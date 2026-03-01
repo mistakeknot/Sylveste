@@ -2264,6 +2264,9 @@
 {"issue_id":"iv-d03","label":"theme:dx"}
 {"issue_id":"iv-d03","label":"theme:research"}
 {"issue_id":"iv-d0kh","label":"mod:intercore"}
+{"issue_id":"iv-d1mcu","label":"claimed_at:1772405462"}
+{"issue_id":"iv-d1mcu","label":"claimed_by:unknown"}
+{"issue_id":"iv-d1mcu","label":"complexity:3"}
 {"issue_id":"iv-d2kz","label":"theme:docs"}
 {"issue_id":"iv-d2kz","label":"theme:dx"}
 {"issue_id":"iv-d2kz","label":"theme:infra"}
@@ -4068,6 +4071,9 @@
 {"issue_id":"iv-o4x7","label":"mod:interspect"}
 {"issue_id":"iv-o4x7","label":"theme:architecture"}
 {"issue_id":"iv-o4x7","label":"theme:observability"}
+{"issue_id":"iv-o54wi","label":"ic_run_id:3ggzg0fd"}
+{"issue_id":"iv-o54wi","label":"sprint:true"}
+{"issue_id":"iv-o54wi","label":"token_budget:250000"}
 {"issue_id":"iv-o5gnd","label":"mod:clavain"}
 {"issue_id":"iv-o5gnd","label":"research:repo"}
 {"issue_id":"iv-o5gnd","label":"source:dicklesworthstone"}
