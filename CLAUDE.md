@@ -4,7 +4,7 @@ Monorepo for the Demarch open-source autonomous software development agency plat
 
 ## Working Style
 
-When you have enough context to start implementing, do it. Write a 3-bullet inline assessment, not a plan file. For irreversible actions (publish, delete, merge, bead-close), always ask before proceeding. If you are redirected, stop immediately and follow the new direction — do not finish the current approach first.
+When you have enough context to start implementing, do it. Write a 3-bullet inline assessment, not a plan file. When a fix is validated (read back looks correct, tests pass), commit, push, and publish without pausing to ask — wasted round-trips cost more than the fix. For irreversible actions (publish, delete, merge, bead-close), always ask before proceeding. If you are redirected, stop immediately and follow the new direction — do not finish the current approach first.
 
 ## Debugging
 
