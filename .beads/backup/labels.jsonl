@@ -930,6 +930,9 @@
 {"issue_id":"iv-4o3m","label":"theme:research"}
 {"issue_id":"iv-4o3m.1","label":"mod:tldrs"}
 {"issue_id":"iv-4o3m.1","label":"theme:docs"}
+{"issue_id":"iv-4p9ca","label":"claimed_at:1772428270"}
+{"issue_id":"iv-4p9ca","label":"claimed_by:unknown"}
+{"issue_id":"iv-4p9ca","label":"complexity:3"}
 {"issue_id":"iv-4pdc","label":"mod:clavain"}
 {"issue_id":"iv-4pdc","label":"mod:intercore"}
 {"issue_id":"iv-4pdc","label":"theme:architecture"}
@@ -5437,6 +5440,9 @@
 {"issue_id":"iv-wie5i.1","label":"mod:interverse"}
 {"issue_id":"iv-wie5i.1","label":"placeholder"}
 {"issue_id":"iv-wie5i.1","label":"recovered"}
+{"issue_id":"iv-wjbex","label":"claimed_at:1772428142"}
+{"issue_id":"iv-wjbex","label":"claimed_by:unknown"}
+{"issue_id":"iv-wjbex","label":"complexity:3"}
 {"issue_id":"iv-wjbex","label":"mod:intercom"}
 {"issue_id":"iv-wjbex","label":"mod:intercore"}
 {"issue_id":"iv-wjl0","label":"mod:interdoc"}
