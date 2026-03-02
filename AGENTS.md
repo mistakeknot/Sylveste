@@ -12,6 +12,8 @@ Demarch is the physical monorepo for the open-source autonomous software develop
 4. Verify which repo you're in: `git rev-parse --show-toplevel`.
 5. When done: `bd close <id>`, commit, `bd sync`, push.
 
+**Ship validated fixes without asking.** When a fix is validated (read back looks correct, tests pass), commit, push, and publish without pausing to confirm. Wasted round-trips cost more than the fix. Only ask before irreversible actions (publish, delete, merge, bead-close).
+
 ## Instruction Loading Order
 
 Use nearest, task-scoped instruction loading instead of reading every instruction file in the repo.
