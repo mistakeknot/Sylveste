@@ -14,6 +14,8 @@ Demarch is the physical monorepo for the open-source autonomous software develop
 
 **Ship validated fixes without asking.** When a fix is validated (read back looks correct, tests pass), commit, push, and publish without pausing to confirm. Wasted round-trips cost more than the fix. Only ask before irreversible actions (publish, delete, merge, bead-close).
 
+**Debugging heuristic:** Check the cheapest observable signals first — is the binary present? (`command -v <tool>`), is the cache stale? (clear and retry), is CWD correct? (`pwd`). Explore complex hypotheses only after ruling out simple causes.
+
 ## Instruction Loading Order
 
 Use nearest, task-scoped instruction loading instead of reading every instruction file in the repo.
@@ -162,6 +164,10 @@ Apply these during brainstorming, planning, and code review. Each distills a cor
 - **Disagreement is signal:** Are we suppressing useful conflict? Agreement is cheap (consensus bias). Disagreement drives the learning loop.
 - **Efficiency = quality:** Does this waste tokens/context? Wasted tokens dilute context, increase hallucination, and slow feedback.
 - **Strong defaults, replaceable policy:** Is this a hardcoded behavior or a policy overlay? Opinions are defaults, not mandates.
+
+### Plugin Design Principle
+
+Hooks handle per-file automatic enforcement (zero cooperation needed). Skills handle session-level strategic decisions. Never duplicate the same behavior in both — single enforcement point per concern.
 
 ### Philosophy Anti-Patterns
 
@@ -400,6 +406,13 @@ Symlinks at `/root/projects/<name>` point into this monorepo for backward compat
 - External contributors: push to your fork and open a PR instead
 
 <!-- bv-agent-instructions-v1: beads commands and workflow covered in "Bead Tracking" section above -->
+
+## Memory Provenance
+
+When writing auto-memory entries, include a source comment so future sessions can trace and verify:
+```
+# [date:YYYY-MM-DD] <one-line description of what was learned and why>
+```
 
 ## Operational Notes & Research
 
