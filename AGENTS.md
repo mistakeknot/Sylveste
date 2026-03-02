@@ -409,6 +409,8 @@ Symlinks at `/root/projects/<name>` point into this monorepo for backward compat
 
 ## Memory Provenance
 
+> Full conventions: [`~/.claude/memory-conventions.md`](~/.claude/memory-conventions.md)
+
 When writing auto-memory entries, include a source comment so future sessions can trace and verify:
 ```
 # [date:YYYY-MM-DD] <one-line description of what was learned and why>
