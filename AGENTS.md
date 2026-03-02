@@ -63,6 +63,7 @@ Clavain (L2) → interlock → intermute (L1)    # file coordination
 Clavain (L2) → interflux → intersearch        # multi-agent review
 Clavain (L2) → interwatch → interpath/interdoc # doc freshness → generator dispatch
 interject → intersearch                        # ambient discovery
+interdeep → interject                          # deep research extraction + search
 Clavain (L2) → intertrust                     # agent trust scoring
 ```
 
@@ -141,6 +142,9 @@ Required tools (all pre-installed on this server):
 **Secrets** (in environment or dotfiles — never commit):
 - `INTERKASTEN_NOTION_TOKEN` — Notion API token for interkasten sync
 - `EXA_API_KEY` — Exa search API for interject and interflux research agents
+- `TAVILY_API_KEY` — Tavily search API for interject
+- `BRAVE_API_KEY` — Brave search API for interject
+- `SEARXNG_URL` — Self-hosted SearXNG instance URL for interject
 - `SLACK_TOKEN` — Slack API for interslack
 
 ## Design Doctrine
@@ -205,7 +209,7 @@ claude --plugin-dir /root/projects/Demarch/interverse/<name>
 cd interverse/<name> && uv run pytest tests/structural/ -v
 ```
 
-**MCP server plugins** (intercache, interflux, interfluence, interject, interkasten, interlock, intermap, intermux, tldr-swinton, tuivision):
+**MCP server plugins** (intercache, interdeep, interflux, interfluence, interject, interkasten, interlock, intermap, intermux, tldr-swinton, tuivision):
 ```bash
 # Build/install the server first, then test via Claude Code.
 # Entrypoints vary — check each module's local AGENTS.md. Examples:
