@@ -2686,3 +2686,5 @@
 {"actor":"mistakeknot","comment":null,"created_at":"2026-03-01T21:11:10Z","event_type":"created","id":2688,"issue_id":"iv-4p9ca.5","new_value":"","old_value":""}
 {"actor":"mistakeknot","comment":"Removed label: claimed_at:1772428210","created_at":"2026-03-01T21:11:10Z","event_type":"label_removed","id":2689,"issue_id":"iv-4p9ca","new_value":null,"old_value":null}
 {"actor":"mistakeknot","comment":"Added label: claimed_at:1772428270","created_at":"2026-03-01T21:11:10Z","event_type":"label_added","id":2690,"issue_id":"iv-4p9ca","new_value":null,"old_value":null}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-01T21:21:05Z","event_type":"closed","id":2691,"issue_id":"iv-wjbex","new_value":"Sprint status push notifications shipped: /status enrichment, block/cancel alerts, stale phase detection","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-01T21:21:48Z","event_type":"closed","id":2692,"issue_id":"iv-4p9ca","new_value":"Implemented calibrate-phase-costs CLI command, calibration reader in Go+shell, reflect trigger, tests","old_value":""}
