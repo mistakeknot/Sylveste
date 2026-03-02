@@ -1,0 +1,156 @@
+---
+name: tool-time
+description: "Tool usage analytics for Claude Code. Tracks tool patterns via hooks, detects inefficiencies, and offers community comparison with anonymized data."
+---
+# Gemini Skill: tool-time
+
+You have activated the tool-time capability.
+
+## Base Instructions
+# tool-time — Development Guide
+
+## Canonical References
+1. [`PHILOSOPHY.md`](../../PHILOSOPHY.md) — direction for ideation and planning decisions.
+2. `CLAUDE.md` — implementation details, architecture, testing, and release workflow.
+
+## Philosophy Alignment Protocol
+Review [`PHILOSOPHY.md`](../../PHILOSOPHY.md) during:
+- Intake/scoping
+- Brainstorming
+- Planning
+- Execution kickoff
+- Review/gates
+- Handoff/retrospective
+
+For brainstorming/planning outputs, add two short lines:
+- **Alignment:** one sentence on how the proposal supports the module's purpose within Demarch's philosophy.
+- **Conflict/Risk:** one sentence on any tension with philosophy (or 'none').
+
+If a high-value change conflicts with philosophy, either:
+- adjust the plan to align, or
+- create follow-up work to update `PHILOSOPHY.md` explicitly.
+
+
+## Quick Reference
+
+| Resource | URL |
+|----------|-----|
+| Dashboard | https://tool-time.org |
+| Worker API | https://tool-time-api.mistakeknot.workers.dev |
+| Plugin registry | interagency-marketplace |
+| GitHub | https://github.com/mistakeknot/tool-time |
+
+## Architecture
+
+```
+tool-time/
+├── summarize.py         # Parses JSONL transcripts → stats.json
+├── upload.py            # Anonymizes + uploads stats to community API
+├── backfill.py          # Parses historical transcripts
+├── parsers.py           # Shared parsing utilities
+├── test_summarize.py    # Tests for summarize
+├── test_upload.py       # Tests for upload
+├── manifest.json        # Plugin manifest
+├── skills/
+│   └── tool-time/
+│       └── SKILL.md     # Skill definition (user-invocable via /tool-time)
+├── community/
+│   ├── src/index.ts     # Hono API (Cloudflare Worker)
+│   ├── public/          # Static dashboard (HTML/JS/CSS)
+│   │   ├── index.html
+│   │   ├── dashboard.js
+│   │   └── style.css
+│   ├── migrations/      # D1 SQL migrations
+│   └── package.json
+└── docs/
+    ├── brainstorms/
+    └── plans/
+```
+
+### Data Flow
+
+1. Claude Code sessions produce JSONL transcripts in `~/.claude/projects/`
+2. `summarize.py` aggregates 7 days of transcripts → `~/.claude/tool-time/stats.json`
+3. `/tool-time` skill triggers summarize + upload
+4. `upload.py` reads stats.json, anonymizes it, POSTs to `/v1/api/submit`
+5. Worker stores in D1, dashboard reads from `/v1/api/stats`
+
+### Ecosystem Data
+
+- **Skills**: Extracted from `tool_use` events with `skill` field in input
+- **MCP servers**: Parsed from tool names matching `mcp__<server>__<tool>`
+- **Installed plugins**: Read from `~/.claude/settings.json` → `enabledPlugins`
+
+## API Endpoints
+
+### Public
+
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/v1/api/submit` | Submit anonymized stats |
+| GET | `/v1/api/stats` | Aggregated community stats (7-day window) |
+| DELETE | `/v1/api/user/:token` | GDPR data deletion |
+
+### Admin (requires `Authorization: Bearer <ADMIN_TOKEN>`)
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/v1/api/admin/submissions` | List recent submissions (accepts `?limit=N`, max 200) |
+| DELETE | `/v1/api/admin/submissions/:id` | Delete a submission by ID (cascades to all related stats) |
+
+## Database (Cloudflare D1)
+
+Tables:
+- `submissions` — one row per upload (keyed by submission_token + generated_at)
+- `tool_stats` — per-tool calls/errors/rejections (FK → submissions, CASCADE delete)
+- `skill_stats` — per-skill call counts (FK → submissions, CASCADE delete)
+- `mcp_server_stats` — per-MCP-server calls/errors (FK → submissions, CASCADE delete)
+- `plugin_usage_aggregate` — aggregate install counts (no submission linkage, for privacy)
+
+Migrations are in `community/migrations/`. Apply with:
+```bash
+npx wrangler d1 execute tool-time-db --file=migrations/NNN_name.sql
+```
+
+## Development
+
+### Local plugin testing
+```bash
+# Regenerate stats with local code (not cached plugin)
+python3 summarize.py
+
+# Run tests
+uv run --with pytest pytest test_summarize.py test_upload.py -v
+```
+
+### Worker deployment
+```bash
+cd community
+npm run deploy
+```
+
+Deploys also happen automatically on `git push` when `community/` files change (via git pre-push hook).
+
+### Secrets
+
+- `ADMIN_TOKEN` — stored as Cloudflare Worker secret (`wrangler secret put ADMIN_TOKEN`)
+- `CLOUDFLARE_API_TOKEN` — in `~/.bashrc`, scoped to Workers
+
+### Community sharing config
+
+User config lives at `~/.claude/tool-time/config.json`:
+```json
+{"community_sharing": true, "submission_token": "<auto-generated>"}
+```
+
+## Known Issues
+
+- Installed plugin cache may lag behind local code (plugin version bump needed for users to get new features)
+- MCP server stats are empty for projects that don't use MCP tools (expected)
+- `model` field in submissions is often null (depends on transcript metadata)
+
+## Session Completion
+
+> See `/root/projects/Interverse/AGENTS.md` for session completion protocol.
+
+

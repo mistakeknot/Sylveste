@@ -1,0 +1,77 @@
+[
+  {
+    "name": "fd-intercom-async-translation",
+    "focus": "Translate Hermes Python asyncio patterns into safe Rust/tokio equivalents for intercom's message pipeline",
+    "persona": "A systems engineer who has ported Python asyncio services to Rust/tokio and understands where the mental models diverge.",
+    "decision_lens": "Flag patterns where asyncio semantics have no clean tokio equivalent and where naive translation introduces deadlocks, starvation, or silent data loss.",
+    "review_areas": [
+      "How Hermes uses asyncio.run() from sync contexts vs intercom's tokio::spawn — thread-pool workaround pattern and Rust's spawn_blocking equivalent",
+      "Hermes fire-and-forget hook emission (errors swallowed) — confirm intercom's GroupQueue spawned tasks have equivalent non-blocking error isolation",
+      "Hermes re-entrant asyncio locks — verify this doesn't map to Rust Mutex held across await points in scheduler_wiring.rs",
+      "Hermes lazy async initialization vs intercom's Arc<Option<PgPool>> pattern — uninitialized-pool handling under concurrent requests",
+      "Hermes ThreadPoolExecutor(max_workers=1) timeout pattern — tokio::time::timeout equivalent for blocking DB writes",
+      "intercom's rand_u16() IPC filename generation — collision probability under high-concurrency vs Hermes uuid.uuid4()"
+    ],
+    "success_hints": [
+      "No Mutex held across an await point in scheduler or queue code",
+      "All fire-and-forget paths log errors and cannot silently drop messages",
+      "Blocking I/O isolated to spawn_blocking — never called from async context directly"
+    ],
+    "task_context": "Intercom is a Rust/Node gateway using tokio, axum, tokio-postgres. Hermes Agent is the Python asyncio reference implementation for cross-pollination.",
+    "anti_overlap": [
+      "fd-intercom-scheduler-reliability covers Postgres task state persistence and cron correctness",
+      "fd-intercom-tenant-isolation covers per-group data separation and access control",
+      "fd-gateway-messaging covers high-level message routing architecture"
+    ]
+  },
+  {
+    "name": "fd-intercom-scheduler-reliability",
+    "focus": "Delivery confirmation, retry durability, and scheduled task state correctness in intercom's Postgres-backed scheduler vs Hermes's file-based cron",
+    "persona": "A distributed systems engineer specializing in at-least-once delivery guarantees and idempotent task execution.",
+    "decision_lens": "Prioritize any window between task dispatch and status persistence where a crash would cause silent task loss or double-execution.",
+    "review_areas": [
+      "Hermes tick() mark_job_run() after delivery vs intercom's re-verify fetch — TOCTOU window analysis",
+      "intercom's update_task_after_run crash gap: next_run computed in application code before write-back — skip-on-restart risk",
+      "Hermes file-based lock for tick exclusivity vs intercom's mutex/advisory lock for double-dispatch prevention",
+      "Hermes delivery truncation guard (MAX_PLATFORM_OUTPUT=4000) vs intercom IPC message-size limits",
+      "Hermes always_log_local audit trail vs intercom's task_run_log atomicity with status update",
+      "once/interval/cron schedule handling: timezone edge cases (DST transitions, invalid tz strings) — parse failure surfacing"
+    ],
+    "success_hints": [
+      "Task status update and next_run write are a single atomic Postgres UPDATE",
+      "Delivery failure recorded before scheduler advances next_run — failed deliveries retryable",
+      "Invalid cron expressions produce errors at creation time, not at tick time"
+    ],
+    "task_context": "Intercom is a Rust/Node gateway using tokio, axum, tokio-postgres. Hermes Agent is the Python asyncio reference implementation for cross-pollination.",
+    "anti_overlap": [
+      "fd-intercom-async-translation covers Rust/tokio runtime model and concurrency primitives",
+      "fd-intercom-tenant-isolation covers per-group data separation",
+      "fd-gateway-messaging covers high-level message routing decisions"
+    ]
+  },
+  {
+    "name": "fd-intercom-tenant-isolation",
+    "focus": "Per-group data isolation and session lifecycle boundaries in intercom's shared gateway, using Hermes pairing/session-reset as reference",
+    "persona": "A security-focused engineer designing multi-tenant backends and reviewing session boundary violations.",
+    "decision_lens": "Treat any path where group_jid from one tenant can influence state visible to another as critical. Session bleed is harder to detect than crashes.",
+    "review_areas": [
+      "GroupQueue groups HashMap — verify group_jid keys never normalized/aliased in ways causing two JIDs to share state",
+      "Hermes pairing approval flow vs intercom registered_groups — can unregistered groups receive task output via scheduler",
+      "intercom session endpoints keyed by group_folder — path traversal risk in write_ipc_message where group_folder constructs filesystem paths",
+      "Hermes mirror.py session-mirroring by platform+chat_id — intercom session lookup fallback collision risk between DM and group chat",
+      "Hermes SessionResetPolicy (daily/idle/both/none) — does intercom have per-group session reset backed by Postgres, idle container blocking max_concurrent",
+      "Migration-period dual-write path: Node host writing session/task entries — group_folder='../other_group' bypass risk"
+    ],
+    "success_hints": [
+      "All group_folder/group_jid validated against strict allowlist pattern before use as path or Postgres key",
+      "Unregistered groups cannot receive scheduled task output",
+      "GroupState entries for inactive groups garbage-collected to prevent unbounded HashMap growth"
+    ],
+    "task_context": "Intercom is a Rust/Node gateway using tokio, axum, tokio-postgres. Hermes Agent is the Python asyncio reference implementation for cross-pollination.",
+    "anti_overlap": [
+      "fd-intercom-async-translation covers Rust/tokio runtime correctness",
+      "fd-intercom-scheduler-reliability covers task persistence and delivery confirmation",
+      "fd-gateway-messaging covers platform routing architecture"
+    ]
+  }
+]
