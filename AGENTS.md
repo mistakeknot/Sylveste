@@ -64,7 +64,7 @@ interject → intersearch                        # ambient discovery
 Clavain (L2) → intertrust                     # agent trust scoring
 ```
 
-Standalone plugins (no cross-deps): interfluence, interkasten, tldr-swinton, intercache, intercheck, interstat, interpeer, intertest, interlens, intermap, intermux, interserve, tool-time, tuivision.
+Standalone plugins (no cross-deps): interfluence, interkasten, tldr-swinton, intercache, intercheck, interstat, interpeer, intertest, interlens, intermap, intermux, tool-time, tuivision.
 
 ## Bead Tracking
 
@@ -203,7 +203,7 @@ claude --plugin-dir /root/projects/Demarch/interverse/<name>
 cd interverse/<name> && uv run pytest tests/structural/ -v
 ```
 
-**MCP server plugins** (intercache, interflux, interfluence, interject, interkasten, interlock, intermap, intermux, interserve, tldr-swinton, tuivision):
+**MCP server plugins** (intercache, interflux, interfluence, interject, interkasten, interlock, intermap, intermux, tldr-swinton, tuivision):
 ```bash
 # Build/install the server first, then test via Claude Code.
 # Entrypoints vary — check each module's local AGENTS.md. Examples:

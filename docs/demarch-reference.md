@@ -44,7 +44,6 @@ Modules organized by architectural role within the pillars.
 | **tldr-swinton** | Token-efficient code context |
 | **intermux** | Agent visibility and session monitoring |
 | **intersynth** | Multi-agent output synthesis |
-| **interserve** | Codex dispatch and context compression |
 
 Additional drivers cover artifact generation (interpath), document freshness (interwatch), plugin publishing (interpub), cross-AI review (interpeer), Notion sync (interkasten), TUI testing (tuivision), cognitive lenses (interlens), voice adaptation (interfluence), and more. The full listing is in [CLAUDE.md](../CLAUDE.md).
 
