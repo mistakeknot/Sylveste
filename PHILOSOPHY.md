@@ -33,7 +33,7 @@ The flywheel (authority → actions → evidence → authority) is an instance o
 - **Per-sprint:** Phase gates observe artifacts, orient on sprint state, decide phase transitions, advance phases, and reflect at sprint end.
 - **Cross-session:** Interspect observes evidence, orients via pattern classification, decides routing proposals, acts via override application, and reflects via canary monitoring.
 
-OODAR extends Boyd's OODA loop with an explicit **Reflect** phase because AI agents don't implicitly learn from experience — learning must be captured as durable evidence that earns authority.
+OODAR extends Boyd's OODA loop with an explicit **Reflect** phase because AI agents don't implicitly learn from experience — learning must be captured as durable evidence that earns authority. The **Closed-loop by default** principle (below) is how Reflect feeds back into Orient: without the 4-stage calibration pattern, Reflect is journaling — durable but inert. With it, each cycle's actuals recalibrate the next cycle's predictions, and the R in OODAR actually closes.
 
 Situation assessments are prompt aids, not ground truth. Always verify recent evidence against cached assessments.
 
@@ -49,6 +49,26 @@ Situation assessments are prompt aids, not ground truth. Always verify recent ev
 - *Outcomes over proxies.* Gate pass rates are gameable. Post-merge defect rates are not.
 - *Rotate and diversify.* No single metric stays dominant. Diverse evaluation resists Goodhart pressure.
 - *Anti-gaming by design.* Agents will optimize for any stable target. Rotate metrics, cap optimization rate, randomize audits. Goodhart pressure exists from day one.
+
+**Closed-loop by default.** Any system that makes a judgment — estimates, classifications, routing decisions, triage scores, gate thresholds — MUST close the loop: predict, observe the outcome, feed the outcome back to improve the next prediction. Automatically, not manually. This is the mechanism by which receipts become intelligence rather than inert records. The implementation pattern has four stages, and shipping fewer than all four is incomplete work:
+
+1. **Hardcoded defaults** — ship a reasonable starting point.
+2. **Collect actuals** — instrument the real outcome alongside the prediction.
+3. **Calibrate from history** — read past actuals to adjust future predictions.
+4. **Defaults become fallback** — the hardcoded values still fire when history is absent.
+
+If you ship stages 1-2 without 3-4, you've built a constant masquerading as intelligence. If you ship stage 3 without stage 4, you've built a system that breaks when the database is empty. The pattern applies everywhere predictions exist:
+
+| Domain | Prediction | Actual | Calibration |
+|---|---|---|---|
+| Cost estimation | `phaseCostEstimate()` | interstat per-phase actuals | `calibrate-phase-costs` reads history |
+| Agent routing | model tier selection | post-merge defect rate by model | interspect canary monitoring |
+| Complexity scoring | `classifyComplexity()` | actual sprint duration/tokens | reflect-phase calibration |
+| Review triage | agent relevance scores | which findings got acted on | interspect evidence → routing overrides |
+| Gate thresholds | phase gate hardness | false-positive/negative rates | threshold tuning from outcomes |
+| Fleet budgets | agent token estimates | interstat per-agent actuals | `scan-fleet.sh --enrich-costs` |
+
+The fleet enrichment pipeline is the existence proof: `estimate-costs.sh` reads historical actuals from interstat, blends them with registry baselines, and writes calibrated estimates back. Every other row in this table should work the same way.
 
 **Disagreement.** Disagreement between models is the highest-value signal. Agreement is cheap (consensus bias). Disagreement drives the learning loop: disagreement at time T, human resolution at T+1, routing signal at T+2. Triage by impact: does resolving this change a decision? If yes, amplify. If no, apply default policy. When agents disagree with humans, the human wins in the moment — but receipts remember. Agents escalate high-confidence disagreements rather than silently comply.
 
