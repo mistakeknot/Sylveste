@@ -2781,3 +2781,16 @@
 {"actor":"mistakeknot","comment":"Added label: phase:plan-reviewed","created_at":"2026-03-02T16:22:04Z","event_type":"label_added","id":2782,"issue_id":"iv-nt43u","new_value":null,"old_value":null}
 {"actor":"mistakeknot","comment":null,"created_at":"2026-03-02T16:48:27Z","event_type":"closed","id":2783,"issue_id":"iv-nt43u","new_value":"Closed","old_value":""}
 {"actor":"mistakeknot","comment":null,"created_at":"2026-03-02T17:26:24Z","event_type":"created","id":2784,"issue_id":"iv-avp29","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-02T17:26:31Z","event_type":"created","id":2785,"issue_id":"iv-dwfg4","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-02T17:26:32Z","event_type":"created","id":2786,"issue_id":"iv-fqtep","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-02T17:26:34Z","event_type":"created","id":2787,"issue_id":"iv-ban2l","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-02T17:26:35Z","event_type":"created","id":2788,"issue_id":"iv-w7tnj","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-02T17:26:36Z","event_type":"created","id":2789,"issue_id":"iv-2f26r","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-02T17:26:37Z","event_type":"created","id":2790,"issue_id":"iv-c1dif","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-02T17:41:17Z","event_type":"closed","id":2791,"issue_id":"iv-dwfg4","new_value":"Implemented in project-onboard skill","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-02T17:41:17Z","event_type":"closed","id":2792,"issue_id":"iv-fqtep","new_value":"Implemented in project-onboard skill","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-02T17:41:17Z","event_type":"closed","id":2793,"issue_id":"iv-ban2l","new_value":"Implemented in project-onboard skill","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-02T17:41:17Z","event_type":"closed","id":2794,"issue_id":"iv-w7tnj","new_value":"Implemented in project-onboard skill","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-02T17:41:17Z","event_type":"closed","id":2795,"issue_id":"iv-2f26r","new_value":"Implemented in project-onboard skill","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-02T17:41:17Z","event_type":"closed","id":2796,"issue_id":"iv-c1dif","new_value":"Implemented in project-onboard skill","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-02T17:41:21Z","event_type":"closed","id":2797,"issue_id":"iv-avp29","new_value":"All features implemented — skill shipped","old_value":""}
