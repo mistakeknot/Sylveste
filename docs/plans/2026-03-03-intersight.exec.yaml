@@ -1,0 +1,63 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 5
+timeout_per_task: 300
+
+stages:
+  - name: "Scaffold & Tests"
+    tasks:
+      - id: task-1
+        title: "Plugin scaffold — directory and required files"
+        files: [interverse/intersight/.claude-plugin/plugin.json, interverse/intersight/CLAUDE.md, interverse/intersight/AGENTS.md, interverse/intersight/PHILOSOPHY.md, interverse/intersight/README.md, interverse/intersight/LICENSE, interverse/intersight/.gitignore, interverse/intersight/scripts/bump-version.sh, interverse/intersight/skills/analyze/SKILL.md]
+        depends: []
+      - id: task-2
+        title: "Structural tests"
+        files: [interverse/intersight/tests/pyproject.toml, interverse/intersight/tests/structural/conftest.py, interverse/intersight/tests/structural/helpers.py, interverse/intersight/tests/structural/test_structure.py, interverse/intersight/tests/structural/test_skills.py]
+        depends: [task-1]
+
+  - name: "Extraction Scripts"
+    tasks:
+      - id: task-3
+        title: "Preflight scripts — robots.txt + content hash"
+        files: [interverse/intersight/scripts/extraction/parseRobotsTxt.js, interverse/intersight/scripts/extraction/contentHash.js]
+        depends: []
+      - id: task-4
+        title: "CSS custom properties extraction"
+        files: [interverse/intersight/scripts/extraction/extractCSSCustomProperties.js]
+        depends: []
+      - id: task-5
+        title: "Color token extraction"
+        files: [interverse/intersight/scripts/extraction/extractColorTokens.js]
+        depends: []
+      - id: task-6
+        title: "Typography extraction"
+        files: [interverse/intersight/scripts/extraction/extractTypography.js]
+        depends: []
+      - id: task-7
+        title: "Spacing, shadows, borders, breakpoints extraction"
+        files: [interverse/intersight/scripts/extraction/extractSpacing.js, interverse/intersight/scripts/extraction/extractShadowsAndBorders.js, interverse/intersight/scripts/extraction/extractBreakpoints.js]
+        depends: []
+      - id: task-8
+        title: "Component inventory extraction"
+        files: [interverse/intersight/scripts/extraction/extractComponentInventory.js]
+        depends: []
+
+  - name: "Schema & Orchestration"
+    tasks:
+      - id: task-9
+        title: "W3C DTCG output schema definition"
+        files: [interverse/intersight/scripts/extraction/schema.json]
+        depends: []
+      - id: task-10
+        title: "SKILL.md full orchestration"
+        files: [interverse/intersight/skills/analyze/SKILL.md]
+        depends: [task-9]
+
+  - name: "Validation"
+    tasks:
+      - id: task-11
+        title: "Final validation and integration test"
+        files: []
+        depends: []
+        tier: fast
