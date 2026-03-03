@@ -1109,6 +1109,9 @@
 {"issue_id":"iv-5yr8","label":"theme:architecture"}
 {"issue_id":"iv-5yr8","label":"theme:docs"}
 {"issue_id":"iv-5yr8","label":"theme:ux"}
+{"issue_id":"iv-5zkb9","label":"claimed_at:1772506553"}
+{"issue_id":"iv-5zkb9","label":"claimed_by:unknown"}
+{"issue_id":"iv-5zkb9","label":"complexity:3"}
 {"issue_id":"iv-5zoaq","label":"placeholder"}
 {"issue_id":"iv-5zoaq","label":"recovered"}
 {"issue_id":"iv-5zoaq","label":"theme:observability"}
@@ -4624,6 +4627,9 @@
 {"issue_id":"iv-r6mf","label":"mod:interflux"}
 {"issue_id":"iv-r6mf","label":"mod:interspect"}
 {"issue_id":"iv-r6mf","label":"theme:architecture"}
+{"issue_id":"iv-r6u9q","label":"claimed_at:1772506863"}
+{"issue_id":"iv-r6u9q","label":"claimed_by:unknown"}
+{"issue_id":"iv-r6u9q","label":"complexity:4"}
 {"issue_id":"iv-r7du","label":"mod:interflux"}
 {"issue_id":"iv-r90q","label":"mod:clavain"}
 {"issue_id":"iv-r90q","label":"mod:interpub"}
