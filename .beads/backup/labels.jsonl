@@ -478,8 +478,8 @@
 {"issue_id":"iv-22w","label":"mod:interject"}
 {"issue_id":"iv-22w","label":"theme:docs"}
 {"issue_id":"iv-22w","label":"theme:dx"}
-{"issue_id":"iv-240m","label":"claimed_at:1772575358"}
-{"issue_id":"iv-240m","label":"claimed_by:unknown"}
+{"issue_id":"iv-240m","label":"claimed_at:0"}
+{"issue_id":"iv-240m","label":"claimed_by:released"}
 {"issue_id":"iv-240m","label":"complexity:4"}
 {"issue_id":"iv-240m","label":"mod:clavain"}
 {"issue_id":"iv-240m","label":"mod:interflux"}
