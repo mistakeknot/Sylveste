@@ -478,8 +478,12 @@
 {"issue_id":"iv-22w","label":"mod:interject"}
 {"issue_id":"iv-22w","label":"theme:docs"}
 {"issue_id":"iv-22w","label":"theme:dx"}
+{"issue_id":"iv-240m","label":"claimed_at:1772575132"}
+{"issue_id":"iv-240m","label":"claimed_by:unknown"}
+{"issue_id":"iv-240m","label":"complexity:4"}
 {"issue_id":"iv-240m","label":"mod:clavain"}
 {"issue_id":"iv-240m","label":"mod:interflux"}
+{"issue_id":"iv-240m","label":"sprint:true"}
 {"issue_id":"iv-240m","label":"theme:coordination"}
 {"issue_id":"iv-240m","label":"theme:docs"}
 {"issue_id":"iv-24qk","label":"phase:done"}
@@ -4153,6 +4157,9 @@
 {"issue_id":"iv-oguc3","label":"placeholder"}
 {"issue_id":"iv-oguc3","label":"recovered"}
 {"issue_id":"iv-oguc3","label":"theme:ux"}
+{"issue_id":"iv-ohmv8","label":"ic_run_id:yjhaxp14"}
+{"issue_id":"iv-ohmv8","label":"sprint:true"}
+{"issue_id":"iv-ohmv8","label":"token_budget:250000"}
 {"issue_id":"iv-oi2g","label":"beads"}
 {"issue_id":"iv-oi2g","label":"compatibility"}
 {"issue_id":"iv-oi2g","label":"mod:clavain"}
