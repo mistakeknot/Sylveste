@@ -12,11 +12,13 @@ Install Clavain and the full companion plugin ecosystem in one command:
 curl -fsSL https://raw.githubusercontent.com/mistakeknot/Demarch/main/install.sh | bash
 ```
 
-Then open Claude Code and run:
+Then open Claude Code in your project and run:
 
 ```
-/clavain:route
+/clavain:project-onboard
 ```
+
+This sets up beads tracking, CLAUDE.md/AGENTS.md, docs structure, observability, and seeds your first roadmap. After that, use `/clavain:route` to start building.
 
 ## What you get
 
