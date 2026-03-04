@@ -77,15 +77,11 @@ Phase 3 (DOM/CSS extraction) runs 7 sequential `browser_evaluate` calls. With `b
 
 ## Recommendation
 
-**Tier 1 (immediate, already done):** `--snapshot-mode none` on upstream Playwright MCP. Zero migration cost. Implemented in iv-bco0o.
+**Use upstream `@playwright/mcp` with `--snapshot-mode none`.** Zero migration cost, Microsoft-backed, sufficient for Intersight's needs. Implemented in iv-bco0o.
 
-**Tier 2 (low-effort upgrade):** Switch to `@tontoko/fast-playwright-mcp`. Drop-in replacement with added benefits:
-- Per-tool snapshot control (future-proofs if Intersight needs selective snapshots)
-- Batch execution for Phase 3 (7 scripts → 1 call)
-- Image compression for Phase 5 screenshots
-- Diff mode for Phase 6 hover state comparison
+**Optional upgrade:** `@tontoko/fast-playwright-mcp` adds per-tool snapshot control, batch execution, and image compression. But with only 31 stars and one maintainer, the supply chain risk outweighs the marginal gains (~2-3K extra tokens from batch execution). Revisit if Microsoft upstreams these features.
 
-**Tier 3 (not recommended):** Playwriter/Playwrightess. Wrong architecture for headless extraction.
+**Not recommended:** Playwriter/Playwrightess. Wrong architecture for headless extraction.
 
 ## Next Steps
 
