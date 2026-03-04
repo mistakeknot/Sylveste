@@ -1,0 +1,45 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 300
+
+stages:
+  - name: "Core Go implementation"
+    tasks:
+      - id: task-1
+        title: "Add yaml.v3 dependency and scaffold compose.go with types and algorithm"
+        files: [os/clavain/cmd/clavain-cli/go.mod, os/clavain/cmd/clavain-cli/compose.go, os/clavain/cmd/clavain-cli/main.go, os/clavain/scripts/build-clavain-cli.sh]
+        depends: []
+      - id: task-2
+        title: "Write table-driven Go tests with fixture files"
+        files: [os/clavain/cmd/clavain-cli/compose_test.go, os/clavain/cmd/clavain-cli/testdata/fleet-registry.yaml, os/clavain/cmd/clavain-cli/testdata/agency-spec.yaml, os/clavain/cmd/clavain-cli/testdata/routing-calibration.json, os/clavain/cmd/clavain-cli/testdata/routing-overrides.json]
+        depends: [task-1]
+
+  - name: "Integration and wiring"
+    tasks:
+      - id: task-3
+        title: "Bats integration tests against real config"
+        files: [os/clavain/tests/shell/test_compose.bats]
+        depends: []
+        tier: fast
+      - id: task-4
+        title: "Shell bridge lib-compose.sh"
+        files: [os/clavain/scripts/lib-compose.sh]
+        depends: []
+      - id: task-5
+        title: "Wire flux-drive launch to consume Composer plan"
+        files: [interverse/interflux/skills/flux-drive/phases/launch.md]
+        depends: [task-4]
+      - id: task-6
+        title: "Wire sprint pipeline to export Composer plan"
+        files: [os/clavain/hooks/lib-sprint.sh]
+        depends: [task-4]
+
+  - name: "Verification"
+    tasks:
+      - id: task-7
+        title: "Build binary, run full test suite, smoke test"
+        files: [os/clavain/cmd/clavain-cli/main.go]
+        depends: []
+        tier: fast
