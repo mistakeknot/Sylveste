@@ -330,7 +330,10 @@
 {"issue_id":"iv-1v50","label":"theme:dx"}
 {"issue_id":"iv-1v50","label":"theme:testing"}
 {"issue_id":"iv-1vhv","label":"mod:interflux"}
+{"issue_id":"iv-1vny","label":"claimed_at:1772639344"}
+{"issue_id":"iv-1vny","label":"claimed_by:unknown"}
 {"issue_id":"iv-1vny","label":"mod:clavain"}
+{"issue_id":"iv-1vny","label":"phase:planned"}
 {"issue_id":"iv-1vny","label":"theme:docs"}
 {"issue_id":"iv-1vny","label":"theme:infra"}
 {"issue_id":"iv-1vny","label":"theme:research"}
@@ -4693,6 +4696,8 @@
 {"issue_id":"iv-rlnq","label":"mod:intermute"}
 {"issue_id":"iv-rlnq","label":"theme:infra"}
 {"issue_id":"iv-rlnq","label":"theme:research"}
+{"issue_id":"iv-rmn75","label":"claimed_at:1772639651"}
+{"issue_id":"iv-rmn75","label":"claimed_by:unknown"}
 {"issue_id":"iv-rmvl","label":"mod:interline"}
 {"issue_id":"iv-rmx0","label":"mod:clavain"}
 {"issue_id":"iv-rmx0","label":"theme:coordination"}
