@@ -1,0 +1,48 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 300
+
+stages:
+  - name: "Foundation"
+    tasks:
+      - id: task-1
+        title: "Create self-targeting agency spec"
+        files: [os/clavain/.clavain/agency-spec.yaml]
+        depends: []
+      - id: task-2
+        title: "Add sprint-compose command"
+        files: [os/clavain/cmd/clavain-cli/compose.go, os/clavain/cmd/clavain-cli/compose_test.go, os/clavain/cmd/clavain-cli/main.go]
+        depends: []
+      - id: task-3
+        title: "Add sprint-plan-phase and sprint-env-vars commands"
+        files: [os/clavain/cmd/clavain-cli/selfbuild.go, os/clavain/cmd/clavain-cli/selfbuild_test.go, os/clavain/cmd/clavain-cli/main.go]
+        depends: []
+
+  - name: "Gate graduation"
+    tasks:
+      - id: task-4
+        title: "Graduate gate mode for early-pipeline transitions"
+        files: [os/clavain/config/agency-spec.yaml, os/clavain/cmd/clavain-cli/handoff.go, os/clavain/cmd/clavain-cli/handoff_test.go, os/clavain/cmd/clavain-cli/compose.go]
+        depends: [task-3]
+
+  - name: "Test infrastructure"
+    tasks:
+      - id: task-5
+        title: "Update test fixtures for self-targeting"
+        files: [os/clavain/cmd/clavain-cli/testdata/agency-spec.yaml, os/clavain/cmd/clavain-cli/testdata/project-agency-spec.yaml, os/clavain/cmd/clavain-cli/compose_test.go]
+        depends: [task-1, task-2, task-4]
+
+  - name: "Verification"
+    tasks:
+      - id: task-6
+        title: "End-to-end smoke test"
+        files: [os/clavain/cmd/clavain-cli/selfbuild_test.go]
+        depends: [task-3, task-5]
+        tier: fast
+      - id: task-7
+        title: "Build binary and run all tests"
+        files: []
+        depends: [task-6]
+        tier: fast
