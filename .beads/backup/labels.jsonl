@@ -3717,6 +3717,9 @@
 {"issue_id":"iv-log2.6","label":"theme:ux"}
 {"issue_id":"iv-log2.9","label":"theme:research"}
 {"issue_id":"iv-lp83","label":"theme:docs"}
+{"issue_id":"iv-lptay","label":"claimed_at:1772682329"}
+{"issue_id":"iv-lptay","label":"claimed_by:b81dca78-8f3f-4c2a-add5-5098cb0d19c5"}
+{"issue_id":"iv-lptay","label":"complexity:3"}
 {"issue_id":"iv-lqsk","label":"mod:interspect"}
 {"issue_id":"iv-lqsk","label":"theme:coordination"}
 {"issue_id":"iv-lqsk","label":"theme:infra"}
@@ -5133,6 +5136,9 @@
 {"issue_id":"iv-u2pd","label":"mod:clavain"}
 {"issue_id":"iv-u2pd","label":"theme:dx"}
 {"issue_id":"iv-u2pd","label":"theme:ux"}
+{"issue_id":"iv-u74sq","label":"claimed_at:1772682167"}
+{"issue_id":"iv-u74sq","label":"claimed_by:bf5a312e-8a2c-4e08-801f-ebadf57cefd8"}
+{"issue_id":"iv-u74sq","label":"complexity:3"}
 {"issue_id":"iv-u80a","label":"mod:interspect"}
 {"issue_id":"iv-u8bc","label":"mod:interflux"}
 {"issue_id":"iv-u8bc","label":"theme:docs"}
