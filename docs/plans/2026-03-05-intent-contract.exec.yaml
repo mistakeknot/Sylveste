@@ -1,0 +1,40 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 300
+
+stages:
+  - name: "Shared Types Foundation"
+    tasks:
+      - id: task-1
+        title: "Create shared intent types in core/intercore/pkg/contract/"
+        files: [core/intercore/pkg/contract/intent.go, core/intercore/pkg/contract/errors.go, core/intercore/pkg/contract/intent_test.go]
+        depends: []
+
+  - name: "Consumer Integration"
+    tasks:
+      - id: task-2
+        title: "Add clavain-cli intent submit command"
+        files: [os/clavain/cmd/clavain-cli/intent.go, os/clavain/cmd/clavain-cli/intent_test.go, os/clavain/cmd/clavain-cli/main.go, os/clavain/cmd/clavain-cli/go.mod]
+        depends: [task-1]
+      - id: task-4
+        title: "Add intent event audit logging to Intercore"
+        files: [core/intercore/internal/event/event.go, core/intercore/internal/event/store.go, core/intercore/internal/event/intent_test.go]
+        depends: [task-1]
+
+  - name: "Wiring & Docs"
+    tasks:
+      - id: task-3
+        title: "Add typed intent client methods to Autarch (stdin pipe)"
+        files: [apps/autarch/go.mod, apps/autarch/pkg/clavain/intent.go, apps/autarch/pkg/clavain/intent_test.go]
+        depends: [task-2]
+      - id: task-5
+        title: "Wire intent audit logging into Clavain router (Go library call)"
+        files: [os/clavain/cmd/clavain-cli/intent.go, os/clavain/cmd/clavain-cli/go.mod]
+        depends: [task-2, task-4]
+      - id: task-6
+        title: "Architecture note and completion"
+        files: [docs/architecture/intent-contract.md]
+        depends: []
+        tier: fast
