@@ -51,6 +51,12 @@ Target: under 150 lines per CUJ.
 | `observable` | Detectable with instrumentation | Player inventory changes | Agents with hooks |
 | `qualitative` | Requires human judgment | Feels intuitive, low friction | Humans |
 
+## When to Create CUJs
+
+**Required** for any user-facing project: apps, CLIs, plugins with commands, games, UIs. If users interact with it, CUJs define what "works well" means.
+
+**Skip** for pure libraries, internal infrastructure, CI tooling — anything without direct user-facing flows.
+
 ## Generation
 
 - **Manual authoring** — preferred; CUJs are user-specific and hard to auto-generate well
