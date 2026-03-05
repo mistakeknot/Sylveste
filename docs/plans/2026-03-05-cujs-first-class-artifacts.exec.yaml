@@ -1,0 +1,56 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 5
+timeout_per_task: 300
+
+stages:
+  - name: "interpath Generation Support"
+    tasks:
+      - id: task-1
+        title: "Create CUJ synthesis phase file"
+        files: [interverse/interpath/skills/artifact-gen/phases/cuj.md]
+        depends: []
+      - id: task-2
+        title: "Register CUJ in artifact-gen skill router"
+        files: [interverse/interpath/skills/artifact-gen/SKILL.md, interverse/interpath/skills/artifact-gen/SKILL-compact.md]
+        depends: [task-1]
+      - id: task-3
+        title: "Add /interpath:cuj command and update plugin.json"
+        files: [interverse/interpath/commands/cuj.md, interverse/interpath/.claude-plugin/plugin.json]
+        depends: []
+      - id: task-4
+        title: "Add CUJ source to discovery phase and source catalog"
+        files: [interverse/interpath/skills/artifact-gen/phases/discover.md, interverse/interpath/skills/artifact-gen/references/source-catalog.md]
+        depends: []
+      - id: task-5
+        title: "Add CUJ to output templates reference"
+        files: [interverse/interpath/skills/artifact-gen/references/output-templates.md]
+        depends: []
+
+  - name: "interwatch Drift Detection"
+    tasks:
+      - id: task-6
+        title: "Add CUJ watchable, signal template, and discovery rule"
+        files: [interverse/interwatch/config/watchables.yaml]
+        depends: []
+      - id: task-7
+        title: "Update watchables reference doc with CUJ generator"
+        files: [interverse/interwatch/skills/doc-watch/references/watchables.md]
+        depends: []
+      - id: task-8
+        title: "Handle {stem} placeholder in interwatch scanner"
+        files: [interverse/interwatch/scripts/interwatch-scan.py]
+        depends: [task-6]
+
+  - name: "Docs and Verification"
+    tasks:
+      - id: task-9
+        title: "Create docs/cujs/ directory with README"
+        files: [docs/cujs/README.md]
+        depends: []
+      - id: task-10
+        title: "Verify end-to-end integration"
+        files: []
+        depends: [task-1, task-2, task-3, task-6, task-8]
+        tier: fast
