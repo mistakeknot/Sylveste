@@ -1,9 +1,9 @@
 {
   "project": "Demarch",
-  "kind": "demarch-monorepo-roadmap",
-  "generated_at": "2026-02-27T18:15:24+00:00",
-  "module_count": 53,
-  "open_beads": 94,
+  "kind": "interverse-monorepo-roadmap",
+  "generated_at": "2026-03-05T22:36:55+00:00",
+  "module_count": 61,
+  "open_beads": 95,
   "blocked": 0,
   "modules": [
     {
@@ -27,7 +27,7 @@
     {
       "module": "clavain",
       "location": "os/clavain",
-      "version": "0.6.106",
+      "version": "0.6.155",
       "has_roadmap": true,
       "roadmap_source": "markdown",
       "open_beads": 0,
@@ -45,7 +45,7 @@
     {
       "module": "interband",
       "location": "core/interband",
-      "version": "—",
+      "version": "\u2014",
       "has_roadmap": false,
       "roadmap_source": "none",
       "open_beads": 0,
@@ -54,7 +54,7 @@
     {
       "module": "interbench",
       "location": "core/interbench",
-      "version": "—",
+      "version": "\u2014",
       "has_roadmap": false,
       "roadmap_source": "none",
       "open_beads": 0,
@@ -63,7 +63,7 @@
     {
       "module": "intercore",
       "location": "core/intercore",
-      "version": "—",
+      "version": "\u2014",
       "has_roadmap": true,
       "roadmap_source": "markdown",
       "open_beads": 0,
@@ -72,7 +72,7 @@
     {
       "module": "intermute",
       "location": "core/intermute",
-      "version": "—",
+      "version": "\u2014",
       "has_roadmap": true,
       "roadmap_source": "markdown",
       "open_beads": 0,
@@ -81,7 +81,7 @@
     {
       "module": "marketplace",
       "location": "core/marketplace",
-      "version": "—",
+      "version": "\u2014",
       "has_roadmap": true,
       "roadmap_source": "markdown",
       "open_beads": 0,
@@ -99,7 +99,7 @@
     {
       "module": "interchart",
       "location": "interverse/interchart",
-      "version": "0.1.0",
+      "version": "0.1.8",
       "has_roadmap": false,
       "roadmap_source": "none",
       "open_beads": 0,
@@ -124,6 +124,15 @@
       "status": "active"
     },
     {
+      "module": "interdeep",
+      "location": "interverse/interdeep",
+      "version": "0.1.6",
+      "has_roadmap": false,
+      "roadmap_source": "none",
+      "open_beads": 0,
+      "status": "early"
+    },
+    {
       "module": "interdev",
       "location": "interverse/interdev",
       "version": "0.2.0",
@@ -135,7 +144,7 @@
     {
       "module": "interdoc",
       "location": "interverse/interdoc",
-      "version": "5.1.1",
+      "version": "5.1.2",
       "has_roadmap": true,
       "roadmap_source": "json",
       "open_beads": 4,
@@ -153,7 +162,7 @@
     {
       "module": "interflux",
       "location": "interverse/interflux",
-      "version": "0.2.30",
+      "version": "0.2.36",
       "has_roadmap": true,
       "roadmap_source": "markdown",
       "open_beads": 0,
@@ -180,7 +189,7 @@
     {
       "module": "interkasten",
       "location": "interverse/interkasten",
-      "version": "0.4.6",
+      "version": "0.4.9",
       "has_roadmap": false,
       "roadmap_source": "none",
       "open_beads": 0,
@@ -189,7 +198,7 @@
     {
       "module": "interknow",
       "location": "interverse/interknow",
-      "version": "0.1.0",
+      "version": "0.1.2",
       "has_roadmap": false,
       "roadmap_source": "none",
       "open_beads": 0,
@@ -225,7 +234,7 @@
     {
       "module": "interline",
       "location": "interverse/interline",
-      "version": "0.2.6",
+      "version": "0.2.11",
       "has_roadmap": true,
       "roadmap_source": "json",
       "open_beads": 4,
@@ -243,20 +252,29 @@
     {
       "module": "intermap",
       "location": "interverse/intermap",
-      "version": "0.1.4",
+      "version": "0.1.5",
       "has_roadmap": true,
       "roadmap_source": "json",
-      "open_beads": 6,
+      "open_beads": 7,
       "status": "active"
     },
     {
       "module": "intermem",
       "location": "interverse/intermem",
-      "version": "0.2.2",
+      "version": "0.2.3",
       "has_roadmap": true,
       "roadmap_source": "markdown",
       "open_beads": 0,
       "status": "active"
+    },
+    {
+      "module": "intermonk",
+      "location": "interverse/intermonk",
+      "version": "0.1.1",
+      "has_roadmap": false,
+      "roadmap_source": "none",
+      "open_beads": 0,
+      "status": "early"
     },
     {
       "module": "intermux",
@@ -279,7 +297,7 @@
     {
       "module": "internext",
       "location": "interverse/internext",
-      "version": "0.1.2",
+      "version": "0.1.4",
       "has_roadmap": true,
       "roadmap_source": "json",
       "open_beads": 4,
@@ -288,7 +306,7 @@
     {
       "module": "interpath",
       "location": "interverse/interpath",
-      "version": "0.2.3",
+      "version": "0.3.0",
       "has_roadmap": true,
       "roadmap_source": "json",
       "open_beads": 4,
@@ -306,7 +324,7 @@
     {
       "module": "interphase",
       "location": "interverse/interphase",
-      "version": "0.3.7",
+      "version": "0.3.13",
       "has_roadmap": true,
       "roadmap_source": "json",
       "open_beads": 4,
@@ -324,7 +342,7 @@
     {
       "module": "interpub",
       "location": "interverse/interpub",
-      "version": "0.1.3",
+      "version": "0.1.7",
       "has_roadmap": true,
       "roadmap_source": "json",
       "open_beads": 4,
@@ -333,6 +351,24 @@
     {
       "module": "interpulse",
       "location": "interverse/interpulse",
+      "version": "0.1.3",
+      "has_roadmap": false,
+      "roadmap_source": "none",
+      "open_beads": 0,
+      "status": "early"
+    },
+    {
+      "module": "interrank",
+      "location": "interverse/interrank",
+      "version": "0.1.0",
+      "has_roadmap": false,
+      "roadmap_source": "none",
+      "open_beads": 0,
+      "status": "early"
+    },
+    {
+      "module": "interscribe",
+      "location": "interverse/interscribe",
       "version": "0.1.1",
       "has_roadmap": false,
       "roadmap_source": "none",
@@ -376,9 +412,18 @@
       "status": "early"
     },
     {
+      "module": "intersight",
+      "location": "interverse/intersight",
+      "version": "0.1.3",
+      "has_roadmap": false,
+      "roadmap_source": "none",
+      "open_beads": 0,
+      "status": "early"
+    },
+    {
       "module": "interskill",
       "location": "interverse/interskill",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "has_roadmap": false,
       "roadmap_source": "none",
       "open_beads": 0,
@@ -394,9 +439,18 @@
       "status": "active"
     },
     {
+      "module": "interspect",
+      "location": "interverse/interspect",
+      "version": "0.1.6",
+      "has_roadmap": false,
+      "roadmap_source": "none",
+      "open_beads": 0,
+      "status": "early"
+    },
+    {
       "module": "interstat",
       "location": "interverse/interstat",
-      "version": "0.2.8",
+      "version": "0.2.15",
       "has_roadmap": true,
       "roadmap_source": "json",
       "open_beads": 4,
@@ -414,11 +468,29 @@
     {
       "module": "intertest",
       "location": "interverse/intertest",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "has_roadmap": false,
       "roadmap_source": "none",
       "open_beads": 0,
       "status": "early"
+    },
+    {
+      "module": "intertrace",
+      "location": "interverse/intertrace",
+      "version": "0.1.2",
+      "has_roadmap": false,
+      "roadmap_source": "none",
+      "open_beads": 0,
+      "status": "early"
+    },
+    {
+      "module": "intertrack",
+      "location": "interverse/intertrack",
+      "version": "0.1.0",
+      "has_roadmap": true,
+      "roadmap_source": "markdown",
+      "open_beads": 0,
+      "status": "active"
     },
     {
       "module": "intertree",
@@ -441,16 +513,16 @@
     {
       "module": "interwatch",
       "location": "interverse/interwatch",
-      "version": "0.1.5",
+      "version": "0.2.0",
       "has_roadmap": true,
       "roadmap_source": "json",
-      "open_beads": 4,
+      "open_beads": 5,
       "status": "active"
     },
     {
       "module": "tldr-swinton",
       "location": "interverse/tldr-swinton",
-      "version": "0.7.14",
+      "version": "0.7.17",
       "has_roadmap": true,
       "roadmap_source": "markdown",
       "open_beads": 0,
@@ -477,7 +549,7 @@
     {
       "module": "interverse",
       "location": "root",
-      "version": "—",
+      "version": "\u2014",
       "has_roadmap": true,
       "roadmap_source": "json",
       "open_beads": 0,
@@ -506,7 +578,7 @@
     {
       "module": "clavain",
       "location": "os/clavain",
-      "version": "0.6.106",
+      "version": "0.6.155",
       "has_roadmap": true,
       "roadmap_source": "markdown",
       "open_beads": 0,
@@ -524,7 +596,7 @@
     {
       "module": "interband",
       "location": "core/interband",
-      "version": "—",
+      "version": "\u2014",
       "has_roadmap": false,
       "roadmap_source": "none",
       "open_beads": 0,
@@ -533,7 +605,7 @@
     {
       "module": "interbench",
       "location": "core/interbench",
-      "version": "—",
+      "version": "\u2014",
       "has_roadmap": false,
       "roadmap_source": "none",
       "open_beads": 0,
@@ -542,7 +614,7 @@
     {
       "module": "intercore",
       "location": "core/intercore",
-      "version": "—",
+      "version": "\u2014",
       "has_roadmap": true,
       "roadmap_source": "markdown",
       "open_beads": 0,
@@ -551,7 +623,7 @@
     {
       "module": "intermute",
       "location": "core/intermute",
-      "version": "—",
+      "version": "\u2014",
       "has_roadmap": true,
       "roadmap_source": "markdown",
       "open_beads": 0,
@@ -560,7 +632,7 @@
     {
       "module": "marketplace",
       "location": "core/marketplace",
-      "version": "—",
+      "version": "\u2014",
       "has_roadmap": true,
       "roadmap_source": "markdown",
       "open_beads": 0,
@@ -578,7 +650,7 @@
     {
       "module": "interchart",
       "location": "interverse/interchart",
-      "version": "0.1.0",
+      "version": "0.1.8",
       "has_roadmap": false,
       "roadmap_source": "none",
       "open_beads": 0,
@@ -603,6 +675,15 @@
       "status": "active"
     },
     {
+      "module": "interdeep",
+      "location": "interverse/interdeep",
+      "version": "0.1.6",
+      "has_roadmap": false,
+      "roadmap_source": "none",
+      "open_beads": 0,
+      "status": "early"
+    },
+    {
       "module": "interdev",
       "location": "interverse/interdev",
       "version": "0.2.0",
@@ -614,7 +695,7 @@
     {
       "module": "interdoc",
       "location": "interverse/interdoc",
-      "version": "5.1.1",
+      "version": "5.1.2",
       "has_roadmap": true,
       "roadmap_source": "json",
       "open_beads": 4,
@@ -632,7 +713,7 @@
     {
       "module": "interflux",
       "location": "interverse/interflux",
-      "version": "0.2.30",
+      "version": "0.2.36",
       "has_roadmap": true,
       "roadmap_source": "markdown",
       "open_beads": 0,
@@ -659,7 +740,7 @@
     {
       "module": "interkasten",
       "location": "interverse/interkasten",
-      "version": "0.4.6",
+      "version": "0.4.9",
       "has_roadmap": false,
       "roadmap_source": "none",
       "open_beads": 0,
@@ -668,7 +749,7 @@
     {
       "module": "interknow",
       "location": "interverse/interknow",
-      "version": "0.1.0",
+      "version": "0.1.2",
       "has_roadmap": false,
       "roadmap_source": "none",
       "open_beads": 0,
@@ -704,7 +785,7 @@
     {
       "module": "interline",
       "location": "interverse/interline",
-      "version": "0.2.6",
+      "version": "0.2.11",
       "has_roadmap": true,
       "roadmap_source": "json",
       "open_beads": 4,
@@ -722,20 +803,29 @@
     {
       "module": "intermap",
       "location": "interverse/intermap",
-      "version": "0.1.4",
+      "version": "0.1.5",
       "has_roadmap": true,
       "roadmap_source": "json",
-      "open_beads": 6,
+      "open_beads": 7,
       "status": "active"
     },
     {
       "module": "intermem",
       "location": "interverse/intermem",
-      "version": "0.2.2",
+      "version": "0.2.3",
       "has_roadmap": true,
       "roadmap_source": "markdown",
       "open_beads": 0,
       "status": "active"
+    },
+    {
+      "module": "intermonk",
+      "location": "interverse/intermonk",
+      "version": "0.1.1",
+      "has_roadmap": false,
+      "roadmap_source": "none",
+      "open_beads": 0,
+      "status": "early"
     },
     {
       "module": "intermux",
@@ -758,7 +848,7 @@
     {
       "module": "internext",
       "location": "interverse/internext",
-      "version": "0.1.2",
+      "version": "0.1.4",
       "has_roadmap": true,
       "roadmap_source": "json",
       "open_beads": 4,
@@ -767,7 +857,7 @@
     {
       "module": "interpath",
       "location": "interverse/interpath",
-      "version": "0.2.3",
+      "version": "0.3.0",
       "has_roadmap": true,
       "roadmap_source": "json",
       "open_beads": 4,
@@ -785,7 +875,7 @@
     {
       "module": "interphase",
       "location": "interverse/interphase",
-      "version": "0.3.7",
+      "version": "0.3.13",
       "has_roadmap": true,
       "roadmap_source": "json",
       "open_beads": 4,
@@ -803,7 +893,7 @@
     {
       "module": "interpub",
       "location": "interverse/interpub",
-      "version": "0.1.3",
+      "version": "0.1.7",
       "has_roadmap": true,
       "roadmap_source": "json",
       "open_beads": 4,
@@ -812,6 +902,24 @@
     {
       "module": "interpulse",
       "location": "interverse/interpulse",
+      "version": "0.1.3",
+      "has_roadmap": false,
+      "roadmap_source": "none",
+      "open_beads": 0,
+      "status": "early"
+    },
+    {
+      "module": "interrank",
+      "location": "interverse/interrank",
+      "version": "0.1.0",
+      "has_roadmap": false,
+      "roadmap_source": "none",
+      "open_beads": 0,
+      "status": "early"
+    },
+    {
+      "module": "interscribe",
+      "location": "interverse/interscribe",
       "version": "0.1.1",
       "has_roadmap": false,
       "roadmap_source": "none",
@@ -855,9 +963,18 @@
       "status": "early"
     },
     {
+      "module": "intersight",
+      "location": "interverse/intersight",
+      "version": "0.1.3",
+      "has_roadmap": false,
+      "roadmap_source": "none",
+      "open_beads": 0,
+      "status": "early"
+    },
+    {
       "module": "interskill",
       "location": "interverse/interskill",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "has_roadmap": false,
       "roadmap_source": "none",
       "open_beads": 0,
@@ -873,9 +990,18 @@
       "status": "active"
     },
     {
+      "module": "interspect",
+      "location": "interverse/interspect",
+      "version": "0.1.6",
+      "has_roadmap": false,
+      "roadmap_source": "none",
+      "open_beads": 0,
+      "status": "early"
+    },
+    {
       "module": "interstat",
       "location": "interverse/interstat",
-      "version": "0.2.8",
+      "version": "0.2.15",
       "has_roadmap": true,
       "roadmap_source": "json",
       "open_beads": 4,
@@ -893,11 +1019,29 @@
     {
       "module": "intertest",
       "location": "interverse/intertest",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "has_roadmap": false,
       "roadmap_source": "none",
       "open_beads": 0,
       "status": "early"
+    },
+    {
+      "module": "intertrace",
+      "location": "interverse/intertrace",
+      "version": "0.1.2",
+      "has_roadmap": false,
+      "roadmap_source": "none",
+      "open_beads": 0,
+      "status": "early"
+    },
+    {
+      "module": "intertrack",
+      "location": "interverse/intertrack",
+      "version": "0.1.0",
+      "has_roadmap": true,
+      "roadmap_source": "markdown",
+      "open_beads": 0,
+      "status": "active"
     },
     {
       "module": "intertree",
@@ -920,16 +1064,16 @@
     {
       "module": "interwatch",
       "location": "interverse/interwatch",
-      "version": "0.1.5",
+      "version": "0.2.0",
       "has_roadmap": true,
       "roadmap_source": "json",
-      "open_beads": 4,
+      "open_beads": 5,
       "status": "active"
     },
     {
       "module": "tldr-swinton",
       "location": "interverse/tldr-swinton",
-      "version": "0.7.14",
+      "version": "0.7.17",
       "has_roadmap": true,
       "roadmap_source": "markdown",
       "open_beads": 0,
@@ -956,7 +1100,7 @@
     {
       "module": "interverse",
       "location": "root",
-      "version": "—",
+      "version": "\u2014",
       "has_roadmap": true,
       "roadmap_source": "json",
       "open_beads": 0,
@@ -1100,26 +1244,14 @@
       {
         "module": "intermap",
         "id": "IMAP-N1",
-        "title": "Complete tldr-swinton extraction and fix test paths.",
+        "title": "All v0.1 goals achieved \u2014 9 tools, audit passed, extraction complete.",
         "phase": "now",
-        "priority": "P1",
-        "status": "open",
+        "priority": "P0",
+        "status": "done",
         "source": "module-roadmap-json",
         "source_file": "docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Complete tldr-swinton extraction and fix test paths."
-      },
-      {
-        "module": "intermap",
-        "id": "IMAP-N2",
-        "title": "Audit all 6 tools for accuracy, performance, and integration gaps.",
-        "phase": "now",
-        "priority": "P1",
-        "status": "open",
-        "source": "module-roadmap-json",
-        "source_file": "docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Audit all 6 tools for accuracy, performance, and integration gaps."
+        "notes": "All v0.1 goals achieved \u2014 9 tools, audit passed, extraction complete."
       },
       {
         "module": "intermux",
@@ -1231,15 +1363,27 @@
       },
       {
         "module": "interwatch",
-        "id": "IWTC-N1",
-        "title": "Improve drift scoring for mixed-format source files and generated artifacts.",
+        "id": "IWTC-N4",
+        "title": "Cross-project scanning: run discovery across all monorepo subprojects in one invocation.",
         "phase": "now",
         "priority": "P1",
         "status": "open",
         "source": "module-roadmap-json",
         "source_file": "docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Improve drift scoring for mixed-format source files and generated artifacts."
+        "notes": "Cross-project scanning: run discovery across all monorepo subprojects in one invocation."
+      },
+      {
+        "module": "interwatch",
+        "id": "IWTC-N5",
+        "title": "Drift trend tracking: historical score progression over time.",
+        "phase": "now",
+        "priority": "P2",
+        "status": "open",
+        "source": "module-roadmap-json",
+        "source_file": "docs/roadmap.json",
+        "blocked_by": [],
+        "notes": "Drift trend tracking: historical score progression over time."
       },
       {
         "module": "tuivision",
@@ -1255,447 +1399,291 @@
       },
       {
         "module": "interverse",
-        "id": "PL-iv-t712t",
-        "title": "Platform: clavain — First-stranger experience — README, install, clavain setup",
-        "phase": "now",
-        "priority": "P1",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — First-stranger experience — README, install, clavain setup"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-1opqc",
-        "title": "Platform: clavain — First-run validation on clean environment",
-        "phase": "now",
-        "priority": "P1",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — First-run validation on clean environment"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-be0ik",
-        "title": "Platform: clavain — CI pipeline + critical-path test coverage",
-        "phase": "now",
-        "priority": "P1",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — CI pipeline + critical-path test coverage"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-1xtgd",
-        "title": "Platform: clavain — Bash-Heavy L2 Logic Migration",
-        "phase": "now",
-        "priority": "P1",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Bash-Heavy L2 Logic Migration"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-1xtgd.2",
-        "title": "Platform: clavain — Enforce shell hardening baseline for hooks and scripts",
-        "phase": "now",
-        "priority": "P1",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Enforce shell hardening baseline for hooks and scripts"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-b46xi",
-        "title": "Platform: clavain — Measure north star — cost-per-landable-change baseline",
-        "phase": "now",
-        "priority": "P1",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Measure north star — cost-per-landable-change baseline"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-xftvq",
-        "title": "Platform: clavain — Hook Cutover — migrate remaining temp-file hooks to ic kernel",
-        "phase": "now",
-        "priority": "P1",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Hook Cutover — migrate remaining temp-file hooks to ic kernel"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-zsio",
-        "title": "Platform: clavain — Integrate full discovery pipeline into sprint workflow",
-        "phase": "now",
-        "priority": "P1",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Integrate full discovery pipeline into sprint workflow"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-kpoz8",
-        "title": "Platform: clavain — Bead lifecycle reliability — auto-close parents + universal claiming",
-        "phase": "now",
-        "priority": "P1",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Bead lifecycle reliability — auto-close parents + universal claiming"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-4xnp4",
-        "title": "Platform: clavain — C1 Agency specs — unblock Track C convergence",
-        "phase": "now",
-        "priority": "P1",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — C1 Agency specs — unblock Track C convergence"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-9hx1t",
-        "title": "Platform: clavain — Go Module Path Alignment (Demarch Reorg)",
-        "phase": "now",
-        "priority": "P1",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Go Module Path Alignment (Demarch Reorg)"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-jay06",
-        "title": "Platform: clavain — Formalize interbase as a Multi-Language SDK",
-        "phase": "now",
-        "priority": "P1",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Formalize interbase as a Multi-Language SDK"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-ip4zr",
-        "title": "Platform: clavain — Autarch self-hosting: make usable for developing Demarch",
-        "phase": "now",
-        "priority": "P1",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Autarch self-hosting: make usable for developing Demarch"
-      },
-      {
-        "module": "interverse",
         "id": "PL-ICHK-N1",
-        "title": "Platform: intercheck — Standardize pre-tool quality policy gates for high-risk file operations across hooks.",
+        "title": "Platform: intercheck \u2014 Standardize pre-tool quality policy gates for high-risk file operations across hooks.",
         "phase": "now",
         "priority": "P1",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: intercheck — Standardize pre-tool quality policy gates for high-risk file operations across hooks."
+        "notes": "Platform: intercheck \u2014 Standardize pre-tool quality policy gates for high-risk file operations across hooks."
       },
       {
         "module": "interverse",
         "id": "PL-ICRA-N1",
-        "title": "Platform: intercraft — Stabilize architectural lint checks and make pattern annotations machine-readable.",
+        "title": "Platform: intercraft \u2014 Stabilize architectural lint checks and make pattern annotations machine-readable.",
         "phase": "now",
         "priority": "P1",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: intercraft — Stabilize architectural lint checks and make pattern annotations machine-readable."
+        "notes": "Platform: intercraft \u2014 Stabilize architectural lint checks and make pattern annotations machine-readable."
       },
       {
         "module": "interverse",
         "id": "PL-IDEV-N1",
-        "title": "Platform: interdev — Reduce friction for MCP tool discovery when tool metadata drifts.",
+        "title": "Platform: interdev \u2014 Reduce friction for MCP tool discovery when tool metadata drifts.",
         "phase": "now",
         "priority": "P1",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interdev — Reduce friction for MCP tool discovery when tool metadata drifts."
+        "notes": "Platform: interdev \u2014 Reduce friction for MCP tool discovery when tool metadata drifts."
       },
       {
         "module": "interverse",
         "id": "PL-IDOC-N1",
-        "title": "Platform: interdoc — Harden recursive AGENTS.md generation for nested module boundaries.",
+        "title": "Platform: interdoc \u2014 Harden recursive AGENTS.md generation for nested module boundaries.",
         "phase": "now",
         "priority": "P1",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interdoc — Harden recursive AGENTS.md generation for nested module boundaries."
+        "notes": "Platform: interdoc \u2014 Harden recursive AGENTS.md generation for nested module boundaries."
       },
       {
         "module": "interverse",
         "id": "PL-IFLE-N1",
-        "title": "Platform: interfluence — Improve voice-profile feature stability on short profile sample sets.",
+        "title": "Platform: interfluence \u2014 Improve voice-profile feature stability on short profile sample sets.",
         "phase": "now",
         "priority": "P1",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interfluence — Improve voice-profile feature stability on short profile sample sets."
+        "notes": "Platform: interfluence \u2014 Improve voice-profile feature stability on short profile sample sets."
       },
       {
         "module": "interverse",
         "id": "PL-IFRM-N1",
-        "title": "Platform: interform — Stabilize design validation hooks for generated interface specs.",
+        "title": "Platform: interform \u2014 Stabilize design validation hooks for generated interface specs.",
         "phase": "now",
         "priority": "P1",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interform — Stabilize design validation hooks for generated interface specs."
+        "notes": "Platform: interform \u2014 Stabilize design validation hooks for generated interface specs."
       },
       {
         "module": "interverse",
         "id": "PL-IINJ-N1",
-        "title": "Platform: interject — Increase discovery relevance for high-signal sources and reduce noisy suggestions.",
+        "title": "Platform: interject \u2014 Increase discovery relevance for high-signal sources and reduce noisy suggestions.",
         "phase": "now",
         "priority": "P1",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interject — Increase discovery relevance for high-signal sources and reduce noisy suggestions."
+        "notes": "Platform: interject \u2014 Increase discovery relevance for high-signal sources and reduce noisy suggestions."
       },
       {
         "module": "interverse",
         "id": "PL-ILRN-N1",
-        "title": "Platform: interlearn — Harden indexing robustness for inconsistent frontmatter and malformed markdown.",
+        "title": "Platform: interlearn \u2014 Harden indexing robustness for inconsistent frontmatter and malformed markdown.",
         "phase": "now",
         "priority": "P1",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interlearn — Harden indexing robustness for inconsistent frontmatter and malformed markdown."
+        "notes": "Platform: interlearn \u2014 Harden indexing robustness for inconsistent frontmatter and malformed markdown."
       },
       {
         "module": "interverse",
         "id": "PL-ILRN-N2",
-        "title": "Platform: interlearn — Improve audit signal quality so coverage gaps are high-confidence.",
+        "title": "Platform: interlearn \u2014 Improve audit signal quality so coverage gaps are high-confidence.",
         "phase": "now",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interlearn — Improve audit signal quality so coverage gaps are high-confidence."
+        "notes": "Platform: interlearn \u2014 Improve audit signal quality so coverage gaps are high-confidence."
       },
       {
         "module": "interverse",
         "id": "PL-ILES-N1",
-        "title": "Platform: interlens — Stabilize lens execution contracts and quality labels for automated synthesis.",
+        "title": "Platform: interlens \u2014 Stabilize lens execution contracts and quality labels for automated synthesis.",
         "phase": "now",
         "priority": "P1",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interlens — Stabilize lens execution contracts and quality labels for automated synthesis."
+        "notes": "Platform: interlens \u2014 Stabilize lens execution contracts and quality labels for automated synthesis."
       },
       {
         "module": "interverse",
         "id": "PL-ILNE-N1",
-        "title": "Platform: interline — Make statusline updates resilient to high-frequency session transitions.",
+        "title": "Platform: interline \u2014 Make statusline updates resilient to high-frequency session transitions.",
         "phase": "now",
         "priority": "P1",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interline — Make statusline updates resilient to high-frequency session transitions."
+        "notes": "Platform: interline \u2014 Make statusline updates resilient to high-frequency session transitions."
       },
       {
         "module": "interverse",
         "id": "PL-IMAP-N1",
-        "title": "Platform: intermap — Complete tldr-swinton extraction and fix test paths.",
+        "title": "Platform: intermap \u2014 Complete tldr-swinton extraction and fix test paths.",
         "phase": "now",
         "priority": "P1",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: intermap — Complete tldr-swinton extraction and fix test paths."
+        "notes": "Platform: intermap \u2014 Complete tldr-swinton extraction and fix test paths."
       },
       {
         "module": "interverse",
         "id": "PL-IMAP-N2",
-        "title": "Platform: intermap — Audit all 6 tools for accuracy, performance, and integration gaps.",
+        "title": "Platform: intermap \u2014 Audit all 6 tools for accuracy, performance, and integration gaps.",
         "phase": "now",
         "priority": "P1",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: intermap — Audit all 6 tools for accuracy, performance, and integration gaps."
+        "notes": "Platform: intermap \u2014 Audit all 6 tools for accuracy, performance, and integration gaps."
       },
       {
         "module": "interverse",
         "id": "PL-IMUX-N1",
-        "title": "Platform: intermux — Stabilize session visibility feeds under intermittent tmux/disconnect conditions.",
+        "title": "Platform: intermux \u2014 Stabilize session visibility feeds under intermittent tmux/disconnect conditions.",
         "phase": "now",
         "priority": "P1",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: intermux — Stabilize session visibility feeds under intermittent tmux/disconnect conditions."
+        "notes": "Platform: intermux \u2014 Stabilize session visibility feeds under intermittent tmux/disconnect conditions."
       },
       {
         "module": "interverse",
         "id": "PL-INXT-N1",
-        "title": "Platform: internext — Improve prioritization explainability and confidence thresholds for recommendations.",
+        "title": "Platform: internext \u2014 Improve prioritization explainability and confidence thresholds for recommendations.",
         "phase": "now",
         "priority": "P1",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: internext — Improve prioritization explainability and confidence thresholds for recommendations."
+        "notes": "Platform: internext \u2014 Improve prioritization explainability and confidence thresholds for recommendations."
       },
       {
         "module": "interverse",
         "id": "PL-IPTH-N1",
-        "title": "Platform: interpath — Harden monorepo artifact synthesis for mixed module discovery states.",
+        "title": "Platform: interpath \u2014 Harden monorepo artifact synthesis for mixed module discovery states.",
         "phase": "now",
         "priority": "P1",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interpath — Harden monorepo artifact synthesis for mixed module discovery states."
+        "notes": "Platform: interpath \u2014 Harden monorepo artifact synthesis for mixed module discovery states."
       },
       {
         "module": "interverse",
         "id": "PL-IPHS-N1",
-        "title": "Platform: interphase — Increase phase transition determinism and resilience across long sessions.",
+        "title": "Platform: interphase \u2014 Increase phase transition determinism and resilience across long sessions.",
         "phase": "now",
         "priority": "P1",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interphase — Increase phase transition determinism and resilience across long sessions."
+        "notes": "Platform: interphase \u2014 Increase phase transition determinism and resilience across long sessions."
       },
       {
         "module": "interverse",
         "id": "PL-IPUB-N1",
-        "title": "Platform: interpub — Reduce publish risk with pre-flight dependency graph checks.",
+        "title": "Platform: interpub \u2014 Reduce publish risk with pre-flight dependency graph checks.",
         "phase": "now",
         "priority": "P1",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interpub — Reduce publish risk with pre-flight dependency graph checks."
+        "notes": "Platform: interpub \u2014 Reduce publish risk with pre-flight dependency graph checks."
       },
       {
         "module": "interverse",
         "id": "PL-ISEA-N1",
-        "title": "Platform: intersearch — Increase recall/precision quality on mixed-repo retrieval in low-token contexts.",
+        "title": "Platform: intersearch \u2014 Increase recall/precision quality on mixed-repo retrieval in low-token contexts.",
         "phase": "now",
         "priority": "P1",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: intersearch — Increase recall/precision quality on mixed-repo retrieval in low-token contexts."
+        "notes": "Platform: intersearch \u2014 Increase recall/precision quality on mixed-repo retrieval in low-token contexts."
       },
       {
         "module": "interverse",
         "id": "PL-ISRV-N1",
-        "title": "Platform: interserve — Improve classification confidence calibration for high-value tasks.",
+        "title": "Platform: interserve \u2014 Improve classification confidence calibration for high-value tasks.",
         "phase": "now",
         "priority": "P1",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interserve — Improve classification confidence calibration for high-value tasks."
+        "notes": "Platform: interserve \u2014 Improve classification confidence calibration for high-value tasks."
       },
       {
         "module": "interverse",
         "id": "PL-ISLK-N1",
-        "title": "Platform: interslack — Stabilize event delivery for gated actions and release notifications.",
+        "title": "Platform: interslack \u2014 Stabilize event delivery for gated actions and release notifications.",
         "phase": "now",
         "priority": "P1",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interslack — Stabilize event delivery for gated actions and release notifications."
+        "notes": "Platform: interslack \u2014 Stabilize event delivery for gated actions and release notifications."
       },
       {
         "module": "interverse",
         "id": "PL-ISTA-N1",
-        "title": "Platform: interstat — Finalize baseline token metric schema aligned to interphase and Clavain decisions.",
+        "title": "Platform: interstat \u2014 Finalize baseline token metric schema aligned to interphase and Clavain decisions.",
         "phase": "now",
         "priority": "P1",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interstat — Finalize baseline token metric schema aligned to interphase and Clavain decisions."
+        "notes": "Platform: interstat \u2014 Finalize baseline token metric schema aligned to interphase and Clavain decisions."
       },
       {
         "module": "interverse",
         "id": "PL-IWTC-N1",
-        "title": "Platform: interwatch — Improve drift scoring for mixed-format source files and generated artifacts.",
+        "title": "Platform: interwatch \u2014 Improve drift scoring for mixed-format source files and generated artifacts.",
         "phase": "now",
         "priority": "P1",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interwatch — Improve drift scoring for mixed-format source files and generated artifacts."
+        "notes": "Platform: interwatch \u2014 Improve drift scoring for mixed-format source files and generated artifacts."
       },
       {
         "module": "interverse",
         "id": "PL-ITUV-N1",
-        "title": "Platform: tuivision — Stabilize deterministic replay for complex interactive terminal sessions.",
+        "title": "Platform: tuivision \u2014 Stabilize deterministic replay for complex interactive terminal sessions.",
         "phase": "now",
         "priority": "P1",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: tuivision — Stabilize deterministic replay for complex interactive terminal sessions."
+        "notes": "Platform: tuivision \u2014 Stabilize deterministic replay for complex interactive terminal sessions."
       }
     ],
     "next": [
@@ -2061,27 +2049,39 @@
       },
       {
         "module": "intermap",
+        "id": "IMAP-N2",
+        "title": "Go-level result caching for detect_patterns and cross_project_deps.",
+        "phase": "next",
+        "priority": "P1",
+        "status": "open",
+        "source": "module-roadmap-json",
+        "source_file": "docs/roadmap.json",
+        "blocked_by": [],
+        "notes": "Go-level result caching for detect_patterns and cross_project_deps."
+      },
+      {
+        "module": "intermap",
         "id": "IMAP-N3",
-        "title": "Cross-project dependency graph MCP tool.",
+        "title": "Symbol body-range detection for live_changes accuracy.",
         "phase": "next",
         "priority": "P2",
         "status": "open",
         "source": "module-roadmap-json",
         "source_file": "docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Cross-project dependency graph MCP tool."
+        "notes": "Symbol body-range detection for live_changes accuracy."
       },
       {
         "module": "intermap",
         "id": "IMAP-N4",
-        "title": "Architecture pattern detection MCP tool.",
+        "title": "Performance baselines and regression benchmarks.",
         "phase": "next",
         "priority": "P2",
         "status": "open",
         "source": "module-roadmap-json",
         "source_file": "docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Architecture pattern detection MCP tool."
+        "notes": "Performance baselines and regression benchmarks."
       },
       {
         "module": "intermux",
@@ -2409,39 +2409,39 @@
       },
       {
         "module": "interwatch",
-        "id": "IWTC-N2",
-        "title": "Add actionable auto-refinement suggestions and safe repair paths.",
+        "id": "IWTC-N6",
+        "title": "Generator availability awareness: graceful degradation and install suggestions when interpath/interdoc missing.",
         "phase": "next",
         "priority": "P2",
         "status": "open",
         "source": "module-roadmap-json",
         "source_file": "docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Add actionable auto-refinement suggestions and safe repair paths."
+        "notes": "Generator availability awareness: graceful degradation and install suggestions when interpath/interdoc missing."
       },
       {
         "module": "interwatch",
-        "id": "IWTC-N3",
-        "title": "Integrate freshness signals into Clavain discovery and sprint summaries.",
-        "phase": "next",
-        "priority": "P2",
-        "status": "open",
-        "source": "module-roadmap-json",
-        "source_file": "docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Integrate freshness signals into Clavain discovery and sprint summaries."
-      },
-      {
-        "module": "interwatch",
-        "id": "IWTC-L1",
-        "title": "Create policy-driven escalation for critical or high-impact stale content.",
+        "id": "IWTC-N7",
+        "title": "Ambient mode (opt-in): periodic scan at Clavain session checkpoints.",
         "phase": "next",
         "priority": "P3",
         "status": "open",
         "source": "module-roadmap-json",
         "source_file": "docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Create policy-driven escalation for critical or high-impact stale content."
+        "notes": "Ambient mode (opt-in): periodic scan at Clavain session checkpoints."
+      },
+      {
+        "module": "interwatch",
+        "id": "IWTC-L1",
+        "title": "Policy-driven escalation for critical or high-impact stale content.",
+        "phase": "next",
+        "priority": "P3",
+        "status": "open",
+        "source": "module-roadmap-json",
+        "source_file": "docs/roadmap.json",
+        "blocked_by": [],
+        "notes": "Policy-driven escalation for critical or high-impact stale content."
       },
       {
         "module": "tuivision",
@@ -2481,927 +2481,783 @@
       },
       {
         "module": "interverse",
-        "id": "PL-iv-e8dg",
-        "title": "Platform: clavain — Migrate Clavain to consume flux-drive Python library",
-        "phase": "next",
-        "priority": "P2",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Migrate Clavain to consume flux-drive Python library"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-ia66",
-        "title": "Platform: clavain — Extract domain detection library",
-        "phase": "next",
-        "priority": "P2",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Extract domain detection library"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-ho3",
-        "title": "Platform: clavain — StrongDM Factory Substrate — validation-first infrastructure",
-        "phase": "next",
-        "priority": "P2",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — StrongDM Factory Substrate — validation-first infrastructure"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-6u3s",
-        "title": "Platform: clavain — Sprint Scan Release Visibility",
-        "phase": "next",
-        "priority": "P2",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Sprint Scan Release Visibility"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-qlt8",
-        "title": "Platform: clavain — Unify duplicated command entry points across Clavain/modules",
-        "phase": "next",
-        "priority": "P2",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Unify duplicated command entry points across Clavain/modules"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-c2b4",
-        "title": "Platform: clavain — /interspect:disable command",
-        "phase": "next",
-        "priority": "P2",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — /interspect:disable command"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-g0to",
-        "title": "Platform: clavain — /interspect:reset command",
-        "phase": "next",
-        "priority": "P2",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — /interspect:reset command"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-asfy",
-        "title": "Platform: clavain — C1: Agency specs — declarative per-stage agent/model/tool config",
-        "phase": "next",
-        "priority": "P2",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — C1: Agency specs — declarative per-stage agent/model/tool config"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-iu31",
-        "title": "Platform: clavain — Remove tool-time PreToolUse binding, extract Task redirect",
-        "phase": "next",
-        "priority": "P2",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Remove tool-time PreToolUse binding, extract Task redirect"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-1xtgd.1",
-        "title": "Platform: clavain — Centralize plugin discovery API and remove cache-glob duplication",
-        "phase": "next",
-        "priority": "P2",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Centralize plugin discovery API and remove cache-glob duplication"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-1zh2",
-        "title": "Platform: clavain — Brainstorm on all 7 token-efficiency findings",
-        "phase": "next",
-        "priority": "P2",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Brainstorm on all 7 token-efficiency findings"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-qlt8.1-4",
-        "title": "Platform: clavain — Unified canonical commands (/status, /changelog, /doctor, /setup)",
-        "phase": "next",
-        "priority": "P2",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Unified canonical commands (/status, /changelog, /doctor, /setup)"
-      },
-      {
-        "module": "interverse",
         "id": "PL-ICHK-N2",
-        "title": "Platform: intercheck — Add Codex/Clavain-aware quality profiles and policy drift alerts.",
+        "title": "Platform: intercheck \u2014 Add Codex/Clavain-aware quality profiles and policy drift alerts.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: intercheck — Add Codex/Clavain-aware quality profiles and policy drift alerts."
+        "notes": "Platform: intercheck \u2014 Add Codex/Clavain-aware quality profiles and policy drift alerts."
       },
       {
         "module": "interverse",
         "id": "PL-ICHK-N3",
-        "title": "Platform: intercheck — Publish shared quality presets and rollout playbooks for teams.",
+        "title": "Platform: intercheck \u2014 Publish shared quality presets and rollout playbooks for teams.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: intercheck — Publish shared quality presets and rollout playbooks for teams."
+        "notes": "Platform: intercheck \u2014 Publish shared quality presets and rollout playbooks for teams."
       },
       {
         "module": "interverse",
         "id": "PL-ICHK-L1",
-        "title": "Platform: intercheck — Build a rule-pack market for reusable quality configurations.",
+        "title": "Platform: intercheck \u2014 Build a rule-pack market for reusable quality configurations.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: intercheck — Build a rule-pack market for reusable quality configurations."
+        "notes": "Platform: intercheck \u2014 Build a rule-pack market for reusable quality configurations."
       },
       {
         "module": "interverse",
         "id": "PL-ICRA-N2",
-        "title": "Platform: intercraft — Ship reusable design contracts for Codex/Clavain handoff quality.",
+        "title": "Platform: intercraft \u2014 Ship reusable design contracts for Codex/Clavain handoff quality.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: intercraft — Ship reusable design contracts for Codex/Clavain handoff quality."
+        "notes": "Platform: intercraft \u2014 Ship reusable design contracts for Codex/Clavain handoff quality."
       },
       {
         "module": "interverse",
         "id": "PL-ICRA-N3",
-        "title": "Platform: intercraft — Publish inter-module architecture decision templates.",
+        "title": "Platform: intercraft \u2014 Publish inter-module architecture decision templates.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: intercraft — Publish inter-module architecture decision templates."
+        "notes": "Platform: intercraft \u2014 Publish inter-module architecture decision templates."
       },
       {
         "module": "interverse",
         "id": "PL-ICRA-L1",
-        "title": "Platform: intercraft — Add long-horizon architecture risk scoring to each scaffolded pattern.",
+        "title": "Platform: intercraft \u2014 Add long-horizon architecture risk scoring to each scaffolded pattern.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: intercraft — Add long-horizon architecture risk scoring to each scaffolded pattern."
+        "notes": "Platform: intercraft \u2014 Add long-horizon architecture risk scoring to each scaffolded pattern."
       },
       {
         "module": "interverse",
         "id": "PL-IDEV-N2",
-        "title": "Platform: interdev — Improve command suggestion relevance using Clavain action tags and module context.",
+        "title": "Platform: interdev \u2014 Improve command suggestion relevance using Clavain action tags and module context.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interdev — Improve command suggestion relevance using Clavain action tags and module context."
+        "notes": "Platform: interdev \u2014 Improve command suggestion relevance using Clavain action tags and module context."
       },
       {
         "module": "interverse",
         "id": "PL-IDEV-N3",
-        "title": "Platform: interdev — Add Codex-friendly bootstrap recipes for local developer toolchains.",
+        "title": "Platform: interdev \u2014 Add Codex-friendly bootstrap recipes for local developer toolchains.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interdev — Add Codex-friendly bootstrap recipes for local developer toolchains."
+        "notes": "Platform: interdev \u2014 Add Codex-friendly bootstrap recipes for local developer toolchains."
       },
       {
         "module": "interverse",
         "id": "PL-IDEV-L1",
-        "title": "Platform: interdev — Create self-healing tooling profiles for common environment breakages.",
+        "title": "Platform: interdev \u2014 Create self-healing tooling profiles for common environment breakages.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interdev — Create self-healing tooling profiles for common environment breakages."
+        "notes": "Platform: interdev \u2014 Create self-healing tooling profiles for common environment breakages."
       },
       {
         "module": "interverse",
         "id": "PL-IDOC-N2",
-        "title": "Platform: interdoc — Add cross-language AGENTS.md drift detection and repair actions.",
+        "title": "Platform: interdoc \u2014 Add cross-language AGENTS.md drift detection and repair actions.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interdoc — Add cross-language AGENTS.md drift detection and repair actions."
+        "notes": "Platform: interdoc \u2014 Add cross-language AGENTS.md drift detection and repair actions."
       },
       {
         "module": "interverse",
         "id": "PL-IDOC-N3",
-        "title": "Platform: interdoc — Publish diff-aware review suggestions for governance updates.",
+        "title": "Platform: interdoc \u2014 Publish diff-aware review suggestions for governance updates.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interdoc — Publish diff-aware review suggestions for governance updates."
+        "notes": "Platform: interdoc \u2014 Publish diff-aware review suggestions for governance updates."
       },
       {
         "module": "interverse",
         "id": "PL-IDOC-L1",
-        "title": "Platform: interdoc — Support policy inheritance presets for experimental and experimental-free modes.",
+        "title": "Platform: interdoc \u2014 Support policy inheritance presets for experimental and experimental-free modes.",
         "phase": "next",
         "priority": "P3",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interdoc — Support policy inheritance presets for experimental and experimental-free modes."
+        "notes": "Platform: interdoc \u2014 Support policy inheritance presets for experimental and experimental-free modes."
       },
       {
         "module": "interverse",
         "id": "PL-IFLE-N2",
-        "title": "Platform: interfluence — Enable profile export/import for per-repo or per-team style governance.",
+        "title": "Platform: interfluence \u2014 Enable profile export/import for per-repo or per-team style governance.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interfluence — Enable profile export/import for per-repo or per-team style governance."
+        "notes": "Platform: interfluence \u2014 Enable profile export/import for per-repo or per-team style governance."
       },
       {
         "module": "interverse",
         "id": "PL-IFLE-N3",
-        "title": "Platform: interfluence — Add confidence metrics for style adaptation suggestions.",
+        "title": "Platform: interfluence \u2014 Add confidence metrics for style adaptation suggestions.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interfluence — Add confidence metrics for style adaptation suggestions."
+        "notes": "Platform: interfluence \u2014 Add confidence metrics for style adaptation suggestions."
       },
       {
         "module": "interverse",
         "id": "PL-IFLE-L1",
-        "title": "Platform: interfluence — Introduce style-aware output gating inside interphase workflow.",
+        "title": "Platform: interfluence \u2014 Introduce style-aware output gating inside interphase workflow.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interfluence — Introduce style-aware output gating inside interphase workflow."
+        "notes": "Platform: interfluence \u2014 Introduce style-aware output gating inside interphase workflow."
       },
       {
         "module": "interverse",
         "id": "PL-IFRM-N2",
-        "title": "Platform: interform — Add Clavain-readable UI quality templates to standard workflows.",
+        "title": "Platform: interform \u2014 Add Clavain-readable UI quality templates to standard workflows.",
         "phase": "next",
         "priority": "P1",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interform — Add Clavain-readable UI quality templates to standard workflows."
+        "notes": "Platform: interform \u2014 Add Clavain-readable UI quality templates to standard workflows."
       },
       {
         "module": "interverse",
         "id": "PL-IFRM-N3",
-        "title": "Platform: interform — Integrate layout and accessibility checks into review artifacts.",
+        "title": "Platform: interform \u2014 Integrate layout and accessibility checks into review artifacts.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interform — Integrate layout and accessibility checks into review artifacts."
+        "notes": "Platform: interform \u2014 Integrate layout and accessibility checks into review artifacts."
       },
       {
         "module": "interverse",
         "id": "PL-IFRM-L1",
-        "title": "Platform: interform — Create a reusable visual style registry with versioned contracts.",
+        "title": "Platform: interform \u2014 Create a reusable visual style registry with versioned contracts.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interform — Create a reusable visual style registry with versioned contracts."
+        "notes": "Platform: interform \u2014 Create a reusable visual style registry with versioned contracts."
       },
       {
         "module": "interverse",
         "id": "PL-IINJ-N2",
-        "title": "Platform: interject — Align ranking signals with Clavain sprint phases and gate requirements.",
+        "title": "Platform: interject \u2014 Align ranking signals with Clavain sprint phases and gate requirements.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interject — Align ranking signals with Clavain sprint phases and gate requirements."
+        "notes": "Platform: interject \u2014 Align ranking signals with Clavain sprint phases and gate requirements."
       },
       {
         "module": "interverse",
         "id": "PL-IINJ-N3",
-        "title": "Platform: interject — Publish structured evidence provenance for each injected research result.",
+        "title": "Platform: interject \u2014 Publish structured evidence provenance for each injected research result.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interject — Publish structured evidence provenance for each injected research result."
+        "notes": "Platform: interject \u2014 Publish structured evidence provenance for each injected research result."
       },
       {
         "module": "interverse",
         "id": "PL-IINJ-L1",
-        "title": "Platform: interject — Add adaptive query templates by domain profile and decision type.",
+        "title": "Platform: interject \u2014 Add adaptive query templates by domain profile and decision type.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interject — Add adaptive query templates by domain profile and decision type."
+        "notes": "Platform: interject \u2014 Add adaptive query templates by domain profile and decision type."
       },
       {
         "module": "interverse",
         "id": "PL-ILRN-N3",
-        "title": "Platform: interlearn — Improve search ranking quality for practical debugging and implementation queries.",
+        "title": "Platform: interlearn \u2014 Improve search ranking quality for practical debugging and implementation queries.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interlearn — Improve search ranking quality for practical debugging and implementation queries."
+        "notes": "Platform: interlearn \u2014 Improve search ranking quality for practical debugging and implementation queries."
       },
       {
         "module": "interverse",
         "id": "PL-ILRN-N4",
-        "title": "Platform: interlearn — Refine metadata taxonomy across category, tags, and module attribution fields.",
+        "title": "Platform: interlearn \u2014 Refine metadata taxonomy across category, tags, and module attribution fields.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interlearn — Refine metadata taxonomy across category, tags, and module attribution fields."
+        "notes": "Platform: interlearn \u2014 Refine metadata taxonomy across category, tags, and module attribution fields."
       },
       {
         "module": "interverse",
         "id": "PL-ILRN-N5",
-        "title": "Platform: interlearn — Integrate with review and planning workflows to surface indexed knowledge proactively.",
+        "title": "Platform: interlearn \u2014 Integrate with review and planning workflows to surface indexed knowledge proactively.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interlearn — Integrate with review and planning workflows to surface indexed knowledge proactively."
+        "notes": "Platform: interlearn \u2014 Integrate with review and planning workflows to surface indexed knowledge proactively."
       },
       {
         "module": "interverse",
         "id": "PL-ILES-N2",
-        "title": "Platform: interlens — Align lens outputs with interflux finding schema and Clavain artifact stages.",
+        "title": "Platform: interlens \u2014 Align lens outputs with interflux finding schema and Clavain artifact stages.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interlens — Align lens outputs with interflux finding schema and Clavain artifact stages."
+        "notes": "Platform: interlens \u2014 Align lens outputs with interflux finding schema and Clavain artifact stages."
       },
       {
         "module": "interverse",
         "id": "PL-ILES-N3",
-        "title": "Platform: interlens — Ship lens governance for provenance and confidence scoring.",
+        "title": "Platform: interlens \u2014 Ship lens governance for provenance and confidence scoring.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interlens — Ship lens governance for provenance and confidence scoring."
+        "notes": "Platform: interlens \u2014 Ship lens governance for provenance and confidence scoring."
       },
       {
         "module": "interverse",
         "id": "PL-ILES-L1",
-        "title": "Platform: interlens — Expose a community catalog of reusable cognitive lenses.",
+        "title": "Platform: interlens \u2014 Expose a community catalog of reusable cognitive lenses.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interlens — Expose a community catalog of reusable cognitive lenses."
+        "notes": "Platform: interlens \u2014 Expose a community catalog of reusable cognitive lenses."
       },
       {
         "module": "interverse",
         "id": "PL-ILNE-N2",
-        "title": "Platform: interline — Add intermute-backed file-reservation visibility in the live HUD.",
+        "title": "Platform: interline \u2014 Add intermute-backed file-reservation visibility in the live HUD.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interline — Add intermute-backed file-reservation visibility in the live HUD."
+        "notes": "Platform: interline \u2014 Add intermute-backed file-reservation visibility in the live HUD."
       },
       {
         "module": "interverse",
         "id": "PL-ILNE-N3",
-        "title": "Platform: interline — Ship lightweight dashboard mode for long-running Codex parallel tasks.",
+        "title": "Platform: interline \u2014 Ship lightweight dashboard mode for long-running Codex parallel tasks.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interline — Ship lightweight dashboard mode for long-running Codex parallel tasks."
+        "notes": "Platform: interline \u2014 Ship lightweight dashboard mode for long-running Codex parallel tasks."
       },
       {
         "module": "interverse",
         "id": "PL-ILNE-L1",
-        "title": "Platform: interline — Create configurable theme and role-specific statusline layouts.",
+        "title": "Platform: interline \u2014 Create configurable theme and role-specific statusline layouts.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interline — Create configurable theme and role-specific statusline layouts."
+        "notes": "Platform: interline \u2014 Create configurable theme and role-specific statusline layouts."
       },
       {
         "module": "interverse",
         "id": "PL-IMAP-N3",
-        "title": "Platform: intermap — Cross-project dependency graph MCP tool.",
+        "title": "Platform: intermap \u2014 Cross-project dependency graph MCP tool.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: intermap — Cross-project dependency graph MCP tool."
+        "notes": "Platform: intermap \u2014 Cross-project dependency graph MCP tool."
       },
       {
         "module": "interverse",
         "id": "PL-IMAP-N4",
-        "title": "Platform: intermap — Architecture pattern detection MCP tool.",
+        "title": "Platform: intermap \u2014 Architecture pattern detection MCP tool.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: intermap — Architecture pattern detection MCP tool."
+        "notes": "Platform: intermap \u2014 Architecture pattern detection MCP tool."
       },
       {
         "module": "interverse",
         "id": "PL-IMUX-N2",
-        "title": "Platform: intermux — Add cross-node metrics export for long-horizon orchestration health.",
+        "title": "Platform: intermux \u2014 Add cross-node metrics export for long-horizon orchestration health.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: intermux — Add cross-node metrics export for long-horizon orchestration health."
+        "notes": "Platform: intermux \u2014 Add cross-node metrics export for long-horizon orchestration health."
       },
       {
         "module": "interverse",
         "id": "PL-IMUX-N3",
-        "title": "Platform: intermux — Integrate agent load and queue metrics with interphase readiness checks.",
+        "title": "Platform: intermux \u2014 Integrate agent load and queue metrics with interphase readiness checks.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: intermux — Integrate agent load and queue metrics with interphase readiness checks."
+        "notes": "Platform: intermux \u2014 Integrate agent load and queue metrics with interphase readiness checks."
       },
       {
         "module": "interverse",
         "id": "PL-IMUX-L1",
-        "title": "Platform: intermux — Introduce anomaly detection for stalled agents and resource contention.",
+        "title": "Platform: intermux \u2014 Introduce anomaly detection for stalled agents and resource contention.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: intermux — Introduce anomaly detection for stalled agents and resource contention."
+        "notes": "Platform: intermux \u2014 Introduce anomaly detection for stalled agents and resource contention."
       },
       {
         "module": "interverse",
         "id": "PL-INXT-N2",
-        "title": "Platform: internext — Tie prioritization output to open bead state and blocker context.",
+        "title": "Platform: internext \u2014 Tie prioritization output to open bead state and blocker context.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: internext — Tie prioritization output to open bead state and blocker context."
+        "notes": "Platform: internext \u2014 Tie prioritization output to open bead state and blocker context."
       },
       {
         "module": "interverse",
         "id": "PL-INXT-N3",
-        "title": "Platform: internext — Add scenario-based tradeoff simulation for high-cost roadmap shifts.",
+        "title": "Platform: internext \u2014 Add scenario-based tradeoff simulation for high-cost roadmap shifts.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: internext — Add scenario-based tradeoff simulation for high-cost roadmap shifts."
+        "notes": "Platform: internext \u2014 Add scenario-based tradeoff simulation for high-cost roadmap shifts."
       },
       {
         "module": "interverse",
         "id": "PL-INXT-L1",
-        "title": "Platform: internext — Build governance presets for automated portfolio-level planning policies.",
+        "title": "Platform: internext \u2014 Build governance presets for automated portfolio-level planning policies.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: internext — Build governance presets for automated portfolio-level planning policies."
+        "notes": "Platform: internext \u2014 Build governance presets for automated portfolio-level planning policies."
       },
       {
         "module": "interverse",
         "id": "PL-IPTH-N2",
-        "title": "Platform: interpath — Standardize inter-breed output contracts between roadmap and vision artifacts.",
+        "title": "Platform: interpath \u2014 Standardize inter-breed output contracts between roadmap and vision artifacts.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interpath — Standardize inter-breed output contracts between roadmap and vision artifacts."
+        "notes": "Platform: interpath \u2014 Standardize inter-breed output contracts between roadmap and vision artifacts."
       },
       {
         "module": "interverse",
         "id": "PL-IPTH-N3",
-        "title": "Platform: interpath — Publish traceable generation metadata for every artifact run.",
+        "title": "Platform: interpath \u2014 Publish traceable generation metadata for every artifact run.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interpath — Publish traceable generation metadata for every artifact run."
+        "notes": "Platform: interpath \u2014 Publish traceable generation metadata for every artifact run."
       },
       {
         "module": "interverse",
         "id": "PL-IPTH-L1",
-        "title": "Platform: interpath — Add artifact quality tests and artifact regression baselines.",
+        "title": "Platform: interpath \u2014 Add artifact quality tests and artifact regression baselines.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interpath — Add artifact quality tests and artifact regression baselines."
+        "notes": "Platform: interpath \u2014 Add artifact quality tests and artifact regression baselines."
       },
       {
         "module": "interverse",
         "id": "PL-IPHS-N2",
-        "title": "Platform: interphase — Improve gate diagnostics for partial artifacts and stale state recovery.",
+        "title": "Platform: interphase \u2014 Improve gate diagnostics for partial artifacts and stale state recovery.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interphase — Improve gate diagnostics for partial artifacts and stale state recovery."
+        "notes": "Platform: interphase \u2014 Improve gate diagnostics for partial artifacts and stale state recovery."
       },
       {
         "module": "interverse",
         "id": "PL-IPHS-N3",
-        "title": "Platform: interphase — Add deeper inter-module phase telemetry to Clavain sprint orchestration.",
+        "title": "Platform: interphase \u2014 Add deeper inter-module phase telemetry to Clavain sprint orchestration.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interphase — Add deeper inter-module phase telemetry to Clavain sprint orchestration."
+        "notes": "Platform: interphase \u2014 Add deeper inter-module phase telemetry to Clavain sprint orchestration."
       },
       {
         "module": "interverse",
         "id": "PL-IPHS-L1",
-        "title": "Platform: interphase — Prototype adaptive phase sequencing for non-linear execution paths.",
+        "title": "Platform: interphase \u2014 Prototype adaptive phase sequencing for non-linear execution paths.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interphase — Prototype adaptive phase sequencing for non-linear execution paths."
+        "notes": "Platform: interphase \u2014 Prototype adaptive phase sequencing for non-linear execution paths."
       },
       {
         "module": "interverse",
         "id": "PL-IPUB-N2",
-        "title": "Platform: interpub — Add rollback and dry-run visibility for multi-repo release dependencies.",
+        "title": "Platform: interpub \u2014 Add rollback and dry-run visibility for multi-repo release dependencies.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interpub — Add rollback and dry-run visibility for multi-repo release dependencies."
+        "notes": "Platform: interpub \u2014 Add rollback and dry-run visibility for multi-repo release dependencies."
       },
       {
         "module": "interverse",
         "id": "PL-IPUB-N3",
-        "title": "Platform: interpub — Expose publish telemetry and gating evidence to Clavain quality dashboards.",
+        "title": "Platform: interpub \u2014 Expose publish telemetry and gating evidence to Clavain quality dashboards.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interpub — Expose publish telemetry and gating evidence to Clavain quality dashboards."
+        "notes": "Platform: interpub \u2014 Expose publish telemetry and gating evidence to Clavain quality dashboards."
       },
       {
         "module": "interverse",
         "id": "PL-IPUB-L1",
-        "title": "Platform: interpub — Automate release candidate validation for plugin bundles.",
+        "title": "Platform: interpub \u2014 Automate release candidate validation for plugin bundles.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interpub — Automate release candidate validation for plugin bundles."
+        "notes": "Platform: interpub \u2014 Automate release candidate validation for plugin bundles."
       },
       {
         "module": "interverse",
         "id": "PL-ISEA-N2",
-        "title": "Platform: intersearch — Add index freshness controls and fallback behavior for degraded providers.",
+        "title": "Platform: intersearch \u2014 Add index freshness controls and fallback behavior for degraded providers.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: intersearch — Add index freshness controls and fallback behavior for degraded providers."
+        "notes": "Platform: intersearch \u2014 Add index freshness controls and fallback behavior for degraded providers."
       },
       {
         "module": "interverse",
         "id": "PL-ISEA-N3",
-        "title": "Platform: intersearch — Document query optimization patterns for flux-drive and intersearch clients.",
+        "title": "Platform: intersearch \u2014 Document query optimization patterns for flux-drive and intersearch clients.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: intersearch — Document query optimization patterns for flux-drive and intersearch clients."
+        "notes": "Platform: intersearch \u2014 Document query optimization patterns for flux-drive and intersearch clients."
       },
       {
         "module": "interverse",
         "id": "PL-ISEA-L1",
-        "title": "Platform: intersearch — Add retrieval quality benchmarking and adaptive ranking feedback loops.",
+        "title": "Platform: intersearch \u2014 Add retrieval quality benchmarking and adaptive ranking feedback loops.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: intersearch — Add retrieval quality benchmarking and adaptive ranking feedback loops."
+        "notes": "Platform: intersearch \u2014 Add retrieval quality benchmarking and adaptive ranking feedback loops."
       },
       {
         "module": "interverse",
         "id": "PL-ISRV-N2",
-        "title": "Platform: interserve — Expose explainability hooks for routing decisions and fallback choices.",
+        "title": "Platform: interserve \u2014 Expose explainability hooks for routing decisions and fallback choices.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interserve — Expose explainability hooks for routing decisions and fallback choices."
+        "notes": "Platform: interserve \u2014 Expose explainability hooks for routing decisions and fallback choices."
       },
       {
         "module": "interverse",
         "id": "PL-ISRV-N3",
-        "title": "Platform: interserve — Tighten interlock between interserve scores and sprint auto-routing.",
+        "title": "Platform: interserve \u2014 Tighten interlock between interserve scores and sprint auto-routing.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interserve — Tighten interlock between interserve scores and sprint auto-routing."
+        "notes": "Platform: interserve \u2014 Tighten interlock between interserve scores and sprint auto-routing."
       },
       {
         "module": "interverse",
         "id": "PL-ISRV-L1",
-        "title": "Platform: interserve — Build self-supervising context-compression benchmarks and quality guardrails.",
+        "title": "Platform: interserve \u2014 Build self-supervising context-compression benchmarks and quality guardrails.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interserve — Build self-supervising context-compression benchmarks and quality guardrails."
+        "notes": "Platform: interserve \u2014 Build self-supervising context-compression benchmarks and quality guardrails."
       },
       {
         "module": "interverse",
         "id": "PL-ISLK-N2",
-        "title": "Platform: interslack — Add digest mode for milestone and quality-gate changes.",
+        "title": "Platform: interslack \u2014 Add digest mode for milestone and quality-gate changes.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interslack — Add digest mode for milestone and quality-gate changes."
+        "notes": "Platform: interslack \u2014 Add digest mode for milestone and quality-gate changes."
       },
       {
         "module": "interverse",
         "id": "PL-ISLK-N3",
-        "title": "Platform: interslack — Add secure token management and tenant-aware channel routing.",
+        "title": "Platform: interslack \u2014 Add secure token management and tenant-aware channel routing.",
         "phase": "next",
         "priority": "P1",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interslack — Add secure token management and tenant-aware channel routing."
+        "notes": "Platform: interslack \u2014 Add secure token management and tenant-aware channel routing."
       },
       {
         "module": "interverse",
         "id": "PL-ISLK-L1",
-        "title": "Platform: interslack — Create richer interaction patterns with context summaries and action links.",
+        "title": "Platform: interslack \u2014 Create richer interaction patterns with context summaries and action links.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interslack — Create richer interaction patterns with context summaries and action links."
+        "notes": "Platform: interslack \u2014 Create richer interaction patterns with context summaries and action links."
       },
       {
         "module": "interverse",
         "id": "PL-ISTA-N2",
-        "title": "Platform: interstat — Enable workload-level attribution for high-cost sub-agents.",
+        "title": "Platform: interstat \u2014 Enable workload-level attribution for high-cost sub-agents.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interstat — Enable workload-level attribution for high-cost sub-agents."
+        "notes": "Platform: interstat \u2014 Enable workload-level attribution for high-cost sub-agents."
       },
       {
         "module": "interverse",
         "id": "PL-ISTA-N3",
-        "title": "Platform: interstat — Export dashboards for trend-based routing optimization pilots.",
+        "title": "Platform: interstat \u2014 Export dashboards for trend-based routing optimization pilots.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interstat — Export dashboards for trend-based routing optimization pilots."
+        "notes": "Platform: interstat \u2014 Export dashboards for trend-based routing optimization pilots."
       },
       {
         "module": "interverse",
         "id": "PL-ISTA-L1",
-        "title": "Platform: interstat — Add model-provider normalization and cross-run comparability.",
+        "title": "Platform: interstat \u2014 Add model-provider normalization and cross-run comparability.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interstat — Add model-provider normalization and cross-run comparability."
+        "notes": "Platform: interstat \u2014 Add model-provider normalization and cross-run comparability."
       },
       {
         "module": "interverse",
         "id": "PL-IWTC-N2",
-        "title": "Platform: interwatch — Add actionable auto-refinement suggestions and safe repair paths.",
+        "title": "Platform: interwatch \u2014 Add actionable auto-refinement suggestions and safe repair paths.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interwatch — Add actionable auto-refinement suggestions and safe repair paths."
+        "notes": "Platform: interwatch \u2014 Add actionable auto-refinement suggestions and safe repair paths."
       },
       {
         "module": "interverse",
         "id": "PL-IWTC-N3",
-        "title": "Platform: interwatch — Integrate freshness signals into Clavain discovery and sprint summaries.",
+        "title": "Platform: interwatch \u2014 Integrate freshness signals into Clavain discovery and sprint summaries.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interwatch — Integrate freshness signals into Clavain discovery and sprint summaries."
+        "notes": "Platform: interwatch \u2014 Integrate freshness signals into Clavain discovery and sprint summaries."
       },
       {
         "module": "interverse",
         "id": "PL-IWTC-L1",
-        "title": "Platform: interwatch — Create policy-driven escalation for critical or high-impact stale content.",
+        "title": "Platform: interwatch \u2014 Create policy-driven escalation for critical or high-impact stale content.",
         "phase": "next",
         "priority": "P3",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interwatch — Create policy-driven escalation for critical or high-impact stale content."
+        "notes": "Platform: interwatch \u2014 Create policy-driven escalation for critical or high-impact stale content."
       },
       {
         "module": "interverse",
         "id": "PL-ITUV-N2",
-        "title": "Platform: tuivision — Improve diff quality for flaky rendering and animation-heavy outputs.",
+        "title": "Platform: tuivision \u2014 Improve diff quality for flaky rendering and animation-heavy outputs.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: tuivision — Improve diff quality for flaky rendering and animation-heavy outputs."
+        "notes": "Platform: tuivision \u2014 Improve diff quality for flaky rendering and animation-heavy outputs."
       },
       {
         "module": "interverse",
         "id": "PL-ITUV-N3",
-        "title": "Platform: tuivision — Expose richer result contracts for Clavain QA and acceptance gates.",
+        "title": "Platform: tuivision \u2014 Expose richer result contracts for Clavain QA and acceptance gates.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: tuivision — Expose richer result contracts for Clavain QA and acceptance gates."
+        "notes": "Platform: tuivision \u2014 Expose richer result contracts for Clavain QA and acceptance gates."
       },
       {
         "module": "interverse",
         "id": "PL-ITUV-L1",
-        "title": "Platform: tuivision — Add cross-device runner support for varied terminal backends.",
+        "title": "Platform: tuivision \u2014 Add cross-device runner support for varied terminal backends.",
         "phase": "next",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: tuivision — Add cross-device runner support for varied terminal backends."
+        "notes": "Platform: tuivision \u2014 Add cross-device runner support for varied terminal backends."
       }
     ],
     "later": [
@@ -3538,6 +3394,18 @@
         "notes": "Roadmap artifact missing in this module; run scripts/generate-module-roadmaps.sh to auto-generate from beads."
       },
       {
+        "module": "interdeep",
+        "id": "PL-interdeep-NO-RM",
+        "title": "Roadmap artifact missing in this module; run scripts/generate-module-roadmaps.sh to auto-generate from beads.",
+        "phase": "later",
+        "priority": "P4",
+        "status": "planned",
+        "source": "missing-module-roadmap",
+        "source_file": "interverse/interdeep/docs/roadmap.md",
+        "blocked_by": [],
+        "notes": "Roadmap artifact missing in this module; run scripts/generate-module-roadmaps.sh to auto-generate from beads."
+      },
+      {
         "module": "interflux",
         "id": "PL-interflux-EMPTY-RM",
         "title": "Roadmap file exists but has no parseable roadmap entries; add Now/Next/Later items to docs/roadmap.md or docs/roadmap.json.",
@@ -3636,18 +3504,30 @@
       {
         "module": "intermap",
         "id": "IMAP-L1",
-        "title": "Live change awareness via git-diff with structural annotation.",
+        "title": "Language expansion: Rust and TypeScript AST parsing.",
         "phase": "later",
         "priority": "P2",
         "status": "open",
         "source": "module-roadmap-json",
         "source_file": "docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Live change awareness via git-diff with structural annotation."
+        "notes": "Language expansion: Rust and TypeScript AST parsing."
       },
       {
         "module": "intermap",
         "id": "IMAP-L2",
+        "title": "Persistent SQLite index for large monorepos.",
+        "phase": "later",
+        "priority": "P3",
+        "status": "open",
+        "source": "module-roadmap-json",
+        "source_file": "docs/roadmap.json",
+        "blocked_by": [],
+        "notes": "Persistent SQLite index for large monorepos."
+      },
+      {
+        "module": "intermap",
+        "id": "IMAP-L3",
         "title": "Deeper intermute integration (agent activity heatmaps).",
         "phase": "later",
         "priority": "P3",
@@ -3668,6 +3548,18 @@
         "source_file": "interverse/intermem/docs/roadmap.md",
         "blocked_by": [],
         "notes": "Roadmap file exists but has no parseable roadmap entries; add Now/Next/Later items to docs/roadmap.md or docs/roadmap.json."
+      },
+      {
+        "module": "intermonk",
+        "id": "PL-intermonk-NO-RM",
+        "title": "Roadmap artifact missing in this module; run scripts/generate-module-roadmaps.sh to auto-generate from beads.",
+        "phase": "later",
+        "priority": "P4",
+        "status": "planned",
+        "source": "missing-module-roadmap",
+        "source_file": "interverse/intermonk/docs/roadmap.md",
+        "blocked_by": [],
+        "notes": "Roadmap artifact missing in this module; run scripts/generate-module-roadmaps.sh to auto-generate from beads."
       },
       {
         "module": "intername",
@@ -3718,6 +3610,30 @@
         "notes": "Roadmap artifact missing in this module; run scripts/generate-module-roadmaps.sh to auto-generate from beads."
       },
       {
+        "module": "interrank",
+        "id": "PL-interrank-NO-RM",
+        "title": "Roadmap artifact missing in this module; run scripts/generate-module-roadmaps.sh to auto-generate from beads.",
+        "phase": "later",
+        "priority": "P4",
+        "status": "planned",
+        "source": "missing-module-roadmap",
+        "source_file": "interverse/interrank/docs/roadmap.md",
+        "blocked_by": [],
+        "notes": "Roadmap artifact missing in this module; run scripts/generate-module-roadmaps.sh to auto-generate from beads."
+      },
+      {
+        "module": "interscribe",
+        "id": "PL-interscribe-NO-RM",
+        "title": "Roadmap artifact missing in this module; run scripts/generate-module-roadmaps.sh to auto-generate from beads.",
+        "phase": "later",
+        "priority": "P4",
+        "status": "planned",
+        "source": "missing-module-roadmap",
+        "source_file": "interverse/interscribe/docs/roadmap.md",
+        "blocked_by": [],
+        "notes": "Roadmap artifact missing in this module; run scripts/generate-module-roadmaps.sh to auto-generate from beads."
+      },
+      {
         "module": "intersense",
         "id": "PL-intersense-NO-RM",
         "title": "Roadmap artifact missing in this module; run scripts/generate-module-roadmaps.sh to auto-generate from beads.",
@@ -3742,6 +3658,18 @@
         "notes": "Roadmap artifact missing in this module; run scripts/generate-module-roadmaps.sh to auto-generate from beads."
       },
       {
+        "module": "intersight",
+        "id": "PL-intersight-NO-RM",
+        "title": "Roadmap artifact missing in this module; run scripts/generate-module-roadmaps.sh to auto-generate from beads.",
+        "phase": "later",
+        "priority": "P4",
+        "status": "planned",
+        "source": "missing-module-roadmap",
+        "source_file": "interverse/intersight/docs/roadmap.md",
+        "blocked_by": [],
+        "notes": "Roadmap artifact missing in this module; run scripts/generate-module-roadmaps.sh to auto-generate from beads."
+      },
+      {
         "module": "interskill",
         "id": "PL-interskill-NO-RM",
         "title": "Roadmap artifact missing in this module; run scripts/generate-module-roadmaps.sh to auto-generate from beads.",
@@ -3750,6 +3678,18 @@
         "status": "planned",
         "source": "missing-module-roadmap",
         "source_file": "interverse/interskill/docs/roadmap.md",
+        "blocked_by": [],
+        "notes": "Roadmap artifact missing in this module; run scripts/generate-module-roadmaps.sh to auto-generate from beads."
+      },
+      {
+        "module": "interspect",
+        "id": "PL-interspect-NO-RM",
+        "title": "Roadmap artifact missing in this module; run scripts/generate-module-roadmaps.sh to auto-generate from beads.",
+        "phase": "later",
+        "priority": "P4",
+        "status": "planned",
+        "source": "missing-module-roadmap",
+        "source_file": "interverse/interspect/docs/roadmap.md",
         "blocked_by": [],
         "notes": "Roadmap artifact missing in this module; run scripts/generate-module-roadmaps.sh to auto-generate from beads."
       },
@@ -3776,6 +3716,30 @@
         "source_file": "interverse/intertest/docs/roadmap.md",
         "blocked_by": [],
         "notes": "Roadmap artifact missing in this module; run scripts/generate-module-roadmaps.sh to auto-generate from beads."
+      },
+      {
+        "module": "intertrace",
+        "id": "PL-intertrace-NO-RM",
+        "title": "Roadmap artifact missing in this module; run scripts/generate-module-roadmaps.sh to auto-generate from beads.",
+        "phase": "later",
+        "priority": "P4",
+        "status": "planned",
+        "source": "missing-module-roadmap",
+        "source_file": "interverse/intertrace/docs/roadmap.md",
+        "blocked_by": [],
+        "notes": "Roadmap artifact missing in this module; run scripts/generate-module-roadmaps.sh to auto-generate from beads."
+      },
+      {
+        "module": "intertrack",
+        "id": "PL-intertrack-EMPTY-RM",
+        "title": "Roadmap file exists but has no parseable roadmap entries; add Now/Next/Later items to docs/roadmap.md or docs/roadmap.json.",
+        "phase": "later",
+        "priority": "P4",
+        "status": "planned",
+        "source": "empty-module-roadmap",
+        "source_file": "interverse/intertrack/docs/roadmap.md",
+        "blocked_by": [],
+        "notes": "Roadmap file exists but has no parseable roadmap entries; add Now/Next/Later items to docs/roadmap.md or docs/roadmap.json."
       },
       {
         "module": "intertree",
@@ -3827,267 +3791,63 @@
       },
       {
         "module": "interverse",
-        "id": "PL-iv-6ixw",
-        "title": "Platform: clavain — C5: Self-building loop — Clavain runs its own sprints",
-        "phase": "later",
-        "priority": "P3",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — C5: Self-building loop — Clavain runs its own sprints"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-240m",
-        "title": "Platform: clavain — C3: Composer — match agency specs to fleet within budget",
-        "phase": "later",
-        "priority": "P3",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — C3: Composer — match agency specs to fleet within budget"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-1vny",
-        "title": "Platform: clavain — C4: Cross-phase handoff protocol — structured contracts",
-        "phase": "later",
-        "priority": "P3",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — C4: Cross-phase handoff protocol — structured contracts"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-i198",
-        "title": "Platform: clavain — B3: Adaptive routing — Interspect outcomes drive selection",
-        "phase": "later",
-        "priority": "P3",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — B3: Adaptive routing — Interspect outcomes drive selection"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-d6vf",
-        "title": "Platform: clavain — B2: Zero-cost routing abstraction + shadow mode",
-        "phase": "later",
-        "priority": "P3",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — B2: Zero-cost routing abstraction + shadow mode"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-4xqu",
-        "title": "Platform: clavain — Adaptive model routing based on measured trust",
-        "phase": "later",
-        "priority": "P3",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Adaptive model routing based on measured trust"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-a0mv",
-        "title": "Platform: clavain — Sprint completion rate tracking",
-        "phase": "later",
-        "priority": "P3",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Sprint completion rate tracking"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-8hhd",
-        "title": "Platform: clavain — Fix dotfiles-sync.sh log path — /var/log not writable",
-        "phase": "later",
-        "priority": "P3",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Fix dotfiles-sync.sh log path — /var/log not writable"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-6i37",
-        "title": "Platform: clavain — Blueprint distillation: channel optimization for sprint intake",
-        "phase": "later",
-        "priority": "P3",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Blueprint distillation: channel optimization for sprint intake"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-u2pd",
-        "title": "Platform: clavain — Arbiter extraction Phase 2: spec sprint sequencing",
-        "phase": "later",
-        "priority": "P3",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Arbiter extraction Phase 2: spec sprint sequencing"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-d5hz",
-        "title": "Platform: clavain — Extract Coldwine task orchestration to Clavain skills (v2)",
-        "phase": "later",
-        "priority": "P3",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Extract Coldwine task orchestration to Clavain skills (v2)"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-bkzf",
-        "title": "Platform: clavain — Arbiter extraction Phase 3",
-        "phase": "later",
-        "priority": "P3",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Arbiter extraction Phase 3"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-k1q4",
-        "title": "Platform: clavain — Coldwine: intent submission to Clavain OS",
-        "phase": "later",
-        "priority": "P3",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Coldwine: intent submission to Clavain OS"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-1quv",
-        "title": "Platform: clavain — Add TTL cleanup for /tmp/clavain-* sentinel files",
-        "phase": "later",
-        "priority": "P3",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Add TTL cleanup for /tmp/clavain-* sentinel files"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-eqbo",
-        "title": "Platform: clavain — Add Conductor-style project init wizard to /clavain:init",
-        "phase": "later",
-        "priority": "P3",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Add Conductor-style project init wizard to /clavain:init"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-d8yi",
-        "title": "Platform: clavain — Add inherit model tier to Clavain model routing",
-        "phase": "later",
-        "priority": "P3",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Add inherit model tier to Clavain model routing"
-      },
-      {
-        "module": "interverse",
-        "id": "PL-iv-64j3",
-        "title": "Platform: clavain — Multi-agent sprint reflection (N artifacts for N dispatches)",
-        "phase": "later",
-        "priority": "P3",
-        "status": "planned",
-        "source": "interverse-rollup",
-        "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
-        "blocked_by": [],
-        "notes": "Platform: clavain — Multi-agent sprint reflection (N artifacts for N dispatches)"
-      },
-      {
-        "module": "interverse",
         "id": "PL-ILRN-L1",
-        "title": "Platform: interlearn — Add feedback loops for low-value hits to iteratively improve ranking.",
+        "title": "Platform: interlearn \u2014 Add feedback loops for low-value hits to iteratively improve ranking.",
         "phase": "later",
         "priority": "P3",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interlearn — Add feedback loops for low-value hits to iteratively improve ranking."
+        "notes": "Platform: interlearn \u2014 Add feedback loops for low-value hits to iteratively improve ranking."
       },
       {
         "module": "interverse",
         "id": "PL-ILRN-L2",
-        "title": "Platform: interlearn — Track reuse impact metrics across modules and sprint cycles.",
+        "title": "Platform: interlearn \u2014 Track reuse impact metrics across modules and sprint cycles.",
         "phase": "later",
         "priority": "P3",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interlearn — Track reuse impact metrics across modules and sprint cycles."
+        "notes": "Platform: interlearn \u2014 Track reuse impact metrics across modules and sprint cycles."
       },
       {
         "module": "interverse",
         "id": "PL-ILRN-L3",
-        "title": "Platform: interlearn — Package compact context bundles for downstream agents and tooling.",
+        "title": "Platform: interlearn \u2014 Package compact context bundles for downstream agents and tooling.",
         "phase": "later",
         "priority": "P3",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: interlearn — Package compact context bundles for downstream agents and tooling."
+        "notes": "Platform: interlearn \u2014 Package compact context bundles for downstream agents and tooling."
       },
       {
         "module": "interverse",
         "id": "PL-IMAP-L1",
-        "title": "Platform: intermap — Live change awareness via git-diff with structural annotation.",
+        "title": "Platform: intermap \u2014 Live change awareness via git-diff with structural annotation.",
         "phase": "later",
         "priority": "P2",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: intermap — Live change awareness via git-diff with structural annotation."
+        "notes": "Platform: intermap \u2014 Live change awareness via git-diff with structural annotation."
       },
       {
         "module": "interverse",
         "id": "PL-IMAP-L2",
-        "title": "Platform: intermap — Deeper intermute integration (agent activity heatmaps).",
+        "title": "Platform: intermap \u2014 Deeper intermute integration (agent activity heatmaps).",
         "phase": "later",
         "priority": "P3",
         "status": "planned",
         "source": "interverse-rollup",
         "source_file": "/home/mk/projects/Demarch/docs/roadmap.json",
         "blocked_by": [],
-        "notes": "Platform: intermap — Deeper intermute integration (agent activity heatmaps)."
+        "notes": "Platform: intermap \u2014 Deeper intermute integration (agent activity heatmaps)."
       }
     ]
   },
@@ -4145,7 +3905,7 @@
     {
       "module": "intermap",
       "location": "interverse/intermap",
-      "summary": "Project-level code mapping via MCP tools: registry, call graphs, impact analysis, architecture detection, and agent overlay."
+      "summary": "Project-level code mapping via 9 MCP tools: registry, call graphs, impact analysis, cross-project deps, architecture detection, live changes, and agent overlay."
     },
     {
       "module": "intermux",
@@ -4195,7 +3955,7 @@
     {
       "module": "interwatch",
       "location": "interverse/interwatch",
-      "summary": "Interwatch monitors documentation freshness and confidence so stale artifacts are identified before they mislead decisions."
+      "summary": "Interwatch monitors documentation freshness \u2014 auto-discovers watchable docs by convention, detects drift via 14 signal types, scores confidence, and dispatches to generators for refresh."
     },
     {
       "module": "tuivision",
@@ -4215,13 +3975,13 @@
     {
       "module": "interband",
       "location": "core/interband",
-      "version": "—",
+      "version": "\u2014",
       "notes": "No docs/roadmap.md"
     },
     {
       "module": "interbench",
       "location": "core/interbench",
-      "version": "—",
+      "version": "\u2014",
       "notes": "No docs/roadmap.md"
     },
     {
@@ -4233,24 +3993,36 @@
     {
       "module": "interchart",
       "location": "interverse/interchart",
-      "version": "0.1.0",
+      "version": "0.1.8",
+      "notes": "No docs/roadmap.md"
+    },
+    {
+      "module": "interdeep",
+      "location": "interverse/interdeep",
+      "version": "0.1.6",
       "notes": "No docs/roadmap.md"
     },
     {
       "module": "interkasten",
       "location": "interverse/interkasten",
-      "version": "0.4.6",
+      "version": "0.4.9",
       "notes": "No docs/roadmap.md"
     },
     {
       "module": "interknow",
       "location": "interverse/interknow",
-      "version": "0.1.0",
+      "version": "0.1.2",
       "notes": "No docs/roadmap.md"
     },
     {
       "module": "interleave",
       "location": "interverse/interleave",
+      "version": "0.1.1",
+      "notes": "No docs/roadmap.md"
+    },
+    {
+      "module": "intermonk",
+      "location": "interverse/intermonk",
       "version": "0.1.1",
       "notes": "No docs/roadmap.md"
     },
@@ -4275,6 +4047,18 @@
     {
       "module": "interpulse",
       "location": "interverse/interpulse",
+      "version": "0.1.3",
+      "notes": "No docs/roadmap.md"
+    },
+    {
+      "module": "interrank",
+      "location": "interverse/interrank",
+      "version": "0.1.0",
+      "notes": "No docs/roadmap.md"
+    },
+    {
+      "module": "interscribe",
+      "location": "interverse/interscribe",
       "version": "0.1.1",
       "notes": "No docs/roadmap.md"
     },
@@ -4291,9 +4075,21 @@
       "notes": "No docs/roadmap.md"
     },
     {
+      "module": "intersight",
+      "location": "interverse/intersight",
+      "version": "0.1.3",
+      "notes": "No docs/roadmap.md"
+    },
+    {
       "module": "interskill",
       "location": "interverse/interskill",
-      "version": "0.1.0",
+      "version": "0.1.1",
+      "notes": "No docs/roadmap.md"
+    },
+    {
+      "module": "interspect",
+      "location": "interverse/interspect",
+      "version": "0.1.6",
       "notes": "No docs/roadmap.md"
     },
     {
@@ -4305,7 +4101,13 @@
     {
       "module": "intertest",
       "location": "interverse/intertest",
-      "version": "0.1.1",
+      "version": "0.1.2",
+      "notes": "No docs/roadmap.md"
+    },
+    {
+      "module": "intertrace",
+      "location": "interverse/intertrace",
+      "version": "0.1.2",
       "notes": "No docs/roadmap.md"
     },
     {

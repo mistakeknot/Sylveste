@@ -1,4 +1,4 @@
-# Demarch Roadmap
+# Interverse Roadmap
 
 **Modules:** 61 | **Open beads (root tracker):** 719 | **Blocked (root tracker):** 78 | **Last updated:** 2026-03-05
 **Structure:** [`CLAUDE.md`](../CLAUDE.md)
