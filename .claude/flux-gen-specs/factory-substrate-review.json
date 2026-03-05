@@ -1,0 +1,127 @@
+[
+  {
+    "name": "fd-dependency-risk",
+    "focus": "Evaluate the architectural risk of adding CXDB (Rust server) as required infrastructure to a Go CLI + Claude Code plugin stack",
+    "persona": "A pragmatic systems architect who has seen many projects buckle under dependency weight. Focuses on operational complexity, failure modes, and whether the dependency earns its place relative to simpler alternatives.",
+    "decision_lens": "Prioritizes findings by blast radius — how many developers/agents are blocked when this dependency fails, and how hard recovery is.",
+    "review_areas": [
+      "Is CXDB's maturity level (StrongDM open-source) appropriate for 'same tier as Dolt' required infrastructure? Check project age, contributor count, release cadence, breaking change history",
+      "What are the failure modes when CXDB is unavailable — does Clavain degrade gracefully or hard-fail? Is there a local-only fallback?",
+      "Build/install complexity: Rust compilation requirements for contributors, CI pipeline impact, cross-platform support (especially Claude Code environments)",
+      "Does the PRD justify why Turn DAG + Blob CAS can't be achieved with existing infrastructure (Dolt, SQLite, filesystem) at current scale?",
+      "Lock-in risk: if CXDB is abandoned or diverges, what's the migration path? Are interfaces abstracted or tightly coupled?",
+      "Resource overhead: memory/CPU footprint of running CXDB alongside Dolt, Claude Code, and plugin processes on developer machines"
+    ],
+    "success_hints": [
+      "PRD explicitly addresses what happens when CXDB is down and defines degradation behavior",
+      "There is a clear argument for why existing tools (Dolt, filesystem CAS) are insufficient, with concrete limitations cited",
+      "Installation and upgrade path is specified with version pinning strategy"
+    ],
+    "task_context": "Demarch is adding CXDB as required infrastructure for its plugin ecosystem. This is a significant commitment — CXDB becomes as fundamental as Dolt, meaning every developer and agent environment must run it.",
+    "anti_overlap": [
+      "fd-evidence-pipeline covers how plugins wire into CXDB (not whether CXDB should exist)",
+      "fd-scenario-validation covers the scenario bank schema and dev/holdout split (not storage layer)",
+      "fd-capability-policy covers agent tool restrictions (not infrastructure dependencies)"
+    ]
+  },
+  {
+    "name": "fd-evidence-pipeline",
+    "focus": "Review the evidence pipeline design wiring interspect, interject, and interstat into CXDB for coherent evidence flow",
+    "persona": "A data engineer who thinks in DAGs, schemas, and data contracts. Obsessive about ensuring every producer-consumer pair has clear ownership, versioning, and that no evidence is silently dropped.",
+    "decision_lens": "Prioritizes gaps where evidence could be produced but not captured, or captured but not queryable — broken links in the 'every action produces evidence' promise.",
+    "review_areas": [
+      "Does the PRD define the data contract between each plugin (interspect, interject, interstat) and CXDB — what fields, what format, what guarantees?",
+      "Is the Turn DAG structure specified concretely enough to implement? Check: node types, edge semantics, what constitutes a 'turn' vs a 'blob'",
+      "How does evidence from existing plugin storage (interstat SQLite, interject files, interspect hooks) migrate or dual-write to CXDB during transition?",
+      "Query patterns: does the PRD specify what downstream consumers (LLM-as-judge, sprint gates, dashboards) need to query, and are those queries efficient on the proposed schema?",
+      "Consistency model: what happens when a plugin writes evidence but the CXDB write fails? Is there at-least-once delivery, or can evidence be lost?",
+      "Does the Blob CAS design handle deduplication and garbage collection for large evidence artifacts (logs, diffs, screenshots)?"
+    ],
+    "success_hints": [
+      "Each plugin's evidence contribution is specified with concrete schema examples, not just 'will write to CXDB'",
+      "The migration path from current storage to CXDB is phased with dual-write or backfill strategy",
+      "At least one end-to-end example traces evidence from action to CXDB to judge query"
+    ],
+    "task_context": "Demarch's philosophy is 'every action produces evidence' and 'evidence earns authority.' The evidence pipeline is the backbone connecting plugin actions to the validation/scoring system via CXDB.",
+    "anti_overlap": [
+      "fd-dependency-risk covers whether CXDB is the right choice (not how data flows through it)",
+      "fd-llm-judge-gates covers the scoring and gating logic that consumes evidence (not evidence production)",
+      "fd-scenario-validation covers scenario definitions (not the evidence they generate)"
+    ]
+  },
+  {
+    "name": "fd-scenario-validation",
+    "focus": "Review the scenario bank design: YAML schema, dev/holdout separation, and externalized correctness definitions",
+    "persona": "A test infrastructure specialist who has built evaluation harnesses for ML systems. Thinks carefully about dataset contamination, schema evolution, and whether correctness definitions are actually unambiguous enough for automated judging.",
+    "decision_lens": "Prioritizes findings that would cause silent correctness drift — ambiguous pass criteria, holdout leakage, or schema rigidity that blocks future scenario types.",
+    "review_areas": [
+      "Is the dev/holdout separation enforced mechanically (different directories, access controls, encryption) or just by convention? Can an agent accidentally train on holdout scenarios?",
+      "Does the YAML schema for scenario definitions support the full range of correctness types needed — exact match, structural equivalence, behavioral properties, negative constraints?",
+      "Schema versioning: how do scenario definitions evolve without invalidating historical results? Is there a migration or compatibility strategy?",
+      "Are scenario definitions truly 'externalized' — could a non-developer domain expert author one from the schema alone, or does it require code knowledge?",
+      "How are scenarios selected for a given sprint/task? Is there a matching/tagging system, or manual assignment?",
+      "What prevents scenario gaming — agents optimizing for known dev scenarios rather than genuine capability?"
+    ],
+    "success_hints": [
+      "Holdout separation has a concrete enforcement mechanism, not just naming convention",
+      "At least 2-3 example scenario YAML definitions are provided showing different correctness types",
+      "The PRD addresses scenario lifecycle: creation, review, promotion from dev to holdout, retirement"
+    ],
+    "task_context": "The scenario bank externalizes correctness definitions so validation isn't embedded in agent code. Dev/holdout separation is critical because agents that can see all scenarios may overfit rather than genuinely improve.",
+    "anti_overlap": [
+      "fd-llm-judge-gates covers how scenarios are scored (not how they're defined or stored)",
+      "fd-evidence-pipeline covers evidence storage in CXDB (not scenario definition schema)",
+      "fd-dependency-risk covers CXDB as storage infrastructure (not what's stored in it)"
+    ]
+  },
+  {
+    "name": "fd-llm-judge-gates",
+    "focus": "Review the LLM-as-judge satisfaction scoring design and its integration as sprint gates",
+    "persona": "A reliability engineer who has operated LLM-based evaluation systems in production. Skeptical of non-deterministic gates blocking CI/CD and focused on calibration, cost, latency, and failure handling.",
+    "decision_lens": "Prioritizes findings where non-determinism or LLM failure could block agent work, create false confidence, or make the system more expensive than the value it provides.",
+    "review_areas": [
+      "How does the system handle LLM judge non-determinism — same evidence scored differently on retry? Is there averaging, majority vote, or single-shot?",
+      "What model serves as judge, and is there a cost/latency budget? Scoring every sprint action with Opus would be expensive — is there tiering?",
+      "Sprint gate integration: what happens when the judge is unavailable (API down, rate limited)? Does the sprint block, timeout, or bypass?",
+      "Calibration: how are judge scores validated against human judgment? Is there a bootstrapping plan or golden set?",
+      "Does the PRD define the scoring rubric concretely — what maps to 'satisfied' vs 'partially satisfied' vs 'failed'? Vague rubrics produce noisy scores",
+      "Can agents contest or appeal judge scores? What's the feedback loop when the judge is wrong?"
+    ],
+    "success_hints": [
+      "The PRD specifies concrete failure/timeout behavior for the judge — sprints don't hang on LLM availability",
+      "Scoring rubric has at least one worked example showing how evidence maps to a score",
+      "Cost and latency expectations are stated with a model selection rationale"
+    ],
+    "task_context": "LLM-as-judge scoring is the feedback loop that turns evidence into authority. Sprint gates use these scores to control agent progression. If the judge is unreliable or too expensive, it undermines the entire validation-first premise.",
+    "anti_overlap": [
+      "fd-scenario-validation covers what's being evaluated (scenario definitions), not how it's scored",
+      "fd-evidence-pipeline covers evidence production and storage, not consumption by the judge",
+      "fd-capability-policy covers tool access restrictions, not scoring outcomes"
+    ]
+  },
+  {
+    "name": "fd-capability-policy",
+    "focus": "Review agent capability policies that restrict tool access during execution phases",
+    "persona": "A security-minded systems designer who thinks about least-privilege, policy enforcement boundaries, and the tension between safety and agent productivity. Has experience with capability-based security models.",
+    "decision_lens": "Prioritizes findings where policy enforcement has gaps (bypass routes), where restrictions are so coarse they block legitimate work, or where policy definitions are ambiguous.",
+    "review_areas": [
+      "Where is policy enforcement implemented — in the Claude Code plugin layer, in Clavain CLI, or in CXDB? Can an agent bypass restrictions by calling tools directly?",
+      "Are execution phases clearly defined with unambiguous transitions? What prevents an agent from claiming it's in a different phase?",
+      "How do capability policies compose with existing Demarch mechanisms (interlock file reservations, interspect hook allowlists, sprint routing)?",
+      "Is the policy schema extensible for new tools/phases without requiring code changes? Can policies be defined per-project or per-scenario?",
+      "What's the enforcement granularity — entire tool blocked, or specific arguments/patterns restricted?",
+      "How are policy violations reported — silently blocked, logged to evidence pipeline, or escalated? Does violation evidence feed into judge scoring?"
+    ],
+    "success_hints": [
+      "Policy enforcement point is clearly identified with an argument for why it can't be bypassed",
+      "At least one concrete phase transition example shows which tools are available/restricted at each step",
+      "Policy violations produce evidence that flows into the scoring pipeline"
+    ],
+    "task_context": "Demarch's philosophy is 'evidence earns authority' — agents should only have capabilities justified by their track record and current task phase. Capability policies are the enforcement mechanism for this principle.",
+    "anti_overlap": [
+      "fd-llm-judge-gates covers scoring outcomes, not the policies that constrain agent behavior during execution",
+      "fd-evidence-pipeline covers evidence flow mechanics, not what actions generate policy violation evidence",
+      "fd-dependency-risk covers infrastructure dependencies, not security/access control design"
+    ]
+  }
+]
