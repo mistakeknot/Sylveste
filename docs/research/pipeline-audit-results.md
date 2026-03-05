@@ -84,3 +84,23 @@ Plugin pairs in the same domain where agents could select the wrong tool due to 
 1. Add 5-6 highest-impact sequencing hints from the uncovered table (rows 1-5, 11)
 2. Add disambiguation hints for all 8 within-domain pairs
 3. Consider adding a `pipeline` concept to tool-composition.yaml for multi-step chains (e.g., the quality-gates fan-out/fan-in sequence)
+
+---
+
+## Consolidation Assessment
+
+**Date:** 2026-03-05
+**Verdict:** No consolidation needed
+
+### Criteria Check
+
+| Criterion | Status | Notes |
+|-----------|--------|-------|
+| Any hint > 120 chars | No | All hints within limit |
+| >3 hints between same pair | No | Max is 2 (interflux→clavain: sequencing + quality-gates) |
+| Persistent failure despite hints | Unknown | No telemetry data yet (iv-qi80j) |
+| Cross-reference needed in tool descriptions | No | Tool descriptions are self-contained |
+
+### Next Review
+
+Re-evaluate after 2 weeks of interstat telemetry data (iv-qi80j). If any pair shows >20% failure rate WITH hints, apply consolidation criteria.

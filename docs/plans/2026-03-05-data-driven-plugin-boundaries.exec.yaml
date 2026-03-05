@@ -1,0 +1,28 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 300
+
+stages:
+  - name: "Research & Schema"
+    tasks:
+      - id: task-1
+        title: "Audit multi-tool pipelines and produce gap analysis"
+        files: [docs/research/pipeline-audit-results.md]
+        depends: []
+      - id: task-2
+        title: "Add disambiguation_hints to Go parser and YAML schema"
+        files: [os/clavain/cmd/clavain-cli/tool_surface.go, os/clavain/config/tool-composition.yaml, os/clavain/tests/shell/test_tool_surface.bats]
+        depends: []
+  - name: "Populate & Document"
+    tasks:
+      - id: task-3
+        title: "Populate sequencing and disambiguation hints from audit"
+        files: [os/clavain/config/tool-composition.yaml, os/clavain/tests/shell/test_tool_surface.bats]
+        depends: [task-1, task-2]
+      - id: task-4
+        title: "Document consolidation checklist"
+        files: [os/clavain/config/tool-composition.yaml, docs/research/pipeline-audit-results.md]
+        depends: [task-1]
+        tier: fast
