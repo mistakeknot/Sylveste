@@ -3044,6 +3044,9 @@
 {"issue_id":"iv-hks2.7","label":"theme:docs"}
 {"issue_id":"iv-hmbm","label":"mod:interflux"}
 {"issue_id":"iv-hnxt7","label":"theme:performance"}
+{"issue_id":"iv-ho3","label":"claimed_at:1772689810"}
+{"issue_id":"iv-ho3","label":"claimed_by:90e09241-3cf1-4bf3-afcd-9d083a988071"}
+{"issue_id":"iv-ho3","label":"complexity:5"}
 {"issue_id":"iv-ho3","label":"mod:autarch"}
 {"issue_id":"iv-ho3","label":"mod:clavain"}
 {"issue_id":"iv-ho3","label":"mod:interflux"}
@@ -4500,6 +4503,12 @@
 {"issue_id":"iv-qfg8","label":"theme:ux"}
 {"issue_id":"iv-qftf","label":"mod:intermem"}
 {"issue_id":"iv-qftf","label":"theme:dx"}
+{"issue_id":"iv-qg1r0","label":"claimed_at:1772689559"}
+{"issue_id":"iv-qg1r0","label":"claimed_by:90e09241-3cf1-4bf3-afcd-9d083a988071"}
+{"issue_id":"iv-qg1r0","label":"complexity:5"}
+{"issue_id":"iv-qg1r0","label":"ic_run_id:ru047zyu"}
+{"issue_id":"iv-qg1r0","label":"sprint:true"}
+{"issue_id":"iv-qg1r0","label":"token_budget:250000"}
 {"issue_id":"iv-qgz00","label":"mod:intercore"}
 {"issue_id":"iv-qgz00","label":"research:repo"}
 {"issue_id":"iv-qgz00","label":"source:dicklesworthstone"}
@@ -5132,6 +5141,8 @@
 {"issue_id":"iv-u2pd","label":"mod:clavain"}
 {"issue_id":"iv-u2pd","label":"theme:dx"}
 {"issue_id":"iv-u2pd","label":"theme:ux"}
+{"issue_id":"iv-u74sq","label":"claimed_at:1772690266"}
+{"issue_id":"iv-u74sq","label":"claimed_by:3f650be7-9eee-487a-a928-0607be56737a"}
 {"issue_id":"iv-u74sq","label":"complexity:3"}
 {"issue_id":"iv-u80a","label":"mod:interspect"}
 {"issue_id":"iv-u8bc","label":"mod:interflux"}
