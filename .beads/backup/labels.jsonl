@@ -1007,6 +1007,11 @@
 {"issue_id":"iv-53ys3","label":"research:repo"}
 {"issue_id":"iv-53ys3","label":"source:dicklesworthstone"}
 {"issue_id":"iv-53ys3","label":"theme:research"}
+{"issue_id":"iv-544dn","label":"mod:demarch"}
+{"issue_id":"iv-544dn","label":"mod:intercore"}
+{"issue_id":"iv-544dn","label":"mod:interspect"}
+{"issue_id":"iv-544dn","label":"theme:observability"}
+{"issue_id":"iv-544dn","label":"theme:research"}
 {"issue_id":"iv-54ev4","label":"mod:intermute"}
 {"issue_id":"iv-54ev4","label":"research:repo"}
 {"issue_id":"iv-54ev4","label":"source:dicklesworthstone"}
