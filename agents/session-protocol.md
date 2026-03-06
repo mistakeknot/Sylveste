@@ -6,7 +6,7 @@
 2. Run `bd ready` to see available work.
 3. Before editing any module, read its local `AGENTS.md` (or `CLAUDE.md` as fallback).
 4. Verify which repo you're in: `git rev-parse --show-toplevel`.
-5. When done: `bd close <id>`, commit, `bd sync`, push.
+5. When done: `bd close <id>`, commit, run `bd sync` if your local `bd` build supports it, then push.
 
 ## Git Autosync
 
@@ -48,7 +48,8 @@ Use nearest, task-scoped instruction loading instead of reading every instructio
 4. **PUSH TO REMOTE** - This is MANDATORY:
    ```bash
    git pull --rebase
-   bd sync              # compatibility sync step (0.50.x syncs, 0.51+ no-op)
+   # If your local bd build exposes it:
+   bd sync
    git push
    git status  # MUST show "up to date with origin"
    ```

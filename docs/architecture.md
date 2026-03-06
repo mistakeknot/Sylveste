@@ -66,13 +66,15 @@ Pillars describe *what* makes up Demarch. The three-layer model below describes 
 | Layer | Component | Owns | Communicates via |
 |-------|-----------|------|------------------|
 | L1 Kernel | Intercore | Runs, phases, gates, events, dispatches, state, locks, sentinels, artifacts | CLI (`ic`) commands, exit codes |
-| L2 OS | Clavain + Drivers | Workflow semantics, sprint lifecycle, agent supervision, brainstorm-to-ship pipeline | Calls L1 via `ic` CLI; receives events via `ic events tail` |
+| L2 OS | Clavain + Drivers | Workflow semantics, sprint lifecycle, agent supervision, brainstorm-to-ship pipeline | Calls L1 via `ic` CLI; consumes the generic bus plus typed evidence queries while the measurement read model is still converging |
 | L3 Apps | Autarch (TUIs) | User-facing dashboards, visualizations | Reads L1 state via `ic` queries; sends intents to L2 |
-| Cross-cutting | Interspect | Observability, profiling, pattern detection | Consumes L1 events; today writes only to L2 (OS config). Kernel boundary softens as trust is earned. |
+| Cross-cutting | Interspect | Observability, profiling, pattern detection | Consumes L1 event surfaces; today this includes `ic events tail`, `ic events list-review`, and `ic interspect query` rather than one fully unified stream. Writes only to L2 (OS config). Kernel boundary softens as trust is earned. |
 
 ## Write-Path Contract
 
 All durable state flows through the kernel (L1). Higher layers do not write to the kernel's database directly.
+
+Current-state note: the generic event bus is not yet the full measurement-grade read model. Review payload fidelity, Interspect evidence, and the durable session/bead/run join still require additional surfaces beyond `ic events tail`. See [docs/research/interspect-event-validity-and-outcome-attribution.md](./research/interspect-event-validity-and-outcome-attribution.md).
 
 ```
   L3 ──intent──▶ L2 ──ic CLI──▶ L1 (SQLite)
@@ -91,10 +93,10 @@ All durable state flows through the kernel (L1). Higher layers do not write to t
 | Direction | Mechanism | Example |
 |-----------|-----------|---------|
 | L2 → L1 | `ic` CLI calls | `ic run advance <id>`, `ic gate check <id>` |
-| L1 → L2 | Event bus (pull) | `ic events tail <run> --consumer=hook-name` |
+| L1 → L2 | Event bus + typed evidence queries (pull) | `ic events tail <run> --consumer=hook-name`, `ic events list-review`, `ic interspect query` |
 | L3 → L2 | Intent protocol | `start-run`, `advance-run`, `override-gate`, `submit-artifact` |
 | L3 → L1 | Read-only queries | `ic run status <id> --json`, `ic state get ...` |
-| * → Interspect | Event consumption | Interspect subscribes to kernel events |
+| * → Interspect | Event consumption | Interspect consumes kernel event surfaces; today this is not one fully unified stream |
 
 ## Drivers (L2 Extensions)
 

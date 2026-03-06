@@ -11,7 +11,7 @@ cd interverse/<name> && uv run pytest tests/structural/ -v  # Plugin tests
 cd core/intercore && go test ./...        # Kernel tests
 ic publish --patch                        # Publish plugin (Go CLI)
 scripts/bump-version.sh <ver>             # Publish plugin (shell)
-bd close <id> && bd sync && git push      # Complete work
+bd close <id> && git push                 # Complete work (`bd sync` first only if your local bd build supports it)
 ```
 
 ## Topic Guides
@@ -33,7 +33,7 @@ bd close <id> && bd sync && git push      # Complete work
 1. File beads for remaining work (`bd create`)
 2. Run quality gates (tests, linters, builds)
 3. Close/update beads (`bd close <id>`)
-4. **Push** — `git pull --rebase && bd sync && git push`
+4. **Push** — `git pull --rebase`, run `bd sync` if your local bd build supports it, then `git push`
 5. Verify `git status` shows "up to date with origin"
 
 Work is NOT complete until `git push` succeeds. See [agents/session-protocol.md](agents/session-protocol.md) for full details.
@@ -137,6 +137,7 @@ For more details, see README.md and docs/QUICKSTART.md.
 4. **PUSH TO REMOTE** - This is MANDATORY:
    ```bash
    git pull --rebase
+   # If your local bd build exposes it:
    bd sync
    git push
    git status  # MUST show "up to date with origin"

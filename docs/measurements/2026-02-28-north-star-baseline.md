@@ -11,6 +11,8 @@ status: baseline
 
 First measurement of the Demarch north star metric: **what does it cost to ship a reviewed, tested change?**
 
+This note is a baseline snapshot, not the final canonical denominator for "landable change." For the current attribution gaps and the follow-on work to close them, see [interspect-event-validity-and-outcome-attribution.md](../research/interspect-event-validity-and-outcome-attribution.md).
+
 ## Results
 
 | Metric | Value |
@@ -68,6 +70,8 @@ First measurement of the Demarch north star metric: **what does it cost to ship 
 4. **Commit count is approximate**: Some commits happen after the session's last recorded timestamp. The baseline uses conservative in-window counting.
 
 5. **API vs subscription pricing**: Claude Code users on Max plan pay a flat subscription, not per-token. API pricing gives a comparable baseline for optimization decisions but doesn't reflect actual out-of-pocket cost.
+
+6. **Denominator is provisional**: This baseline uses session-window commit counts, but Demarch does not yet have one canonical landed-change entity across measurement consumers. See [interspect-event-validity-and-outcome-attribution.md](../research/interspect-event-validity-and-outcome-attribution.md).
 
 ## How to Reproduce
 

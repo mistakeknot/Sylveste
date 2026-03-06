@@ -15,7 +15,7 @@ Demarch is the physical monorepo for the open-source autonomous software develop
 | **MCP** | Model Context Protocol — enables plugins to expose tools as server processes that Claude Code calls directly. |
 | **Driver** | A companion plugin (part of the Interverse pillar) that extends Clavain with one capability. Also called "companion plugin." |
 | **Marketplace** | The `interagency-marketplace` registry at `core/marketplace/` — JSON catalog of all published plugins. |
-| **Interspect** | Adaptive profiler pillar — reads kernel events, proposes OS configuration changes. Cross-cutting (not a layer). |
+| **Interspect** | Adaptive profiler pillar — reads kernel event surfaces, proposes OS configuration changes. Cross-cutting (not a layer). Current measurement caveats are documented in `docs/research/interspect-event-validity-and-outcome-attribution.md`. |
 
 ## Directory Layout
 
