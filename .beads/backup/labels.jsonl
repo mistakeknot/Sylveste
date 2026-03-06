@@ -684,6 +684,9 @@
 {"issue_id":"iv-2zg","label":"theme:docs"}
 {"issue_id":"iv-2zg","label":"theme:dx"}
 {"issue_id":"iv-30a","label":"theme:ux"}
+{"issue_id":"iv-30zy3","label":"claimed_at:1772811134"}
+{"issue_id":"iv-30zy3","label":"claimed_by:8cde8f84-f61d-42c4-921e-19d011204a87"}
+{"issue_id":"iv-30zy3","label":"complexity:4"}
 {"issue_id":"iv-3115","label":"mod:interwatch"}
 {"issue_id":"iv-3115","label":"theme:dx"}
 {"issue_id":"iv-32mk","label":"mod:tldrs"}
@@ -1885,6 +1888,8 @@
 {"issue_id":"iv-ardm5","label":"theme:research"}
 {"issue_id":"iv-as0jw","label":"mod:autarch"}
 {"issue_id":"iv-as0jw","label":"theme:ux"}
+{"issue_id":"iv-asfy","label":"claimed_at:1772810944"}
+{"issue_id":"iv-asfy","label":"claimed_by:d1527394-3280-4482-9f25-e4c4ef7ee8eb"}
 {"issue_id":"iv-asfy","label":"complexity:4"}
 {"issue_id":"iv-asfy","label":"mod:clavain"}
 {"issue_id":"iv-asfy","label":"theme:coordination"}
