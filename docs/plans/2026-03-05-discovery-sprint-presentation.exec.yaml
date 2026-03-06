@@ -1,0 +1,32 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 2
+timeout_per_task: 300
+
+stages:
+  - name: "Core implementation"
+    tasks:
+      - id: task-1
+        title: "Add metadata extraction and review_discovery action to lib-discovery.sh"
+        files: [interverse/interphase/hooks/lib-discovery.sh]
+        depends: []
+      - id: task-2
+        title: "Update route.md presentation and routing for interject discoveries"
+        files: [os/clavain/commands/route.md]
+        depends: []
+
+  - name: "Testing"
+    tasks:
+      - id: task-3
+        title: "Add BATS tests for interject metadata extraction"
+        files: [interverse/interphase/tests/shell/test_interject_discovery.bats]
+        depends: [task-1]
+
+  - name: "Verification"
+    tasks:
+      - id: task-4
+        title: "Verify end-to-end and push"
+        files: []
+        depends: [task-1, task-2, task-3]
+        tier: fast
