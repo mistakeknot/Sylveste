@@ -156,7 +156,7 @@ All 4 extractions in this phase are independent and can be executed in parallel.
 **Acceptance:**
 - Reads `/tmp/interpulse-${SESSION_ID}.json`
 - Renders pressure bar (16-char), level (Green/Yellow/Orange/Red), token estimate, session age, recommendation
-- Matches existing intercheck status behavior for pressure-related fields
+- Matches the previous intercheck pressure behavior for pressure-related fields
 
 ---
 
@@ -170,7 +170,7 @@ All 4 extractions in this phase are independent and can be executed in parallel.
 - Edit: `interverse/intercheck/lib/intercheck-lib.sh` — remove `_ic_session_id`, `_ic_read_state`, `_ic_write_state`, `_ic_state_file`; keep `_ic_file_path`, `_ic_detect_lang`
 - Edit: `interverse/intercheck/hooks/syntax-check.sh` — write to simple counter file `{syntax_errors, format_runs}` instead of full state
 - Edit: `interverse/intercheck/hooks/auto-format.sh` — same counter file update
-- Edit: `interverse/intercheck/skills/status/SKILL.md` — show only syntax errors + format runs (no pressure)
+- Edit: `interverse/intercheck/skills/quality/SKILL.md` — show only syntax errors + format runs (no pressure)
 
 **Acceptance:**
 - `intercheck/hooks/hooks.json` has only one PostToolUse matcher group (Edit|Write|NotebookEdit)
@@ -660,7 +660,7 @@ All 4 extractions in this phase are independent and can be executed in parallel.
 5. `/interkasten:onboard` still works without hierarchy tools
 6. `/interskill:create` walks through unified skill authoring
 7. `/interplug:create` walks through plugin creation
-8. `/intercheck:status` shows syntax errors + format runs only
+8. `/intercheck:quality` shows syntax errors + format runs only
 9. `/interpulse:status` shows pressure gauge + token estimate
 10. `/interknow:compound` writes a knowledge entry
 11. `/interknow:recall` retrieves knowledge entries

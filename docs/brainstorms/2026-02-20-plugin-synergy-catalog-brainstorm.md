@@ -17,15 +17,15 @@ The ecosystem has reached critical mass — enough plugins exist that cross-cutt
 
 ## Category 1: Feedback Loops (Data Collected but Never Consumed)
 
-### 1.1 intercheck context pressure → interline statusline
+### 1.1 interpulse context pressure → interline statusline
 
-**Gap:** intercheck tracks context pressure (Green/Yellow/Orange/Red thresholds at 60/90/120 tool calls) and stores it at `/tmp/intercheck-${SESSION_ID}.json`. interline renders the statusline but has no idea about context pressure.
+**Gap:** interpulse tracks context pressure (Green/Yellow/Orange/Red thresholds at 60/90/120 tool calls) and stores it at `/tmp/interpulse-${SESSION_ID}.json`. interline renders the statusline but has no idea about context pressure.
 
-**Opportunity:** intercheck writes pressure level to interband (`intercheck/pressure`). interline reads it and shows a colored indicator (green dot, yellow warning, red alert) in the statusline.
+**Opportunity:** interpulse writes pressure level to interband (`interpulse/pressure`). interline reads it and shows a colored indicator (green dot, yellow warning, red alert) in the statusline.
 
-**Effort:** Small — intercheck already has the data, interline already reads interband channels.
+**Effort:** Small — interpulse already has the data, interline already reads interband channels.
 
-**Impact:** High — users get ambient awareness of context burn rate without running `/intercheck:status`.
+**Impact:** High — users get ambient awareness of context burn rate without running `/interpulse:status`.
 
 ### 1.2 interstat token spend → model routing decisions
 

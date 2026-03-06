@@ -490,19 +490,19 @@ body {
 <script>
 // DATA_PLACEHOLDER is replaced by the generator with scanned JSON
 const data = {
-  "generated": "2026-03-05T02:36:22.922Z",
+  "generated": "2026-03-06T03:38:26.274Z",
   "stats": {
     "nodes": 188,
-    "edges": 262,
+    "edges": 263,
     "overlaps": 39,
     "byType": {
       "monorepo": 1,
       "ecosystem": 1,
       "plugin": 50,
-      "mcp-server": 17,
+      "mcp-server": 16,
       "skill": 78,
       "hook-event": 6,
-      "agent": 30,
+      "agent": 31,
       "hub": 1,
       "kernel": 1,
       "service": 1,
@@ -558,19 +558,19 @@ const data = {
       "label": "intercheck",
       "description": "Code quality guards and session health monitoring",
       "meta": {
-        "version": "0.2.0",
+        "version": "0.2.2",
         "path": "interverse/intercheck",
         "repoUrl": "https://github.com/mistakeknot/intercheck"
       }
     },
     {
-      "id": "intercheck:status",
+      "id": "intercheck:quality",
       "type": "skill",
-      "label": "status",
-      "description": "Session health dashboard — plugin errors, MCP status, hook failures",
+      "label": "quality",
+      "description": "Code quality metrics — syntax errors and auto-format activity for the current session",
       "meta": {
         "plugin": "intercheck",
-        "path": "interverse/intercheck/skills/status",
+        "path": "interverse/intercheck/skills/quality",
         "repoUrl": "https://github.com/mistakeknot/intercheck"
       }
     },
@@ -623,7 +623,7 @@ const data = {
       "label": "interdeep",
       "description": "Deep research plugin — content extraction and research orchestration via MCP tools.",
       "meta": {
-        "version": "0.1.5",
+        "version": "0.1.6",
         "path": "interverse/interdeep",
         "repoUrl": "https://github.com/mistakeknot/interdeep",
         "commandCount": 1
@@ -1167,7 +1167,7 @@ const data = {
       "label": "interkasten",
       "description": "Living bridge between your projects folder and Notion — bidirectional sync with adaptive AI documentation and pagent",
       "meta": {
-        "version": "0.4.6",
+        "version": "0.4.16",
         "path": "interverse/interkasten",
         "repoUrl": "https://github.com/mistakeknot/interkasten",
         "commandCount": 3
@@ -1354,7 +1354,7 @@ const data = {
       "label": "interline",
       "description": "Dynamic statusline for Claude Code — shows workflow phase, bead context, and Codex dispatch state. Integrates with",
       "meta": {
-        "version": "0.2.11",
+        "version": "0.2.12",
         "path": "interverse/interline",
         "repoUrl": "https://github.com/mistakeknot/interline",
         "commandCount": 2
@@ -1427,10 +1427,10 @@ const data = {
       }
     },
     {
-      "id": "intermap:skills",
+      "id": "intermap:intermap",
       "type": "skill",
-      "label": "skills",
-      "description": "Code architecture mapping — call graphs, module boundaries, dependency analysis",
+      "label": "intermap",
+      "description": "Show project map with detected projects, branches, languages, and active agents",
       "meta": {
         "plugin": "intermap",
         "path": "interverse/intermap/skills",
@@ -1461,10 +1461,10 @@ const data = {
       }
     },
     {
-      "id": "intermem:synthesize",
+      "id": "intermem:memory-synthesis",
       "type": "skill",
-      "label": "synthesize",
-      "description": "Memory synthesis — graduate stable auto-memory facts to AGENTS.md and CLAUDE.md",
+      "label": "memory-synthesis",
+      "description": "Memory Synthesis",
       "meta": {
         "plugin": "intermem",
         "path": "interverse/intermem/skills/synthesize",
@@ -1472,9 +1472,9 @@ const data = {
       }
     },
     {
-      "id": "intermem:tidy",
+      "id": "intermem:memory-tidy",
       "type": "skill",
-      "label": "tidy",
+      "label": "memory-tidy",
       "description": "Tidy memory files — extract oversized sections, detect stale counts",
       "meta": {
         "plugin": "intermem",
@@ -1510,19 +1510,19 @@ const data = {
       "label": "intermux",
       "description": "Agent activity visibility -- tmux monitoring, activity feeds, health detection. Enriches intermute with live context.",
       "meta": {
-        "version": "0.1.2",
+        "version": "0.1.4",
         "path": "interverse/intermux",
         "repoUrl": "https://github.com/mistakeknot/intermux"
       }
     },
     {
-      "id": "intermux:status",
+      "id": "intermux:agents",
       "type": "skill",
-      "label": "status",
-      "description": "Agent activity dashboard — tmux sessions, heartbeats, resource usage",
+      "label": "agents",
+      "description": "Show a live dashboard of all agent tmux sessions — status, activity, health warnings. Not for context pressure (use",
       "meta": {
         "plugin": "intermux",
-        "path": "interverse/intermux/skills/status",
+        "path": "interverse/intermux/skills/agents",
         "repoUrl": "https://github.com/mistakeknot/intermux"
       }
     },
@@ -1576,12 +1576,12 @@ const data = {
       "id": "interpath",
       "type": "plugin",
       "label": "interpath",
-      "description": "Product artifact generator — roadmaps, PRDs, vision docs, changelogs, and status reports from beads, brainstorms, and",
+      "description": "Product artifact generator — roadmaps, PRDs, vision docs, changelogs, CUJs, and status reports from beads, brainstorms",
       "meta": {
-        "version": "0.2.3",
+        "version": "0.3.0",
         "path": "interverse/interpath",
         "repoUrl": "https://github.com/mistakeknot/interpath",
-        "commandCount": 7
+        "commandCount": 8
       }
     },
     {
@@ -1646,19 +1646,19 @@ const data = {
       "label": "interplug",
       "description": "Plugin development toolkit — lifecycle management, structure validation, and troubleshooting for Claude Code plugins",
       "meta": {
-        "version": "0.1.0",
+        "version": "0.1.3",
         "path": "interverse/interplug",
         "repoUrl": "https://github.com/mistakeknot/interplug"
       }
     },
     {
-      "id": "interplug:create",
+      "id": "interplug:plugin",
       "type": "skill",
-      "label": "create",
-      "description": "Creating a new Claude Code plugin from scratch, adding components to an existing plugin, setting up a development",
+      "label": "plugin",
+      "description": "Full plugin lifecycle — create, structure, test, and release Claude Code plugins. For skill/command authoring",
       "meta": {
         "plugin": "interplug",
-        "path": "interverse/interplug/skills/create",
+        "path": "interverse/interplug/skills/plugin",
         "repoUrl": "https://github.com/mistakeknot/interplug"
       }
     },
@@ -1702,19 +1702,19 @@ const data = {
       "label": "interpulse",
       "description": "Session context monitoring — pressure tracking, token estimation, threshold warnings",
       "meta": {
-        "version": "0.1.3",
+        "version": "0.1.5",
         "path": "interverse/interpulse",
         "repoUrl": "https://github.com/mistakeknot/interpulse"
       }
     },
     {
-      "id": "interpulse:status",
+      "id": "interpulse:pressure",
       "type": "skill",
-      "label": "status",
-      "description": "Show current session pressure dashboard",
+      "label": "pressure",
+      "description": "Show current session context pressure dashboard — token usage, call count, threshold warnings. Not for code quality (use",
       "meta": {
         "plugin": "interpulse",
-        "path": "interverse/interpulse/skills/status",
+        "path": "interverse/interpulse/skills/pressure",
         "repoUrl": "https://github.com/mistakeknot/interpulse"
       }
     },
@@ -1859,19 +1859,19 @@ const data = {
       "label": "interskill",
       "description": "Skill authoring toolkit — unified skill creation, TDD-adapted testing, and audit. Consolidated from interdev's",
       "meta": {
-        "version": "0.1.1",
+        "version": "0.1.3",
         "path": "interverse/interskill",
         "repoUrl": "https://github.com/mistakeknot/interskill"
       }
     },
     {
-      "id": "interskill:create",
+      "id": "interskill:skill",
       "type": "skill",
-      "label": "create",
-      "description": "Expert guidance for creating Claude Code skills and slash commands. Use when working with SKILL.md files, authoring new",
+      "label": "skill",
+      "description": "Expert guidance for creating Claude Code skills and slash commands — SKILL.md authoring, frontmatter, TDD pressure",
       "meta": {
         "plugin": "interskill",
-        "path": "interverse/interskill/skills/create",
+        "path": "interverse/interskill/skills/skill",
         "repoUrl": "https://github.com/mistakeknot/interskill"
       }
     },
@@ -1914,7 +1914,7 @@ const data = {
       "label": "interspect",
       "description": "Agent performance profiler and routing optimizer. Collects evidence about flux-drive agent accuracy, proposes routing",
       "meta": {
-        "version": "0.1.6",
+        "version": "0.1.7",
         "path": "interverse/interspect",
         "repoUrl": "https://github.com/mistakeknot/interspect"
       }
@@ -1925,7 +1925,7 @@ const data = {
       "label": "interstat",
       "description": "Token efficiency benchmarking for agent workflows",
       "meta": {
-        "version": "0.2.14",
+        "version": "0.2.15",
         "path": "interverse/interstat",
         "repoUrl": "https://github.com/mistakeknot/interstat"
       }
@@ -2099,7 +2099,7 @@ const data = {
       "label": "intertrack",
       "description": "Feature-level success metric tracking for Demarch",
       "meta": {
-        "version": "0.1.0",
+        "version": "0.1.2",
         "path": "interverse/intertrack",
         "repoUrl": "https://github.com/mistakeknot/intertrack"
       }
@@ -2116,13 +2116,13 @@ const data = {
       }
     },
     {
-      "id": "intertrack:status",
+      "id": "intertrack:metrics",
       "type": "skill",
-      "label": "status",
-      "description": "Show the current state of all tracked feature metrics.",
+      "label": "metrics",
+      "description": "Show the current state of all tracked feature metrics — per-feature success rates, targets, baselines. Not for context",
       "meta": {
         "plugin": "intertrack",
-        "path": "interverse/intertrack/skills/status",
+        "path": "interverse/intertrack/skills/metrics",
         "repoUrl": "https://github.com/mistakeknot/intertrack"
       }
     },
@@ -2132,19 +2132,19 @@ const data = {
       "label": "intertree",
       "description": "Project hierarchy management — filesystem discovery, parent-child relationships, tagging, and layout orchestration",
       "meta": {
-        "version": "0.1.0",
+        "version": "0.1.2",
         "path": "interverse/intertree",
         "repoUrl": "https://github.com/mistakeknot/intertree"
       }
     },
     {
-      "id": "intertree:layout",
+      "id": "intertree:tree",
       "type": "skill",
-      "label": "layout",
-      "description": "Organizing projects — interactive project discovery, hierarchy review, classification, tagging, and Notion registration",
+      "label": "tree",
+      "description": "Visualize project hierarchy — filesystem tree, parent-child relationships, signal analysis. For full interactive project",
       "meta": {
         "plugin": "intertree",
-        "path": "interverse/intertree/skills/layout",
+        "path": "interverse/intertree/skills/tree",
         "repoUrl": "https://github.com/mistakeknot/intertree"
       }
     },
@@ -2166,7 +2166,7 @@ const data = {
       "label": "interwatch",
       "description": "Doc freshness and correctness monitoring — auto-discovers watchable docs, detects drift via 14 signal types, scores",
       "meta": {
-        "version": "0.1.13",
+        "version": "0.2.0",
         "path": "interverse/interwatch",
         "repoUrl": "https://github.com/mistakeknot/interwatch",
         "commandCount": 4
@@ -2313,7 +2313,7 @@ const data = {
       "label": "clavain",
       "description": "Self-improving agent rig: codifies product and engineering discipline into composable workflows from brainstorm to ship",
       "meta": {
-        "version": "0.6.144",
+        "version": "0.6.158",
         "path": "os/clavain",
         "repoUrl": "https://github.com/mistakeknot/Clavain",
         "commandCount": 45
@@ -2529,6 +2529,17 @@ const data = {
       }
     },
     {
+      "id": "clavain:agent:codex-delegate",
+      "type": "agent",
+      "label": "codex-delegate",
+      "description": "Delegates well-scoped tasks to Codex CLI for cost-efficient execution. Use proactively for implementation, exploration",
+      "meta": {
+        "plugin": "clavain",
+        "path": "./agents/workflow/codex-delegate.md",
+        "repoUrl": "https://github.com/mistakeknot/Clavain"
+      }
+    },
+    {
       "id": "clavain:agent:pr-comment-resolver",
       "type": "agent",
       "label": "pr-comment-resolver",
@@ -2536,17 +2547,6 @@ const data = {
       "meta": {
         "plugin": "clavain",
         "path": "./agents/workflow/pr-comment-resolver.md",
-        "repoUrl": "https://github.com/mistakeknot/Clavain"
-      }
-    },
-    {
-      "id": "mcp:clavain:context7",
-      "type": "mcp-server",
-      "label": "context7",
-      "description": "MCP server for clavain — provides context7 tools via http",
-      "meta": {
-        "plugin": "clavain",
-        "type": "http",
         "repoUrl": "https://github.com/mistakeknot/Clavain"
       }
     },
@@ -2603,7 +2603,7 @@ const data = {
     },
     {
       "source": "intercheck",
-      "target": "intercheck:status",
+      "target": "intercheck:quality",
       "type": "provides-skill"
     },
     {
@@ -2958,7 +2958,7 @@ const data = {
     },
     {
       "source": "intermap",
-      "target": "intermap:skills",
+      "target": "intermap:intermap",
       "type": "provides-skill"
     },
     {
@@ -2968,12 +2968,12 @@ const data = {
     },
     {
       "source": "intermem",
-      "target": "intermem:synthesize",
+      "target": "intermem:memory-synthesis",
       "type": "provides-skill"
     },
     {
       "source": "intermem",
-      "target": "intermem:tidy",
+      "target": "intermem:memory-tidy",
       "type": "provides-skill"
     },
     {
@@ -2988,7 +2988,7 @@ const data = {
     },
     {
       "source": "intermux",
-      "target": "intermux:status",
+      "target": "intermux:agents",
       "type": "provides-skill"
     },
     {
@@ -3043,7 +3043,7 @@ const data = {
     },
     {
       "source": "interplug",
-      "target": "interplug:create",
+      "target": "interplug:plugin",
       "type": "provides-skill"
     },
     {
@@ -3058,7 +3058,7 @@ const data = {
     },
     {
       "source": "interpulse",
-      "target": "interpulse:status",
+      "target": "interpulse:pressure",
       "type": "provides-skill"
     },
     {
@@ -3103,7 +3103,7 @@ const data = {
     },
     {
       "source": "interskill",
-      "target": "interskill:create",
+      "target": "interskill:skill",
       "type": "provides-skill"
     },
     {
@@ -3223,7 +3223,7 @@ const data = {
     },
     {
       "source": "intertrack",
-      "target": "intertrack:status",
+      "target": "intertrack:metrics",
       "type": "provides-skill"
     },
     {
@@ -3233,7 +3233,7 @@ const data = {
     },
     {
       "source": "intertree",
-      "target": "intertree:layout",
+      "target": "intertree:tree",
       "type": "provides-skill"
     },
     {
@@ -3403,17 +3403,22 @@ const data = {
     },
     {
       "source": "clavain",
+      "target": "clavain:agent:codex-delegate",
+      "type": "provides-agent"
+    },
+    {
+      "source": "clavain",
       "target": "clavain:agent:pr-comment-resolver",
       "type": "provides-agent"
     },
     {
       "source": "clavain",
-      "target": "mcp:clavain:context7",
-      "type": "provides-mcp"
+      "target": "hook:SessionStart",
+      "type": "fires-hook"
     },
     {
       "source": "clavain",
-      "target": "hook:SessionStart",
+      "target": "hook:PreToolUse",
       "type": "fires-hook"
     },
     {
@@ -5380,7 +5385,7 @@ var PHASE_SKILLS = {
                               'intertest:test-driven-development'], agents: [], mcp: [] },
   'test':          { skills: ['intertest:test-driven-development', 'intertest:verification-before-completion',
                               'intertest:systematic-debugging'], agents: [], mcp: [] },
-  'quality-gates': { skills: ['interflux:flux-drive', 'intercheck:status', 'interpeer:interpeer'],
+  'quality-gates': { skills: ['interflux:flux-drive', 'intercheck:quality', 'interpeer:interpeer'],
                      agents: ['interflux:agent:fd-architecture', 'interflux:agent:fd-safety',
                               'interflux:agent:fd-correctness', 'interflux:agent:fd-user-product',
                               'interflux:agent:fd-quality', 'intersynth:agent:synthesize-review',
@@ -5406,7 +5411,7 @@ var WORKFLOW_TRACE = {
   'review-plan':   { hooks: ['PostToolUse', 'PreToolUse'], artifactIn: 'implementation plan', artifactOut: 'review verdict', mcpTools: ['interspect:review_events'], dataContracts: ['.claude/reviews/*.md'] },
   'execute':       { hooks: ['PreToolUse', 'PostToolUse', 'SessionStart'], artifactIn: 'implementation plan', artifactOut: 'code changes', mcpTools: ['interlock:reserve_files', 'interlock:release_files'], dataContracts: ['source files', '.beads/'] },
   'test':          { hooks: ['PostToolUse'], artifactIn: 'code changes', artifactOut: 'test results', mcpTools: [], dataContracts: ['test output', 'coverage reports'] },
-  'quality-gates': { hooks: ['PostToolUse', 'PreToolUse'], artifactIn: 'code changes + test results', artifactOut: 'review reports', mcpTools: ['interspect:review_events', 'intercheck:status'], dataContracts: ['.claude/reviews/*.md', 'findings JSON'] },
+  'quality-gates': { hooks: ['PostToolUse', 'PreToolUse'], artifactIn: 'code changes + test results', artifactOut: 'review reports', mcpTools: ['interspect:review_events', 'intercheck:quality'], dataContracts: ['.claude/reviews/*.md', 'findings JSON'] },
   'resolve':       { hooks: ['PreToolUse'], artifactIn: 'review reports', artifactOut: 'resolved findings', mcpTools: [], dataContracts: ['source files'] },
   'reflect':       { hooks: ['PostToolUse'], artifactIn: 'resolved findings', artifactOut: 'learnings doc', mcpTools: ['interfluence:corpus_add'], dataContracts: ['docs/solutions/*.md', 'memory files'] },
   'ship':          { hooks: ['PostToolUse', 'SessionStart'], artifactIn: 'learnings doc', artifactOut: 'merged commits', mcpTools: ['interlock:release_all'], dataContracts: ['git log', '.beads/'] }

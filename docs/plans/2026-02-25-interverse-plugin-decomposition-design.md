@@ -159,7 +159,7 @@ Access mediated by interbase SDK module for `~/.interkasten/state.db`.
 - **Hooks:** PostToolUse on `Edit|Write|NotebookEdit`
 - **Shared lib:** Keeps `_ic_file_path`, `_ic_detect_lang` from `lib/intercheck-lib.sh`
 - **State:** Own counter file at `/tmp/intercheck-${SESSION_ID}.json` (just `syntax_errors`, `format_runs`)
-- **Skills:** `/intercheck:status` (syntax error count + format run count)
+- **Skills:** `/intercheck:quality` (syntax error count + format run count)
 - **Bug fix:** Declares `"hooks": "./hooks/hooks.json"` in plugin.json (currently missing)
 
 #### interpulse (new) — Session context monitoring
