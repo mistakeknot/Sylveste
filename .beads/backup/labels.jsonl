@@ -684,7 +684,7 @@
 {"issue_id":"iv-2zg","label":"theme:docs"}
 {"issue_id":"iv-2zg","label":"theme:dx"}
 {"issue_id":"iv-30a","label":"theme:ux"}
-{"issue_id":"iv-30zy3","label":"claimed_at:1772811134"}
+{"issue_id":"iv-30zy3","label":"claimed_at:1772811934"}
 {"issue_id":"iv-30zy3","label":"claimed_by:8cde8f84-f61d-42c4-921e-19d011204a87"}
 {"issue_id":"iv-30zy3","label":"complexity:4"}
 {"issue_id":"iv-3115","label":"mod:interwatch"}
@@ -2635,6 +2635,9 @@
 {"issue_id":"iv-exos","label":"phase:planned"}
 {"issue_id":"iv-exos","label":"theme:research"}
 {"issue_id":"iv-exos.1","label":"theme:docs"}
+{"issue_id":"iv-ey5wb","label":"mod:demarch"}
+{"issue_id":"iv-ey5wb","label":"theme:docs"}
+{"issue_id":"iv-ey5wb","label":"theme:strategy"}
 {"issue_id":"iv-ey6s","label":"mod:interflux"}
 {"issue_id":"iv-ey6s","label":"phase:done"}
 {"issue_id":"iv-ey6s","label":"phase_history:{\n  \"planned_at\": \"2026-02-19T01:38:42Z\"\n}"}
@@ -3747,7 +3750,7 @@
 {"issue_id":"iv-leocs","label":"research:repo"}
 {"issue_id":"iv-leocs","label":"source:dicklesworthstone"}
 {"issue_id":"iv-leocs","label":"theme:research"}
-{"issue_id":"iv-lf5wx","label":"claimed_at:1772740605"}
+{"issue_id":"iv-lf5wx","label":"claimed_at:1772811706"}
 {"issue_id":"iv-lf5wx","label":"claimed_by:b7bbe7d0-3c3b-49d1-9ad9-05b830edb5bc"}
 {"issue_id":"iv-lf5wx","label":"complexity:2"}
 {"issue_id":"iv-lgfi","label":"phase:strategized"}
@@ -3842,6 +3845,8 @@
 {"issue_id":"iv-lwsf","label":"theme:docs"}
 {"issue_id":"iv-lwsf","label":"theme:research"}
 {"issue_id":"iv-lwsf","label":"theme:security"}
+{"issue_id":"iv-lx00","label":"claimed_at:1772811884"}
+{"issue_id":"iv-lx00","label":"claimed_by:d1527394-3280-4482-9f25-e4c4ef7ee8eb"}
 {"issue_id":"iv-lx00","label":"complexity:3"}
 {"issue_id":"iv-lx00","label":"mod:clavain"}
 {"issue_id":"iv-lx00","label":"theme:docs"}
