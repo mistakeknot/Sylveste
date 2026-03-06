@@ -19243,3 +19243,37 @@ time="2026-03-05T19:51:26-08:00" level=info msg=NewConnection DisableClientMulti
 time="2026-03-05T19:51:26-08:00" level=info msg=ConnectionClosed connectionID=256
 time="2026-03-05T19:51:26-08:00" level=info msg="Server closing listener. No longer accepting connections."
 time="2026-03-05T19:51:26-08:00" level=info msg="stats stopped: context canceled"
+Starting server with Config HP="127.0.0.1:3307"|T="28800000"|R="false"|L="info"
+time="2026-03-05T20:43:18-08:00" level=info msg="Server ready. Accepting connections."
+time="2026-03-05T20:43:18-08:00" level=warning msg="secure_file_priv is set to \"\", which is insecure."
+time="2026-03-05T20:43:18-08:00" level=warning msg="Any user with GRANT FILE privileges will be able to read any file which the sql-server process can read."
+time="2026-03-05T20:43:18-08:00" level=warning msg="Please consider restarting the server with secure_file_priv set to a safe (or non-existent) directory."
+time="2026-03-05T20:43:18-08:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=1
+time="2026-03-05T20:43:18-08:00" level=info msg=ConnectionClosed connectionID=1
+time="2026-03-05T20:43:18-08:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=2
+time="2026-03-05T20:43:18-08:00" level=info msg=ConnectionClosed connectionID=2
+time="2026-03-05T20:43:18-08:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=3
+time="2026-03-05T20:43:18-08:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=4
+time="2026-03-05T20:43:18-08:00" level=info msg=ConnectionClosed connectionID=3
+time="2026-03-05T20:43:18-08:00" level=warning msg="error running query" connectTime="2026-03-05 20:43:18.299951204 -0800 PST m=+0.503241584" connectionDb=beads_iv connectionID=4 error="nothing to commit" queryTime="2026-03-05 20:43:18.312240911 -0800 PST m=+0.515531311"
+time="2026-03-05T20:43:22-08:00" level=info msg=ConnectionClosed connectionID=4
+time="2026-03-05T20:43:22-08:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=5
+time="2026-03-05T20:43:22-08:00" level=info msg=ConnectionClosed connectionID=5
+time="2026-03-05T20:43:22-08:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=6
+time="2026-03-05T20:43:22-08:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=7
+time="2026-03-05T20:43:22-08:00" level=info msg=ConnectionClosed connectionID=6
+time="2026-03-05T20:43:22-08:00" level=info msg=ConnectionClosed connectionID=7
+time="2026-03-05T20:43:22-08:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=8
+time="2026-03-05T20:43:22-08:00" level=info msg=ConnectionClosed connectionID=8
+time="2026-03-05T20:43:22-08:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=9
+time="2026-03-05T20:43:22-08:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=10
+time="2026-03-05T20:43:22-08:00" level=info msg=ConnectionClosed connectionID=9
+time="2026-03-05T20:43:22-08:00" level=warning msg="error running query" connectTime="2026-03-05 20:43:22.167075897 -0800 PST m=+4.370366297" connectionDb=beads_iv connectionID=10 error="nothing to commit" queryTime="2026-03-05 20:43:22.178493941 -0800 PST m=+4.381784351"
+time="2026-03-05T20:43:22-08:00" level=info msg=ConnectionClosed connectionID=10
+time="2026-03-05T20:43:25-08:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=11
+time="2026-03-05T20:43:25-08:00" level=info msg=ConnectionClosed connectionID=11
+time="2026-03-05T20:43:25-08:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=12
+time="2026-03-05T20:43:25-08:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=13
+time="2026-03-05T20:43:25-08:00" level=info msg=ConnectionClosed connectionID=12
+time="2026-03-05T20:43:25-08:00" level=warning msg="error running query" connectTime="2026-03-05 20:43:25.658586403 -0800 PST m=+7.861876804" connectionDb=beads_iv connectionID=13 error="nothing to commit" queryTime="2026-03-05 20:43:25.669066308 -0800 PST m=+7.872356717"
+time="2026-03-05T20:43:25-08:00" level=info msg=ConnectionClosed connectionID=13
