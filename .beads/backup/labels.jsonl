@@ -2590,8 +2590,8 @@
 {"issue_id":"iv-ehx2s","label":"theme:architecture"}
 {"issue_id":"iv-ehx2s","label":"theme:docs"}
 {"issue_id":"iv-ehx2s","label":"theme:research"}
-{"issue_id":"iv-elbnh","label":"claimed_at:1772748212"}
-{"issue_id":"iv-elbnh","label":"claimed_by:b7bbe7d0-3c3b-49d1-9ad9-05b830edb5bc"}
+{"issue_id":"iv-elbnh","label":"claimed_at:0"}
+{"issue_id":"iv-elbnh","label":"claimed_by:released"}
 {"issue_id":"iv-elbnh","label":"mod:intercom"}
 {"issue_id":"iv-elcy","label":"mod:interject"}
 {"issue_id":"iv-eqbo","label":"mod:clavain"}
@@ -2755,6 +2755,9 @@
 {"issue_id":"iv-fnvw","label":"theme:dx"}
 {"issue_id":"iv-fnvw","label":"theme:infra"}
 {"issue_id":"iv-fnvw","label":"theme:research"}
+{"issue_id":"iv-fo0rx","label":"claimed_at:1772762038"}
+{"issue_id":"iv-fo0rx","label":"claimed_by:915d7fe0-1688-408d-bd14-177f1e2a0ff3"}
+{"issue_id":"iv-fo0rx","label":"complexity:3"}
 {"issue_id":"iv-fos3","label":"mod:intercore"}
 {"issue_id":"iv-fos3","label":"phase:strategized"}
 {"issue_id":"iv-fos3","label":"theme:architecture"}
@@ -2941,6 +2944,9 @@
 {"issue_id":"iv-gny","label":"mod:autarch"}
 {"issue_id":"iv-gny","label":"theme:docs"}
 {"issue_id":"iv-gny","label":"theme:dx"}
+{"issue_id":"iv-godia","label":"claimed_at:1772762178"}
+{"issue_id":"iv-godia","label":"claimed_by:codex-cli"}
+{"issue_id":"iv-godia","label":"complexity:3"}
 {"issue_id":"iv-gpsqk","label":"mod:intercom"}
 {"issue_id":"iv-gpsqk","label":"mod:interspect"}
 {"issue_id":"iv-gqqvm","label":"mod:intermute"}
