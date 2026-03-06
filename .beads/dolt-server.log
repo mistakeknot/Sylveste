@@ -20281,3 +20281,23 @@ time="2026-03-05T22:01:59-08:00" level=info msg=NewConnection DisableClientMulti
 time="2026-03-05T22:01:59-08:00" level=info msg=ConnectionClosed connectionID=476
 time="2026-03-05T22:01:59-08:00" level=info msg="Server closing listener. No longer accepting connections."
 time="2026-03-05T22:01:59-08:00" level=info msg="stats stopped: context canceled"
+multiple .doltcfg directories detected: '/home/mk/projects/Demarch/.beads/dolt' and '/home/mk/projects/Demarch/.beads/.doltcfg'; pass one of the directories using option --doltcfg-dir
+multiple .doltcfg directories detected: '/home/mk/projects/Demarch/.beads/dolt' and '/home/mk/projects/Demarch/.beads/.doltcfg'; pass one of the directories using option --doltcfg-dir
+Starting server with Config HP="127.0.0.1:3307"|T="28800000"|R="false"|L="info"
+time="2026-03-06T11:28:49-08:00" level=info msg="Server ready. Accepting connections."
+time="2026-03-06T11:28:49-08:00" level=warning msg="secure_file_priv is set to \"\", which is insecure."
+time="2026-03-06T11:28:49-08:00" level=warning msg="Any user with GRANT FILE privileges will be able to read any file which the sql-server process can read."
+time="2026-03-06T11:28:49-08:00" level=warning msg="Please consider restarting the server with secure_file_priv set to a safe (or non-existent) directory."
+time="2026-03-06T11:28:49-08:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=1
+time="2026-03-06T11:28:49-08:00" level=info msg=ConnectionClosed connectionID=1
+time="2026-03-06T11:28:49-08:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=3
+time="2026-03-06T11:28:49-08:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=2
+time="2026-03-06T11:28:49-08:00" level=info msg=ConnectionClosed connectionID=2
+time="2026-03-06T11:28:49-08:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=4
+time="2026-03-06T11:28:49-08:00" level=info msg=ConnectionClosed connectionID=3
+time="2026-03-06T11:28:49-08:00" level=warning msg="error running query" connectTime="2026-03-06 11:28:49.490976789 -0800 PST m=+0.529755182" connectionDb=beads_iv connectionID=4 error="table not found: config" queryTime="2026-03-06 11:28:49.493416625 -0800 PST m=+0.532195059"
+time="2026-03-06T11:28:49-08:00" level=warning msg="error running query" connectTime="2026-03-06 11:28:49.490976789 -0800 PST m=+0.529755182" connectionDb=beads_iv connectionID=4 error="Duplicate key name 'idx_issues_issue_type'" queryTime="2026-03-06 11:28:49.602563678 -0800 PST m=+0.641342081"
+time="2026-03-06T11:28:49-08:00" level=warning msg="error running query" connectTime="2026-03-06 11:28:49.490976789 -0800 PST m=+0.529755182" connectionDb=beads_iv connectionID=4 error="foreign key `fk_dep_depends_on` was not found on the table `dependencies`" queryTime="2026-03-06 11:28:49.603054187 -0800 PST m=+0.641832580"
+time="2026-03-06T11:29:23-08:00" level=info msg="sqle/auto_gc: Successfully completed auto GC of database beads_iv in 285.462608ms"
+time="2026-03-06T11:30:17-08:00" level=warning msg="error running query" connectTime="2026-03-06 11:28:49.490976789 -0800 PST m=+0.529755182" connectionDb=beads_iv connectionID=4 error="nothing to commit" queryTime="2026-03-06 11:30:17.629430715 -0800 PST m=+88.668209109"
+time="2026-03-06T11:30:17-08:00" level=info msg=ConnectionClosed connectionID=4
