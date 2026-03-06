@@ -1,0 +1,1 @@
+{"mtime_ns":1772211651083481746,"size":374,"module_info":{"file_path":"/home/mk/projects/Demarch/research/meta_skill/src/search/tantivy_index.rs","language":"rust","docstring":null,"imports":[{"module":"pub super::tantivy::{Bm25Index, Bm25Result}","names":[],"is_from":false,"line_number":5}],"classes":[],"functions":[],"call_graph":{"calls":{},"called_by":{}}}}

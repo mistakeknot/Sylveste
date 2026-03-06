@@ -439,8 +439,8 @@ body {
   </div>
   <span class="workflow-select-label" id="view-mode-label">View:</span>
   <select class="workflow-select" id="view-mode" onchange="changeViewMode(this.value)">
-    <option value="force">Force Graph</option>
-    <option value="sequence" selected>Swimlane</option>
+    <option value="force" selected>Force Graph</option>
+    <option value="sequence">Swimlane</option>
     <option value="sankey">Sankey Flow</option>
     <option value="statemachine">State Machine</option>
   </select>
@@ -490,7 +490,7 @@ body {
 <script>
 // DATA_PLACEHOLDER is replaced by the generator with scanned JSON
 const data = {
-  "generated": "2026-03-04T20:51:31.551Z",
+  "generated": "2026-03-05T02:36:22.922Z",
   "stats": {
     "nodes": 188,
     "edges": 262,
@@ -1354,10 +1354,10 @@ const data = {
       "label": "interline",
       "description": "Dynamic statusline for Claude Code — shows workflow phase, bead context, and Codex dispatch state. Integrates with",
       "meta": {
-        "version": "0.2.6",
+        "version": "0.2.11",
         "path": "interverse/interline",
         "repoUrl": "https://github.com/mistakeknot/interline",
-        "commandCount": 1
+        "commandCount": 2
       }
     },
     {
@@ -2313,7 +2313,7 @@ const data = {
       "label": "clavain",
       "description": "Self-improving agent rig: codifies product and engineering discipline into composable workflows from brainstorm to ship",
       "meta": {
-        "version": "0.6.139",
+        "version": "0.6.144",
         "path": "os/clavain",
         "repoUrl": "https://github.com/mistakeknot/Clavain",
         "commandCount": 45
@@ -4736,7 +4736,7 @@ var simulation = d3.forceSimulation(graphNodes)
     if (d.type === 'plugin' || d.type === 'kernel' || d.type === 'service') return Math.min(width, height) * 0.22;
     return Math.min(width, height) * 0.35;
   }, width / 2, height / 2).strength(function(d) {
-    if (d.type === 'monorepo' || d.type === 'ecosystem' || d.type === 'hub') return 0;
+    if (d.type === 'monorepo' || d.type === 'ecosystem' || d.type === 'hub') return 0.8;
     if (d.type === 'sprint-phase') return 0;
     if (d.type === 'plugin' || d.type === 'kernel' || d.type === 'service') return 0.4;
     return 0.5;
@@ -5247,7 +5247,7 @@ function dragended(event, d) {
 // Zoom to fit after layout settles
 setTimeout(function() {
   var bounds = g.node().getBBox();
-  var scale = 0.8 / Math.max(bounds.width / width, bounds.height / height);
+  var scale = 0.95 / Math.max(bounds.width / width, bounds.height / height);
   var midX = bounds.x + bounds.width / 2;
   var midY = bounds.y + bounds.height / 2;
   svg.transition().duration(750).call(
@@ -6216,7 +6216,7 @@ function showSprintDetail(phase) {
 // WORKFLOW VISUALIZATION VIEWS
 // ═══════════════════════════════════════════════════════
 
-var currentViewMode = 'sequence'; // 'force', 'sequence', 'sankey', 'statemachine'
+var currentViewMode = 'force'; // 'force', 'sequence', 'sankey', 'statemachine'
 
 // SVG layer for state machine view (rendered in main SVG with zoom/pan)
 var stateMachineGroup = g.append('g').attr('class', 'statemachine-layer');
@@ -6737,13 +6737,13 @@ function renderStateMachineView() {
   // Background
   stateMachineGroup.append('rect')
     .attr('width', width).attr('height', height)
-    .attr('fill', '#0d1117');
+    .attr('fill', '#161b22');
 
   // Elliptical layout — larger radius than force graph
   var cx = width / 2;
   var cy = height / 2;
-  var rx = Math.min(width * 0.38, 500);
-  var ry = Math.min(height * 0.35, 350);
+  var rx = Math.min(width * 0.42, 600);
+  var ry = Math.min(height * 0.40, 420);
   var nodeW = 200, nodeH = 80;
 
   // Compute positions for active phases
@@ -6775,7 +6775,9 @@ function renderStateMachineView() {
     stateMachineGroup.append('line')
       .attr('class', 'sm-transition sm-transition-animated')
       .attr('x1', sx).attr('y1', sy)
-      .attr('x2', ex).attr('y2', ey);
+      .attr('x2', ex).attr('y2', ey)
+      .attr('stroke', '#58a6ff').attr('stroke-width', 2.5)
+      .attr('marker-end', 'url(#sprint-arrow)');
 
     // Gate diamond
     if (phases[i + 1].gate) {
@@ -6798,6 +6800,7 @@ function renderStateMachineView() {
     }
   }
 
+
   // Skip arc: Brainstorm → Write Plan
   var skipFrom = phasePos['brainstorm'];
   var skipTo = phasePos['write-plan'];
@@ -6807,7 +6810,8 @@ function renderStateMachineView() {
     stateMachineGroup.append('path')
       .attr('class', 'sm-skip-arc')
       .attr('d', 'M' + skipFrom.x + ',' + skipFrom.y +
-        ' Q' + midX + ',' + midY + ' ' + skipTo.x + ',' + skipTo.y);
+        ' Q' + midX + ',' + midY + ' ' + skipTo.x + ',' + skipTo.y)
+      .attr('stroke', '#F39C12').attr('stroke-width', 2).attr('fill', 'none');
 
     stateMachineGroup.append('text')
       .attr('x', midX).attr('y', midY - 10)
@@ -6869,6 +6873,45 @@ function renderStateMachineView() {
           .attr('text-anchor', 'end')
           .attr('fill', '#E74C3C').attr('font-size', '7px')
           .text(hooks.join(', '));
+      }
+    }
+
+    // Entity pills below phase node (depth >= 2)
+    if (depth >= 2) {
+      var entities = getPhaseEntities(phase.id, depth);
+      var typeColors = { plugins: '#4A90D9', skills: '#50C878', agents: '#FF8C42', mcp: '#9B59B6', hooks: '#E74C3C' };
+      var typeOrder = ['plugins', 'skills', 'agents', 'mcp', 'hooks'];
+      var allItems = [];
+      typeOrder.forEach(function(type) {
+        entities[type].forEach(function(id) {
+          var n = nodeById[id];
+          allItems.push({ id: id, type: type, color: typeColors[type], label: n ? n.label : id });
+        });
+      });
+
+      var pillY = nodeH + 6;
+      var pillH = 16;
+      var maxVisible = 6;
+      var shown = allItems.slice(0, maxVisible);
+      var overflow = allItems.length - maxVisible;
+
+      shown.forEach(function(item, j) {
+        var py = pillY + j * (pillH + 2);
+        gNode.append('circle')
+          .attr('cx', 8).attr('cy', py + pillH / 2)
+          .attr('r', 4).attr('fill', item.color).attr('opacity', 0.8);
+        gNode.append('text')
+          .attr('x', 16).attr('y', py + pillH / 2 + 3)
+          .attr('fill', '#c9d1d9').attr('font-size', '9px')
+          .text(item.label.length > 22 ? item.label.substring(0, 20) + '..' : item.label);
+      });
+
+      if (overflow > 0) {
+        var py = pillY + shown.length * (pillH + 2);
+        gNode.append('text')
+          .attr('x', 8).attr('y', py + pillH / 2 + 3)
+          .attr('fill', '#8b949e').attr('font-size', '8px')
+          .text('+' + overflow + ' more (click to expand)');
       }
     }
 
