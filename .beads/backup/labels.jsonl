@@ -2864,6 +2864,10 @@
 {"issue_id":"iv-g7uem","label":"source:dicklesworthstone"}
 {"issue_id":"iv-g7uem","label":"theme:research"}
 {"issue_id":"iv-g8j6","label":"mod:interject"}
+{"issue_id":"iv-g8v4j","label":"mod:clavain"}
+{"issue_id":"iv-g8v4j","label":"mod:intercheck"}
+{"issue_id":"iv-g8v4j","label":"theme:dx"}
+{"issue_id":"iv-g8v4j","label":"theme:installer"}
 {"issue_id":"iv-g9aju","label":"mod:clavain"}
 {"issue_id":"iv-g9aju","label":"source:imbue"}
 {"issue_id":"iv-g9aju","label":"theme:research"}
@@ -5084,6 +5088,9 @@
 {"issue_id":"iv-t217.3","label":"theme:docs"}
 {"issue_id":"iv-t217.4","label":"mod:autarch"}
 {"issue_id":"iv-t217.4","label":"theme:docs"}
+{"issue_id":"iv-t25bs","label":"mod:clavain"}
+{"issue_id":"iv-t25bs","label":"theme:dx"}
+{"issue_id":"iv-t25bs","label":"theme:installer"}
 {"issue_id":"iv-t31iu","label":"mod:demarch"}
 {"issue_id":"iv-t31iu","label":"research:repo"}
 {"issue_id":"iv-t31iu","label":"source:dicklesworthstone"}

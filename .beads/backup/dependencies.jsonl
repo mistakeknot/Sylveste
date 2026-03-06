@@ -991,6 +991,7 @@
 {"created_at":"2026-03-05T09:13:45Z","created_by":"90e09241","depends_on_id":"iv-296","issue_id":"iv-g36hy","type":"blocks"}
 {"created_at":"2026-03-05T09:13:45Z","created_by":"90e09241","depends_on_id":"iv-ho3","issue_id":"iv-g36hy","type":"blocks"}
 {"created_at":"2026-03-05T14:36:28Z","created_by":"5b77a946","depends_on_id":"iv-6ocmi","issue_id":"iv-g6wtc","type":"blocks"}
+{"created_at":"2026-03-05T19:02:49Z","created_by":"mistakeknot","depends_on_id":"iv-t25bs","issue_id":"iv-g8v4j","type":"discovered-from"}
 {"created_at":"2026-03-05T16:42:36Z","created_by":"mistakeknot","depends_on_id":"iv-544dn","issue_id":"iv-g9put","type":"discovered-from"}
 {"created_at":"2026-02-22T23:13:37Z","created_by":"mk","depends_on_id":"iv-gax","issue_id":"iv-gax.1","type":"parent-child"}
 {"created_at":"2026-02-18T17:19:10Z","created_by":"mk","depends_on_id":"iv-gbgj","issue_id":"iv-gbgj.1","type":"parent-child"}
@@ -1844,6 +1845,7 @@
 {"created_at":"2026-02-23T08:09:10Z","created_by":"mk","depends_on_id":"iv-t217","issue_id":"iv-t217.2","type":"parent-child"}
 {"created_at":"2026-02-23T08:21:21Z","created_by":"mk","depends_on_id":"iv-t217","issue_id":"iv-t217.3","type":"parent-child"}
 {"created_at":"2026-02-23T08:21:32Z","created_by":"mk","depends_on_id":"iv-t217","issue_id":"iv-t217.4","type":"parent-child"}
+{"created_at":"2026-03-05T18:58:46Z","created_by":"mistakeknot","depends_on_id":"iv-t712t.3","issue_id":"iv-t25bs","type":"discovered-from"}
 {"created_at":"2026-02-19T23:12:14Z","created_by":"mk","depends_on_id":"iv-ishl","issue_id":"iv-t4v6","type":"blocks"}
 {"created_at":"2026-02-28T10:31:52Z","created_by":"mistakeknot","depends_on_id":"iv-t712t","issue_id":"iv-t712t.1","type":"parent-child"}
 {"created_at":"2026-02-28T10:32:06Z","created_by":"mistakeknot","depends_on_id":"iv-t712t","issue_id":"iv-t712t.2","type":"parent-child"}
