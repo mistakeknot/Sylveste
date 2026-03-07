@@ -23,7 +23,7 @@ This sets up beads tracking, CLAUDE.md/AGENTS.md, docs structure, observability,
 ## What you get
 
 - **Clavain**: the agent rig (brainstorm → strategy → plan → execute → review → ship)
-- **40+ companion plugins**: multi-agent code review, phase tracking, doc freshness, semantic search, TUI testing (26 installed by default, 14 optional)
+- **55+ companion plugins**: multi-agent code review, phase tracking, doc freshness, semantic search, TUI testing (43 installed by default, 14 optional)
 - **Multi-model orchestration**: Claude does the heavy lifting, Codex runs parallel tasks, GPT-5.2 Pro provides a second opinion via Oracle
 - **Sprint management**: track work with Beads, auto-discover what to work on next
 
@@ -61,7 +61,7 @@ Demarch is a monorepo with 5 pillars:
 |--------|-------|-------------|
 | [Intercore](https://github.com/mistakeknot/intercore) | L1 (Core) | Orchestration kernel: runs, dispatches, gates, events |
 | [Clavain](https://github.com/mistakeknot/Clavain) | L2 (OS) | Self-improving agent rig |
-| [Interverse](https://github.com/mistakeknot/interagency-marketplace) | L2-L3 | 47 companion plugins |
+| [Interverse](https://github.com/mistakeknot/interagency-marketplace) | L2-L3 | 51 companion plugins |
 | [Autarch](https://github.com/mistakeknot/Autarch) | L3 (Apps) | TUI interfaces (Bigend, Gurgeh, Coldwine, Pollard) |
 | [Interspect](interverse/interspect/) | L2 | Agent performance profiler and routing optimizer |
 
