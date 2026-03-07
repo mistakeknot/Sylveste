@@ -143,6 +143,46 @@ The bar is high — kernel-native is earned by architectural role, not convenien
 
 ---
 
+## Memory Architecture
+
+*Composition applied to knowledge: many scoped stores with explicit boundaries, unified through retrieval, not migration.*
+
+Demarch has 10 memory-shaped systems across 3 layers. Each was built to solve a specific problem. The taxonomy below prevents future systems from creating yet another knowledge store without checking if an existing category fits.
+
+### Five Categories
+
+| Category | Name | What it holds | Owner | Decay model |
+|----------|------|---------------|-------|-------------|
+| C1 | Operational State | Run state, dispatches, sprints, locks, sessions | Intercore kernel | TTL-based (30d for completed runs) |
+| C2 | Evidence & Calibration | Agent accuracy, canary windows, routing calibration, feedback signals | Interspect + Interject | Rolling window (90d evidence, 14d canary) |
+| C3 | Learned Preferences | Interest profiles, voice profiles, source weights | Plugin-local | Exponential moving average (existing) |
+| C4 | Curated Knowledge | Human-validated patterns, solutions, reference material | docs/solutions/ | Provenance-based (10-review + 180d staleness) |
+| C5 | Ephemeral Context | Per-session working memory, auto-memory, cache blobs | Plugin-local filesystem | Intermem promotion model (14d grace + decay) |
+
+### Decision Rule
+
+When a new piece of memory needs a home:
+
+- Is it about current system status? → **C1** (kernel)
+- Is it an observation about agent/system behavior? → **C2** (evidence)
+- Is it a learned model parameter? → **C3** (plugin-local)
+- Is it a human-validated pattern or solution? → **C4** (docs/solutions/)
+- Is it a working note that might become permanent? → **C5** (auto-memory → intermem promotion)
+
+### Design Decisions
+
+**Unify retrieval, not storage.** The real problem is fragmented read paths, not fragmented stores. A thin retrieval layer that queries across systems and returns ranked, deduplicated results solves discoverability without migration risk. Each system keeps its storage.
+
+**Intermem's decay model is the standard.** Grace period + linear decay + hysteresis. Systems without decay adopt this pattern rather than inventing their own. Intermem already solved false-positive demotion prevention and crash recovery.
+
+**Learned preferences stay plugin-local.** C3 models (interest profiles, voice profiles) are ML parameters specific to each plugin's domain. The kernel provides the evidence (C2) that feeds these models, but the models themselves don't need kernel-level treatment. No other system needs to read them.
+
+**Curated knowledge converges.** Multiple C4 stores (interknow, compound docs) converge into a single write path and read path, with shared provenance metadata. The goal is one place to look for validated engineering knowledge, not three.
+
+See `docs/prds/2026-03-07-memory-architecture-convergence.md` for the full system map, per-system recommendations, and implementation sequence.
+
+---
+
 ## Strong Defaults, Replaceable Policy
 
 *Mechanism/policy separation applied to the product itself.*
