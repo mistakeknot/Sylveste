@@ -12,6 +12,14 @@ Install Clavain and the full companion plugin ecosystem in one command:
 curl -fsSL https://raw.githubusercontent.com/mistakeknot/Demarch/main/install.sh | bash
 ```
 
+### Prerequisites
+
+**Required:** [jq](https://jqlang.github.io/jq/), [Go 1.22+](https://go.dev/dl/) (1.24+ for full platform), git
+
+**Recommended:** Python 3.10+ with PyYAML, [Node.js 20+](https://nodejs.org/), [yq v4](https://github.com/mikefarah/yq)
+
+Install takes ~2 minutes (power user) or ~30 minutes (full platform). Disk: ~2 GB core, ~5 GB with all plugins.
+
 Then open Claude Code in your project and run:
 
 ```
@@ -76,6 +84,19 @@ All plugins are installed from the [interagency-marketplace](https://github.com/
 ### Naming convention
 
 All module names are **lowercase** except **Clavain** (proper noun), **Demarch** (project name), **Interverse** (ecosystem name), and **Autarch** (proper noun).
+
+## Troubleshooting
+
+| Problem | Symptom | Fix |
+|---------|---------|-----|
+| jq missing | `install.sh` exits immediately | `sudo apt install jq` or `brew install jq` |
+| Go too old | Version check fails during install | Install Go 1.22+ from [go.dev](https://go.dev/dl/) |
+| `ic` not found | Commands fail after install | Add `export PATH="$HOME/.local/bin:$PATH"` to your shell profile |
+| ic build fails | Install exits with Go error | Check `go env GOPATH` and network access |
+| Plugins missing | `/clavain:setup` shows gaps | Re-run `install.sh` with Claude Code running |
+| `bd` hangs | Beads commands never return | Run `bash .beads/recover.sh` |
+
+Run `/clavain:doctor` for a full health check.
 
 ## License
 
