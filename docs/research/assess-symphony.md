@@ -11,7 +11,7 @@
 
 Symphony is a long-running automation daemon that polls an issue tracker (Linear), creates isolated per-issue workspaces, and runs a coding agent (Codex app-server) for each eligible ticket. It is a **scheduler/runner** with no persistent database — all state lives in-memory and recovers from tracker + filesystem on restart.
 
-**Stack:** Elixir/BEAM (reference impl). The spec is language-agnostic and explicitly designed for porting.
+**Stack:** Elixir/BEAM (reference impl). The spec is language-agnostic and explicitly designed for porting — Section 16 provides pseudocode reference algorithms for all core behaviors, making pattern extraction straightforward.
 
 **Scope:** Orchestrator only. Symphony does not write to the issue tracker; ticket mutations (state transitions, comments, PR links) are performed by the coding agent via tools in the workflow prompt. The orchestrator's job is concurrency control, retry with backoff, reconciliation, and workspace lifecycle.
 
@@ -92,6 +92,7 @@ hooks:
 | `WORKFLOW.md` (prompt + config) | CLAUDE.md + SKILL.md + AGENTS.md | Exists (distributed, not unified) |
 | Retry with backoff | `ic dispatch` has retry logic | Exists but iv-sym03 proposes enhancement |
 | Stall detection | Bead claim heartbeat + `claimed_at` freshness | Exists (45-min window) |
+| Blocker-aware dispatch | `bd ready` filters by blockers; `ic dispatch` does not | **Gap**: dispatch defers to caller |
 | Agent runner (Codex app-server) | Claude Code subprocess (`claude --dangerously-skip-permissions`) | Exists |
 | Token accounting | interstat hooks + `ic session` + `ic cost` | Exists (richer) |
 | Dynamic config reload | No live reload; session-scoped config | **Gap**: not needed (sessions are ephemeral) |
@@ -141,8 +142,8 @@ Symphony's agent runner supports up to `max_turns` per worker session, re-checki
 | Pattern | Target | Why |
 |---------|--------|-----|
 | **Workspace isolation via git worktree** | iv-sym05 | Eliminates claim conflicts, enables true parallelism. Symphony's sanitized workspace keys, root containment validation, and hook lifecycle are directly portable. |
-| **Exponential backoff with capped retry** | iv-sym03 | `min(10s * 2^(attempt-1), max_backoff)` is a clean formula. Demarch's retry logic exists but lacks backoff cap configuration. |
-| **Stall detection as reconciliation** | intercore | Kill + retry on inactivity timeout. Demarch's heartbeat model (45-min claimed_at window) is similar but coarser; per-agent event-based stall detection is tighter. |
+| **Exponential backoff with capped retry** | iv-sym03 | `min(10s * 2^(attempt-1), max_backoff)` is a clean formula. Demarch's retry logic exists but lacks backoff cap configuration. Integrate with intercore's durable retry tracking (not in-memory like Symphony). |
+| **Stall detection as reconciliation** | intercore (enhance existing heartbeat) | Kill + retry on inactivity timeout. Demarch's heartbeat model (45-min claimed_at window) is similar but coarser; per-agent event-based stall detection is tighter. No dedicated bead — enhancement to existing `ic dispatch` reconciliation loop. |
 | **Workspace lifecycle hooks** (after_create, before_run, after_run, before_remove) | iv-sym08 | Clean separation of concerns. Demarch has session-level hooks but no workspace-level hooks. The 4-hook model with failure semantics (fatal vs best-effort) is well-designed. |
 
 ### Adapt
@@ -150,10 +151,10 @@ Symphony's agent runner supports up to `max_turns` per worker session, re-checki
 | Pattern | Target | How to adapt |
 |---------|--------|--------------|
 | **External issue tracker adapter** | iv-sym02 | Don't replace beads with Linear; add an optional sync layer that imports from Linear/GitHub Issues into beads. The adapter interface (fetch_candidates, fetch_states_by_ids) is clean. |
-| **Dispatch-level retry with backoff** | iv-sym03 | Add `max_retry_backoff_ms` to `ic dispatch` config. Use Symphony's formula but integrate with intercore's durable retry tracking (not in-memory). |
 | **Continuous dispatch daemon mode** | iv-sym04 | Symphony's poll-dispatch-reconcile loop is the right shape. Adapt to a long-running `ic daemon` that watches beads instead of Linear. Must be durable (intercore SQLite), not in-memory. |
-| **Turn cap with inter-turn state refresh** | iv-sym06 | Add `max_turns` to Clavain sprint config. Between turns, refresh bead state and check for cancellation/priority changes. Adapt the continuation guidance pattern (don't re-render full prompt). |
+| **Turn cap with inter-turn state refresh** | iv-sym06 | Note: the bead title says "token budget enforcement" but Symphony's pattern is turn-count-based (`max_turns`), not token-based. Both are useful — adopt the turn cap + inter-turn bead state refresh from Symphony; token budget enforcement comes from interstat. Between turns, check for cancellation/priority changes and use continuation guidance (don't re-render full prompt). |
 | **Harness engineering audit** | iv-sym07 | Symphony's Section 15.5 harness hardening guidance is a good checklist. Adapt into a pre-dispatch health check: verify repo state, check for uncommitted changes, validate CLAUDE.md exists, ensure hooks are registered. |
+| **Blocker-aware dispatch gating** | intercore | Symphony won't dispatch `Todo` issues with non-terminal blockers (Section 8.2). `bd ready` filters this already, but `ic dispatch` defers to the caller. Move blocker checking into the dispatch layer so all consumers get it. |
 
 ### Skip
 
@@ -178,7 +179,7 @@ This assessment enables concrete scoping for the 7 downstream beads:
 | iv-sym03 | Adopt | `min(10s * 2^(attempt-1), config.max_retry_backoff_ms)` in `ic dispatch`. Continuation retry = 1s fixed. |
 | iv-sym04 | Adapt | Poll-dispatch-reconcile loop as `ic daemon`. Durable state, not in-memory. Watch beads, not Linear. |
 | iv-sym05 | Adopt | `git worktree add` per bead. Sanitize workspace key from bead ID. Root containment validation. 4 hooks. |
-| iv-sym06 | Adapt | `max_turns` cap + inter-turn bead state refresh. Budget enforcement from interstat. |
+| iv-sym06 | Adapt | Turn-count cap (`max_turns`) + inter-turn bead state refresh from Symphony. Token budget enforcement is a separate concern (interstat). Both mechanisms needed. |
 | iv-sym07 | Adapt | Pre-dispatch health gate: repo clean, CLAUDE.md exists, hooks registered, no zombie processes. |
 | iv-sym08 | Adopt | Hook lifecycle: after_create (fatal), before_run (fatal), after_run (best-effort), before_remove (best-effort). Timeout per hook. |
 
