@@ -11,6 +11,9 @@ root_cause: missing_validation
 resolution_type: code_fix
 severity: high
 tags: [jq, null-safety, shell, bash, checkpoint, json, empty-string, runtime-error]
+lastConfirmed: 2026-02-16
+provenance: independent
+review_count: 0
 ---
 
 # Troubleshooting: jq Null-Slice Runtime Error from Empty-String Function Returns

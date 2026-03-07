@@ -12,6 +12,9 @@ root_cause: arithmetic_exit_code_under_set_e
 resolution_type: pattern
 severity: medium
 tags: [bash, set-e, arithmetic, batch-loop, error-accumulation, shell]
+lastConfirmed: 2026-02-22
+provenance: independent
+review_count: 0
 ---
 
 # `set -e` with Bash Arithmetic and Error-Accumulating Functions

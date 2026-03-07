@@ -5,6 +5,9 @@ severity: medium
 tags: [documentation, validation, drift, onboarding, quality-gates]
 created: 2026-02-28
 root_cause: "Docs written at design time drift as the project evolves — counts, versions, build commands, and architectural definitions become stale without automated detection"
+lastConfirmed: 2026-03-07
+provenance: independent
+review_count: 0
 ---
 
 # Stranger-Perspective Documentation Validation

@@ -5,6 +5,9 @@ severity: high
 date: 2026-02-23
 tags: [go, hashing, caching, maps, determinism, performance, bubble-tea]
 related: []
+lastConfirmed: 2026-02-23
+provenance: independent
+review_count: 0
 ---
 
 ## Problem

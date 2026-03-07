@@ -12,6 +12,9 @@ root_cause: credential_file_lock
 resolution_type: config_change
 severity: high
 tags: [git, credentials, multi-user, claude-user, permissions, ACL, plugin-install]
+lastConfirmed: 2026-02-16
+provenance: independent
+review_count: 0
 ---
 
 # Git Credential Store Lock Failure in Multi-User Setup

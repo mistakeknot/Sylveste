@@ -1,10 +1,3 @@
-# Intercom-Hermes Consolidation: Recommendation & Roadmap
-
-**Date:** 2026-03-02
-**Decision:** Keep dual-process architecture, replace fire-and-forget HTTP with Postgres LISTEN/NOTIFY
-**Timeline:** 2–3 weeks to production
-**Effort:** 15–18 days
-
 ---
 
 ## Recommended Approach: Option A (LISTEN/NOTIFY)
@@ -45,7 +38,11 @@ sendMessage() + increment retry_count
 ### Key Changes
 
 | What | Before | After |
-|------|--------|-------|
+|
+lastConfirmed: 2026-03-07
+provenance: independent
+review_count: 0
+------|--------|-------|
 | **Task creation flow** | Node: SQLite + fire-and-forget HTTP | Node: SQLite + outbox INSERT + NOTIFY |
 | **Task dispatch** | Daemon: HTTP listener (no backpressure) | Daemon: LISTEN subscription + fallback polling |
 | **Session updates** | Node: SQLite + HTTP, Daemon: Postgres | Daemon: Postgres only, Node: subscribes to notify |

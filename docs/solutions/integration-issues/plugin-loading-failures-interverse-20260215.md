@@ -12,6 +12,9 @@ root_cause: incomplete_setup
 resolution_type: environment_setup
 severity: high
 tags: [claude-code, plugin, mcp, hooks, orphaned-at, version-mismatch, binary-missing]
+lastConfirmed: 2026-02-15
+provenance: independent
+review_count: 0
 ---
 
 # Troubleshooting: Claude Code Plugin Loading Failures (4 Plugins)

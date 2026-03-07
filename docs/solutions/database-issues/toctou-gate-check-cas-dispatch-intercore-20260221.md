@@ -12,6 +12,9 @@ framework_version: 1.22.0
 resolution_type: code_fix
 severity: high
 tags: [sqlite, toctou, cas, optimistic-concurrency, transaction, go, begintx, querier-interface]
+lastConfirmed: 2026-02-21
+provenance: independent
+review_count: 0
 ---
 
 # Troubleshooting: TOCTOU in Gate-Phase Advance + Missing CAS on Dispatch Status

@@ -10,6 +10,9 @@ root_cause: missing_workflow_step
 resolution_type: tooling_addition
 severity: medium
 tags: [go, mcp, plugin, auto-build, launcher, compiled-binary]
+lastConfirmed: 2026-02-15
+provenance: independent
+review_count: 0
 ---
 
 # Troubleshooting: Compiled MCP Binary Missing After Plugin Install

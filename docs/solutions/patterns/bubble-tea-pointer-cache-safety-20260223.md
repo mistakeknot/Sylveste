@@ -5,6 +5,9 @@ severity: medium
 date: 2026-02-23
 tags: [go, bubble-tea, concurrency, elm-architecture, caching, tui]
 related: [go-map-hash-determinism-20260223]
+lastConfirmed: 2026-02-23
+provenance: independent
+review_count: 0
 ---
 
 ## Problem

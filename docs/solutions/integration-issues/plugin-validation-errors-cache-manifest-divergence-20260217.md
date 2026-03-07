@@ -12,6 +12,9 @@ root_cause: incomplete_setup
 resolution_type: config_change
 severity: high
 tags: [claude-code, plugin, cache-divergence, hooks-format, manifest, orphaned-at, hook-event-types]
+lastConfirmed: 2026-02-17
+provenance: independent
+review_count: 0
 ---
 
 # Plugin Validation Errors: Cache/Manifest Divergence (4 Plugins)

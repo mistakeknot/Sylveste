@@ -11,6 +11,9 @@ root_cause: guard_fallthrough
 resolution_type: pattern
 severity: high
 tags: [path-traversal, validation, guard-clause, null-safety, security, typescript]
+lastConfirmed: 2026-02-16
+provenance: independent
+review_count: 0
 ---
 
 # Guard Fallthrough: Validation That Silently Skips on Null

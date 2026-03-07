@@ -11,6 +11,9 @@ root_cause: wrong_flag
 resolution_type: workflow_fix
 severity: medium
 tags: [beads, bd, sync, trunk-based, git, workflow]
+lastConfirmed: 2026-02-16
+provenance: independent
+review_count: 0
 ---
 
 # `bd sync --from-main` Fails on Trunk-Based Repos

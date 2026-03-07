@@ -11,6 +11,9 @@ root_cause: wal_bypass
 resolution_type: pattern
 severity: high
 tags: [wal, crash-recovery, write-ahead-log, conflict-resolution, data-integrity, typescript]
+lastConfirmed: 2026-02-16
+provenance: independent
+review_count: 0
 ---
 
 # WAL Protocol Completeness: Every Write Path Needs Protection

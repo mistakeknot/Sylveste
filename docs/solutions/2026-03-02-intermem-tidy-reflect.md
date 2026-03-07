@@ -4,6 +4,9 @@ category: pattern
 tags: [intermem, memory, auto-memory, tidy]
 bead: iv-o54wi
 date: 2026-03-02
+lastConfirmed: 2026-03-02
+provenance: independent
+review_count: 0
 ---
 
 # Reflect: intermem tidy sprint

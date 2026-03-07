@@ -12,6 +12,9 @@ root_cause: incomplete_setup
 resolution_type: tooling_addition
 severity: high
 tags: [claude-code, plugin, mcp, launcher, graceful-degradation, hooks, install]
+lastConfirmed: 2026-02-24
+provenance: independent
+review_count: 0
 ---
 
 # Troubleshooting: Plugin Install Failure on New Machine — Undeclared Hooks + Missing MCP Prerequisites

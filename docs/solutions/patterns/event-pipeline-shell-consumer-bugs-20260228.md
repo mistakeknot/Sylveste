@@ -6,6 +6,9 @@ created: 2026-02-28
 severity: high
 confidence: verified
 trigger: "Adding new event consumers in shell that call ic state or _interspect_insert_evidence"
+lastConfirmed: 2026-03-07
+provenance: independent
+review_count: 0
 ---
 
 # Event Pipeline Shell Consumer Bugs

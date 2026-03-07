@@ -10,6 +10,9 @@ root_cause: set_e_interaction
 resolution_type: pattern
 severity: medium
 tags: [bash, set-e, error-handling, hooks, fallback, shell]
+lastConfirmed: 2026-02-16
+provenance: independent
+review_count: 0
 ---
 
 # `set -euo pipefail` with Fallback Recovery Paths

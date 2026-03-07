@@ -5,6 +5,9 @@ severity: medium
 date: 2026-02-23
 tags: [architecture, plugin-design, cli, interverse, separation-of-concerns, skills]
 related: [hooks-vs-skills-separation-plugin-20260211, cli-plugin-low-agent-adoption-vs-mcp-20260211]
+lastConfirmed: 2026-02-23
+provenance: independent
+review_count: 0
 ---
 
 ## Problem

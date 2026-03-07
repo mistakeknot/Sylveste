@@ -11,6 +11,9 @@ root_cause: argparse_parents_default_overwrite
 resolution_type: pattern
 severity: medium
 tags: [python, argparse, cli, subparsers, parents, defaults, suppress]
+lastConfirmed: 2026-02-19
+provenance: independent
+review_count: 0
 ---
 
 # argparse `parents=[shared]` Overwrites Flags Parsed by Main Parser

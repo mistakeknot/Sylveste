@@ -5,6 +5,9 @@ severity: medium
 date: 2026-02-18
 tags: [intercore, sqlite, migration, deployment, go-embed]
 related_issues: [iv-a20e]
+lastConfirmed: 2026-02-18
+provenance: independent
+review_count: 0
 ---
 
 # intercore Schema Upgrade + Binary Deployment Pattern

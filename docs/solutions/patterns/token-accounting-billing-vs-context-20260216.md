@@ -11,6 +11,9 @@ root_cause: wrong_metric
 resolution_type: dual_metric_reporting
 severity: high
 tags: [tokens, context-window, cache, billing, measurement, decision-gate, interstat]
+lastConfirmed: 2026-02-16
+provenance: independent
+review_count: 0
 ---
 
 # Token Accounting: Billing Tokens vs Effective Context

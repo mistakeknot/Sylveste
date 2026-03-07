@@ -5,6 +5,9 @@ date: 2026-03-03
 bead: iv-240m
 tags: [clavain, go, composer, dispatch, fleet-registry, safety-floors]
 relevance: high
+lastConfirmed: 2026-03-03
+provenance: independent
+review_count: 0
 ---
 
 # C3 Composer — Dispatch Plan Generator

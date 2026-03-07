@@ -5,6 +5,9 @@ severity: high
 date: 2026-02-16
 tags: [multi-agent, context-window, synthesis, intersynth, verdict, subagent]
 related: [token-accounting-billing-vs-context-20260216]
+lastConfirmed: 2026-02-16
+provenance: independent
+review_count: 0
 ---
 
 ## Problem

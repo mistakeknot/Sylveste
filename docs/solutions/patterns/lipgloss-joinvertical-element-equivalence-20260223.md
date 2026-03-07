@@ -5,6 +5,9 @@ severity: low
 date: 2026-02-23
 tags: [go, lipgloss, bubble-tea, tui, refactoring, string-composition]
 related: [bubble-tea-pointer-cache-safety-20260223]
+lastConfirmed: 2026-02-23
+provenance: independent
+review_count: 0
 ---
 
 ## Problem

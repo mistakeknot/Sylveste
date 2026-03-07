@@ -12,6 +12,9 @@ root_cause: missing_validation
 resolution_type: code_fix
 severity: medium
 tags: [go, silent-failure, error-handling, utf8, sql, quality-gates, multi-agent-review]
+lastConfirmed: 2026-02-21
+provenance: independent
+review_count: 0
 ---
 
 # Best Practice: Silent API Misuse Patterns in Go

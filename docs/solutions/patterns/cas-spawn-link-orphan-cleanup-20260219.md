@@ -11,6 +11,9 @@ root_cause: toctou_race_and_orphan_resource
 resolution_type: pattern
 severity: medium
 tags: [sqlite, concurrency, cas, spawn, orphan-cleanup, single-connection, go]
+lastConfirmed: 2026-02-19
+provenance: independent
+review_count: 0
 ---
 
 # CAS Dispatch Linking with Orphan Process Cleanup

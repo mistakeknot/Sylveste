@@ -4,6 +4,9 @@ bead: iv-6ixw
 stage: reflect
 category: patterns
 tags: [self-building, clavain, agency-spec, wiring, gate-graduation]
+lastConfirmed: 2026-03-07
+provenance: independent
+review_count: 0
 ---
 # C5: Self-Building Loop — Sprint Reflection
 
