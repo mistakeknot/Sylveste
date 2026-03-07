@@ -22,6 +22,8 @@ When you have enough context to start implementing, do it. Write a 3-bullet inli
 
 **Owner/agents:** Trunk-based development — commit directly to `main`. You can bypass branch protection as admin.
 
+**Commit implies push:** When the user says "commit", "commit this", or "commit and proceed", always `git push` after committing unless they explicitly say not to push. Do not ask for separate push confirmation.
+
 **External contributors:** Fork + PR. Branch protection is enabled on `main` for all public repos (require 1 approving review, dismiss stale reviews). Direct pushes to `main` are blocked for non-admins.
 
 See [docs/guide-contributing.md](docs/guide-contributing.md) for the full contributor guide.

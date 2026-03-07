@@ -2638,9 +2638,6 @@
 {"issue_id":"iv-exos","label":"phase:planned"}
 {"issue_id":"iv-exos","label":"theme:research"}
 {"issue_id":"iv-exos.1","label":"theme:docs"}
-{"issue_id":"iv-ey5wb","label":"claimed_at:1772841955"}
-{"issue_id":"iv-ey5wb","label":"claimed_by:unknown"}
-{"issue_id":"iv-ey5wb","label":"complexity:3"}
 {"issue_id":"iv-ey5wb","label":"mod:demarch"}
 {"issue_id":"iv-ey5wb","label":"theme:docs"}
 {"issue_id":"iv-ey5wb","label":"theme:strategy"}
@@ -3313,9 +3310,6 @@
 {"issue_id":"iv-iqeuh","label":"research:repo"}
 {"issue_id":"iv-iqeuh","label":"source:dicklesworthstone"}
 {"issue_id":"iv-iqeuh","label":"theme:research"}
-{"issue_id":"iv-iqrv6","label":"claimed_at:1772854347"}
-{"issue_id":"iv-iqrv6","label":"claimed_by:2d7c7517-af90-446e-b999-e417af862a09"}
-{"issue_id":"iv-iqrv6","label":"complexity:3"}
 {"issue_id":"iv-iqx5h","label":"mod:intermute"}
 {"issue_id":"iv-iqx5h","label":"research:repo"}
 {"issue_id":"iv-iqx5h","label":"source:dicklesworthstone"}
