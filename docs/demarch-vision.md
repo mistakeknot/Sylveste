@@ -155,7 +155,7 @@ Codex handles parallel implementation. Opus and Sonnet handle complex reasoning.
 
 Final review, deployment, and knowledge capture. The agency validates the change, lands it, and compounds what was learned.
 
-The interflux fleet deploys explicit cognitive diversity lenses during final review. Oracle provides cross-AI validation. The system never pushes code to a remote repository without human confirmation. What "human confirmation" means evolves with the autonomy ladder:
+The interflux fleet deploys explicit cognitive diversity lenses during final review. Oracle provides cross-AI validation. Code pushes are gated on human confirmation, where the scope of "confirmation" evolves with the autonomy ladder:
 - **L0-L2 (current):** Per-change human confirmation before each push.
 - **L3:** Human sets shipping policy (which repos, which confidence thresholds, which test coverage gates). Agent pushes when policy conditions are met.
 - **L4:** Human approves the policy itself; agent pushes autonomously within policy bounds.
