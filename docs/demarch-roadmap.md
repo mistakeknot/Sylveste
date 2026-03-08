@@ -271,31 +271,20 @@ Major dependency chains spanning multiple modules:
 
 ## Modules Without Roadmaps
 
-- `core/agent-rig`
-- `core/interband`
-- `core/interbench`
-- `interverse/intercache`
-- `interverse/interchart`
-- `interverse/interdeep`
-- `interverse/interkasten`
-- `interverse/interknow`
-- `interverse/interleave`
-- `interverse/intermonk`
-- `interverse/intername`
-- `interverse/interpeer`
-- `interverse/interplug`
-- `interverse/interpulse`
-- `interverse/interrank`
-- `interverse/interscribe`
-- `interverse/intersense`
-- `interverse/intership`
-- `interverse/intersight`
-- `interverse/interskill`
-- `interverse/interspect`
-- `interverse/intersynth`
-- `interverse/intertest`
-- `interverse/intertrace`
-- `interverse/intertree`
+26 modules lack dedicated roadmap files. Most are peripheral ("early" status). Flywheel-critical modules have alternative coverage noted.
+
+**Flywheel-critical (have alternative coverage):**
+- `interverse/interspect` — has [vision doc](interspect-vision.md) and [interspect product PRD](../core/intercore/docs/product/interspect-prd.md). Roadmap items tracked via beads (iv-sksfx chain, iv-f7gsz, iv-w3ee6).
+
+**Peripheral (early status, no roadmap needed yet):**
+- `core/agent-rig`, `core/interband`, `core/interbench`
+- `interverse/intercache`, `interverse/interchart`, `interverse/interdeep`
+- `interverse/interkasten`, `interverse/interknow`, `interverse/interleave`
+- `interverse/intermonk`, `interverse/intername`, `interverse/interpeer`
+- `interverse/interplug`, `interverse/interpulse`, `interverse/interrank`
+- `interverse/interscribe`, `interverse/intersense`, `interverse/intership`
+- `interverse/intersight`, `interverse/interskill`, `interverse/intersynth`
+- `interverse/intertest`, `interverse/intertrace`, `interverse/intertree`
 - `interverse/intertrust`
 
 ---
