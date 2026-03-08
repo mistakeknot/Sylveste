@@ -11,7 +11,7 @@ cd interverse/interflux  # from repo root
 
 **Plugins (hooks/skills/commands only):**
 ```bash
-claude --plugin-dir /root/projects/Demarch/interverse/<name>
+claude --plugin-dir ~/projects/Demarch/interverse/<name>
 # Structural tests (if present):
 cd interverse/<name> && uv run pytest tests/structural/ -v
 ```

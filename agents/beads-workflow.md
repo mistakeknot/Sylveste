@@ -4,7 +4,7 @@
 
 All work is tracked at the **Demarch root level** using the monorepo `.beads/` database. Module-level `.beads/` databases are read-only archives of historical closed beads.
 
-- Create beads from the Demarch root: `cd /root/projects/Demarch && bd create --title="[module] Description" ...`
+- Create beads from the Demarch root: `cd ~/projects/Demarch && bd create --title="[module] Description" ...`
 - Use `[module]` prefix in bead titles to identify the relevant module (e.g., `[interlock]`, `[interflux]`, `[clavain]`)
 - Filter by module: `bd list --status=open | grep -i interlock`
 - Cross-module beads use multiple prefixes: `[interlock/intermute]`

@@ -53,4 +53,4 @@ Standalone plugins (no cross-deps): intercache, interchart, intercheck, intercra
 
 ## Compatibility
 
-Symlinks at `/root/projects/<name>` point into this monorepo for backward compatibility with scripts, configs, and Claude Code session history that reference old paths. These can be removed once all references are updated.
+Historical symlinks at `/root/projects/<name>` previously pointed into this monorepo. These have been removed. The canonical path is `~/projects/Demarch/`.
