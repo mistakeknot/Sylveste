@@ -45,9 +45,11 @@ Clavain (L2) → interwatch → interpath/interdoc # doc freshness → generator
 interject → intersearch                        # ambient discovery
 interdeep → interject                          # deep research extraction + search
 Clavain (L2) → intertrust                     # agent trust scoring
+interpulse → interband → interline/intermem   # context pressure → statusline/memory
+Clavain (L2) → interphase                     # phase tracking, gates, discovery
 ```
 
-Standalone plugins (no cross-deps): interfluence, interkasten, tldr-swinton, intercache, intercheck, interstat, interpeer, intertest, interlens, intermap, intermux, tool-time, tuivision.
+Standalone plugins (no cross-deps): intercache, interchart, intercheck, intercraft, interdev, interfluence, interform, interkasten, interknow, interlearn, interleave, interlens, intermap, intermonk, intermux, intername, internext, interpeer, interplug, interrank, interscribe, intersense, intership, intersight, interskill, interslack, interstat, intertest, intertrace, intertrack, intertree, tldr-swinton, tool-time, tuivision.
 
 ## Compatibility
 

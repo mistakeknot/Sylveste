@@ -16,7 +16,7 @@ claude --plugin-dir /root/projects/Demarch/interverse/<name>
 cd interverse/<name> && uv run pytest tests/structural/ -v
 ```
 
-**MCP server plugins** (intercache, interdeep, interflux, interfluence, interject, interkasten, interlock, intermap, intermux, tldr-swinton, tuivision):
+**MCP server plugins** (intercache, interdeep, interfluence, interflux, interject, interkasten, interknow, interlens, interlock, intermap, intermux, interrank, intersearch, interserve, tldr-swinton, tuivision):
 ```bash
 # Build/install the server first, then test via Claude Code.
 # Entrypoints vary — check each module's local AGENTS.md. Examples:
