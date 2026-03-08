@@ -1,6 +1,6 @@
 {"issue_id":"Demarch-1qd","label":"claimed_at:1772931795"}
 {"issue_id":"Demarch-1qd","label":"claimed_by:2d7c7517-af90-446e-b999-e417af862a09"}
-{"issue_id":"Demarch-2ce","label":"claimed_at:1772945262"}
+{"issue_id":"Demarch-2ce","label":"claimed_at:1772945688"}
 {"issue_id":"Demarch-2ce","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-3v6","label":"claimed_at:1772865116"}
 {"issue_id":"Demarch-3v6","label":"claimed_by:a2ac6b77-94ad-4526-8b84-efa6edf28c8d"}
@@ -665,10 +665,9 @@
 {"issue_id":"iv-2p6sm","label":"source:dicklesworthstone"}
 {"issue_id":"iv-2p6sm","label":"theme:research"}
 {"issue_id":"iv-2p8","label":"theme:research"}
-{"issue_id":"iv-2s7k7","label":"claimed_at:0"}
-{"issue_id":"iv-2s7k7","label":"claimed_at:1772898320"}
-{"issue_id":"iv-2s7k7","label":"claimed_by:d1527394-3280-4482-9f25-e4c4ef7ee8eb"}
-{"issue_id":"iv-2s7k7","label":"claimed_by:released"}
+{"issue_id":"iv-2s7k7","label":"claimed_at:1772945861"}
+{"issue_id":"iv-2s7k7","label":"claimed_by:51d64d87-cf60-4c63-b47c-e76d444006bb"}
+{"issue_id":"iv-2s7k7","label":"claimed_by:unknown"}
 {"issue_id":"iv-2s7k7","label":"complexity:3"}
 {"issue_id":"iv-2sm4","label":"mod:clavain"}
 {"issue_id":"iv-2sm4","label":"theme:coordination"}
