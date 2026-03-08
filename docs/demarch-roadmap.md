@@ -1,8 +1,8 @@
 # Demarch Roadmap
 
-**Modules:** 61 | **Open beads:** 698 (per `bd stats`, 2026-03-06) | **Blocked:** 68 | **Closed:** 2,567 | **Last updated:** 2026-03-06
+**Modules:** 61 | **Open beads:** 696 | **In progress:** 6 | **Blocked:** 59 | **Closed:** 2,667 | **Last updated:** 2026-03-07
 **Structure:** [`CLAUDE.md`](../CLAUDE.md)
-**Machine output:** [`docs/roadmap.json`](roadmap.json) — auto-generated inventory of all roadmap-placed items (230+ entries). This markdown file is the curated view; roadmap.json is the machine-readable superset. `bd stats` tracks all beads including unplaced work.
+**Machine output:** [`docs/roadmap.json`](roadmap.json) — auto-generated superset with all roadmap-placed items. This markdown is the curated view. Counts above are from `bd stats` (all beads); roadmap.json counts are roadmap-placed items only and may differ.
 
 ---
 
