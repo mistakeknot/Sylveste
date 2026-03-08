@@ -2,7 +2,7 @@
 
 **Modules:** 61 | **Open beads:** 698 (per `bd stats`, 2026-03-06) | **Blocked:** 68 | **Closed:** 2,567 | **Last updated:** 2026-03-06
 **Structure:** [`CLAUDE.md`](../CLAUDE.md)
-**Machine output:** [`docs/roadmap.json`](roadmap.json) (tracks roadmap-placed items only; `bd stats` tracks all beads)
+**Machine output:** [`docs/roadmap.json`](roadmap.json) — auto-generated inventory of all roadmap-placed items (230+ entries). This markdown file is the curated view; roadmap.json is the machine-readable superset. `bd stats` tracks all beads including unplaced work.
 
 ---
 
@@ -94,31 +94,26 @@
 **Measurement hardening chain:** iv-fo0rx (canonical landed-change entity) → iv-057uu (measurement read model). This is the path to making the north-star metric ($1.17/landable change) canonical rather than provisional. Item 7 above is the entry point.
 
 **Recently completed:**
+- iv-nnxzo — Memory architecture convergence (C1-C5 taxonomy, decay standardization, /recall command)
+- iv-zsio — Full discovery pipeline integration into sprint workflow
+- iv-asfy — C1 Agency specs (declarative per-stage config)
 - iv-r6mf — Interspect routing overrides F1-F5 (shipped, 127/127 tests passing)
 - iv-30zy3 — Durable session-bead-run attribution ledger (kernel v26)
 - iv-b46xi — North star baseline ($1.17/landable change)
-- iv-544dn — Interspect event validity and outcome attribution (research)
-- iv-iglsh — Codex installer docs and SKILL metadata refresh
 
 ### Detailed Now Inventory
 
-All P0-P1 items for reference. Items marked ✓ are closed.
+Open P0-P1 items. Closed items moved to "Recently completed" above.
 
-- ✓ [intercore/interstat] **iv-30zy3** Durable session-bead-run attribution ledger
-- ✓ [interspect] **iv-r6mf** F1: routing-overrides.json schema + flux-drive reader
-- ✓ [interverse] **iv-b46xi** Measure north star — cost-per-landable-change baseline
 - [intercore] **iv-fo0rx** Define canonical landed-change entity and north-star denominator (blocks iv-544dn)
 - [intercom] **iv-awny7** Finish Rust/Postgres control-plane cutover (6 subtasks: iv-awny7.1-.6)
 - [interverse] **iv-wie5i** Discovery OS integration (blocks iv-faq6)
 - [interverse] **iv-t712t** First-stranger experience
 - [interverse] **iv-4xnp4** C1 Agency specs
 - [interverse] **iv-sksfx** Interspect Phase 2 — routing overrides chain
-- [clavain/interphase] **iv-zsio** Integrate full discovery pipeline into sprint workflow
-- [clavain] **iv-asfy** C1: Agency specs — declarative per-stage config
 - [interverse] **iv-2s7k7** Codex-first routing
 - [interspect] **iv-w3ee6** Preserve raw review semantics in evidence ingestion (blocks iv-544dn)
 - [intercore/events] **iv-057uu** Define canonical measurement read model (blocks iv-544dn)
-- [interverse] **iv-nnxzo** Research: Memory architecture convergence
 - [interverse] **iv-wie5i.2** Research: Discovery ranking precision (blocks iv-wie5i)
 - [interverse] **iv-sksfx.1** Research: Offline routing evals (blocks iv-sksfx)
 - [interverse] **iv-t712t.3** Research: First-stranger setup failure taxonomy (blocks iv-t712t)
