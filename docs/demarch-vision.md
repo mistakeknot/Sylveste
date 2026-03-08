@@ -258,15 +258,23 @@ As of March 2026:
 Active P0 priorities driving the next phase, plus three parallel tracks converging toward a self-building agency with adaptive model routing and fleet-optimized dispatch:
 
 **P0 Priorities:**
-- **Intermap** (iv-w7bh) — Project-level code mapping. Hub for the extraction chain, blocks 9 downstream beads.
-- **Discovery OS integration** (iv-wie5i) — Close the research→backlog loop. Wiring event-driven scan triggers and automated triage into the sprint workflow.
-- **First-stranger experience** (iv-t712t) — README, install, clavain setup. The platform play requires other people to be able to run it.
-- **Agency specs** (iv-4xnp4) — Declarative per-stage agent/model/tool config. Unblocks Track C convergence.
+- **Discovery OS integration** (iv-wie5i) — Close the research→backlog loop. Wiring event-driven scan triggers and automated triage into the sprint workflow. *Last remaining P0.*
 
-**Recently closed P0s:**
-- ~~Interspect routing overrides~~ (iv-r6mf) — CLOSED. F1-F5 routing override chain shipped. Adaptive routing flywheel activated.
-- ~~Session attribution~~ (iv-30zy3) — CLOSED. Durable session-bead-run attribution ledger in kernel.
-- ~~North star metric~~ (iv-b46xi) — CLOSED. Cost-per-landable-change baseline established ($1.17/change).
+**P1 Priorities:**
+- **Codex-first routing** (iv-2s7k7) — Auto-delegate CC work to Codex with closed-loop calibration. The multi-runtime dispatch strategy.
+- **Vision/philosophy/roadmap alignment** (iv-ey5wb) — Synchronize priorities across all three surfaces.
+
+**Recently closed:**
+- ~~Intermap~~ (iv-w7bh) — CLOSED. Project-level code mapping shipped.
+- ~~First-stranger experience~~ (iv-t712t) — CLOSED. README, install, clavain setup shipped.
+- ~~Agency specs~~ (iv-4xnp4) — CLOSED. Declarative per-stage config shipped.
+- ~~Interspect Phase 2~~ (iv-sksfx) — CLOSED. Routing overrides chain complete.
+- ~~Intercom cutover~~ (iv-awny7) — CLOSED. Rust/Postgres control-plane migrated.
+- ~~Canonical landed-change~~ (iv-fo0rx) — CLOSED. North-star denominator defined.
+- ~~Memory architecture~~ (iv-nnxzo) — CLOSED. C1-C5 taxonomy, decay standardization, /recall command.
+- ~~Interspect routing overrides~~ (iv-r6mf) — CLOSED. F1-F5 shipped.
+- ~~Session attribution~~ (iv-30zy3) — CLOSED. Durable attribution ledger in kernel.
+- ~~North star metric~~ (iv-b46xi) — CLOSED. Cost-per-landable-change baseline ($1.17/change).
 
 *Note: iv-ho3 (StrongDM Factory Substrate) is tracked at P2, not P0.*
 

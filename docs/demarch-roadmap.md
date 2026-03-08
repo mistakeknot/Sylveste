@@ -80,46 +80,40 @@
 
 ### Now — Frontier Priorities
 
-**8 items defining the next phase.** Full inventory in [Detailed Now Inventory](#detailed-now-inventory) below.
+**3 open frontier items.** Most of the previous 8-item frontier has shipped. Full inventory in [Detailed Now Inventory](#detailed-now-inventory) below.
 
-1. **[interverse] iv-wie5i** Discovery OS integration — Close the research→backlog loop with event-driven scan triggers and automated triage. *Why frontier: completes the Discover macro-stage, unblocking autonomous problem discovery.*
-2. **[interverse] iv-t712t** First-stranger experience — README, install, clavain setup. *Why frontier: the platform play requires other people to be able to run it.*
-3. **[interverse] iv-4xnp4** C1 Agency specs — Declarative per-stage agent/model/tool config. *Why frontier: unblocks Track C convergence (C2-C5 all depend on this).*
-4. **[interverse] iv-sksfx** Interspect Phase 2 — Evidence-driven agent selection and canary monitoring. *Why frontier: the adaptive routing flywheel has the override mechanism (iv-r6mf shipped) but not yet the evidence→proposal pipeline.*
-5. **[interverse] iv-w7bh** Intermap — Project-level code mapping. *Why frontier: hub for the extraction chain, blocks 9 downstream beads.*
-6. **[intercom] iv-awny7** Intercom Rust/Postgres cutover — Finish control-plane migration (6 subtasks). *Why frontier: eliminates dual-persistence and Node scaffolding, prerequisite for Intercom reliability work.*
-7. **[intercore] iv-fo0rx** Canonical landed-change entity — Define the north-star denominator. *Why frontier: blocks iv-544dn (measurement read model) which blocks the full Interspect evidence pipeline.*
-8. **[interverse] iv-2s7k7** Codex-first routing — Auto-delegate CC work to Codex with closed-loop calibration. *Why frontier: the multi-runtime dispatch strategy for Track B.*
+1. **[interverse] iv-wie5i** Discovery OS integration — Close the research→backlog loop with event-driven scan triggers and automated triage. *Why frontier: completes the Discover macro-stage, unblocking autonomous problem discovery. Last P0.*
+2. **[interverse] iv-2s7k7** Codex-first routing — Auto-delegate CC work to Codex with closed-loop calibration. *Why frontier: the multi-runtime dispatch strategy for Track B.*
+3. **[interverse] iv-ey5wb** Vision/philosophy/roadmap alignment — Synchronize priorities across all three surfaces. *Why frontier: the platform's self-description needs to match reality.*
 
-**Measurement hardening chain:** iv-fo0rx (canonical landed-change entity) → iv-057uu (measurement read model). This is the path to making the north-star metric ($1.17/landable change) canonical rather than provisional. Item 7 above is the entry point.
+**Measurement hardening chain:** iv-fo0rx (canonical landed-change entity, CLOSED) → iv-057uu (measurement read model, open). The path to making the north-star metric ($1.17/landable change) canonical rather than provisional.
 
-**Recently completed:**
+**Recently completed (since last update):**
 - iv-nnxzo — Memory architecture convergence (C1-C5 taxonomy, decay standardization, /recall command)
-- iv-zsio — Full discovery pipeline integration into sprint workflow
-- iv-asfy — C1 Agency specs (declarative per-stage config)
-- iv-r6mf — Interspect routing overrides F1-F5 (shipped, 127/127 tests passing)
-- iv-30zy3 — Durable session-bead-run attribution ledger (kernel v26)
+- iv-w7bh — Intermap: Project-Level Code Mapping (shipped)
+- iv-t712t — First-stranger experience (README, install, setup)
+- iv-4xnp4 — C1 Agency specs (declarative per-stage config)
+- iv-sksfx — Interspect Phase 2 (routing overrides chain)
+- iv-awny7 — Intercom Rust/Postgres cutover (6 subtasks)
+- iv-fo0rx — Canonical landed-change entity
+- iv-zsio — Full discovery pipeline integration
+- iv-r6mf — Interspect routing overrides F1-F5
+- iv-30zy3 — Durable session-bead-run attribution ledger
 - iv-b46xi — North star baseline ($1.17/landable change)
 
 ### Detailed Now Inventory
 
 Open P0-P1 items. Closed items moved to "Recently completed" above.
 
-- [intercore] **iv-fo0rx** Define canonical landed-change entity and north-star denominator (blocks iv-544dn)
-- [intercom] **iv-awny7** Finish Rust/Postgres control-plane cutover (6 subtasks: iv-awny7.1-.6)
-- [interverse] **iv-wie5i** Discovery OS integration (blocks iv-faq6)
-- [interverse] **iv-t712t** First-stranger experience
-- [interverse] **iv-4xnp4** C1 Agency specs
-- [interverse] **iv-sksfx** Interspect Phase 2 — routing overrides chain
-- [interverse] **iv-2s7k7** Codex-first routing
-- [interspect] **iv-w3ee6** Preserve raw review semantics in evidence ingestion (blocks iv-544dn)
-- [intercore/events] **iv-057uu** Define canonical measurement read model (blocks iv-544dn)
-- [interverse] **iv-wie5i.2** Research: Discovery ranking precision (blocks iv-wie5i)
-- [interverse] **iv-sksfx.1** Research: Offline routing evals (blocks iv-sksfx)
-- [interverse] **iv-t712t.3** Research: First-stranger setup failure taxonomy (blocks iv-t712t)
-- [interverse] **iv-g36hy** Sprint execution recording in CXDB (blocked by iv-296, iv-ho3)
-- [interverse] **iv-83du3** Intercom message delivery reliability
-- [interverse] **iv-w7bh** Intermap: Project-Level Code Mapping
+- [interverse] **iv-wie5i** Discovery OS integration (blocks iv-faq6) — **P0, in progress**
+- [interverse] **iv-2s7k7** Codex-first routing — **P1**
+- [interspect] **iv-w3ee6** Preserve raw review semantics in evidence ingestion (blocks iv-544dn) — **P1**
+- [intercore/events] **iv-057uu** Define canonical measurement read model (blocks iv-544dn) — **P1**
+- [interspect] **iv-f7gsz** Scope canary baselines to routing cohorts — **P1**
+- [interverse] **iv-wie5i.2** Research: Discovery ranking precision (blocks iv-wie5i) — **P1**
+- [interverse] **iv-t712t.3** Research: First-stranger setup failure taxonomy — **P1**
+- [interverse] **iv-g36hy** Sprint execution recording in CXDB (blocked by iv-296, iv-ho3) — **P1**
+- [interverse] **iv-ey5wb** Vision/philosophy/roadmap alignment memo — **P0 (decision)**
 
 ### Next — Strategic Themes (P2)
 
