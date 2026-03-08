@@ -1,10 +1,14 @@
 {"issue_id":"Demarch-1qd","label":"claimed_at:1772931795"}
 {"issue_id":"Demarch-1qd","label":"claimed_by:2d7c7517-af90-446e-b999-e417af862a09"}
+{"issue_id":"Demarch-2ce","label":"claimed_at:1772945262"}
+{"issue_id":"Demarch-2ce","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-3v6","label":"claimed_at:1772865116"}
 {"issue_id":"Demarch-3v6","label":"claimed_by:a2ac6b77-94ad-4526-8b84-efa6edf28c8d"}
 {"issue_id":"Demarch-3v6","label":"complexity:3"}
 {"issue_id":"Demarch-5lp","label":"claimed_at:1772931759"}
 {"issue_id":"Demarch-5lp","label":"claimed_by:2d7c7517-af90-446e-b999-e417af862a09"}
+{"issue_id":"Demarch-5zq","label":"claimed_at:1772944884"}
+{"issue_id":"Demarch-5zq","label":"claimed_by:a2ac6b77-94ad-4526-8b84-efa6edf28c8d"}
 {"issue_id":"Demarch-7xs","label":"claimed_at:1772898152"}
 {"issue_id":"Demarch-7xs","label":"claimed_by:2d7c7517-af90-446e-b999-e417af862a09"}
 {"issue_id":"Demarch-7xs","label":"complexity:3"}
@@ -2681,6 +2685,8 @@
 {"issue_id":"iv-exos","label":"phase:planned"}
 {"issue_id":"iv-exos","label":"theme:research"}
 {"issue_id":"iv-exos.1","label":"theme:docs"}
+{"issue_id":"iv-ey5wb","label":"claimed_at:1772945063"}
+{"issue_id":"iv-ey5wb","label":"claimed_by:51d64d87-cf60-4c63-b47c-e76d444006bb"}
 {"issue_id":"iv-ey5wb","label":"mod:demarch"}
 {"issue_id":"iv-ey5wb","label":"theme:docs"}
 {"issue_id":"iv-ey5wb","label":"theme:strategy"}
