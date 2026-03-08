@@ -1,3 +1,6 @@
+{"issue_id":"Demarch-1eh","label":"claimed_at:1772998397"}
+{"issue_id":"Demarch-1eh","label":"claimed_by:2d7c7517-af90-446e-b999-e417af862a09"}
+{"issue_id":"Demarch-1eh","label":"complexity:3"}
 {"issue_id":"Demarch-1qd","label":"claimed_at:1772931795"}
 {"issue_id":"Demarch-1qd","label":"claimed_by:2d7c7517-af90-446e-b999-e417af862a09"}
 {"issue_id":"Demarch-2ce","label":"claimed_at:1772945688"}
@@ -7,6 +10,8 @@
 {"issue_id":"Demarch-3v6","label":"complexity:3"}
 {"issue_id":"Demarch-41c","label":"claimed_at:1772955510"}
 {"issue_id":"Demarch-41c","label":"claimed_by:unknown"}
+{"issue_id":"Demarch-5g2","label":"claimed_at:1772999670"}
+{"issue_id":"Demarch-5g2","label":"claimed_by:51d64d87-cf60-4c63-b47c-e76d444006bb"}
 {"issue_id":"Demarch-5lp","label":"claimed_at:1772931759"}
 {"issue_id":"Demarch-5lp","label":"claimed_by:2d7c7517-af90-446e-b999-e417af862a09"}
 {"issue_id":"Demarch-5zq","label":"claimed_at:1772944884"}
@@ -681,8 +686,10 @@
 {"issue_id":"iv-2p6sm","label":"source:dicklesworthstone"}
 {"issue_id":"iv-2p6sm","label":"theme:research"}
 {"issue_id":"iv-2p8","label":"theme:research"}
+{"issue_id":"iv-2s7k7","label":"claimed_at:0"}
 {"issue_id":"iv-2s7k7","label":"claimed_at:1772949284"}
 {"issue_id":"iv-2s7k7","label":"claimed_by:51d64d87-cf60-4c63-b47c-e76d444006bb"}
+{"issue_id":"iv-2s7k7","label":"claimed_by:released"}
 {"issue_id":"iv-2s7k7","label":"claimed_by:unknown"}
 {"issue_id":"iv-2s7k7","label":"complexity:3"}
 {"issue_id":"iv-2sm4","label":"mod:clavain"}
@@ -2218,8 +2225,8 @@
 {"issue_id":"iv-c4nc","label":"theme:architecture"}
 {"issue_id":"iv-c4nc","label":"theme:docs"}
 {"issue_id":"iv-c4q","label":"mod:interject"}
-{"issue_id":"iv-c60c5","label":"claimed_at:1772869229"}
-{"issue_id":"iv-c60c5","label":"claimed_by:51d64d87-cf60-4c63-b47c-e76d444006bb"}
+{"issue_id":"iv-c60c5","label":"claimed_at:1772998355"}
+{"issue_id":"iv-c60c5","label":"claimed_by:d1527394-3280-4482-9f25-e4c4ef7ee8eb"}
 {"issue_id":"iv-c60c5","label":"complexity:3"}
 {"issue_id":"iv-c6az","label":"mod:intercore"}
 {"issue_id":"iv-c6az","label":"phase:done"}
@@ -5663,6 +5670,9 @@
 {"issue_id":"iv-w352","label":"mod:intercore"}
 {"issue_id":"iv-w352","label":"theme:dx"}
 {"issue_id":"iv-w352","label":"theme:security"}
+{"issue_id":"iv-w3ee6","label":"claimed_at:1773004272"}
+{"issue_id":"iv-w3ee6","label":"claimed_by:51d64d87-cf60-4c63-b47c-e76d444006bb"}
+{"issue_id":"iv-w3ee6","label":"complexity:3"}
 {"issue_id":"iv-w3gg1","label":"mod:clavain"}
 {"issue_id":"iv-w3gg1","label":"research:repo"}
 {"issue_id":"iv-w3gg1","label":"source:dicklesworthstone"}
