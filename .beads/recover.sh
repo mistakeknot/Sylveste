@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # Beads recovery script: kills zombies, stops orphan monitors, re-inits from JSONL
 # Usage: bash .beads/recover.sh
+#
+# Prefers backup/issues.jsonl over issues.jsonl when it's newer, since
+# auto-flush to the main JSONL can stall while bd backup stays current.
 set -euo pipefail
 
 echo "=== Beads Recovery ==="
@@ -17,22 +20,48 @@ ps aux | grep "dolt sql-server" | grep -v grep | awk '{print $2}' | xargs -r kil
 sleep 2
 bd dolt killall 2>/dev/null || true
 
-# 4. Verify JSONL exists and has content
-JSONL=".beads/issues.jsonl"
-if [[ ! -f "$JSONL" ]]; then
-    echo "ERROR: $JSONL not found. Cannot recover."
+# 4. Try to flush latest state before killing the database
+# If the server was still alive enough, this captures recent mutations
+bd backup 2>/dev/null && echo "Pre-recovery backup captured" || echo "Pre-recovery backup skipped (server already dead)"
+
+# 5. Pick the freshest JSONL source
+MAIN_JSONL=".beads/issues.jsonl"
+BACKUP_JSONL=".beads/backup/issues.jsonl"
+JSONL=""
+
+if [[ -f "$BACKUP_JSONL" ]] && [[ -f "$MAIN_JSONL" ]]; then
+    main_mtime=$(stat -c %Y "$MAIN_JSONL" 2>/dev/null) || main_mtime=0
+    backup_mtime=$(stat -c %Y "$BACKUP_JSONL" 2>/dev/null) || backup_mtime=0
+    if [[ "$backup_mtime" -gt "$main_mtime" ]]; then
+        echo "Using backup/issues.jsonl (newer: $(date -d @$backup_mtime '+%Y-%m-%d %H:%M') vs $(date -d @$main_mtime '+%Y-%m-%d %H:%M'))"
+        cp "$BACKUP_JSONL" "$MAIN_JSONL"
+        JSONL="$MAIN_JSONL"
+    else
+        echo "Using issues.jsonl (up to date)"
+        JSONL="$MAIN_JSONL"
+    fi
+elif [[ -f "$BACKUP_JSONL" ]]; then
+    echo "Main JSONL missing — using backup/issues.jsonl"
+    cp "$BACKUP_JSONL" "$MAIN_JSONL"
+    JSONL="$MAIN_JSONL"
+elif [[ -f "$MAIN_JSONL" ]]; then
+    echo "No backup JSONL — using issues.jsonl"
+    JSONL="$MAIN_JSONL"
+else
+    echo "ERROR: No JSONL found. Cannot recover."
     exit 1
 fi
+
 LINES=$(wc -l < "$JSONL")
 echo "JSONL has $LINES issues"
 
-# 5. Re-init from JSONL
+# 6. Re-init from JSONL
 echo "Re-initializing from JSONL..."
 bd dolt stop 2>/dev/null || true
 sleep 2
 bd init --from-jsonl --force --prefix iv
 
-# 6. Verify
+# 7. Verify
 echo ""
 echo "=== Verification ==="
 bd list 2>&1 | wc -l

@@ -10,21 +10,22 @@
 ```
 [ ] 1. git status              (check what changed)
 [ ] 2. git add <files>         (stage code changes)
-[ ] 3. bd sync                 (commit beads changes)
+[ ] 3. bd backup               (flush beads state to JSONL — survives Dolt crashes)
 [ ] 4. git commit -m "..."     (commit code)
 [ ] 5. bd orphans              (close beads referenced in commits — skip parents with open children)
-[ ] 6. bd sync                 (sync bead closes before push)
-[ ] 7. git push                (push to remote)
+[ ] 6. bd backup               (capture orphan closes in JSONL)
+[ ] 7. bash .beads/push.sh     (push Dolt to remote)
+[ ] 8. git push                (push to remote)
 ```
 
-**NEVER skip this.** Work is not done until pushed.
+**NEVER skip this.** `bd backup` writes fresh JSONL that `recover.sh` reads — without it, closes are lost on the next Dolt crash. Work is not done until pushed.
 
 ## Core Rules
 - **Default**: Use beads for ALL task tracking (`bd create`, `bd ready`, `bd close`)
 - **Prohibited**: Do NOT use TodoWrite, TaskCreate, or markdown files for task tracking
 - **Workflow**: Create beads issue BEFORE writing code, mark in_progress when starting
 - Persistence you don't need beats lost context
-- Git workflow: hooks auto-sync, run `bd sync` at session end
+- Git workflow: run `bd backup && bash .beads/push.sh` at session end
 - Session management: check `bd ready` for available work
 
 ## Essential Commands
@@ -36,6 +37,7 @@
 - `bd show <id>` - Detailed issue view with dependencies
 
 ### Creating & Updating
+- **BEFORE `bd create`**: Always `bd search "<keywords>"` first to check for duplicates. Reuse existing beads instead of creating duplicates.
 - `bd create --title="Summary of this issue" --description="Why this issue exists and what needs to be done" --type=task|bug|feature --priority=2` - New issue
   - Priority: 0-4 or P0-P4 (0=critical, 2=medium, 4=backlog). NOT "high"/"medium"/"low"
 - `bd update <id> --status=in_progress` - Claim work
