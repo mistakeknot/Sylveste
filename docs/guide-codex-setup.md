@@ -16,8 +16,8 @@ find ~/.agents/skills -mindepth 1 -maxdepth 1 -type l -printf '%f\n' | sort
 
 Expected: `clavain` plus the current set of companion skills discovered from recommended Interverse plugins.
 
-A healthy install typically includes links such as:
-`agent-native-architecture`, `artifact-gen`, `beads-workflow`, `coordination-protocol`, `doc-watch`, `flux-drive`, `interdoc`, `intermap`, `interpeer`, `mcp-cli`, `memory-synthesis`, `memory-tidy`, `next-work`, `status`, `systematic-debugging`, `test-driven-development`, `tldrs-agent-workflow`, `tool-time`, `verification-before-completion`, and `working-with-claude-code`.
+A healthy install includes `clavain` plus companion links such as
+`agent-native-architecture`, `artifact-gen`, `beads-workflow`, `conflict-recovery`, `coordination-protocol`, `doc-watch`, `flux-drive`, `interdoc`, `intermap`, `interpeer`, `mcp-cli`, `memory-synthesis`, `memory-tidy`, `next-work`, `quality`, `slack-messaging`, `systematic-debugging`, `test-driven-development`, `tldrs-agent-workflow`, `tool-time`, `verification-before-completion`, and `working-with-claude-code`.
 
 For the exact source of truth, run:
 
