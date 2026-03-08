@@ -51,9 +51,9 @@ Task 5 and Task 6 are independent of 1-4 and each other.
 
 ## Verification
 
-- [ ] `docs/backlog.md` contains all P2/P3 items from the original roadmap
-- [ ] `docs/demarch-roadmap.md` Now section unchanged (8 items)
-- [ ] `docs/demarch-roadmap.md` Next section has 5 themes, not 100+ items
-- [ ] Measurement chain explicitly called out
-- [ ] Vision autonomy phrasing is graduated, not absolute
-- [ ] No items lost (backlog.md has everything that was removed from roadmap)
+- [x] `docs/backlog.md` contains all P2/P3 items from the original roadmap
+- [x] `docs/demarch-roadmap.md` Now section unchanged (3 frontier + detailed inventory)
+- [x] `docs/demarch-roadmap.md` Next section has 5 themes, not 100+ items
+- [x] Measurement chain explicitly called out
+- [x] Vision autonomy phrasing is graduated, not absolute
+- [x] No items lost (backlog.md has everything that was removed from roadmap)
