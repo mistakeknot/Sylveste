@@ -1,7 +1,7 @@
 # Demarch — Vision
 
-**Version:** 3.2
-**Date:** 2026-03-06
+**Version:** 3.3
+**Date:** 2026-03-08
 **Status:** Active
 
 ---
@@ -247,56 +247,61 @@ As of March 2026:
 - **Kernel:** 8 of 10 epics shipped (E1-E8). Runs, phases, gates, dispatches, events, discovery pipeline, rollback, portfolio orchestration, TOCTOU prevention, cost-aware scheduling, fair spawn scheduler, sandbox specs, durable session attribution (v26). All landed and tested. Remaining: E9 (Autarch Phase 2 — Pollard + Gurgeh migration) and E10 (Sandboxing + Autarch Phase 3).
 - **OS:** Full sprint lifecycle (brainstorm → ship) is kernel-driven. Sprint consolidation complete (`/route → /sprint → /work` unified into adaptive single-entry workflow). For current stats: `grep -c '^##' os/clavain/skills/*/SKILL.md` (skills), `ls os/clavain/agents/` (agents).
 - **Model routing:** Static routing, complexity-aware routing (C1-C5), and routing override chain (F1-F5) shipped. Adaptive routing (B3) is the next frontier — evidence pipeline and canary monitoring.
+- **Agency architecture:** Track C fully shipped (C1-C5). Agency specs, fleet registry, composer, cross-phase handoff, and self-building loop all landed and tested.
 - **Review engine:** 12 specialized review agents + 5 research agents, deployed through interflux with multi-agent synthesis. Capability declarations shipped. Interoperability benchmark harness completed.
 - **Ecosystem:** Companion plugins shipped, each independently installable (`ls interverse/ | wc -l`). 11 new plugins extracted (2026-02-25) from Clavain, interflux, and interkasten to maintain single-responsibility. Total modules: `find apps os core interverse sdk -maxdepth 2 -name .git -printf '%h\n' 2>/dev/null | wc -l`.
 - **Apps:** Autarch TUI (Bigend monitoring with inline mode, Gurgeh PRD generation, Coldwine task orchestration, Pollard research). Intercom multi-runtime AI assistant bridging Claude, Gemini, and Codex (v1.1.0).
-- **Profiler:** Evidence collection and routing override chain (F1-F5) shipped. Adaptive routing flywheel activated. Next: Interspect Phase 2 — evidence-driven agent selection, canary monitoring, and counterfactual shadow evaluation.
-- **Self-building:** The system has been building itself for months. 2,567 beads closed, 698 open (per `bd stats`, 2026-03-06).
+- **Profiler:** Evidence collection and routing override chain (F1-F5) shipped. Adaptive routing flywheel activated. Next: evidence-driven agent selection (iv-5ztam), canary monitoring, and counterfactual shadow evaluation.
+- **Self-building:** The system has been building itself for months. 2,476 closed beads, 647 open (per `bd stats`, 2026-03-08).
 
 ## What's Next
 
-Active P0 priorities driving the next phase, plus three parallel tracks converging toward a self-building agency with adaptive model routing and fleet-optimized dispatch:
+Three tracks converged: kernel integration (A), model routing (B1-B2), and agency architecture (C1-C5) are all shipped. The frontier has shifted to adaptive intelligence, infrastructure hardening, and measurement.
 
-**P0 Priorities:**
-- **Discovery OS integration** (iv-wie5i) — Close the research→backlog loop. Wiring event-driven scan triggers and automated triage into the sprint workflow. *Last remaining P0.*
+**P0 — Intercom cutover** (iv-awny7, epic, 6 open subtasks):
+- Rust/Postgres control-plane migration is partially complete but Node/SQLite remain authoritative for group state, task mutation, and command handling. The remaining P0 work: make group registration and scheduled task state single-writer (.1, .2), remove legacy SQLite (.3), unify command handling (.4), remove Node scaffolding (.5), canonicalize architecture docs (.6).
 
-**P1 Priorities:**
-- **Codex-first routing** (iv-2s7k7) — Auto-delegate CC work to Codex with closed-loop calibration. The multi-runtime dispatch strategy.
-- **Vision/philosophy/roadmap alignment** (iv-ey5wb) — Synchronize priorities across all three surfaces.
+**P1 — Measurement hardening:**
+- **Sprint execution recording** (iv-g36hy) — Record phase transitions, dispatches, and artifacts as typed turns in CXDB. Blocked by iv-296 (CXDB integration) and iv-ho3 (StrongDM Factory Substrate).
+- **CXDB integration** (iv-296) — Make CXDB a required infrastructure dependency. Blocked by iv-ho3.
+- **StrongDM Factory Substrate** (iv-ho3) — Validation-first infrastructure for Clavain. In progress.
+
+**P1 — Bugs:**
+- **go.mod replace directive** (iv-v5ayb) — interlock/intermap break in plugin cache due to replace directive pointing to ../../sdk/interbase/go.
+- **Compaction recovery protocol** (iv-28vf9) — Enhance SessionStart hook to re-read CLAUDE.md and check beads state after context compaction.
+
+**P2 — Adaptive routing (the flywheel):**
+- **Interspect adaptive routing** (iv-5ztam, epic) — Evidence-driven agent selection. The next step after F1-F5 routing overrides shipped. Blocked by 10+ subtasks including counterfactual shadow evaluation (iv-435u), global rate limiter (iv-003t), and meta-learning loop (iv-rafa).
+- **Complexity-aware routing across all subagents** (iv-jgdct) — Apply the C1-C5 routing to flux-drive subagents, not just top-level dispatch.
+
+**P2 — Kernel:**
+- **E9: Autarch Phase 2** (iv-6376, epic) — Pollard + Gurgeh migration to kernel primitives.
 
 **Recently closed:**
+- ~~Track C~~ (C1-C5) — ALL SHIPPED. Agency specs, fleet registry, composer, cross-phase handoff, self-building loop.
+- ~~Discovery OS integration~~ (iv-wie5i → iv-zsio) — CLOSED. Full discovery pipeline integrated into sprint workflow.
 - ~~Intermap~~ (iv-w7bh) — CLOSED. Project-level code mapping shipped.
 - ~~First-stranger experience~~ (iv-t712t) — CLOSED. README, install, clavain setup shipped.
-- ~~Agency specs~~ (iv-4xnp4) — CLOSED. Declarative per-stage config shipped.
-- ~~Interspect Phase 2~~ (iv-sksfx) — CLOSED. Routing overrides chain complete.
-- ~~Intercom cutover~~ (iv-awny7) — CLOSED. Rust/Postgres control-plane migrated.
-- ~~Canonical landed-change~~ (iv-fo0rx) — CLOSED. North-star denominator defined.
-- ~~Memory architecture~~ (iv-nnxzo) — CLOSED. C1-C5 taxonomy, decay standardization, /recall command.
 - ~~Interspect routing overrides~~ (iv-r6mf) — CLOSED. F1-F5 shipped.
-- ~~Session attribution~~ (iv-30zy3) — CLOSED. Durable attribution ledger in kernel.
 - ~~North star metric~~ (iv-b46xi) — CLOSED. Cost-per-landable-change baseline ($1.17/change).
 
-*Note: iv-ho3 (StrongDM Factory Substrate) is tracked at P2, not P0.*
-
-**Track A: Kernel integration.** Done. Sprint is fully kernel-driven.
-
-**Track B: Model routing.** Static routing, complexity-aware routing, and routing override chain (F1-F5) done. Next: Interspect outcome data driving model selection (B3) — evidence pipeline and canary monitoring.
-
-**Track C: Agency architecture.** The next frontier. Declarative agency specs (C1, now P0), agent fleet registry with cost/quality profiles (C2), budget-constrained fleet composition (C3), cross-phase handoff protocol (C4), and the convergence point: a self-building loop where Clavain uses its own agency specs to run its own development sprints (C5).
+**Track status:**
 
 ```
 Track A (Kernel)      Track B (Routing)     Track C (Agency)
-    A1 ✓                  B1 ✓                  C1 ←  [P0]
+    A1 ✓                  B1 ✓                  C1 ✓
     │                     │                     │
-    A2 ✓                  B2 ✓─────────────→    C2 ←
+    A2 ✓                  B2 ✓─────────────→    C2 ✓
     │                     │                     │
-    A3 ✓                  B3 ← [P0]             C3
-    │                                           │
-    └───────────────────────────────────────→   C4
+    A3 ✓                  B3 ← [frontier]       C3 ✓
                                                 │
-                                               C5 ← convergence
+                                                C4 ✓
+                                                │
+                                               C5 ✓ ← convergence
                                           (self-building)
 ```
+
+B3 (adaptive routing via Interspect outcome data) is the primary strategic frontier. The measurement hardening chain (iv-ho3 → iv-296 → iv-g36hy → iv-3ov) unblocks the evidence pipeline that B3 needs to learn from.
 
 ## What This Is Not
 

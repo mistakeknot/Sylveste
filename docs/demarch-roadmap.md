@@ -1,6 +1,6 @@
 # Demarch Roadmap
 
-**Modules:** 61 | **Open beads:** 696 | **In progress:** 6 | **Blocked:** 59 | **Closed:** 2,667 | **Last updated:** 2026-03-07
+**Modules:** 61 | **Open beads:** 647 | **In progress:** 2 | **Blocked:** 44 | **Closed:** 2,476 | **Last updated:** 2026-03-08
 **Structure:** [`CLAUDE.md`](../CLAUDE.md)
 **Machine output:** [`docs/roadmap.json`](roadmap.json) — auto-generated superset with all roadmap-placed items. This markdown is the curated view. Counts above are from `bd stats` (all beads); roadmap.json counts are roadmap-placed items only and may differ.
 
@@ -80,60 +80,65 @@
 
 ### Now — Frontier Priorities
 
-**3 open frontier items.** Most of the previous 8-item frontier has shipped. Full inventory in [Detailed Now Inventory](#detailed-now-inventory) below.
+**P0: Intercom cutover** (iv-awny7, epic, 6 open subtasks). The only P0 epic. Rust/Postgres control-plane migration is partially complete; Node/SQLite remain authoritative for group state, task mutation, and command handling.
 
-1. **[interverse] iv-wie5i** Discovery OS integration — Close the research→backlog loop with event-driven scan triggers and automated triage. *Why frontier: completes the Discover macro-stage, unblocking autonomous problem discovery. Last P0.*
-2. **[interverse] iv-2s7k7** Codex-first routing — Auto-delegate CC work to Codex with closed-loop calibration. *Why frontier: the multi-runtime dispatch strategy for Track B.*
-3. **[interverse] iv-ey5wb** Vision/philosophy/roadmap alignment — Synchronize priorities across all three surfaces. *Why frontier: the platform's self-description needs to match reality.*
+**P1: Infrastructure + bugs.**
+- **iv-ho3** StrongDM Factory Substrate — validation-first infra for Clavain. In progress. Blocks iv-296 → iv-g36hy → iv-3ov (the measurement chain).
+- **iv-v5ayb** go.mod replace directive breaks interlock/intermap in plugin cache. Quick fix: publish interbase/go as Go module.
+- **iv-28vf9** Compaction recovery protocol for SessionStart hook.
+- **iv-83du3** Intercom message delivery reliability (outbox + LISTEN/NOTIFY + UDS).
+- **iv-6376** Kernel E9: Autarch Phase 2 — Pollard + Gurgeh migration.
 
-**Measurement hardening chain:** iv-fo0rx (canonical landed-change entity, CLOSED) → iv-057uu (measurement read model, open). The path to making the north-star metric ($1.17/landable change) canonical rather than provisional.
+**P1: Measurement hardening chain.** The path to making the north-star metric canonical:
+- iv-ho3 (in progress) → iv-296 (CXDB integration) → iv-g36hy (sprint execution recording) → iv-3ov (evidence pipeline wiring)
+
+**P2: Adaptive routing (the flywheel).**
+- **iv-5ztam** Interspect adaptive routing epic — evidence-driven agent selection. 10+ subtasks including counterfactual shadow evaluation, rate limiter, meta-learning loop.
+- **iv-jgdct** Apply complexity-aware routing across all subagents.
 
 **Recently completed (since last update):**
-- iv-nnxzo — Memory architecture convergence (C1-C5 taxonomy, decay standardization, /recall command)
+- Track C (C1-C5) — ALL SHIPPED. Agency specs (iv-asfy), fleet registry (iv-lx00), composer (iv-240m), cross-phase handoff (iv-1vny), self-building loop (iv-6ixw).
+- iv-wie5i / iv-zsio — Discovery OS integration / discovery pipeline (consolidated, closed)
 - iv-w7bh — Intermap: Project-Level Code Mapping (shipped)
 - iv-t712t — First-stranger experience (README, install, setup)
-- iv-4xnp4 — C1 Agency specs (declarative per-stage config)
-- iv-sksfx — Interspect Phase 2 (routing overrides chain)
-- iv-awny7 — Intercom Rust/Postgres cutover (6 subtasks)
-- iv-fo0rx — Canonical landed-change entity
-- iv-zsio — Full discovery pipeline integration
 - iv-r6mf — Interspect routing overrides F1-F5
-- iv-30zy3 — Durable session-bead-run attribution ledger
 - iv-b46xi — North star baseline ($1.17/landable change)
 
 ### Detailed Now Inventory
 
 Open P0-P1 items. Closed items moved to "Recently completed" above.
 
-- [interverse] **iv-wie5i** Discovery OS integration (blocks iv-faq6) — **P0, in progress**
-- [interverse] **iv-2s7k7** Codex-first routing — **P1**
-- [interspect] **iv-w3ee6** Preserve raw review semantics in evidence ingestion (blocks iv-544dn) — **P1**
-- [intercore/events] **iv-057uu** Define canonical measurement read model (blocks iv-544dn) — **P1**
-- [interspect] **iv-f7gsz** Scope canary baselines to routing cohorts — **P1**
-- [interverse] **iv-wie5i.2** Research: Discovery ranking precision (blocks iv-wie5i) — **P1**
-- [interverse] **iv-t712t.3** Research: First-stranger setup failure taxonomy — **P1**
-- [interverse] **iv-g36hy** Sprint execution recording in CXDB (blocked by iv-296, iv-ho3) — **P1**
-- [interverse] **iv-ey5wb** Vision/philosophy/roadmap alignment memo — **P0 (decision)**
+- [intercom] **iv-awny7** Finish Rust/Postgres control-plane cutover (6 open subtasks) — **P0, epic**
+  - iv-awny7.1: Make group registration state single-writer — **P0** (blocks .3, .5)
+  - iv-awny7.2: Make scheduled task state single-writer — **P0** (blocks .5)
+  - iv-awny7.3: Remove legacy SQLite from Rust Telegram bridge — **P0** (blocked by .1)
+  - iv-awny7.4: Unify chat command handling on one command plane — **P0** (blocks .5)
+  - iv-awny7.5: Remove Node orchestration scaffolding — **P0** (blocked by .1-.4)
+  - iv-awny7.6: Canonicalize architecture docs — **P0**
+- [clavain] **iv-ho3** StrongDM Factory Substrate — **P0, in progress** (blocks iv-296, iv-g36hy, iv-3ov, and 7 more)
+- [clavain] **iv-296** F1: Integrate CXDB as required infrastructure — **P1** (blocked by iv-ho3)
+- [clavain] **iv-g36hy** Sprint execution recording in CXDB — **P1** (blocked by iv-296, iv-ho3)
+- [intercom] **iv-83du3** Message delivery reliability: outbox + LISTEN/NOTIFY + UDS — **P1, epic**
+- [intercore] **iv-6376** E9: Autarch Phase 2 — Pollard + Gurgeh migration — **P1, epic**
+- [interverse] **iv-v5ayb** go.mod replace directive breaks in plugin cache — **P1, bug**
+- [clavain] **iv-28vf9** Compaction recovery protocol for SessionStart hook — **P1**
 
 ### Next — Strategic Themes (P2)
 
-**5 themes defining the medium-term direction.** Full item inventory: [backlog.md](backlog.md).
+**4 themes defining the medium-term direction.** Track C (Agency Architecture) has shipped entirely (C1-C5). Full item inventory: [backlog.md](backlog.md).
 
-1. **Agency Architecture (Track C)** — Declarative per-stage agent/model/tool config, fleet registry with cost/quality profiles, budget-constrained composition. The path from static orchestration to self-configuring agencies.
-   - Key items: iv-lx00 (C2 fleet registry), iv-mlca1 (shared intent types), iv-6ocmi (OS intent router)
+1. **Adaptive Routing (Track B3)** — Evidence-driven agent selection, canary monitoring, counterfactual shadow evaluation. The learning loop that makes the system cheaper and better over time. The primary strategic frontier now that Tracks A and C are complete.
+   - Key items: iv-5ztam (evidence-driven selection epic), iv-435u (counterfactual shadow eval), iv-003t (global rate limiter), iv-rafa (meta-learning loop)
+   - Key item (fd routing): iv-jgdct (apply complexity-aware routing across all subagents)
 
-2. **Adaptive Routing (Track B)** — Evidence-driven agent selection, canary monitoring, counterfactual shadow evaluation. The learning loop that makes the system cheaper and better over time.
-   - Key items: iv-5ztam (evidence-driven selection epic), iv-8fgu (pattern detection), iv-gkj9 (apply + canary)
+2. **Measurement Hardening** — Make the north-star metric canonical. The measurement chain (iv-ho3 → iv-296 → iv-g36hy → iv-3ov) unblocks the evidence pipeline that adaptive routing needs. Without measurement, the flywheel thesis is aspirational.
+   - Key items: iv-mi8e0 (metrics plugin), iv-3ov (evidence pipeline wiring)
 
-3. **Measurement Hardening** — Make the north-star metric canonical. Metrics instrumentation, cost reconciliation, flux-drive library extraction. Without this, the flywheel thesis is aspirational.
-   - Key items: iv-mi8e0 (metrics plugin), iv-v81k (benchmark expansion), iv-ia66 (flux-drive library)
-   - **Critical path:** iv-fo0rx → iv-057uu → iv-544dn (see Now section)
+3. **Multi-Runtime Dispatch** — Multi-agent coordination patterns, Hermes pattern adoption. Multiple runtimes working together reliably.
+   - Key items: iv-fwwhl (WCM coordination epic), iv-a0q2r (Hermes compression chain)
 
-4. **Multi-Runtime Dispatch** — Intercom Rust/Postgres cutover, multi-agent coordination patterns, Hermes pattern adoption. Multiple runtimes working together reliably.
-   - Key items: iv-fwwhl (WCM coordination epic), iv-a0q2r (Hermes compression chain), iv-romro (multimodal input)
-
-5. **Developer Experience & Tooling** — Intermap code mapping, interlock coordination, Autarch TUI migration, plugin ecosystem maturity. What makes the platform usable for others.
-   - Key items: iv-dl72x (intermap audit), iv-6u3s (interlock visibility), iv-16z (Autarch signal emitters)
+4. **Developer Experience & Tooling** — Intermap code mapping, interlock coordination, Autarch TUI migration, plugin ecosystem maturity. What makes the platform usable for others.
+   - Key items: iv-6376 (E9 Autarch Phase 2), iv-v5ayb (go.mod bug)
 
 ### Later — Horizon (P3)
 
