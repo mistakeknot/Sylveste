@@ -3,7 +3,7 @@
 {"issue_id":"Demarch-4wm","label":"memory"}
 {"issue_id":"Demarch-dcy","label":"claimed_at:1773042407"}
 {"issue_id":"Demarch-dcy","label":"claimed_by:e5977592-9f9c-4671-a2df-2f517abae5a1"}
-{"issue_id":"Demarch-ekh","label":"claimed_at:1773098137"}
+{"issue_id":"Demarch-ekh","label":"claimed_at:1773099711"}
 {"issue_id":"Demarch-ekh","label":"claimed_by:f82e58da-60aa-4764-b223-858a42463fdd"}
 {"issue_id":"Demarch-ekh","label":"complexity:3"}
 {"issue_id":"Demarch-q52","label":"devops"}
@@ -12,6 +12,9 @@
 {"issue_id":"iv-057uu","label":"claimed_at:1773067945"}
 {"issue_id":"iv-057uu","label":"claimed_by:e5977592-9f9c-4671-a2df-2f517abae5a1"}
 {"issue_id":"iv-057uu","label":"complexity:3"}
+{"issue_id":"iv-6bwm7","label":"claimed_at:1773099628"}
+{"issue_id":"iv-6bwm7","label":"claimed_by:unknown"}
+{"issue_id":"iv-6bwm7","label":"complexity:3"}
 {"issue_id":"iv-g36hy","label":"claimed_at:1773084976"}
 {"issue_id":"iv-g36hy","label":"claimed_by:e5977592-9f9c-4671-a2df-2f517abae5a1"}
 {"issue_id":"iv-g36hy","label":"complexity:4"}
