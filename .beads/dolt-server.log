@@ -1,34 +1,27 @@
 Starting server with Config HP="127.0.0.1:3307"|T="28800000"|R="false"|L="info"
-time="2026-03-08T18:42:05-07:00" level=info msg="Creating root@localhost superuser"
-time="2026-03-08T18:42:05-07:00" level=info msg="Server ready. Accepting connections."
-time="2026-03-08T18:42:05-07:00" level=warning msg="secure_file_priv is set to \"\", which is insecure."
-time="2026-03-08T18:42:05-07:00" level=warning msg="Any user with GRANT FILE privileges will be able to read any file which the sql-server process can read."
-time="2026-03-08T18:42:05-07:00" level=warning msg="Please consider restarting the server with secure_file_priv set to a safe (or non-existent) directory."
-time="2026-03-08T18:42:05-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=1
-time="2026-03-08T18:42:05-07:00" level=info msg=ConnectionClosed connectionID=1
-time="2026-03-08T18:42:05-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=2
-time="2026-03-08T18:42:05-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=3
-time="2026-03-08T18:42:05-07:00" level=info msg=ConnectionClosed connectionID=2
-time="2026-03-08T18:42:05-07:00" level=warning msg="error running query" connectTime="2026-03-08 18:42:05.393574862 -0700 PDT m=+0.364139723" connectionDb=beads_iv connectionID=3 error="table not found: config" queryTime="2026-03-08 18:42:05.395648121 -0700 PDT m=+0.366212981"
-time="2026-03-08T18:42:05-07:00" level=warning msg="error running query" connectTime="2026-03-08 18:42:05.393574862 -0700 PDT m=+0.364139723" connectionDb=beads_iv connectionID=3 error="Duplicate key name 'idx_issues_issue_type'" queryTime="2026-03-08 18:42:05.501461207 -0700 PDT m=+0.472026068"
-time="2026-03-08T18:42:05-07:00" level=warning msg="error running query" connectTime="2026-03-08 18:42:05.393574862 -0700 PDT m=+0.364139723" connectionDb=beads_iv connectionID=3 error="foreign key `fk_dep_depends_on` was not found on the table `dependencies`" queryTime="2026-03-08 18:42:05.502812301 -0700 PDT m=+0.473377172"
-time="2026-03-08T18:42:05-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=4
-time="2026-03-08T18:42:05-07:00" level=info msg=ConnectionClosed connectionID=4
-time="2026-03-08T18:42:05-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=5
-time="2026-03-08T18:42:05-07:00" level=info msg=ConnectionClosed connectionID=5
-time="2026-03-08T18:42:05-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=6
-time="2026-03-08T18:42:05-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=7
-time="2026-03-08T18:42:05-07:00" level=info msg=ConnectionClosed connectionID=6
-time="2026-03-08T18:42:05-07:00" level=warning msg="error running query" connectTime="2026-03-08 18:42:05.535027986 -0700 PDT m=+0.505592847" connectionDb=beads_iv connectionID=7 error="Duplicate key name 'idx_issues_issue_type'" queryTime="2026-03-08 18:42:05.564211324 -0700 PDT m=+0.534776215"
-time="2026-03-08T18:42:05-07:00" level=warning msg="error running query" connectTime="2026-03-08 18:42:05.535027986 -0700 PDT m=+0.505592847" connectionDb=beads_iv connectionID=7 error="foreign key `fk_dep_depends_on` was not found on the table `dependencies`" queryTime="2026-03-08 18:42:05.567946879 -0700 PDT m=+0.538511741"
-time="2026-03-08T18:42:05-07:00" level=warning msg="error running query" connectTime="2026-03-08 18:42:05.535027986 -0700 PDT m=+0.505592847" connectionDb=beads_iv connectionID=7 error="nothing to commit" queryTime="2026-03-08 18:42:05.628557694 -0700 PDT m=+0.599122555"
-time="2026-03-08T18:43:01-07:00" level=info msg="sqle/auto_gc: Successfully completed auto GC of database beads_iv in 341.7683ms"
-time="2026-03-08T18:43:01-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=9
-time="2026-03-08T18:43:01-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=8
-time="2026-03-08T18:43:01-07:00" level=info msg=ConnectionClosed connectionID=8
-time="2026-03-08T18:43:02-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=10
-time="2026-03-08T18:43:02-07:00" level=info msg=ConnectionClosed connectionID=9
-time="2026-03-08T18:43:02-07:00" level=warning msg="error running query" connectTime="2026-03-08 18:43:02.021569162 -0700 PDT m=+56.992134052" connectionDb=beads_iv connectionID=10 error="nothing to commit" queryTime="2026-03-08 18:43:02.222356324 -0700 PDT m=+57.192921185"
-time="2026-03-08T18:43:02-07:00" level=info msg=ConnectionClosed connectionID=10
-time="2026-03-08T18:43:47-07:00" level=warning msg="error running query" connectTime="2026-03-08 18:42:05.535027986 -0700 PDT m=+0.505592847" connectionDb=beads_iv connectionID=7 error="nothing to commit" queryTime="2026-03-08 18:43:47.528416106 -0700 PDT m=+102.498980997"
-time="2026-03-08T18:43:47-07:00" level=info msg=ConnectionClosed connectionID=7
+time="2026-03-08T18:45:04-07:00" level=info msg="Creating root@localhost superuser"
+time="2026-03-08T18:45:04-07:00" level=info msg="Server ready. Accepting connections."
+time="2026-03-08T18:45:04-07:00" level=warning msg="secure_file_priv is set to \"\", which is insecure."
+time="2026-03-08T18:45:04-07:00" level=warning msg="Any user with GRANT FILE privileges will be able to read any file which the sql-server process can read."
+time="2026-03-08T18:45:04-07:00" level=warning msg="Please consider restarting the server with secure_file_priv set to a safe (or non-existent) directory."
+time="2026-03-08T18:45:04-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=1
+time="2026-03-08T18:45:04-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=2
+time="2026-03-08T18:45:04-07:00" level=info msg=ConnectionClosed connectionID=1
+time="2026-03-08T18:45:04-07:00" level=info msg=ConnectionClosed connectionID=2
+time="2026-03-08T18:45:04-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=3
+time="2026-03-08T18:45:04-07:00" level=info msg=ConnectionClosed connectionID=3
+time="2026-03-08T18:45:12-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=4
+time="2026-03-08T18:45:12-07:00" level=info msg=ConnectionClosed connectionID=4
+time="2026-03-08T18:45:12-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=5
+time="2026-03-08T18:45:12-07:00" level=info msg=ConnectionClosed connectionID=5
+time="2026-03-08T18:45:13-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=7
+time="2026-03-08T18:45:13-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=6
+time="2026-03-08T18:45:13-07:00" level=info msg=ConnectionClosed connectionID=6
+time="2026-03-08T18:45:13-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=8
+time="2026-03-08T18:45:13-07:00" level=info msg=ConnectionClosed connectionID=7
+time="2026-03-08T18:45:13-07:00" level=warning msg="error running query" connectTime="2026-03-08 18:45:13.274169054 -0700 PDT m=+8.882923051" connectionDb=beads_iv connectionID=8 error="table not found: config" queryTime="2026-03-08 18:45:13.275162287 -0700 PDT m=+8.883916304"
+time="2026-03-08T18:45:13-07:00" level=warning msg="error running query" connectTime="2026-03-08 18:45:13.274169054 -0700 PDT m=+8.882923051" connectionDb=beads_iv connectionID=8 error="Duplicate key name 'idx_issues_issue_type'" queryTime="2026-03-08 18:45:13.364550845 -0700 PDT m=+8.973304871"
+time="2026-03-08T18:45:13-07:00" level=warning msg="error running query" connectTime="2026-03-08 18:45:13.274169054 -0700 PDT m=+8.882923051" connectionDb=beads_iv connectionID=8 error="foreign key `fk_dep_depends_on` was not found on the table `dependencies`" queryTime="2026-03-08 18:45:13.365026317 -0700 PDT m=+8.973780313"
+time="2026-03-08T18:46:08-07:00" level=info msg="sqle/auto_gc: Successfully completed auto GC of database beads_iv in 426.740409ms"
+time="2026-03-08T18:46:25-07:00" level=warning msg="error running query" connectTime="2026-03-08 18:45:13.274169054 -0700 PDT m=+8.882923051" connectionDb=beads_iv connectionID=8 error="nothing to commit" queryTime="2026-03-08 18:46:25.407745569 -0700 PDT m=+81.016499586"
+time="2026-03-08T18:46:25-07:00" level=info msg=ConnectionClosed connectionID=8
