@@ -1,0 +1,52 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 300
+
+stages:
+  - name: "Core Migration"
+    tasks:
+      - id: task-1
+        title: "Remove session analytics from interstat"
+        files: [interverse/interstat/scripts/session-index.py, interverse/interstat/scripts/session-search.sh, interverse/interstat/skills/session-search/SKILL.md, interverse/interstat/CLAUDE.md, interverse/interstat/AGENTS.md, interverse/interstat/.claude-plugin/plugin.json]
+        depends: []
+      - id: task-2
+        title: "Create session-search skill in intersearch"
+        files: [interverse/intersearch/skills/session-search/SKILL.md, interverse/intersearch/.claude-plugin/plugin.json, interverse/intersearch/CLAUDE.md]
+        depends: []
+      - id: task-3
+        title: "Add cass index freshness check to SessionStart hook"
+        files: [interverse/interstat/hooks/session-start.sh]
+        depends: [task-1]
+
+  - name: "Downstream Integrations"
+    tasks:
+      - id: task-4
+        title: "Add session transcript export to /reflect"
+        files: [os/clavain/commands/reflect.md]
+        depends: []
+      - id: task-5
+        title: "Add similar session discovery to /compound"
+        files: [os/clavain/commands/compound.md]
+        depends: []
+      - id: task-6
+        title: "Add cass analytics tools to tool-time"
+        files: [interverse/tool-time/skills/tool-time/SKILL.md]
+        depends: []
+      - id: task-7
+        title: "Add cass context to internext next-work"
+        files: [interverse/internext/skills/next-work/SKILL.md]
+        depends: []
+      - id: task-8
+        title: "Add cass analytics to galiana"
+        files: [os/clavain/galiana/analyze.py]
+        depends: []
+
+  - name: "Publish"
+    tasks:
+      - id: task-9
+        title: "Update documentation and publish all plugins"
+        files: [interverse/interstat/CLAUDE.md, interverse/intersearch/CLAUDE.md, interverse/intersearch/AGENTS.md]
+        depends: []
+        tier: fast
