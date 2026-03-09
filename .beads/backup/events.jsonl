@@ -3484,3 +3484,4 @@
 {"actor":"53077124","comment":null,"created_at":"2026-03-08T18:46:38Z","event_type":"closed","id":3484,"issue_id":"iv-lthzo","new_value":"Closed","old_value":""}
 {"actor":"53077124","comment":null,"created_at":"2026-03-08T18:46:38Z","event_type":"closed","id":3485,"issue_id":"iv-l8zk","new_value":"Closed","old_value":""}
 {"actor":"53077124","comment":null,"created_at":"2026-03-08T18:46:38Z","event_type":"closed","id":3486,"issue_id":"iv-1quv","new_value":"Closed","old_value":""}
+{"actor":"b7bbe7d0","comment":null,"created_at":"2026-03-08T18:52:42Z","event_type":"closed","id":3487,"issue_id":"Demarch-gs1","new_value":"Pool enabled and validated — four production bugs fixed: docker wait race, health check killing active containers, missing ping handler in agent-runner, idle detection collision with model announcements","old_value":""}
