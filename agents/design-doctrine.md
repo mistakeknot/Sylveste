@@ -30,17 +30,19 @@ Reject proposals that exhibit these (from PHILOSOPHY.md):
 
 ## Brainstorming
 
-1. Start from outcomes and failure modes, not implementation details.
-2. Generate at least three options: conservative, balanced, and aggressive.
-3. Explicitly call out assumptions, unknowns, and dependency risk across modules.
-4. Prefer ideas that improve clarity, reversibility, and operational visibility.
+1. **Check prior art first** — before designing new infrastructure, search `docs/research/assess-*.md` for already-evaluated tools and run a conditional web search for mature open-source alternatives. See `agents/operational-guides.md` for the full prior art pipeline.
+2. Start from outcomes and failure modes, not implementation details.
+3. Generate at least three options: conservative, balanced, and aggressive.
+4. Explicitly call out assumptions, unknowns, and dependency risk across modules.
+5. Prefer ideas that improve clarity, reversibility, and operational visibility.
 
 ## Planning
 
-1. Convert selected direction into small, testable, reversible slices.
-2. Define acceptance criteria, verification steps, and rollback path for each slice.
-3. Sequence dependencies explicitly and keep integration contracts narrow.
-4. Reserve optimization work until correctness and reliability are proven.
+1. **Verify no prior art exists** — search assessment docs and existing plugins before writing tasks that build new systems. If a tool has an "adopt" verdict, default to integration over reimplementation.
+2. Convert selected direction into small, testable, reversible slices.
+3. Define acceptance criteria, verification steps, and rollback path for each slice.
+4. Sequence dependencies explicitly and keep integration contracts narrow.
+5. Reserve optimization work until correctness and reliability are proven.
 
 ## Operational Decision Filters
 

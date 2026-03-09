@@ -78,3 +78,14 @@ Findings should include:
 - **Adaptation notes** — what to keep, what to change, what to skip
 
 Also record key takeaways in auto-memory (`MEMORY.md` or topic files) so future sessions benefit without re-reading the full research doc.
+
+## Prior Art Pipeline
+
+The research directory is part of a 4-step prior art pipeline enforced in `/clavain:brainstorm` (Phase 1.1), `/clavain:strategy` (Phase 0), and `/clavain:write-plan` (Step 0):
+
+1. **Local assessment docs** — `grep -ril "<keywords>" docs/research/assess-*.md`
+2. **Existing plugins/beads** — check for overlap in `interverse/` and `bd search`
+3. **Web search (conditional)** — only when building new infrastructure from scratch
+4. **Deep evaluation** — `git clone --depth=1 ... research/<repo>`, then write `docs/research/assess-<repo>.md` with verdict
+
+Verdicts follow PHILOSOPHY.md tiers: `adopt`, `port-partially`, `inspire-only`, `skip`. If verdict is "adopt", the workflow pivots from "build" to "integrate."

@@ -26,7 +26,7 @@ bd close <id> && git push                 # Complete work (`bd sync` first only 
 | Beads Workflow | [agents/beads-workflow.md](agents/beads-workflow.md) | Bead tracking, label taxonomy, recovery scripts, roadmap |
 | Critical Patterns | [agents/critical-patterns.md](agents/critical-patterns.md) | Six must-know patterns from production failures |
 | Prerequisites | [agents/prerequisites.md](agents/prerequisites.md) | Required tools, secrets, Go module path convention |
-| Operational Guides | [agents/operational-guides.md](agents/operational-guides.md) | Guide index, prior solutions search, operational notes |
+| Operational Guides | [agents/operational-guides.md](agents/operational-guides.md) | Guide index, prior solutions search, prior art pipeline, operational notes |
 
 ## Session Close Protocol
 
