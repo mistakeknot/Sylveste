@@ -66,12 +66,10 @@ sync-branch: "beads-sync"
 # - github.org
 # - github.repo
 
-sync:
-  remote: "origin"
-  mode: "dolt-native"
+sync.remote: "origin"
+sync.mode: "dolt-native"
 events-export: true
 
-backup:
-  enabled: true
-  interval: 5m
-  git-push: false
+backup.enabled: true
+backup.interval: 5m
+backup.git-push: false
