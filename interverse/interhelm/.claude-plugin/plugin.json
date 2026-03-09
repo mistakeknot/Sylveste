@@ -1,0 +1,27 @@
+{
+  "name": "interhelm",
+  "version": "0.1.0",
+  "description": "Agent-as-operator runtime diagnostics — teaches agents to observe and control running applications via diagnostic HTTP servers and CLI tools.",
+  "author": {
+    "name": "mistakeknot",
+    "email": "mistakeknot@vibeguider.org"
+  },
+  "repository": "https://github.com/mistakeknot/interhelm",
+  "license": "MIT",
+  "keywords": [
+    "runtime",
+    "diagnostics",
+    "observability",
+    "health-check",
+    "operator",
+    "native-apps"
+  ],
+  "skills": [
+    "./skills/runtime-diagnostics",
+    "./skills/smoke-test-design",
+    "./skills/cuj-verification"
+  ],
+  "agents": [
+    "./agents/review/runtime-reviewer.md"
+  ]
+}

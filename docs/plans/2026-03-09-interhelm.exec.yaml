@@ -1,0 +1,67 @@
+version: 1
+mode: all-sequential
+tier: deep
+max_parallel: 1
+timeout_per_task: 300
+
+stages:
+  - name: "Scaffold"
+    tasks:
+      - id: task-1
+        title: "Plugin scaffold — directory structure and plugin.json"
+        files: [interverse/interhelm/.claude-plugin/plugin.json, interverse/interhelm/.gitignore, interverse/interhelm/LICENSE]
+        depends: []
+      - id: task-2
+        title: "Plugin docs — CLAUDE.md, AGENTS.md, PHILOSOPHY.md, README.md"
+        files: [interverse/interhelm/CLAUDE.md, interverse/interhelm/AGENTS.md, interverse/interhelm/PHILOSOPHY.md, interverse/interhelm/README.md]
+        depends: [task-1]
+
+  - name: "Skills"
+    tasks:
+      - id: task-3
+        title: "Runtime diagnostics skill — 4 patterns + UI state"
+        files: [interverse/interhelm/skills/runtime-diagnostics/SKILL.md]
+        depends: []
+      - id: task-4
+        title: "Smoke test design skill — executable contract pattern"
+        files: [interverse/interhelm/skills/smoke-test-design/SKILL.md]
+        depends: []
+      - id: task-5
+        title: "CUJ verification skill — screenshot-free validation"
+        files: [interverse/interhelm/skills/cuj-verification/SKILL.md]
+        depends: []
+
+  - name: "Agent and Hooks"
+    tasks:
+      - id: task-6
+        title: "Runtime reviewer agent — completeness, security, performance"
+        files: [interverse/interhelm/agents/review/runtime-reviewer.md]
+        depends: []
+      - id: task-7
+        title: "Hooks — browser-on-native, auto-health, CUJ reminder"
+        files: [interverse/interhelm/hooks/hooks.json, interverse/interhelm/hooks/browser-on-native.sh, interverse/interhelm/hooks/auto-health-check.sh, interverse/interhelm/hooks/cuj-reminder.sh]
+        depends: []
+
+  - name: "Templates"
+    tasks:
+      - id: task-8
+        title: "Rust/hyper diagnostic server templates"
+        files: [interverse/interhelm/templates/rust-hyper/]
+        depends: []
+      - id: task-9
+        title: "CLI client templates"
+        files: [interverse/interhelm/templates/cli/]
+        depends: []
+
+  - name: "Validation"
+    tasks:
+      - id: task-10
+        title: "Scripts and structural tests"
+        files: [interverse/interhelm/scripts/bump-version.sh, interverse/interhelm/tests/]
+        depends: []
+        tier: fast
+      - id: task-11
+        title: "Final validation and close"
+        files: []
+        depends: [task-10]
+        tier: fast
