@@ -85,6 +85,26 @@ Convert background state-mutating actors to read-only observers. Push mutation t
 
 Applied in interlock: `CheckExpiredNegotiations` is advisory-only — it reports expired negotiations but does NOT force-release, letting the state owner (the holding agent) decide.
 
+## Interface Contracts for Parallel Work
+
+When multiple agents need to build against a shared interface, publish the interface contract **before** either agent starts coding. This enables parallel work without waiting for the upstream agent to finish.
+
+```bash
+# Publisher: declare the interface contract
+sprint_publish_contract "$CLAVAIN_BEAD_ID" "/path/to/contract.json"
+
+# Dependent: verify contract hasn't been revised before building
+version=$(sprint_check_contract_conflict "$SPRINT_ID" "api-surface" "1")
+[[ $? -ne 0 ]] && echo "Contract revised to v${version} — re-read"
+
+# Query all active contracts for a sprint
+sprint_query_contracts "$CLAVAIN_BEAD_ID"
+```
+
+On revision (version bump), `sprint_publish_contract()` auto-notifies dependents via Intermute (`topic: contract-revised`). Write_set coordination locks protect the declared file patterns.
+
+Full convention: `os/clavain/agents/interface-contracts.md`
+
 ## Post-Parallel Quality Gates
 
 After parallel agent implementation, always run quality gates with the **full unified diff** — not individual agent diffs. Schema consistency is a cross-cutting concern that no single implementing agent owns. A unified diff catches:
