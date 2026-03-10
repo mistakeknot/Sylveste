@@ -3,7 +3,7 @@ artifact_type: brainstorm
 stage: discover
 ---
 
-# Skaffen: Demarch's Sovereign Agent Runtime
+# Skaffen — Demarch's Sovereign Agent Runtime
 
 **Date:** 2026-03-10
 **Status:** Brainstorming
@@ -25,7 +25,7 @@ The ceiling is real and blocking today. The answer isn't replacing Clavain — i
 
 **Skaffen** is Demarch's sovereign agent runtime — a standalone coding agent binary where OODARC, evidence pipelines, phase gates, and model routing are architectural primitives, not bolt-ons.
 
-Named after Skaffen-Amtiskaw (Culture drone operating with full autonomy within its authority scope) — exactly the earned-authority model from PHILOSOPHY.md.
+Named after Skaffen-Amtiskaw — the Culture drone that operates with full autonomy within its authority scope. Exactly the earned-authority model from PHILOSOPHY.md.
 
 ### Relationship to Existing Pillars
 

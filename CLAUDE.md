@@ -13,7 +13,7 @@ When you have enough context to start implementing, do it. Write a 3-bullet inli
 ## Naming Convention
 
 - All module names are **lowercase** — `interflux`, `intermute`, `interkasten`
-- Exception: **Clavain** (proper noun), **Interverse** (plugin ecosystem name), **Demarch** (project name), **Autarch** (proper noun), **Interspect** (proper noun), **Intercore** (proper noun)
+- Exception: **Clavain** (proper noun), **Interverse** (plugin ecosystem name), **Demarch** (project name), **Autarch** (proper noun), **Interspect** (proper noun), **Intercore** (proper noun), **Skaffen** (proper noun)
 - GitHub repos match: `github.com/mistakeknot/interflux`
 - **Pillars** are the 5 top-level components: Intercore, Clavain, Interverse, Autarch, Interspect
 - **Layers** (L1/L2/L3) describe architectural dependency; pillars describe organizational structure
