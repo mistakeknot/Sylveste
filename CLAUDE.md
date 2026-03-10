@@ -8,14 +8,14 @@ When you have enough context to start implementing, do it. Write a 3-bullet inli
 
 ## Structure
 
-5 pillars across 3 layers: `os/clavain/` (L2 OS), `interverse/` (plugins), `core/intercore/` + `core/intermute/` (L1 kernel), `apps/autarch/` + `apps/intercom/` (L3 apps), `sdk/interbase/` (shared SDK). Each subproject has its own CLAUDE.md and AGENTS.md — read those when working in a module. See root `AGENTS.md` for full directory table and module relationships. See `PHILOSOPHY.md` for design bets and tradeoffs.
+6 pillars across 3 layers: `os/clavain/` (L2 OS), `os/skaffen/` (L2 sovereign agent), `interverse/` (plugins), `core/intercore/` + `core/intermute/` (L1 kernel), `apps/autarch/` + `apps/intercom/` (L3 apps), `sdk/interbase/` (shared SDK). Each subproject has its own CLAUDE.md and AGENTS.md — read those when working in a module. See root `AGENTS.md` for full directory table and module relationships. See `PHILOSOPHY.md` for design bets and tradeoffs.
 
 ## Naming Convention
 
 - All module names are **lowercase** — `interflux`, `intermute`, `interkasten`
 - Exception: **Clavain** (proper noun), **Interverse** (plugin ecosystem name), **Demarch** (project name), **Autarch** (proper noun), **Interspect** (proper noun), **Intercore** (proper noun), **Skaffen** (proper noun)
 - GitHub repos match: `github.com/mistakeknot/interflux`
-- **Pillars** are the 5 top-level components: Intercore, Clavain, Interverse, Autarch, Interspect
+- **Pillars** are the 6 top-level components: Intercore, Clavain, Skaffen, Interverse, Autarch, Interspect
 - **Layers** (L1/L2/L3) describe architectural dependency; pillars describe organizational structure
 
 ## Git Workflow

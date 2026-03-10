@@ -139,17 +139,9 @@ Pi_agent_rust currently uses `charmed_rust` (Rust ports of Go's bubbletea/lipglo
 
 ### D1: Where does Skaffen live?
 
-**Option A:** New repo (`github.com/mistakeknot/skaffen`)
-- Clean separation. Own version, own CI, own releases.
-- Matches how beads, cass are external tools Demarch depends on.
-- Downside: Another repo to maintain. Cross-repo changes are harder.
+**Decision: Own repo at `github.com/mistakeknot/skaffen`, monorepo anchor at `os/skaffen/`.**
 
-**Option B:** In monorepo at `apps/skaffen/`
-- Consistent with pillar structure (apps/autarch, os/clavain, core/intercore).
-- Shared CI, shared beads, shared version coordination.
-- Downside: Rust build system adds complexity to monorepo (Cargo workspace alongside Go modules and Python packages).
-
-**Current lean: Option A (new repo).** Skaffen is a binary with its own Cargo workspace — it doesn't share code with Go/Python modules. Same pattern as cass (external binary, integrated via CLI).
+Skaffen is the sixth pillar — a sibling L2 OS alongside Clavain, not an app under Autarch. It has its own GitHub repo and Cargo workspace (same pattern as cass). The monorepo anchor at `os/skaffen/` holds CLAUDE.md, AGENTS.md, and cross-repo references.
 
 ### D2: OODARC loop structure
 
