@@ -7,8 +7,8 @@ from pathlib import Path
 def test_skill_count(skills_dir):
     """Expected number of skills."""
     skills = list(skills_dir.glob("*/SKILL.md"))
-    assert len(skills) == 3, (
-        f"Expected 3 skills, found {len(skills)}: {[s.parent.name for s in skills]}"
+    assert len(skills) == 4, (
+        f"Expected 4 skills, found {len(skills)}: {[s.parent.name for s in skills]}"
     )
 
 

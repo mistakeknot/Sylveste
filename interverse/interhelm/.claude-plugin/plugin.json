@@ -16,7 +16,8 @@
   "skills": [
     "./skills/runtime-diagnostics",
     "./skills/smoke-test-design",
-    "./skills/cuj-verification"
+    "./skills/cuj-verification",
+    "./skills/diagnostic-maturation"
   ],
   "agents": [
     "./agents/review/runtime-reviewer.md"

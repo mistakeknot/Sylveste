@@ -1,0 +1,24 @@
+version: 1
+mode: all-sequential
+tier: fast
+max_parallel: 1
+timeout_per_task: 120
+
+stages:
+  - name: "Create Skill & Update Plugin"
+    tasks:
+      - id: task-1
+        title: "Create diagnostic-maturation SKILL.md"
+        files: [interverse/interhelm/skills/diagnostic-maturation/SKILL.md]
+        depends: []
+      - id: task-2
+        title: "Update plugin.json + test_skills.py together"
+        files: [interverse/interhelm/.claude-plugin/plugin.json, interverse/interhelm/tests/structural/test_skills.py]
+        depends: [task-1]
+  - name: "Update Docs"
+    tasks:
+      - id: task-3
+        title: "Update CLAUDE.md skill count to 4"
+        files: [interverse/interhelm/CLAUDE.md]
+        depends: [task-2]
+        tier: fast

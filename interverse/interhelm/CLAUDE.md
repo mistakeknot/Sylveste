@@ -4,13 +4,13 @@
 
 ## Overview
 
-3 skills, 1 agent, 3 hooks. Standalone plugin — no intercore dependency. Teaches agents the "agent-as-operator" pattern: observe and control running applications via diagnostic HTTP servers and CLI tools.
+4 skills, 1 agent, 3 hooks. Standalone plugin — no intercore dependency. Teaches agents the "agent-as-operator" pattern: observe and control running applications via diagnostic HTTP servers and CLI tools.
 
 ## Quick Commands
 
 ```bash
 python3 -c "import json; json.load(open('.claude-plugin/plugin.json'))"  # Manifest check
-ls skills/*/SKILL.md | wc -l  # Should be 3
+ls skills/*/SKILL.md | wc -l  # Should be 4
 ls agents/review/*.md | wc -l  # Should be 1
 python3 -c "import json; json.load(open('hooks/hooks.json'))"  # Hooks check
 cd tests && uv run pytest -q  # Structural tests
