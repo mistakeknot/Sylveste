@@ -59,7 +59,7 @@ echo "JSONL has $LINES issues"
 echo "Re-initializing from JSONL..."
 bd dolt stop 2>/dev/null || true
 sleep 2
-bd init --from-jsonl --force --prefix iv
+bd init --from-jsonl --force
 
 # 7. Verify
 echo ""

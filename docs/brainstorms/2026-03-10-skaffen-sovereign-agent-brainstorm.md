@@ -60,7 +60,7 @@ Fork [Dicklesworthstone/pi_agent_rust](https://github.com/Dicklesworthstone/pi_a
 | Concurrency | Promise chains | Structured concurrency, cancellation | Rust |
 | Provider count | 23+ | ~10 (Anthropic, OpenAI, Gemini, Azure) | TS has more, Rust has enough |
 | Language fit | Only TS in Demarch | Joins Go (clavain-cli) + Rust (cass) | Rust |
-| Feature parity | Mature (v0.57, 14K stars) | v0.1.8, 89/89 feature parity claimed | Trade-off |
+| Feature parity | Mature (v0.57, 14K stars) | v0.1.8, author-claimed parity (unaudited; Skaffen validates via v0.1 AC) | Trade-off |
 
 ### What We Keep from the Fork
 
@@ -191,7 +191,7 @@ Clavain's 17 skills encode discipline (brainstorming protocol, plan format, revi
 - **Load Clavain skills via compatibility bridge.** Read SKILL.md files from Clavain's directory, inject into Skaffen's resource loader.
 - **Extract discipline into shared docs.** The discipline content (brainstorm protocol, phase gates, review checklist) becomes shared documentation that both Clavain and Skaffen consume.
 
-**Current lean: Extract to shared docs.** The discipline is the value, not the plugin format. Both runtimes should read from the same source of truth.
+**Decision: Extract to shared markdown docs (`docs/discipline/`).** The discipline is the value, not the plugin format. Both runtimes consume shared source of truth. Plugin infrastructure (hooks, MCP servers, slash commands) stays Clavain-only. Drop "compatibility bridge" language.
 
 ### D5: Phase-aware tool gating
 
@@ -211,7 +211,7 @@ fn tools_for_phase(phase: Phase) -> Vec<&dyn Tool> {
 
 **Question:** Hard gate (tool unavailable) or soft gate (tool available but system prompt discourages)?
 
-**Current lean: Hard gate.** Structural enforcement is the Demarch way (PHILOSOPHY.md: "structural, not moral"). If the model can't call `write` during review, it won't accidentally modify code when it should be reading.
+**Decision: Hard gate (runtime-enforced).** Structural enforcement is the Demarch way (PHILOSOPHY.md: "structural, not moral"). If the model can't call `write` during review, it won't accidentally modify code when it should be reading. Note: this is runtime enforcement via exclusive tool lists, not compile-time type-system enforcement. Ship phase uses `git_bash` (allowlisted git subcommands) instead of unrestricted `bash`.
 
 ### D6: Model routing at the loop level
 
@@ -298,11 +298,136 @@ Anthropic is building toward OAuth for third-party integrations (MCP OAuth, Clau
 - Con: Doesn't exist yet. Timeline unknown.
 - Con: May have rate limits or capability restrictions vs. API.
 
-**Current lean: A as default, B as opt-in, C as future drop-in.**
+**Decision: Phased rollout with v0.3 decision gate.**
 
-Ship with `ClaudeCodeProvider` as the default backend (zero cost for Max subscribers). Users who want direct API control or multi-provider routing can configure API keys. When Anthropic ships programmatic Max access, add it as a third backend. The `InferenceBackend` trait makes all three pluggable.
+- **v0.1:** ClaudeCodeProvider only (zero cost, `ModelSelection::Deferred`)
+- **v0.2:** DirectApiProvider as opt-in (API keys required, `ModelSelection::Selected(model)`, test mid-session switching)
+- **v0.3 decision gate:** Can ClaudeCodeProvider honor Interspect routing overrides? If not, v0.4 requires DirectApiProvider or Anthropic OAuth.
+- **v0.4:** Self-building uses whichever backend satisfies `select_model()`. Flywheel only validated on direct API.
 
-This also means Skaffen v0.1 doesn't need to solve auth at all — it delegates to Claude Code, which already handles it. The self-building bootstrap (Q3) works immediately: build Skaffen using Skaffen-via-Claude-Code-proxy.
+**Important limitation:** ClaudeCodeProvider delegates model selection to Claude Code, short-circuiting the routing flywheel. This is acceptable for v0.1-v0.2 (bootstrap) but the core thesis cannot be validated without a backend that honors `select_model()`.
+
+This also means Skaffen v0.1 doesn't need to solve auth at all — it delegates to Claude Code, which already handles it.
+
+### D8: Compaction strategy
+
+**Decision: Hybrid — structured at phase boundaries, reactive mid-phase.**
+
+Phase boundaries produce structured summaries (goal, decisions, artifacts, file lists) that become the seed for the next phase. Mid-phase, reactive compaction fires when the context threshold is crossed, preserving recent tool results and the phase's goal/constraints. Cumulative file tracking across compactions (pi-mono pattern).
+
+Phase summaries are persisted in two places:
+- **Session tree:** Compaction entry with `first_kept_entry_id` (for context rebuild within session).
+- **Beads:** `bd update <id> --notes "phase summary"` (for cross-session persistence and handoff).
+
+The session entry is the ephemeral receipt; the bead update is the durable one. This is the Receipts principle applied to context management.
+
+### D9: System prompt architecture
+
+**Decision: Priompt-style priority rendering, phase-aware.**
+
+Each prompt component (identity, phase instructions, tool docs, sprint context, evidence, file lists) has a priority number. At each turn, Skaffen renders components into the token budget, dropping lowest-priority items first. Phase transitions change the priority map — during brainstorm, research context is high-priority; during build, tool docs are high-priority.
+
+```rust
+struct PromptElement {
+    content: String,
+    priority: i32,        // higher = more important
+    phase_boost: PhaseMap, // per-phase priority adjustments
+    tokens: usize,
+}
+
+fn render_prompt(elements: &[PromptElement], phase: Phase, budget: usize) -> String {
+    // Sort by effective priority (base + phase boost)
+    // Greedily include until budget exhausted
+    // Isolate stable prefixes for cache hits
+}
+```
+
+Prompt construction is a knapsack problem, not a template problem. The optimal packing changes per phase. The closed-loop pattern applies: start with hardcoded priorities (stage 1), collect which elements the model actually uses (stage 2), calibrate priorities from usage data (stage 3), hardcoded becomes fallback (stage 4).
+
+Plugins add elements with priorities; the renderer handles the budget. ~200 lines of Rust.
+
+**Research bead:** SPEAR prompt algebra (CIDR 2026) — typed prompt fragments with algebraic composition. Natural Rust type-system fit. Long-term evolution path.
+
+### D10: Context window as budget — git-context architecture
+
+**Decision: Context management as agent tools over JSONL session tree, with priority rendering as default eviction policy.**
+
+Skaffen's JSONL session tree already has COMMIT (session entries), BRANCH (tree branching), and MERGE (branch summarization from pi-mono). Add explicit context operations as tools the agent can call:
+
+```rust
+enum ContextTool {
+    Commit { summary: String },            // Checkpoint working state
+    Retrieve { query: String },            // Pull from L2/L3 into L1
+    Anchor { key: String, value: String }, // Pin stable signal (survives compression)
+    Fold { scope: FoldScope },             // Compress a completed sub-task
+}
+```
+
+Three memory tiers:
+- **L1** (context window) — current phase + active tool results. Managed by D9's priority rendering.
+- **L2** (session index) — JSONL session tree + SQLite index. Recent summaries, file lists, evidence.
+- **L3** (persistent store) — beads, docs/solutions, session archive.
+
+Factory.ai's anchored summaries: stable signals (phase goals, file lists, test results) persist as anchors. Volatile content (tool outputs, intermediate reasoning) gets compressed. Delta encoding: only new content since last anchor is in full resolution.
+
+The agent controls its own memory — aligned with Skaffen's sovereignty philosophy. Every context operation produces a receipt (PHILOSOPHY.md: "every action produces evidence").
+
+**Research beads:**
+- Entropy-aware telescoping (SimpleMem, Jan 2026) — 30x token reduction via entropy-scored compression.
+- Learned folding (AgentFold, ICLR 2026) — agent learns granular vs. deep consolidation. 30B matches 671B.
+- RLMs (Prime Intellect, Jan 2026) — model writes code to manage own context. Most radical.
+- MAGMA (Jan 2026) — multi-graph retrieval (semantic/temporal/causal/entity). 95% token reduction.
+
+### D11: Fork maintenance strategy
+
+**Decision: Hard fork with per-release-tag upstream review.**
+
+Fork pi_agent_rust once, rename to Skaffen, diverge. Agent loop, session format, and extension system diverge immediately. No upstream tracking for modified files.
+
+Per-release-tag "upstream review": diff `agent.rs` + `Cargo.toml` against each pi_agent_rust release tag. Provider-layer patches are the high-value upstream content, but they are entangled with `asupersync` wiring that won't show up in a provider-file-only diff. Per-tag diffs are more targeted than monthly cadence and catch these entanglements.
+
+PHILOSOPHY.md says "Fork, don't rewrite." Pi_agent_rust's agent loop (`src/agent.rs`) isn't designed for extension — there's no plugin point for OODARC, phase gates, or evidence emission. A wrapper would fight the architecture.
+
+### D12: MCP server compatibility
+
+**Decision: Native Rust MCP client.**
+
+Implement the MCP stdio client protocol in Rust. Skaffen discovers MCP servers from plugin.json manifests, spawns them as subprocesses, and registers their tools alongside built-in tools. Same tool dispatch for MCP tools and native tools. The Rust `mcp` crate handles the protocol.
+
+This gives 34 Interverse plugins tools immediately, plus full MCP ecosystem access (not just Interverse). MCP is becoming the standard — Anthropic, OpenAI, Google all support it. Skaffen's sovereignty requires independent tool discovery.
+
+### D13: Testing strategy
+
+**Decision: Phased Block pyramid with stateful properties and behavioral contracts.**
+
+**V0.1 — Block pyramid base:**
+- **L1 Deterministic:** `mockall` for provider traits, `proptest` for tool argument fuzzing, `#[test]` for phase FSM. Runs in CI.
+- **L2 Record/Replay:** VCR pattern — record real agent sessions as cassettes, replay deterministically. `insta` for snapshot approval when behavior changes. Runs in CI.
+- **L3 Performance:** Criterion benchmarks for startup time, context rebuild speed, compaction speed. CI gates.
+
+**V0.2 — Stateful properties + contracts:**
+- **proptest-stateful:** Define agent state machine (phase, context tokens, tool history, anchors). Generate random transition sequences. Check postconditions (context ≤ max after compaction, system prompt survives, evidence emitted per tool call). Auto-shrink to minimal failing sequence.
+- **ABC (Agent Behavioral Contracts):** Formal contracts with pre/post conditions on the OODARC loop. Drift detection across extended sessions.
+- **L4 Probabilistic:** LLM-as-judge evals. Nightly, not CI. Grade outputs not paths.
+
+**V0.3+ — Self-testing:** Skaffen tests itself by building itself (PHILOSOPHY.md: "Demarch builds itself with its own tools").
+
+**Research bead:** SHIELDA (ICLR 2026) — cross-phase root cause tracing. Tool failure ← reasoning error linkage.
+
+### D14: Interverse plugin bridge
+
+**Decision: MCP + agents + shared discipline docs for v0.1.**
+
+Three capabilities bridged:
+1. **MCP tools** (D12) — native Rust MCP client. 34 plugins work immediately.
+2. **Agent definitions** — parse agents/*.md files, dispatch with Skaffen's routing. ~20 plugins with agent definitions (interflux's 17 reviewers, intersynth's 3 synthesizers).
+3. **Shared discipline docs** (D4) — skill content extracted to shared documentation both runtimes consume. Not SKILL.md format, not Skaffen-native format — shared markdown.
+
+What stays Clavain-only for v0.1: hooks (SessionStart, PreToolUse — Skaffen's OODARC phases have different boundaries), Claude-specific skills (depend on Claude Code's context model), slash commands (Skaffen has its own TUI command system).
+
+This covers ~80% of plugin value with ~20% of bridge effort.
+
+**Research bead:** Full compatibility layer — translate all plugin capabilities across runtimes. 200-400 hours estimated. Evaluate after v0.2 based on actual usage patterns.
 
 ## Open Questions for Brainstorming
 
@@ -326,7 +451,7 @@ Pi_agent_rust is a single-agent system. Should Skaffen's loop support spawning s
 Demarch builds itself with its own tools (PHILOSOPHY.md). Skaffen should be the first consumer of its own runtime — building Skaffen features using Skaffen.
 
 - At what point is Skaffen capable enough to build itself?
-- What's the bootstrap sequence? (Clavain-rigged Claude Code builds Skaffen v0.1, then Skaffen builds Skaffen v0.2+)
+- What's the bootstrap sequence? (Clavain-rigged Claude Code builds Skaffen v0.1-v0.3, then Skaffen builds v0.4+ — superseded by PRD/Roadmap which set the handoff at v0.4)
 
 ### Q4: Extension compatibility with pi_agent_rust ecosystem
 
@@ -353,7 +478,19 @@ When does the TUI migration from charmed_rust to FrankenTUI become worth the cos
 
 ## Success Criteria
 
-1. **Skaffen v0.1:** Fork built, Intercore bridge working, phase-aware tool gating implemented. Can run a simple "read file, edit file, run tests" workflow with phase transitions.
-2. **Skaffen v0.2:** OODARC loop native, evidence emission to Interspect, model routing from routing overrides.
-3. **Skaffen v0.3:** Self-building (Skaffen develops Skaffen). Discipline content shared with Clavain.
-4. **Skaffen v1.0:** Production parity with Clavain-rigged Claude Code for Demarch development. Measurable improvement in autonomy level (PHILOSOPHY.md trust ladder).
+1. **Skaffen v0.1:** Hard fork built. ClaudeCodeProvider as default inference backend. Native MCP client loading Interverse plugins. Phase-aware tool gating (D5). Priority-based prompt rendering (D9). Hybrid compaction with beads persistence (D8). Block pyramid tests (L1+L2) passing. Can run a simple "read file, edit file, run tests" workflow with phase transitions.
+2. **Skaffen v0.2:** OODARC loop native with git-context tools (commit/retrieve/anchor/fold). Evidence emission to Interspect. Model routing from routing overrides (D6). Agent definitions from Interverse dispatched. proptest-stateful for loop invariants. ABC behavioral contracts for drift detection.
+3. **Skaffen v0.3:** Self-building (Skaffen develops Skaffen). Shared discipline docs consumed by both runtimes (D4+D14). Learned context allocation via ACON pattern (D10). Self-testing capability.
+4. **Skaffen v1.0:** Production parity with Clavain-rigged Claude Code for Demarch development. Measurable improvement in autonomy level (PHILOSOPHY.md trust ladder). Direct API backend with full model routing. Prompt priority calibration from outcomes.
+
+## Research Beads (to create when beads server is healthy)
+
+The following research beads should be created as children of the Skaffen epic (Demarch-6qb):
+
+1. **SPEAR prompt algebra** — CIDR 2026 paper. Typed prompt fragments with algebraic composition (compose, refine, specialize). Natural Rust type-system fit. Long-term evolution path for D9. Source: arxiv.org/abs/2508.05012
+2. **Entropy-aware context compression (SimpleMem)** — Jan 2026. 30x token reduction via entropy-scored filtering + recursive consolidation + adaptive query-aware retrieval. Source: huggingface.co/papers/2601.02553
+3. **Learned context folding (AgentFold)** — ICLR 2026. Multi-scale folding: granular condensation vs. deep consolidation. AgentFold-30B matches DeepSeek-671B. Source: arxiv.org/abs/2510.24699
+4. **Recursive Language Models (RLMs)** — Prime Intellect, Jan 2026. Model writes Python code to manage own context. Never summarizes — delegates to scripts. Most radical approach. Source: primeintellect.ai/blog/rlm
+5. **Multi-graph retrieval (MAGMA)** — Jan 2026. 4 orthogonal graphs (semantic/temporal/causal/entity). Policy-guided traversal. 95% token reduction. Source: arxiv.org/abs/2601.03236
+6. **Cross-phase root cause tracing (SHIELDA)** — ICLR 2026. 36 exception types across 12 agent artifacts. Phase-aware recovery links execution errors to reasoning failures. Source: arxiv.org/abs/2508.07935
+7. **Full Interverse compatibility layer** — Translate all plugin capabilities (skills, hooks, commands) across Clavain and Skaffen runtimes. 200-400 hours estimated. Evaluate after v0.2 based on usage patterns.
