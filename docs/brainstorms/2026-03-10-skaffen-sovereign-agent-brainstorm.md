@@ -232,6 +232,78 @@ fn select_model(phase: &Phase, routing: &RoutingOverrides, budget: &Budget) -> M
 }
 ```
 
+### D7: Inference backend strategy
+
+Skaffen needs LLM inference. The cost model determines whether this is viable as a hobby project or requires API budgets.
+
+**The problem:** Pi_agent_rust's `Provider` trait assumes API-key auth (Anthropic, OpenAI, Gemini, Azure, etc.). Claude Max subscriptions provide unlimited Claude usage but only through Claude Code's proprietary OAuth flow — there's no general-purpose bearer token a third-party binary can use.
+
+**Three backends, not one:**
+
+```rust
+trait InferenceBackend: Provider {
+    fn auth_method(&self) -> AuthMethod;
+    fn supports_mid_turn_model_switch(&self) -> bool;
+    fn cost_per_turn(&self, model: &Model, tokens: &TokenEstimate) -> Cost;
+}
+
+enum AuthMethod {
+    ApiKey,              // Anthropic/OpenAI API keys — pay per token
+    ClaudeCodeProxy,     // Piggyback on Max subscription via `claude --mode rpc`
+    OAuth,               // Future: Anthropic programmatic Max access
+}
+```
+
+**Option A: Claude Code as inference proxy (works today, $0 extra)**
+
+Skaffen spawns `claude --mode rpc` as a subprocess and sends prompts via JSON-line protocol. The Claude Code process authenticates via the user's Max subscription. This is the same pattern Clavain uses with `ic run`.
+
+```
+Skaffen binary
+  └── ClaudeCodeProvider
+        └── spawns `claude --mode rpc` subprocess
+              └── authenticates via Max OAuth (handled by Claude Code)
+```
+
+- Pro: Free with Max subscription. Proven pattern (Clavain does this today).
+- Pro: No API key management. Works anywhere Claude Code is logged in.
+- Con: Extra process hop (~50ms latency per call). Claude Code manages compaction and context window.
+- Con: No mid-turn model switching — Claude Code picks the model (unless `set_model` RPC command is supported).
+- Con: Bound by Claude Code's rate limits (currently generous on Max).
+
+**Option B: Direct API with aggressive routing ($)**
+
+Use pi_agent_rust's native `Provider` trait with API keys. D6's model routing selects the cheapest model per phase:
+
+| Phase | Default Model | Estimated Cost (100K context) |
+|-------|--------------|-------------------------------|
+| Brainstorm | Haiku | ~$0.03 |
+| Plan | Haiku/Sonnet | ~$0.05 |
+| Build | Sonnet/Opus | ~$0.15-0.50 |
+| Review | Haiku | ~$0.03 |
+| Ship | Haiku | ~$0.01 |
+
+A full sprint: ~$0.10-0.60 depending on build complexity. Viable for hobby use at low volume.
+
+- Pro: Full control. Mid-turn model switching. No Claude Code dependency.
+- Pro: Can use any provider (OpenAI, Gemini, local models for cheap phases).
+- Con: Requires API keys and a budget. Opus-heavy sprints add up.
+- Con: No subscription leverage — you pay retail per token.
+
+**Option C: Future Anthropic OAuth for programmatic Max access**
+
+Anthropic is building toward OAuth for third-party integrations (MCP OAuth, Claude integrations). When this ships, Skaffen registers as an OAuth client and gets a token scoped to the user's Max subscription.
+
+- Pro: Best of both worlds — Max pricing with full Provider control.
+- Con: Doesn't exist yet. Timeline unknown.
+- Con: May have rate limits or capability restrictions vs. API.
+
+**Current lean: A as default, B as opt-in, C as future drop-in.**
+
+Ship with `ClaudeCodeProvider` as the default backend (zero cost for Max subscribers). Users who want direct API control or multi-provider routing can configure API keys. When Anthropic ships programmatic Max access, add it as a third backend. The `InferenceBackend` trait makes all three pluggable.
+
+This also means Skaffen v0.1 doesn't need to solve auth at all — it delegates to Claude Code, which already handles it. The self-building bootstrap (Q3) works immediately: build Skaffen using Skaffen-via-Claude-Code-proxy.
+
 ## Open Questions for Brainstorming
 
 ### Q1: Should Skaffen support multi-agent orchestration natively?

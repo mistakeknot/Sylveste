@@ -1,0 +1,67 @@
+samples:
+  - id: sample-20260302002202-bl0f
+    filename: sample-20260302002202-bl0f.md
+    source: inline
+    title: 'PR #1 comment: phased approach agreement'
+    addedAt: '2026-03-02T00:22:02.234Z'
+    wordCount: 40
+    analyzed: false
+    tags:
+      - pr-comments
+      - github
+      - client-facing
+  - id: sample-20260302002203-gbzg
+    filename: sample-20260302002203-gbzg.md
+    source: inline
+    title: 'PR #1 comment: internal requirements split'
+    addedAt: '2026-03-02T00:22:03.908Z'
+    wordCount: 14
+    analyzed: false
+    tags:
+      - pr-comments
+      - github
+      - client-facing
+  - id: sample-20260302002206-d0aq
+    filename: sample-20260302002206-d0aq.md
+    source: inline
+    title: 'PR #1 comment: draft-and-approve confirmation'
+    addedAt: '2026-03-02T00:22:06.252Z'
+    wordCount: 21
+    analyzed: false
+    tags:
+      - pr-comments
+      - github
+      - client-facing
+  - id: sample-20260302002208-zppl
+    filename: sample-20260302002208-zppl.md
+    source: inline
+    title: 'PR #1 comment: LLM poisoning reframe'
+    addedAt: '2026-03-02T00:22:08.476Z'
+    wordCount: 21
+    analyzed: false
+    tags:
+      - pr-comments
+      - github
+      - client-facing
+  - id: sample-20260302002210-3wbc
+    filename: sample-20260302002210-3wbc.md
+    source: inline
+    title: 'PR #1 comment: domain content extracted'
+    addedAt: '2026-03-02T00:22:10.279Z'
+    wordCount: 11
+    analyzed: false
+    tags:
+      - pr-comments
+      - github
+      - client-facing
+  - id: sample-20260302002212-fnsh
+    filename: sample-20260302002212-fnsh.md
+    source: inline
+    title: 'PR #1 comment: TikTok clarification'
+    addedAt: '2026-03-02T00:22:12.155Z'
+    wordCount: 18
+    analyzed: false
+    tags:
+      - pr-comments
+      - github
+      - client-facing

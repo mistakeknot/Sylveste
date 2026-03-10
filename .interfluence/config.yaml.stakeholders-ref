@@ -1,0 +1,61 @@
+mode: manual
+scope:
+  - "**/*.md"
+exclusions:
+  - CLAUDE.md
+  - AGENTS.md
+voices:
+  - name: robinson
+    applyTo:
+      - world/infrastructure/**/*.md
+      - docs/systems/**/*.md
+  - name: watts
+    applyTo:
+      - world/protocols.md
+      - world/**/*.md
+  - name: gibson
+    applyTo:
+      - stories/**/*.md
+  - name: reynolds
+    applyTo:
+      - characters/**/*.md
+  - name: palmer
+    applyTo:
+      - world/factions/**/*.md
+      - world/institutions/**/*.md
+  - name: butler
+    applyTo:
+      - world/biology/**/*.md
+      - world/symbiosis/**/*.md
+  - name: vandermeer
+    applyTo:
+      - world/lattice/**/*.md
+      - world/ecology/**/*.md
+  - name: mieville
+    applyTo:
+      - world/urbanism/**/*.md
+      - world/jurisdictions/**/*.md
+  - name: lem
+    applyTo:
+      - docs/bureaucracy/**/*.md
+      - docs/humor/**/*.md
+  - name: borges
+    applyTo:
+      - docs/lore/**/*.md
+      - world/lattice/deep-structure.md
+  - name: jemisin
+    applyTo:
+      - characters/underclass/**/*.md
+      - stories/resistance/**/*.md
+  - name: ishiguro
+    applyTo:
+      - characters/bloodfluencers/**/*.md
+      - stories/compliance/**/*.md
+  - name: leguin
+    applyTo:
+      - world/anthropology/**/*.md
+      - docs/sociology/**/*.md
+  - name: delany
+    applyTo:
+      - world/executives/**/*.md
+      - stories/sensory/**/*.md
