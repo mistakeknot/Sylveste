@@ -8,7 +8,7 @@ When you have enough context to start implementing, do it. Write a 3-bullet inli
 
 ## Structure
 
-6 pillars across 3 layers: `os/clavain/` (L2 OS), `os/skaffen/` (L2 sovereign agent), `interverse/` (plugins), `core/intercore/` + `core/intermute/` (L1 kernel), `apps/autarch/` + `apps/intercom/` (L3 apps), `sdk/interbase/` (shared SDK). Each subproject has its own CLAUDE.md and AGENTS.md — read those when working in a module. See root `AGENTS.md` for full directory table and module relationships. See `PHILOSOPHY.md` for design bets and tradeoffs.
+6 pillars across 3 layers: `os/clavain/` (L2 OS), `os/Skaffen/` (L2 sovereign agent), `interverse/` (plugins), `core/intercore/` + `core/intermute/` (L1 kernel), `apps/autarch/` + `apps/intercom/` (L3 apps), `sdk/interbase/` (shared SDK). Each subproject has its own CLAUDE.md and AGENTS.md — read those when working in a module. See root `AGENTS.md` for full directory table and module relationships. See `PHILOSOPHY.md` for design bets and tradeoffs.
 
 ## Naming Convention
 

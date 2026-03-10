@@ -139,9 +139,9 @@ Pi_agent_rust currently uses `charmed_rust` (Rust ports of Go's bubbletea/lipglo
 
 ### D1: Where does Skaffen live?
 
-**Decision: Own repo at `github.com/mistakeknot/skaffen`, monorepo anchor at `os/skaffen/`.**
+**Decision: Own repo at `github.com/mistakeknot/Skaffen`, monorepo anchor at `os/Skaffen/`.**
 
-Skaffen is the sixth pillar — a sibling L2 OS alongside Clavain, not an app under Autarch. It has its own GitHub repo and Cargo workspace (same pattern as cass). The monorepo anchor at `os/skaffen/` holds CLAUDE.md, AGENTS.md, and cross-repo references.
+Skaffen is the sixth pillar — a sibling L2 OS alongside Clavain, not an app under Autarch. It has its own GitHub repo and Cargo workspace (same pattern as cass). The monorepo anchor at `os/Skaffen/` holds CLAUDE.md, AGENTS.md, and cross-repo references.
 
 ### D2: OODARC loop structure
 
