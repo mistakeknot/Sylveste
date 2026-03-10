@@ -1,0 +1,54 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 600
+
+stages:
+  - name: "Foundation"
+    tasks:
+      - id: task-1
+        title: "Clone pi_agent_rust source into Skaffen repo"
+        files: [os/Skaffen/]
+        depends: []
+      - id: task-2
+        title: "Rename binary and strip pi branding"
+        files: [os/Skaffen/Cargo.toml, os/Skaffen/src/main.rs, os/Skaffen/src/cli.rs, os/Skaffen/src/config.rs]
+        depends: [task-1]
+      - id: task-3
+        title: "Vendor custom dependencies"
+        files: [os/Skaffen/vendor/, os/Skaffen/Cargo.toml]
+        depends: [task-1]
+
+  - name: "Build Green"
+    tasks:
+      - id: task-4
+        title: "Get cargo build passing"
+        files: [os/Skaffen/src/]
+        depends: [task-2, task-3]
+      - id: task-5
+        title: "Get cargo test passing"
+        files: [os/Skaffen/tests/, os/Skaffen/src/]
+        depends: [task-4]
+
+  - name: "Enhancements"
+    tasks:
+      - id: task-6
+        title: "Add OODARC coupling spike"
+        files: [os/Skaffen/src/oodarc.rs, os/Skaffen/src/agent.rs, os/Skaffen/src/lib.rs, os/Skaffen/Cargo.toml]
+        depends: [task-5]
+      - id: task-7
+        title: "Establish benchmark baselines"
+        files: [os/Skaffen/benches/, os/Skaffen/docs/benchmarks.md]
+        depends: [task-5]
+      - id: task-8
+        title: "Set up CI pipeline"
+        files: [os/Skaffen/.github/workflows/ci.yml, os/Skaffen/README.md]
+        depends: [task-5]
+
+  - name: "Verification"
+    tasks:
+      - id: task-9
+        title: "Final verification and push"
+        files: [os/Skaffen/CLAUDE.md, os/Skaffen/AGENTS.md]
+        depends: [task-6, task-7, task-8]
