@@ -5,7 +5,7 @@ Automated UI/UX design analysis for Claude Code. Extracts W3C DTCG design tokens
 ## Usage
 
 ```
-/intersight:analyze <URL> [--depth tokens|standard|full] [--format json|markdown|tokens-only] [--fresh] [--pages /path1,/path2]
+/intersight:design-analyze <URL> [--depth tokens|standard|full] [--format json|markdown|tokens-only] [--fresh] [--pages /path1,/path2]
 ```
 
 ### Depth Modes

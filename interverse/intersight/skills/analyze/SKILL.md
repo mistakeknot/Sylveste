@@ -1,12 +1,12 @@
 ---
-name: analyze
+name: design-analyze
 description: "Analyze a website's design system — extracts W3C DTCG tokens, component inventory, and layout analysis"
 user_invocable: true
 argument-hint: "<URL> [--depth tokens|standard|full] [--format json|markdown|tokens-only] [--fresh] [--pages /path1,/path2]"
 allowed-tools: ["Bash", "Read", "Write", "mcp__playwright*"]
 ---
 
-# intersight:analyze
+# intersight:design-analyze
 
 Analyze a website and extract its design system as W3C DTCG tokens.
 
