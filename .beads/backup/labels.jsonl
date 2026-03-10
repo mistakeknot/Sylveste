@@ -1,4 +1,7 @@
 {"issue_id":"Demarch-4wm","label":"agent-experience"}
+{"issue_id":"Demarch-4wm","label":"claimed_at:1773143427"}
+{"issue_id":"Demarch-4wm","label":"claimed_by:unknown"}
+{"issue_id":"Demarch-4wm","label":"complexity:3"}
 {"issue_id":"Demarch-4wm","label":"intercom"}
 {"issue_id":"Demarch-4wm","label":"memory"}
 {"issue_id":"Demarch-csq","label":"claimed_at:1773105070"}
@@ -19,6 +22,8 @@
 {"issue_id":"Demarch-q52","label":"intercom"}
 {"issue_id":"Demarch-q52","label":"ipc"}
 {"issue_id":"Demarch-uuf","label":"complexity:2"}
+{"issue_id":"Demarch-xcc","label":"claimed_at:1773142699"}
+{"issue_id":"Demarch-xcc","label":"claimed_by:unknown"}
 {"issue_id":"iv-057uu","label":"claimed_at:1773067945"}
 {"issue_id":"iv-057uu","label":"claimed_by:e5977592-9f9c-4671-a2df-2f517abae5a1"}
 {"issue_id":"iv-057uu","label":"complexity:3"}
@@ -34,6 +39,11 @@
 {"issue_id":"iv-hvoyx","label":"claimed_at:1773077660"}
 {"issue_id":"iv-hvoyx","label":"claimed_by:unknown"}
 {"issue_id":"iv-hvoyx","label":"complexity:3"}
+{"issue_id":"iv-kpus","label":"claimed_at:1773145393"}
+{"issue_id":"iv-kpus","label":"claimed_by:unknown"}
+{"issue_id":"iv-kpus","label":"complexity:2"}
+{"issue_id":"iv-sym03","label":"claimed_at:1773145612"}
+{"issue_id":"iv-sym03","label":"claimed_by:unknown"}
 {"issue_id":"iv-sym04","label":"claimed_at:1773020785"}
 {"issue_id":"iv-w7bh","label":"claimed_at:1773092831"}
 {"issue_id":"iv-w7bh","label":"claimed_by:e5977592-9f9c-4671-a2df-2f517abae5a1"}
