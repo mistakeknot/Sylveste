@@ -2,7 +2,7 @@
   "name": "interhelm",
   "version": "0.2.0",
   "description": "Agent-as-operator runtime diagnostics — teaches agents to observe and control running applications via diagnostic HTTP servers and CLI tools.",
-  "author": "mistakeknot",
+  "author": {"name": "mistakeknot"},
   "repository": "https://github.com/mistakeknot/interhelm",
   "license": "MIT",
   "keywords": [
