@@ -23,9 +23,10 @@ Each subproject has its own CLAUDE.md and AGENTS.md — read those before editin
 
 | Path | Pillar | Notes |
 |------|--------|-------|
-| `apps/autarch/` | Autarch | TUI interfaces (Bigend, Gurgeh, Coldwine, Pollard) |
-| `apps/intercom/` | Autarch | Multi-runtime AI assistant (Claude, Gemini, Codex) |
-| `os/clavain/` | Clavain | Autonomous software agency (L2 OS) |
+| `apps/Autarch/` | Autarch | TUI interfaces (Bigend, Gurgeh, Coldwine, Pollard) |
+| `apps/Intercom/` | Autarch | Multi-runtime AI assistant (Claude, Gemini, Codex) |
+| `os/Clavain/` | Clavain | Autonomous software agency (L2 OS) |
+| `os/Skaffen/` | Skaffen | Sovereign agent runtime (L2 OS) |
 | `core/intercore/` | Intercore | Orchestration kernel — Go CLI `ic` (L1) |
 | `core/intermute/` | Intercore | Multi-agent coordination service (Go) |
 | `core/marketplace/` | Intercore | Plugin marketplace registry |
