@@ -95,8 +95,11 @@ impl AppState {
         HealthReport {
             status: overall,
             subsystems,
-            // CUSTOMIZE: use chrono::Utc::now().to_rfc3339() if chrono is available
-            timestamp: format!("{:?}", std::time::SystemTime::now()),
+            // CUSTOMIZE: use chrono::Utc::now().to_rfc3339() for ISO 8601 timestamps
+            timestamp: std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .map(|d| d.as_secs().to_string())
+                .unwrap_or_else(|_| "0".to_string()),
         }
     }
 

@@ -6,16 +6,16 @@ set -euo pipefail
 
 # Parse the edited file path from stdin JSON
 HOOK_INPUT=$(cat)
-FILE_PATH=$(echo "$HOOK_INPUT" | python3 -c "
+FILE_PATH=$(printf '%s' "$HOOK_INPUT" | python3 -c "
 import json, sys
 try:
     d = json.load(sys.stdin)
-    # Edit tool: file_path is in tool_input
     inp = d.get('tool_input', {})
     if isinstance(inp, str):
         inp = json.loads(inp)
     print(inp.get('file_path', inp.get('command', '')))
-except: pass
+except Exception as e:
+    print(str(e), file=sys.stderr)
 " 2>/dev/null) || FILE_PATH=""
 
 if [[ -z "$FILE_PATH" ]]; then
@@ -36,7 +36,8 @@ PROJECT_ROOT="${CLAUDE_PROJECT_ROOT:-.}"
 # Check if project has a diagnostic CLI configured
 if [[ -f "$PROJECT_ROOT/CLAUDE.md" ]]; then
     diag_cli=$(grep -oP 'CLI:\s*`\K[^`]+' "$PROJECT_ROOT/CLAUDE.md" 2>/dev/null || true)
-    if [[ -n "$diag_cli" && -x "$PROJECT_ROOT/$diag_cli" ]]; then
+    # S2: Validate path — must be relative, no traversal, alphanumeric+dash+slash+dot only
+    if [[ -n "$diag_cli" && "$diag_cli" != *".."* && "$diag_cli" =~ ^[a-zA-Z0-9_./-]+$ && -x "$PROJECT_ROOT/$diag_cli" ]]; then
         health_output=$("$PROJECT_ROOT/$diag_cli" health 2>/dev/null) || true
         if echo "$health_output" | grep -qi "unhealthy\|degraded\|fail"; then
             echo "interhelm: Health regression detected after editing Rust source. Run '$diag_cli health' for details."

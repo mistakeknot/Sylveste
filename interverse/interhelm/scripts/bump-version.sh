@@ -9,12 +9,13 @@ ROOT="$(dirname "$SCRIPT_DIR")"
 cd "$ROOT"
 python3 -c "
 import json, sys
+version = sys.argv[1]
 with open('.claude-plugin/plugin.json', 'r+') as f:
     d = json.load(f)
-    d['version'] = '$VERSION'
+    d['version'] = version
     f.seek(0)
     json.dump(d, f, indent=2)
     f.write('\n')
     f.truncate()
-"
+" "$VERSION"
 echo "Bumped to $VERSION"

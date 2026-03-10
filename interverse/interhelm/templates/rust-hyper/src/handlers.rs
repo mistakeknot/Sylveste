@@ -28,7 +28,7 @@ fn error_response(status: StatusCode, msg: &str) -> Response<BoxBody> {
 // ── Diagnostic Endpoints (read-only) ──────────────────────────────────
 
 pub async fn handle_health(state: SharedState) -> Response<BoxBody> {
-    let state = state.lock().unwrap();
+    let state = state.lock().unwrap_or_else(|e| e.into_inner());
     let report = state.health();
     json_response(serde_json::to_value(&report).unwrap())
 }
@@ -51,7 +51,7 @@ pub async fn handle_schema(_state: SharedState) -> Response<BoxBody> {
 }
 
 pub async fn handle_ui_state(state: SharedState) -> Response<BoxBody> {
-    let state = state.lock().unwrap();
+    let state = state.lock().unwrap_or_else(|e| e.into_inner());
     json_response(serde_json::to_value(state.ui_state()).unwrap())
 }
 
@@ -69,8 +69,11 @@ pub async fn handle_assert(state: SharedState, _body: Request<hyper::body::Incom
 
 pub async fn handle_smoke_test(state: SharedState) -> Response<BoxBody> {
     // CUSTOMIZE: Define your smoke test checks
-    let state = state.lock().unwrap();
-    let health = state.health();
+    // Q-06: Snapshot state under lock, then release before processing
+    let health = {
+        let state = state.lock().unwrap_or_else(|e| e.into_inner());
+        state.health()
+    };
 
     json_response(serde_json::json!({
         "passed": 1,
@@ -86,18 +89,20 @@ pub async fn handle_smoke_test(state: SharedState) -> Response<BoxBody> {
 // ── Control Endpoints (mutations) ─────────────────────────────────────
 
 pub async fn handle_restart(_state: SharedState) -> Response<BoxBody> {
-    // CUSTOMIZE: Implement restart logic
-    json_response(serde_json::json!({"status": "restarted"}))
+    // CUSTOMIZE: Implement restart logic — returns 501 until wired up
+    // WARNING: Feature-gate control endpoints for non-localhost deployments
+    error_response(StatusCode::NOT_IMPLEMENTED, "restart not implemented — CUSTOMIZE handle_restart in handlers.rs")
 }
 
 pub async fn handle_reset(_state: SharedState, _body: Request<hyper::body::Incoming>) -> Response<BoxBody> {
-    // CUSTOMIZE: Reset specific subsystem
-    json_response(serde_json::json!({"status": "reset"}))
+    // CUSTOMIZE: Reset specific subsystem — returns 501 until wired up
+    // WARNING: Feature-gate control endpoints for non-localhost deployments
+    error_response(StatusCode::NOT_IMPLEMENTED, "reset not implemented — CUSTOMIZE handle_reset in handlers.rs")
 }
 
 pub async fn handle_step(state: SharedState, _body: Request<hyper::body::Incoming>) -> Response<BoxBody> {
     // CUSTOMIZE: Step simulation by N
-    let mut state = state.lock().unwrap();
+    let mut state = state.lock().unwrap_or_else(|e| e.into_inner());
     state.simulation.tick += 1;
     json_response(serde_json::json!({"tick": state.simulation.tick}))
 }

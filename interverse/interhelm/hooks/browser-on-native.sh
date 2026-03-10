@@ -3,6 +3,9 @@
 # Suggests diagnostic CLI instead of visual inspection
 set -euo pipefail
 
+# Q-05: Drain stdin to prevent pipe blockage on large tool responses
+cat > /dev/null
+
 # Check if project has a diagnostic server configured
 PROJECT_ROOT="${CLAUDE_PROJECT_ROOT:-.}"
 

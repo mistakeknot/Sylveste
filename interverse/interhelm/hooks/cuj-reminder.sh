@@ -6,7 +6,18 @@ set -euo pipefail
 
 # Parse the command from stdin JSON
 HOOK_INPUT=$(cat)
-COMMAND=$(echo "$HOOK_INPUT" | python3 -c "
+PROJECT_ROOT="${CLAUDE_PROJECT_ROOT:-.}"
+
+# UP-03: Check project guard first — skip non-interhelm projects immediately
+if [[ ! -f "$PROJECT_ROOT/CLAUDE.md" ]]; then
+    exit 0
+fi
+has_diag=$(grep -qi "diagnostic server\|/diag/" "$PROJECT_ROOT/CLAUDE.md" 2>/dev/null && echo "true" || echo "false")
+if [[ "$has_diag" != "true" ]]; then
+    exit 0
+fi
+
+COMMAND=$(printf '%s' "$HOOK_INPUT" | python3 -c "
 import json, sys
 try:
     d = json.load(sys.stdin)
@@ -14,24 +25,13 @@ try:
     if isinstance(inp, str):
         inp = json.loads(inp)
     print(inp.get('command', ''))
-except: pass
+except Exception as e:
+    print(str(e), file=sys.stderr)
 " 2>/dev/null) || COMMAND=""
 
 # Only trigger on git commit commands
 case "$COMMAND" in
     *"git commit"*)
-        ;;
-    *)
-        exit 0
+        echo "interhelm: Consider running CUJ verification to confirm runtime behavior after this change. Skill: interhelm:cuj-verification"
         ;;
 esac
-
-PROJECT_ROOT="${CLAUDE_PROJECT_ROOT:-.}"
-
-# Check if project has CUJs or diagnostic server
-if [[ -f "$PROJECT_ROOT/CLAUDE.md" ]]; then
-    has_diag=$(grep -qi "diagnostic server\|/diag/" "$PROJECT_ROOT/CLAUDE.md" 2>/dev/null && echo "true" || echo "false")
-    if [[ "$has_diag" == "true" ]]; then
-        echo "interhelm: Consider running CUJ verification to confirm runtime behavior after this change. Skill: interhelm:cuj-verification"
-    fi
-fi
