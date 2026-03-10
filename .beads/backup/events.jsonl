@@ -3724,3 +3724,19 @@
 {"actor":"mistakeknot","comment":"Removed label: claimed_at:1773098137","created_at":"2026-03-09T16:41:51Z","event_type":"label_removed","id":3724,"issue_id":"Demarch-ekh","new_value":null,"old_value":null}
 {"actor":"mistakeknot","comment":"Added label: claimed_at:1773099711","created_at":"2026-03-09T16:41:51Z","event_type":"label_added","id":3725,"issue_id":"Demarch-ekh","new_value":null,"old_value":null}
 {"actor":"mistakeknot","comment":null,"created_at":"2026-03-09T16:47:00Z","event_type":"closed","id":3726,"issue_id":"iv-6bwm7","new_value":"Research complete. Coordination overhead 8.9% (healthy). Subagent idle gap 74.5% (opportunity for micro-task dispatch). Pattern 4 promoted P2→P1 with budget constraint. Pattern 3 remains P2. See docs/research/2026-03-09-wcm-coordination-overhead-measurement.md","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-09T17:06:20Z","event_type":"closed","id":3727,"issue_id":"Demarch-ekh","new_value":"Shipped: interhelm plugin v0.1.0","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-09T17:06:22Z","event_type":"closed","id":3728,"issue_id":"Demarch-49g","new_value":"Shipped with parent epic Demarch-ekh","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-09T17:06:23Z","event_type":"closed","id":3729,"issue_id":"Demarch-7qk","new_value":"Shipped with parent epic Demarch-ekh","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-09T17:06:23Z","event_type":"closed","id":3730,"issue_id":"Demarch-8f0","new_value":"Shipped with parent epic Demarch-ekh","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-09T17:06:23Z","event_type":"closed","id":3731,"issue_id":"Demarch-ary","new_value":"Shipped with parent epic Demarch-ekh","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-09T17:06:23Z","event_type":"closed","id":3732,"issue_id":"Demarch-i1d","new_value":"Shipped with parent epic Demarch-ekh","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-09T17:06:23Z","event_type":"closed","id":3733,"issue_id":"Demarch-qs3","new_value":"Shipped with parent epic Demarch-ekh","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-09T17:06:23Z","event_type":"closed","id":3734,"issue_id":"Demarch-qww","new_value":"Shipped with parent epic Demarch-ekh","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-09T17:06:23Z","event_type":"closed","id":3735,"issue_id":"Demarch-rxa","new_value":"Shipped with parent epic Demarch-ekh","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-09T17:06:23Z","event_type":"closed","id":3736,"issue_id":"Demarch-su1","new_value":"Shipped with parent epic Demarch-ekh","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-09T17:06:23Z","event_type":"closed","id":3737,"issue_id":"Demarch-vxk","new_value":"Shipped with parent epic Demarch-ekh","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-09T17:23:49Z","event_type":"closed","id":3738,"issue_id":"Demarch-v27","new_value":"Closed","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-09T17:23:49Z","event_type":"closed","id":3739,"issue_id":"Demarch-efz","new_value":"Closed","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-09T17:23:49Z","event_type":"closed","id":3740,"issue_id":"Demarch-2qp","new_value":"Closed","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-09T17:23:49Z","event_type":"closed","id":3741,"issue_id":"Demarch-bkl","new_value":"Closed","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-09T17:23:52Z","event_type":"closed","id":3742,"issue_id":"iv-w7bh","new_value":"Closed","old_value":""}
