@@ -1,0 +1,122 @@
+[
+  {
+    "name": "fd-fork-viability",
+    "focus": "Validates whether the pi_agent_rust fork strategy is sound and the fork cost assumptions are defensible",
+    "persona": "A Rust systems engineer who has maintained long-lived forks of active open-source projects. Approaches every fork decision with healthy skepticism about upstream coupling, divergence risk, and the hidden cost of maintained divergence.",
+    "decision_lens": "Prioritizes findings that could invalidate the fork bet before significant time is invested. Any structural coupling or upstream velocity issue that makes the fork cost higher than stated is a P0 finding.",
+    "review_areas": [
+      "Check whether the '89/89 feature parity' claim is verified or assumed — is there a mapping between pi-mono features and test coverage, or is this a count match?",
+      "Assess whether pi_agent_rust's agent loop (src/agent.rs) is architecturally amenable to OODARC insertion, or whether it assumes a flat tool-call loop that would require a full rewrite of core logic",
+      "Evaluate the upstream velocity risk: is pi_agent_rust actively maintained, and does the roadmap account for cherry-picking relevant upstream fixes versus accumulating drift?",
+      "Review whether the 'rebrand and stabilize' milestone realistically surfaces fork complexity, or whether it defers hard coupling issues to v0.2 when OODARC modification actually begins",
+      "Check whether the MIT license and fork permissions are confirmed, and whether vendored dependencies (224 extensions) have compatible licenses for redistribution under Skaffen branding",
+      "Assess whether the stated performance numbers (sub-100ms startup, 12x memory reduction) are measured from pi_agent_rust itself or are projections — and whether they hold under Demarch's actual session workload"
+    ],
+    "success_hints": [
+      "Fork viability is confirmed when v0.1 acceptance criteria include a structural review of agent.rs coupling, not just a rename-and-CI-green bar",
+      "The roadmap explicitly budgets for upstream divergence management (cherry-pick policy, upstream monitor cadence)"
+    ],
+    "task_context": "Skaffen is a Rust coding agent being built by forking pi_agent_rust and adding OODARC, phase-gated tools, evidence emission, and Intercore/Interspect bridges. The documents reviewed are the vision, PRD, initial-goals brainstorm, and milestone roadmap — all pre-fork, design-stage artifacts.",
+    "anti_overlap": [
+      "fd-oodarc-design covers the correctness and completeness of the OODARC loop design itself — this agent focuses only on whether the fork base supports it",
+      "fd-pillar-integration covers the Intercore/Interspect/Clavain integration design — this agent focuses only on the fork decision and upstream risk",
+      "fd-evidence-flywheel covers the evidence-authority compounding thesis — this agent does not evaluate flywheel logic"
+    ]
+  },
+  {
+    "name": "fd-oodarc-design",
+    "focus": "Reviews the OODARC loop design for correctness, completeness, and structural enforceability of phase gates",
+    "persona": "A programming languages and type systems researcher who has worked on capability-based security and session type systems. Thinks carefully about what 'structurally enforced' actually means versus what requires runtime checks versus what is just convention.",
+    "decision_lens": "Prioritizes findings where the design claims structural enforcement but actually relies on runtime conventions or naming discipline. A phase gate that can be bypassed by calling the wrong function is not structural safety.",
+    "review_areas": [
+      "Evaluate whether the phase-gate enforcement design (tools_for_phase returning a filtered list) is genuinely type-system enforced or whether it reduces to a runtime filter that can be bypassed by direct tool invocation",
+      "Check whether the Reflect/Compound interface spec is concrete enough to implement, or whether 'stable interface, experimental policy' defers so much that v0.2 cannot be meaningfully tested",
+      "Assess whether the OODARC phase sequence (Observe, Orient, Decide, Act, Reflect, Compound) maps cleanly onto the existing agent loop structure, or whether Orient and Compound introduce new architectural components not present in a standard tool-call loop",
+      "Review the phase transition model: are transitions driven by the LLM, by the user, by the runtime, or by all three? Is there a spec for how conflicting transition signals are resolved?",
+      "Check whether the Ship phase tool set (read, bash, grep — 'commit/push only') is actually enforced to only allow commit/push bash commands, or whether bash in Ship phase grants unrestricted shell access",
+      "Evaluate whether the mid-session model switching design (select_model(phase, routing, budget)) has a defined fallback when routing overrides are unavailable or return an unknown model"
+    ],
+    "success_hints": [
+      "Phase gate enforcement is genuine structural safety when an out-of-phase tool call is impossible to make, not just when it returns an error — the design should distinguish these two levels",
+      "The Reflect/Compound trait is 'stable' when it can be implemented by at least two concrete policies with no interface changes required between them"
+    ],
+    "task_context": "Skaffen is a Rust coding agent being built by forking pi_agent_rust and adding OODARC, phase-gated tools, evidence emission, and Intercore/Interspect bridges. The documents reviewed are the vision, PRD, initial-goals brainstorm, and milestone roadmap — all pre-fork, design-stage artifacts.",
+    "anti_overlap": [
+      "fd-fork-viability covers whether pi_agent_rust's architecture supports OODARC insertion — this agent takes the fork as given and reviews the OODARC design itself",
+      "fd-evidence-flywheel covers the evidence-authority compounding loop — this agent covers only the loop structure, not the downstream evidence use",
+      "fd-pillar-integration covers how Interspect routing overrides feed into model selection — this agent covers only the select_model interface design"
+    ]
+  },
+  {
+    "name": "fd-evidence-flywheel",
+    "focus": "Evaluates whether the evidence-authority compounding thesis is falsifiable, measurable, and correctly sequenced across milestones",
+    "persona": "A machine learning systems engineer who has built feedback loops in production recommendation and routing systems. Deeply skeptical of flywheel claims that lack clear measurement definitions and feedback latency specifications.",
+    "decision_lens": "Prioritizes findings where the flywheel's causation chain has gaps — places where 'more evidence leads to better routing' is asserted but the mechanism is underspecified. Flywheel claims without feedback latency bounds are suspect.",
+    "review_areas": [
+      "Assess whether the evidence-authority flywheel has a defined feedback loop: what specific Interspect output changes model selection, on what latency (per-turn, per-session, per-N-sessions), and what is the minimum evidence corpus before calibration is meaningful?",
+      "Check whether the 'The flywheel is measurable' success criterion has concrete metrics defined anywhere — what does 'better routing, lower cost, higher autonomy over time' look like as a number that can go up or down?",
+      "Review whether the roadmap correctly sequences the flywheel: v0.3 emits evidence, but the Interspect calibration pipeline that processes it into routing overrides is 'not yet started' — does v0.4 self-building actually get calibrated routing, or is it running on static overrides?",
+      "Evaluate whether the evidence schema (tool calls, model selections, phase transitions, steering decisions) is rich enough to support routing calibration, or whether it captures activity without capturing the outcomes needed for calibration (task completion, test pass rate, cost per task)",
+      "Check whether the self-building bootstrap is circular in a way that undermines the flywheel: if Skaffen builds itself without calibrated routing (because evidence pipeline isn't operational yet), the self-building sessions may produce noise rather than signal",
+      "Assess whether 'autonomy level as a dial calibrated by Interspect' has a defined trust ladder with explicit thresholds, or whether it is a metaphor without implementation spec"
+    ],
+    "success_hints": [
+      "The flywheel thesis is falsifiable when a specific metric (e.g., cost-per-task over N sessions) is committed to with a directional prediction before v0.4 begins",
+      "Evidence schema adequacy is confirmed when outcome signals (not just activity signals) are included — tool calls without task success/failure are inputs without labels"
+    ],
+    "task_context": "Skaffen is a Rust coding agent being built by forking pi_agent_rust and adding OODARC, phase-gated tools, evidence emission, and Intercore/Interspect bridges. The documents reviewed are the vision, PRD, initial-goals brainstorm, and milestone roadmap — all pre-fork, design-stage artifacts.",
+    "anti_overlap": [
+      "fd-oodarc-design covers the Reflect/Compound interface and per-turn emission mechanics — this agent covers the downstream evidence processing and calibration loop",
+      "fd-pillar-integration covers the Interspect bridge integration design — this agent covers whether the flywheel logic itself is sound regardless of how the bridge works",
+      "fd-fork-viability covers whether the fork base supports the required architecture — this agent takes the implementation as given and reviews the feedback loop design"
+    ]
+  },
+  {
+    "name": "fd-pillar-integration",
+    "focus": "Reviews the integration design between Skaffen and the five existing Demarch pillars for interface completeness, dependency ordering, and graceful degradation",
+    "persona": "A distributed systems architect who has worked on multi-component platform integrations where different teams own different layers. Focuses on interface contracts, versioning assumptions, and what happens when one component is unavailable.",
+    "decision_lens": "Prioritizes findings where an integration assumes a stable interface that is explicitly noted as 'still evolving' or 'not yet started'. A v0.3 dependency on an unstable Intercore schema is a blocking risk, not a background concern.",
+    "review_areas": [
+      "Audit each cross-project dependency in the roadmap table against its stated status: where a dependency is 'in progress' or 'not yet started', check whether the dependent Skaffen milestone has a concrete fallback plan or whether it silently assumes completion",
+      "Review whether the Intercore CLI bridge design (thin bridge via ic CLI) has a defined contract — what specific ic commands Skaffen will call, what their output schema is, and what Skaffen does when ic returns a non-zero exit code",
+      "Check whether the Clavain-to-Skaffen discipline content migration path is specified: 'same protocols, different runtimes' and 'shared docs, not Clavain plugin format' are direction statements, not interface contracts — what format does Skaffen actually load?",
+      "Evaluate whether the Interverse plugin compatibility bridge design is concrete enough to implement, or whether 'best-effort compatibility' and 'don't gate on it' defer a significant integration surface to an unscheduled milestone",
+      "Assess whether the Autarch RPC mode design (Skaffen instances orchestrated via RPC) has a defined protocol, or whether the interface between Autarch and Skaffen is underdefined at the roadmap level",
+      "Review whether graceful degradation (standalone mode when Intercore/Interspect unavailable) is tested as a first-class acceptance criterion in v0.3, or whether it is mentioned once and not validated"
+    ],
+    "success_hints": [
+      "Integration design is adequate when every external dependency in the roadmap table has either a confirmed stable interface or an explicit contingency that does not require the dependent milestone to slip",
+      "The Clavain-Skaffen discipline content bridge is concrete when a file format and load mechanism are named, not just described as 'shared'"
+    ],
+    "task_context": "Skaffen is a Rust coding agent being built by forking pi_agent_rust and adding OODARC, phase-gated tools, evidence emission, and Intercore/Interspect bridges. The documents reviewed are the vision, PRD, initial-goals brainstorm, and milestone roadmap — all pre-fork, design-stage artifacts.",
+    "anti_overlap": [
+      "fd-evidence-flywheel covers whether the Interspect calibration pipeline design is logically sound — this agent covers whether the Interspect bridge interface is defined and testable",
+      "fd-oodarc-design covers the select_model interface design — this agent covers whether Interspect routing overrides have a stable schema that select_model can consume",
+      "fd-fork-viability covers whether the fork base supports the required bridging architecture — this agent takes the architecture as given and reviews the interface contracts"
+    ]
+  },
+  {
+    "name": "fd-self-building-bootstrap",
+    "focus": "Reviews the self-building bootstrap design for circular dependency risks, measurability of the handoff, and whether v0.4 acceptance criteria actually test autonomous agency",
+    "persona": "A software engineering researcher focused on AI-assisted development and automation. Has experience with staged automation rollouts where the handoff criteria between 'human-assisted' and 'autonomous' are underspecified and lead to scope creep or false claims of autonomy.",
+    "decision_lens": "Prioritizes findings where the v0.4 self-building milestone conflates 'Skaffen can run tools on its own code' with 'Skaffen demonstrated earned autonomy'. The milestone is only meaningful if the acceptance criteria distinguish assisted from autonomous contribution.",
+    "review_areas": [
+      "Evaluate whether 'at least one Skaffen feature shipped entirely by Skaffen (no human code edits)' is a meaningful test of autonomous agency, or whether it could be satisfied by a trivial documentation update or a single-line change that a human reviewed and approved",
+      "Check whether the v0.4 success criterion 'daily-driver viable without Claude Code fallback' has a defined workload that Skaffen must handle — what tasks, at what quality bar, measured how?",
+      "Assess whether the side-by-side comparison design (Skaffen vs Clavain-rigged Claude Code on same task) is rigorous enough to produce an actionable signal, or whether confounders (task selection, human scaffolding differences) would make the comparison uninterpretable",
+      "Review the circular bootstrap risk in detail: v0.4 requires v0.3 complete AND Interspect calibration pipeline operational, but the calibration pipeline is 'not yet started' in the roadmap — does this create a situation where v0.4 is perpetually blocked by an unscheduled dependency?",
+      "Check whether phase gates applying to Skaffen's own development is actually tested in v0.4 acceptance criteria, or whether it is assumed to work because the phase gates were implemented in v0.2 — self-application is a distinct test from general application",
+      "Evaluate whether the evidence from self-building sessions can actually calibrate routing, or whether the absence of ground-truth labels (human judgment of output quality) means the calibration signal is circular: Skaffen routing its own sessions using evidence from its own sessions"
+    ],
+    "success_hints": [
+      "The self-building milestone is meaningful when the 'no human code edits' criterion is paired with a quality gate (tests pass, no regression, review agent signs off) rather than standing alone as the sole criterion",
+      "The bootstrap handoff is clean when there is a named commit or version tag that marks the transition from Claude Code-built to Skaffen-built, with the diff verified to contain no human edits"
+    ],
+    "task_context": "Skaffen is a Rust coding agent being built by forking pi_agent_rust and adding OODARC, phase-gated tools, evidence emission, and Intercore/Interspect bridges. The documents reviewed are the vision, PRD, initial-goals brainstorm, and milestone roadmap — all pre-fork, design-stage artifacts.",
+    "anti_overlap": [
+      "fd-evidence-flywheel covers whether the calibration pipeline design is logically sound — this agent covers whether v0.4 acceptance criteria actually test autonomous agency rather than assisted task completion",
+      "fd-oodarc-design covers the phase gate implementation design — this agent covers whether phase gates are tested against Skaffen's own codebase as a self-application scenario",
+      "fd-pillar-integration covers the Interspect bridge interface contracts — this agent covers whether the missing calibration pipeline blocks v0.4 and whether that block is acknowledged in the roadmap"
+    ]
+  }
+]

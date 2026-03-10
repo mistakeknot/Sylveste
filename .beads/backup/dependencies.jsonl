@@ -45,6 +45,9 @@
 {"created_at":"2026-03-10T03:51:27Z","created_by":"mistakeknot","depends_on_id":"Demarch-njg","issue_id":"Demarch-njg.3","type":"parent-child"}
 {"created_at":"2026-03-09T16:33:44Z","created_by":"mistakeknot","depends_on_id":"Demarch-ekh","issue_id":"Demarch-qs3","type":"blocks"}
 {"created_at":"2026-03-09T16:33:44Z","created_by":"mistakeknot","depends_on_id":"Demarch-ekh","issue_id":"Demarch-qww","type":"blocks"}
+{"created_at":"2026-03-10T08:57:04Z","created_by":"mistakeknot","depends_on_id":"Demarch-rp5","issue_id":"Demarch-rp5.1","type":"parent-child"}
+{"created_at":"2026-03-10T08:57:22Z","created_by":"mistakeknot","depends_on_id":"Demarch-rp5","issue_id":"Demarch-rp5.2","type":"parent-child"}
+{"created_at":"2026-03-10T08:57:22Z","created_by":"mistakeknot","depends_on_id":"Demarch-rp5","issue_id":"Demarch-rp5.3","type":"parent-child"}
 {"created_at":"2026-03-09T16:33:43Z","created_by":"mistakeknot","depends_on_id":"Demarch-ekh","issue_id":"Demarch-rxa","type":"blocks"}
 {"created_at":"2026-03-09T16:33:44Z","created_by":"mistakeknot","depends_on_id":"Demarch-ekh","issue_id":"Demarch-su1","type":"blocks"}
 {"created_at":"2026-03-09T18:10:57Z","created_by":"mistakeknot","depends_on_id":"Demarch-uuf","issue_id":"Demarch-uuf.1","type":"parent-child"}
