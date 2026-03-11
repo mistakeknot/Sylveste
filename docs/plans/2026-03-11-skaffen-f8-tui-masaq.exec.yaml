@@ -1,0 +1,108 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 4
+timeout_per_task: 600
+
+stages:
+  - name: "Masaq Foundation"
+    tasks:
+      - id: task-1
+        title: "Scaffold Masaq repo + Go module"
+        files: [masaq/go.mod, masaq/masaq.go]
+        depends: []
+      - id: task-2
+        title: "Masaq theme — Tokyo Night + semantic colors"
+        files: [masaq/theme/theme.go, masaq/theme/theme_test.go]
+        depends: [task-1]
+      - id: task-3
+        title: "Masaq keys — keybinding framework"
+        files: [masaq/keys/keys.go, masaq/keys/keys_test.go]
+        depends: [task-1]
+
+  - name: "Masaq Components"
+    tasks:
+      - id: task-4
+        title: "Masaq viewport — flicker-free scrollable"
+        files: [masaq/viewport/viewport.go, masaq/viewport/viewport_test.go]
+        depends: []
+      - id: task-5
+        title: "Masaq diff — unified diff + Chroma highlighting"
+        files: [masaq/diff/diff.go, masaq/diff/diff_test.go]
+        depends: [task-2]
+      - id: task-6
+        title: "Masaq markdown — Glamour streaming adapter"
+        files: [masaq/markdown/markdown.go, masaq/markdown/markdown_test.go]
+        depends: []
+      - id: task-7
+        title: "Masaq question — structured multi-choice widget"
+        files: [masaq/question/question.go, masaq/question/question_test.go]
+        depends: [task-2]
+      - id: task-8
+        title: "Masaq compact — tool call formatter"
+        files: [masaq/compact/compact.go, masaq/compact/compact_test.go]
+        depends: [task-2]
+
+  - name: "Skaffen Engine"
+    tasks:
+      - id: task-9
+        title: "Smart trust engine — pattern rules + learning"
+        files: [os/Skaffen/internal/trust/trust.go, os/Skaffen/internal/trust/rules.go, os/Skaffen/internal/trust/trust_test.go]
+        depends: []
+      - id: task-10
+        title: "Agent streaming callback for TUI"
+        files: [os/Skaffen/internal/agent/streaming.go, os/Skaffen/internal/agent/agent.go, os/Skaffen/internal/agent/loop.go]
+        depends: []
+      - id: task-17
+        title: "Git-native integration — auto-commit, undo, ship"
+        files: [os/Skaffen/internal/git/git.go, os/Skaffen/internal/git/git_test.go]
+        depends: []
+
+  - name: "Skaffen TUI"
+    tasks:
+      - id: task-11
+        title: "TUI app model — compose Masaq into REPL"
+        files: [os/Skaffen/internal/tui/app.go, os/Skaffen/internal/tui/chat.go, os/Skaffen/internal/tui/status.go, os/Skaffen/internal/tui/prompt.go]
+        depends: []
+      - id: task-12
+        title: "Wire TUI mode into main.go"
+        files: [os/Skaffen/cmd/skaffen/main.go, os/Skaffen/go.mod]
+        depends: [task-11]
+      - id: task-13
+        title: "Smart trust approval UI"
+        files: [os/Skaffen/internal/tui/toolcall.go]
+        depends: [task-11, task-9]
+      - id: task-14
+        title: "Phase indicator + transition events"
+        files: [os/Skaffen/internal/tui/phase.go]
+        depends: [task-11]
+      - id: task-15
+        title: "Slash commands"
+        files: [os/Skaffen/internal/tui/commands.go, os/Skaffen/internal/tui/commands_test.go]
+        depends: [task-11]
+      - id: task-16
+        title: "Session resume with smart picker"
+        files: [os/Skaffen/internal/session/picker.go, os/Skaffen/internal/session/picker_test.go]
+        depends: [task-11]
+      - id: task-18
+        title: "@-file mentions fuzzy search"
+        files: [os/Skaffen/internal/tui/prompt.go]
+        depends: [task-11]
+
+  - name: "Integration"
+    tasks:
+      - id: task-19
+        title: "TUI integration smoke test"
+        files: [os/Skaffen/internal/tui/app_test.go]
+        depends: []
+        tier: fast
+      - id: task-20
+        title: "Update PRD with F8 acceptance criteria"
+        files: [docs/prds/2026-03-11-skaffen-go-rewrite.md]
+        depends: []
+        tier: fast
+      - id: task-21
+        title: "Final build + test + smoke"
+        files: []
+        depends: [task-19, task-20]
+        tier: fast
