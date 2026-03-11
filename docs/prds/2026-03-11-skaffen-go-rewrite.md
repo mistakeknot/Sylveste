@@ -22,13 +22,13 @@ Clean-room Go implementation of Skaffen, studying pi-mono's (TypeScript, clean M
 **What:** Streaming LLM provider interface with Anthropic Claude as the first implementation, plus a Claude Code RPC proxy as an opt-in backend for Max subscriptions.
 
 **Acceptance criteria:**
-- [ ] `Provider` interface defined: `Stream(ctx, messages, tools, config) → StreamResponse` with text chunks, tool calls, usage stats
-- [ ] Anthropic provider implements streaming via SSE (Messages API), supports tool_use, reports token usage
-- [ ] Anthropic provider is the default backend (works in CI/server environments with API key)
-- [ ] Claude Code proxy provider spawns `claude --mode rpc` subprocess, delegates inference (opt-in via `--provider claude-code`)
-- [ ] Proxy provider: graceful error with actionable message when `claude` binary is missing, not logged in, or returns unexpected response format
-- [ ] Provider selection by name via config (e.g., `--provider anthropic` or `--provider claude-code`)
-- [ ] Unit tests with recorded HTTP responses (golden files)
+- [x] `Provider` interface defined: `Stream(ctx, messages, tools, config) → StreamResponse` with text chunks, tool calls, usage stats
+- [x] Anthropic provider implements streaming via SSE (Messages API), supports tool_use, reports token usage
+- [x] Anthropic provider is the default backend (works in CI/server environments with API key)
+- [x] Claude Code proxy provider spawns `claude --print --output-format=stream-json` subprocess, delegates inference (opt-in via `--provider claude-code`)
+- [x] Proxy provider: graceful error with actionable message when `claude` binary is missing, not logged in, or returns unexpected response format
+- [x] Provider selection by name via config (e.g., `--provider anthropic` or `--provider claude-code`)
+- [x] Unit tests with recorded HTTP responses (golden files)
 
 ### F2: Core Tool System
 
