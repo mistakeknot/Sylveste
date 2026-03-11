@@ -95,6 +95,9 @@
 {"created_at":"2026-03-11T08:36:41Z","created_by":"8b79fb22","depends_on_id":"Demarch-4hu","issue_id":"Demarch-xe0","type":"blocks"}
 {"created_at":"2026-03-11T08:36:40Z","created_by":"8b79fb22","depends_on_id":"Demarch-92j","issue_id":"Demarch-xe0","type":"blocks"}
 {"created_at":"2026-03-11T08:36:41Z","created_by":"8b79fb22","depends_on_id":"Demarch-hop","issue_id":"Demarch-xe0","type":"blocks"}
+{"created_at":"2026-03-11T12:00:27Z","created_by":"8b79fb22","depends_on_id":"Demarch-xe0","issue_id":"Demarch-xe0.1","type":"parent-child"}
+{"created_at":"2026-03-11T12:00:42Z","created_by":"8b79fb22","depends_on_id":"Demarch-xe0","issue_id":"Demarch-xe0.2","type":"parent-child"}
+{"created_at":"2026-03-11T12:00:42Z","created_by":"8b79fb22","depends_on_id":"Demarch-xe0","issue_id":"Demarch-xe0.3","type":"parent-child"}
 {"created_at":"2026-03-09T00:45:51Z","created_by":"mistakeknot","depends_on_id":"iv-057uu","issue_id":"iv-057uu.1","type":"parent-child"}
 {"created_at":"2026-03-09T01:02:55Z","created_by":"mistakeknot","depends_on_id":"iv-057uu","issue_id":"iv-057uu.10","type":"parent-child"}
 {"created_at":"2026-03-09T01:13:14Z","created_by":"mistakeknot","depends_on_id":"iv-057uu","issue_id":"iv-057uu.11","type":"parent-child"}

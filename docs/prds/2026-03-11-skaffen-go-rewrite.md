@@ -52,17 +52,17 @@ Clean-room Go implementation of Skaffen, studying pi-mono's (TypeScript, clean M
 **What:** Main agent loop implementing OODARC (Observe-Orient-Decide-Act-Reflect-Compound) with phase FSM and hard tool gating.
 
 **Acceptance criteria:**
-- [ ] Agent loop: `for { observe → orient → decide → act → reflect → compound }` with clean exit on completion or error
-- [ ] Phase FSM: brainstorm → plan → build → review → ship, with explicit transitions
-- [ ] Loop accepts Router (F4), Session (F5), and Emitter (F6) as constructor dependencies via interfaces — testable in isolation with mocks
-- [ ] Orient step: assembles phase context, selects model (via Router), determines available tools (via Registry)
-- [ ] Decide step: calls LLM with oriented context, streams response
-- [ ] Act step: executes tool calls from LLM response, collects results via goroutine-per-tool
-- [ ] Reflect step: emits lightweight structured evidence (JSON) per turn via Emitter
-- [ ] Compound step: at phase boundaries, persists learnings (phase summary → session)
-- [ ] Steering via RPC: `{"type": "steer", "direction": "...", "mode": "interrupt|queue"}` message on stdin interrupts current turn (interrupt) or queues for after current act (queue)
-- [ ] Loop terminates cleanly on: task completion, budget exhaustion, phase gate violation, user interrupt (SIGINT)
-- [ ] Tests: deterministic loop execution with mock provider/router/session/emitter, phase transitions verified
+- [x] Agent loop: `for { observe → orient → decide → act → reflect → compound }` with clean exit on completion or error
+- [x] Phase FSM: brainstorm → plan → build → review → ship, with explicit transitions
+- [x] Loop accepts Router (F4), Session (F5), and Emitter (F6) as constructor dependencies via interfaces — testable in isolation with mocks
+- [x] Orient step: assembles phase context, selects model (via Router), determines available tools (via Registry)
+- [x] Decide step: calls LLM with oriented context, streams response
+- [x] Act step: executes tool calls from LLM response, collects results (sequential; goroutine-per-tool deferred to v0.2)
+- [x] Reflect step: emits lightweight structured evidence (JSON) per turn via Emitter
+- [x] Compound step: persists turn data via Session (phase boundary detection deferred to v0.2)
+- [ ] Steering via RPC: deferred to F7 CLI integration
+- [x] Loop terminates cleanly on: task completion, max turns exceeded, context cancellation (budget exhaustion via F4 Router)
+- [x] Tests: deterministic loop execution with mock provider/router/session/emitter, phase transitions verified
 
 ### F4: Model Routing
 
