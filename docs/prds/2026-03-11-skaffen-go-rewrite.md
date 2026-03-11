@@ -35,17 +35,17 @@ Clean-room Go implementation of Skaffen, studying pi-mono's (TypeScript, clean M
 **What:** Tool registry with phase-aware gating and 7 built-in tools matching Claude Code's core capabilities.
 
 **Acceptance criteria:**
-- [ ] `Tool` interface: `Name(), Description(), Schema() → JSONSchema, Execute(ctx, params) → ToolResult`
-- [ ] Tool registry accepts phase, returns only tools available for that phase (hard gate)
-- [ ] Registry supports runtime tool registration (extension point for future MCP tools in v0.2)
-- [ ] `read` tool: reads files with offset/limit, returns content with line numbers
-- [ ] `write` tool: creates/overwrites files
-- [ ] `edit` tool: exact string replacement with uniqueness validation
-- [ ] `bash` tool: shell execution with configurable timeout (default 120s), output truncation (default 10K chars)
-- [ ] `grep` tool: ripgrep wrapper with regex, glob filtering, output modes
-- [ ] `glob` tool: file pattern matching, sorted by modification time
-- [ ] `ls` tool: directory listing
-- [ ] Phase gate matrix tested: brainstorm=read-only, build=full, review=read+test, ship=git-only
+- [x] `Tool` interface: `Name(), Description(), Schema() → JSONSchema, Execute(ctx, params) → ToolResult`
+- [x] Tool registry accepts phase, returns only tools available for that phase (hard gate)
+- [x] Registry supports runtime tool registration (extension point for future MCP tools in v0.2)
+- [x] `read` tool: reads files with offset/limit, returns content with line numbers
+- [x] `write` tool: creates/overwrites files
+- [x] `edit` tool: exact string replacement with uniqueness validation
+- [x] `bash` tool: shell execution with configurable timeout (default 120s), output truncation (default 10K chars)
+- [x] `grep` tool: ripgrep wrapper with regex, glob filtering, output modes
+- [x] `glob` tool: file pattern matching, sorted by modification time
+- [x] `ls` tool: directory listing
+- [x] Phase gate matrix tested: brainstorm=read-only, build=full, review=read+test, ship=git-only
 
 ### F3: OODARC Agent Loop
 

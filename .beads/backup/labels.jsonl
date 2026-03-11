@@ -1,3 +1,5 @@
+{"issue_id":"Demarch-4hu","label":"claimed_at:1773244502"}
+{"issue_id":"Demarch-4hu","label":"claimed_by:8b79fb22-400e-49b4-94f4-da990fc10462"}
 {"issue_id":"Demarch-4wm","label":"agent-experience"}
 {"issue_id":"Demarch-4wm","label":"claimed_at:1773146191"}
 {"issue_id":"Demarch-4wm","label":"claimed_by:unknown"}
@@ -12,9 +14,15 @@
 {"issue_id":"Demarch-csq","label":"token_budget:250000"}
 {"issue_id":"Demarch-dcy","label":"claimed_at:1773042407"}
 {"issue_id":"Demarch-dcy","label":"claimed_by:e5977592-9f9c-4671-a2df-2f517abae5a1"}
+{"issue_id":"Demarch-ebz","label":"claimed_at:1773182011"}
+{"issue_id":"Demarch-ebz","label":"claimed_by:8b79fb22-400e-49b4-94f4-da990fc10462"}
+{"issue_id":"Demarch-ebz","label":"complexity:2"}
 {"issue_id":"Demarch-ekh","label":"claimed_at:1773099711"}
 {"issue_id":"Demarch-ekh","label":"claimed_by:f82e58da-60aa-4764-b223-858a42463fdd"}
 {"issue_id":"Demarch-ekh","label":"complexity:3"}
+{"issue_id":"Demarch-hop","label":"claimed_at:1773254413"}
+{"issue_id":"Demarch-hop","label":"claimed_by:8b79fb22-400e-49b4-94f4-da990fc10462"}
+{"issue_id":"Demarch-hop","label":"complexity:3"}
 {"issue_id":"Demarch-njg","label":"claimed_at:1773139887"}
 {"issue_id":"Demarch-njg","label":"claimed_by:e5977592-9f9c-4671-a2df-2f517abae5a1"}
 {"issue_id":"Demarch-njg","label":"complexity:2"}
@@ -33,12 +41,13 @@
 {"issue_id":"Demarch-rp5.6","label":"claimed_at:1773158242"}
 {"issue_id":"Demarch-rp5.6","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-rp5.6","label":"complexity:3"}
-{"issue_id":"Demarch-rp5.7","label":"claimed_at:1773158242"}
-{"issue_id":"Demarch-rp5.7","label":"claimed_by:unknown"}
+{"issue_id":"Demarch-rp5.7","label":"claimed_at:1773177079"}
+{"issue_id":"Demarch-rp5.7","label":"claimed_by:8b79fb22-400e-49b4-94f4-da990fc10462"}
 {"issue_id":"Demarch-rp5.7","label":"complexity:3"}
 {"issue_id":"Demarch-rp5.8","label":"claimed_at:1773176262"}
 {"issue_id":"Demarch-rp5.8","label":"claimed_by:8b79fb22-400e-49b4-94f4-da990fc10462"}
 {"issue_id":"Demarch-rp5.8","label":"complexity:3"}
+{"issue_id":"Demarch-rp5.8","label":"phase:executing"}
 {"issue_id":"Demarch-uuf","label":"complexity:2"}
 {"issue_id":"Demarch-xcc","label":"claimed_at:1773142699"}
 {"issue_id":"Demarch-xcc","label":"claimed_by:unknown"}
