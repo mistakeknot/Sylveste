@@ -6,6 +6,9 @@
 {"issue_id":"Demarch-4wm","label":"complexity:3"}
 {"issue_id":"Demarch-4wm","label":"intercom"}
 {"issue_id":"Demarch-4wm","label":"memory"}
+{"issue_id":"Demarch-c4c","label":"claimed_at:1773256203"}
+{"issue_id":"Demarch-c4c","label":"claimed_by:8b79fb22-400e-49b4-94f4-da990fc10462"}
+{"issue_id":"Demarch-c4c","label":"complexity:3"}
 {"issue_id":"Demarch-csq","label":"claimed_at:1773105070"}
 {"issue_id":"Demarch-csq","label":"claimed_by:f82e58da-60aa-4764-b223-858a42463fdd"}
 {"issue_id":"Demarch-csq","label":"complexity:2"}

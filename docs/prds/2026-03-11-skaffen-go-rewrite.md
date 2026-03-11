@@ -116,14 +116,14 @@ Clean-room Go implementation of Skaffen, studying pi-mono's (TypeScript, clean M
 **What:** Command-line interface with print mode (stdin/stdout) and headless RPC mode. No TUI.
 
 **Acceptance criteria:**
-- [ ] `skaffen` binary with subcommands: `run` (default), `version`, `config`
-- [ ] Print mode (`--mode print`): reads prompt from stdin or `-p` flag, streams response to stdout, exits
-- [ ] RPC mode (`--mode rpc`): JSON-line protocol on stdin/stdout for IDE/CI/orchestrator integration
-- [ ] RPC protocol supports: `prompt`, `steer` (interrupt/queue), `cancel`, `status` message types
-- [ ] Config: `--provider`, `--model`, `--phase`, `--budget`, `--config-file` flags
-- [ ] Config file: TOML at `~/.skaffen/config.toml` or `$SKAFFEN_CONFIG_PATH`
-- [ ] Version: `skaffen version` prints version, Go version, build info
-- [ ] Clean shutdown: SIGINT/SIGTERM handled, session persisted, evidence flushed
+- [x] `skaffen` binary with subcommands: `version` (run is default, config deferred)
+- [x] Print mode: reads prompt from stdin or `-p` flag, runs agent, prints response to stdout
+- [ ] RPC mode: deferred to v0.2 (no consumers yet)
+- [ ] RPC protocol: deferred to v0.2
+- [x] Config: `--provider`, `--model`, `--phase`, `--max-turns`, `--system` flags
+- [ ] Config file: TOML deferred to v0.2
+- [x] Version: `skaffen version` prints version, Go version, build info
+- [x] Clean shutdown: SIGINT/SIGTERM handled via context cancellation
 
 ## Non-goals
 

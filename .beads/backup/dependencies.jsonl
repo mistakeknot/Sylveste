@@ -31,6 +31,9 @@
 {"created_at":"2026-03-09T16:38:42Z","created_by":"mistakeknot","depends_on_id":"iv-w7bh","issue_id":"Demarch-bkl","type":"blocks"}
 {"created_at":"2026-03-11T08:36:41Z","created_by":"8b79fb22","depends_on_id":"Demarch-92j","issue_id":"Demarch-c4c","type":"blocks"}
 {"created_at":"2026-03-11T08:36:42Z","created_by":"8b79fb22","depends_on_id":"Demarch-xe0","issue_id":"Demarch-c4c","type":"blocks"}
+{"created_at":"2026-03-11T12:10:03Z","created_by":"8b79fb22","depends_on_id":"Demarch-c4c","issue_id":"Demarch-c4c.1","type":"parent-child"}
+{"created_at":"2026-03-11T12:10:03Z","created_by":"8b79fb22","depends_on_id":"Demarch-c4c","issue_id":"Demarch-c4c.2","type":"parent-child"}
+{"created_at":"2026-03-11T12:10:03Z","created_by":"8b79fb22","depends_on_id":"Demarch-c4c","issue_id":"Demarch-c4c.3","type":"parent-child"}
 {"created_at":"2026-03-09T18:11:09Z","created_by":"mistakeknot","depends_on_id":"Demarch-csq","issue_id":"Demarch-csq.1","type":"parent-child"}
 {"created_at":"2026-03-09T18:11:10Z","created_by":"mistakeknot","depends_on_id":"Demarch-csq","issue_id":"Demarch-csq.2","type":"parent-child"}
 {"created_at":"2026-03-09T18:11:10Z","created_by":"mistakeknot","depends_on_id":"Demarch-csq","issue_id":"Demarch-csq.3","type":"parent-child"}
