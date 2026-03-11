@@ -125,9 +125,27 @@ Clean-room Go implementation of Skaffen, studying pi-mono's (TypeScript, clean M
 - [x] Version: `skaffen version` prints version, Go version, build info
 - [x] Clean shutdown: SIGINT/SIGTERM handled via context cancellation
 
+### F8: TUI Mode
+
+**What:** Standalone conversational REPL using Bubble Tea, composing Masaq shared components. Default mode when running `skaffen` with no args.
+
+**Acceptance criteria:**
+- [ ] `skaffen` (default) launches TUI REPL with chat viewport, input composer, status bar
+- [ ] `skaffen run --mode print` preserves headless streaming behavior
+- [ ] Smart trust: auto-allows safe tools, prompts for gray-area, blocks dangerous — with progressive learning
+- [ ] Streaming markdown rendered via Glamour adapter
+- [ ] Diffs rendered with Chroma syntax highlighting and [y]/[n] approval keys
+- [ ] Tool calls compact by default, expandable via Enter/d
+- [ ] Status bar shows: phase | model | cost | context% | turns
+- [ ] Session resume via `-c` (last) or `-r <id>` (specific) with smart picker
+- [ ] Slash commands: /compact, /verbose, /phase, /advance, /undo, /commit, /sessions, /help
+- [ ] @-file mentions with fuzzy search in input composer
+- [ ] Git-native: auto-commit per edit, /undo = git revert, /ship = squash
+- [ ] OODARC phase transitions visible in status bar and chat stream
+
 ## Non-goals
 
-- **TUI.** Skaffen starts headless. Clavain handles the human interface. If interactive mode is needed later, bubbletea (Go-native, MIT) is the path.
+- ~~**TUI.**~~ *Reversed: F8 adds TUI mode as default. Print mode remains via `--mode print`.*
 - **MCP client.** Deferred to v0.2. F2's registry supports runtime tool registration as the extension point. The tool registry design accounts for MCP but v0.1 ships with built-in tools only.
 - **Extension sandbox (QuickJS/WASM).** Interverse MCP plugins replace this. WASM via wazero is a future option.
 - **Full pi-mono test suite porting.** New test suite from scratch, informed by pi-mono's patterns.
