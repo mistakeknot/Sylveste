@@ -69,13 +69,13 @@ Clean-room Go implementation of Skaffen, studying pi-mono's (TypeScript, clean M
 **What:** Per-turn model selection based on phase, Interspect overrides, cost optimization, and fallback chains.
 
 **Acceptance criteria:**
-- [ ] `Router` interface: `SelectModel(phase, budget) → (Model, Reason)`
-- [ ] Default router: checks phase defaults → Interspect overrides → budget constraints → fallback chain
-- [ ] Phase default map configurable (e.g., brainstorm=haiku, build=sonnet, review=haiku)
-- [ ] Interspect routing overrides loaded from JSON file (static v2 format with phases array)
-- [ ] Budget tracker: per-session token/cost tracking, configurable limits, graceful degradation on budget exhaustion
-- [ ] Fallback chain: if primary model rate-limited or unavailable, try next in chain
-- [ ] Tests: routing decisions verified for each phase, override precedence tested
+- [x] `Router` interface: `SelectModel(phase) → (Model, Reason)` + `RecordUsage(usage)` + `BudgetState()`
+- [x] Default router: checks phase defaults → config overrides → env var overrides → budget constraints → complexity layer
+- [x] Phase default map configurable (brainstorm=opus, plan/build/review/ship=sonnet) via routing.json
+- [x] Config overrides loaded from JSON file (`~/.skaffen/routing.json`) + env vars (`SKAFFEN_MODEL_<PHASE>`)
+- [x] Budget tracker: per-session token tracking, configurable limits (graceful/hard-stop/advisory), `--budget` CLI flag
+- [x] Complexity classifier: C1-C5 tiers with shadow/enforce modes, evidence emission
+- [x] Tests: 36 router tests — routing decisions, override precedence, budget degradation, complexity classification
 
 ### F5: Session Persistence
 

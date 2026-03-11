@@ -1,0 +1,71 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 300
+
+stages:
+  - name: "Interface Extension"
+    tasks:
+      - id: task-1
+        title: "Extend Router interface with RecordUsage"
+        files: [os/Skaffen/internal/agent/deps.go]
+        depends: []
+        tier: fast
+      - id: task-2
+        title: "Wire RecordUsage in agent loop"
+        files: [os/Skaffen/internal/agent/loop.go]
+        depends: [task-1]
+        tier: fast
+
+  - name: "Router Package Core"
+    tasks:
+      - id: task-3
+        title: "DefaultRouter with phase defaults"
+        files: [os/Skaffen/internal/router/router.go, os/Skaffen/internal/router/router_test.go]
+        depends: []
+      - id: task-4
+        title: "Config loading (JSON + env vars)"
+        files: [os/Skaffen/internal/router/config.go, os/Skaffen/internal/router/config_test.go]
+        depends: []
+      - id: task-5
+        title: "Budget tracker with degradation"
+        files: [os/Skaffen/internal/router/budget.go, os/Skaffen/internal/router/budget_test.go]
+        depends: []
+      - id: task-6
+        title: "Complexity classifier"
+        files: [os/Skaffen/internal/router/complexity.go, os/Skaffen/internal/router/complexity_test.go]
+        depends: []
+
+  - name: "Integration"
+    tasks:
+      - id: task-7
+        title: "Integrate complexity into DefaultRouter + evidence"
+        files: [os/Skaffen/internal/router/router.go, os/Skaffen/internal/router/router_test.go, os/Skaffen/internal/agent/deps.go]
+        depends: [task-3, task-6]
+      - id: task-8
+        title: "Wire DefaultRouter + --budget flag in CLI"
+        files: [os/Skaffen/cmd/skaffen/main.go]
+        depends: [task-3, task-4, task-5]
+      - id: task-9
+        title: "Budget state in evidence emission"
+        files: [os/Skaffen/internal/agent/deps.go, os/Skaffen/internal/agent/loop.go, os/Skaffen/internal/router/router.go]
+        depends: [task-5, task-7]
+
+  - name: "Verification"
+    tasks:
+      - id: task-10
+        title: "End-to-end integration test"
+        files: [os/Skaffen/internal/router/integration_test.go]
+        depends: []
+        tier: fast
+      - id: task-11
+        title: "Live test via tmux"
+        files: []
+        depends: [task-8]
+        tier: fast
+      - id: task-12
+        title: "Update PRD checkboxes"
+        files: [docs/prds/2026-03-11-skaffen-go-rewrite.md, docs/prds/2026-03-11-skaffen-f4-model-routing.md]
+        depends: []
+        tier: fast
