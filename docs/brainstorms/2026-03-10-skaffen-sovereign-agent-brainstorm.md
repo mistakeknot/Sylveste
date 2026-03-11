@@ -1,6 +1,8 @@
 ---
 artifact_type: brainstorm
 stage: discover
+status: superseded
+superseded_by: docs/brainstorms/2026-03-11-skaffen-go-rewrite-brainstorm.md
 ---
 
 # Skaffen — Demarch's Sovereign Agent Runtime

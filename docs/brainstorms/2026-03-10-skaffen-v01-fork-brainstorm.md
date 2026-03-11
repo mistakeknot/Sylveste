@@ -2,6 +2,8 @@
 artifact_type: brainstorm
 bead: Demarch-rp5
 stage: discover
+status: superseded
+superseded_by: docs/brainstorms/2026-03-11-skaffen-go-rewrite-brainstorm.md
 ---
 
 # Skaffen v0.1: Fork pi_agent_rust, Rebrand, CI Green

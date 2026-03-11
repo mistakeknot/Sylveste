@@ -2,6 +2,8 @@
 artifact_type: prd
 bead: Demarch-rp5
 stage: design
+status: superseded
+note: "Rust fork completed (Demarch-rp5 CLOSED) but superseded by Go rewrite due to license contamination"
 ---
 # PRD: Skaffen v0.1 — Fork pi_agent_rust, Rebrand, CI Green
 
