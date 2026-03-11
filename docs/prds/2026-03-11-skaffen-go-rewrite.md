@@ -82,12 +82,12 @@ Clean-room Go implementation of Skaffen, studying pi-mono's (TypeScript, clean M
 **What:** JSONL session format with basic context management. Hybrid compaction and priority prompt rendering deferred to v0.2.
 
 **Acceptance criteria:**
-- [ ] Session state: ordered list of messages (system, user, assistant, tool_result) with metadata (timestamp, phase, turn number)
-- [ ] JSONL persistence: append-only write, full-state read, crash-safe (fsync after write)
-- [ ] Basic truncation: when context exceeds token threshold, keep system prompt + last N turns (configurable, default 20)
+- [x] Session state: ordered list of messages (system, user, assistant, tool_result) with metadata (timestamp, phase, turn number)
+- [x] JSONL persistence: append-only write, full-state read, crash-safe (fsync after write)
+- [x] Basic truncation: when context exceeds token threshold, keep system prompt + last N turns (configurable, default 20)
 - [ ] Phase boundary summary: on phase transition, generate structured summary (goal, decisions, artifacts, file list) and prepend to next phase's context
-- [ ] Session resume: load from JSONL, reconstruct state, continue from last turn
-- [ ] Tests: session roundtrips through JSONL, truncation preserves system prompt, phase summaries generated
+- [x] Session resume: load from JSONL, reconstruct state, continue from last turn
+- [x] Tests: session roundtrips through JSONL, truncation preserves system prompt, phase summaries generated
 
 **Deferred to v0.2:**
 - Priompt-style priority prompt rendering with phase-boost
@@ -100,14 +100,14 @@ Clean-room Go implementation of Skaffen, studying pi-mono's (TypeScript, clean M
 **What:** Structured event emission per tool call and phase transition, with local persistence and intercore CLI bridge.
 
 **Acceptance criteria:**
-- [ ] Evidence struct: `{timestamp, session_id, phase, turn, tool_name, tool_args_hash, outcome, duration_ms, tokens_used}`
-- [ ] Emitter interface: `Emit(event Evidence)` — injectable into agent loop
-- [ ] Evidence emitted per tool call (Reflect step) and per phase transition (Compound step)
-- [ ] Outcome signals: terminal state (success/failure/timeout), retry count, test pass rate (for bash tool running tests)
-- [ ] Local JSONL emitter: writes evidence to `~/.skaffen/evidence/<session_id>.jsonl`
-- [ ] Intercore CLI bridge: shells out to `ic events record --source=skaffen` when `ic` binary is available
-- [ ] Standalone mode: detect `ic` availability at startup, fall back to local-only emission silently
-- [ ] Tests: evidence emission verified per tool call, emitter mocked for agent loop tests
+- [x] Evidence struct: `{timestamp, session_id, phase, turn, tool_name, tool_args_hash, outcome, duration_ms, tokens_used}`
+- [x] Emitter interface: `Emit(event Evidence)` — injectable into agent loop
+- [x] Evidence emitted per tool call (Reflect step) and per phase transition (Compound step)
+- [x] Outcome signals: terminal state (success/failure/timeout), retry count, test pass rate (for bash tool running tests)
+- [x] Local JSONL emitter: writes evidence to `~/.skaffen/evidence/<session_id>.jsonl`
+- [x] Intercore CLI bridge: shells out to `ic events record --source=skaffen` when `ic` binary is available
+- [x] Standalone mode: detect `ic` availability at startup, fall back to local-only emission silently
+- [x] Tests: evidence emission verified per tool call, emitter mocked for agent loop tests
 
 **Note:** intercore does not export a Go client library in v1 (CLI only). Native Go integration deferred to v0.2+ pending intercore `pkg/client` API. The CLI bridge provides the same functionality with subprocess overhead (~5ms per event).
 
