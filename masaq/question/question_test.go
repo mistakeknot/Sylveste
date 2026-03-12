@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/mistakeknot/masaq/question"
+	"github.com/mistakeknot/Masaq/question"
 )
 
 func TestNewQuestion(t *testing.T) {

@@ -9,7 +9,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/mistakeknot/masaq/theme"
+	"github.com/mistakeknot/Masaq/theme"
 )
 
 // Option is a single selectable choice.

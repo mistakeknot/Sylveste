@@ -13,7 +13,7 @@ import (
 	"github.com/alecthomas/chroma/v2/lexers"
 	"github.com/alecthomas/chroma/v2/styles"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/mistakeknot/masaq/theme"
+	"github.com/mistakeknot/Masaq/theme"
 )
 
 // Renderer produces styled unified diffs.

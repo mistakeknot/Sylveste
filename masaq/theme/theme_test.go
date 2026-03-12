@@ -3,7 +3,7 @@ package theme_test
 import (
 	"testing"
 
-	"github.com/mistakeknot/masaq/theme"
+	"github.com/mistakeknot/Masaq/theme"
 )
 
 func TestTokyoNightHasRequiredColors(t *testing.T) {

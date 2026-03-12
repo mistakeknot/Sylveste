@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mistakeknot/masaq/diff"
+	"github.com/mistakeknot/Masaq/diff"
 )
 
 func TestRenderUnifiedDiff(t *testing.T) {

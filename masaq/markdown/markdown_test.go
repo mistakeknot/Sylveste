@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mistakeknot/masaq/markdown"
+	"github.com/mistakeknot/Masaq/markdown"
 )
 
 func TestRenderComplete(t *testing.T) {

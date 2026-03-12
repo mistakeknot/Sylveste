@@ -3,7 +3,7 @@ package keys_test
 import (
 	"testing"
 
-	"github.com/mistakeknot/masaq/keys"
+	"github.com/mistakeknot/Masaq/keys"
 )
 
 func TestDefaultMapHasQuit(t *testing.T) {

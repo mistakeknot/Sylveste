@@ -1,4 +1,4 @@
-module github.com/mistakeknot/masaq
+module github.com/mistakeknot/Masaq
 
 go 1.22
 

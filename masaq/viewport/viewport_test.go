@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mistakeknot/masaq/viewport"
+	"github.com/mistakeknot/Masaq/viewport"
 )
 
 func TestNewViewport(t *testing.T) {

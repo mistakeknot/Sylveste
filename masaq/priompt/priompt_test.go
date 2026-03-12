@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mistakeknot/masaq/priompt"
+	"github.com/mistakeknot/Masaq/priompt"
 )
 
 // --- Task 3: Core Render tests ---

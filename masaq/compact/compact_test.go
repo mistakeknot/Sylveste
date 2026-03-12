@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mistakeknot/masaq/compact"
+	"github.com/mistakeknot/Masaq/compact"
 )
 
 func TestCompactSummary(t *testing.T) {
