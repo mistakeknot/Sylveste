@@ -73,3 +73,5 @@ events-export: true
 backup.enabled: true
 backup.interval: 5m
 backup.git-push: false
+
+dolt.shared-server: true
