@@ -139,7 +139,7 @@ Clean-room Go implementation of Skaffen, studying pi-mono's (TypeScript, clean M
 - [x] Status bar shows: phase | model | cost | context% | turns
 - [x] Session resume via `-c` (last) or `-r <id>` (specific) with smart picker
 - [x] Slash commands: /compact, /verbose, /phase, /advance, /undo, /commit, /sessions, /help
-- [ ] @-file mentions with fuzzy search in input composer
+- [x] @-file mentions with fuzzy search in input composer
 - [x] Git-native: auto-commit per edit, /undo = git revert, /ship = squash
 - [x] OODARC phase transitions visible in status bar and chat stream
 
