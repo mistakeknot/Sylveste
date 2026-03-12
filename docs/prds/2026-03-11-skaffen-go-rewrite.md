@@ -130,18 +130,18 @@ Clean-room Go implementation of Skaffen, studying pi-mono's (TypeScript, clean M
 **What:** Standalone conversational REPL using Bubble Tea, composing Masaq shared components. Default mode when running `skaffen` with no args.
 
 **Acceptance criteria:**
-- [ ] `skaffen` (default) launches TUI REPL with chat viewport, input composer, status bar
-- [ ] `skaffen run --mode print` preserves headless streaming behavior
-- [ ] Smart trust: auto-allows safe tools, prompts for gray-area, blocks dangerous — with progressive learning
-- [ ] Streaming markdown rendered via Glamour adapter
-- [ ] Diffs rendered with Chroma syntax highlighting and [y]/[n] approval keys
-- [ ] Tool calls compact by default, expandable via Enter/d
-- [ ] Status bar shows: phase | model | cost | context% | turns
-- [ ] Session resume via `-c` (last) or `-r <id>` (specific) with smart picker
-- [ ] Slash commands: /compact, /verbose, /phase, /advance, /undo, /commit, /sessions, /help
+- [x] `skaffen` (default) launches TUI REPL with chat viewport, input composer, status bar
+- [x] `skaffen run --mode print` preserves headless streaming behavior
+- [x] Smart trust: auto-allows safe tools, prompts for gray-area, blocks dangerous — with progressive learning
+- [x] Streaming markdown rendered via Glamour adapter
+- [x] Diffs rendered with Chroma syntax highlighting and [y]/[n] approval keys
+- [x] Tool calls compact by default, expandable via Enter/d
+- [x] Status bar shows: phase | model | cost | context% | turns
+- [x] Session resume via `-c` (last) or `-r <id>` (specific) with smart picker
+- [x] Slash commands: /compact, /verbose, /phase, /advance, /undo, /commit, /sessions, /help
 - [ ] @-file mentions with fuzzy search in input composer
-- [ ] Git-native: auto-commit per edit, /undo = git revert, /ship = squash
-- [ ] OODARC phase transitions visible in status bar and chat stream
+- [x] Git-native: auto-commit per edit, /undo = git revert, /ship = squash
+- [x] OODARC phase transitions visible in status bar and chat stream
 
 ## Non-goals
 
