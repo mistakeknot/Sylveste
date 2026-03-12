@@ -1,7 +1,7 @@
 ---
 artifact_type: plan
 bead: Demarch-6qb.8
-stage: design
+stage: executing
 requirements:
   - Separate agent loop library from OODARC workflow engine
 ---
