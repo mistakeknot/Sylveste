@@ -13,15 +13,7 @@ import (
 	"github.com/alecthomas/chroma/v2/lexers"
 	"github.com/alecthomas/chroma/v2/styles"
 	"github.com/charmbracelet/lipgloss"
-)
-
-// Colors matching the Tokyo Night theme from masaq/theme.
-var (
-	colorInfo        = lipgloss.Color("#7dcfff")
-	colorSecondary   = lipgloss.Color("#bb9af7")
-	colorDiffAdd     = lipgloss.Color("#9ece6a")
-	colorDiffRemove  = lipgloss.Color("#f7768e")
-	colorDiffContext = lipgloss.Color("#565f89")
+	"github.com/mistakeknot/masaq/theme"
 )
 
 // Renderer produces styled unified diffs.
@@ -53,11 +45,12 @@ func (r *Renderer) Render(before, after, filename string) string {
 	lexer := lexerForFile(filename)
 	highlighter := newHighlighter(lexer)
 
-	headerStyle := lipgloss.NewStyle().Foreground(colorInfo).Bold(true)
-	hunkStyle := lipgloss.NewStyle().Foreground(colorSecondary)
-	addStyle := lipgloss.NewStyle().Foreground(colorDiffAdd)
-	removeStyle := lipgloss.NewStyle().Foreground(colorDiffRemove)
-	contextStyle := lipgloss.NewStyle().Foreground(colorDiffContext)
+	c := theme.Current().Semantic()
+	headerStyle := lipgloss.NewStyle().Foreground(c.Info.Color()).Bold(true)
+	hunkStyle := lipgloss.NewStyle().Foreground(c.Secondary.Color())
+	addStyle := lipgloss.NewStyle().Foreground(c.DiffAdd.Color())
+	removeStyle := lipgloss.NewStyle().Foreground(c.DiffRemove.Color())
+	contextStyle := lipgloss.NewStyle().Foreground(c.DiffContext.Color())
 
 	var sb strings.Builder
 

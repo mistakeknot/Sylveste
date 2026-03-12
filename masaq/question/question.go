@@ -9,13 +9,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-)
-
-// Tokyo Night palette.
-var (
-	colorPrimary = lipgloss.Color("#7aa2f7")
-	colorSuccess = lipgloss.Color("#9ece6a")
-	colorMuted   = lipgloss.Color("#565f89")
+	"github.com/mistakeknot/masaq/theme"
 )
 
 // Option is a single selectable choice.
@@ -107,19 +101,21 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 // View renders the question and its options.
 func (m Model) View() string {
+	c := theme.Current().Semantic()
+
 	questionStyle := lipgloss.NewStyle().
-		Foreground(colorPrimary).
+		Foreground(c.Primary.Color()).
 		Bold(true)
 
 	cursorStyle := lipgloss.NewStyle().
-		Foreground(colorSuccess)
+		Foreground(c.Success.Color())
 
 	labelSelectedStyle := lipgloss.NewStyle().
-		Foreground(colorSuccess).
+		Foreground(c.Success.Color()).
 		Bold(true)
 
 	descStyle := lipgloss.NewStyle().
-		Foreground(colorMuted)
+		Foreground(c.Muted.Color())
 
 	var b strings.Builder
 	b.WriteString(questionStyle.Render(m.question))

@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/charmbracelet/lipgloss"
+	"github.com/mistakeknot/masaq/theme"
 )
 
 // Formatter renders tool call summaries in compact or verbose mode.
@@ -32,9 +33,10 @@ func (f *Formatter) IsVerbose() bool {
 // FormatToolCall renders a tool call summary.
 // name: tool name, paramsJSON: JSON params string, output: tool result, isError: whether it errored.
 func (f *Formatter) FormatToolCall(name, paramsJSON, output string, isError bool) string {
-	toolStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("#7dcfff")).Bold(true)
-	subtextStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("#565f89"))
-	errorStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("#f7768e"))
+	c := theme.Current().Semantic()
+	toolStyle := lipgloss.NewStyle().Foreground(c.Info.Color()).Bold(true)
+	subtextStyle := lipgloss.NewStyle().Foreground(c.Muted.Color())
+	errorStyle := lipgloss.NewStyle().Foreground(c.Error.Color())
 
 	summary := extractSummary(name, paramsJSON)
 
@@ -49,7 +51,7 @@ func (f *Formatter) FormatToolCall(name, paramsJSON, output string, isError bool
 	if f.verbose {
 		header := toolStyle.Render(name) + " " + subtextStyle.Render(summary)
 		truncated := truncateOutput(output, 2000)
-		mutedStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("#565f89"))
+		mutedStyle := lipgloss.NewStyle().Foreground(c.Muted.Color())
 		return header + "\n" + mutedStyle.Render(truncated)
 	}
 
