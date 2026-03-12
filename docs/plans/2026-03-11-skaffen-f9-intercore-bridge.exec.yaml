@@ -1,0 +1,51 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 300
+
+stages:
+  - name: "Foundation"
+    tasks:
+      - id: task-1
+        title: "ICClient wrapper for ic CLI routing operations"
+        files: [os/Skaffen/internal/router/intercore.go, os/Skaffen/internal/router/intercore_test.go]
+        depends: []
+      - id: task-3
+        title: "Fix emitter bridge bugs — source, flag, agent_name"
+        files: [os/Skaffen/internal/evidence/emitter.go, os/Skaffen/internal/evidence/emitter_test.go]
+        depends: []
+      - id: task-6
+        title: "Add Model and ModelReason to Evidence struct"
+        files: [os/Skaffen/internal/agent/deps.go, os/Skaffen/internal/agent/loop.go, os/Skaffen/internal/evidence/emitter_test.go]
+        depends: []
+
+  - name: "Router Integration"
+    tasks:
+      - id: task-4
+        title: "Override consumption in router — NewWithIC, resolution chain"
+        files: [os/Skaffen/internal/router/router.go, os/Skaffen/internal/router/router_test.go]
+        depends: [task-1]
+      - id: task-5
+        title: "Routing decision recording via ic route record"
+        files: [os/Skaffen/internal/router/router.go, os/Skaffen/internal/router/router_test.go]
+        depends: [task-1, task-4]
+
+  - name: "Wiring"
+    tasks:
+      - id: task-2
+        title: "Mandatory ic startup check in main.go"
+        files: [os/Skaffen/cmd/skaffen/main.go]
+        depends: [task-1]
+      - id: task-7
+        title: "Wire ICClient into main.go router construction"
+        files: [os/Skaffen/cmd/skaffen/main.go]
+        depends: [task-2, task-4, task-5]
+
+  - name: "Verification"
+    tasks:
+      - id: task-8
+        title: "Integration tests and cleanup"
+        files: [os/Skaffen/internal/router/intercore_test.go]
+        depends: [task-7]
+        tier: fast
