@@ -1,0 +1,127 @@
+[
+  {
+    "name": "fd-integration-seams",
+    "focus": "Evaluate the integration points between Mycroft and the 5 existing data sources and sibling Autarch components",
+    "persona": "A systems integration architect who has debugged production failures at component boundaries. Reads design docs looking for impedance mismatches, ownership ambiguities, and unstated coupling assumptions.",
+    "decision_lens": "Prioritizes findings where two components have conflicting assumptions about data freshness, schema ownership, or error responsibility. Silent integration failures rank above noisy ones.",
+    "review_areas": [
+      "Check whether Mycroft treats fleet-registry.yaml, intermux, interstat, beads, and intermute as read-only consumers or whether any writes back to them — and whether each source's owner has designed for that",
+      "Assess whether the Bigend aggregator and Coldwine dispatcher interfaces are stable enough to compose from, or whether Mycroft would be coupling to implementation details that could drift",
+      "Identify whether the 5 data sources can produce a coherent fleet view when they disagree — e.g., intermux says agent is running, beads says bead is unclaimed, interstat has no recent rows",
+      "Evaluate the push-first/pull-fallback dispatch model: when does the SessionStart hook fire relative to assignment file write, and what happens if Clavain reads a half-written assignment",
+      "Check whether intermute and intercore pkg boundaries are used as stable APIs or as internal shared libraries that Mycroft would re-import directly, creating version coupling",
+      "Assess whether interlock's file-reservation protocol is included in the integration surface and whether Mycroft needs to participate in it to avoid dispatching two agents to the same work"
+    ],
+    "success_hints": [
+      "Each data source has a clearly stated read/write contract with Mycroft and a defined owner responsible for schema changes",
+      "The aggregated fleet view has a documented conflict-resolution rule for each pair of sources that could disagree",
+      "The assignment file + SessionStart hook handshake has a defined timeout and fallback path before /route is attempted"
+    ],
+    "anti_overlap": [
+      "fd-autonomy-tiers covers the graduated autonomy model and tier transition logic — this agent does not evaluate T0-T3 decision boundaries",
+      "fd-failure-recovery covers the clean/dirty/corrupted state classification and auto-recovery behavior",
+      "fd-agent-identity covers the Clavain claim system and tmux session name pattern matching"
+    ],
+    "task_context": "Mycroft is a fleet coordination app in apps/Autarch/ that composes a fleet view from 5 existing data sources rather than owning its own registry. The design doc is a brainstorm, so integration contracts are likely underspecified."
+  },
+  {
+    "name": "fd-autonomy-tiers",
+    "focus": "Evaluate the graduated autonomy model (T0-T3) for soundness, safety, and reversibility",
+    "persona": "A human-AI interaction researcher with a background in control system design and AI safety. Approaches autonomy graduation as a trust calibration problem: what evidence justifies expanding the action space, and what triggers contraction.",
+    "decision_lens": "Prioritizes findings where tier transitions are irreversible, where the evidence threshold for graduation is undefined, or where a tier's action set is larger than its recovery footprint — i.e., Mycroft can do more damage than it can undo.",
+    "review_areas": [
+      "Assess whether the SQLite decision log captures enough evidence for tier graduation — what specific signals (bead close rate, failure rate, user override frequency) justify moving from T1 to T2",
+      "Check whether tier demotion (T3 to T2 or T2 to T1) is designed with the same rigor as promotion, including what triggers it and how quickly it can engage after a bad auto-dispatch",
+      "Evaluate whether T2 'low-risk' auto-dispatch has a principled definition of low-risk, or whether it's left to per-instance judgment without guardrails",
+      "Identify whether the dashboard-first design (T0 observe) provides enough operator signal to actually calibrate trust — what does the user see that lets them confidently approve T1 suggestions",
+      "Assess whether there is a per-project or per-agent-type tier, or a single global tier — a single global tier is safer but may be too conservative for well-understood agent types",
+      "Check whether T3 full dispatch includes any human-in-the-loop escape hatch or whether the design assumes operators will demote the tier manually when something goes wrong"
+    ],
+    "success_hints": [
+      "Each tier transition (up and down) has a named trigger condition with a measurable threshold, not just a qualitative description",
+      "T2 auto-dispatch has a defined maximum blast radius — a list of action types that are excluded even at T2",
+      "The SQLite decision log schema is detailed enough that a future operator (or agent) could reconstruct why a tier change happened"
+    ],
+    "anti_overlap": [
+      "fd-integration-seams covers how Mycroft connects to existing data sources and Autarch siblings — not the autonomy model itself",
+      "fd-failure-recovery covers what happens after a dispatch goes wrong, including state classification — this agent covers the decision to dispatch, not the recovery from failure",
+      "fd-narrative-coherence covers whether the Terra Ignota naming and design philosophy are internally consistent"
+    ],
+    "task_context": "Mycroft's autonomy model progresses from T0 observe through T3 full dispatch. The design names the tiers but the doc is a brainstorm, so the graduation criteria and demotion triggers may be underspecified or aspirational."
+  },
+  {
+    "name": "fd-failure-recovery",
+    "focus": "Evaluate the failure classification model (clean/dirty/corrupted) and the auto-recovery design for soundness and completeness",
+    "persona": "A distributed systems reliability engineer who has designed and post-mortemed fleet recovery systems. Approaches failure taxonomy skeptically: every classification scheme has edge cases that fall between categories, and recovery actions that are safe for one class can be catastrophic for another.",
+    "decision_lens": "Prioritizes findings where the boundary between failure classes is ambiguous, where recovery actions have side effects not accounted for by the classification, or where the patrol loop's polling interval creates a detection lag that changes the recovery calculus.",
+    "review_areas": [
+      "Evaluate whether clean/dirty/corrupted is a sufficient taxonomy — identify failure modes (e.g., agent in an infinite retry loop, agent holding an interlock reservation but not making progress) that may not fit cleanly into any category",
+      "Assess whether the 30-60s patrol loop interval is appropriate given how quickly a dirty failure can become corrupted — what is the maximum damage a runaway agent can do in 60 seconds",
+      "Check whether auto-recovery at T2+ has idempotency guarantees — if Mycroft issues a recovery action and then crashes before confirming it, does the next patrol loop double-apply the recovery",
+      "Identify whether the failure classification reads from a single data source or triangulates across multiple — a bead marked in-progress by beads but no intermux session for the agent is different from both showing failure",
+      "Evaluate whether there is a defined escalation path when auto-recovery fails — what does Mycroft do if a corrupted state does not resolve after N recovery attempts",
+      "Check whether the failure detection and recovery loop is itself monitored — if Mycroft's patrol loop stalls or crashes, who detects and recovers Mycroft"
+    ],
+    "success_hints": [
+      "Each failure class has at least one example failure mode and one counter-example (a failure that looks similar but belongs to a different class)",
+      "Auto-recovery actions are explicitly idempotent or include a guard against double-application",
+      "There is a defined escalation policy (alert, demote tier, halt dispatch) for when auto-recovery repeatedly fails on the same agent"
+    ],
+    "anti_overlap": [
+      "fd-autonomy-tiers covers the T2 decision to enable auto-recovery — this agent covers what the recovery actions are and whether they are safe, not the tier model",
+      "fd-integration-seams covers how Mycroft reads from beads, intermux, and interlock — this agent assumes those reads work and focuses on what Mycroft does with failure signals",
+      "fd-agent-identity covers how Mycroft distinguishes one agent session from another — not how it recovers from agent failures"
+    ],
+    "task_context": "Mycroft classifies agent failures as clean, dirty, or corrupted and applies aggressive auto-recovery at T2+. The patrol loop polls intermux, beads, and interlock at 30-60s intervals. The doc is a brainstorm, so recovery action details may be thin."
+  },
+  {
+    "name": "fd-agent-identity",
+    "focus": "Evaluate the agent identity and session tracking model — how Mycroft knows which agent is which across dispatch, crash, restart, and multi-project scenarios",
+    "persona": "A platform engineer who has built session management and identity systems for distributed agent fleets. Is skeptical of identity schemes that rely on naming conventions or mutable state without a durable anchor.",
+    "decision_lens": "Prioritizes findings where identity could be confused across agent restarts, where the tmux session name pattern is ambiguous or collides across projects, or where the Clavain claim system's assumptions about session uniqueness are violated in practice.",
+    "review_areas": [
+      "Assess whether the combination of Clavain claim system + tmux session name patterns is sufficient to uniquely identify an agent across its full lifecycle (pre-dispatch, running, crashed, restarted)",
+      "Check whether tmux session name patterns are globally unique or project-scoped — in a monorepo with multiple active projects, can two agents have the same pattern-matched identity",
+      "Evaluate what happens to identity when an agent crashes and Clavain restarts it: does it get a new session ID, does it reclaim the same bead, and does Mycroft treat it as the same agent or a new one",
+      "Identify whether agent identity is durable enough for the SQLite decision log — if Mycroft records 'agent X dispatched at T', can it later correlate 'agent X completed at T+N' if the session was restarted in between",
+      "Assess whether the runtime-agnostic AgentSpawner interface preserves the same identity contract for Skaffen-spawned agents as for Claude Code — or whether Skaffen v0.2 will require identity model changes",
+      "Check whether interlock's window identity (used for file reservations) is the same identity used in Mycroft's fleet view, or whether there is a mapping layer that could desync"
+    ],
+    "success_hints": [
+      "Agent identity is anchored to a durable artifact (bead ID, assignment file path, or claim record) rather than solely to an ephemeral session name",
+      "The identity model explicitly handles the crash-and-restart case with a defined policy: same identity or new identity, and why",
+      "The AgentSpawner interface includes identity as a first-class return value so Mycroft can track spawned agents regardless of runtime"
+    ],
+    "anti_overlap": [
+      "fd-integration-seams covers the Clavain SessionStart hook and assignment file handshake as an integration point — this agent covers what identity information that handshake establishes and whether it is durable",
+      "fd-failure-recovery covers what Mycroft does when an agent fails — this agent covers whether Mycroft can correctly identify the agent before, during, and after failure",
+      "fd-autonomy-tiers covers the dispatch decision — this agent covers the tracking of what was dispatched, not the decision to dispatch"
+    ],
+    "task_context": "Mycroft tracks agent sessions using the Clavain claim system and tmux session name patterns. The design is single-project in v0.1 but interfaces are intended to support multi-project. The doc is a brainstorm, so identity lifecycle details across crash/restart may be underspecified."
+  },
+  {
+    "name": "fd-narrative-coherence",
+    "focus": "Evaluate whether the design's stated philosophy, naming choices, and architectural bets are internally consistent and coherent as a product vision",
+    "persona": "A technical product strategist who reads design documents for logical consistency between stated goals and proposed mechanisms. Looks for places where the narrative sells a capability the architecture does not deliver, or where a design decision conflicts with a stated principle.",
+    "decision_lens": "Prioritizes findings where a named principle (e.g., 'compose rather than own', 'earned trust', 'dashboard-first') is violated by a specific design choice, and where the v0.1 scope sets a trajectory that makes v0.2 goals harder rather than easier.",
+    "review_areas": [
+      "Assess whether 'compose rather than own a new registry' is fully honored — does Mycroft write any persistent state (SQLite decision log, assignment files) that effectively makes it a registry owner by another name",
+      "Evaluate whether the Mycroft Canner (Terra Ignota) naming is load-bearing for the design or decorative — does the 'earned trust across autonomous systems' concept from the character actually map onto the T0-T3 graduation model",
+      "Check whether Mycroft's position as the '5th Autarch app' is architecturally justified — does it genuinely reuse Bigend and Coldwine as components, or does it duplicate their concerns with a fleet-coordination wrapper",
+      "Identify whether single-project v0.1 with 'interfaces designed for multi-project' is a coherent scope boundary, or whether the multi-project abstractions will force premature generalization that complicates v0.1 delivery",
+      "Assess whether 'dashboard-first' and 'graduated autonomy' are in tension — a dashboard-first product biases toward human oversight, but the graduation model's end state (T3) removes the human from the loop entirely",
+      "Evaluate whether the brainstorm identifies the right success metric for Mycroft — is 'fleet coordination' the job to be done, or is there a more precise statement of what problem Mycroft solves that the current framing obscures"
+    ],
+    "success_hints": [
+      "Every named design principle ('compose', 'earned trust', 'dashboard-first') has at least one specific mechanism in the architecture that enacts it — not just a statement of intent",
+      "The v0.1 scope boundary is justified by a stated hypothesis to validate, not just by time or effort constraints",
+      "The relationship between Mycroft and its four Autarch siblings is described as a use relationship, not a re-implementation of the same concerns"
+    ],
+    "anti_overlap": [
+      "fd-integration-seams covers technical coupling between components — this agent covers whether the stated philosophy of composition is honored, not the technical details of the seams",
+      "fd-autonomy-tiers covers the technical soundness of the T0-T3 model — this agent covers whether the graduation model is coherent with the product narrative, not whether the tier boundaries are safe",
+      "fd-agent-identity and fd-failure-recovery cover specific technical subsystems — this agent does not duplicate their findings but may note if a technical gap undermines a stated design principle"
+    ],
+    "task_context": "Mycroft is positioned as a fleet coordination agent with a specific philosophical identity (Mycroft Canner, earned trust) and a clear product narrative (dashboard-first graduated autonomy). The review should assess whether the architecture earns the narrative, not just whether the architecture is technically sound."
+  }
+]
