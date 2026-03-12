@@ -7,8 +7,8 @@ All pre-installed on this server:
 | Tool | Used by | Purpose |
 |------|---------|---------|
 | `jq` | interbump, hooks | JSON manipulation |
-| `uv` | tldr-swinton, interject, intersearch, intercache, interfin | Python package management |
-| `go` (1.24+ for intermute, 1.22+ for intercore) | intermute, intercore, interlock, interbench | Go builds and tests |
+| `uv` | tldr-swinton, interject, intersearch, intercache | Python package management |
+| `go` (1.24+ for intermute/Skaffen/interband, 1.22+ for intercore/masaq) | intermute, intercore, interlock, interbench, Skaffen, masaq, interband | Go builds and tests |
 | `node`/`npm` | interkasten | MCP server build |
 | `python3` | tldr-swinton, tool-time, interject, intercache | CLI tools, analysis scripts |
 | `bd` | all | Beads issue tracker CLI |

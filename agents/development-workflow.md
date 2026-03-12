@@ -33,6 +33,13 @@ go test ./...              # run all tests
 ./ic --help                # verify
 ```
 
+**Sovereign Agent** (Skaffen):
+```bash
+cd os/Skaffen
+go build -o skaffen ./cmd/skaffen  # produces the `skaffen` binary
+go test ./...                       # run all tests
+```
+
 **Service** (intermute):
 ```bash
 cd core/intermute

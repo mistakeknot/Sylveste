@@ -2,19 +2,20 @@
 
 ## Overview
 
-Demarch is the physical monorepo for the open-source autonomous software development agency platform. It contains five pillars: **Intercore** (`/core`) the orchestration kernel, **Clavain** (`/os`) the agent OS and reference agency, **Interverse** (`/interverse`) the companion plugin ecosystem, **Autarch** (`/apps`) the TUI surfaces, and **Interspect** (cross-cutting profiler, currently housed in Clavain). Plus `sdk/` for shared libraries (interbase). Each module keeps its own `.git` as a nested independent repo. The root `Demarch/` also has a `.git` for the monorepo skeleton (scripts, docs, CLAUDE.md). Git operations apply to the nearest `.git`; verify with `git rev-parse --show-toplevel`.
+Demarch is the physical monorepo for the open-source autonomous software development agency platform. It contains six pillars: **Intercore** (`/core`) the orchestration kernel, **Clavain** (`/os/Clavain`) the agent OS and reference agency, **Skaffen** (`/os/Skaffen`) the sovereign agent runtime, **Interverse** (`/interverse`) the companion plugin ecosystem, **Autarch** (`/apps`) the TUI surfaces, and **Interspect** (cross-cutting profiler, currently in Interverse). Plus `sdk/` for shared libraries (interbase). Each module keeps its own `.git` as a nested independent repo. The root `Demarch/` also has a `.git` for the monorepo skeleton (scripts, docs, CLAUDE.md). Git operations apply to the nearest `.git`; verify with `git rev-parse --show-toplevel`.
 
 ## Glossary
 
 | Term | Meaning |
 |------|---------|
-| **Pillar** | One of the 5 top-level components of Demarch: Intercore, Clavain, Interverse, Autarch, Interspect. Organizational term — use "layer" (L1/L2/L3) for architectural dependency. |
+| **Pillar** | One of the 6 top-level components of Demarch: Intercore, Clavain, Skaffen, Interverse, Autarch, Interspect. Organizational term — use "layer" (L1/L2/L3) for architectural dependency. |
 | **Layer** | Architectural dependency level: L1 (Kernel/Intercore), L2 (OS/Clavain + Drivers/Interverse), L3 (Apps/Autarch). Interspect is cross-cutting. |
 | **Beads** | File-based issue tracker (`bd` CLI). Each project can have a `.beads/` database. All active tracking is at Demarch root. |
 | **Plugin** | A Claude Code extension (skills, commands, hooks, agents, MCP servers) installed from the marketplace. |
 | **MCP** | Model Context Protocol — enables plugins to expose tools as server processes that Claude Code calls directly. |
 | **Driver** | A companion plugin (part of the Interverse pillar) that extends Clavain with one capability. Also called "companion plugin." |
 | **Marketplace** | The `interagency-marketplace` registry at `core/marketplace/` — JSON catalog of all published plugins. |
+| **Skaffen** | Sovereign agent runtime — standalone Go binary with OODARC agent loop, multi-provider support, and TUI (via masaq). L2, peers with Clavain. |
 | **Interspect** | Adaptive profiler pillar — reads kernel event surfaces, proposes OS configuration changes. Cross-cutting (not a layer). Current measurement caveats are documented in `docs/research/interspect-event-validity-and-outcome-attribution.md`. |
 
 ## Directory Layout
@@ -30,8 +31,12 @@ Each subproject has its own CLAUDE.md and AGENTS.md — read those before editin
 | `core/intercore/` | Intercore | Orchestration kernel — Go CLI `ic` (L1) |
 | `core/intermute/` | Intercore | Multi-agent coordination service (Go) |
 | `core/marketplace/` | Intercore | Plugin marketplace registry |
+| `core/agent-rig/` | Intercore | Agent rig configuration (TypeScript/Node) |
+| `core/interband/` | Intercore | Sideband communication protocol (Go) |
+| `core/interbench/` | Intercore | Plugin benchmarking harness (Go) |
 | `interverse/` | Interverse | Companion plugins — each has own docs (`ls interverse/ | wc -l`) |
 | `sdk/interbase/` | — | Shared integration SDK (Bash/Go/Python) |
+| `masaq/` | — | Shared Bubble Tea component library (Go) — themes, keys, viewport, priompt |
 | `docs/` | — | Platform-level docs only (brainstorms, research, solutions) |
 
 > **Docs convention:** `Demarch/docs/` is for platform-level work only. Each subproject keeps its own docs.
@@ -48,9 +53,11 @@ interdeep → interject                          # deep research extraction + se
 Clavain (L2) → intertrust                     # agent trust scoring
 interpulse → interband → interline/intermem   # context pressure → statusline/memory
 Clavain (L2) → interphase                     # phase tracking, gates, discovery
+Skaffen (L2) → masaq                          # TUI components, themes
+Skaffen (L2) → intercore (L1)                 # provider/tool system via Intercore bridge
 ```
 
-Standalone plugins (no cross-deps): intercache, interchart, intercheck, intercraft, interdev, interfluence, interform, interkasten, interknow, interlearn, interleave, interlens, intermap, intermonk, intermux, intername, internext, interpeer, interplug, interrank, interscribe, intersense, intership, intersight, interskill, interslack, interstat, intertest, intertrace, intertrack, intertree, tldr-swinton, tool-time, tuivision.
+Standalone plugins (no cross-deps): intercache, interchart, intercheck, intercraft, interdev, interfluence, interform, interhelm, interkasten, interknow, interlearn, interleave, interlens, intermap, intermonk, intermux, intername, internext, interpeer, interplug, interpub, interrank, interscribe, intersense, intership, intersight, interskill, interslack, interspect, interstat, intersynth, intertest, intertrace, intertrack, intertree, tldr-swinton, tool-time, tuivision.
 
 ## Compatibility
 
