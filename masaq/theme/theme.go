@@ -1,6 +1,36 @@
 package theme
 
-import "github.com/charmbracelet/lipgloss"
+import (
+	"strings"
+
+	"github.com/charmbracelet/lipgloss"
+)
+
+// Mode selects whether dark or light color variants are used.
+type Mode int
+
+const (
+	// Dark selects the dark-background color variant (default).
+	Dark Mode = iota
+	// Light selects the light-background color variant.
+	Light
+)
+
+// String returns "dark" or "light".
+func (m Mode) String() string {
+	if m == Light {
+		return "light"
+	}
+	return "dark"
+}
+
+var currentMode Mode = Dark
+
+// CurrentMode returns the active color mode.
+func CurrentMode() Mode { return currentMode }
+
+// SetMode changes the active color mode.
+func SetMode(m Mode) { currentMode = m }
 
 // ColorPair holds hex colors for dark and light mode.
 type ColorPair struct {
@@ -8,8 +38,11 @@ type ColorPair struct {
 	Light string
 }
 
-// Color returns the lipgloss.Color for dark mode.
+// Color returns the lipgloss.Color for the active mode.
 func (cp ColorPair) Color() lipgloss.Color {
+	if currentMode == Light {
+		return lipgloss.Color(cp.Light)
+	}
 	return lipgloss.Color(cp.Dark)
 }
 
@@ -21,6 +54,7 @@ type SemanticColors struct {
 	Warning     ColorPair
 	Error       ColorPair
 	Info        ColorPair
+	Active      ColorPair
 	Muted       ColorPair
 	Bg          ColorPair
 	BgDark      ColorPair
@@ -54,6 +88,7 @@ var TokyoNight = Theme{
 		Warning:     ColorPair{Dark: "#e0af68", Light: "#8c6c3e"},
 		Error:       ColorPair{Dark: "#f7768e", Light: "#c64343"},
 		Info:        ColorPair{Dark: "#7dcfff", Light: "#2e7de9"},
+		Active:      ColorPair{Dark: "#2ac3de", Light: "#007197"},
 		Muted:       ColorPair{Dark: "#565f89", Light: "#8990b3"},
 		Bg:          ColorPair{Dark: "#1a1b26", Light: "#d5d6db"},
 		BgDark:      ColorPair{Dark: "#16161e", Light: "#e9e9ec"},
@@ -77,4 +112,20 @@ func Current() Theme {
 // SetCurrent changes the active theme.
 func SetCurrent(t Theme) {
 	current = t
+}
+
+// Themes returns all built-in themes.
+func Themes() []Theme {
+	return []Theme{TokyoNight, Catppuccin}
+}
+
+// ThemeByName returns the built-in theme matching the given name (case-insensitive).
+func ThemeByName(name string) (Theme, bool) {
+	lower := strings.ToLower(name)
+	for _, t := range Themes() {
+		if strings.ToLower(t.Name) == lower {
+			return t, true
+		}
+	}
+	return Theme{}, false
 }
