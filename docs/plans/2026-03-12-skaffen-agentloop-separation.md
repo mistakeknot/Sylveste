@@ -199,7 +199,7 @@ Test: Register tools, create gated registry. Verify `Tools("brainstorm")` exclud
 
 ---
 
-### Task 5: Refactor agent.Agent to wrap agentloop.Loop
+### Task 5: Refactor agent.Agent to wrap agentloop.Loop [x]
 
 **Files:**
 - Modify: `os/Skaffen/internal/agent/agent.go`
@@ -239,7 +239,7 @@ Test: All existing agent tests must pass (import path changes may be needed).
 
 ---
 
-### Task 6: Update router to use SelectionHints
+### Task 6: Update router to use SelectionHints [x] (no-op — adapter pattern handles bridge)
 
 **Files:**
 - Modify: `os/Skaffen/internal/router/router.go`
@@ -262,7 +262,7 @@ Test: All existing router tests pass with string phases instead of typed constan
 
 ---
 
-### Task 7: Update session to use PromptHints
+### Task 7: Update session to use PromptHints [x] (no-op — adapter pattern handles bridge)
 
 **Files:**
 - Modify: `os/Skaffen/internal/session/session.go`
@@ -280,7 +280,7 @@ Test: All existing session tests pass.
 
 ---
 
-### Task 8: Update tool package — remove phase from core Tool interface
+### Task 8: Update tool package — remove phase from core Tool interface [x] (no-op — Option B: tool.Phase stays)
 
 **Files:**
 - Modify: `os/Skaffen/internal/tool/tool.go`
@@ -303,7 +303,7 @@ Test: All tool tests pass.
 
 ---
 
-### Task 9: Integration test — verify full stack
+### Task 9: Integration test — verify full stack [x] (333 tests, 14 packages)
 
 **Files:**
 - Run: all tests across all packages
