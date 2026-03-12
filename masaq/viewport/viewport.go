@@ -127,8 +127,11 @@ func (m Model) Init() tea.Cmd {
 	return nil
 }
 
-// Update handles key messages for viewport scrolling. It returns a new Model by
-// value per Bubble Tea convention.
+// Update handles key and mouse messages for viewport scrolling. It returns a
+// new Model by value per Bubble Tea convention.
+//
+// Supported keys: Up/Down (1 line), PgUp/PgDown (half page), Home/End,
+// Ctrl+U/Ctrl+D (half page, vim-style). Mouse wheel scrolls 3 lines.
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -138,22 +141,25 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		case tea.KeyDown:
 			m.ScrollDown(1)
 		case tea.KeyPgUp:
-			half := m.height / 2
-			if half < 1 {
-				half = 1
-			}
-			m.ScrollUp(half)
+			m.ScrollUp(m.halfPage())
 		case tea.KeyPgDown:
-			half := m.height / 2
-			if half < 1 {
-				half = 1
-			}
-			m.ScrollDown(half)
+			m.ScrollDown(m.halfPage())
 		case tea.KeyHome:
 			m.offset = 0
 			m.autoScroll = false
 		case tea.KeyEnd:
 			m.ScrollToBottom()
+		case tea.KeyCtrlU:
+			m.ScrollUp(m.halfPage())
+		case tea.KeyCtrlD:
+			m.ScrollDown(m.halfPage())
+		}
+	case tea.MouseMsg:
+		switch msg.Type {
+		case tea.MouseWheelUp:
+			m.ScrollUp(3)
+		case tea.MouseWheelDown:
+			m.ScrollDown(3)
 		}
 	}
 	return m, nil
@@ -192,6 +198,15 @@ func (m Model) View() string {
 		b.WriteString(ansi.Truncate(line, m.width, ""))
 	}
 	return b.String()
+}
+
+// halfPage returns half the viewport height, minimum 1.
+func (m Model) halfPage() int {
+	h := m.height / 2
+	if h < 1 {
+		return 1
+	}
+	return h
 }
 
 // maxOffset returns the highest valid offset (first line of the last screenful).
