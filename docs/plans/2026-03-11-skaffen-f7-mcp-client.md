@@ -1,7 +1,7 @@
 ---
 artifact_type: plan
 bead: Demarch-o5u
-stage: design
+stage: executed
 requirements:
   - F1: Plugin config parsing
   - F2: MCP stdio client
