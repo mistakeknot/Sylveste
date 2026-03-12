@@ -1,0 +1,47 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 300
+
+stages:
+  - name: "Foundation"
+    tasks:
+      - id: task-1
+        title: "Extend Registry with RegisterForPhases"
+        files: [os/Skaffen/internal/tool/registry.go, os/Skaffen/internal/tool/registry_test.go]
+        depends: []
+      - id: task-2
+        title: "Plugin config parser (plugins.toml + plugin.json)"
+        files: [os/Skaffen/internal/mcp/config.go, os/Skaffen/internal/mcp/config_test.go]
+        depends: []
+
+  - name: "Protocol"
+    tasks:
+      - id: task-3
+        title: "MCP stdio client wrapper (go-sdk)"
+        files: [os/Skaffen/internal/mcp/client.go, os/Skaffen/internal/mcp/client_test.go, os/Skaffen/internal/mcp/testdata/echo-server/main.go]
+        depends: []
+
+  - name: "Integration"
+    tasks:
+      - id: task-4
+        title: "MCPTool adapter (tool.Tool implementation)"
+        files: [os/Skaffen/internal/mcp/tool.go, os/Skaffen/internal/mcp/tool_test.go]
+        depends: [task-3]
+      - id: task-5
+        title: "MCPManager lifecycle orchestration"
+        files: [os/Skaffen/internal/mcp/manager.go, os/Skaffen/internal/mcp/manager_test.go]
+        depends: [task-2, task-3, task-4]
+
+  - name: "Wiring"
+    tasks:
+      - id: task-6
+        title: "Wire into main.go (--plugins flag)"
+        files: [os/Skaffen/cmd/skaffen/main.go]
+        depends: [task-1, task-5]
+      - id: task-7
+        title: "Integration test and package doc"
+        files: [os/Skaffen/internal/mcp/manager_test.go, os/Skaffen/internal/mcp/doc.go]
+        depends: [task-5]
+        tier: fast

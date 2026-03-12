@@ -1,3 +1,10 @@
+{"issue_id":"Demarch-17r","label":"claimed_at:1773274585"}
+{"issue_id":"Demarch-17r","label":"claimed_by:41035d92-362f-4550-be03-477de1ced2e9"}
+{"issue_id":"Demarch-17r","label":"ic_run_id:osxy16tc"}
+{"issue_id":"Demarch-17r","label":"sprint:true"}
+{"issue_id":"Demarch-17r","label":"token_budget:250000"}
+{"issue_id":"Demarch-2ic","label":"claimed_at:1773258288"}
+{"issue_id":"Demarch-2ic","label":"claimed_by:8b79fb22-400e-49b4-94f4-da990fc10462"}
 {"issue_id":"Demarch-4hu","label":"claimed_at:1773244502"}
 {"issue_id":"Demarch-4hu","label":"claimed_by:8b79fb22-400e-49b4-94f4-da990fc10462"}
 {"issue_id":"Demarch-4wm","label":"agent-experience"}
@@ -6,6 +13,9 @@
 {"issue_id":"Demarch-4wm","label":"complexity:3"}
 {"issue_id":"Demarch-4wm","label":"intercom"}
 {"issue_id":"Demarch-4wm","label":"memory"}
+{"issue_id":"Demarch-4xp","label":"claimed_at:1773268579"}
+{"issue_id":"Demarch-4xp","label":"claimed_by:3b54e7fd-1d67-47bc-8d07-f2e5813a1c95"}
+{"issue_id":"Demarch-4xp","label":"complexity:4"}
 {"issue_id":"Demarch-c4c","label":"claimed_at:1773256203"}
 {"issue_id":"Demarch-c4c","label":"claimed_by:8b79fb22-400e-49b4-94f4-da990fc10462"}
 {"issue_id":"Demarch-c4c","label":"complexity:3"}
@@ -29,9 +39,14 @@
 {"issue_id":"Demarch-njg","label":"claimed_at:1773139887"}
 {"issue_id":"Demarch-njg","label":"claimed_by:e5977592-9f9c-4671-a2df-2f517abae5a1"}
 {"issue_id":"Demarch-njg","label":"complexity:2"}
+{"issue_id":"Demarch-o5u","label":"complexity:4"}
 {"issue_id":"Demarch-q52","label":"devops"}
 {"issue_id":"Demarch-q52","label":"intercom"}
 {"issue_id":"Demarch-q52","label":"ipc"}
+{"issue_id":"Demarch-qsw","label":"claimed_at:1773273273"}
+{"issue_id":"Demarch-qsw","label":"claimed_by:3b54e7fd-1d67-47bc-8d07-f2e5813a1c95"}
+{"issue_id":"Demarch-qsw","label":"complexity:4"}
+{"issue_id":"Demarch-qsw","label":"sprint:true"}
 {"issue_id":"Demarch-rp5","label":"claimed_at:1773158242"}
 {"issue_id":"Demarch-rp5","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-rp5","label":"complexity:3"}
