@@ -124,6 +124,8 @@
 {"issue_id":"Demarch-g3a","label":"claimed_by:6e75ec0b-de38-405d-a8ce-e7319c7146a9"}
 {"issue_id":"Demarch-g3a","label":"complexity:3"}
 {"issue_id":"Demarch-g3a","label":"sprint:true"}
+{"issue_id":"Demarch-j6k","label":"complexity:2"}
+{"issue_id":"Demarch-j6k","label":"sprint:true"}
 {"issue_id":"Demarch-oyi","label":"easter-egg"}
 {"issue_id":"Demarch-oyi","label":"skaffen"}
 {"issue_id":"Demarch-oyi","label":"tui"}
