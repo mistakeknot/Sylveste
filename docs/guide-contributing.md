@@ -19,7 +19,8 @@ Each subproject (`os/clavain`, `interverse/interflux`, `core/intermute`, etc.) k
 ## Project structure
 
 ```
-os/clavain/           # Self-improving agent rig (L2)
+os/clavain/           # Autonomous software agency (L2)
+os/skaffen/           # Sovereign agent runtime (L2)
 interverse/           # Companion plugins (L2-L3)
 core/
   intercore/          # Orchestration kernel (L1)
@@ -120,7 +121,7 @@ your-plugin/
 ### Naming conventions
 
 - All module names are **lowercase**: `interflux`, `intermute`, `interkasten`
-- Exceptions: **Clavain** (proper noun), **Demarch** (project name), **Interverse** (ecosystem name), **Autarch** (proper noun), **Interspect** (proper noun)
+- Exceptions: **Clavain** (proper noun), **Skaffen** (proper noun), **Demarch** (project name), **Interverse** (ecosystem name), **Autarch** (proper noun), **Interspect** (proper noun)
 - GitHub repos match: `github.com/mistakeknot/interflux`
 
 ## Key files

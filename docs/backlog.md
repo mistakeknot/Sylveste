@@ -1,7 +1,7 @@
 # Demarch Backlog — Detailed Inventory
 
 **Companion to:** [demarch-roadmap.md](demarch-roadmap.md) (strategic roadmap)
-**Last synced:** 2026-03-07
+**Last synced:** 2026-03-13
 
 This file contains the full P2/P3 item inventory. The root roadmap shows strategic themes; this file has every tracked item. Generated from beads state — regenerate with `scripts/sync-roadmap-json.sh`.
 
@@ -152,3 +152,56 @@ This file contains the full P2/P3 item inventory. The root roadmap shows strateg
 - [interverse] **iv-gx405** bd ready --verify: cross-check each result is still open before printing
 - [interverse] **iv-sjz6t** Phase 3: Retire SQLite dual-persistence (blocked by iv-83du3, iv-nt43u)
 - [interverse] **iv-pkv4y** Study VerifierContext pattern: reuse agent sandbox for reward verification
+
+---
+
+## Research Agenda
+
+Thematic research directions spanning multiple modules. Each bullet may decompose into multiple beads.
+
+- **Sprint resilience and agent coordination** — Multi-phase work on sprint handover, agent claiming protocols, shift-work boundary formalization, and cross-phase handoff to make long-running autonomous work survive session boundaries.
+- **Token and cost optimization** — Token-efficient skill loading, budget controls, cost-aware agent scheduling, cost reconciliation, and accuracy gap measurement to reduce per-change cost and improve output quality.
+- **Clavain kernel evolution** — Go migration of clavain-cli, kernel schema validation, native kernel coordination, hierarchical dispatch meta-agent, adaptive routing (b3), composer (c3), self-building loop (c5), and unified routing engine.
+- **Intercore event pipeline** — Hook cutover (e3), discovery pipeline (e5), portfolio orchestration (e8), rollback recovery, fair spawn scheduler, sandbox specs, and Go wrapper for Autarch integration.
+- **Observability and tracing** — Unified structured logging, MCP instrumentation middleware, intertrace cross-module integration tracer, tool selection failure instrumentation, and fleet registry enrichment for operational visibility.
+- **Review and safety systems** — Interspect approve/propose flows, pattern detection, routing overrides, disagreement pipeline, agent trust scoring, safety floors, and Go redaction library for secure multi-agent review.
+- **Plugin ecosystem maturity** — Dual-mode plugin architecture, publishing validation pipeline overhaul, plugin synergy catalog, data-driven plugin boundaries, modpack auto-install, and interverse plugin decomposition.
+- **Code intelligence and mapping** — Intermap project-level code mapping, Python sidecar, live changes hardening, TLDRs import graph compression (dedup, longcodezip, precomputed context bundles, symbol popularity index), and intercache.
+- **Knowledge and learning loops** — Reflect-phase learning loop, knowledge distillation pipeline, review quality feedback loop, intermonk dialectic reasoning, interdeep deep research, and role-aware latent memory experiments.
+- **Multi-agent collaboration** — Interlock window identity, intermute contact policies and broadcast/topic messages, adopt mcp-agent-mail patterns, heterogeneous collaboration routing, and "when Claudes meet" interaction patterns.
+- **SDK and cross-language support** — Interbase multi-language SDK, Go module path alignment, interbump transactional safety, and gemini CLI integration adapter for broader agent and language coverage.
+- **Developer experience and onboarding** — First-stranger experience, project onboard skill, Autarch status tool, bigend migration (dirty row tracking, inline log pane), session start drift summary injection, and search surface documentation.
+- **Document and artifact pipelines** — Flux-drive document slicing and intermediate findings, interscribe doc quality and extraction, CUJs as first-class artifacts, intent contracts, blueprint distillation sprint intake, and factory substrate for reproducible builds.
+- **Application layer (Intercom and Intersight)** — Intercom H2 last-mile delivery, outbox listen-notify, interfin design, intersight UI design analysis, and interchart ecosystem diagrams.
+- **Operational workflows** — Backlog hygiene gate, thematic work lanes, oodarc shared observation loops, Pollard hunter progressive reveal, catalog reminder escalation, and intent submission mechanism for structured planning.
+
+---
+
+## Cross-Module Dependencies
+
+Major dependency chains spanning multiple modules. Query live state with `bd blocked`.
+
+- **iv-5ztam** (interverse) blocked by 17 interspect subtasks (iv-003t, iv-0fi2, iv-2o6c, iv-435u, iv-5su3, iv-6liz, iv-88yg, iv-8fgu, iv-bj0w, iv-c2b4, iv-drgo, iv-g0to, iv-gkj9, iv-izth, iv-m6cd, iv-rafa, iv-t1m4)
+- **iv-mi8e0** (interverse) blocked by 5 intertrack subtasks (iv-74moz, iv-f462h, iv-hqdvn, iv-yhjy4, iv-z90qq)
+- **iv-5ubkh** (fd) blocked by **iv-5ztam** (interverse)
+- **iv-3r6q** (interflux) blocked by **iv-r6mf** (interspect)
+
+---
+
+## Modules Without Roadmaps
+
+26 modules lack dedicated roadmap files. Most are peripheral ("early" status).
+
+**Flywheel-critical (have alternative coverage):**
+- `interverse/interspect` — has [vision doc](interspect-vision.md) and [interspect product PRD](../core/intercore/docs/product/interspect-prd.md). Roadmap items tracked via beads.
+
+**Peripheral (early status, no roadmap needed yet):**
+- `core/agent-rig`, `core/interband`, `core/interbench`
+- `interverse/intercache`, `interverse/interchart`, `interverse/interdeep`
+- `interverse/interkasten`, `interverse/interknow`, `interverse/interleave`
+- `interverse/intermonk`, `interverse/intername`, `interverse/interpeer`
+- `interverse/interplug`, `interverse/interpulse`, `interverse/interrank`
+- `interverse/interscribe`, `interverse/intersense`, `interverse/intership`
+- `interverse/intersight`, `interverse/interskill`, `interverse/intersynth`
+- `interverse/intertest`, `interverse/intertrace`, `interverse/intertree`
+- `interverse/intertrust`

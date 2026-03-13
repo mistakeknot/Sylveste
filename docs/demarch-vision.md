@@ -1,7 +1,7 @@
 # Demarch — Vision
 
-**Version:** 3.3
-**Date:** 2026-03-08
+**Version:** 3.4
+**Date:** 2026-03-13
 **Status:** Active
 
 ---
@@ -28,7 +28,7 @@ The bet: if you build the right infrastructure beneath agents, they become capab
 
 ## The Stack
 
-Five pillars, organized in three layers plus one cross-cutting profiler. Each pillar has a clear owner, a clear boundary, and a clear survival property.
+Six pillars, organized in three layers plus one cross-cutting profiler. Each pillar has a clear owner, a clear boundary, and a clear survival property.
 
 ```
 Layer 3: Apps (Autarch + Intercom)
@@ -38,8 +38,9 @@ Layer 3: Apps (Autarch + Intercom)
 ├── Multi-runtime AI assistant: Claude, Gemini, Codex (Intercom)
 └── Swappable — if apps are replaced, everything beneath survives
 
-Layer 2: OS (Clavain) + Drivers (Companion Plugins)
-├── The opinionated workflow — phases, gates, model routing, dispatch
+Layer 2: OS (Clavain + Skaffen) + Drivers (Companion Plugins)
+├── Clavain: opinionated workflow — phases, gates, model routing, dispatch
+├── Skaffen: sovereign agent runtime — standalone Go binary, OODARC loop, multi-provider
 ├── Companion plugins, each wrapping one capability (`ls interverse/ | wc -l`)
 ├── Every driver independently installable and useful standalone
 └── If the host platform changes, opinions survive; UX adapters are rewritten
@@ -63,7 +64,7 @@ The survival properties are the point. Each layer can be replaced, rewritten, or
 
 **The kernel (Intercore)** provides mechanism. Runs, phases, gates, dispatches, events, state, locks, sentinels. A Go CLI binary: no daemon, no server, no background process. Every `ic` invocation opens the database, does its work, and exits. The SQLite database is the system of record. The kernel says "a gate can block a transition." It doesn't say "brainstorm requires an artifact." That's policy, and policy belongs in the OS.
 
-**The OS (Clavain)** provides policy. Which phases make up a development sprint, what conditions must be met at each gate, which model to route each agent to, when to advance automatically. Clavain orchestrates the full lifecycle from problem discovery through shipped code. It's opinionated about what "good" looks like at every phase, and those opinions are encoded in gates, review agents, and quality disciplines. Today it ships as a Claude Code plugin; the architecture is designed so the opinions survive even if the host platform doesn't.
+**The OS (Clavain + Skaffen)** provides policy. Clavain is the reference agency: which phases make up a development sprint, what conditions must be met at each gate, which model to route each agent to, when to advance automatically. It orchestrates the full lifecycle from problem discovery through shipped code, opinionated about what "good" looks like at every phase, those opinions encoded in gates, review agents, and quality disciplines. Today it ships as a Claude Code plugin; the architecture is designed so the opinions survive even if the host platform doesn't. Skaffen is the sovereign agent runtime: a standalone Go binary with its own OODARC agent loop, multi-provider support, and TUI via masaq. Clavain and Skaffen are L2 peers — different runtimes sharing the same kernel.
 
 **The profiler (Interspect)** provides learning. It reads kernel event surfaces, correlates dispatch outcomes with both human signals (review dismissals, gate overrides, manual corrections) and automated signals (CI results, revert frequency, finding density), and proposes changes to OS configuration. The signal mix shifts as autonomy increases: human-heavy at L0-L2, automated-heavy at L3-L4. Static orchestration is table stakes; a system that improves its own agents through evidence rather than intuition is what makes Demarch different. Today, Interspect modifies only the OS layer through safe, reversible overlays. The kernel boundary is a trust threshold that softens as evidence accumulates (see PHILOSOPHY.md § Earned Authority), but the current operating level restricts Interspect to OS-level changes. Current-state caveat: the generic `ic events tail` stream is not yet the full measurement read model, and session->bead->run attribution is still being hardened. See [docs/research/interspect-event-validity-and-outcome-attribution.md](./research/interspect-event-validity-and-outcome-attribution.md). (Full signal taxonomy in the [Interspect vision](./interspect-vision.md).)
 
@@ -218,7 +219,7 @@ The north star is economic because the platform play only works if other people 
 
 **Goodhart caveat:** Any stable metric becomes a target, and any target becomes gamed. Cost-per-landable-change is the north star for now, but the supporting metrics above exist to prevent tunnel vision. Rotate emphasis, diversify evaluation dimensions, and watch for agents optimizing the metric at the expense of actual quality. (See PHILOSOPHY.md § Receipts Close Loops, Measurement.)
 
-The cost-per-landable-change baseline was established on 2026-02-28 (iv-b46xi, closed). After 2,567 closed beads, the system now measures this number and uses it to evaluate routing and agent decisions. The baseline ($1.17/landable change, Opus 95% of cost) provides the denominator for Interspect's adaptive routing flywheel.
+The cost-per-landable-change baseline was established on 2026-02-28 (iv-b46xi, closed). The baseline ($1.17/landable change, Opus 95% of cost) provides the denominator for Interspect's adaptive routing flywheel.
 
 ## Audience
 
@@ -234,7 +235,7 @@ Three concentric circles, in priority order:
 
 ## Open Source Strategy
 
-Everything is open source. All five pillars: the kernel (Intercore), the OS (Clavain), the companion plugins (Interverse), the TUI tools (Autarch), and the profiler (Interspect).
+Everything is open source. All six pillars: the kernel (Intercore), the OS (Clavain), the sovereign runtime (Skaffen), the companion plugins (Interverse), the TUI tools (Autarch), and the profiler (Interspect).
 
 The bet is on ecosystem effects. If the kernel is good enough, people will build their own agencies on top of it. If the reference agency is good enough, people will write their own companions. The value of the platform increases with every external contribution, and the learning loop (Interspect) benefits from a larger evidence base.
 
@@ -252,40 +253,16 @@ As of March 2026:
 - **Ecosystem:** Companion plugins shipped, each independently installable (`ls interverse/ | wc -l`). 11 new plugins extracted (2026-02-25) from Clavain, interflux, and interkasten to maintain single-responsibility. Total modules: `find apps os core interverse sdk -maxdepth 2 -name .git -printf '%h\n' 2>/dev/null | wc -l`.
 - **Apps:** Autarch TUI (Bigend monitoring with inline mode, Gurgeh PRD generation, Coldwine task orchestration, Pollard research). Intercom multi-runtime AI assistant bridging Claude, Gemini, and Codex (v1.1.0).
 - **Profiler:** Evidence collection and routing override chain (F1-F5) shipped. Adaptive routing flywheel activated. Next: evidence-driven agent selection (iv-5ztam), canary monitoring, and counterfactual shadow evaluation.
-- **Self-building:** The system has been building itself for months. 2,476 closed beads, 647 open (per `bd stats`, 2026-03-08).
+- **Self-building:** The system has been building itself for months. Run `bd stats` for current counts.
 
 ## What's Next
 
-Three tracks converged: kernel integration (A), model routing (B1-B2), and agency architecture (C1-C5) are all shipped. The frontier has shifted to adaptive intelligence, infrastructure hardening, and measurement.
+Three tracks converged: kernel integration (A), model routing (B1-B2), and agency architecture (C1-C5) are all shipped. The frontier has shifted to four themes:
 
-**P0 — Intercom cutover** (iv-awny7, epic, 6 open subtasks):
-- Rust/Postgres control-plane migration is partially complete but Node/SQLite remain authoritative for group state, task mutation, and command handling. The remaining P0 work: make group registration and scheduled task state single-writer (.1, .2), remove legacy SQLite (.3), unify command handling (.4), remove Node scaffolding (.5), canonicalize architecture docs (.6).
-
-**P1 — Measurement hardening:**
-- **Sprint execution recording** (iv-g36hy) — Record phase transitions, dispatches, and artifacts as typed turns in CXDB. Blocked by iv-296 (CXDB integration) and iv-ho3 (StrongDM Factory Substrate).
-- **CXDB integration** (iv-296) — Make CXDB a required infrastructure dependency. Blocked by iv-ho3.
-- **StrongDM Factory Substrate** (iv-ho3) — Validation-first infrastructure for Clavain. In progress.
-
-**P1 — Bugs:**
-- **go.mod replace directive** (iv-v5ayb) — interlock/intermap break in plugin cache due to replace directive pointing to ../../sdk/interbase/go.
-- **Compaction recovery protocol** (iv-28vf9) — Enhance SessionStart hook to re-read CLAUDE.md and check beads state after context compaction.
-
-**P2 — Adaptive routing (the flywheel):**
-- **Interspect adaptive routing** (iv-5ztam, epic) — Evidence-driven agent selection. The next step after F1-F5 routing overrides shipped. Blocked by 10+ subtasks including counterfactual shadow evaluation (iv-435u), global rate limiter (iv-003t), and meta-learning loop (iv-rafa).
-- **Complexity-aware routing across all subagents** (iv-jgdct) — Apply the C1-C5 routing to flux-drive subagents, not just top-level dispatch.
-
-**P2 — Kernel:**
-- **E9: Autarch Phase 2** (iv-6376, epic) — Pollard + Gurgeh migration to kernel primitives.
-
-**Recently closed:**
-- ~~Track C~~ (C1-C5) — ALL SHIPPED. Agency specs, fleet registry, composer, cross-phase handoff, self-building loop.
-- ~~Discovery OS integration~~ (iv-wie5i → iv-zsio) — CLOSED. Full discovery pipeline integrated into sprint workflow.
-- ~~Intermap~~ (iv-w7bh) — CLOSED. Project-level code mapping shipped.
-- ~~First-stranger experience~~ (iv-t712t) — CLOSED. README, install, clavain setup shipped.
-- ~~Interspect routing overrides~~ (iv-r6mf) — CLOSED. F1-F5 shipped.
-- ~~North star metric~~ (iv-b46xi) — CLOSED. Cost-per-landable-change baseline ($1.17/change).
-
-**Track status:**
+1. **Intercom cutover** (P0) — Rust/Postgres control-plane migration replacing Node/SQLite.
+2. **Measurement hardening** (P1) — The chain that makes the north-star metric canonical: factory substrate → CXDB integration → sprint execution recording → evidence pipeline wiring.
+3. **Adaptive routing** (P2) — Interspect evidence-driven agent selection, canary monitoring, counterfactual shadow evaluation. The flywheel thesis.
+4. **Infrastructure + DX** (P2) — Autarch Phase 2 (Pollard + Gurgeh migration), go.mod fixes, compaction recovery.
 
 ```
 Track A (Kernel)      Track B (Routing)     Track C (Agency)
@@ -301,7 +278,7 @@ Track A (Kernel)      Track B (Routing)     Track C (Agency)
                                           (self-building)
 ```
 
-B3 (adaptive routing via Interspect outcome data) is the primary strategic frontier. The measurement hardening chain (iv-ho3 → iv-296 → iv-g36hy → iv-3ov) unblocks the evidence pipeline that B3 needs to learn from.
+B3 (adaptive routing via Interspect outcome data) is the primary strategic frontier. See [demarch-roadmap.md](./demarch-roadmap.md) for the full prioritized inventory.
 
 ## What This Is Not
 
@@ -319,4 +296,4 @@ The project began by merging [superpowers](https://github.com/obra/superpowers),
 
 ---
 
-*Module inventory, model routing stages, and adoption ladder: [demarch-reference.md](./demarch-reference.md). Layer-specific vision docs: [Intercore](../core/intercore/docs/intercore-roadmap.md) (kernel), [Clavain](../os/clavain/docs/clavain-vision.md) (OS), [Autarch](../apps/autarch/docs/autarch-vision.md) (apps), [Interspect](./interspect-vision.md) (profiler).*
+*Module inventory, model routing stages, and adoption ladder: [demarch-reference.md](./demarch-reference.md). Layer-specific vision docs: [Intercore](../core/intercore/docs/intercore-roadmap.md) (kernel), [Clavain](../os/clavain/docs/clavain-vision.md) (OS), [Skaffen](../os/Skaffen/PHILOSOPHY.md) (sovereign runtime), [Autarch](../apps/autarch/docs/autarch-vision.md) (apps), [Interspect](./interspect-vision.md) (profiler, [roadmap](./interspect-roadmap.md)).*

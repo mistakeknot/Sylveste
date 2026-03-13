@@ -1,8 +1,8 @@
 # Interspect — Vision
 
-**Version:** 1.0
-**Date:** 2026-02-22
-**Status:** Draft
+**Version:** 1.1
+**Date:** 2026-03-13
+**Status:** Active
 **Implementation detail:** [core/intercore/docs/product/interspect-vision.md](../core/intercore/docs/product/interspect-vision.md)
 
 ---
@@ -89,9 +89,9 @@ Interspect collects evidence in a SQLite database (`.clavain/interspect/interspe
 
 No modifications. Just observation. The user can answer "what changed and why" in 10 seconds.
 
-### Phase 2: Overlays (next)
+### Phase 2: Overlays (partially shipped)
 
-Safe, reversible modifications via an overlay system. Two types:
+Safe, reversible modifications via an overlay system. The routing override chain (F1-F5) shipped in March 2026: pattern detection, propose flow, apply + canary + git commit, status display + revert, and manual override support. Context overlays and full canary monitoring are the remaining Phase 2 work. Two overlay types:
 
 **Context overlays.** Feature-flag files layered onto agent prompts at runtime. "This project uses parameterized queries; stop flagging SQL injection." Rollback is instant: disable the overlay.
 
@@ -138,15 +138,15 @@ Counting-rule thresholds are simple and debuggable. No weighted formulas until r
 
 ## Where We Are
 
-Phase 1 is shipped. Evidence collection is operational across 14 projects. The SQLite schema supports evidence, sessions, canary monitoring, and modification tracking. Four reporting commands are functional. Session lifecycle hooks capture start/end events. The `/interspect:correction` command captures explicit human corrections.
+Phase 1 is shipped. Evidence collection is operational across 14+ projects. The SQLite schema supports evidence, sessions, canary monitoring, and modification tracking. Reporting commands are functional. Session lifecycle hooks capture start/end events. The `/interspect:correction` command captures explicit human corrections.
 
-Phase 2 (overlays + canary alerting) is designed and beaded. Phase 3 (autonomy + eval corpus) is designed. The Oracle review (GPT-5.2 Pro) validated the observability-first approach and informed several design simplifications: dropping session-scoped modifications, replacing weighted confidence with counting rules, switching from auto-revert to alert-only canaries, and adding privilege separation.
+Phase 2 is partially shipped: the routing override chain (F1-F5) landed in March 2026 — pattern detection, propose/approve flows, apply with canary + git commit, status display, revert, and manual overrides. Remaining Phase 2 work: context overlays and full canary monitoring with degradation alerting. Phase 3 (autonomy + eval corpus) is designed. The Oracle review (GPT-5.2 Pro) validated the observability-first approach and informed several design simplifications: dropping session-scoped modifications, replacing weighted confidence with counting rules, switching from auto-revert to alert-only canaries, and adding privilege separation.
 
 ## Success Metrics
 
 | Horizon | What Success Looks Like |
 |---------|------------------------|
-| Phase 1 (now) | User can debug agent behavior in 10 seconds. Evidence collection covers all review agents. |
+| Phase 1 (shipped) | User can debug agent behavior in 10 seconds. Evidence collection covers all review agents. |
 | Phase 2 | Override rate decreasing. >80% proposal acceptance rate. <10% canary alert rate. |
 | Phase 3 | Eval corpus covers >=3 agent domains. Shadow testing operational. Privilege separation enforced. |
 | Long-term | Model routing accuracy improving quarter over quarter. Cost per landable change declining. Interspect proposals that improve metrics when applied >70%. |
