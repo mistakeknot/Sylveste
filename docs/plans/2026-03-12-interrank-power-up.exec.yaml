@@ -1,0 +1,36 @@
+version: 1
+mode: all-sequential
+tier: deep
+max_parallel: 1
+timeout_per_task: 300
+
+stages:
+  - name: "Core recommendation engine"
+    tasks:
+      - id: task-1
+        title: "Add recommendModels function to recommend.ts"
+        files: [interverse/interrank/src/recommend.ts, interverse/interrank/src/recommend.test.ts]
+        depends: []
+
+  - name: "MCP tool registration"
+    tasks:
+      - id: task-2
+        title: "Register recommend_model MCP tool"
+        files: [interverse/interrank/src/index.ts]
+        depends: [task-1]
+      - id: task-3
+        title: "Add cost_leaderboard MCP tool"
+        files: [interverse/interrank/src/index.ts, interverse/interrank/src/load.test.ts]
+        depends: []
+      - id: task-4
+        title: "Enrich benchmark metadata in responses"
+        files: [interverse/interrank/src/index.ts]
+        depends: []
+
+  - name: "Release"
+    tasks:
+      - id: task-5
+        title: "Bump version and final verification"
+        files: [interverse/interrank/package.json]
+        depends: [task-2, task-3, task-4]
+        tier: fast

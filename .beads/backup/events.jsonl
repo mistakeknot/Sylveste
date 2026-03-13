@@ -4399,3 +4399,28 @@
 {"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T21:26:59Z","event_type":"closed","id":4399,"issue_id":"Demarch-6i0.7","new_value":"Closed","old_value":""}
 {"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T21:27:01Z","event_type":"closed","id":4400,"issue_id":"Demarch-6i0.9","new_value":"Closed","old_value":""}
 {"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T21:27:08Z","event_type":"closed","id":4401,"issue_id":"Demarch-s9jd","new_value":"Closed","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T22:21:03Z","event_type":"created","id":4402,"issue_id":"Demarch-hbaf","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T22:21:05Z","event_type":"created","id":4403,"issue_id":"Demarch-4g8r","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T22:21:07Z","event_type":"created","id":4404,"issue_id":"Demarch-kz60","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T22:21:09Z","event_type":"created","id":4405,"issue_id":"Demarch-aa39","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T22:21:10Z","event_type":"created","id":4406,"issue_id":"Demarch-m131","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T22:21:11Z","event_type":"created","id":4407,"issue_id":"Demarch-24uy","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T22:36:40Z","event_type":"closed","id":4408,"issue_id":"Demarch-hbaf","new_value":"Implemented in interrank v0.2.0","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T22:36:40Z","event_type":"closed","id":4409,"issue_id":"Demarch-4g8r","new_value":"Implemented in interrank v0.2.0","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T22:36:40Z","event_type":"closed","id":4410,"issue_id":"Demarch-kz60","new_value":"Implemented in interrank v0.2.0","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T22:37:09Z","event_type":"created","id":4411,"issue_id":"Demarch-9k8k","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T22:37:16Z","event_type":"created","id":4412,"issue_id":"Demarch-32g4","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T22:37:19Z","event_type":"created","id":4413,"issue_id":"Demarch-1x5b","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T22:37:22Z","event_type":"created","id":4414,"issue_id":"Demarch-rbdl","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T22:37:25Z","event_type":"created","id":4415,"issue_id":"Demarch-x3s0","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T22:37:27Z","event_type":"created","id":4416,"issue_id":"Demarch-qhjw","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T22:37:29Z","event_type":"created","id":4417,"issue_id":"Demarch-yhfj","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T22:37:31Z","event_type":"created","id":4418,"issue_id":"Demarch-ncxn","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T22:37:35Z","event_type":"created","id":4419,"issue_id":"Demarch-9jy2","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T22:37:50Z","event_type":"status_changed","id":4420,"issue_id":"Demarch-32g4","new_value":"{\"status\":\"in_progress\"}","old_value":"{\"id\":\"Demarch-32g4\",\"title\":\"[mycroft] TUI dashboard tab (/myc) in Autarch\",\"description\":\"Bubble Tea view for fleet state, pending decisions, tier status, patrol health. Integrates with Autarch tab system alongside Bigend/Coldwine/Gurgeh. Key views: fleet status table, decision queue with approve/reject keybinds, tier indicator, staleness badges.\",\"status\":\"open\",\"priority\":2,\"issue_type\":\"feature\",\"owner\":\"mistakeknot@users.noreply.github.com\",\"created_at\":\"2026-03-13T05:37:17Z\",\"created_by\":\"mistakeknot\",\"updated_at\":\"2026-03-13T05:37:17Z\"}"}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T22:37:51Z","event_type":"created","id":4421,"issue_id":"Demarch-32g4.1","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":"Added label: claimed_by:unknown","created_at":"2026-03-12T22:37:51Z","event_type":"label_added","id":4422,"issue_id":"Demarch-32g4","new_value":null,"old_value":null}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T22:37:51Z","event_type":"created","id":4423,"issue_id":"Demarch-32g4.2","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":"Added label: claimed_at:1773380271","created_at":"2026-03-12T22:37:51Z","event_type":"label_added","id":4424,"issue_id":"Demarch-32g4","new_value":null,"old_value":null}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T22:44:03Z","event_type":"closed","id":4425,"issue_id":"Demarch-fqb","new_value":"Interrank v0.2.0 shipped — recommend_model + cost_leaderboard tools","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T22:44:07Z","event_type":"closed","id":4426,"issue_id":"Demarch-i1b","new_value":"Sprint housekeeping complete","old_value":""}
