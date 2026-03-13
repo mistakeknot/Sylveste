@@ -20,15 +20,25 @@ Each CUJ file uses this structure:
 
 Signal types: `measurable` (automatable), `observable` (instrumented), `qualitative` (human judgment).
 
+## Scope
+
+The current CUJ set covers **solo platform usage** — a single developer using Demarch to build software on their own project. Known gaps:
+
+- **Contributor journey** — cloning the monorepo, understanding the architecture, submitting a PR
+- **Multi-agent coordination** — interlock, intermux, and beads in a team context
+- **Standalone plugin usage** — using individual drivers (interflux, interlock, etc.) without Clavain
+
+These are planned as future CUJs.
+
 ## Journeys
 
 ### Platform (P0-P1)
 
 | Journey | Actor | Criticality | Covers |
 |---------|-------|-------------|--------|
-| [First Install](first-install.md) | New user | P1 | Install → first sprint |
-| [Running a Sprint](running-a-sprint.md) | Regular user | P0 | Core Clavain `/route` → ship loop |
-| [Reviewing with Flux-Drive](reviewing-with-flux-drive.md) | Regular user | P1 | Multi-agent code review |
+| [First Install](first-install.md) | New platform user | P1 | Discovery → install → onboard → first sprint → debrief |
+| [Running a Sprint](running-a-sprint.md) | Regular user | P0 | Core `/route` → sprint loop, failure recovery, multi-session resume |
+| [Multi-Agent Code Review](code-review.md) | Regular user | P1 | Quality-gates / flux-drive review, synthesis, Interspect learning |
 | [Quality Gates](clavain-quality-gates.md) | Regular user | P1 | Auto-selected review, synthesis, verdict |
 | [Multi-Agent Coordination](multi-agent-coordination.md) | Regular user | P1 | Interlock + Intermux + Beads |
 | [Parallel Agent Dispatch](clavain-parallel-dispatch.md) | Regular user | P2 | Dependency-aware parallel execution |
