@@ -61,8 +61,8 @@ func (m Model) View() string {
 	labelStyle := lipgloss.NewStyle().Foreground(sem.FgDim.Color())
 	valueStyle := lipgloss.NewStyle().Foreground(sem.Fg.Color())
 
-	sep := sepStyle.Render(" │ ")
-	sepLen := 3 // " │ " is 3 display columns
+	sep := sepStyle.Render("  │  ")
+	sepLen := 5 // "  │  " is 5 display columns
 
 	// Build segments and measure.
 	type segment struct {
@@ -96,9 +96,10 @@ func (m Model) View() string {
 		segs = append(segs, segment{rendered: rendered, dispLen: dispLen})
 	}
 
-	// Truncate from the right until it fits.
+	// Truncate from the right until it fits (1 char left padding).
+	padLen := 1
 	for len(segs) > 0 {
-		total := 0
+		total := padLen
 		for i, s := range segs {
 			total += s.dispLen
 			if i > 0 {
@@ -116,6 +117,7 @@ func (m Model) View() string {
 	}
 
 	var sb strings.Builder
+	sb.WriteString(" ") // left padding
 	for i, s := range segs {
 		if i > 0 {
 			sb.WriteString(sep)

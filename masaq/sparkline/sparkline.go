@@ -14,6 +14,12 @@ import (
 // blocks maps quantized levels 0–7 to Unicode block elements.
 var blocks = [8]rune{'▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'}
 
+// ColorFunc maps a normalized value (0–1 within the current bounds) to a
+// lipgloss color. When set on a Model, it overrides the default traffic-light
+// coloring (Success/Warning/Error). This is useful for informational sparklines
+// where brand colors are more appropriate than alert colors.
+type ColorFunc func(t float64, sem theme.SemanticColors) lipgloss.Color
+
 // Model is a fixed-width sparkline backed by a ring buffer.
 type Model struct {
 	width int
@@ -28,6 +34,9 @@ type Model struct {
 	// Values above WarnThreshold render in Warning, above CritThreshold in Error.
 	WarnThreshold float64
 	CritThreshold float64
+
+	// ColorOverride, when non-nil, replaces the default traffic-light coloring.
+	ColorOverride ColorFunc
 }
 
 // New creates a sparkline with the given display width.
@@ -160,10 +169,13 @@ func quantize(v, lo, hi float64) int {
 
 // colorFor picks a semantic color based on the value's relative position.
 func (m Model) colorFor(v, lo, hi float64, sem theme.SemanticColors) lipgloss.Color {
-	if hi <= lo {
-		return sem.Success.Color()
+	t := 0.0
+	if hi > lo {
+		t = (v - lo) / (hi - lo)
 	}
-	t := (v - lo) / (hi - lo)
+	if m.ColorOverride != nil {
+		return m.ColorOverride(t, sem)
+	}
 	if t >= m.CritThreshold {
 		return sem.Error.Color()
 	}
