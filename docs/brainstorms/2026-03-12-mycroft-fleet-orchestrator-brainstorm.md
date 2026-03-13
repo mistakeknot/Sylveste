@@ -70,14 +70,26 @@ tier2_dispatch_allowlist:
 ```
 If a bead's `(type, priority, complexity)` tuple doesn't match any allowlist entry, T2 escalates to user. This is enforceable without human judgment — no "low-risk" ambiguity.
 
-**Automatic demotion triggers (rolling-window circuit breaker):**
-- **T3→T2:** >20% failure rate in rolling 24h window
-- **T2→T1:** Any corrupted failure (always escalate-worthy)
+**Complexity via labels:** Complexity is expressed using beads labels (`label:complexity/simple`, `label:complexity/medium`, `label:complexity/complex`) rather than a new schema field. Labels are already supported by beads and don't require schema migration. Missing complexity label = unknown = escalate to user (safe default).
+
+**Automatic demotion triggers (symmetric rolling-window circuit breaker):**
+- **T3→T2:** >25% failure rate in rolling 24h window
+- **T2→T1:** >15% failure rate in rolling 24h window OR any corrupted failure (always escalate-worthy). Symmetric with T3→T2 — the system is at least as rigorous about revoking authority as granting it.
 - **Any→T0:** Budget overshoot (>120% of daily limit)
 - **Immediate one-tier demotion:** 3 consecutive failures on different beads
 - Demotion is instant; re-promotion requires meeting the original graduation criteria again from scratch
 
-**T0 shadow suggestions:** At T0, Mycroft runs the full `select/` pipeline each patrol cycle but writes results as shadow entries in `dispatch_log` (`action='shadow_suggest'`) rather than acting on them. The TUI shows "what Mycroft would have suggested" — bead priority, agent capability match, load reasoning — so the user can evaluate Mycroft's judgment before granting any authority. This provides evidence for T0→T1 promotion: the user can compare Mycroft's shadow suggestions against their own dispatch decisions.
+**Circuit breaker reconciliation sweep:** The failure rate is computed from `dispatch_log`, but silent failures (agent crashes without Mycroft detecting) would undercount. The patrol loop cross-references `dispatch_log` against intermux presence: any bead that was dispatched but whose agent session disappeared from intermux without a corresponding 'completed' entry is counted as an undetected failure. This ensures the circuit breaker reflects ground truth, not just Mycroft's own records.
+
+**T0 shadow suggestions:** At T0, Mycroft runs the full `select/` pipeline each patrol cycle but writes results as shadow entries in `dispatch_log` (`action='shadow_suggest'`) rather than acting on them. The TUI shows "what Mycroft would have suggested" — bead priority, agent capability match, load reasoning — so the user can evaluate Mycroft's judgment before granting any authority.
+
+**Shadow feedback (hybrid model):** End-of-session digest (`mycroft shadows`) as the default low-friction path — presents shadow suggestions alongside what the user actually did, with `would-approve` / `would-reject` / `skip` ratings. In Autarch TUI mode, a real-time shadow overlay shows suggestions as they arise for immediate thumbs-up/down. Both channels feed into T0→T1 graduation evidence: the user can compare Mycroft's shadow suggestions against their own dispatch decisions.
+
+**T1 inline approval:** At T1, Mycroft presents dispatch suggestions as numbered choices in its session (or TUI panel). User types `approve 1`, `reject 2 — too risky`, or `approve all`. Approved suggestions dispatch immediately. Rejected suggestions are logged with reason to `dispatch_log` (feeds into override pattern analysis). Batch approval supported.
+
+**Graduation minimum sample size:** Tier promotion thresholds (e.g., >90% approval rate) are only evaluated after at least 20 completed dispatches. Below 20, the tier is locked regardless of success rate. This prevents small-sample artifacts (4/5 = 80% at N=5).
+
+**Dual-source graduation verification:** Interspect cross-references `dispatch_log` entries against beads state (was the bead actually closed successfully?) and git history (was a commit produced?). Promotion requires agreement between dispatch_log AND at least one independent signal from systems Mycroft doesn't control. This prevents self-grading — Mycroft cannot inflate its own approval rate.
 
 ### 5th Autarch app (not a new pillar)
 
@@ -132,6 +144,8 @@ Mycroft does not write code, run tests, or modify files. It reads fleet state, m
 
 Tools Mycroft uses: intermux MCP (read fleet), interlock MCP (read reservations), beads CLI (read/write work state + dispatch metadata via `bd set-state`), tmux (spawn/kill sessions), SQLite (decisions.db). Tools Mycroft does NOT use: write, edit, bash (code execution), grep, glob.
 
+**Bead state safety:** All beads CLI calls use `BD_ACTOR=mycroft` for audit trail. Before any unclaim/reassign action, Mycroft performs a **fresh liveness recheck** (live intermux query, not stale patrol data) to confirm the agent is actually gone. Write operations use a **compare-and-swap guard**: check `assigned_at` matches the expected value before writing, preventing interleaved writes from concurrent Mycroft restarts or race conditions with agents that self-unclaim.
+
 ### 2. Patrol loop, not event-driven (Phase 1)
 
 Mycroft polls fleet state on intervals rather than consuming events. Simpler to build, debug, and reason about. Intermux already polls tmux on 10s intervals — Mycroft reads intermux's output rather than duplicating tmux access.
@@ -147,10 +161,15 @@ Phase 2+: migrate to event-driven via intercore event consumption (Skaffen v0.3 
 
 Agents are named after **Culture ships** (Iain M. Banks) — e.g., `grey-area`, `falling-outside`, `mistake-not`. These names go directly in tmux session names (`iterm-Demarch-grey-area-01`) and are the canonical identifiers throughout the system.
 
+**Identity hierarchy (canonical → ephemeral):**
+1. **Culture ship name** (durable) — `grey-area`, `falling-outside`, `mistake-not`. Canonical identifier across all systems. Used in `dispatch_log.agent`, `bd set-state claimed_by`, fleet-registry.yaml.
+2. **Interlock agent ID** (per-session) — Written by `mycroft-check` hook at SessionStart: `bd set-state <bead> interlock_agent_id=$INTERLOCK_ID`. Maps the durable ship name to the session-specific interlock identity for file reservation correlation.
+3. **CLAUDE_SESSION_ID** (ephemeral) — Session-scoped UUID. Linked at SessionStart for crash correlation but never used as a primary key.
+
 **Identity lifecycle:**
-1. **Claim time:** Mycroft writes `bd set-state <bead> claimed_by=grey-area` immediately after `bd update <bead> --claim`
-2. **Spawn time:** Mycroft creates tmux session with Culture name embedded in the session name
-3. **SessionStart hook:** `mycroft-check` writes `bd set-state <bead> session_id=$CLAUDE_SESSION_ID` — linking fleet name to session
+1. **Claim time:** Mycroft writes `bd set-state <bead> claimed_by=grey-area` immediately after `bd update <bead> --claim` using `BD_ACTOR=mycroft` for audit trail
+2. **Spawn time:** Mycroft creates tmux session with Culture name embedded in the session name (underscore delimiter in tmux: `grey_area`)
+3. **SessionStart hook:** `mycroft-check` writes `bd set-state <bead> session_id=$CLAUDE_SESSION_ID` AND `bd set-state <bead> interlock_agent_id=$INTERLOCK_ID` — linking fleet name to session and interlock identities
 
 This eliminates the `claimed_by=unknown` window that exists in the current Clavain claim system.
 
@@ -177,7 +196,7 @@ agents:
 Primary: Mycroft tab in Autarch unified TUI — shows fleet status, work queue, pending decisions, recent actions.
 
 Escalation: When Mycroft needs a decision (T0/T1) or encounters an anomaly it can't handle (T2/T3), it sends a notification. Options:
-- TUI highlight (tab badge shows pending decision count)
+- TUI highlight (tab badge with **severity-aware indicator**: `⚠ 3 pending` when P0/P1 items present, `● 5 pending` for P2+ only, `✓ idle` when nothing pending. Color follows severity: red for P0/P1, yellow for P2, default for P3+)
 - Desktop notification (via `notify-send` or macOS `osascript`)
 - Terminal bell (fallback)
 
@@ -189,20 +208,24 @@ Mycroft tracks estimated cost per dispatch (via interstat/fleet registry baselin
 
 Three commands for runtime control without tier demotion:
 
-- **`myc pause`** — Suspends the patrol loop. Holds current tier. No new dispatches. Existing agents continue their current work. Logged to `dispatch_log` (`action='pause'`). Essential for responding to upstream breaking changes at T2+.
-- **`myc resume`** — Restarts the patrol loop from current tier. Logged to `dispatch_log` (`action='resume'`).
+- **`myc pause`** — Stops new dispatches. In-flight agents finish their current bead normally, then idle. Logged to `dispatch_log` (`action='pause'`). Essential for responding to upstream breaking changes at T2+.
+- **`myc pause --drain`** — Stops new dispatches AND sends a graceful-stop signal to in-flight agents: checkpoint and stop at next safe point. State transitions: `running → paused (no new) → drained (all idle) → running`.
+- **`myc resume`** — Re-enables dispatching from current tier. Logged to `dispatch_log` (`action='resume'`).
 - **`myc override <bead> <agent>`** — Manually assigns a specific bead to a specific agent, bypassing Mycroft's `select/` pipeline. Logged as `action='manual_override'`. Useful when the user knows the right assignment but doesn't want to leave Mycroft's TUI.
 
 Pause/resume is distinct from tier demotion: pause is temporary (the tier is preserved), demotion is persistent (re-promotion requires meeting graduation criteria). A paused Mycroft at T2 resumes at T2; a demoted Mycroft at T2→T1 must re-earn T2.
 
 ### 7. Watchdog (who watches the watcher)
 
-Two-layer detection for Mycroft crashes:
+Three-layer monitoring, each covering what the others miss:
 
-- **Heartbeat file:** Mycroft writes `.autarch/mycroft/heartbeat` every patrol cycle with a timestamp. Autarch TUI checks file age — if stale >2 min, shows `MYCROFT DOWN` badge. Other agents' SessionStart hooks check the heartbeat to warn on startup.
-- **Watchdog session:** A lightweight tmux session (`iterm-Demarch-mycroft-watchdog`) monitors Mycroft's session via intermux. If Mycroft's session disappears, the watchdog sends a desktop notification (`notify-send "Mycroft is down"`) and optionally respawns it. The watchdog itself is a simple shell loop, not an AI agent — minimal resource cost.
+**Layer 1 — Heartbeat file + external checker (both runtime modes):** Mycroft writes `.autarch/mycroft/heartbeat` every patrol cycle with epoch timestamp. External shell loop (or cron, every 2min) checks file age. If stale >3min (3x patrol interval), fires `notify-send "Mycroft is down"`. Borrows Gas Town's battle-tested patterns: grace-period logic (distinguish pre-start stale from post-start stale), crash-loop exponential backoff guard (prevent kill-restart loops). The three-tier chain — OS supervisor → shell watchdog → Mycroft patrol loop — mirrors Gas Town's proven `launchd → daemon.go → Deacon` architecture.
 
-No auto-restart by default — user decides when to relaunch. The watchdog notifies; the user acts.
+**Layer 2 — Internal goroutine watchdog (Autarch-embedded only):** When running as a Go binary inside Autarch, a supervisor goroutine monitors patrol loop health. The pet is **conditional on actual health**: `FleetView` freshness, successful data source queries, and patrol cycle completion must all pass before the watchdog is petted. This catches goroutine-level stalls that heartbeat-only monitoring would miss (process alive but patrol loop stuck on a blocking call).
+
+**Layer 3 — Fleet-aware fallback (already exists):** The `mycroft-check` SessionStart hook checks for Mycroft assignments. If `$MYCROFT_BEAD` is not set (Mycroft down or never assigned), agents fall back to the existing `/route` flow. No new code needed — the fallback path provides graceful degradation.
+
+No auto-restart at v0.1 — alert only. User decides when to relaunch.
 
 ## Architecture
 
@@ -210,31 +233,44 @@ No auto-restart by default — user decides when to relaunch. The watchdog notif
 apps/Autarch/
   cmd/mycroft/main.go           # Entry point
   internal/mycroft/
-    patrol/                     # Polling loops (intermux, beads, interlock)
+    patrol/                     # Health checks, failure detection, fleet view
       patrol.go                 # Main patrol coordinator
+      detect.go                 # Failure state classifier (clean/dirty/degraded/corrupted)
       fleet_observer.go         # Read intermux, classify agent state
       work_scanner.go           # Read beads, rank available work
       conflict_detector.go      # Read interlock, detect file conflicts
+    scheduler/                  # Dispatch queue, selector ranking, timing
+      scheduler.go              # Patrol → Decide → Act cycle
+      selector.go               # Priority-first ranking with tiebreakers
+      dispatch.go               # Dispatch interface + dispatch execution
+      conflict.go               # Pre-dispatch interlock conflict check
     fleet/                      # Agent registry + lifecycle
       registry.go               # Fleet YAML + runtime matching
       agent.go                  # Agent interface + implementations
       health.go                 # Health scoring + anomaly detection
-    select/                     # Pure bead-to-agent matching (no side effects)
-      selector.go               # Score + rank bead-agent pairs
-      conflict.go               # Pre-dispatch interlock conflict check
     spawn/                      # OS side effects (tmux, hooks)
       spawner.go                # Create new tmux/Skaffen sessions
-    context/                    # Build task context for agent
-      context.go                # Assemble context document from bead + history
+    briefing/                   # Build task context for agent (avoids stdlib context/ collision)
+      briefing.go               # Assemble context document from bead + history
     tier/                       # Autonomy graduation
       tier.go                   # T0-T3 FSM
-      evidence.go               # Track suggestion acceptance/rejection
+      evidence.go               # Track suggestion acceptance/rejection + dual-source verification
       graduation.go             # Promotion/demotion logic
+      transitions.go            # tier_transitions table: promotion/demotion receipts
     escalate/                   # User notification channel
       escalate.go               # Notification dispatch
       decision.go               # Pending decision queue
-    loop/                       # Main coordination loop
-      loop.go                   # Patrol → Decide → Act cycle
+```
+
+**DataSource interface sketch:**
+```go
+type DataSource interface {
+    FleetState() FleetView
+    AgentHealth(name string) AgentStatus
+    BeadQueue() []Bead
+}
+// AggregatorSource: reads from Bigend's in-process state (Autarch-embedded)
+// PatrolSource: queries MCP/CLI directly (standalone Claude Code)
 ```
 
 ## Borrowings from Gas Town / Goosetown
@@ -258,10 +294,10 @@ Mycroft inverts the current pull-based model. Instead of agents discovering thei
 
 **Push flow (Mycroft-initiated):**
 
-1. Mycroft selects bead `iv-abc` for agent `grey-area` (based on priority, capabilities, availability)
+1. Mycroft selects bead `iv-abc` for agent `grey-area` using **priority-first ranking with tiebreakers**: (1) bead priority (P0 > P1 > P2 > P3 > P4), (2) dependency-readiness (all blockers resolved — beads with unresolved dependencies excluded entirely), (3) age (oldest first within same priority), (4) complexity match (simple beads dispatched to available agents first). User can override via `myc override`.
 2. Mycroft checks interlock for file conflicts: if bead's expected file scope overlaps active reservations, skip and pick next-best bead
 3. Mycroft claims bead: `bd update iv-abc --claim --claimed-by=grey-area`
-4. Mycroft writes dispatch metadata to bead state:
+4. Mycroft writes dispatch metadata to bead state (all calls use `BD_ACTOR=mycroft`):
    ```bash
    bd set-state iv-abc claimed_by grey-area
    bd set-state iv-abc assigned_agent grey-area
@@ -270,12 +306,16 @@ Mycroft inverts the current pull-based model. Instead of agents discovering thei
    bd set-state iv-abc assigned_at 2026-03-12T14:30:00Z
    bd set-state iv-abc assigned_by mycroft
    ```
+   **Context file path validation:** Context file paths are resolved to absolute and verified to start with the project root. Paths containing `..` after normalization are rejected. Symlinks resolving outside the project root are rejected. This prevents path traversal via corrupted bead state.
 5. Mycroft spawns: `tmux new-session -s iterm-Demarch-grey-area-01` with Clavain rig
 6. Agent's SessionStart hook chain reads bead state and auto-starts work
 
 **No assignment files.** All dispatch metadata lives in bead state (`bd set-state`), which is durable, queryable, and shared across sessions without filesystem coupling.
 
-**Claim-expiry TTL:** If no matching session appears in intermux within 5 minutes of spawn, the patrol loop auto-unclaims the bead. Prevents orphaned claims from failed spawns blocking work.
+**Two-phase claim-expiry TTL:**
+- **Phase 1 (dispatch→first heartbeat):** 90 seconds. If the agent doesn't emit its first heartbeat within 90s, it probably failed to start — fast-fail agents are reclaimed quickly.
+- **Phase 2 (running):** 45 minutes (aligned with Clavain's `beadClaimStaleSeconds = 2700`). Slow-start agents that successfully boot get the full window.
+The patrol loop reads heartbeat age to distinguish phases. Prevents both orphaned claims from failed spawns and premature unclaims on legitimate slow-start agents.
 
 **Pull fallback (user-initiated):**
 
@@ -298,6 +338,7 @@ SessionStart hook chain (ordered):
      - query: bd list --json | find bead where assigned_agent=$FLEET_NAME
      - if found:
          bd set-state $BEAD session_id=$CLAUDE_SESSION_ID
+         bd set-state $BEAD interlock_agent_id=$INTERLOCK_ID  # link ship name → interlock identity
          export MYCROFT_BEAD=$BEAD
          export MYCROFT_PHASE=$(bd get-state $BEAD assigned_phase)
          export MYCROFT_CONTEXT=$(bd get-state $BEAD context_file)
@@ -353,34 +394,43 @@ Mycroft classifies agent failures by inspecting the state they left behind:
 - Detection: `git status` returns error on **known-bad patterns** (merge markers, dangling HEAD, locked index) OR interlock shows conflicting reservations. Mundane `git status` errors (e.g., permission denied, disk full) trigger a single retry after 2s before classifying — transient filesystem issues should not escalate.
 - ALWAYS escalate to user, regardless of tier
 
-### Recovery matrix (aggressive model)
+### Recovery matrix (T2 dirty escalates, T3 auto-discards)
 
 ```
              | T0 Observe | T1 Suggest | T2 Auto-low | T3 Full
 -------------|------------|------------|-------------|--------
 Clean fail   | Report     | Suggest    | Auto-restart| Auto
              |            | restart    | + re-assign | restart
-Dirty fail   | Report     | Suggest    | Patch +     | Patch +
-             |            | options    | reassign    | reassign
+Dirty fail   | Report     | Suggest    | ESCALATE    | Patch +
+             |            | options    | (user decides)| reassign
 Degraded     | Report     | Suggest    | Kill +      | Kill +
              |            | kill       | re-dispatch | re-dispatch
 Corrupted    | Report     | Report     | Report +    | Report +
              |            |            | ESCALATE    | ESCALATE
 ```
 
+**T2 dirty escalation rationale:** At T2, irreversible discard of uncommitted changes requires user confirmation. Only T3 (full trust) auto-discards. This ensures the system doesn't destroy work at a trust level where the user hasn't fully validated Mycroft's judgment.
+
 ### Recovery actions
 
 - **Report:** Log to Mycroft activity feed. No action taken.
 - **Suggest restart:** Present "Agent X stuck on bead Y. Restart?" via escalation channel.
 - **Auto-restart:** Kill tmux session, unclaim bead (`bd update <id> --unclaim`), clear bead dispatch state (`bd set-state <id> assigned_agent ""`), re-dispatch to same or different agent.
-- **Patch + discard (scoped via interlock):** Save the failed agent's uncommitted changes as a per-agent patch file (`git diff -- <reserved-files> > .autarch/mycroft/patches/grey-area-iv-abc.patch`), then discard only that agent's files (`git checkout -- <reserved-files>`). Interlock reservations scope the recovery to only the files that agent touched — other agents' uncommitted work is untouched. Release interlock reservations, unclaim bead, re-dispatch. Patch file logged in Mycroft decision log for manual recovery if needed.
+- **Patch + discard (scoped via interlock, WAL-first ordering):** Recovery follows strict WAL-first ordering to prevent data loss:
+  1. Write `recovery_log` row (with patch path) in SQLite `BEGIN IMMEDIATE` transaction BEFORE any destructive action
+  2. Create patch file with **content-addressed naming**: `recovery-<bead_id>-<sha256(diff)>.patch` — same diff = same filename = idempotent, no duplicate patches
+  3. Only then execute `git checkout -- <reserved-files>` (the destructive step)
+  4. Release interlock reservations, unclaim bead, re-dispatch
+
+  Interlock reservations scope the recovery to only the files that agent touched — other agents' uncommitted work is untouched.
   - **Key insight:** Interlock already creates per-session `GIT_INDEX_FILE` isolation, so each agent's changes are trackable independently.
   - **v0.2 graduation:** At scale (>5 concurrent agents), graduate to per-agent git worktrees (`--worktree` flag in Claude Code) for full filesystem isolation.
-  - **Patch cleanup:** Patch files are pruned when their associated bead is closed (successfully or abandoned). The patrol loop checks for patches whose bead ID is in `closed` status and deletes them. No time-based TTL — lifecycle is tied to the bead.
+  - **Patch cleanup:** Patches are deleted after the associated bead is successfully closed or after 30 days, whichever comes first. The patrol loop checks for patches whose bead ID is in `closed` status and deletes them.
   - **Durable receipt:** Patch file paths are written to the `recovery_log.context` JSON column (not just TUI display), so patch refs survive Mycroft restarts.
+  - **Recovery resumption precondition:** Before resuming an incomplete recovery (from `recovery_log` entries with `status='started'`), validate that the bead is still claimed by the original agent and no new session has started work on it. If a new agent has claimed the bead, skip the stale recovery.
 - **Escalate:** Send notification to user (TUI badge + desktop notification). Pause bead (`bd update <id> --status=blocked`). Wait for user input before proceeding.
 
-**Retry limit:** Max 3 recovery attempts per bead per hour. After 3 failed dispatch-crash-recover cycles for the same bead within 1 hour, mark it as blocked with reason (`bd update <id> --status=blocked --notes="auto-blocked: 3 recovery failures in 1h"`) and escalate to user. Counter resets after 1 hour or manual unblock. Tracked in `dispatch_log` — count rows where `bead=$BEAD AND action IN ('restart','patch_reassign') AND outcome='failure' AND ts > now()-3600`.
+**Retry limit:** Max 3 recovery attempts per bead, tracked as a **monotonic integer counter** (not time-based — immune to clock skew). After 3 failed dispatch-crash-recover cycles, mark the bead as blocked with reason (`bd update <id> --status=blocked --notes="auto-blocked: 3 recovery failures"`) and escalate to user. Counter resets when the bead transitions to a new state (re-dispatched to a different agent, or manually unblocked). Wall clock timestamps used for logging/display only, not for retry decisions.
 
 ### Stuck detection
 
@@ -449,9 +499,11 @@ tier2_dispatch_allowlist:
   - { type: docs, max_priority: 2, max_complexity: any }
 demotion_triggers:
   failure_rate_window: 24h
-  failure_rate_threshold: 0.20    # >20% → demote one tier
-  consecutive_failure_limit: 3    # 3 in a row → immediate demotion
-  budget_overshoot_threshold: 1.2 # >120% → demote to T0
+  t3_failure_rate_threshold: 0.25    # >25% → T3 demotes to T2
+  t2_failure_rate_threshold: 0.15    # >15% → T2 demotes to T1 (symmetric)
+  consecutive_failure_limit: 3       # 3 in a row → immediate one-tier demotion
+  budget_overshoot_threshold: 1.2    # >120% → demote to T0
+  min_sample_size: 20                # don't evaluate thresholds below 20 dispatches
 agent_overrides:
   grey-area:
     max_concurrent: 2
@@ -463,17 +515,31 @@ agent_overrides:
 CREATE TABLE dispatch_log (
   id INTEGER PRIMARY KEY,
   ts INTEGER,
-  agent TEXT,
+  project TEXT DEFAULT 'demarch',  -- multi-project ready, hardcoded in v0.1
+  agent TEXT,                      -- always Culture ship name (canonical identifier)
   bead TEXT,
   action TEXT,     -- shadow_suggest, suggest, auto_dispatch, restart, patch_reassign, escalate, pause, resume, manual_override
   outcome TEXT,    -- accepted, rejected, success, failure
-  context TEXT,    -- JSON: reason, tier_at_time, cost_estimate
+  reason TEXT,     -- user's reject/override reason (from inline approval, e.g., "too risky")
+  context TEXT,    -- JSON: tier_at_time, cost_estimate, selector_reasoning
   cost_actual REAL -- actual token cost from interstat, written after bead close
 );
 
 CREATE TABLE tier_state (
-  key TEXT PRIMARY KEY,   -- 'current_tier', 'last_promotion', 'last_demotion'
-  value TEXT
+  key TEXT,
+  project TEXT DEFAULT 'demarch',  -- multi-project ready, hardcoded in v0.1
+  value TEXT,
+  PRIMARY KEY (key, project)       -- 'current_tier', 'last_promotion', 'last_demotion'
+);
+
+CREATE TABLE tier_transitions (
+  id INTEGER PRIMARY KEY,
+  ts INTEGER,
+  project TEXT DEFAULT 'demarch',
+  from_tier INTEGER,
+  to_tier INTEGER,
+  trigger TEXT,            -- 'manual', 'auto_graduate', 'circuit_breaker', 'budget_overshoot'
+  evidence TEXT            -- JSON snapshot: approval_rate, completion_rate, sample_size, interspect_class
 );
 
 -- Write-ahead log for crash-safe recovery actions
@@ -489,9 +555,11 @@ CREATE TABLE recovery_log (
 );
 ```
 
-**Recovery idempotency:** Before executing any multi-step recovery (e.g., patch + discard + release + unclaim + redispatch), Mycroft writes a `recovery_started` row for each step. On completion, updates to `completed`. On crash and restart, the patrol loop checks for incomplete recovery_log entries and resumes from the last completed step. Each recovery action is individually idempotent (patching an already-patched file, releasing already-released locks, unclaiming an already-unclaimed bead are all no-ops).
+**Recovery idempotency (WAL-first):** Before executing any destructive recovery step, Mycroft writes the intent to `recovery_log` in a `BEGIN IMMEDIATE` SQLite transaction. The `recovery_log` row (including patch path) is durable BEFORE `git checkout` executes. On crash and restart, the patrol loop checks for incomplete `recovery_log` entries and resumes from the last completed step — with **precondition validation**: verify the bead is still claimed by the original agent and no new session has started work. Each recovery action is individually idempotent (patching an already-patched file, releasing already-released locks, unclaiming an already-unclaimed bead are all no-ops).
 
 **Dual graduation signal:** Tier promotion requires BOTH user approval rate (>90% of suggestions accepted) AND bead completion rate (>70% of dispatched beads closed successfully within 2x estimated time). Approval alone is insufficient — it measures trust, not outcome quality. Both thresholds are configurable in `config.yaml`. The demotion triggers (circuit breaker) also query dispatch_log for failure rate in the rolling window.
+
+**Override pattern analysis:** `mycroft overrides` summarizes user rejection/override patterns (frequency, common reasons from `dispatch_log.reason`). High override rate is a negative signal for graduation — if the user frequently rejects Mycroft's suggestions, the selector needs recalibration, not promotion.
 
 ### Integration seams
 
