@@ -37,8 +37,8 @@ For Codex-backed dispatch (`/clavain:interserve`), independent tasks can be sent
 | Independent tasks dispatch in parallel, not sequentially | measurable | Tasks with no shared dependencies start within 10s of each other |
 | Dependency resolution prevents premature starts | measurable | No task starts before its dependencies complete |
 | File reservation prevents concurrent edits | measurable | Zero merge conflicts during parallel execution |
-| Wall time is less than sum of task times | measurable | Parallel wall time < sequential sum × 0.7 |
-| Agent failure doesn't block the entire fleet | measurable | Other agents continue when one fails |
+| Wall time is meaningfully less than sequential | measurable | Parallel execution is faster than sequential for plans with 4+ independent tasks |
+| Failed tasks are re-assigned, not abandoned | measurable | A failed task is re-dispatched to another agent; dependent tasks wait |
 | Progress is visible across all agents simultaneously | observable | Multi-agent dashboard shows all active tasks |
 | Codex dispatch works for scoped implementation tasks | measurable | `/interserve` completes tasks and returns results |
 

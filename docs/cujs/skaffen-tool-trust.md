@@ -38,7 +38,7 @@ Phase gating adds a structural layer on top of trust. During the Orient phase, o
 
 | Signal | Type | Assertion |
 |--------|------|-----------|
-| Auto-approve rate reaches >80% after 5 sessions | measurable | Trust evaluator approves ≥80% of tool calls without prompting |
+| Auto-approve rate reaches >80% after 5 sessions | measurable | Trust evaluator approves ≥80% of tool calls without prompting (configurable promotion threshold, default 5 approvals) |
 | Destructive actions always require approval | measurable | File deletes, force pushes, rm commands never auto-approved |
 | Phase gating blocks out-of-phase tool use | measurable | Write tool blocked during Orient phase |
 | "Always" approval creates a persistent rule | measurable | Rule persists across sessions for same pattern |
@@ -50,6 +50,5 @@ Phase gating adds a structural layer on top of trust. During the Orient phase, o
 
 - **Pattern matching granularity** — "auto-approve reads in internal/" is coarse. The developer might want "approve reads in internal/mycroft/ but not internal/secrets/". Pattern refinement UI is basic.
 - **Trust doesn't transfer across projects** — a new project starts with zero trust even if the developer has extensive history elsewhere. Project-scoped by design, but cold-start is slow.
-- **No trust sharing between agents** — each Skaffen instance has its own trust profile. Mycroft-dispatched agents don't inherit the developer's trust preferences.
-- **"Always" is forever** — no expiration on auto-approve rules. Stale rules accumulate. Needs periodic review or TTL.
-- **Phase gating is binary** — a tool is available or not in a phase. No "available but requires extra confirmation" middle ground.
+- **Trust sharing is read-only** — dispatched agents inherit the developer's global trust rules but cannot promote new patterns to global scope. This provides a safe cold-start for fleet agents while preventing untested patterns from propagating.
+- **Phase gating uses softened boundaries** — Review phase allows `edit` (always prompted, rate-limited to 3 calls). Ship phase allows `edit`/`write` for manifest files (CHANGELOG, VERSION, *.md) but blocks code file edits. Brainstorm and Plan remain strictly read-only. Future evolution: risk scoring per action replaces static file-glob rules with learned risk thresholds.

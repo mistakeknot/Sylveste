@@ -41,12 +41,13 @@ For headless operation (CI, automation, Mycroft dispatch), the developer uses pr
 | Smart trust auto-approves simple, safe tool calls | measurable | Trust evaluator approval rate > 80% for simple patterns |
 | Print mode produces equivalent results to TUI mode | measurable | Same tool calls, same output for identical prompts |
 | Session persists and is resumable | measurable | JSONL session file written, reloadable on restart |
-| Token usage scales with task complexity | observable | Simple tasks use <10K tokens, complex tasks <100K |
+| Cost scales with task complexity | observable | Simple tasks cost meaningfully less than complex ones |
 
 ## Known Friction Points
 
 - **Model routing latency** — switching between cheap and expensive models mid-session adds API cold-start time. Router should pre-warm when possible.
 - **Trust calibration is per-installation** — a new Skaffen instance starts with no trust history. Bootstrapping trust requires human-in-the-loop for the first N sessions.
 - **MCP tool loading** — loading all Interverse plugin tools at startup is slow if many plugins are installed. Should be lazy-loaded per phase.
-- **Compound phase is underspecified** — what exactly gets persisted and where? Currently writes to session log but integration with Demarch docs/solutions is manual.
+- **TUI model display lag** — the router selects different models per phase (configurable), but the TUI status bar doesn't auto-update the displayed model name on phase transitions. The backend routes correctly; the display is stale until the next turn.
+- **Compound phase auto-writes** — Skaffen automatically identifies learnings and writes compound docs to docs/solutions/ without user intervention. The mechanism for deciding *what* is worth compounding needs calibration.
 - **No streaming diff view** — code changes appear as full file writes, not incremental diffs. Hard to follow for large changes.
