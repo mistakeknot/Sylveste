@@ -16,6 +16,20 @@ Demarch solves this through cognitive diversity: instead of one model reviewing 
 
 This matters for Demarch specifically because the review fleet is where Interspect has the most immediate leverage. An agent that consistently produces false positives gets downweighted. An agent whose findings are always acted upon gets prioritized. The signal density of the review fleet directly feeds the learning loop. Bad review is not just annoying — it's expensive data pollution.
 
+### Current State vs. Planned
+
+| Capability | Status |
+|------------|--------|
+| Parallel agent dispatch with per-agent output files | **Shipped** |
+| Triage based on capability declarations | **Shipped** |
+| Synthesis with deduplication and severity ranking | **Shipped** |
+| Verdict (approve/request changes/needs discussion) | **Shipped** |
+| Manual routing overrides (`/interspect:override`) | **Shipped** |
+| Findings grouped by theme (not agent) | **Planned** |
+| Automated dismissal-to-routing feedback loop | **Planned** (Phase 2) |
+| Confidence score on verdicts | **Planned** |
+| Incremental re-review (only re-check changed code) | **Planned** |
+
 ## The Journey
 
 The developer has code ready for review. This might happen at several points in the [sprint lifecycle](running-a-sprint.md): a plan is written and needs validation before execution, a feature is implemented and needs review before shipping, or a document (PRD, vision, roadmap) needs multi-perspective feedback.
@@ -26,7 +40,7 @@ The triage layer determines which review agents are relevant. A pure documentati
 
 The selected agents run in parallel, each examining the change through their specific lens. The architecture agent checks module boundaries, coupling, and design patterns. The safety agent checks credentials, trust boundaries, and deployment risk. The correctness agent checks data consistency, race conditions, and transaction safety. The quality agent checks naming, conventions, and idiomatic patterns. Each agent writes its findings to a file in `.claude/flux-drive-output/`.
 
-The synthesis agent reads all agent outputs, deduplicates overlapping findings, ranks by severity (blocking, important, suggestion, nit), and produces a structured report. The report includes a verdict (approve, request changes, or needs discussion) and a confidence score. *(Planned: findings grouped by theme rather than by agent — the developer would see "three agents flagged this error handling pattern" rather than reading three separate agent sections. Current synthesis groups by agent with deduplication across agents.)*
+The synthesis agent reads all agent outputs, deduplicates overlapping findings, ranks by severity (P0/critical, P1/important, P2/suggestion, IMP/improvement), and produces a structured report. The report includes a verdict: approve, request changes, or needs discussion. *(Planned: findings grouped by theme rather than by agent — the developer would see "three agents flagged this error handling pattern" rather than reading three separate agent sections. Current synthesis groups by agent with deduplication across agents. Confidence scores on verdicts are also planned.)*
 
 The developer reads the synthesis. For each finding, they can:
 - **Act on it** — make the suggested change. This is a positive signal to Interspect.
@@ -35,27 +49,28 @@ The developer reads the synthesis. For each finding, they can:
 
 After resolving findings, the developer can re-run the review on the updated change to verify fixes, or proceed to ship if the verdict was approve. The review findings, agent selections, and developer responses are all recorded as kernel events — they're the evidence that Interspect uses to calibrate the fleet.
 
-Over time, the review gets better. Agents that produce noise get downweighted or excluded. Agents whose findings consistently improve the code get prioritized. The cost of review decreases because fewer agents are dispatched for well-understood change types, while the signal quality increases because the remaining agents are the ones that matter.
+Over time, the review gets better — but today this requires manual effort. The operator runs `/interspect:propose` to detect patterns in agent effectiveness, reviews the proposals, and approves overrides with `/interspect:approve`. Agents that produce noise get excluded via routing overrides. Agents whose findings consistently improve the code stay in the default triage set. *(The long-term goal is automated feedback: dismissal patterns trigger routing proposals without manual intervention. This is Phase 2.)*
 
 ## Success Signals
 
-| Signal | Type | Assertion |
-|--------|------|-----------|
-| Triage selects relevant agents only | observable | No agent is dispatched whose declared capabilities don't match the change type |
-| Agent dispatch completes within 2 minutes | measurable | All parallel agents finish and synthesis begins in <120s for typical changes |
-| Synthesis deduplicates cross-agent overlap | measurable | Finding count in synthesis is less than sum of individual agent findings |
-| At least one finding is genuinely actionable | qualitative | Developer acts on at least one finding that they would not have caught themselves |
-| Majority of findings are acted upon | measurable | >50% of findings result in code changes or acknowledged tradeoffs, not dismissals |
-| Verdict confidence correlates with quality | observable | High-confidence "approve" verdicts don't precede post-merge regressions |
-| Developer reads the full report | qualitative | Report is concise enough that the developer reads it rather than skipping to the verdict |
-| Review cost trends downward per change | measurable | Token spend on review decreases as Interspect optimizes agent selection |
-| Interspect adjusts routing based on review outcomes | observable | Agent dispatch patterns change after sustained dismissal or action signals |
+| Signal | Type | Status | Assertion |
+|--------|------|--------|-----------|
+| Triage selects relevant agents only | observable | active | Dispatched agent list in `.claude/flux-drive-output/` matches change type; no capability-mismatched agents |
+| Agent dispatch completes within 2 minutes | measurable | active | Wall-clock from `/quality-gates` invocation to synthesis start is <120s for <500-line diffs |
+| Synthesis deduplicates cross-agent overlap | measurable | active | Finding count in `synthesis.md` is less than sum of per-agent finding counts |
+| At least one finding is genuinely actionable | qualitative | active | Developer acts on at least one finding that they would not have caught themselves |
+| Majority of findings are acted upon | measurable | active | >50% of findings result in code changes or acknowledged tradeoffs, not dismissals |
+| Developer reads the full report | qualitative | active | Report is concise enough that the developer reads it rather than skipping to the verdict |
+| Agent timeout produces partial synthesis | observable | active | If one agent fails/times out, synthesis proceeds with available results and notes the missing agent |
+| Review cost trends downward per change | measurable | planned | Token spend per review (via `interstat`) decreases over 10-review window as routing improves |
+| Interspect adjusts routing based on review outcomes | observable | planned | Agent dispatch patterns change after manual `/interspect:propose` + `/interspect:approve` cycle |
 
 ## Known Friction Points
 
-- **Triage accuracy on novel change types.** When a change doesn't match established patterns (new module, unfamiliar language, cross-cutting refactor), triage may over-dispatch (too many agents, high cost) or under-dispatch (missing the relevant lens).
-- **Synthesis quality depends on agent output quality.** If individual agents produce vague or contradictory findings, the synthesis can't magically produce clarity. "Architecture says split this module; quality says keep it together" is a genuine tension, but the synthesis may present it as two unrelated findings rather than a tradeoff.
-- **Dismissal friction.** Dismissing a finding should be one action, but the developer may need to explain why (for Interspect to learn effectively). The tension between "fast dismissal" and "informative dismissal" is unresolved.
-- **Re-review cost.** Running the review again after fixing findings re-dispatches all agents, not just the ones whose findings were relevant. Incremental re-review (only check what changed since last review) isn't implemented.
-- **Review fatigue on large changes.** A 500-line diff produces many findings. Even with deduplication and ranking, the developer may hit review fatigue and start dismissing without reading. The system has no mechanism to detect or prevent this.
-- **Interspect feedback latency.** Routing adjustments based on dismissal patterns take multiple sprints to manifest. A developer who dismisses the same agent's findings five times in one session won't see the adjustment until later sessions.
+- **Triage accuracy on novel change types.** When a change doesn't match established patterns (new module, unfamiliar language, cross-cutting refactor), triage may over-dispatch (too many agents, high cost) or under-dispatch (missing the relevant lens). *Workaround: use `/interflux:flux-drive` directly with explicit agent selection instead of auto-triage.*
+- **Synthesis quality depends on agent output quality.** If individual agents produce vague or contradictory findings, the synthesis can't magically produce clarity. "Architecture says split this module; quality says keep it together" is a genuine tension, but the synthesis may present it as two unrelated findings rather than a tradeoff. *No mitigation yet — tension detection in synthesis is planned.*
+- **Dismissal friction.** Dismissing a finding should be one action, but the developer may need to explain why (for Interspect to learn effectively). The tension between "fast dismissal" and "informative dismissal" is unresolved. *No mitigation yet.*
+- **Re-review cost.** Running the review again after fixing findings re-dispatches all agents, not just the ones whose findings were relevant. Incremental re-review (only check what changed since last review) isn't implemented. *Workaround: use `/interflux:flux-drive` with a narrow file target instead of a full re-review.*
+- **Review fatigue on large changes.** A 500-line diff produces many findings. Even with deduplication and ranking, the developer may hit review fatigue and start dismissing without reading. The system has no mechanism to detect or prevent this. *No mitigation yet.*
+- **Interspect feedback latency.** Today, routing adjustments require manual steps: run `/interspect:propose` to detect patterns (needs ~5+ dismissed findings from the same agent), review proposals, then `/interspect:approve` to activate overrides. A developer in their first week of use won't have enough evidence for proposals to surface. Expect 2-4 weeks of use before routing improvements appear. *Automated feedback (skipping the manual propose/approve cycle) is Phase 2.*
+- **Agent timeout or error during dispatch.** If one agent fails or times out during parallel dispatch, the synthesis proceeds with partial results. The developer may not notice a missing perspective unless they check the agent list. *Mitigation: synthesis notes which agents were dispatched and which completed. Missing agents are listed in the report.*

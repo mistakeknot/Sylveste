@@ -20,9 +20,9 @@ This CUJ covers the **platform user** journey: a developer who installs Clavain 
 
 A developer finds Demarch — a README on GitHub, a link from a colleague, a mention in a blog post about autonomous development tools. They read the project description and the pitch: "an open-source autonomous software development agency platform." This is not self-explanatory. The developer needs to understand three things before they'll invest time: what does this do that my current tools don't? What does it cost me to try? How long before I see if it works?
 
-The README answers these. It explains the lifecycle (not just coding — brainstorm, strategy, plan, review, ship, reflect), shows the stack (kernel, OS, drivers, all open source), and points to a quickstart. The developer decides it's worth thirty minutes.
+The README answers these. It explains the lifecycle (not just coding — brainstorm, strategy, plan, execute, ship, reflect), shows the stack (kernel, OS, drivers, all open source), and points to a quickstart. The developer decides it's worth thirty minutes.
 
-They already have Claude Code installed (which provides OAuth authentication — no API keys to configure). They install the Clavain plugin from the marketplace: `claude install clavain`. They add companion plugins they want — interflux for multi-agent review, interlock for file coordination. Each plugin installs independently; they don't need the full stack to start.
+They already have Claude Code installed (which provides OAuth authentication — no API keys to configure). They install the Clavain plugin following the quickstart instructions — adding the marketplace source and installing the plugin. They add companion plugins they want — interflux for multi-agent review, interlock for file coordination. Each plugin installs independently; they don't need the full stack to start.
 
 They open a terminal in their own project directory. They run `/clavain:project-onboard`, which introspects the repo, creates CLAUDE.md and AGENTS.md scaffolds, initializes beads tracking, and seeds the docs/ structure. The onboarding takes a few minutes and produces a working development environment without requiring manual configuration.
 
@@ -34,26 +34,30 @@ The critical moment is not the end — it's the middle. When the developer sees 
 
 ## Success Signals
 
-| Signal | Type | Assertion |
-|--------|------|-----------|
-| README communicates the value proposition | qualitative | A developer who reads the README can explain what Demarch does differently from a coding assistant |
-| Install completes without errors | measurable | `claude install clavain` exits 0, all declared dependencies resolve |
-| Install and onboard complete within 10 minutes | measurable | Time from `claude install clavain` to `/clavain:project-onboard` finishing is <10 minutes |
-| Project onboarding produces valid structure | measurable | `/clavain:project-onboard` creates CLAUDE.md, AGENTS.md, .beads/, docs/ |
-| First `/route` presents actionable options | observable | Discovery scan completes, user sees "Start fresh brainstorm" option |
-| Sprint reaches Ship phase without manual intervention | measurable | Sprint state machine advances through brainstorm → strategy → plan → work → ship |
-| At least one review finding is acted upon | observable | Quality gates or flux-drive produces a finding that changes the implementation |
-| Change lands on main with passing tests | measurable | `git log -1` shows a new commit, test suite exits 0 |
-| Bead is closed at sprint end | measurable | `bd show <bead-id>` reports status CLOSED |
-| First sprint time is reasonable | qualitative | Sprint duration feels proportionate to the feature's complexity; developer doesn't feel they're waiting |
-| Developer understands what happened | qualitative | Developer can explain the sprint phases, the artifacts produced, and what the bead represents |
+| Signal | Type | Status | Assertion |
+|--------|------|--------|-----------|
+| README communicates the value proposition | qualitative | active | A developer who reads the README can explain what Demarch does differently from a coding assistant |
+| Plugin install completes without errors | measurable | active | Plugin install exits 0; `claude mcp list` shows clavain server registered |
+| Install and onboard complete within 10 minutes | measurable | active | Wall-clock delta from first install command to `/clavain:project-onboard` exit is <600s |
+| Project onboarding produces valid structure | measurable | active | `ls CLAUDE.md AGENTS.md .beads/ docs/` all exist after `/clavain:project-onboard` |
+| Companion plugin failure doesn't block onboarding | measurable | active | If a companion install fails, onboarding still completes; error message names the failed plugin |
+| First `/route` presents actionable options | observable | active | Discovery scan writes options to stdout; user sees "Start fresh brainstorm" in terminal output |
+| Sprint reaches Ship phase without manual intervention | measurable | active | Sprint state machine advances through brainstorm → strategy → plan → execute → ship |
+| At least one review finding is acted upon | observable | active | `.claude/flux-drive-output/` contains a finding file; a subsequent commit addresses it |
+| Change lands on main with passing tests | measurable | active | `git log -1` shows a new commit; project test command exits 0 |
+| Bead is closed at sprint end | measurable | active | `bd show <bead-id>` reports `status: closed` (lowercase) |
+| First sprint time is reasonable | qualitative | active | Sprint duration feels proportionate to the feature's complexity; developer doesn't feel they're waiting |
+| Developer understands what happened | qualitative | active | Developer can explain the sprint phases, the artifacts produced, and what the bead represents |
+| Install failure produces actionable error | measurable | active | A failed install prints the specific component that failed and a recovery command |
 
 ## Known Friction Points
 
-- **Prerequisite sprawl.** Claude Code is the baseline requirement, but Go (for beads/intercore), and optional tools (Codex CLI, Node for some plugins) add up. A developer who doesn't already have Go installed may bounce before reaching the interesting part.
-- **Plugin marketplace discovery.** New users may not know which companion plugins are useful vs. optional. The onboarding flow doesn't yet recommend a "starter set."
-- **Comprehension gap.** "Autonomous software development agency platform" is a mouthful. The README needs to bridge from familiar concepts (CI/CD, code review, project management) to Demarch's model (sprints, phases, gates, beads) without jargon overload.
-- **Beads as unfamiliar concept.** Developers expect issues/tickets. Beads (Dolt-backed, prefix-scoped, with dependency tracking) have a learning curve. The first sprint creates beads automatically, but the terminology may confuse.
-- **Sprint length uncertainty.** A first sprint on a small feature might take 10 minutes or 45 minutes depending on model latency, review depth, and feature complexity. No progress indicator exists beyond phase transitions in the terminal.
-- **Error recovery on first run.** If a gate fails or a model call errors on the first sprint, the developer has no mental model for debugging. Error messages assume familiarity with the phase/gate architecture.
-- **BYOK users face extra friction.** Developers who bring their own API key instead of using Claude Code's built-in OAuth need to configure credentials and may encounter unexpected costs on their first sprint.
+- **Prerequisite sprawl.** Claude Code is the baseline requirement, but Go (for beads/intercore) and optional tools (Codex CLI, Node for some plugins) add up. A developer who doesn't already have Go installed may bounce before reaching the interesting part. *Mitigation: the quickstart lists prerequisites upfront with install commands per platform. No mitigation yet for reducing the prerequisite count itself.*
+- **Shell and OS compatibility.** The install and onboarding flows assume bash on Linux/macOS. Windows, fish, and zsh edge cases are not tested. *No mitigation yet.*
+- **Plugin marketplace discovery.** New users may not know which companion plugins are useful vs. optional. *Mitigation: the quickstart recommends a starter set (clavain + interflux). The onboarding flow doesn't yet auto-suggest companions.*
+- **Comprehension gap.** "Autonomous software development agency platform" is a mouthful. The README needs to bridge from familiar concepts (CI/CD, code review, project management) to Demarch's model (sprints, phases, gates, beads) without jargon overload. *Mitigation: the README includes a "what this is not" section. Further simplification is planned.*
+- **Beads as unfamiliar concept.** Developers expect issues/tickets. Beads (Dolt-backed, prefix-scoped, with dependency tracking) have a learning curve. The first sprint creates beads automatically, but the terminology may confuse. *Mitigation: `/clavain:project-onboard` briefly explains beads during setup. No standalone tutorial yet.*
+- **Sprint length uncertainty.** A first sprint on a small feature might take 10 minutes or 45 minutes depending on model latency, review depth, and feature complexity. No progress indicator exists beyond phase transitions in the terminal. *No mitigation yet — progress indicators are a planned feature.*
+- **Error recovery on first run.** If a gate fails or a model call errors on the first sprint, the developer has no mental model for debugging. Error messages assume familiarity with the phase/gate architecture. *Workaround: `/clavain:doctor` diagnoses common issues. Error messages themselves need improvement.*
+- **First-run intervention anxiety.** The developer doesn't know when the system will ask for input vs. proceed autonomously. The first time a gate blocks or a question appears, they may not understand the expected interaction model. *No mitigation yet.*
+- **BYOK users face extra friction.** Developers who bring their own API key instead of using Claude Code's built-in OAuth need to configure credentials and may encounter unexpected costs on their first sprint. *Mitigation: BYOK setup is documented in the full setup guide.*
