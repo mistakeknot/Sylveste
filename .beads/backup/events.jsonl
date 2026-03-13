@@ -4374,3 +4374,4 @@
 {"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T23:54:09Z","event_type":"closed","id":4663,"issue_id":"projects-0wh","new_value":"prefix test","old_value":""}
 {"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T23:54:24Z","event_type":"created","id":4664,"issue_id":"Demarch-5zb","new_value":"","old_value":""}
 {"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T23:54:28Z","event_type":"closed","id":4665,"issue_id":"Demarch-5zb","new_value":"prefix test — success","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T23:57:19Z","event_type":"closed","id":4666,"issue_id":"projects-e34","new_value":"AggregatorSource implemented in pkg/fleet/aggregator.go. Composes fleet state from tmux (agent detection), bd CLI (work queue), interlock (conflicts), and fleet-registry.yaml (enrichment). Cached with configurable TTL. Wired into Autarch TUI dashboard. 1906 tests pass.","old_value":""}
