@@ -1,3 +1,5 @@
+{"issue_id":"Demarch-0141","label":"claimed_at:1773373612"}
+{"issue_id":"Demarch-0141","label":"claimed_by:c58b65f0-23ff-4d43-b5b7-0fa87382303a"}
 {"issue_id":"Demarch-0ed","label":"skaffen"}
 {"issue_id":"Demarch-0ed","label":"tui"}
 {"issue_id":"Demarch-5ct","label":"claimed_at:1773353210"}
@@ -52,7 +54,7 @@
 {"issue_id":"Demarch-6i0.18","label":"complexity:4"}
 {"issue_id":"Demarch-6i0.18","label":"skaffen"}
 {"issue_id":"Demarch-6i0.18","label":"tui"}
-{"issue_id":"Demarch-6i0.19","label":"claimed_at:1773357081"}
+{"issue_id":"Demarch-6i0.19","label":"claimed_at:1773364847"}
 {"issue_id":"Demarch-6i0.19","label":"claimed_by:c58b65f0-23ff-4d43-b5b7-0fa87382303a"}
 {"issue_id":"Demarch-6i0.19","label":"competitive"}
 {"issue_id":"Demarch-6i0.19","label":"complexity:3"}
@@ -119,6 +121,9 @@
 {"issue_id":"Demarch-6i0.9","label":"high-priority"}
 {"issue_id":"Demarch-6i0.9","label":"skaffen"}
 {"issue_id":"Demarch-6i0.9","label":"tui"}
+{"issue_id":"Demarch-ewap","label":"claimed_at:1773374441"}
+{"issue_id":"Demarch-ewap","label":"claimed_by:c58b65f0-23ff-4d43-b5b7-0fa87382303a"}
+{"issue_id":"Demarch-ewap","label":"complexity:2"}
 {"issue_id":"Demarch-fqb","label":"claimed_at:1773364180"}
 {"issue_id":"Demarch-fqb","label":"claimed_by:6e75ec0b-de38-405d-a8ce-e7319c7146a9"}
 {"issue_id":"Demarch-fqb","label":"complexity:3"}
@@ -130,6 +135,15 @@
 {"issue_id":"Demarch-oyi","label":"easter-egg"}
 {"issue_id":"Demarch-oyi","label":"skaffen"}
 {"issue_id":"Demarch-oyi","label":"tui"}
+{"issue_id":"Demarch-p23","label":"claimed_at:1773374686"}
+{"issue_id":"Demarch-p23","label":"claimed_by:26ba8ae2-4a20-4908-8a72-745d48b4d243"}
+{"issue_id":"Demarch-p23","label":"complexity:3"}
+{"issue_id":"Demarch-s9jd","label":"claimed_at:1773374467"}
+{"issue_id":"Demarch-s9jd","label":"claimed_by:17a4552b-8878-497f-b53e-ad6753dece8a"}
+{"issue_id":"Demarch-s9jd","label":"complexity:2"}
+{"issue_id":"Demarch-s9jd","label":"ic_run_id:8p6xrzcn"}
+{"issue_id":"Demarch-s9jd","label":"sprint:true"}
+{"issue_id":"Demarch-s9jd","label":"token_budget:250000"}
 {"issue_id":"Demarch-u2b","label":"claimed_at:1773348870"}
 {"issue_id":"Demarch-u2b","label":"claimed_by:a02c1462-d980-4cd7-b94e-eac016660583"}
 {"issue_id":"Demarch-u2b","label":"complexity:4"}
@@ -141,6 +155,8 @@
 {"issue_id":"Demarch-uhq","label":"sprint:true"}
 {"issue_id":"Demarch-wvi","label":"claimed_at:1773350363"}
 {"issue_id":"Demarch-wvi","label":"claimed_by:a02c1462-d980-4cd7-b94e-eac016660583"}
+{"issue_id":"Demarch-y9cf","label":"claimed_at:1773373654"}
+{"issue_id":"Demarch-y9cf","label":"claimed_by:c58b65f0-23ff-4d43-b5b7-0fa87382303a"}
 {"issue_id":"iv-6u3s","label":"claimed_at:1773364502"}
 {"issue_id":"iv-6u3s","label":"claimed_by:26ba8ae2-4a20-4908-8a72-745d48b4d243"}
 {"issue_id":"iv-ia66","label":"claimed_at:1773364628"}
