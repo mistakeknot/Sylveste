@@ -29,8 +29,11 @@ Signal types: `measurable` (automatable), `observable` (instrumented), `qualitat
 | [First Install](first-install.md) | New user | P1 | Install → first sprint |
 | [Running a Sprint](running-a-sprint.md) | Regular user | P0 | Core Clavain `/route` → ship loop |
 | [Reviewing with Flux-Drive](reviewing-with-flux-drive.md) | Regular user | P1 | Multi-agent code review |
+| [Quality Gates](clavain-quality-gates.md) | Regular user | P1 | Auto-selected review, synthesis, verdict |
 | [Multi-Agent Coordination](multi-agent-coordination.md) | Regular user | P1 | Interlock + Intermux + Beads |
+| [Parallel Agent Dispatch](clavain-parallel-dispatch.md) | Regular user | P2 | Dependency-aware parallel execution |
 | [Skaffen Sovereign Session](skaffen-sovereign-session.md) | Regular user | P1 | OODARC agent runtime |
+| [Skaffen Tool Trust](skaffen-tool-trust.md) | Regular user | P2 | Smart trust, phase gating, approval learning |
 
 ### Apps (P1-P2)
 
@@ -50,6 +53,11 @@ Signal types: `measurable` (automatable), `observable` (instrumented), `qualitat
 |---------|-------|-------------|--------|
 | [Plugin Discovery & Install](plugin-discovery-install.md) | New user | P2 | Marketplace → install → use |
 | [Knowledge Compounding](knowledge-compound.md) | Regular user | P2 | Compound + recall + CASS |
+| [Interspect Agent Learning](interspect-agent-learning.md) | Regular user | P2 | Agent profiling, calibration, routing |
+| [Interfluence Voice Tuning](interfluence-voice-tuning.md) | Regular user | P3 | Writing style analysis and adaptation |
+| [Interwatch Drift Detection](interwatch-drift-detection.md) | Regular user | P2 | Doc freshness monitoring and audit |
+| [Interject Discovery](interject-discovery.md) | Regular user | P3 | Ambient research scanning + recommendations |
+| [Interlens Conceptual Analysis](interlens-conceptual-analysis.md) | Regular user | P3 | Mental model application and synthesis |
 
 ## Drift Detection
 
