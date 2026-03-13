@@ -4393,3 +4393,9 @@
 {"actor":"26ba8ae2","comment":"Added label: claimed_at:1773374686","created_at":"2026-03-12T21:04:47Z","event_type":"label_added","id":4393,"issue_id":"Demarch-p23","new_value":null,"old_value":null}
 {"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T21:05:54Z","event_type":"closed","id":4394,"issue_id":"Demarch-ewap","new_value":"Wired meter (context gauge with 80% forecast) and sparkline (per-turn token trends) into Skaffen TUI. Tabbar deferred — no session management to switch between yet.","old_value":""}
 {"actor":"26ba8ae2","comment":null,"created_at":"2026-03-12T21:09:20Z","event_type":"closed","id":4395,"issue_id":"Demarch-p23","new_value":"Shipped: ScopedSession enhanced with BeadDescription placeholder, token-capped injection, and BuildInjectedContext helper","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T21:25:55Z","event_type":"created","id":4396,"issue_id":"Demarch-s9jd.7","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":"Removed label: claimed_at:1773374467","created_at":"2026-03-12T21:25:55Z","event_type":"label_removed","id":4397,"issue_id":"Demarch-s9jd","new_value":null,"old_value":null}
+{"actor":"mistakeknot","comment":"Added label: claimed_at:1773375954","created_at":"2026-03-12T21:25:55Z","event_type":"label_added","id":4398,"issue_id":"Demarch-s9jd","new_value":null,"old_value":null}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T21:26:59Z","event_type":"closed","id":4399,"issue_id":"Demarch-6i0.7","new_value":"Closed","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T21:27:01Z","event_type":"closed","id":4400,"issue_id":"Demarch-6i0.9","new_value":"Closed","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-12T21:27:08Z","event_type":"closed","id":4401,"issue_id":"Demarch-s9jd","new_value":"Closed","old_value":""}
