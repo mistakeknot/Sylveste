@@ -164,6 +164,8 @@
 {"issue_id":"Demarch-afd","label":"claimed_at:1773417205"}
 {"issue_id":"Demarch-afd","label":"claimed_by:8e54ff10-a448-4605-bdac-5722d9fa39a3"}
 {"issue_id":"Demarch-afd","label":"complexity:3"}
+{"issue_id":"Demarch-e0dl","label":"claimed_at:1773478367"}
+{"issue_id":"Demarch-e0dl","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-fqb","label":"claimed_at:1773364180"}
 {"issue_id":"Demarch-fqb","label":"claimed_by:6e75ec0b-de38-405d-a8ce-e7319c7146a9"}
 {"issue_id":"Demarch-fqb","label":"complexity:3"}
@@ -191,11 +193,15 @@
 {"issue_id":"Demarch-meq9","label":"claimed_at:1773461728"}
 {"issue_id":"Demarch-meq9","label":"claimed_by:2858f73b-8943-41ad-b557-b0c63964ae24"}
 {"issue_id":"Demarch-meq9","label":"complexity:4"}
+{"issue_id":"Demarch-nq35","label":"claimed_at:1773478183"}
+{"issue_id":"Demarch-nq35","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-nwvr","label":"claimed_at:1773462233"}
 {"issue_id":"Demarch-nwvr","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-oyi","label":"easter-egg"}
 {"issue_id":"Demarch-oyi","label":"skaffen"}
 {"issue_id":"Demarch-oyi","label":"tui"}
+{"issue_id":"Demarch-qtf4","label":"claimed_at:1773478467"}
+{"issue_id":"Demarch-qtf4","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-rsrx","label":"claimed_at:1773476219"}
 {"issue_id":"Demarch-rsrx","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-sjq","label":"claimed_at:1773435876"}
