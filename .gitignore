@@ -33,6 +33,7 @@ docs/docs
 .clavain/quality-gates/
 .clavain/reviews/
 .clavain/checkpoint.json
+.clavain/routing-decisions.jsonl
 .clavain/intercore.db
 .clavain/intercore.db.backup-*
 .clavain/interspect/
