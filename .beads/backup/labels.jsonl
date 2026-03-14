@@ -12,8 +12,12 @@
 {"issue_id":"Demarch-1ljx","label":"complexity:3"}
 {"issue_id":"Demarch-2kes","label":"claimed_at:1773462092"}
 {"issue_id":"Demarch-2kes","label":"claimed_by:unknown"}
+{"issue_id":"Demarch-45t6","label":"claimed_at:1773500442"}
+{"issue_id":"Demarch-45t6","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-4j20","label":"claimed_at:1773441865"}
 {"issue_id":"Demarch-4j20","label":"claimed_by:unknown"}
+{"issue_id":"Demarch-5k81","label":"claimed_at:1773500266"}
+{"issue_id":"Demarch-5k81","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-6i0","label":"competitive"}
 {"issue_id":"Demarch-6i0","label":"skaffen"}
 {"issue_id":"Demarch-6i0","label":"tui"}
@@ -150,6 +154,8 @@
 {"issue_id":"Demarch-6sut","label":"claimed_at:1773460661"}
 {"issue_id":"Demarch-6sut","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-6sut","label":"complexity:2"}
+{"issue_id":"Demarch-79se","label":"claimed_at:1773500333"}
+{"issue_id":"Demarch-79se","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-85k","label":"claimed_at:1773416905"}
 {"issue_id":"Demarch-85k","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-85k","label":"complexity:3"}
@@ -190,6 +196,8 @@
 {"issue_id":"Demarch-k1b","label":"claimed_at:1773461765"}
 {"issue_id":"Demarch-k1b","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-k1b","label":"complexity:1"}
+{"issue_id":"Demarch-k9z6","label":"claimed_at:1773500057"}
+{"issue_id":"Demarch-k9z6","label":"claimed_by:8e54ff10-a448-4605-bdac-5722d9fa39a3"}
 {"issue_id":"Demarch-meq9","label":"claimed_at:1773461728"}
 {"issue_id":"Demarch-meq9","label":"claimed_by:2858f73b-8943-41ad-b557-b0c63964ae24"}
 {"issue_id":"Demarch-meq9","label":"complexity:4"}
@@ -200,8 +208,8 @@
 {"issue_id":"Demarch-oyi","label":"easter-egg"}
 {"issue_id":"Demarch-oyi","label":"skaffen"}
 {"issue_id":"Demarch-oyi","label":"tui"}
-{"issue_id":"Demarch-qtf4","label":"claimed_at:1773478467"}
-{"issue_id":"Demarch-qtf4","label":"claimed_by:unknown"}
+{"issue_id":"Demarch-qtf4","label":"claimed_at:0"}
+{"issue_id":"Demarch-qtf4","label":"claimed_by:released"}
 {"issue_id":"Demarch-rsrx","label":"claimed_at:1773476219"}
 {"issue_id":"Demarch-rsrx","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-sjq","label":"claimed_at:1773435876"}
@@ -211,11 +219,15 @@
 {"issue_id":"Demarch-uhq","label":"claimed_at:1773348439"}
 {"issue_id":"Demarch-uhq","label":"complexity:3"}
 {"issue_id":"Demarch-uhq","label":"sprint:true"}
+{"issue_id":"Demarch-wah9","label":"claimed_at:1773500184"}
+{"issue_id":"Demarch-wah9","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-xkh","label":"complexity:1"}
 {"issue_id":"Demarch-xkh","label":"phase:executing"}
 {"issue_id":"Demarch-xkh","label":"sprint:true"}
 {"issue_id":"Demarch-yd7s","label":"claimed_at:1773441902"}
 {"issue_id":"Demarch-yd7s","label":"claimed_by:unknown"}
+{"issue_id":"Demarch-z3a5","label":"claimed_at:1773500228"}
+{"issue_id":"Demarch-z3a5","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-z79","label":"claimed_at:1773435571"}
 {"issue_id":"Demarch-z79","label":"claimed_by:2858f73b-8943-41ad-b557-b0c63964ae24"}
 {"issue_id":"Demarch-z79","label":"complexity:2"}
