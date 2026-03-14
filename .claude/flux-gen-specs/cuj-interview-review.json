@@ -1,0 +1,127 @@
+[
+  {
+    "name": "fd-success-signal-integrity",
+    "focus": "Whether each CUJ's success signals are actually measurable, testable, and sufficient to validate the journey",
+    "persona": "A QA architect who has instrumented complex distributed systems. Approaches specifications by asking: how would you know this worked? Is the signal automatable or does it require human judgment dressed up as a metric?",
+    "decision_lens": "Prioritize signals that claim to be 'measurable' but are actually qualitative, signals with no stated threshold or baseline, and signals that could pass even when the journey is broken. A success signal that cannot be falsified is not a signal.",
+    "review_areas": [
+      "Check every 'measurable' signal for a concrete threshold — '> 80%', '< 90s', '≤ 5s'. Flag any 'measurable' signal that has no numeric assertion.",
+      "Identify success signals that rely on 'no X happens' (no merge conflicts, no duplicates) and check whether the CUJ describes the mechanism that prevents X, not just the absence of X.",
+      "Check whether the quality-gates CUJ's synthesis deduplication signal ('No two findings describe the same issue') is practically automatable without ground-truth labeling.",
+      "Verify that the skaffen-sovereign-session 'Cost scales with task complexity' signal (observable only) is backed by any instrumentation mechanism — what emits this signal?",
+      "Check for signals missing from the trust CUJ: there's no signal for 'trust profile persists across Skaffen version upgrades' or 'trust rules apply correctly after project rename'.",
+      "Assess whether the parallel-dispatch 'wall time is meaningfully less than sequential' signal requires a sequential baseline run to be meaningful — and whether that baseline is tracked."
+    ],
+    "success_hints": [
+      "Every 'measurable' signal should have a numeric assertion, a test oracle, and a defined measurement method.",
+      "Observable signals are weaker than measurable — the CUJ should explain what instrument produces the observation.",
+      "Absence signals ('zero conflicts', 'no duplicates') need a description of the mechanism that produces the absence, not just the desired state."
+    ],
+    "task_context": "These are product specification CUJs for the Demarch autonomous development platform. They describe target user experiences across quality gates, multi-agent coordination, parallel dispatch, and Skaffen agent runtime. Review is for specification quality, not implementation.",
+    "anti_overlap": [
+      "fd-cross-cuj-coherence covers whether the same concept is described consistently across CUJs — this agent focuses only on signal quality within each CUJ.",
+      "fd-friction-completeness covers whether friction points are realistic and complete — this agent focuses only on the success signal table.",
+      "fd-trust-and-safety covers the substance of trust and phase-gating claims — this agent focuses on testability of signals, not whether the trust model itself is correct."
+    ]
+  },
+  {
+    "name": "fd-cross-cuj-coherence",
+    "focus": "Whether the five CUJs form a consistent, non-contradictory system — shared concepts, shared components, and shared vocabulary must be aligned",
+    "persona": "A platform architect who reads specs across a large system and catches when two teams have independently defined the same concept differently. Looks for contradictions in component responsibilities, terminology drift, and implicit assumptions that conflict across documents.",
+    "decision_lens": "Prioritize contradictions where the same component is described as doing different things in different CUJs, terminology that shifts meaning between documents, and dependency relationships that create logical impossibilities when the CUJs are read together.",
+    "review_areas": [
+      "Heartbeat behavior: multi-agent-coordination says heartbeats should be 'adaptive: fast when producing output, slow when idle' — check whether skaffen-sovereign-session or skaffen-tool-trust's claim/trust update flows contradict or independently assume a fixed heartbeat interval.",
+      "Interlock is described as auto-joining on Clavain/Mycroft dispatch in multi-agent-coordination, but the parallel-dispatch CUJ says agents 'reserve files via Interlock' without specifying when join happens — check for the gap.",
+      "The quality-gates CUJ mentions 'intersynth:synthesize-review' for deduplication; the parallel-dispatch CUJ mentions quality gates running 'on the aggregate change' after all tasks complete — check whether intersynth's scope (single diff vs. aggregate diff) is consistent.",
+      "Bead claim lifecycle: multi-agent-coordination says 'bd update --claim fails if already claimed'; parallel-dispatch says 'failed tasks are re-dispatched' — check if re-dispatch implies unclaim+reclaim or just reassignment, and whether both CUJs describe this the same way.",
+      "Trust inheritance: skaffen-tool-trust says 'dispatched agents inherit the developer's global trust rules but cannot promote new patterns' — check whether the parallel-dispatch CUJ's Codex-backed dispatch scenario accounts for trust inheritance or leaves Codex agents ungated.",
+      "P0/P1 severity is defined in quality-gates but referenced implicitly in multi-agent-coordination — verify that the severity taxonomy is not duplicated with inconsistencies."
+    ],
+    "success_hints": [
+      "Any shared component (Interlock, Intercore, Beads) must have the same described behavior across all CUJs that reference it.",
+      "Vocabulary coined in one CUJ (OODARC, phase gating, bead claim) must be used with the same meaning when it appears in another.",
+      "Dependency arrows must be consistent: if CUJ A says X depends on Y, CUJ B must not implicitly describe Y as optional or absent."
+    ],
+    "task_context": "These are product specification CUJs for the Demarch autonomous development platform. They describe target user experiences across quality gates, multi-agent coordination, parallel dispatch, and Skaffen agent runtime. Review is for specification quality, not implementation.",
+    "anti_overlap": [
+      "fd-success-signal-integrity focuses only on the quality of success signal tables within each CUJ — this agent focuses on cross-document consistency.",
+      "fd-friction-completeness checks whether friction points are complete and realistic within each CUJ — this agent looks at whether friction acknowledged in one CUJ is silently assumed absent in another.",
+      "fd-trust-and-safety reviews whether the trust model's safety claims hold — this agent checks whether trust-related claims are terminologically consistent across CUJs."
+    ]
+  },
+  {
+    "name": "fd-friction-completeness",
+    "focus": "Whether the Known Friction Points sections accurately capture realistic pain, and whether the journey narratives paper over failure modes that should be acknowledged",
+    "persona": "A developer advocate who has run autonomous agent systems in production and knows where the idealized narrative diverges from real-world use.",
+    "decision_lens": "Prioritize missing friction points that are highly likely to occur in practice, journey narratives that describe only the happy path with no mention of intermediate failure states, and friction points that are acknowledged but not given any mitigation strategy or workaround.",
+    "review_areas": [
+      "Quality-gates: the CUJ says 'Agents run in parallel, writing output to .clavain/quality-gates/' — what happens if two agents write conflicting findings to the same path? No friction point covers output collision.",
+      "Multi-agent-coordination: 'Coordination requires Intercore — multi-agent dispatch refuses to start if Intercore bus isn't running' is listed as friction, but there is no described path for starting Intercore or verifying it is running before dispatch.",
+      "Parallel-dispatch: the CUJ says 'Failed tasks are re-assigned, not abandoned' but does not describe what counts as failure, how many re-assignments are allowed, or what happens to dependent tasks during re-dispatch delay.",
+      "Skaffen-sovereign-session: 'Compound phase auto-writes' is flagged as a friction point needing calibration, but the journey narrative presents it as seamless.",
+      "Skaffen-tool-trust: pattern matching granularity is acknowledged as a friction point, but the journey narrative says 'the profile is stored in the session config, not hidden' without describing the actual editing UX.",
+      "Across all CUJs: check whether any friction point is listed without a known workaround, mitigation, or future plan."
+    ],
+    "success_hints": [
+      "Each friction point should have at least a workaround described, even if the long-term solution is future work.",
+      "Journey narratives should acknowledge at least one intermediate failure state rather than describing only the ideal sequence.",
+      "Friction points should be ranked or triaged — not all friction is equal."
+    ],
+    "task_context": "These are product specification CUJs for the Demarch autonomous development platform. They describe target user experiences across quality gates, multi-agent coordination, parallel dispatch, and Skaffen agent runtime. Review is for specification quality, not implementation.",
+    "anti_overlap": [
+      "fd-cross-cuj-coherence checks whether friction acknowledged in one CUJ conflicts with assumptions in another.",
+      "fd-success-signal-integrity checks whether success signals are testable.",
+      "fd-trust-and-safety reviews whether the trust model's safety claims hold."
+    ]
+  },
+  {
+    "name": "fd-trust-and-safety",
+    "focus": "Whether the trust model, phase gating, and safety boundaries in the Skaffen CUJs are internally consistent and sufficient to prevent unintended destructive actions",
+    "persona": "A security-minded engineer who has built approval and permission systems for agentic systems. Reads trust specifications by constructing adversarial scenarios.",
+    "decision_lens": "Prioritize gaps where auto-approval could chain into destructive outcomes, phase boundaries described as 'softened' without specifying exact rules, and trust inheritance rules that could give dispatched agents unintended capabilities.",
+    "review_areas": [
+      "The trust CUJ says 'Destructive actions always require approval' — check whether the definition of 'destructive' is exhaustive or relies on a bypassable pattern list.",
+      "Phase softening: verify whether softened boundaries are described consistently in both the sovereign-session CUJ and the trust CUJ.",
+      "Trust inheritance for Codex-backed dispatch: does the parallel-dispatch CUJ account for trust inheritance or leave Codex agents ungated?",
+      "Reconcile: sovereign-session says 'Smart trust auto-approves simple, safe tool calls' but trust CUJ says 'No trust history exists' on first session — how are built-in rules defined?",
+      "Verify that the '> 80% auto-approve rate after 5 sessions' signal is achievable given the configurable promotion threshold (default 5 approvals).",
+      "Check whether there is any described mechanism for trust revocation — removing an unsafe auto-approved pattern."
+    ],
+    "success_hints": [
+      "Every 'always require approval' category should be backed by an exhaustive definition, not a pattern list.",
+      "Phase boundary softening must be specified precisely: which tools, which rate limits, which file globs.",
+      "Trust inheritance for non-primary agents must be explicitly specified."
+    ],
+    "task_context": "These are product specification CUJs for the Demarch autonomous development platform. They describe target user experiences across quality gates, multi-agent coordination, parallel dispatch, and Skaffen agent runtime. Review is for specification quality, not implementation.",
+    "anti_overlap": [
+      "fd-success-signal-integrity checks whether the auto-approve signal is testable.",
+      "fd-cross-cuj-coherence checks whether trust vocabulary is consistent across CUJs.",
+      "fd-friction-completeness checks whether trust friction points are adequately acknowledged."
+    ]
+  },
+  {
+    "name": "fd-workflow-realism",
+    "focus": "Whether the journey narratives describe realistic developer workflows or construct idealized sequences that obscure essential steps",
+    "persona": "A senior developer who has used autonomous coding tools extensively and reads product specs asking: would I actually do it this way?",
+    "decision_lens": "Prioritize journey steps where a command is invoked without showing how it was configured, feedback that requires capabilities not yet described as implemented, and sequences where the actor could not proceed without unsurfaced information.",
+    "review_areas": [
+      "Quality-gates: '/flux-gen must be run first' is in friction but the journey narrative auto-selects agents without mentioning this prerequisite.",
+      "Parallel-dispatch: 'They run /clavain:work <plan>' — what form does <plan> take? File path? YAML? Natural language?",
+      "Skaffen-sovereign-session: Orient output implies codebase indexing. When does indexing happen?",
+      "Multi-agent-coordination: '/interlock:join registers the agent explicitly' — no description of what command or context invokes this.",
+      "Skaffen-sovereign-session: print mode is 'go run ./cmd/skaffen --mode print' — this runs from source, not a published binary.",
+      "Check all five CUJs for commands presented as current without indication of implementation status."
+    ],
+    "success_hints": [
+      "Every command or slash-invocation should either exist today or be clearly marked as target state.",
+      "Every implicit prerequisite should surface in the journey before it is relied upon.",
+      "The actor's information at each step should be traceable."
+    ],
+    "task_context": "These are product specification CUJs for the Demarch autonomous development platform. They describe target user experiences across quality gates, multi-agent coordination, parallel dispatch, and Skaffen agent runtime. Review is for specification quality, not implementation.",
+    "anti_overlap": [
+      "fd-friction-completeness checks whether friction points are complete.",
+      "fd-cross-cuj-coherence checks for consistency across CUJs.",
+      "fd-success-signal-integrity checks whether signals are measurable."
+    ]
+  }
+]
