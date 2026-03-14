@@ -1,0 +1,74 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 300
+
+stages:
+  - name: "Foundation"
+    tasks:
+      - id: task-1
+        title: "Project scaffold & plugin manifest"
+        files: [interverse/intermix/cmd/intermix-mcp/main.go, interverse/intermix/go.mod, interverse/intermix/.claude-plugin/plugin.json, interverse/intermix/bin/launch-mcp.sh, interverse/intermix/CLAUDE.md]
+        depends: []
+
+  - name: "Core Types"
+    tasks:
+      - id: task-2
+        title: "YAML manifest schema & parser"
+        files: [interverse/intermix/internal/eval/manifest.go, interverse/intermix/internal/eval/manifest_test.go]
+        depends: []
+      - id: task-3
+        title: "JSONL state types & reconstruction"
+        files: [interverse/intermix/internal/eval/state.go, interverse/intermix/internal/eval/state_test.go]
+        depends: []
+
+  - name: "Components"
+    tasks:
+      - id: task-4
+        title: "Cell runner — clone, spawn Skaffen, validate"
+        files: [interverse/intermix/internal/eval/runner.go, interverse/intermix/internal/eval/runner_test.go]
+        depends: [task-3]
+      - id: task-5
+        title: "Classifier — fixed taxonomy + LLM placeholder"
+        files: [interverse/intermix/internal/eval/classify.go, interverse/intermix/internal/eval/classify_test.go]
+        depends: [task-3]
+      - id: task-6
+        title: "Report generator — heatmap, clustering, delta"
+        files: [interverse/intermix/internal/eval/report.go, interverse/intermix/internal/eval/report_test.go]
+        depends: [task-3]
+
+  - name: "Integration"
+    tasks:
+      - id: task-7
+        title: "MCP tool handlers — wire everything"
+        files: [interverse/intermix/internal/eval/tools.go, interverse/intermix/internal/eval/tools_test.go]
+        depends: [task-2, task-3, task-4, task-5, task-6]
+      - id: task-8
+        title: "IC events bridge"
+        files: [interverse/intermix/internal/eval/ic.go, interverse/intermix/internal/eval/ic_test.go]
+        depends: [task-3]
+
+  - name: "Content & Testing"
+    tasks:
+      - id: task-9
+        title: "Starter YAML manifest with 12 repos"
+        files: [interverse/intermix/examples/skaffen-stress.yaml]
+        depends: [task-2]
+      - id: task-10
+        title: "Evaluate skill (SKILL.md)"
+        files: [interverse/intermix/skills/evaluate/SKILL.md]
+        depends: [task-7]
+      - id: task-11
+        title: "Integration test — full pipeline"
+        files: [interverse/intermix/internal/eval/integration_test.go]
+        depends: [task-7]
+        tier: fast
+
+  - name: "Ship"
+    tasks:
+      - id: task-12
+        title: "Build binary & verify plugin loads"
+        files: [interverse/intermix/bin/intermix-mcp]
+        depends: [task-7, task-11]
+        tier: fast
