@@ -128,6 +128,9 @@
 {"issue_id":"Demarch-6nsw","label":"ic_run_id:1ryw9rsm"}
 {"issue_id":"Demarch-6nsw","label":"sprint:true"}
 {"issue_id":"Demarch-6nsw","label":"token_budget:250000"}
+{"issue_id":"Demarch-6sut","label":"claimed_at:1773460661"}
+{"issue_id":"Demarch-6sut","label":"claimed_by:unknown"}
+{"issue_id":"Demarch-6sut","label":"complexity:2"}
 {"issue_id":"Demarch-85k","label":"claimed_at:1773416905"}
 {"issue_id":"Demarch-85k","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-85k","label":"complexity:3"}
@@ -173,6 +176,9 @@
 {"issue_id":"Demarch-z79","label":"claimed_at:1773435571"}
 {"issue_id":"Demarch-z79","label":"claimed_by:2858f73b-8943-41ad-b557-b0c63964ae24"}
 {"issue_id":"Demarch-z79","label":"complexity:2"}
+{"issue_id":"Demarch-zxll","label":"claimed_at:1773460531"}
+{"issue_id":"Demarch-zxll","label":"claimed_by:unknown"}
+{"issue_id":"Demarch-zxll","label":"complexity:3"}
 {"issue_id":"iv-2o6c","label":"claimed_at:1773448061"}
 {"issue_id":"iv-2o6c","label":"claimed_by:unknown"}
 {"issue_id":"iv-2o6c","label":"complexity:2"}
