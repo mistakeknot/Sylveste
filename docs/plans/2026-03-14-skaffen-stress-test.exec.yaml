@@ -1,0 +1,55 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 4
+timeout_per_task: 300
+
+stages:
+  - name: "Foundation"
+    tasks:
+      - id: task-1
+        title: "Per-cell JSONL and run file isolation"
+        files: [interverse/intermix/internal/eval/state.go, interverse/intermix/internal/eval/state_test.go]
+        depends: []
+      - id: task-2
+        title: "Tmux-based Skaffen spawner"
+        files: [interverse/intermix/internal/eval/runner.go, interverse/intermix/internal/eval/runner_test.go]
+        depends: []
+      - id: task-4
+        title: "Evidence harvesting"
+        files: [interverse/intermix/internal/eval/evidence.go, interverse/intermix/internal/eval/evidence_test.go]
+        depends: []
+      - id: task-5
+        title: "Debug bead creation"
+        files: [interverse/intermix/internal/eval/bead.go, interverse/intermix/internal/eval/bead_test.go]
+        depends: []
+
+  - name: "Assembly"
+    tasks:
+      - id: task-3
+        title: "Parallel batch runner"
+        files: [interverse/intermix/internal/eval/parallel.go, interverse/intermix/internal/eval/parallel_test.go]
+        depends: [task-1, task-2]
+      - id: task-6
+        title: "Report matrix with heatmap"
+        files: [interverse/intermix/internal/eval/report.go, interverse/intermix/internal/eval/report_test.go]
+        depends: [task-1]
+
+  - name: "Integration"
+    tasks:
+      - id: task-7
+        title: "MCP tools for batch operations"
+        files: [interverse/intermix/internal/eval/tools.go, interverse/intermix/internal/eval/tools_test.go]
+        depends: [task-3, task-4, task-5, task-6]
+      - id: task-8
+        title: "Build and verify binary"
+        files: [interverse/intermix/cmd/intermix-mcp/main.go]
+        depends: [task-7]
+        tier: fast
+
+  - name: "Campaign"
+    tasks:
+      - id: task-9
+        title: "Run 9-cell stress test campaign"
+        files: []
+        depends: [task-8]
