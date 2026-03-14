@@ -10,6 +10,8 @@
 {"issue_id":"Demarch-1ljx","label":"claimed_at:1773475423"}
 {"issue_id":"Demarch-1ljx","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-1ljx","label":"complexity:3"}
+{"issue_id":"Demarch-1nos","label":"claimed_at:1773502323"}
+{"issue_id":"Demarch-1nos","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-2kes","label":"claimed_at:1773462092"}
 {"issue_id":"Demarch-2kes","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-45t6","label":"claimed_at:0"}
@@ -167,6 +169,8 @@
 {"issue_id":"Demarch-9ha","label":"claimed_by:2cc2e82d-7868-4af9-bf0d-7866533dd18d"}
 {"issue_id":"Demarch-9ier","label":"claimed_at:1773476075"}
 {"issue_id":"Demarch-9ier","label":"claimed_by:unknown"}
+{"issue_id":"Demarch-9kor","label":"campaign_dir:/home/mk/projects/Demarch/interverse/interlab/campaigns/plan-validation-speed"}
+{"issue_id":"Demarch-9kor","label":"campaign_name:plan-validation-speed"}
 {"issue_id":"Demarch-afd","label":"claimed_at:1773417205"}
 {"issue_id":"Demarch-afd","label":"claimed_by:8e54ff10-a448-4605-bdac-5722d9fa39a3"}
 {"issue_id":"Demarch-afd","label":"complexity:3"}
@@ -193,6 +197,8 @@
 {"issue_id":"Demarch-iuvt","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-j6k","label":"complexity:2"}
 {"issue_id":"Demarch-j6k","label":"sprint:true"}
+{"issue_id":"Demarch-jc74","label":"campaign_dir:/home/mk/projects/Demarch/interverse/interlab/campaigns/status-reconstruction"}
+{"issue_id":"Demarch-jc74","label":"campaign_name:status-reconstruction"}
 {"issue_id":"Demarch-k1b","label":"claimed_at:1773461765"}
 {"issue_id":"Demarch-k1b","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-k1b","label":"complexity:1"}
@@ -205,11 +211,20 @@
 {"issue_id":"Demarch-nq35","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-nwvr","label":"claimed_at:1773462233"}
 {"issue_id":"Demarch-nwvr","label":"claimed_by:unknown"}
+{"issue_id":"Demarch-ome7","label":"claimed_at:1773502093"}
+{"issue_id":"Demarch-ome7","label":"claimed_by:unknown"}
+{"issue_id":"Demarch-ome7","label":"complexity:3"}
 {"issue_id":"Demarch-oyi","label":"easter-egg"}
 {"issue_id":"Demarch-oyi","label":"skaffen"}
 {"issue_id":"Demarch-oyi","label":"tui"}
 {"issue_id":"Demarch-qtf4","label":"claimed_at:0"}
 {"issue_id":"Demarch-qtf4","label":"claimed_by:released"}
+{"issue_id":"Demarch-rez6","label":"campaign_count:2"}
+{"issue_id":"Demarch-rez6","label":"campaign_ids:Demarch-9kor,Demarch-jc74"}
+{"issue_id":"Demarch-rez6","label":"claimed_at:1773501950"}
+{"issue_id":"Demarch-rez6","label":"claimed_by:2858f73b-8943-41ad-b557-b0c63964ae24"}
+{"issue_id":"Demarch-rez6","label":"plan_timestamp:2026-03-14T15:31:49Z"}
+{"issue_id":"Demarch-rez6","label":"test_key:test_value"}
 {"issue_id":"Demarch-rsrx","label":"claimed_at:1773476219"}
 {"issue_id":"Demarch-rsrx","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-sjq","label":"claimed_at:1773435876"}
