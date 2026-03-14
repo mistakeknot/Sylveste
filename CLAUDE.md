@@ -18,6 +18,10 @@ When you have enough context to start implementing, do it. Write a 3-bullet inli
 - **Pillars** are the 6 top-level components: Intercore, Clavain, Skaffen, Interverse, Autarch, Interspect
 - **Layers** (L1/L2/L3) describe architectural dependency; pillars describe organizational structure
 
+## Work Tracking
+
+Beads (`bd create/close`) is the single source of truth for work tracking. Never create TODO files, markdown checklists with status fields, or pending-beads lists. These drift silently and cause duplicate effort. If beads is unavailable, use a single `BLOCKED.md` and convert when it recovers. `/clavain:doctor` checks for shadow trackers.
+
 ## Git Workflow
 
 **Owner/agents:** Trunk-based development — commit directly to `main`. You can bypass branch protection as admin.
