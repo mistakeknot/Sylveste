@@ -233,6 +233,9 @@ validate_plugin() {
 
     # --- 11. Version mismatch with marketplace ---
     check_marketplace_version "$plugin_root" "$plugin_name" "$version"
+
+    # --- 12. SKILL.md injection scanning ---
+    scan_skill_injection "$plugin_root"
 }
 
 # =============================================================================
@@ -433,6 +436,116 @@ main() {
 
     if [ "$ERRORS" -gt 0 ]; then exit 1; fi
     exit 0
+}
+
+# =============================================================================
+# Scan SKILL.md/command/agent files for injection patterns
+# =============================================================================
+scan_skill_injection() {
+    local plugin_root="$1"
+    local scan_count=0
+
+    # Collect all .md files in skills/, commands/, agents/ directories
+    local md_files=()
+    for dir in skills commands agents; do
+        local full_dir="$plugin_root/$dir"
+        [ -d "$full_dir" ] || continue
+        while IFS= read -r f; do
+            [ -n "$f" ] && md_files+=("$f")
+        done < <(find "$full_dir" -name "*.md" -type f 2>/dev/null)
+    done
+    # Also check .claude-plugin subdirs
+    for dir in skills commands agents; do
+        local full_dir="$plugin_root/.claude-plugin/$dir"
+        [ -d "$full_dir" ] || continue
+        while IFS= read -r f; do
+            [ -n "$f" ] && md_files+=("$f")
+        done < <(find "$full_dir" -name "*.md" -type f 2>/dev/null)
+    done
+
+    if [ ${#md_files[@]} -eq 0 ]; then
+        return
+    fi
+
+    # --- Injection patterns (prompt injection / instruction override) ---
+    local injection_patterns=(
+        'ignore previous instructions'
+        'ignore all previous'
+        'ignore the above'
+        'disregard previous'
+        'disregard all previous'
+        'forget your instructions'
+        'override your instructions'
+        'new instructions'
+        'do not report'
+        'do not flag'
+        'do not mention'
+        'always approve'
+        'never deny'
+        'never reject'
+        'skip verification'
+        'skip validation'
+        'bypass safety'
+        'bypass security'
+        'bypass approval'
+    )
+
+    # --- Exfiltration patterns (data theft via shell) ---
+    local exfil_patterns=(
+        'curl .*-d\|curl .*--data'
+        'wget .*--post'
+        '\bnc \|netcat '
+        'base64.*\| *curl'
+        'base64.*\| *wget'
+        '\bsendmail\b'
+    )
+
+    # --- Authority escalation patterns ---
+    local escalation_patterns=(
+        'you are now'
+        'you have been promoted'
+        'admin mode'
+        'sudo mode'
+        'unrestricted mode'
+        'ignore safety'
+        'all permissions granted'
+    )
+
+    for f in "${md_files[@]}"; do
+        local rel="${f#$plugin_root/}"
+        local content
+        content=$(cat "$f" 2>/dev/null) || continue
+        local lower_content
+        lower_content=$(echo "$content" | tr '[:upper:]' '[:lower:]')
+
+        # Check injection patterns
+        for pattern in "${injection_patterns[@]}"; do
+            if echo "$lower_content" | grep -q "$pattern"; then
+                error "injection: '$rel' contains '$pattern'"
+                scan_count=$((scan_count + 1))
+            fi
+        done
+
+        # Check exfiltration patterns
+        for pattern in "${exfil_patterns[@]}"; do
+            if echo "$lower_content" | grep -qE "$pattern"; then
+                error "exfiltration: '$rel' matches pattern '$pattern'"
+                scan_count=$((scan_count + 1))
+            fi
+        done
+
+        # Check escalation patterns
+        for pattern in "${escalation_patterns[@]}"; do
+            if echo "$lower_content" | grep -q "$pattern"; then
+                error "escalation: '$rel' contains '$pattern'"
+                scan_count=$((scan_count + 1))
+            fi
+        done
+    done
+
+    if [ "$scan_count" -eq 0 ] && [ ${#md_files[@]} -gt 0 ]; then
+        ok "injection scan: ${#md_files[@]} files clean"
+    fi
 }
 
 main "$@"
