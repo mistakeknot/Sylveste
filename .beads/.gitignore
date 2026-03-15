@@ -26,6 +26,9 @@ ephemeral.sqlite3-journal
 ephemeral.sqlite3-wal
 ephemeral.sqlite3-shm
 
+# Snapshots (generated output, not source)
+snapshots/
+
 # Dolt server management (auto-started by bd)
 dolt-server.pid
 dolt-server.log

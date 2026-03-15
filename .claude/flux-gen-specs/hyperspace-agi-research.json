@@ -1,0 +1,127 @@
+[
+  {
+    "name": "fd-coordination-state-model",
+    "focus": "Evaluate CRDT/gossip coordination patterns against Demarch's current interlock and Dolt-based state management",
+    "persona": "A distributed systems engineer who has designed conflict-free replicated data types for production systems and understands the tradeoffs between eventual consistency, strong consistency, and file-based locking. Approaches findings through the lens of operational simplicity and failure recovery.",
+    "decision_lens": "Prioritize changes that eliminate the zombie-process and race-condition failure modes already documented in Demarch's memory. Deprioritize solutions that require network infrastructure Demarch doesn't have (P2P multi-machine).",
+    "review_areas": [
+      "Assess whether Loro CRDT could replace interlock's file-based reservation system on a single machine, and what Go/Rust library would fit the existing stack",
+      "Evaluate the 3-layer stack (GossipSub→CRDT→GitHub) and identify which layers apply to single-operator local Demarch vs. which require multi-party trust that Demarch doesn't need",
+      "Check whether beads issue state (claim/close/unclaim) is semantically a convergent CRDT problem, and whether replacing Dolt would eliminate the zombie-process failures documented in beads-troubleshooting.md",
+      "Analyze the 'no cold start' property of Loro (new nodes read full state on connect) and contrast with Demarch's current sprint-find-active and claim recovery patterns",
+      "Identify which Hyperspace coordination guarantees (commit-reveal pulse, cryptographic verification) are overkill for single-operator use and which convergence properties are still valuable",
+      "Assess the per-agent branch model ('never merged to main') as an alternative to Clavain worktree isolation and what the migration path would look like"
+    ],
+    "success_hints": [
+      "Agent identifies a specific CRDT library (Go or Rust) that fits the Clavain/interlock stack with minimal FFI overhead",
+      "Agent produces a clear verdict on whether CRDT replacement of Dolt would actually fix the documented zombie-process failure modes",
+      "Agent distinguishes which Hyperspace coordination techniques require P2P trust (skip) vs. local-only convergence (adopt)"
+    ],
+    "task_context": "Hyperspace AGI is a P2P autonomous AI research network using GossipSub, Loro CRDTs, and GitHub as a 3-layer coordination stack. Demarch is a single-operator multi-agent platform where Clavain orchestrates agents via interlock (file-based reservations) and beads (Dolt-backed issue tracking). The analysis must identify adoptable coordination patterns for a local, single-machine context.",
+    "anti_overlap": [
+      "fd-autonomous-work-loop covers the hypothesis→mutate→evaluate research pipeline and how it maps to Skaffen/Autarch's work execution model",
+      "fd-observability-data-model covers snapshot publishing, structured experiment formats (best.json, run-NNN.json), and the living-leaderboard pattern for Intercom/Autarch",
+      "fd-plugin-evolution covers the Skills & Tools domain, autonomous plugin improvement, and WASM sandboxing relevance to Interverse"
+    ]
+  },
+  {
+    "name": "fd-autonomous-work-loop",
+    "focus": "Evaluate Hyperspace's mutation-based research pipeline (hypothesis→train→evaluate→critique→discover) as a model for Skaffen and Autarch's autonomous work execution",
+    "persona": "An AI systems architect who has designed autonomous agent work loops and understands the difference between goal-directed planning, mutation-based search, and reactive execution. Thinks carefully about how feedback loops close and where human judgment must remain in the loop.",
+    "decision_lens": "Prioritize patterns that make Skaffen's autonomous work loop more systematic and compound-learning-aware. Flag philosophical mismatches where Hyperspace's narrow-metric optimization diverges from Demarch's broad software-quality goals.",
+    "review_areas": [
+      "Map Hyperspace's 5-stage pipeline (hypothesis→train→paper→critique→discovery) onto Skaffen's current work loop and identify which stages are missing or implicit",
+      "Evaluate the 'mutation over regeneration' principle: whether Skaffen/Autarch should maintain a best.json equivalent per task type and mutate it rather than starting from scratch each cycle",
+      "Assess the 'inspiration-before-hypothesis' pattern (agents read peers' discoveries before generating next hypothesis) and how this maps to Skaffen checking auto-memory + intersearch before planning",
+      "Evaluate the agent JOURNAL.md cognitive journal pattern as a structured alternative to Demarch's auto-memory conventions, and whether the two should be unified",
+      "Identify the philosophical gap between Hyperspace's single-metric optimization (val_loss, NDCG@10) and Demarch's multi-dimensional code quality, and what richer metrics Autarch should use instead",
+      "Assess DiLoCo's 'work locally, share deltas periodically' pattern as a coordination model for multiple Skaffen instances working on the same codebase from different angles"
+    ],
+    "success_hints": [
+      "Agent produces a concrete proposal for what Skaffen's 'mutation history' (best approach per task type) should look like as a data structure",
+      "Agent identifies the specific feedback loop closure mechanism Demarch is missing that Hyperspace has (what triggers the next hypothesis in Skaffen's loop)",
+      "Agent makes a clear recommendation on whether the agent JOURNAL.md pattern should replace, extend, or remain separate from Demarch's auto-memory conventions"
+    ],
+    "task_context": "Hyperspace AGI is a P2P autonomous AI research network using GossipSub, Loro CRDTs, and GitHub as a 3-layer coordination stack. Demarch is a single-operator multi-agent platform where Clavain orchestrates agents via interlock (file-based reservations) and beads (Dolt-backed issue tracking). The analysis must identify adoptable coordination patterns for a local, single-machine context.",
+    "anti_overlap": [
+      "fd-coordination-state-model covers CRDT/gossip coordination infrastructure, interlock replacement, and the 3-layer stack applicability",
+      "fd-observability-data-model covers structured experiment file formats (best.json, run-NNN.json), snapshot publishing, and leaderboard generation for Intercom/Autarch reporting",
+      "fd-capability-routing covers capability declarations, weight-based agent matching, and how Hyperspace's 9-capability model maps to Clavain's lib-routing.sh"
+    ]
+  },
+  {
+    "name": "fd-observability-data-model",
+    "focus": "Evaluate Hyperspace's structured experiment format, snapshot publishing, and leaderboard generation as a model for Intercom's agent activity visibility and Autarch's output archiving",
+    "persona": "A developer experience engineer who has designed observability systems for autonomous agents and believes that structured data + LLM analysis outperforms hand-built dashboards. Focuses on what data must be machine-readable vs. human-readable and when each is appropriate.",
+    "decision_lens": "Prioritize patterns that produce durable, queryable records of agent work with minimal implementation overhead. Favor structured JSON outputs that let users point any LLM at the data over elaborate dashboard UIs.",
+    "review_areas": [
+      "Evaluate the per-agent experiment format (run-NNN.json + run-NNN.md + best.json + JOURNAL.md) and design a Demarch-equivalent for Autarch work items and interlab campaigns",
+      "Assess the 'hourly network snapshot' pattern (snapshots/latest.json with full CRDT state) as a model for bd snapshot --json and whether this would replace the need for complex beads dashboards",
+      "Evaluate the auto-generated LEADERBOARD.md (every 6 hours from build-leaderboard.js scanning agent branches) as a template for Intercom's sprint retrospective and beads reporting",
+      "Check whether the 'living research repository' README pattern (network snapshot at top, join-in-1-command, overnight report with concrete results) could be adopted for Autarch's agent activity feed",
+      "Assess the 'point any LLM at snapshots/latest.json' UX philosophy against Demarch's current approach to observability, and identify where Intercom currently builds dashboards it shouldn't",
+      "Evaluate the per-agent git branch archive (agents/<peerId>/<project>) as a browsable history pattern for what each Skaffen instance has accomplished"
+    ],
+    "success_hints": [
+      "Agent produces a concrete file schema for a Demarch experiment record (equivalent to run-NNN.json) that works for both interlab campaigns and Autarch beads work",
+      "Agent identifies which existing Demarch observability tools (interstat, cass, intersearch) already produce snapshot-friendly JSON and which require new output modes",
+      "Agent gives a clear verdict on whether Intercom should implement a leaderboard generator or whether existing beads + cass data is sufficient with a simpler query interface"
+    ],
+    "task_context": "Hyperspace AGI is a P2P autonomous AI research network using GossipSub, Loro CRDTs, and GitHub as a 3-layer coordination stack. Demarch is a single-operator multi-agent platform where Clavain orchestrates agents via interlock (file-based reservations) and beads (Dolt-backed issue tracking). The analysis must identify adoptable coordination patterns for a local, single-machine context.",
+    "anti_overlap": [
+      "fd-coordination-state-model covers CRDT and gossip coordination infrastructure, not output formats or observability patterns",
+      "fd-autonomous-work-loop covers the research pipeline execution model and cognitive journal patterns, not the file format and reporting layer",
+      "fd-plugin-evolution covers the Skills & Tools domain and autonomous plugin improvement, not general observability or experiment archiving"
+    ]
+  },
+  {
+    "name": "fd-capability-routing",
+    "focus": "Evaluate Hyperspace's 9-capability model, weight-based scoring, and capability-weighted routing against Clavain's lib-routing.sh and agent-model matching",
+    "persona": "A platform engineer who specializes in heterogeneous compute routing and has experience designing capability registries for multi-agent systems. Focuses on how capability declarations, runtime evidence, and routing weights interact and where each approach breaks down.",
+    "decision_lens": "Prioritize capability routing changes that improve Clavain's agent-model matching without adding configuration burden. Flag cases where Hyperspace's capability model assumes infrastructure Demarch doesn't have (network-wide capability discovery).",
+    "review_areas": [
+      "Map Hyperspace's 9 capabilities (Inference, Research, Proxy, Storage, Embedding, Memory, Orchestration, Validation, Relay) onto Demarch's agent roles and identify which have direct analogs in Clavain's routing model",
+      "Evaluate the weight-based capability scoring (+10% inference, +12% research) as a model for extending lib-routing.sh beyond evidence-only routing to include capability declarations",
+      "Assess whether Demarch agents should declare capabilities explicitly (like Hyperspace nodes) vs. inferring them from evidence (current Clavain approach), and what the migration cost is",
+      "Analyze the uptime bonus formula U(t) = 1 + 0.2 * ln(1 + t/12) as a model for Clavain's agent-trust weighting — does longevity/reliability belong in Demarch's routing model?",
+      "Evaluate Hyperspace's automatic hardware adaptation (browser/laptop/H100 → different experiment scales) against Clavain's current model-tier (Haiku/Sonnet/Opus) awareness and where the two models diverge",
+      "Check whether the Orchestration capability (+5%) and its description ('multi-step task decomposition + routing') creates a recursive routing problem in Demarch's architecture that doesn't exist in Hyperspace's flat peer model"
+    ],
+    "success_hints": [
+      "Agent identifies whether lib-routing.sh should add a capability declaration step before evidence scoring, and what format those declarations should take",
+      "Agent maps at least 5 of Hyperspace's 9 capabilities to concrete Demarch agent roles with specific routing weight recommendations",
+      "Agent flags any Hyperspace routing assumptions that would break in Demarch's single-machine, human-operator context without modification"
+    ],
+    "task_context": "Hyperspace AGI is a P2P autonomous AI research network using GossipSub, Loro CRDTs, and GitHub as a 3-layer coordination stack. Demarch is a single-operator multi-agent platform where Clavain orchestrates agents via interlock (file-based reservations) and beads (Dolt-backed issue tracking). The analysis must identify adoptable coordination patterns for a local, single-machine context.",
+    "anti_overlap": [
+      "fd-coordination-state-model covers CRDT/gossip infrastructure and interlock replacement, not capability routing or agent-model matching",
+      "fd-autonomous-work-loop covers the general research pipeline and mutation-based improvement for Skaffen/Autarch code work, not capability declarations or routing weight mechanics",
+      "fd-plugin-evolution covers the Skills & Tools domain and WASM sandboxing, not the general capability routing layer"
+    ]
+  },
+  {
+    "name": "fd-plugin-evolution",
+    "focus": "Evaluate Hyperspace's Skills & Tools domain (autonomous skill invention, WASM sandboxing, correctness×utility scoring, cross-agent adoption) as a model for autonomous Interverse plugin evolution",
+    "persona": "A plugin ecosystem architect who has designed plugin lifecycle systems and understands the tension between autonomous plugin generation and plugin quality guarantees. Thinks carefully about when autonomous creation adds value and when human curation is necessary.",
+    "decision_lens": "Prioritize plugin evolution patterns that could be implemented as an extension to existing interlab and Interverse tooling. Deprioritize WASM-specific techniques that don't apply to Claude Code's plugin execution model.",
+    "review_areas": [
+      "Evaluate Hyperspace's Skills & Tools domain (WASM skills scored by test_pass_rate × adoption) as a template for an Interverse plugin quality metric beyond star ratings or manual review",
+      "Assess whether the autonomous skill invention loop (agents identify friction → generate skill → test → share if score > threshold) could be implemented using interlab's existing campaign framework targeting plugin improvement",
+      "Evaluate the 'cross-agent adoption via gossip' pattern for Interverse — when one agent invents a useful plugin, how would other Skaffen instances discover and adopt it without a gossip network",
+      "Check whether Hyperspace's composite scoring (correctness × utility) maps to Interverse's needs, and what 'utility' means for Claude Code plugins vs. WASM skills for web scraping",
+      "Assess the WASM sandboxing principle (portable, sandboxed skill execution) against Claude Code's plugin execution model and what isolation guarantees Interverse currently provides vs. needs",
+      "Evaluate whether autonomous plugin evolution introduces adversarial surface area (a generated plugin could exfiltrate data or manipulate other agents) and what guardrails Demarch's security model requires before enabling it"
+    ],
+    "success_hints": [
+      "Agent produces a concrete scoring formula (correctness × utility) for Interverse plugins with specific definitions of each term drawn from actual plugin behavior",
+      "Agent identifies which existing interlab primitives (init_experiment, log_experiment, synthesize_campaigns) could be reused for autonomous plugin improvement campaigns without new infrastructure",
+      "Agent explicitly addresses the security boundary: what permissions or review gates are required before an autonomously generated plugin can be published to Interverse"
+    ],
+    "task_context": "Hyperspace AGI is a P2P autonomous AI research network using GossipSub, Loro CRDTs, and GitHub as a 3-layer coordination stack. Demarch is a single-operator multi-agent platform where Clavain orchestrates agents via interlock (file-based reservations) and beads (Dolt-backed issue tracking). The analysis must identify adoptable coordination patterns for a local, single-machine context.",
+    "anti_overlap": [
+      "fd-coordination-state-model covers CRDT/gossip infrastructure and interlock replacement, not plugin-specific evolution or skill scoring",
+      "fd-autonomous-work-loop covers the general research pipeline and mutation-based improvement for Skaffen/Autarch code work, not plugin ecosystem dynamics",
+      "fd-observability-data-model covers structured experiment formats and snapshot publishing for general agent observability, not plugin quality metrics or adoption tracking"
+    ]
+  }
+]
