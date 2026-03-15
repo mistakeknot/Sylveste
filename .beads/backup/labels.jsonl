@@ -158,6 +158,8 @@
 {"issue_id":"Demarch-80o","label":"ic_run_id:zm3uufu9"}
 {"issue_id":"Demarch-80o","label":"sprint:true"}
 {"issue_id":"Demarch-80o","label":"token_budget:250000"}
+{"issue_id":"Demarch-a4c","label":"claimed_at:1773590677"}
+{"issue_id":"Demarch-a4c","label":"claimed_by:a95b39b6-d362-4de5-97a3-9e8cd581160a"}
 {"issue_id":"Demarch-c4c","label":"claimed_at:1773256203"}
 {"issue_id":"Demarch-c4c","label":"claimed_by:8b79fb22-400e-49b4-94f4-da990fc10462"}
 {"issue_id":"Demarch-c4c","label":"complexity:3"}
