@@ -1,0 +1,48 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 300
+
+stages:
+  - name: "Foundation"
+    tasks:
+      - id: task-1
+        title: "Add SQLite dependency to interlab"
+        files: [interverse/interlab/go.mod, interverse/interlab/go.sum]
+        depends: []
+        tier: fast
+
+  - name: "Core Store + Benchmark"
+    tasks:
+      - id: task-2
+        title: "Implement mutation store (SQLite layer)"
+        files: [interverse/interlab/internal/mutation/store.go, interverse/interlab/internal/mutation/store_test.go]
+        depends: [task-1]
+      - id: task-4
+        title: "Write agent quality benchmark script"
+        files: [interverse/interlab/scripts/agent-quality-benchmark.sh]
+        depends: []
+
+  - name: "MCP Tools + Campaign"
+    tasks:
+      - id: task-3
+        title: "Implement mutation MCP tools"
+        files: [interverse/interlab/internal/mutation/tools.go, interverse/interlab/internal/mutation/tools_test.go, interverse/interlab/cmd/interlab-mcp/main.go]
+        depends: [task-2]
+      - id: task-5
+        title: "Create interflux self-review campaign directory"
+        files: [interverse/interlab/campaigns/interflux-self-review/README.md, interverse/interlab/campaigns/interflux-self-review/metric.md]
+        depends: [task-4]
+
+  - name: "Integration + Verification"
+    tasks:
+      - id: task-6
+        title: "Update /autoresearch for mutation store integration"
+        files: [interverse/interlab/skills/autoresearch/SKILL.md]
+        depends: [task-3]
+      - id: task-7
+        title: "Run full test suite and verify build"
+        files: []
+        depends: [task-3, task-4, task-5, task-6]
+        tier: fast
