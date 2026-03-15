@@ -7,7 +7,5 @@
 {"key":"compact_tier2_days","value":"90"}
 {"key":"compact_tier2_dep_levels","value":"5"}
 {"key":"compaction_enabled","value":"false"}
-{"key":"issue-prefix","value":"Typhon"}
-{"key":"issue_prefix","value":"Typhon"}
-{"key":"kv.memory.beads-prefix-bug-bd-config-set-issue-prefix","value":"Beads prefix bug: bd config set issue-prefix Revel succeeds but bd create still uses Typhon. The prefix is stored in the config table and reads correctly but the create command derives the prefix from somewhere else (possibly the dolt database name or a cached value). Filed as known issue — using Typhon prefix for now."}
+{"key":"issue_prefix","value":"Demarch"}
 {"key":"schema_version","value":"6"}
