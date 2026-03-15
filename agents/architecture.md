@@ -55,9 +55,10 @@ interpulse → interband → interline/intermem   # context pressure → statusl
 Clavain (L2) → interphase                     # phase tracking, gates, discovery
 Skaffen (L2) → masaq                          # TUI components, themes
 Skaffen (L2) → intercore (L1)                 # provider/tool system via Intercore bridge
+interlab → interlock                           # delta sharing — mutation broadcast across sessions
 ```
 
-Standalone plugins (no cross-deps): intercache, interchart, intercheck, intercraft, interdev, interfluence, interform, interhelm, interkasten, interknow, interlearn, interleave, interlens, intermap, intermonk, intermux, intername, internext, interpeer, interplug, interpub, interrank, interscribe, intersense, intership, intersight, interskill, interslack, interspect, interstat, intersynth, intertest, intertrace, intertrack, intertree, tldr-swinton, tool-time, tuivision.
+Standalone plugins (no cross-deps): intercache, interchart, intercheck, intercraft, interdev, interfluence, interform, interhelm, interkasten, interknow, interlearn, interleave, interlens, intermap, intermix, intermonk, intermux, intername, internext, interpeer, interplug, interpub, interrank, interscribe, intersense, intership, intersight, interskill, interslack, interspect, interstat, intersynth, intertest, intertrace, intertrack, intertree, tldr-swinton, tool-time, tuivision.
 
 ## Compatibility
 

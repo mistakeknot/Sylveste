@@ -1,6 +1,6 @@
 # Demarch — Agent Development Guide
 
-Open-source autonomous software development agency platform (Intercore, Clavain, Interverse, Autarch, Interspect).
+Open-source autonomous software development agency platform. Six pillars (Intercore, Clavain, Skaffen, Interverse, Autarch, Interspect) across three layers (L1 kernel, L2 OS, L3 apps). 57 Interverse plugins, 18 with MCP servers.
 
 ## Quick Reference
 
@@ -27,6 +27,19 @@ bd close <id> && git push                 # Complete work (`bd sync` first only 
 | Critical Patterns | [agents/critical-patterns.md](agents/critical-patterns.md) | Six must-know patterns from production failures |
 | Prerequisites | [agents/prerequisites.md](agents/prerequisites.md) | Required tools, secrets, Go module path convention |
 | Operational Guides | [agents/operational-guides.md](agents/operational-guides.md) | Guide index, prior solutions search, prior art pipeline, operational notes |
+
+## Recent Changes
+
+**interlab v0.4.2 — Mutation store and provenance tracking.** The `internal/mutation/` package adds a SQLite-backed mutation history store at `~/.local/share/interlab/mutations.db` with three new MCP tools:
+- `mutation_record` — Persist an approach attempt with hypothesis, quality signal, and provenance (inspired_by, session_id, campaign_id). Returns `is_new_best` status.
+- `mutation_query` — Query mutation history by task_type, campaign, quality threshold. Returns mutations sorted by quality (best first). Use at campaign start to seed hypotheses.
+- `mutation_genealogy` — Trace inspired_by provenance chains to visualize idea evolution across sessions and campaigns.
+
+**Agent quality benchmark.** `interverse/interlab/scripts/agent-quality-benchmark.sh` scores agent `.md` files and emits `METRIC agent_quality_score=N.NNNN` lines for use as interlab campaign benchmark commands.
+
+**Plugin quality scanner.** `interverse/interlab/scripts/scan-plugin-quality.sh` scores all Interverse plugins via `plugin-benchmark.sh`, ranks by PQS, and outputs a report. `scripts/generate-campaign-spec.sh` converts scan results into campaign specs consumable by `plan_campaigns` for automated multi-plugin improvement.
+
+**Delta sharing via interlock.** After recording a mutation, `/autoresearch` broadcasts it via interlock's `broadcast_message` (topic: `"mutation"`) so parallel sessions discover and build on each other's approaches. At campaign start, agents check `list_topic_messages` for cross-session mutations alongside `mutation_query`. Broadcasting is best-effort — failure does not block the campaign.
 
 ## Session Close Protocol
 
@@ -115,13 +128,13 @@ bd automatically syncs via Dolt:
 
 ### Important Rules
 
-- ✅ Use bd for ALL task tracking
-- ✅ Always use `--json` flag for programmatic use
-- ✅ Link discovered work with `discovered-from` dependencies
-- ✅ Check `bd ready` before asking "what should I work on?"
-- ❌ Do NOT create markdown TODO lists
-- ❌ Do NOT use external issue trackers
-- ❌ Do NOT duplicate tracking systems
+- Use bd for ALL task tracking
+- Always use `--json` flag for programmatic use
+- Link discovered work with `discovered-from` dependencies
+- Check `bd ready` before asking "what should I work on?"
+- Do NOT create markdown TODO lists
+- Do NOT use external issue trackers
+- Do NOT duplicate tracking systems
 
 For more details, see README.md and docs/QUICKSTART.md.
 
