@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "bead_id": "Demarch-zyx0",
+  "session_id": "unknown",
+  "title": "Fix negotiation force-release: check holder liveness via intermute Heartbeat before timeout",
+  "timestamp": "2026-03-15T01:47:26Z",
+  "duration_s": 1748,
+  "outcome": "closed",
+  "close_reason": "Added DeadAgentThreshold liveness check in ForceReleaseNegotiation — dead agents no longer block for 5min. All tests pass.",
+  "cost": {
+    "total_tokens": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "usd": 0
+  },
+  "artifacts": {
+    "commits": [
+      "77bdb9c"
+    ],
+    "files_changed": 18,
+    "lines_added": 3310,
+    "lines_removed": 13
+  },
+  "context": {
+    "issue_type": "bug",
+    "priority": 1,
+    "parent_bead": "",
+    "complexity": null
+  }
+}

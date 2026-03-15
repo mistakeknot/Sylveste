@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "bead_id": "Demarch-xgco",
+  "session_id": "unknown",
+  "title": "bd snapshot --json: consolidated system state for LLM analysis",
+  "timestamp": "2026-03-15T01:47:25Z",
+  "duration_s": 1816,
+  "outcome": "closed",
+  "close_reason": "Implemented .beads/scripts/snapshot.sh — 2.1KB output, 3.6s runtime, parallel data collection",
+  "cost": {
+    "total_tokens": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "usd": 0
+  },
+  "artifacts": {
+    "commits": [
+      "77bdb9c"
+    ],
+    "files_changed": 18,
+    "lines_added": 3310,
+    "lines_removed": 13
+  },
+  "context": {
+    "issue_type": "feature",
+    "priority": 0,
+    "parent_bead": "",
+    "complexity": null
+  }
+}
