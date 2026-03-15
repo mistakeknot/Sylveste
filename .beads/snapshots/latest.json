@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "timestamp": "2026-03-15T01:46:39Z",
+  "generated_by": "bd snapshot",
+  "counts": {
+    "total": 4522,
+    "open": 736,
+    "in_progress": 5,
+    "closed": 3781,
+    "blocked": 0
+  },
+  "velocity": {
+    "closed_last_7d": 1029,
+    "closed_last_24h": 283,
+    "cost_per_change_usd": 2.5167
+  },
+  "active_agents": [
+    {
+      "session_id": "unknown",
+      "bead_id": "Demarch-ir1l",
+      "claimed_at": "2026-03-15T01:42:50Z",
+      "title": "Fix fleet-registry schema: add orchestrator to category enum + routing_level field"
+    },
+    {
+      "session_id": "unknown",
+      "bead_id": "Demarch-xgco",
+      "claimed_at": "2026-03-15T01:42:49Z",
+      "title": "bd snapshot --json: consolidated system state for LLM analysis"
+    },
+    {
+      "session_id": "unknown",
+      "bead_id": "Demarch-5u8u",
+      "claimed_at": "2026-03-15T01:42:51Z",
+      "title": "plugin-benchmark.sh: enable interlab /autoresearch on plugin quality"
+    },
+    {
+      "session_id": "unknown",
+      "bead_id": "Demarch-3j0i",
+      "claimed_at": "2026-03-15T01:41:09Z",
+      "title": "Hyperspace AGI adoption: compound learning + observability + plugin evolution"
+    },
+    {
+      "session_id": "",
+      "bead_id": "iv-7iy1i",
+      "claimed_at": "",
+      "title": "[intercom] Warm container pool for faster response latency"
+    }
+  ],
+  "blockers": [],
+  "top_cost_beads_7d": [
+    {
+      "bead_id": "Demarch-6i0.8",
+      "tokens": 311261,
+      "runs": 33
+    },
+    {
+      "bead_id": "Demarch-u2b",
+      "tokens": 167990,
+      "runs": 20
+    },
+    {
+      "bead_id": "Demarch-fqb",
+      "tokens": 164715,
+      "runs": 2
+    },
+    {
+      "bead_id": "Demarch-hq9",
+      "tokens": 161588,
+      "runs": 11
+    },
+    {
+      "bead_id": "Demarch-0ir",
+      "tokens": 119167,
+      "runs": 8
+    }
+  ],
+  "session_stats": {
+    "total_conversations": 11075,
+    "total_messages": 222735,
+    "top_agents": [
+      {
+        "agent": "gemini",
+        "count": 5928
+      },
+      {
+        "agent": "codex",
+        "count": 2992
+      },
+      {
+        "agent": "claude_code",
+        "count": 2155
+      }
+    ]
+  }
+}
