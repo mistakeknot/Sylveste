@@ -161,3 +161,48 @@ func stripANSI(s string) string {
 	}
 	return out.String()
 }
+
+func TestCompactMode(t *testing.T) {
+	m := breadcrumb.New(80)
+	m.SetSteps([]breadcrumb.Step{
+		{Label: "orient", Status: breadcrumb.Done},
+		{Label: "observe", Status: breadcrumb.Done},
+		{Label: "decide", Status: breadcrumb.Active},
+		{Label: "act", Status: breadcrumb.Pending},
+		{Label: "reflect", Status: breadcrumb.Pending},
+		{Label: "compound", Status: breadcrumb.Pending},
+	})
+	m.SetCompact("OODARC")
+	view := m.View()
+	if view == "" {
+		t.Fatal("compact view should not be empty")
+	}
+	// Should contain the letters O, O, D, A, R, C
+	stripped := stripANSI(view)
+	if !strings.Contains(stripped, "OODARC") {
+		t.Fatalf("compact view should contain 'OODARC', got %q", stripped)
+	}
+}
+
+func TestCompactModeOff(t *testing.T) {
+	m := breadcrumb.New(80)
+	m.SetSteps([]breadcrumb.Step{
+		{Label: "orient", Status: breadcrumb.Active},
+	})
+	m.SetCompact("")
+	view := m.View()
+	if !strings.Contains(stripANSI(view), "orient") {
+		t.Fatal("non-compact view should show full label")
+	}
+}
+
+func TestCompactAccessor(t *testing.T) {
+	m := breadcrumb.New(80)
+	if m.Compact() != "" {
+		t.Fatal("default should be non-compact")
+	}
+	m.SetCompact("OODARC")
+	if m.Compact() != "OODARC" {
+		t.Fatalf("Compact() = %q, want OODARC", m.Compact())
+	}
+}

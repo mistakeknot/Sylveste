@@ -30,8 +30,10 @@ type Step struct {
 
 // Model is a horizontal breadcrumb trail.
 type Model struct {
-	width int
-	steps []Step
+	width   int
+	steps   []Step
+	compact bool   // render as single word with per-letter coloring
+	word    string // compact mode word (e.g. "OODARC"); len must match steps
 }
 
 // New creates a breadcrumb with the given display width.
@@ -46,6 +48,22 @@ func New(width int) Model {
 func (m *Model) SetSteps(steps []Step) {
 	m.steps = make([]Step, len(steps))
 	copy(m.steps, steps)
+}
+
+// SetCompact enables compact mode where steps render as individual letters of a
+// word (e.g. "OODARC") with per-letter coloring based on status. The word must
+// have the same length as the number of steps.
+func (m *Model) SetCompact(word string) {
+	m.compact = word != ""
+	m.word = word
+}
+
+// Compact returns the compact word, or empty string if not in compact mode.
+func (m Model) Compact() string {
+	if m.compact {
+		return m.word
+	}
+	return ""
 }
 
 // Push adds a new step as Active, transitioning the previous Active step to Done.
@@ -69,9 +87,15 @@ func (m *Model) Complete() {
 }
 
 // View renders the breadcrumb as a single-line string with left-truncation.
+// In compact mode, renders as a colored word (e.g. "OODARC") where each
+// letter takes the color of its corresponding step's status.
 func (m Model) View() string {
 	if m.width == 0 || len(m.steps) == 0 {
 		return ""
+	}
+
+	if m.compact && len(m.word) > 0 {
+		return m.viewCompact()
 	}
 
 	sem := theme.Current().Semantic()
@@ -156,6 +180,36 @@ func (m Model) View() string {
 		}
 		sb.WriteString(items[i].text)
 		first = false
+	}
+	return sb.String()
+}
+
+// viewCompact renders the breadcrumb as a colored word where each letter
+// reflects its step's status. Active letters are bold with the Active color,
+// done letters use Success, pending use Muted.
+func (m Model) viewCompact() string {
+	sem := theme.Current().Semantic()
+	doneStyle := lipgloss.NewStyle().Foreground(sem.Success.Color())
+	activeStyle := lipgloss.NewStyle().Foreground(sem.Active.Color()).Bold(true)
+	pendingStyle := lipgloss.NewStyle().Foreground(sem.Muted.Color())
+
+	runes := []rune(m.word)
+	var sb strings.Builder
+	sb.WriteString(" ") // left padding to match status bar
+	for i, r := range runes {
+		ch := string(r)
+		if i < len(m.steps) {
+			switch m.steps[i].Status {
+			case Done:
+				sb.WriteString(doneStyle.Render(ch))
+			case Active:
+				sb.WriteString(activeStyle.Render(ch))
+			default:
+				sb.WriteString(pendingStyle.Render(ch))
+			}
+		} else {
+			sb.WriteString(pendingStyle.Render(ch))
+		}
 	}
 	return sb.String()
 }
