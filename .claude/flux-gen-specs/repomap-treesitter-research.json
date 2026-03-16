@@ -1,0 +1,127 @@
+[
+  {
+    "name": "fd-repomap-build-vs-integrate",
+    "focus": "Evaluate build-vs-integrate-vs-hybrid decision for the repomap: pure Go native, MCP-delegated to intermap, or hybrid with Go owning token-fitting and intermap owning parsing",
+    "persona": "A pragmatic systems architect who has shipped production AI tooling in both Go and Python, with deep experience evaluating make-vs-buy tradeoffs for infrastructure components. Approaches decisions through the lens of total cost of ownership across development, maintenance, and runtime dimensions.",
+    "decision_lens": "Prioritizes which boundary minimizes long-term coupling cost and preserves Skaffen's ability to degrade gracefully. Flags whenever a choice creates an irreversible dependency or violates the 'infrastructure unlocks autonomy' principle.",
+    "review_areas": [
+      "Assess Go tree-sitter binding maturity: smacker/go-tree-sitter CGO requirement vs CGO_ENABLED=0 constraint — is a pure-Go parser (participle, sitter-go-wasm, or regex-based tag extractor) viable for the 5-10 languages Skaffen actually needs?",
+      "Audit intermap's existing Python sidecar startup cost (~200ms saved per call, crash recovery, auto-respawn) against the 'MCP tools are slower than built-ins' sovereignty concern — measure whether the latency delta matters on the OODARC workflow's critical path",
+      "Map which parts of the pipeline can only live in Go (token budget arithmetic, priompt.Element assembly, binary-search fitting) vs which parts have no compelling reason not to reuse intermap (multi-language tag extraction, cross-file call graph)",
+      "Evaluate the 'graceful degradation' path for each option: if intermap MCP is unavailable, does Go fall back to the current go/ast naive map or a degraded identifier scan? What is the UX difference?",
+      "Check whether intermap's code_structure and impact_analysis tools already expose the tag/reference data needed for PageRank input, or whether a new tool surface is required — avoid building what already exists",
+      "Examine the sovereignty risk of depending on a Python sidecar for a core prompt-assembly feature: process lifecycle, port conflicts, version drift between Skaffen and intermap releases"
+    ],
+    "success_hints": [
+      "A clear decision matrix mapping each pipeline stage (parse → graph → rank → fit → format) to its owner (Go / intermap MCP / either) with explicit fallback behavior for each stage",
+      "Latency budget estimate for the MCP path (round-trip overhead × expected call frequency per OODARC turn) sufficient to accept or reject delegation as viable",
+      "Identification of the minimum new intermap tool surface needed if hybrid is chosen, to avoid duplicating intermap work in Skaffen"
+    ],
+    "task_context": "Skaffen is a pure-Go (CGO_ENABLED=0) sovereign agent runtime that needs a conversation-aware, token-budgeted repo map for LLM context. Intermap is a mature Go+Python MCP plugin with 3200 lines of tree-sitter analysis across 15+ languages that Skaffen can already call via its MCP client infrastructure.",
+    "anti_overlap": [
+      "fd-repomap-graph-model covers which graph representation and PageRank variant to use — this agent stays at the architectural boundary question, not the algorithm",
+      "fd-repomap-priompt-integration covers how the ranked output wires into priompt.Element and token budget fitting — this agent stops at 'who owns the data', not 'how it flows into the prompt'",
+      "fd-repomap-alternatives covers non-Aider approaches (embedding-based retrieval, LSP-based graphs, static analysis tools) — this agent focuses on the build/integrate axis for the Aider-style approach specifically"
+    ]
+  },
+  {
+    "name": "fd-repomap-graph-model",
+    "focus": "Evaluate graph representation, PageRank variant, and conversation personalization strategy for the code reference graph",
+    "persona": "A graph algorithms practitioner with experience applying PageRank variants to information retrieval and code navigation problems. Treats graph construction choices as precision/recall tradeoffs and evaluates personalization vectors as a signal quality problem.",
+    "decision_lens": "Flags any algorithm choice that adds complexity without measurable retrieval improvement at Skaffen's typical repo size (hundreds to low-thousands of files). Prefers approaches with deterministic fallbacks over ones that require tuning.",
+    "review_areas": [
+      "Analyze Aider's tag-extraction → identifier-reference graph → personalized PageRank pipeline: specifically the edge construction (definition node → reference node vs file → file via shared identifiers) and whether the bipartite tag graph structure is necessary or an artifact of Aider's ctags heritage",
+      "Evaluate pure Go graph library options (dominikbraun/graph, yourbasic/graph, hand-rolled adjacency list) against the operation set needed: edge insertion, personalized PageRank with sparse teleportation vector, iteration until convergence — check if any require CGO",
+      "Assess conversation personalization signal quality: Aider seeds the teleportation vector with identifiers mentioned in recent chat turns — compare against alternatives (recently edited files, open files in contextfiles, git-diff touched files) and their noise/signal tradeoffs",
+      "Examine convergence behavior at scale: at 100, 500, 2000 file repositories, how many iterations does power-iteration PageRank need, and what is the wall-clock cost in Go with a sparse adjacency list?",
+      "Evaluate whether a simplified HITS-style authority score (files that define symbols referenced by many other files) provides equivalent ranking quality to full PageRank with less implementation complexity and no convergence loop",
+      "Check whether the graph needs to be rebuilt per query (expensive) or can be cached and updated incrementally on file change — assess intermap's project_index.py as a potential persistent graph store vs in-memory rebuild"
+    ],
+    "success_hints": [
+      "A concrete recommendation on graph edge semantics (identifier-level bipartite, file-level co-reference, or hybrid) with reasoning grounded in retrieval quality for typical agent tasks",
+      "A Go implementation sketch of the PageRank iteration that satisfies CGO_ENABLED=0 and converges in under 50ms for a 500-file repo",
+      "Explicit recommendation on whether to cache the graph between turns or rebuild per query, with cache invalidation trigger (git hash, file mtime, or file watcher)"
+    ],
+    "task_context": "Skaffen is a pure-Go (CGO_ENABLED=0) sovereign agent runtime that needs a conversation-aware, token-budgeted repo map for LLM context. Intermap is a mature Go+Python MCP plugin with 3200 lines of tree-sitter analysis across 15+ languages that Skaffen can already call via its MCP client infrastructure.",
+    "anti_overlap": [
+      "fd-repomap-build-vs-integrate covers whether the graph computation lives in Go or is delegated to intermap — this agent assumes a graph exists and focuses on its structure and algorithm",
+      "fd-repomap-priompt-integration covers how ranked file scores are converted into token-budgeted priompt.Elements — this agent stops at the ranked score vector",
+      "fd-repomap-alternatives covers non-PageRank ranking approaches (embedding cosine similarity, BM25, LSP workspace symbols) — this agent focuses on PageRank and its direct variants only"
+    ]
+  },
+  {
+    "name": "fd-repomap-priompt-integration",
+    "focus": "Design the interface between the ranked repomap output and Skaffen's priompt token-budget system, including element structure, binary-search fitting, cache-stability, and phase-aware priority",
+    "persona": "A prompt engineering systems designer who thinks about context assembly as a data pipeline with hard token constraints. Has deep familiarity with Skaffen's priompt.Element/Render API and the OODARC phase model.",
+    "decision_lens": "Every design choice is evaluated against two questions: does it keep the stable prompt prefix intact for Anthropic cache hits, and does it degrade gracefully when the token budget shrinks?",
+    "review_areas": [
+      "Map the repomap output format (ranked file list with symbols) to priompt.Element fields: what Priority value range is appropriate relative to other system prompt sections, should it use Stable=true or false, and which PhaseBoost values make sense per OODARC phase (build vs brainstorm need different code context weight)",
+      "Evaluate binary-search token fitting: Aider bisects the ranked file list until it fits the budget — assess whether this logic belongs in the priompt.ContentFunc closure (called per render), in a pre-render caching layer, or as a new priompt API (e.g. a BudgetedList element type)",
+      "Analyze the interaction between repomap token consumption and the estimateMessageTokens budget subtraction in agent/loop.go — the repomap is a system prompt element but must leave headroom for conversation history; model the worst-case token partition",
+      "Design the ContentFunc signature for a dynamic repomap element: what inputs does it need (conversation text for personalization seed, current phase, remaining budget), and how does it avoid blocking the render hot path with a slow graph computation",
+      "Check whether RenderResult.StableTokens is invalidated if the repomap element changes rank between turns (it will) — evaluate whether the repomap should be non-stable (dynamic) and what that costs in cache hit rate",
+      "Assess the output format rendered into the prompt: Aider uses a specific text format with file paths and tag signatures — evaluate alternatives (JSON, markdown code fence, concise symbol index) for LLM parse quality per token"
+    ],
+    "success_hints": [
+      "A concrete priompt.Element definition for the repomap section including Priority, PhaseBoost map, Stable flag, and ContentFunc interface contract",
+      "A token partition model showing how repomap budget interacts with system prompt stable prefix, conversation history, and tool result headroom at 100k and 200k context windows",
+      "A clear recommendation on whether binary-search fitting happens inside ContentFunc or as a pre-computation step, with rationale about blocking vs async tradeoffs in the TUI render loop"
+    ],
+    "task_context": "Skaffen is a pure-Go (CGO_ENABLED=0) sovereign agent runtime that needs a conversation-aware, token-budgeted repo map for LLM context. The priompt system uses ContentFunc/Element/Render to assemble system prompts within a token budget, with cache-stable prefixes and phase-aware priority boosts.",
+    "anti_overlap": [
+      "fd-repomap-build-vs-integrate covers where graph computation lives (Go vs intermap) — this agent assumes ranked scores are available and focuses on the downstream prompt assembly",
+      "fd-repomap-graph-model covers the PageRank algorithm and ranking computation — this agent starts where ranked scores end",
+      "fd-repomap-alternatives covers non-Aider ranking strategies — this agent is algorithm-agnostic and focuses on the priompt integration contract regardless of ranking source"
+    ]
+  },
+  {
+    "name": "fd-repomap-alternatives",
+    "focus": "Research and evaluate non-Aider approaches to conversation-aware code context retrieval: embedding-based, LSP-based, git-signal-based, and hybrid ranking alternatives",
+    "persona": "A retrieval systems researcher with practical experience implementing code search, semantic indexing, and context-aware file selection for AI coding tools. Approaches alternatives comparisons empirically — what has shipped and worked in production, not just what sounds elegant.",
+    "decision_lens": "Prioritizes approaches that can be implemented incrementally and degrade to the current go/ast naive map rather than requiring a full rewrite. Flags approaches that introduce heavyweight dependencies or require a persistent index daemon incompatible with Skaffen's zero-infrastructure philosophy.",
+    "review_areas": [
+      "Evaluate LSP workspace/symbol as an alternative tag source: many projects already have a language server running; assess whether Skaffen could query gopls (for Go repos) via JSON-RPC to get symbol definitions and references without any tree-sitter or regex parsing, and whether this is practical across languages",
+      "Assess embedding-based file retrieval (e.g. intersearch plugin's embedding_query) as an alternative to PageRank: embed conversation text, retrieve top-K semantically similar files — evaluate precision/recall vs graph rank for typical agentic tasks, latency, and the cold-start problem for new repos",
+      "Examine git-signal heuristics as a lightweight alternative or complement: recently modified files, files co-changed with conversation-mentioned files (git log --follow), files with high churn correlated with current task type — evaluate as a PageRank personalization seed or as a standalone fallback",
+      "Survey what Cursor, Copilot Workspace, and Continue.dev use for repo-context retrieval beyond Aider's approach — identify whether any open-source implementations exist in Go or with clean FFI boundaries",
+      "Evaluate the CASS session intelligence backend (already assessed as 'adopt' in Demarch) as a source of file relevance signal: cass context <path> returns sessions that touched a file — assess whether cross-session file access patterns are a useful PageRank seed or prior",
+      "Assess the 'no graph at all' baseline: a BM25 or TF-IDF keyword index over symbol names and file paths, queried with conversation text — what is the quality ceiling and implementation cost vs a full PageRank approach for Skaffen's primary use cases"
+    ],
+    "success_hints": [
+      "A ranked shortlist of 2-3 alternative approaches with explicit quality/complexity/latency tradeoffs that could be adopted as the primary strategy or as fallback layers",
+      "Identification of any approach that could be layered on top of the Aider-style graph (e.g. git signal as personalization seed) rather than replacing it",
+      "A verdict on whether the intersearch embedding_query tool already available in Interverse is good enough to serve as a viable alternative, and what would need to change in intermap or Skaffen to use it"
+    ],
+    "task_context": "Skaffen is a pure-Go (CGO_ENABLED=0) sovereign agent runtime that needs a conversation-aware, token-budgeted repo map for LLM context. The Aider approach (tree-sitter tags → identifier reference graph → personalized PageRank → binary-search token fitting) is the primary candidate but alternatives should be evaluated on their merits.",
+    "anti_overlap": [
+      "fd-repomap-build-vs-integrate covers the build/integrate decision for the Aider-style approach — this agent evaluates whether Aider's approach should be the approach at all",
+      "fd-repomap-graph-model covers PageRank algorithm variants assuming the graph approach is chosen — this agent questions whether a graph is needed",
+      "fd-repomap-priompt-integration covers how any ranked output plugs into priompt — this agent is upstream of that, focused on what produces the ranking"
+    ]
+  },
+  {
+    "name": "fd-repomap-tag-extraction-surface",
+    "focus": "Evaluate tag extraction strategies and the intermap Python bridge as the parsing substrate: what node types to extract, which languages to prioritize, and how to expose this as a clean Go interface in Skaffen",
+    "persona": "A language tooling engineer who has worked with tree-sitter grammars, ctags, and language server protocol across polyglot codebases. Cares deeply about extraction correctness, grammar maintenance burden, and the practical difference between definition tags and reference tags for graph construction.",
+    "decision_lens": "Evaluates extraction approaches by their signal-to-noise ratio for graph construction — tags that produce low-quality graph edges (e.g. over-extracted string literals, under-extracted interface implementations) hurt ranking more than they help. Prefers narrow, high-confidence extraction over broad, noisy extraction.",
+    "review_areas": [
+      "Audit intermap's cross_file_calls.py (116KB, the largest file) for which tree-sitter node types it currently extracts as definitions vs references, and whether its output schema maps cleanly to the (definer_file, tag_name, referencer_file) triples needed for a PageRank edge list",
+      "Compare ctags-based extraction (Aider's original approach, still available as Universal Ctags binary) vs tree-sitter for the languages Skaffen most commonly works in — Go, Python, TypeScript, Rust — and evaluate the quality gap for definition/reference disambiguation",
+      "Assess the Go bridge to intermap's Python sidecar (internal/python/bridge.go): what is the serialization format for tag extraction requests and responses, and can it return a structured edge list or only the current code_structure/impact_analysis JSON shapes?",
+      "Evaluate whether a new intermap MCP tool (e.g. tag_graph or reference_edges) should be added to expose raw definition+reference pairs for external graph construction, vs adapting impact_analysis output to serve the same purpose",
+      "Examine language coverage gaps: intermap covers 15+ languages but Skaffen operates in arbitrary repos — identify which languages commonly appear in agent target repos that have poor tree-sitter grammar quality or missing coverage in intermap, and what the degradation path is",
+      "Assess the viability of a Go-native pure-regex fallback for Go files only (extending the current repomap.go go/ast approach to emit reference pairs) as the Skaffen-native baseline when intermap is unavailable"
+    ],
+    "success_hints": [
+      "A proposed output schema for an intermap tag_graph or reference_edges tool that provides what the PageRank graph builder needs without requiring intermap to implement PageRank itself",
+      "A language coverage matrix showing which of the top-10 languages Skaffen agents encounter are fully supported, degraded, or unsupported by intermap's tree-sitter extraction",
+      "A concrete assessment of whether cross_file_calls.py's existing output can be adapted to produce a PageRank-ready edge list with minimal new Python code, or requires a new extraction pipeline"
+    ],
+    "task_context": "Skaffen is a pure-Go (CGO_ENABLED=0) sovereign agent runtime that needs a conversation-aware, token-budgeted repo map for LLM context. Intermap is a mature Go+Python MCP plugin where the Python analysis layer (particularly cross_file_calls.py at 116KB) does tree-sitter-based tag extraction across 15+ languages via a persistent sidecar bridge.",
+    "anti_overlap": [
+      "fd-repomap-build-vs-integrate covers the architectural boundary decision between Skaffen and intermap — this agent focuses on the extraction layer's correctness and schema, not where it runs",
+      "fd-repomap-graph-model covers how extracted tags are assembled into a graph and ranked — this agent stops at the edge list output, before graph construction",
+      "fd-repomap-alternatives covers non-tree-sitter retrieval strategies — this agent assumes tree-sitter tag extraction and evaluates its quality and interface shape"
+    ]
+  }
+]

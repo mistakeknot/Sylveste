@@ -1,0 +1,47 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 600
+
+stages:
+  - name: "Core Infrastructure"
+    tasks:
+      - id: task-1
+        title: "Extract repomap to internal/repomap/ package"
+        files: [os/Skaffen/internal/repomap/extract.go, os/Skaffen/internal/repomap/extract_test.go, os/Skaffen/internal/tui/repomap.go]
+        depends: []
+      - id: task-2
+        title: "Implement personalized PageRank"
+        files: [os/Skaffen/internal/repomap/pagerank.go, os/Skaffen/internal/repomap/pagerank_test.go]
+        depends: [task-1]
+
+  - name: "Priompt Integration + Intermap Tool"
+    tasks:
+      - id: task-3
+        title: "Add priompt Element with ContentFunc and token fitting + PriomptSession migration"
+        files: [os/Skaffen/internal/repomap/element.go, os/Skaffen/internal/repomap/element_test.go, os/Skaffen/cmd/skaffen/main.go]
+        depends: [task-2]
+      - id: task-4
+        title: "Add intermap reference_edges MCP tool"
+        files: [interverse/intermap/python/intermap/analyze.py, interverse/intermap/internal/tools/tools.go]
+        depends: []
+
+  - name: "Integration"
+    tasks:
+      - id: task-5
+        title: "Wire Skaffen to intermap MCP with graceful degradation"
+        files: [os/Skaffen/internal/repomap/mcp.go, os/Skaffen/internal/repomap/mcp_test.go, os/Skaffen/internal/repomap/element.go]
+        depends: [task-3, task-4]
+      - id: task-6
+        title: "Add conversation personalization"
+        files: [os/Skaffen/internal/repomap/personalize.go, os/Skaffen/internal/repomap/personalize_test.go, os/Skaffen/internal/repomap/element.go]
+        depends: [task-5]
+
+  - name: "Verification"
+    tasks:
+      - id: task-7
+        title: "Integration test and cleanup"
+        files: [os/Skaffen/internal/repomap/element_test.go]
+        depends: [task-6]
+        tier: fast
