@@ -28,7 +28,7 @@ bash ~/.codex/clavain/scripts/install-codex-interverse.sh doctor
 If any are missing, run:
 
 ```bash
-bash os/clavain/scripts/install-codex-interverse.sh install
+bash os/Clavain/scripts/install-codex-interverse.sh install
 ```
 
 ## Fresh Install (standalone)
@@ -48,7 +48,7 @@ bash ~/.codex/clavain/scripts/install-codex-interverse.sh install
 ```
 
 This reconciles the full Codex companion ecosystem:
-- Updates or clones all recommended Interverse repos declared in `os/clavain/agent-rig.json`
+- Updates or clones all recommended Interverse repos declared in `os/Clavain/agent-rig.json`
 - Links every companion skill discovered under `skills/**/SKILL.md` with valid frontmatter
 - Generates Clavain prompt wrappers in `~/.codex/prompts/clavain-*.md`
 - Generates companion prompt wrappers in `~/.codex/prompts/<plugin>-<command>.md`

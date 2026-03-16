@@ -246,7 +246,7 @@ Revenue, when it matters, comes from managed hosting, enterprise support, and pr
 As of March 2026:
 
 - **Kernel:** 8 of 10 epics shipped (E1-E8). Runs, phases, gates, dispatches, events, discovery pipeline, rollback, portfolio orchestration, TOCTOU prevention, cost-aware scheduling, fair spawn scheduler, sandbox specs, durable session attribution (v26). All landed and tested. Remaining: E9 (Autarch Phase 2 — Pollard + Gurgeh migration) and E10 (Sandboxing + Autarch Phase 3).
-- **OS:** Full sprint lifecycle (brainstorm → ship) is kernel-driven. Sprint consolidation complete (`/route → /sprint → /work` unified into adaptive single-entry workflow). For current stats: `grep -c '^##' os/clavain/skills/*/SKILL.md` (skills), `ls os/clavain/agents/` (agents).
+- **OS:** Full sprint lifecycle (brainstorm → ship) is kernel-driven. Sprint consolidation complete (`/route → /sprint → /work` unified into adaptive single-entry workflow). For current stats: `grep -c '^##' os/Clavain/skills/*/SKILL.md` (skills), `ls os/Clavain/agents/` (agents).
 - **Model routing:** Static routing, complexity-aware routing (C1-C5), and routing override chain (F1-F5) shipped. Adaptive routing (B3) is the next frontier — evidence pipeline and canary monitoring.
 - **Agency architecture:** Track C fully shipped (C1-C5). Agency specs, fleet registry, composer, cross-phase handoff, and self-building loop all landed and tested.
 - **Review engine:** 12 specialized review agents + 5 research agents, deployed through interflux with multi-agent synthesis. Capability declarations shipped. Interoperability benchmark harness completed.
@@ -296,4 +296,4 @@ The project began by merging [superpowers](https://github.com/obra/superpowers),
 
 ---
 
-*Module inventory, model routing stages, and adoption ladder: [demarch-reference.md](./demarch-reference.md). Layer-specific vision docs: [Intercore](../core/intercore/docs/intercore-roadmap.md) (kernel), [Clavain](../os/clavain/docs/clavain-vision.md) (OS), [Skaffen](../os/Skaffen/PHILOSOPHY.md) (sovereign runtime), [Autarch](../apps/autarch/docs/autarch-vision.md) (apps), [Interspect](./interspect-vision.md) (profiler, [roadmap](./interspect-roadmap.md)).*
+*Module inventory, model routing stages, and adoption ladder: [demarch-reference.md](./demarch-reference.md). Layer-specific vision docs: [Intercore](../core/intercore/docs/intercore-roadmap.md) (kernel), [Clavain](../os/Clavain/docs/clavain-vision.md) (OS), [Skaffen](../os/Skaffen/PHILOSOPHY.md) (sovereign runtime), [Autarch](../apps/Autarch/docs/autarch-vision.md) (apps), [Interspect](./interspect-vision.md) (profiler, [roadmap](./interspect-roadmap.md)).*

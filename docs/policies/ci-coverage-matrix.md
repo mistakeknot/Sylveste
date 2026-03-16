@@ -24,13 +24,13 @@
 ### Apps (L3)
 | Repo | Tests | Framework |
 |------|-------|-----------|
-| apps/autarch | `go test -race` | Go |
+| apps/Autarch | `go test -race` | Go |
 | apps/intercom | `vitest` + skill matrix | Node/TypeScript |
 
 ### OS (L2)
 | Repo | Tests | Framework |
 |------|-------|-----------|
-| os/clavain | `pytest` + `bats` + shellcheck | Python/Bash |
+| os/Clavain | `pytest` + `bats` + shellcheck | Python/Bash |
 
 ### SDK
 | Repo | Tests | Framework |

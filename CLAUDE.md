@@ -17,6 +17,16 @@ When you have enough context to start implementing, do it. Write a 3-bullet inli
 - GitHub repos match: `github.com/mistakeknot/interflux`
 - **Pillars** are the 6 top-level components: Intercore, Clavain, Skaffen, Interverse, Autarch, Interspect
 - **Layers** (L1/L2/L3) describe architectural dependency; pillars describe organizational structure
+- **Directory casing**: Pillar directories use their proper casing (`os/Clavain/`, `apps/Autarch/`, `os/Skaffen/`). Never create lowercase duplicates — Claude Code autodiscovers all `.claude-plugin/plugin.json` files and case variants cause triple-loading.
+
+## Plugin Collision Rules
+
+Claude Code autodiscovers plugins in the monorepo by walking for `.claude-plugin/plugin.json`. In a monorepo this means **every subproject plugin loads simultaneously**. Rules to avoid collisions:
+
+- **One canonical owner per command/skill name.** When a capability is extracted from Clavain into a companion plugin (e.g., interpeer, interlab), remove the command/skill from Clavain's `plugin.json`.
+- **Delegation facades are fine.** Companion plugins (interkasten, interwatch, interpath) can register namespaced commands (`doctor`, `status`, `changelog`) that delegate to Clavain — these are safe because Claude Code qualifies them as `interkasten:doctor`, etc.
+- **Never duplicate case-variant directories.** `os/Clavain/` and `os/clavain/` both contain `.claude-plugin/plugin.json` with `name: "clavain"` — Claude Code loads both, causing every command to register twice.
+- **Extracted plugins own their domain.** If a plugin was "extracted from Clavain" (see its CLAUDE.md), the plugin is canonical — Clavain must not re-register those commands/skills.
 
 ## Work Tracking
 

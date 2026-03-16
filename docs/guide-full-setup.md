@@ -72,7 +72,7 @@ Expected: `clavain`, `interdoc`, `tool-time`, `tldrs-agent-workflow`
 If you installed Codex after running the main installer, set up skills manually:
 
 ```bash
-bash os/clavain/scripts/install-codex-interverse.sh install
+bash os/Clavain/scripts/install-codex-interverse.sh install
 ```
 
 Restart Codex after installation. See the [Codex Setup Guide](guide-codex-setup.md) for details, migration from legacy patterns, and troubleshooting.
