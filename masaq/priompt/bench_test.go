@@ -112,6 +112,21 @@ func BenchmarkRenderDynamic50(b *testing.B) {
 	}
 }
 
+func BenchmarkPackingEfficiency(b *testing.B) {
+	elems := makeElements(100)
+	budget := 2000 // tight budget to maximize exclusion pressure
+	b.ReportAllocs()
+	b.ResetTimer()
+	var lastResult priompt.RenderResult
+	for i := 0; i < b.N; i++ {
+		lastResult = priompt.Render(elems, budget, priompt.WithPhase("execute"))
+	}
+	b.ReportMetric(lastResult.PackingEfficiency, "packing_eff")
+	b.ReportMetric(float64(lastResult.WastedTokens), "wasted_tokens")
+	b.ReportMetric(float64(lastResult.ExcludedPrioritySum), "excluded_pri_sum")
+	b.ReportMetric(float64(len(lastResult.Included)), "included_count")
+}
+
 func BenchmarkCharHeuristic(b *testing.B) {
 	h := priompt.CharHeuristic{Ratio: 4}
 	text := strings.Repeat("The quick brown fox jumps. ", 100) // ~2600 chars

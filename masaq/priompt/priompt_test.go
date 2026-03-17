@@ -434,3 +434,322 @@ func TestNegativeBoostDemotes(t *testing.T) {
 		t.Fatalf("negative boost should demote, got %v", r.Included)
 	}
 }
+
+// --- ContentFunc (dynamic rendering) tests ---
+
+func TestContentFuncOverridesStatic(t *testing.T) {
+	elems := []priompt.Element{
+		{
+			Name:     "dynamic",
+			Content:  "static fallback",
+			Priority: 10,
+			Render: func(ctx priompt.RenderContext) string {
+				return "dynamic content"
+			},
+		},
+	}
+	r := priompt.Render(elems, 10000)
+	if r.Prompt != "dynamic content" {
+		t.Fatalf("expected dynamic content, got %q", r.Prompt)
+	}
+}
+
+func TestContentFuncReceivesPhase(t *testing.T) {
+	elems := []priompt.Element{
+		{
+			Name:     "phase-aware",
+			Priority: 10,
+			Render: func(ctx priompt.RenderContext) string {
+				return "phase=" + ctx.Phase
+			},
+		},
+	}
+	r := priompt.Render(elems, 10000, priompt.WithPhase("build"))
+	if r.Prompt != "phase=build" {
+		t.Fatalf("expected phase=build, got %q", r.Prompt)
+	}
+}
+
+func TestContentFuncReceivesModel(t *testing.T) {
+	elems := []priompt.Element{
+		{
+			Name:     "model-aware",
+			Priority: 10,
+			Render: func(ctx priompt.RenderContext) string {
+				return "model=" + ctx.Model
+			},
+		},
+	}
+	r := priompt.Render(elems, 10000, priompt.WithModel("opus"))
+	if r.Prompt != "model=opus" {
+		t.Fatalf("expected model=opus, got %q", r.Prompt)
+	}
+}
+
+func TestContentFuncReceivesTurnCount(t *testing.T) {
+	var gotTurn int
+	elems := []priompt.Element{
+		{
+			Name:     "turn-aware",
+			Priority: 10,
+			Render: func(ctx priompt.RenderContext) string {
+				gotTurn = ctx.TurnCount
+				return "ok"
+			},
+		},
+	}
+	priompt.Render(elems, 10000, priompt.WithTurnCount(42))
+	if gotTurn != 42 {
+		t.Fatalf("expected turn count 42, got %d", gotTurn)
+	}
+}
+
+func TestContentFuncEmptyExcludes(t *testing.T) {
+	elems := []priompt.Element{
+		{
+			Name:     "conditional",
+			Priority: 10,
+			Render: func(ctx priompt.RenderContext) string {
+				if ctx.Phase == "build" {
+					return "build instructions"
+				}
+				return "" // excluded in other phases
+			},
+		},
+		{Name: "always", Content: "hello", Priority: 5},
+	}
+	// In review phase, conditional returns empty → excluded
+	r := priompt.Render(elems, 10000, priompt.WithPhase("review"))
+	if len(r.Included) != 1 || r.Included[0] != "always" {
+		t.Fatalf("conditional should be excluded in review, got %v", r.Included)
+	}
+	// In build phase, conditional returns content → included
+	r2 := priompt.Render(elems, 10000, priompt.WithPhase("build"))
+	if len(r2.Included) != 2 {
+		t.Fatalf("conditional should be included in build, got %v", r2.Included)
+	}
+}
+
+func TestContentFuncNilFallsBackToContent(t *testing.T) {
+	elems := []priompt.Element{
+		{Name: "static", Content: "hello", Priority: 10, Render: nil},
+	}
+	r := priompt.Render(elems, 10000)
+	if r.Prompt != "hello" {
+		t.Fatalf("nil Render should use static Content, got %q", r.Prompt)
+	}
+}
+
+func TestContentFuncBudgetInContext(t *testing.T) {
+	var gotBudget int
+	elems := []priompt.Element{
+		{
+			Name:     "budget-aware",
+			Priority: 10,
+			Render: func(ctx priompt.RenderContext) string {
+				gotBudget = ctx.Budget
+				return "ok"
+			},
+		},
+	}
+	priompt.Render(elems, 5000)
+	if gotBudget != 5000 {
+		t.Fatalf("expected budget 5000, got %d", gotBudget)
+	}
+}
+
+// --- Packing efficiency observability tests ---
+
+func TestPackingEfficiencyGenerousBudget(t *testing.T) {
+	elems := []priompt.Element{
+		{Name: "a", Content: strings.Repeat("x", 40), Priority: 10}, // 10 tokens
+		{Name: "b", Content: strings.Repeat("y", 40), Priority: 5},  // 10 tokens
+	}
+	r := priompt.Render(elems, 10000) // way more than needed
+	if r.PackingEfficiency >= 1.0 {
+		t.Fatalf("generous budget should have efficiency < 1.0, got %f", r.PackingEfficiency)
+	}
+	if r.PackingEfficiency <= 0 {
+		t.Fatalf("efficiency should be positive, got %f", r.PackingEfficiency)
+	}
+	if r.WastedTokens <= 0 {
+		t.Fatalf("should have wasted tokens with generous budget, got %d", r.WastedTokens)
+	}
+}
+
+func TestPackingEfficiencyTightBudget(t *testing.T) {
+	// 3 elements: 1 token each. 2 separators at 1 token each. Total needed: 5.
+	elems := []priompt.Element{
+		{Name: "a", Content: "aaaa", Priority: 30}, // 1 token
+		{Name: "b", Content: "bbbb", Priority: 20}, // 1 token
+		{Name: "c", Content: "cccc", Priority: 10}, // 1 token
+	}
+	r := priompt.Render(elems, 5, priompt.WithSeparator(";"))
+	// All fit exactly: 3 tokens + 2 seps = 5
+	if r.PackingEfficiency != 1.0 {
+		t.Fatalf("expected efficiency 1.0 for exact fit, got %f", r.PackingEfficiency)
+	}
+	if r.WastedTokens != 0 {
+		t.Fatalf("expected 0 wasted tokens for exact fit, got %d", r.WastedTokens)
+	}
+}
+
+func TestPackingEfficiencyZeroBudget(t *testing.T) {
+	elems := []priompt.Element{
+		{Name: "a", Content: "hello", Priority: 10},
+	}
+	r := priompt.Render(elems, 0)
+	if r.PackingEfficiency != 0 {
+		t.Fatalf("zero budget should have 0 efficiency, got %f", r.PackingEfficiency)
+	}
+}
+
+func TestExcludedPrioritySum(t *testing.T) {
+	elems := []priompt.Element{
+		{Name: "big", Content: strings.Repeat("x", 1000), Priority: 50},  // 250 tokens
+		{Name: "also-big", Content: strings.Repeat("y", 1000), Priority: 30}, // 250 tokens
+	}
+	r := priompt.Render(elems, 1) // nothing fits
+	if r.ExcludedPrioritySum != 80 {
+		t.Fatalf("expected excluded priority sum 80, got %d", r.ExcludedPrioritySum)
+	}
+}
+
+func TestExcludedPrioritySumWithPhaseBoost(t *testing.T) {
+	elems := []priompt.Element{
+		{Name: "fits", Content: "aaaa", Priority: 10},                                       // 1 token, fits
+		{Name: "excluded", Content: strings.Repeat("x", 1000), Priority: 20, PhaseBoost: map[string]int{"plan": 15}}, // 250 tokens, excluded
+	}
+	r := priompt.Render(elems, 5, priompt.WithPhase("plan"))
+	// excluded effective priority: 20 + 15 = 35
+	if r.ExcludedPrioritySum != 35 {
+		t.Fatalf("expected excluded priority sum 35 (with boost), got %d", r.ExcludedPrioritySum)
+	}
+}
+
+func TestWastedTokensPlusTotalEqualsBudget(t *testing.T) {
+	elems := makeElements(20)
+	budget := 500
+	r := priompt.Render(elems, budget, priompt.WithPhase("execute"))
+	if r.TotalTokens+r.WastedTokens != budget {
+		t.Fatalf("TotalTokens(%d) + WastedTokens(%d) should equal budget(%d)",
+			r.TotalTokens, r.WastedTokens, budget)
+	}
+}
+
+func TestFillPassRecoversSmallElement(t *testing.T) {
+	// Greedy pass: high(1) fits, big(250) doesn't fit, small(1) would fit but comes after big.
+	// Fill pass should recover small since it's tried smallest-first.
+	elems := []priompt.Element{
+		{Name: "high", Content: "aaaa", Priority: 30},                         // 1 token
+		{Name: "big", Content: strings.Repeat("x", 1000), Priority: 20},       // 250 tokens — won't fit
+		{Name: "small", Content: "bbbb", Priority: 10},                         // 1 token — fits after fill
+	}
+	r := priompt.Render(elems, 4, priompt.WithSeparator(";"))
+	// Budget 4: high(1) + sep(1) + small(1) + sep(1) = 4. big excluded.
+	if len(r.Included) != 2 {
+		t.Fatalf("fill pass should recover small element, got %d included: %v (excluded: %v)",
+			len(r.Included), r.Included, r.Excluded)
+	}
+	found := false
+	for _, name := range r.Included {
+		if name == "small" {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("expected small in included after fill pass, got %v", r.Included)
+	}
+	if len(r.Excluded) != 1 || r.Excluded[0] != "big" {
+		t.Fatalf("expected only big excluded, got %v", r.Excluded)
+	}
+}
+
+func TestFillPassImprovesTightBudgetEfficiency(t *testing.T) {
+	// Create a scenario where greedy leaves waste but fill pass can recover.
+	// Mix of large and small elements with a tight budget.
+	elems := []priompt.Element{
+		{Name: "s1", Content: strings.Repeat("a", 100), Priority: 90, Stable: true},   // 25 tokens
+		{Name: "big", Content: strings.Repeat("b", 800), Priority: 80},                 // 200 tokens — won't fit
+		{Name: "med", Content: strings.Repeat("c", 200), Priority: 70},                 // 50 tokens
+		{Name: "tiny1", Content: "aaaa", Priority: 60},                                  // 1 token
+		{Name: "tiny2", Content: "bbbb", Priority: 50},                                  // 1 token
+	}
+	r := priompt.Render(elems, 80) // tight: s1(25)+sep(1)+med(50)=76, leaving 4 tokens
+	// Fill pass should pick up tiny1 and tiny2 from the remaining 4 tokens
+	if r.PackingEfficiency < 0.9 {
+		t.Fatalf("fill pass should achieve >0.9 efficiency, got %f", r.PackingEfficiency)
+	}
+}
+
+func TestStableCapDemotesOverflow(t *testing.T) {
+	// Without cap: big-stable consumes 250 of 300 tokens, only 1 dynamic fits.
+	// With cap 0.5: stable budget = 150, big-stable (250) demoted to dynamic queue.
+	// Dynamic queue gets big-stable (250, pri 10) + small-dyn (1, pri 80) + med-dyn (50, pri 60).
+	// Priority order: small-dyn(80), med-dyn(60), big-stable(10).
+	// Packs: small-dyn(1) + sep(1) + med-dyn(50) + sep(1) = 53. Remaining: 247.
+	// big-stable(250) + sep(1) = 251 > 247, excluded.
+	elems := []priompt.Element{
+		{Name: "big-stable", Content: strings.Repeat("x", 1000), Priority: 10, Stable: true}, // 250 tokens
+		{Name: "small-dyn", Content: "aaaa", Priority: 80},                                     // 1 token
+		{Name: "med-dyn", Content: strings.Repeat("y", 200), Priority: 60},                    // 50 tokens
+	}
+
+	// Without cap: big-stable fits first (250), then small-dyn(1+1=2). Total: 252. med-dyn excluded.
+	rNoCap := priompt.Render(elems, 300)
+	if len(rNoCap.Included) != 2 {
+		t.Fatalf("no cap: expected 2 included, got %d: %v", len(rNoCap.Included), rNoCap.Included)
+	}
+
+	// With cap 0.5: stable budget = 150. big-stable (250) won't fit → demoted.
+	rCapped := priompt.Render(elems, 300, priompt.WithStableCap(0.5))
+	// Should include small-dyn + med-dyn (higher priority than big-stable when competing as dynamic).
+	if len(rCapped.Included) < 2 {
+		t.Fatalf("capped: expected ≥2 included, got %d: %v", len(rCapped.Included), rCapped.Included)
+	}
+	// med-dyn should now be included (was excluded without cap)
+	found := false
+	for _, name := range rCapped.Included {
+		if name == "med-dyn" {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("capped: expected med-dyn included, got %v", rCapped.Included)
+	}
+}
+
+func TestStableCapDefaultNoCap(t *testing.T) {
+	// Default (no WithStableCap) should behave identically to previous behavior.
+	elems := []priompt.Element{
+		{Name: "stable", Content: strings.Repeat("x", 100), Priority: 10, Stable: true},
+		{Name: "dynamic", Content: "aaaa", Priority: 80},
+	}
+	r1 := priompt.Render(elems, 1000)
+	r2 := priompt.Render(elems, 1000, priompt.WithStableCap(0))  // explicit 0 = no cap
+	r3 := priompt.Render(elems, 1000, priompt.WithStableCap(1.0)) // 1.0 = no cap
+
+	if r1.Prompt != r2.Prompt || r1.Prompt != r3.Prompt {
+		t.Fatalf("default, 0, and 1.0 should produce same prompt")
+	}
+}
+
+func TestRunningTokensConservative(t *testing.T) {
+	// Running accumulation may slightly overestimate vs recounting the joined string,
+	// because Count(A)+Count(sep)+Count(B) >= Count(A+sep+B) with integer division.
+	// This is conservative (won't over-pack the budget).
+	elems := makeElements(50)
+	budget := 10000
+	h := priompt.CharHeuristic{Ratio: 4}
+	r := priompt.Render(elems, budget, priompt.WithPhase("execute"))
+	recount := h.Count(r.Prompt)
+	if r.TotalTokens < recount {
+		t.Fatalf("running TotalTokens(%d) should be >= recount(%d)", r.TotalTokens, recount)
+	}
+	// Difference should be small (< 5% of budget).
+	diff := r.TotalTokens - recount
+	maxDiff := budget / 20
+	if diff > maxDiff {
+		t.Fatalf("running vs recount difference too large: %d (max %d)", diff, maxDiff)
+	}
+}
