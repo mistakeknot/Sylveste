@@ -1,3 +1,4 @@
+{"issue_id":"Demarch-01ew","label":"clavain"}
 {"issue_id":"Demarch-0ed","label":"skaffen"}
 {"issue_id":"Demarch-0ed","label":"tui"}
 {"issue_id":"Demarch-0pvp","label":"benchmarks"}
@@ -103,6 +104,7 @@
 {"issue_id":"Demarch-3t5","label":"complexity:4"}
 {"issue_id":"Demarch-3zmo","label":"skaffen"}
 {"issue_id":"Demarch-3zmo","label":"swe-bench"}
+{"issue_id":"Demarch-4bxc","label":"clavain"}
 {"issue_id":"Demarch-4nl","label":"claimed_at:1773641829"}
 {"issue_id":"Demarch-4nl","label":"claimed_by:71e5bbfc-1984-4042-b90e-83e15c7fd84c"}
 {"issue_id":"Demarch-4nl","label":"complexity:3"}
@@ -265,6 +267,7 @@
 {"issue_id":"Demarch-b5md","label":"intersense"}
 {"issue_id":"Demarch-b5md","label":"phase:executing"}
 {"issue_id":"Demarch-b5md","label":"ux"}
+{"issue_id":"Demarch-ce29","label":"clavain"}
 {"issue_id":"Demarch-cmc8","label":"claimed_at:1773685672"}
 {"issue_id":"Demarch-cmc8","label":"claimed_by:71e5bbfc-1984-4042-b90e-83e15c7fd84c"}
 {"issue_id":"Demarch-cmc8","label":"complexity:3"}
@@ -289,12 +292,14 @@
 {"issue_id":"Demarch-ezrw","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-fjvb","label":"interlab"}
 {"issue_id":"Demarch-fjvb","label":"observability"}
+{"issue_id":"Demarch-fq41","label":"clavain"}
 {"issue_id":"Demarch-fqb","label":"claimed_at:1773364180"}
 {"issue_id":"Demarch-fqb","label":"claimed_by:6e75ec0b-de38-405d-a8ce-e7319c7146a9"}
 {"issue_id":"Demarch-fqb","label":"complexity:3"}
 {"issue_id":"Demarch-g3a","label":"claimed_at:1773601532"}
 {"issue_id":"Demarch-g3a","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-g3a","label":"complexity:4"}
+{"issue_id":"Demarch-hlx2","label":"clavain"}
 {"issue_id":"Demarch-hw6","label":"claimed_at:1773640545"}
 {"issue_id":"Demarch-hw6","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-iq0p","label":"claimed_at:1773819836"}
@@ -320,6 +325,7 @@
 {"issue_id":"Demarch-k2xf.7","label":"claimed_by:3723aa32-b149-4aa0-82b9-0e9349288526"}
 {"issue_id":"Demarch-k2xf.7","label":"phase:done"}
 {"issue_id":"Demarch-l3dr","label":"interlab"}
+{"issue_id":"Demarch-lta9","label":"clavain"}
 {"issue_id":"Demarch-mlsy","label":"skaffen"}
 {"issue_id":"Demarch-mlsy","label":"swe-bench"}
 {"issue_id":"Demarch-mvy","label":"claimed_at:1773801753"}
@@ -342,8 +348,8 @@
 {"issue_id":"Demarch-mvy.8","label":"claimed_by:1bd69e98-a651-4941-8237-0da9e529f03c"}
 {"issue_id":"Demarch-mvy.8","label":"complexity:2"}
 {"issue_id":"Demarch-mvy.8","label":"phase:plan-reviewed"}
-{"issue_id":"Demarch-mvy.9","label":"claimed_at:1773801753"}
-{"issue_id":"Demarch-mvy.9","label":"claimed_by:bcd4f210-8a11-4c9d-860f-bc99bf91ed89"}
+{"issue_id":"Demarch-mvy.9","label":"claimed_at:1773876052"}
+{"issue_id":"Demarch-mvy.9","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-mvy.9","label":"complexity:5"}
 {"issue_id":"Demarch-mvy.9","label":"phase:plan-reviewed"}
 {"issue_id":"Demarch-mzxc","label":"bug"}
@@ -366,6 +372,7 @@
 {"issue_id":"Demarch-sr6","label":"claimed_by:71e5bbfc-1984-4042-b90e-83e15c7fd84c"}
 {"issue_id":"Demarch-sr6","label":"complexity:2"}
 {"issue_id":"Demarch-sr6","label":"phase:executing"}
+{"issue_id":"Demarch-sst3","label":"clavain"}
 {"issue_id":"Demarch-uhq","label":"claimed_at:1773348439"}
 {"issue_id":"Demarch-uhq","label":"complexity:3"}
 {"issue_id":"Demarch-uhq","label":"sprint:true"}
