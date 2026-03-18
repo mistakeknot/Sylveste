@@ -115,46 +115,135 @@ func (h hunk) header() string {
 	return fmt.Sprintf("@@ -%d,%d +%d,%d @@", h.oldStart+1, h.oldCount, h.newStart+1, h.newCount)
 }
 
-// lcs computes the LCS table for two slices of strings using the classic
-// O(n*m) dynamic-programming approach.
-func lcs(a, b []string) [][]int {
+type myersTrace struct {
+	v []int
+}
+
+// myersDiff computes the shortest edit script between a and b using Myers'
+// O(nd) algorithm, where n = len(a)+len(b) and d = edit distance.
+// Returns a flat sequence of diff operations (context, add, remove).
+//
+// For small changes (d << n), this is dramatically faster than O(n*m) LCS
+// and uses O(d) space instead of O(n*m).
+func myersDiff(a, b []string) []diffLine {
 	n, m := len(a), len(b)
-	tbl := make([][]int, n+1)
-	for i := range tbl {
-		tbl[i] = make([]int, m+1)
+	if n == 0 && m == 0 {
+		return nil
 	}
-	for i := 1; i <= n; i++ {
-		for j := 1; j <= m; j++ {
-			if a[i-1] == b[j-1] {
-				tbl[i][j] = tbl[i-1][j-1] + 1
-			} else if tbl[i-1][j] >= tbl[i][j-1] {
-				tbl[i][j] = tbl[i-1][j]
+	if n == 0 {
+		result := make([]diffLine, m)
+		for i, line := range b {
+			result[i] = diffLine{op: opAdd, text: line}
+		}
+		return result
+	}
+	if m == 0 {
+		result := make([]diffLine, n)
+		for i, line := range a {
+			result[i] = diffLine{op: opRemove, text: line}
+		}
+		return result
+	}
+
+	// Myers algorithm: find shortest edit script by exploring diagonals.
+	// V[k] stores the furthest-reaching x on diagonal k for the current d.
+	max := n + m
+	// Use offset so negative indices work: V[k+offset]
+	vSize := 2*max + 1
+	v := make([]int, vSize)
+	// Store trace for backtracking: trace[d] = copy of V at step d.
+	var trace []myersTrace
+
+	offset := max
+	for d := 0; d <= max; d++ {
+		// Save V state for backtracking.
+		vc := make([]int, vSize)
+		copy(vc, v)
+		trace = append(trace, myersTrace{v: vc})
+
+		for k := -d; k <= d; k += 2 {
+			// Decide whether to go down or right.
+			var x int
+			if k == -d || (k != d && v[k-1+offset] < v[k+1+offset]) {
+				x = v[k+1+offset] // move down (insert from b)
 			} else {
-				tbl[i][j] = tbl[i][j-1]
+				x = v[k-1+offset] + 1 // move right (delete from a)
+			}
+			y := x - k
+
+			// Follow diagonal (matching lines).
+			for x < n && y < m && a[x] == b[y] {
+				x++
+				y++
+			}
+			v[k+offset] = x
+
+			// Check if we've reached the end.
+			if x >= n && y >= m {
+				// Backtrack through trace to build edit script.
+				return myersBacktrack(trace, a, b, d)
 			}
 		}
 	}
-	return tbl
+	// Should never reach here for valid inputs.
+	return nil
 }
 
-// backtrack walks the LCS table to produce a flat sequence of diff operations.
-func backtrack(tbl [][]int, a, b []string) []diffLine {
-	var result []diffLine
-	i, j := len(a), len(b)
-	for i > 0 || j > 0 {
-		if i > 0 && j > 0 && a[i-1] == b[j-1] {
-			result = append(result, diffLine{op: opContext, text: a[i-1]})
-			i--
-			j--
-		} else if j > 0 && (i == 0 || tbl[i][j-1] >= tbl[i-1][j]) {
-			result = append(result, diffLine{op: opAdd, text: b[j-1]})
-			j--
+// myersBacktrack reconstructs the edit script from Myers trace.
+// It walks the trace backwards, identifying each edit (insert/delete) and
+// diagonal run (context), then reverses to produce forward-order operations.
+func myersBacktrack(trace []myersTrace, a, b []string, finalD int) []diffLine {
+	n, m := len(a), len(b)
+	offset := n + m
+
+	// Collect operations in reverse order.
+	result := make([]diffLine, 0, n+m)
+	x, y := n, m
+
+	for d := finalD; d > 0; d-- {
+		k := x - y
+		prev := trace[d-1].v
+		var prevK int
+		if k == -d || (k != d && prev[k-1+offset] < prev[k+1+offset]) {
+			prevK = k + 1 // came from above (insert)
 		} else {
-			result = append(result, diffLine{op: opRemove, text: a[i-1]})
-			i--
+			prevK = k - 1 // came from left (delete)
+		}
+		prevX := prev[prevK+offset]
+		prevY := prevX - prevK
+
+		// Diagonal (snake) from (prevX,prevY) to before the edit at (x,y).
+		// The snake runs forward: positions (prevX..editX-1, prevY..editY-1).
+		// But the edit happened first, then the snake followed.
+		// So: snake is from (prevX or prevX+1, ...) to (x, y).
+
+		// Walk back the diagonal portion (matching lines).
+		for x > prevX+1 && y > prevY+1 {
+			x--
+			y--
+			result = append(result, diffLine{op: opContext, text: a[x]})
+		}
+
+		// The edit step.
+		if prevK == k+1 {
+			// Insert from b (moved down: y increased).
+			y--
+			result = append(result, diffLine{op: opAdd, text: b[y]})
+		} else {
+			// Delete from a (moved right: x increased).
+			x--
+			result = append(result, diffLine{op: opRemove, text: a[x]})
 		}
 	}
-	// Reverse — backtracking produces lines in reverse order.
+
+	// Remaining diagonal at d=0 (initial matching prefix).
+	for x > 0 && y > 0 {
+		x--
+		y--
+		result = append(result, diffLine{op: opContext, text: a[x]})
+	}
+
+	// Reverse to get forward order.
 	for l, r := 0, len(result)-1; l < r; l, r = l+1, r-1 {
 		result[l], result[r] = result[r], result[l]
 	}
@@ -164,8 +253,7 @@ func backtrack(tbl [][]int, a, b []string) []diffLine {
 // computeHunks groups a flat diff into hunks, keeping ctx context lines
 // around each change (standard unified diff convention, usually ctx=3).
 func computeHunks(a, b []string, ctx int) []hunk {
-	tbl := lcs(a, b)
-	ops := backtrack(tbl, a, b)
+	ops := myersDiff(a, b)
 	if len(ops) == 0 {
 		return nil
 	}
