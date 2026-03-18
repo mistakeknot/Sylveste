@@ -137,6 +137,13 @@ type RenderResult struct {
 	ExcludedPrioritySum int     // sum of effective priorities of all excluded elements
 }
 
+// scored holds an index into the resolved element slice plus effective priority.
+// Using an index avoids copying the Element struct (which contains strings and maps).
+type scored struct {
+	idx    int // index into resolved slice
+	effPri int
+}
+
 // Render assembles elements into a prompt within the token budget.
 // Elements with empty Content are silently skipped.
 func Render(elements []Element, budget int, opts ...Option) RenderResult {
@@ -149,39 +156,48 @@ func Render(elements []Element, budget int, opts ...Option) RenderResult {
 	}
 
 	// Resolve dynamic content and filter out empty elements.
+	// We rewrite elements in-place into a "resolved" slice to avoid copying.
 	rctx := RenderContext{
 		Phase:     cfg.phase,
 		Model:     cfg.model,
 		TurnCount: cfg.turnCount,
 		Budget:    budget,
 	}
-	var filtered []Element
-	for _, e := range elements {
+
+	// Pre-allocate resolved slice at input capacity.
+	resolved := make([]Element, 0, len(elements))
+	for i := range elements {
+		e := &elements[i]
+		content := e.Content
 		if e.Render != nil {
-			e.Content = e.Render(rctx)
+			content = e.Render(rctx)
 		}
-		if e.Content != "" {
-			filtered = append(filtered, e)
+		if content != "" {
+			resolved = append(resolved, Element{
+				Name:       e.Name,
+				Content:    content,
+				Priority:   e.Priority,
+				PhaseBoost: e.PhaseBoost,
+				Stable:     e.Stable,
+			})
 		}
 	}
 
-	if len(filtered) == 0 {
+	n := len(resolved)
+	if n == 0 {
 		return RenderResult{}
 	}
 
-	// Compute effective priorities.
-	type scored struct {
-		elem     Element
-		effPri   int
-	}
-	var stable, dynamic []scored
-	for _, e := range filtered {
-		eff := e.Priority
+	// Partition into stable/dynamic using indices, pre-allocated.
+	stable := make([]scored, 0, n)
+	dynamic := make([]scored, 0, n)
+	for i := range resolved {
+		eff := resolved[i].Priority
 		if cfg.phase != "" {
-			eff += e.PhaseBoost[cfg.phase]
+			eff += resolved[i].PhaseBoost[cfg.phase]
 		}
-		s := scored{elem: e, effPri: eff}
-		if e.Stable {
+		s := scored{idx: i, effPri: eff}
+		if resolved[i].Stable {
 			stable = append(stable, s)
 		} else {
 			dynamic = append(dynamic, s)
@@ -194,7 +210,7 @@ func Render(elements []Element, budget int, opts ...Option) RenderResult {
 			if ss[i].effPri != ss[j].effPri {
 				return ss[i].effPri > ss[j].effPri
 			}
-			return ss[i].elem.Name < ss[j].elem.Name
+			return resolved[ss[i].idx].Name < resolved[ss[j].idx].Name
 		})
 	}
 	sortScored(stable)
@@ -204,11 +220,11 @@ func Render(elements []Element, budget int, opts ...Option) RenderResult {
 	if budget <= 0 {
 		var result RenderResult
 		for _, s := range stable {
-			result.ExcludedStable = append(result.ExcludedStable, s.elem.Name)
+			result.ExcludedStable = append(result.ExcludedStable, resolved[s.idx].Name)
 			result.ExcludedPrioritySum += s.effPri
 		}
 		for _, s := range dynamic {
-			result.Excluded = append(result.Excluded, s.elem.Name)
+			result.Excluded = append(result.Excluded, resolved[s.idx].Name)
 			result.ExcludedPrioritySum += s.effPri
 		}
 		return result
@@ -217,15 +233,16 @@ func Render(elements []Element, budget int, opts ...Option) RenderResult {
 	// Greedy pack: stable first, then dynamic.
 	remaining := budget
 	runningTokens := 0
+	stableRunningTokens := 0
 	excludedPrioritySum := 0
-	var included []string
-	var includedContents []string
-	var stableContents []string
 	anyStableExcluded := false
 
+	// Pre-allocate output slices.
+	included := make([]string, 0, n)
+	includedContents := make([]string, 0, n)
+
 	type excludedItem struct {
-		name      string
-		content   string
+		idx       int // index into resolved
 		tokenCost int
 		effPri    int
 		isStable  bool
@@ -242,7 +259,8 @@ func Render(elements []Element, budget int, opts ...Option) RenderResult {
 
 	pack := func(items []scored, isStable bool) {
 		for _, s := range items {
-			tokenCost := cfg.tokenizer.Count(s.elem.Content)
+			content := resolved[s.idx].Content
+			tokenCost := cfg.tokenizer.Count(content)
 			thisSepCost := 0
 			if len(included) > 0 {
 				thisSepCost = sepCost
@@ -251,15 +269,14 @@ func Render(elements []Element, budget int, opts ...Option) RenderResult {
 			if tokenCost+thisSepCost <= remaining {
 				remaining -= tokenCost + thisSepCost
 				runningTokens += tokenCost + thisSepCost
-				included = append(included, s.elem.Name)
-				includedContents = append(includedContents, s.elem.Content)
+				included = append(included, resolved[s.idx].Name)
+				includedContents = append(includedContents, content)
 				if isStable {
-					stableContents = append(stableContents, s.elem.Content)
+					stableRunningTokens += tokenCost + thisSepCost
 				}
 			} else {
 				excludedItems = append(excludedItems, excludedItem{
-					name:      s.elem.Name,
-					content:   s.elem.Content,
+					idx:       s.idx,
 					tokenCost: tokenCost,
 					effPri:    s.effPri,
 					isStable:  isStable,
@@ -275,23 +292,22 @@ func Render(elements []Element, budget int, opts ...Option) RenderResult {
 	if cfg.stableCap > 0 && cfg.stableCap < 1.0 {
 		stableBudget := int(float64(budget) * cfg.stableCap)
 		stableSpent := 0
-		var keptStable, demoted []scored
-		for _, s := range stable {
-			tokenCost := cfg.tokenizer.Count(s.elem.Content)
+		kept := 0
+		for i, s := range stable {
+			tokenCost := cfg.tokenizer.Count(resolved[s.idx].Content)
 			thisSepCost := 0
-			if len(keptStable) > 0 {
+			if kept > 0 {
 				thisSepCost = sepCost
 			}
 			if stableSpent+tokenCost+thisSepCost <= stableBudget {
 				stableSpent += tokenCost + thisSepCost
-				keptStable = append(keptStable, s)
+				stable[kept] = stable[i]
+				kept++
 			} else {
-				demoted = append(demoted, s)
+				dynamic = append(dynamic, s)
 			}
 		}
-		stable = keptStable
-		// Insert demoted into dynamic, maintaining priority order.
-		dynamic = append(dynamic, demoted...)
+		stable = stable[:kept]
 		sortScored(dynamic)
 	}
 
@@ -303,7 +319,7 @@ func Render(elements []Element, budget int, opts ...Option) RenderResult {
 		sort.Slice(excludedItems, func(i, j int) bool {
 			return excludedItems[i].tokenCost < excludedItems[j].tokenCost
 		})
-		var stillExcluded []excludedItem
+		kept := 0
 		for _, ex := range excludedItems {
 			thisSepCost := 0
 			if len(included) > 0 {
@@ -312,13 +328,14 @@ func Render(elements []Element, budget int, opts ...Option) RenderResult {
 			if ex.tokenCost+thisSepCost <= remaining {
 				remaining -= ex.tokenCost + thisSepCost
 				runningTokens += ex.tokenCost + thisSepCost
-				included = append(included, ex.name)
-				includedContents = append(includedContents, ex.content)
+				included = append(included, resolved[ex.idx].Name)
+				includedContents = append(includedContents, resolved[ex.idx].Content)
 			} else {
-				stillExcluded = append(stillExcluded, ex)
+				excludedItems[kept] = ex
+				kept++
 			}
 		}
-		excludedItems = stillExcluded
+		excludedItems = excludedItems[:kept]
 	}
 
 	// Build final excluded lists from remaining excluded items.
@@ -327,19 +344,19 @@ func Render(elements []Element, budget int, opts ...Option) RenderResult {
 	for _, ex := range excludedItems {
 		excludedPrioritySum += ex.effPri
 		if ex.isStable {
-			excludedStable = append(excludedStable, ex.name)
+			excludedStable = append(excludedStable, resolved[ex.idx].Name)
 		} else {
-			excluded = append(excluded, ex.name)
+			excluded = append(excluded, resolved[ex.idx].Name)
 		}
 	}
 
 	// Build prompt.
 	prompt := strings.Join(includedContents, cfg.separator)
 
-	// Compute StableTokens.
+	// Compute StableTokens from running sum (avoids re-joining and re-counting).
 	stableTokens := 0
-	if !anyStableExcluded && len(stableContents) > 0 {
-		stableTokens = cfg.tokenizer.Count(strings.Join(stableContents, cfg.separator))
+	if !anyStableExcluded && stableRunningTokens > 0 {
+		stableTokens = stableRunningTokens
 	}
 
 	// Packing efficiency.

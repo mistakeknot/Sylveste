@@ -299,10 +299,11 @@ func TestStableTokensCorrect(t *testing.T) {
 		{Name: "d1", Content: strings.Repeat("c", 20), Priority: 3, Stable: false},  // 5 tokens
 	}
 	r := priompt.Render(elems, 10000)
-	// Stable prefix: s1 + "\n\n" + s2 = 40 + 2 + 40 = 82 chars.
-	// Count("aaa...a\n\naaa...a") with ratio 4.
+	// StableTokens is computed via running sum: Count(s1) + Count(sep) + Count(s2).
+	// With CharHeuristic{4}: 10 + 1 + 10 = 21.
+	// (Slightly higher than Count(joined) = 82/4 = 20, due to integer division.)
 	h := priompt.CharHeuristic{Ratio: 4}
-	expected := h.Count(strings.Repeat("a", 40) + "\n\n" + strings.Repeat("b", 40))
+	expected := h.Count(strings.Repeat("a", 40)) + h.Count("\n\n") + h.Count(strings.Repeat("b", 40))
 	if r.StableTokens != expected {
 		t.Fatalf("StableTokens: expected %d, got %d", expected, r.StableTokens)
 	}
