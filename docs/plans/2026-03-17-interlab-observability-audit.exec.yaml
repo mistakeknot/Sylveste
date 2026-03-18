@@ -1,0 +1,83 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 4
+timeout_per_task: 300
+
+stages:
+  - name: "Phase 1: Quick-Win METRIC Wrappers"
+    tasks:
+      - id: task-1
+        title: "masaq interlab.sh — priompt/diff/compact benchmark wrapper"
+        files: [masaq/interlab.sh]
+        depends: []
+        tier: fast
+      - id: task-2
+        title: "intermap interlab.sh — pattern detection benchmark wrapper"
+        files: [interverse/intermap/interlab.sh]
+        depends: []
+        tier: fast
+      - id: task-3
+        title: "interlens interlab.sh — Python quality score wrapper"
+        files: [interverse/interlens/interlab.sh]
+        depends: []
+        tier: fast
+      - id: task-4
+        title: "tldr-swinton interlab.sh — pytest harness wrapper"
+        files: [interverse/tldr-swinton/interlab.sh]
+        depends: []
+        tier: fast
+      - id: task-5
+        title: "Clavain satisfaction benchmark + interlab harness"
+        files: [os/Clavain/interlab-satisfaction.sh, os/Clavain/cmd/clavain-cli/scenario_test.go]
+        depends: []
+
+  - name: "Phase 2: Core Pillar Go Benchmarks (reads existing test files — needs deep tier)"
+    tasks:
+      - id: task-6
+        title: "Skaffen router benchmark + interlab harness"
+        files: [os/Skaffen/internal/router/bench_test.go, os/Skaffen/interlab.sh]
+        depends: [task-1]
+      - id: task-7
+        title: "Autarch specflow benchmark + interlab harness"
+        files: [apps/Autarch/internal/gurgeh/spec/bench_test.go, apps/Autarch/interlab.sh]
+        depends: [task-1]
+      - id: task-8
+        title: "Intercore dispatch benchmark + interlab harness"
+        files: [core/intercore/internal/dispatch/bench_test.go, core/intercore/interlab.sh]
+        depends: [task-1]
+      - id: task-9
+        title: "Intermute reservation benchmark + interlab harness"
+        files: [core/intermute/internal/storage/bench_test.go, core/intermute/interlab.sh]
+        depends: [task-1]
+
+  - name: "Phase 3: Python Harness + Plugin Sweep"
+    tasks:
+      - id: task-10
+        title: "Generic py-bench-harness.sh"
+        files: [interverse/interlab/scripts/py-bench-harness.sh]
+        depends: []
+        tier: fast
+      - id: task-11
+        title: "Apply py harness to 5 Python plugins"
+        files: [interverse/intercache/interlab.sh, interverse/intermem/interlab.sh, interverse/interject/interlab.sh, interverse/intersearch/interlab.sh, interverse/interwatch/interlab.sh]
+        depends: [task-10]
+        tier: fast
+      - id: task-13
+        title: "Update scan-plugin-quality.sh with METRIC-readiness"
+        files: [interverse/interlab/scripts/scan-plugin-quality.sh]
+        depends: [task-10]
+        tier: fast
+
+  - name: "Phase 4: Meta-Observability + Validation"
+    tasks:
+      - id: task-12
+        title: "Interlab meta-observability benchmark"
+        files: [interverse/interlab/interlab-meta.sh]
+        depends: []
+        tier: fast
+      - id: task-14
+        title: "End-to-end validation — run masaq campaign"
+        files: []
+        depends: [task-1, task-10]
+        tier: fast
