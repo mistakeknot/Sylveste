@@ -1,0 +1,87 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 5
+timeout_per_task: 300
+
+stages:
+  - name: "Wave 1 — Per-Turn Hot Paths (independent)"
+    tasks:
+      - id: task-1
+        title: "F4: Optimize classifyComplexity (Clavain CLI)"
+        files: [os/Clavain/cmd/clavain-cli/complexity.go]
+        depends: []
+      - id: task-2
+        title: "F1: Benchmark + Optimize classifyFailure (Skaffen agentloop)"
+        files: [os/Skaffen/internal/agentloop/loop.go, os/Skaffen/internal/agentloop/loop_bench_test.go]
+        depends: []
+      - id: task-3
+        title: "F5: Benchmark + Optimize extractFileActivity (Skaffen agentloop)"
+        files: [os/Skaffen/internal/agentloop/loop.go, os/Skaffen/internal/agentloop/loop_bench_test.go]
+        depends: [task-2]
+      - id: task-4
+        title: "F3: Benchmark + Optimize trust.Evaluator.Evaluate (Skaffen trust)"
+        files: [os/Skaffen/internal/trust/trust.go, os/Skaffen/internal/trust/trust_bench_test.go]
+        depends: []
+      - id: task-5
+        title: "F2: Benchmark + Optimize estimateMessageTokens (Skaffen agentloop)"
+        files: [os/Skaffen/internal/agentloop/loop.go, os/Skaffen/internal/agentloop/loop_bench_test.go]
+        depends: [task-2]
+
+  - name: "Wave 2 — Per-Session Paths (independent)"
+    tasks:
+      - id: task-6
+        title: "F8: Optimize composePlan (Clavain CLI)"
+        files: [os/Clavain/cmd/clavain-cli/compose.go]
+        depends: []
+      - id: task-8
+        title: "F9: Optimize parseFrontmatter (Skaffen skill)"
+        files: [os/Skaffen/internal/skill/skill.go]
+        depends: []
+      - id: task-9
+        title: "F6: Benchmark + Optimize PageRank (Skaffen repomap)"
+        files: [os/Skaffen/internal/repomap/pagerank.go, os/Skaffen/internal/repomap/pagerank_bench_test.go]
+        depends: []
+      - id: task-10
+        title: "F7: Benchmark + Optimize ScoreMessages + TopK (Skaffen session)"
+        files: [os/Skaffen/internal/session/scoring.go, os/Skaffen/internal/session/scoring_bench_test.go]
+        depends: []
+
+  - name: "Wave 3 — Algorithmic Improvements (independent)"
+    tasks:
+      - id: task-11
+        title: "F10: Reduce scoring Assign allocations (Intercore)"
+        files: [core/intercore/internal/scoring/scoring.go]
+        depends: []
+      - id: task-12
+        title: "F11: Optimize TopologicalSort heap queue (Intercore)"
+        files: [core/intercore/internal/portfolio/topo.go]
+        depends: []
+      - id: task-13
+        title: "F12: Optimize DiffSpecs map-based diff (Autarch)"
+        files: [apps/Autarch/internal/gurgeh/diff/diff.go]
+        depends: []
+      - id: task-14
+        title: "F13: Benchmark ReconcileProject mtime caching (Autarch)"
+        files: [apps/Autarch/pkg/events/reconcile.go, apps/Autarch/pkg/events/reconcile_bench_test.go]
+        depends: []
+      - id: task-15
+        title: "F14: Benchmark Hub.Broadcast snapshot pooling (Intermute)"
+        files: [core/intermute/internal/ws/gateway.go, core/intermute/internal/ws/gateway_bench_test.go]
+        depends: []
+
+  - name: "Wave 4 — Low Priority (independent)"
+    tasks:
+      - id: task-16
+        title: "F15: Optimize PatternsOverlap pre-normalization (Intermute)"
+        files: [core/intermute/internal/glob/overlap.go]
+        depends: []
+      - id: task-17
+        title: "F16: Cache convertToolDefs (Skaffen agentloop)"
+        files: [os/Skaffen/internal/agentloop/loop.go]
+        depends: [task-2]
+      - id: task-18
+        title: "F17: Benchmark AtomicWriteFile (Autarch)"
+        files: [apps/Autarch/internal/file/atomic_bench_test.go]
+        depends: []
+        tier: fast

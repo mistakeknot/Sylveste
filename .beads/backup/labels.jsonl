@@ -330,6 +330,8 @@
 {"issue_id":"Demarch-k2xf.7","label":"phase:done"}
 {"issue_id":"Demarch-l3dr","label":"interlab"}
 {"issue_id":"Demarch-lcxa","label":"clavain"}
+{"issue_id":"Demarch-lta9","label":"artifact_badtype:test.md"}
+{"issue_id":"Demarch-lta9","label":"artifact_brainstorm:docs/brainstorms/2026-03-19-sprint-v2-lifecycle-redesign-brainstorm.md"}
 {"issue_id":"Demarch-lta9","label":"clavain"}
 {"issue_id":"Demarch-mlsy","label":"skaffen"}
 {"issue_id":"Demarch-mlsy","label":"swe-bench"}
