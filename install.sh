@@ -471,6 +471,9 @@ if [[ "$DRY_RUN" == true ]]; then
     log "  ${DIM}[DRY RUN] Would verify Clavain installation via 'claude plugin list'${RESET}"
     log ""
     success "Dry run complete, no changes made"
+elif [[ "$HAS_CLAUDE" == false ]]; then
+    warn "Claude CLI not installed — Clavain plugin not installed (ic kernel installed successfully)"
+    log "  Install Claude Code first, then re-run this installer to add the plugin."
 elif claude plugin list 2>/dev/null | grep -q "clavain"; then
     success "Clavain installed and loaded!"
 elif [[ -d "${CACHE_DIR}/interagency-marketplace/clavain" ]]; then
