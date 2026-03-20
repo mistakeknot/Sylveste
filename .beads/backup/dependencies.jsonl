@@ -197,6 +197,7 @@
 {"created_at":"2026-03-16T19:25:25Z","created_by":"32806f91","depends_on_id":"Demarch-988","issue_id":"Demarch-988.2","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-20T04:58:46Z","created_by":"Claude Code","depends_on_id":"Demarch-31g4","issue_id":"Demarch-9jv8","metadata":"{}","type":"discovered-from"}
 {"created_at":"2026-03-20T05:29:23Z","created_by":"Claude Code","depends_on_id":"Demarch-9jv8","issue_id":"Demarch-9jv8.1","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T14:11:01Z","created_by":"Claude Code","depends_on_id":"Demarch-9jv8","issue_id":"Demarch-9jv8.2","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-15T12:02:55Z","created_by":"mistakeknot","depends_on_id":"Demarch-1n3","issue_id":"Demarch-9nd","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-16T06:51:06Z","created_by":"bc498026","depends_on_id":"Demarch-9nd","issue_id":"Demarch-9nd.1","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-16T06:51:06Z","created_by":"bc498026","depends_on_id":"Demarch-9nd","issue_id":"Demarch-9nd.2","metadata":"{}","type":"parent-child"}
@@ -204,6 +205,21 @@
 {"created_at":"2026-03-16T06:53:48Z","created_by":"efc8f384","depends_on_id":"Demarch-9nd","issue_id":"Demarch-9nd.4","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-16T06:53:49Z","created_by":"efc8f384","depends_on_id":"Demarch-9nd","issue_id":"Demarch-9nd.5","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-16T06:54:15Z","created_by":"bc498026","depends_on_id":"Demarch-9nd","issue_id":"Demarch-9nd.6","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T09:18:36Z","created_by":"Claude Code","depends_on_id":"Demarch-a637","issue_id":"Demarch-a637.1","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T09:18:41Z","created_by":"Claude Code","depends_on_id":"Demarch-a637","issue_id":"Demarch-a637.2","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T09:18:43Z","created_by":"Claude Code","depends_on_id":"Demarch-a637","issue_id":"Demarch-a637.3","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T09:19:18Z","created_by":"Claude Code","depends_on_id":"Demarch-a637.2","issue_id":"Demarch-a637.3","metadata":"{}","type":"blocks"}
+{"created_at":"2026-03-20T09:18:46Z","created_by":"Claude Code","depends_on_id":"Demarch-a637","issue_id":"Demarch-a637.4","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T09:19:19Z","created_by":"Claude Code","depends_on_id":"Demarch-a637.1","issue_id":"Demarch-a637.4","metadata":"{}","type":"blocks"}
+{"created_at":"2026-03-20T09:18:48Z","created_by":"Claude Code","depends_on_id":"Demarch-a637","issue_id":"Demarch-a637.5","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T09:19:19Z","created_by":"Claude Code","depends_on_id":"Demarch-a637.1","issue_id":"Demarch-a637.5","metadata":"{}","type":"blocks"}
+{"created_at":"2026-03-20T09:18:51Z","created_by":"Claude Code","depends_on_id":"Demarch-a637","issue_id":"Demarch-a637.6","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T09:19:20Z","created_by":"Claude Code","depends_on_id":"Demarch-a637.1","issue_id":"Demarch-a637.6","metadata":"{}","type":"blocks"}
+{"created_at":"2026-03-20T09:18:54Z","created_by":"Claude Code","depends_on_id":"Demarch-a637","issue_id":"Demarch-a637.7","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T09:19:21Z","created_by":"Claude Code","depends_on_id":"Demarch-a637.1","issue_id":"Demarch-a637.7","metadata":"{}","type":"blocks"}
+{"created_at":"2026-03-20T09:19:22Z","created_by":"Claude Code","depends_on_id":"Demarch-a637.2","issue_id":"Demarch-a637.7","metadata":"{}","type":"blocks"}
+{"created_at":"2026-03-20T09:18:56Z","created_by":"Claude Code","depends_on_id":"Demarch-a637","issue_id":"Demarch-a637.8","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T09:19:22Z","created_by":"Claude Code","depends_on_id":"Demarch-a637.1","issue_id":"Demarch-a637.8","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-20T04:59:10Z","created_by":"Claude Code","depends_on_id":"Demarch-31g4","issue_id":"Demarch-anhb","metadata":"{}","type":"discovered-from"}
 {"created_at":"2026-03-18T20:13:23Z","created_by":"mk","depends_on_id":"Demarch-b5md","issue_id":"Demarch-b5md.1","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-18T20:13:24Z","created_by":"mk","depends_on_id":"Demarch-b5md","issue_id":"Demarch-b5md.2","metadata":"{}","type":"parent-child"}
@@ -477,6 +493,9 @@
 {"created_at":"2026-03-16T18:52:53Z","created_by":"mk","depends_on_id":"Demarch-02wb","issue_id":"Demarch-x8wz","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-16T18:52:50Z","created_by":"mk","depends_on_id":"Demarch-6i0.17","issue_id":"Demarch-x8wz","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-20T04:58:46Z","created_by":"Claude Code","depends_on_id":"Demarch-31g4","issue_id":"Demarch-xk68","metadata":"{}","type":"discovered-from"}
+{"created_at":"2026-03-20T15:19:23Z","created_by":"Claude Code","depends_on_id":"Demarch-xk68","issue_id":"Demarch-xk68.1","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T15:20:48Z","created_by":"Claude Code","depends_on_id":"Demarch-xk68","issue_id":"Demarch-xk68.2","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T15:22:16Z","created_by":"Claude Code","depends_on_id":"Demarch-xk68","issue_id":"Demarch-xk68.3","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-18T03:42:19Z","created_by":"bcd4f210","depends_on_id":"Demarch-mvy","issue_id":"Demarch-xlh6","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-20T08:50:32Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe","issue_id":"Demarch-ysxe.1","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-20T08:53:31Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.1","issue_id":"Demarch-ysxe.1.1","metadata":"{}","type":"parent-child"}
@@ -487,8 +506,33 @@
 {"created_at":"2026-03-20T08:50:36Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe","issue_id":"Demarch-ysxe.3","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-20T08:50:50Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.1","issue_id":"Demarch-ysxe.3","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-20T08:50:50Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.2","issue_id":"Demarch-ysxe.3","metadata":"{}","type":"blocks"}
+{"created_at":"2026-03-20T09:21:57Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.3","issue_id":"Demarch-ysxe.3.1","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T09:23:09Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.3","issue_id":"Demarch-ysxe.3.2","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T15:01:43Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.3","issue_id":"Demarch-ysxe.3.3","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T15:02:52Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.3","issue_id":"Demarch-ysxe.3.4","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-20T08:50:38Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe","issue_id":"Demarch-ysxe.4","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-20T08:50:51Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.3","issue_id":"Demarch-ysxe.4","metadata":"{}","type":"blocks"}
+{"created_at":"2026-03-20T16:03:57Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.1","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T16:05:52Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.10","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T16:06:09Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.11","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T16:07:44Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.12","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T16:08:45Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.13","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T16:10:20Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.14","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T16:10:55Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.15","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T16:11:13Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.16","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T16:11:36Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.17","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T16:12:00Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.18","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T16:13:02Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.19","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T16:03:57Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.2","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T16:15:14Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.20","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T16:16:55Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.21","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T16:04:05Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.3","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T16:04:21Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.4","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T16:04:22Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.5","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T16:04:49Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.6","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T16:04:50Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.7","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T16:05:05Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.8","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T16:05:25Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.9","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-20T08:50:40Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe","issue_id":"Demarch-ysxe.5","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-20T08:50:52Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.3","issue_id":"Demarch-ysxe.5","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-16T07:03:39Z","created_by":"32806f91","depends_on_id":"Demarch-3de","issue_id":"Demarch-z2r","metadata":"{}","type":"blocks"}
