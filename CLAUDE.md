@@ -13,11 +13,11 @@ When you have enough context to start implementing, do it. Write a 3-bullet inli
 ## Naming Convention
 
 - All module names are **lowercase** — `interflux`, `intermute`, `interkasten`
-- Exception: **Clavain** (proper noun), **Interverse** (plugin ecosystem name), **Demarch** (project name), **Autarch** (proper noun), **Interspect** (proper noun), **Intercore** (proper noun), **Skaffen** (proper noun)
+- Exception: **Clavain** (proper noun), **Interverse** (plugin ecosystem name), **Demarch** (project name), **Autarch** (proper noun), **Interspect** (proper noun), **Intercore** (proper noun), **Skaffen** (proper noun), **Zaka** (proper noun), **Alwe** (proper noun)
 - GitHub repos match: `github.com/mistakeknot/interflux`
 - **Pillars** are the 6 top-level components: Intercore, Clavain, Skaffen, Interverse, Autarch, Interspect
 - **Layers** (L1/L2/L3) describe architectural dependency; pillars describe organizational structure
-- **Directory casing**: Pillar directories use their proper casing (`os/Clavain/`, `apps/Autarch/`, `os/Skaffen/`). Never create lowercase duplicates — Claude Code autodiscovers all `.claude-plugin/plugin.json` files and case variants cause triple-loading.
+- **Directory casing**: Pillar directories use their proper casing (`os/Clavain/`, `apps/Autarch/`, `os/Skaffen/`, `os/Zaka/`, `os/Alwe/`). Never create lowercase duplicates — Claude Code autodiscovers all `.claude-plugin/plugin.json` files and case variants cause triple-loading.
 
 ## Plugin Collision Rules
 

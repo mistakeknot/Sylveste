@@ -28,6 +28,8 @@ Each subproject has its own CLAUDE.md and AGENTS.md — read those before editin
 | `apps/Intercom/` | Autarch | Multi-runtime AI assistant (Claude, Gemini, Codex) |
 | `os/Clavain/` | Clavain | Autonomous software agency (L2 OS) |
 | `os/Skaffen/` | Skaffen | Sovereign agent runtime (L2 OS) |
+| `os/Zaka/` | Zaka | Universal CLI agent driver — tmux steering (L2 OS) |
+| `os/Alwe/` | Alwe | Universal agent observation layer — CASS + MCP (L2 OS) |
 | `core/intercore/` | Intercore | Orchestration kernel — Go CLI `ic` (L1) |
 | `core/intermute/` | Intercore | Multi-agent coordination service (Go) |
 | `core/marketplace/` | Intercore | Plugin marketplace registry |
@@ -55,6 +57,9 @@ interpulse → interband → interline/intermem   # context pressure → statusl
 Clavain (L2) → interphase                     # phase tracking, gates, discovery
 Skaffen (L2) → masaq                          # TUI components, themes
 Skaffen (L2) → intercore (L1)                 # provider/tool system via Intercore bridge
+Skaffen (L2) → Zaka (L2)                      # tmux agent steering
+Skaffen (L2) → Alwe (L2)                      # CASS observation
+Zaka (L2) + Alwe (L2) = Zakalwe               # two halves: steer + observe
 interlab → interlock                           # delta sharing — mutation broadcast across sessions
 ```
 
