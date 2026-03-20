@@ -526,6 +526,7 @@
 {"created_at":"2026-03-20T16:03:57Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.2","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-20T16:15:14Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.20","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-20T16:16:55Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.21","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T16:17:17Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.22","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-20T16:04:05Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.3","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-20T16:04:21Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.4","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-20T16:04:22Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.5","metadata":"{}","type":"parent-child"}
@@ -535,6 +536,18 @@
 {"created_at":"2026-03-20T16:05:25Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.4","issue_id":"Demarch-ysxe.4.9","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-20T08:50:40Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe","issue_id":"Demarch-ysxe.5","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-20T08:50:52Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.3","issue_id":"Demarch-ysxe.5","metadata":"{}","type":"blocks"}
+{"created_at":"2026-03-20T17:07:05Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.5","issue_id":"Demarch-ysxe.5.1","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T17:10:16Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.5","issue_id":"Demarch-ysxe.5.10","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T17:11:23Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.5","issue_id":"Demarch-ysxe.5.11","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T17:11:42Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.5","issue_id":"Demarch-ysxe.5.12","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T17:07:05Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.5","issue_id":"Demarch-ysxe.5.2","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T17:07:06Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.5","issue_id":"Demarch-ysxe.5.3","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T17:07:07Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.5","issue_id":"Demarch-ysxe.5.4","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T17:07:18Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.5","issue_id":"Demarch-ysxe.5.5","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T17:07:34Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.5","issue_id":"Demarch-ysxe.5.6","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T17:08:46Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.5","issue_id":"Demarch-ysxe.5.7","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T17:09:04Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.5","issue_id":"Demarch-ysxe.5.8","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-20T17:09:28Z","created_by":"Claude Code","depends_on_id":"Demarch-ysxe.5","issue_id":"Demarch-ysxe.5.9","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-16T07:03:39Z","created_by":"32806f91","depends_on_id":"Demarch-3de","issue_id":"Demarch-z2r","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-16T08:54:40Z","created_by":"32806f91","depends_on_id":"Demarch-z2r","issue_id":"Demarch-z2r.1","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-16T08:54:41Z","created_by":"32806f91","depends_on_id":"Demarch-z2r","issue_id":"Demarch-z2r.2","metadata":"{}","type":"parent-child"}
