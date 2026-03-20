@@ -71,6 +71,7 @@
 {"issue_id":"Demarch-0pvp.6","label":"performance"}
 {"issue_id":"Demarch-0pvp.7","label":"benchmarks"}
 {"issue_id":"Demarch-0pvp.7","label":"performance"}
+{"issue_id":"Demarch-0ves","label":"installer"}
 {"issue_id":"Demarch-1x9l.1","label":"claimed_at:1773784270"}
 {"issue_id":"Demarch-1x9l.1","label":"claimed_by:3723aa32-b149-4aa0-82b9-0e9349288526"}
 {"issue_id":"Demarch-1x9l.1","label":"complexity:4"}
@@ -273,6 +274,7 @@
 {"issue_id":"Demarch-9nd","label":"claimed_by:efc8f384-a381-49e2-bffd-d542b7c56cd7"}
 {"issue_id":"Demarch-9nd","label":"complexity:2"}
 {"issue_id":"Demarch-9nd","label":"phase:executing"}
+{"issue_id":"Demarch-9ray","label":"installer"}
 {"issue_id":"Demarch-b5md","label":"claimed_at:1773861204"}
 {"issue_id":"Demarch-b5md","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-b5md","label":"epic"}
@@ -280,6 +282,7 @@
 {"issue_id":"Demarch-b5md","label":"intersense"}
 {"issue_id":"Demarch-b5md","label":"phase:executing"}
 {"issue_id":"Demarch-b5md","label":"ux"}
+{"issue_id":"Demarch-bqm4","label":"installer"}
 {"issue_id":"Demarch-ce29","label":"clavain"}
 {"issue_id":"Demarch-cmc8","label":"claimed_at:1773685672"}
 {"issue_id":"Demarch-cmc8","label":"claimed_by:71e5bbfc-1984-4042-b90e-83e15c7fd84c"}
@@ -326,6 +329,7 @@
 {"issue_id":"Demarch-g3a","label":"claimed_at:1773601532"}
 {"issue_id":"Demarch-g3a","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-g3a","label":"complexity:4"}
+{"issue_id":"Demarch-gf9c","label":"installer"}
 {"issue_id":"Demarch-hlx2","label":"clavain"}
 {"issue_id":"Demarch-hw6","label":"claimed_at:1773640545"}
 {"issue_id":"Demarch-hw6","label":"claimed_by:unknown"}
