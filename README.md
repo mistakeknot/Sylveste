@@ -14,11 +14,21 @@ curl -fsSL https://raw.githubusercontent.com/mistakeknot/Demarch/main/install.sh
 
 ### Prerequisites
 
-**Required:** [jq](https://jqlang.github.io/jq/), [Go 1.22+](https://go.dev/dl/) (1.24+ for full platform), git
+**Required:** [jq](https://jqlang.github.io/jq/), [Go 1.22+](https://go.dev/dl/), git
+
+**Why Go?** The intercore kernel (`ic`) and `clavain-cli` are Go binaries built from source during installation. Go 1.22+ is the minimum; 1.24+ is recommended.
 
 **Recommended:** Python 3.10+ with PyYAML, [Node.js 20+](https://nodejs.org/), [yq v4](https://github.com/mikefarah/yq)
 
 Install takes ~2 minutes (power user) or ~30 minutes (full platform). Disk: ~2 GB core, ~5 GB with all plugins.
+
+### Managing your installation
+
+```bash
+bash install.sh --update      # Update to latest (skip first-time setup)
+bash install.sh --uninstall   # Remove all Demarch components
+bash install.sh --dry-run     # Preview what would happen
+```
 
 Then open Claude Code in your project and run:
 

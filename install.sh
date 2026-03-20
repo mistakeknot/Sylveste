@@ -3,12 +3,14 @@
 #
 # Usage:
 #   curl -fsSL https://raw.githubusercontent.com/mistakeknot/Demarch/main/install.sh | bash
-#   bash install.sh [--help] [--dry-run] [--verbose]
+#   bash install.sh [--help] [--dry-run] [--verbose] [--update] [--uninstall]
 #
 # Flags:
-#   --help      Show this usage message and exit
-#   --dry-run   Show what would happen without executing
-#   --verbose   Enable debug output
+#   --help        Show this usage message and exit
+#   --dry-run     Show what would happen without executing
+#   --verbose     Enable debug output
+#   --update      Update existing installation (skip first-time setup)
+#   --uninstall   Remove Demarch components (Clavain, companions, ic, Codex/Gemini skills)
 
 set -euo pipefail
 
@@ -34,6 +36,8 @@ fi
 # --- State ---
 DRY_RUN=false
 VERBOSE=false
+UPDATE_ONLY=false
+UNINSTALL=false
 HAS_BD=false
 CACHE_DIR="${HOME}/.claude/plugins/cache"
 
@@ -46,17 +50,28 @@ install.sh -- Curl-fetchable installer for Demarch (Clavain + Interverse)
 
 Usage:
   curl -fsSL https://raw.githubusercontent.com/mistakeknot/Demarch/main/install.sh | bash
-  bash install.sh [--help] [--dry-run] [--verbose]
+  bash install.sh [--help] [--dry-run] [--verbose] [--update] [--uninstall]
 
 Flags:
-  --help      Show this usage message and exit
-  --dry-run   Show what would happen without executing
-  --verbose   Enable debug output
+  --help        Show this usage message and exit
+  --dry-run     Show what would happen without executing
+  --verbose     Enable debug output
+  --update      Update existing installation (skip first-time setup)
+  --uninstall   Remove Demarch components (prompts for confirmation)
+
+Prerequisites:
+  Required: jq, Go 1.22+ (builds ic kernel and clavain-cli), git
+  Optional: Claude Code CLI, Codex CLI, Gemini CLI, Beads CLI (bd)
+
+Go is required because the intercore kernel (ic) and clavain-cli are Go
+binaries built from source during installation. Install Go from https://go.dev/dl/
 USAGE
             exit 0
             ;;
         --dry-run) DRY_RUN=true ;;
         --verbose) VERBOSE=true ;;
+        --update) UPDATE_ONLY=true ;;
+        --uninstall) UNINSTALL=true ;;
         *)
             printf "${RED}Unknown flag: %s${RESET}\n" "$arg"
             printf "Run with --help for usage.\n"
@@ -98,10 +113,138 @@ run() {
     "$@"
 }
 
+# --- Uninstall ---
+if [[ "$UNINSTALL" == true ]]; then
+    log ""
+    log "${BOLD}Demarch Uninstaller${RESET}"
+    log "${DIM}Removing Clavain + Interverse components${RESET}"
+    log ""
+
+    if [[ "$DRY_RUN" != true ]]; then
+        printf "${YELLOW}This will remove Demarch components. Continue? [y/N] ${RESET}"
+        read -r confirm
+        if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
+            log "Aborted."
+            exit 0
+        fi
+    fi
+
+    # Remove Claude Code plugins
+    if command -v claude &>/dev/null; then
+        log "${BOLD}Removing Claude Code plugins...${RESET}"
+
+        # Remove Clavain plugin
+        if run claude plugin uninstall clavain@interagency-marketplace 2>/dev/null; then
+            success "Clavain plugin removed"
+        else
+            warn "Clavain plugin not found or already removed"
+        fi
+
+        # Remove companion plugins via modpack list
+        CLAVAIN_DIR=$(find "${CACHE_DIR}/interagency-marketplace/clavain" -name "agent-rig.json" -exec dirname {} \; 2>/dev/null | sort -V | tail -1)
+        if [[ -n "$CLAVAIN_DIR" ]] && [[ -f "$CLAVAIN_DIR/agent-rig.json" ]] && command -v jq &>/dev/null; then
+            jq -r '.plugins.recommended[]?.source // empty, .plugins.required[]?.source // empty' "$CLAVAIN_DIR/agent-rig.json" 2>/dev/null | while IFS= read -r plugin_src; do
+                [[ -n "$plugin_src" ]] || continue
+                if run claude plugin uninstall "$plugin_src" 2>/dev/null; then
+                    success "Removed $plugin_src"
+                else
+                    debug "Skip $plugin_src (not installed or already removed)"
+                fi
+            done
+        fi
+
+        # Remove marketplace
+        if run claude plugin marketplace remove interagency-marketplace 2>/dev/null; then
+            success "Marketplace removed"
+        else
+            warn "Marketplace not found or already removed"
+        fi
+        log ""
+    fi
+
+    # Remove ic binary and database
+    log "${BOLD}Removing ic kernel...${RESET}"
+    if [[ -f "${HOME}/.local/bin/ic" ]]; then
+        run rm -f "${HOME}/.local/bin/ic"
+        success "ic binary removed"
+    else
+        debug "ic binary not found"
+    fi
+    for ic_db in "${HOME}/.clavain/intercore.db" ".clavain/intercore.db"; do
+        if [[ -f "$ic_db" ]]; then
+            run rm -f "$ic_db"
+            success "ic database removed: $ic_db"
+        fi
+    done
+    log ""
+
+    # Remove Codex skills
+    if [[ -d "${HOME}/.agents/skills/clavain" ]] || [[ -d "${HOME}/.codex/clavain" ]]; then
+        log "${BOLD}Removing Codex skills...${RESET}"
+        # Remove skill symlinks
+        for link in "${HOME}/.agents/skills"/*; do
+            [[ -L "$link" ]] || continue
+            target=$(readlink "$link" 2>/dev/null || true)
+            if [[ "$target" == */.codex/* ]] || [[ "$target" == *interagency-marketplace/clavain/* ]]; then
+                run rm -f "$link"
+                debug "Removed symlink: $(basename "$link")"
+            fi
+        done
+        # Remove Codex prompt wrappers
+        if [[ -d "${HOME}/.codex/prompts" ]]; then
+            run rm -f "${HOME}/.codex/prompts"/clavain-*.md
+            success "Codex prompt wrappers removed"
+        fi
+        # Remove Clavain Codex checkout
+        if [[ -d "${HOME}/.codex/clavain" ]]; then
+            run rm -rf "${HOME}/.codex/clavain"
+            success "Clavain Codex checkout removed"
+        fi
+        # Remove companion plugin checkouts
+        for repo_dir in "${HOME}/.codex"/inter*; do
+            [[ -d "$repo_dir/.git" ]] || continue
+            run rm -rf "$repo_dir"
+            debug "Removed $(basename "$repo_dir")"
+        done
+        [[ -d "${HOME}/.codex/tldr-swinton" ]] && run rm -rf "${HOME}/.codex/tldr-swinton"
+        [[ -d "${HOME}/.codex/tool-time" ]] && run rm -rf "${HOME}/.codex/tool-time"
+        success "Codex skills and companion repos removed"
+        log ""
+    fi
+
+    # Remove Gemini skills
+    if [[ -d "${HOME}/.gemini/generated-skills" ]]; then
+        log "${BOLD}Removing Gemini skills...${RESET}"
+        run rm -rf "${HOME}/.gemini/generated-skills"
+        success "Gemini generated skills removed"
+        log ""
+    fi
+
+    # Remove clavain-cli symlink
+    if [[ -L "${HOME}/.local/bin/clavain-cli" ]]; then
+        run rm -f "${HOME}/.local/bin/clavain-cli"
+        success "clavain-cli symlink removed"
+    fi
+
+    log "${GREEN}✓ Demarch uninstalled.${RESET}"
+    log ""
+    log "  Remaining (not removed automatically):"
+    log "  - Beads data in .beads/ directories (project-specific)"
+    log "  - Claude Code settings in ~/.claude/ (shared with other plugins)"
+    log "  - Go toolchain"
+    log ""
+    exit 0
+fi
+
 # --- Prerequisites ---
 log ""
-log "${BOLD}Demarch Installer${RESET}"
-log "${DIM}Clavain + Interverse plugin ecosystem${RESET}"
+if [[ "$UPDATE_ONLY" == true ]]; then
+    log "${BOLD}Demarch Updater${RESET}"
+    log "${DIM}Updating Clavain + Interverse to latest${RESET}"
+else
+    log "${BOLD}Demarch Installer${RESET}"
+    log "${DIM}Clavain + Interverse plugin ecosystem${RESET}"
+fi
 log ""
 
 log "${BOLD}Checking prerequisites...${RESET}"
@@ -301,8 +444,8 @@ if [[ "$HAS_CLAUDE" == true ]]; then
 
 fi
 
-# Step 4: Beads init (conditional)
-if [[ "$HAS_BD" == true ]] && git rev-parse --is-inside-work-tree &>/dev/null; then
+# Step 4: Beads init (conditional, skip in update mode)
+if [[ "$UPDATE_ONLY" != true ]] && [[ "$HAS_BD" == true ]] && git rev-parse --is-inside-work-tree &>/dev/null; then
     log "  Initializing Beads in current project..."
     if run bd init 2>/dev/null; then
         [[ "$DRY_RUN" != true ]] && success "Beads initialized"
@@ -310,7 +453,7 @@ if [[ "$HAS_BD" == true ]] && git rev-parse --is-inside-work-tree &>/dev/null; t
         warn "Beads init returned non-zero (may already be initialized, continuing)"
     fi
 else
-    debug "Skipping bd init (bd not available or not in a git repo)"
+    debug "Skipping bd init (update mode, bd not available, or not in a git repo)"
 fi
 
 # Step 5: Build intercore kernel (ic)
