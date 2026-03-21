@@ -65,6 +65,14 @@
 {"created_at":"2026-03-18T08:31:39Z","created_by":"mk","depends_on_id":"Demarch-1x9l.6","issue_id":"Demarch-1x9l.6.3","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-18T08:35:37Z","created_by":"mk","depends_on_id":"Demarch-1x9l.6","issue_id":"Demarch-1x9l.6.4","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-15T09:52:06Z","created_by":"mistakeknot","depends_on_id":"Demarch-kwm","issue_id":"Demarch-1xm","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-21T09:21:27Z","created_by":"Claude Code","depends_on_id":"Demarch-2bf","issue_id":"Demarch-2bf.1","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-21T09:21:28Z","created_by":"Claude Code","depends_on_id":"Demarch-2bf","issue_id":"Demarch-2bf.2","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-21T09:21:32Z","created_by":"Claude Code","depends_on_id":"Demarch-2bf","issue_id":"Demarch-2bf.3","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-21T09:21:58Z","created_by":"Claude Code","depends_on_id":"Demarch-2bf","issue_id":"Demarch-2bf.4","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-21T09:22:13Z","created_by":"Claude Code","depends_on_id":"Demarch-2bf","issue_id":"Demarch-2bf.5","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-21T09:22:28Z","created_by":"Claude Code","depends_on_id":"Demarch-2bf","issue_id":"Demarch-2bf.6","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-21T09:22:44Z","created_by":"Claude Code","depends_on_id":"Demarch-2bf","issue_id":"Demarch-2bf.7","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-21T09:23:37Z","created_by":"Claude Code","depends_on_id":"Demarch-2bf","issue_id":"Demarch-2bf.8","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-16T08:06:28Z","created_by":"mk","depends_on_id":"Demarch-edi3","issue_id":"Demarch-2e8","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-16T19:27:43Z","created_by":"mk","depends_on_id":"Demarch-2e8","issue_id":"Demarch-2e8.1","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-16T19:27:43Z","created_by":"mk","depends_on_id":"Demarch-2e8","issue_id":"Demarch-2e8.2","metadata":"{}","type":"parent-child"}
