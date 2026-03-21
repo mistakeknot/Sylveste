@@ -73,18 +73,37 @@ project/AGENTS.md            (loaded on demand)
 | AGENTS.md section | 50-80 | 80 | 100 | Extract → docs/ with pointer |
 | MEMORY.md | 100-150 | 150 | 200 | Promote stable facts → AGENTS.md via intermem:synthesize |
 
+## Document Hierarchy
+
+Three root documents, each with a distinct purpose:
+
+```
+MISSION.md                  — why the project exists (rarely changes)
+  ├→ docs/demarch-vision.md — where it's going (existing vision doc, v3.4)
+  └→ PHILOSOPHY.md          — how we build (design bets, principles)
+       └→ derived: PRDs, Roadmap, CUJs, AGENTS.md conventions
+```
+
+| Document | Changes | Who updates |
+|----------|---------|-------------|
+| MISSION.md | Almost never | Human only |
+| VISION.md | Quarterly | Human, interpath drafts |
+| PHILOSOPHY.md | When latent patterns detected | Human, interlore proposes |
+
+Conflict resolution: MISSION.md takes precedence when VISION and PHILOSOPHY conflict.
+
 ## docs/canon/
 
-Foundational docs that define project identity and standards. Every project in the ecosystem should have:
+Foundational docs that define project standards:
 
 ```
 docs/canon/
-├── doc-structure.md      # This file — how docs are organized (interscribe enforces this)
+├── doc-structure.md      # This file
 ├── plugin-standard.md    # Structural quality bar for Interverse plugins
 └── naming.md             # Naming conventions (currently at docs/guides/naming-conventions.md)
 ```
 
-Root keeps: CLAUDE.md, AGENTS.md (operational, auto-loaded). PHILOSOPHY.md stays at project root (auto-loaded by interdoc's philosophy alignment protocol).
+Root keeps: MISSION.md, CLAUDE.md, AGENTS.md (auto-loaded). PHILOSOPHY.md stays at project root (hierarchy position — sibling of VISION, derived from MISSION).
 
 ## Enforcement
 

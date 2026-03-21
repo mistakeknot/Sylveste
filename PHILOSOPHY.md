@@ -1,8 +1,6 @@
 # Demarch Philosophy
 
-The design bets, tradeoffs, and convictions that inform everything else.
-
-CLAUDE.md says *how to work here*. AGENTS.md says *what to build and how*. This document says *why these tradeoffs and not others*.
+The design bets, tradeoffs, and principles that guide how we build. See MISSION.md for why this project exists.
 
 Three principles, applied recursively:
 

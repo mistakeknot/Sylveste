@@ -119,6 +119,8 @@ Every AGENTS.md opens with this boilerplate, then has plugin-specific content:
 
 ### Standard Header (identical across all plugins)
 
+> **NOTE:** Monorepo projects should reference `MISSION.md` in their root-level `AGENTS.md` Canonical References section (e.g., `[MISSION.md](../../MISSION.md)`). Do not add MISSION.md to the per-plugin AGENTS.md boilerplate — plugins don't have their own MISSION.md and the relative path would break for standalone clones.
+
 ```markdown
 # <plugin-name> — Development Guide
 
