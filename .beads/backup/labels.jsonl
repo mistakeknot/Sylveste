@@ -426,9 +426,9 @@
 {"issue_id":"Demarch-mvy.10","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-mvy.10","label":"complexity:5"}
 {"issue_id":"Demarch-mvy.10","label":"phase:plan-reviewed"}
-{"issue_id":"Demarch-mvy.11","label":"claimed_at:1773801753"}
-{"issue_id":"Demarch-mvy.11","label":"claimed_by:bcd4f210-8a11-4c9d-860f-bc99bf91ed89"}
-{"issue_id":"Demarch-mvy.11","label":"complexity:5"}
+{"issue_id":"Demarch-mvy.11","label":"claimed_at:1774054050"}
+{"issue_id":"Demarch-mvy.11","label":"claimed_by:unknown"}
+{"issue_id":"Demarch-mvy.11","label":"complexity:2"}
 {"issue_id":"Demarch-mvy.11","label":"phase:plan-reviewed"}
 {"issue_id":"Demarch-mvy.12","label":"claimed_at:1773870502"}
 {"issue_id":"Demarch-mvy.12","label":"claimed_by:1bd69e98-a651-4941-8237-0da9e529f03c"}
@@ -514,8 +514,8 @@
 {"issue_id":"Demarch-ysxe.4","label":"epic"}
 {"issue_id":"Demarch-ysxe.5","label":"artifact_implementation:150c90157d3d97008b83992e725eda55073176ca"}
 {"issue_id":"Demarch-ysxe.5","label":"artifact_plan:docs/plans/2026-03-20-ai-factory-wave1-foundation.md"}
-{"issue_id":"Demarch-ysxe.5","label":"claimed_at:1774023759"}
-{"issue_id":"Demarch-ysxe.5","label":"claimed_by:unknown"}
+{"issue_id":"Demarch-ysxe.5","label":"claimed_at:1774053876"}
+{"issue_id":"Demarch-ysxe.5","label":"claimed_by:released"}
 {"issue_id":"Demarch-ysxe.5","label":"epic"}
 {"issue_id":"Demarch-z2r","label":"claimed_at:1773647681"}
 {"issue_id":"Demarch-z2r","label":"claimed_by:32806f91-8f63-4823-9f34-92bee2995509"}
