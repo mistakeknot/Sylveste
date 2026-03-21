@@ -30,6 +30,7 @@ Each subproject has its own CLAUDE.md and AGENTS.md — read those before editin
 | `os/Skaffen/` | Skaffen | Sovereign agent runtime (L2 OS) |
 | `os/Zaka/` | Zaka | Universal CLI agent driver — tmux steering (L2 OS) |
 | `os/Alwe/` | Alwe | Universal agent observation layer — CASS + MCP (L2 OS) |
+| `os/Ockham/` | Ockham | Factory governor — intent, authority, anomaly, dispatch (L2 OS) |
 | `core/intercore/` | Intercore | Orchestration kernel — Go CLI `ic` (L1) |
 | `core/intermute/` | Intercore | Multi-agent coordination service (Go) |
 | `core/marketplace/` | Intercore | Plugin marketplace registry |
@@ -60,6 +61,9 @@ Skaffen (L2) → intercore (L1)                 # provider/tool system via Inter
 Skaffen (L2) → Zaka (L2)                      # tmux agent steering
 Skaffen (L2) → Alwe (L2)                      # CASS observation
 Zaka (L2) + Alwe (L2) = Zakalwe               # two halves: steer + observe
+Ockham (L2) → Clavain dispatch scoring          # intent → dispatch weights
+Ockham (L2) → Alwe                              # anomaly detection queries
+Meadowsyn (L3) → Ockham (L2)                   # UI → governor
 interlab → interlock                           # delta sharing — mutation broadcast across sessions
 ```
 

@@ -40,6 +40,7 @@ These names are **capitalized** as proper nouns. They get their own repos, their
 | **Zaka** | Banks — Cheradenine Zakalwe (Use of Weapons) | L2 universal CLI agent driver (tmux steering) |
 | **Alwe** | Banks — Zakalwe (Use of Weapons) | L2 universal agent observation layer (CASS + MCP) |
 | **Skaffen** | Banks — Skaffen-Amtiskaw (Use of Weapons) | L2 sovereign agent runtime |
+| **Ockham** | Palmer — Ockham Saneer (Terra Ignota) | L2 factory governor |
 
 ### `inter-*` modules (plugins, companions, SDK)
 
