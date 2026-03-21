@@ -49,6 +49,9 @@ docs/docs
 # ── Intermem state (per-project, not committed) ──
 .intermem/
 
+# ── interlore scan state (per-project, not committed) ──
+.interlore/
+
 # ── Generated secret scan artifacts (reports/logs) ──
 docs/reports/security/secret-scan-backfill-*/
 docs/reports/security/secret-scan-backfill-*.md
