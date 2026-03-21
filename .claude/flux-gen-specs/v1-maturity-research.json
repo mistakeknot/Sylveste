@@ -1,0 +1,152 @@
+[
+  {
+    "name": "fd-versioning-philosophy",
+    "focus": "How AI-native toolchains should reason about version milestones vs traditional semantic versioning",
+    "persona": "A toolchain historian and open-source release strategist who has studied the 1.0 declarations of Rust, Go, Kubernetes, Terraform, Nix, and other developer infrastructure projects. Approaches versioning as a social contract, not just a technical label.",
+    "decision_lens": "Prioritizes findings that distinguish AI-native toolchain maturity signals from traditional software signals. Focuses on what the 1.0 declaration communicates to the developer ecosystem.",
+    "review_areas": [
+      "What explicit stability promises did Rust 1.0, Go 1.0, Kubernetes 1.0, Terraform 1.0, and Nix 1.0 make — and which of those promises are meaningful for an AI-native platform where outputs are non-deterministic?",
+      "How do developer infrastructure projects handle the tension between 'stable enough to build on' and 'still evolving rapidly' at 1.0?",
+      "What is the semantic versioning contract problem for AI toolchains: if the agent's behavior changes because the underlying model changes, has the platform broken its version contract even if no code changed?",
+      "Survey versioning philosophies from non-software domains: pharmaceutical approval phases, engineering prototype classifications, and how they handle 'the thing itself changes over time'",
+      "What does CalVer vs SemVer vs capability-gated versioning look like for an agentic platform?",
+      "Identify the minimum viable contract for a 1.0 declaration: what must be stable, what may change, and how should breaking changes be communicated when the 'breakage' is behavioral rather than structural?"
+    ],
+    "success_hints": [
+      "Produces a concrete versioning contract template for AI-native platforms",
+      "Distinguishes between 'API stability' (structural) and 'behavioral stability' (semantic)",
+      "Identifies at least one versioning scheme from a non-software domain that maps well onto the autonomous dev agency context"
+    ],
+    "task_context": "Demarch is an autonomous software development agency platform at v0.6.228. The question is what v1.0.0 should mean and commit to, given the platform's outputs depend on evolving AI models.",
+    "anti_overlap": [
+      "fd-maturity-models covers organizational readiness frameworks (NASA TRL, DoD MRL) and biological stage models",
+      "fd-oss-readiness-signals covers the empirical signals that specific OSS projects used at 1.0 declaration",
+      "fd-autopoiesis-viability covers thermodynamic and systems-theoretic maturity thresholds"
+    ]
+  },
+  {
+    "name": "fd-maturity-models",
+    "focus": "Mapping NASA TRL, DoD MRL, biological development stages, and CAS phase transitions onto an autonomous dev agency platform",
+    "persona": "A systems scientist who moves fluently between aerospace readiness frameworks, developmental biology, and complexity theory. Specializes in finding structural isomorphisms between maturity models across domains.",
+    "decision_lens": "Prioritizes findings where a maturity model from another domain reveals a non-obvious threshold or gate that would be invisible inside the software framing.",
+    "review_areas": [
+      "Map NASA Technology Readiness Levels (TRL 1-9) onto the Demarch platform lifecycle — identify which TRL the platform currently occupies",
+      "Map DoD Manufacturing Readiness Levels (MRL 1-10) for the 'production of autonomous dev work' use case",
+      "Survey biological development stage models (embryonic/fetal/neonatal/juvenile/adult, Waddington's landscape) for structural analogs to platform maturation",
+      "Analyze CAS phase transition literature for what constitutes a 'criticality' in a developing system",
+      "Synthesize a composite maturity rubric drawing the most predictive indicators from each domain",
+      "Identify which maturity frameworks have been misapplied historically and where those misapplications would mislead"
+    ],
+    "success_hints": [
+      "Produces a minimum 3-level rubric derived from cross-domain synthesis",
+      "Names at least one maturity signal that only appears in non-software frameworks",
+      "Distinguishes 'readiness to deploy' from 'readiness to be relied upon'"
+    ],
+    "task_context": "Demarch is an autonomous software development agency platform at v0.6.228. The question is what v1.0.0 should mean and commit to, given the platform's outputs depend on evolving AI models.",
+    "anti_overlap": [
+      "fd-versioning-philosophy covers version contract semantics and OSS release conventions",
+      "fd-autopoiesis-viability covers Beer's VSM viability and autopoiesis thresholds specifically",
+      "fd-agent-ecosystem-readiness covers AI agent ecosystem maturity in the contemporary ML/engineering framing"
+    ]
+  },
+  {
+    "name": "fd-oss-readiness-signals",
+    "focus": "Empirical signals that major open-source dev infrastructure projects actually used when declaring 1.0",
+    "persona": "An open-source ecosystem researcher who has studied release histories, changelogs, RFC archives, and community discussions for Rust, Go, Kubernetes, Terraform, Nix, and similar projects.",
+    "decision_lens": "Prioritizes findings grounded in what projects actually did, not what they said they'd do. Values patterns that appear across multiple independent projects.",
+    "review_areas": [
+      "Rust 1.0 (May 2015): stability guarantees, backward-compatibility commitment, community signals that triggered the declaration",
+      "Go 1.0 (March 2012): the Go 1 compatibility promise scope, exclusions, applicability to an agentic platform",
+      "Kubernetes 1.0 (July 2015): how 'production ready' was defined while still maturing rapidly",
+      "Terraform 1.0 (June 2021): specific triggers after 7 years — workflow stability, provider protocol stability, state file format stability",
+      "Nix/NixOS: why no 1.0 despite widespread production use — what holds it back and whether similar dynamics apply",
+      "Extract the common 3-5 signals that consistently preceded credible 1.0 declarations"
+    ],
+    "success_hints": [
+      "References primary sources not just summaries",
+      "Produces a readiness signal checklist derived from empirical patterns across 4+ projects",
+      "Identifies at least one signal structurally inapplicable to agentic platforms"
+    ],
+    "task_context": "Demarch is an autonomous software development agency platform at v0.6.228. The question is what v1.0.0 should mean and commit to, given the platform's outputs depend on evolving AI models.",
+    "anti_overlap": [
+      "fd-versioning-philosophy covers the philosophical meaning of versioning contracts",
+      "fd-maturity-models covers abstract maturity frameworks (TRL, MRL, biology)",
+      "fd-agent-ecosystem-readiness covers AI agent ecosystem maturity specifically"
+    ]
+  },
+  {
+    "name": "fd-autopoiesis-viability",
+    "focus": "Thermodynamic free energy, autopoiesis thresholds, stigmergy maturity, and Stafford Beer's VSM viability as maturity criteria",
+    "persona": "A cybernetician and complexity theorist with deep familiarity with Beer's VSM, Maturana and Varela's autopoiesis, Prigogine's dissipative structures, and stigmergy research. Applies frameworks without forcing them.",
+    "decision_lens": "Prioritizes findings that identify non-obvious threshold conditions — moments where a system transitions from 'scripted' to 'self-maintaining'. Values findings invisible to a purely software-framing analysis.",
+    "review_areas": [
+      "Apply Beer's Viable System Model: map the five VSM systems onto Demarch's components and identify which are present, missing, or underdeveloped",
+      "Analyze the autopoiesis threshold: at what point does an autonomous dev agency become self-maintaining rather than merely self-operating?",
+      "Survey thermodynamic free energy framing (Friston's free energy principle, Prigogine's dissipative structures): what observable platform behaviors correspond to reaching a stable dissipative regime?",
+      "Analyze stigmergy maturity in ant colonies: qualitative phase transitions as colony size grows — identify analogous phase transitions in multi-agent dev platforms",
+      "Apply Ashby's Law of Requisite Variety: does Demarch's agent repertoire have sufficient variety for its target problem space?",
+      "Synthesize: which framework yields the most operationally useful v1.0 criterion, and what single observable test would determine if the threshold has been crossed?"
+    ],
+    "success_hints": [
+      "Produces at least one concrete observable test derived from the esoteric frameworks",
+      "Identifies where the biological/cybernetic analogies break down and what that reveals",
+      "Applies Beer's VSM rigorously enough to identify at least one missing VSM system"
+    ],
+    "task_context": "Demarch is an autonomous software development agency platform at v0.6.228. The question is what v1.0.0 should mean and commit to, given the platform's outputs depend on evolving AI models.",
+    "anti_overlap": [
+      "fd-maturity-models covers NASA TRL, DoD MRL, and biological stage models",
+      "fd-agent-ecosystem-readiness covers AI agent ecosystem maturity in the engineering framing",
+      "fd-versioning-philosophy covers versioning contract semantics"
+    ]
+  },
+  {
+    "name": "fd-agent-ecosystem-readiness",
+    "focus": "What 'production ready' means for AI agent ecosystems where the agents themselves evolve",
+    "persona": "An AI systems engineer who has worked on production LLM deployments, agent frameworks, and multi-agent orchestration. Thinks about the gap between 'works in demos' and 'reliable in production' for agentic systems.",
+    "decision_lens": "Prioritizes findings that expose the unique reliability challenge of agentic platforms: platform code may be stable but platform behavior is not. Values testable production-readiness criteria.",
+    "review_areas": [
+      "Define the layers of stability: (1) structural API stability, (2) behavioral stability under fixed model, (3) behavioral stability across model upgrades — which layers must be stable at v1.0?",
+      "Survey how LangChain, AutoGen, CrewAI, Semantic Kernel have handled version declarations and breaking changes",
+      "Analyze the 'agent evaluation problem' at v1.0: how to demonstrate production readiness when outputs are code and environments are diverse",
+      "Examine the 'self-evolution problem': if agents update their own prompts and routing, what does version stability mean?",
+      "Define minimum production readiness criteria: failure modes that must be absent, recovery behaviors, observability, human oversight hooks",
+      "Multi-project scaling: does v1.0 require reliability on one project, a class of projects, or arbitrary domains?"
+    ],
+    "success_hints": [
+      "Produces a concrete production readiness checklist distinguishing structural, behavioral, and operational stability",
+      "Identifies at least one failure mode unique to agentic platforms that must be absent at v1.0",
+      "Surveys at least 3 existing AI agent frameworks' versioning histories"
+    ],
+    "task_context": "Demarch is an autonomous software development agency platform at v0.6.228. The question is what v1.0.0 should mean and commit to, given the platform's outputs depend on evolving AI models.",
+    "anti_overlap": [
+      "fd-oss-readiness-signals covers traditional OSS dev infrastructure versioning history",
+      "fd-versioning-philosophy covers abstract contract semantics of versioning",
+      "fd-autopoiesis-viability covers systems-theoretic viability thresholds"
+    ]
+  },
+  {
+    "name": "fd-game-design-readiness",
+    "focus": "Game design release readiness — emergent gameplay stability, meta-game convergence, and balance as structural analogs for v1.0",
+    "persona": "A game designer and systems thinker who has worked on mechanically deep games and live-service launches. Thinks rigorously about the difference between 'feature complete', 'mechanically stable', and 'meta-stable'.",
+    "decision_lens": "Prioritizes findings that translate game release criteria into operationally testable platform criteria. Values the game design framing for its unusually precise vocabulary for emergent system stability.",
+    "review_areas": [
+      "Define 'emergent gameplay stability' and map it to an autonomous dev agency: when can users reliably predict the space of interesting outcomes?",
+      "Analyze 'meta-game convergence' as a readiness signal: viable strategy space stabilization with no dominant strategy making all others obsolete",
+      "Survey alpha/beta/release framework in game development: what observable conditions trigger each transition?",
+      "Examine 'balance' in games with complex interaction systems (MTG, Dwarf Fortress) — what is 'balance' for an autonomous dev platform?",
+      "Analyze player onboarding / tutorial completeness as release criteria — map to developer onboarding for an autonomous dev agency",
+      "Case studies: games that launched too early (No Man's Sky, Cyberpunk 2077) vs right time (Minecraft 1.0, Dwarf Fortress Steam) — what structural lessons apply?"
+    ],
+    "success_hints": [
+      "Produces 3+ game design readiness criteria that translate directly into testable platform criteria",
+      "Identifies at least one game design concept with a non-obvious but precise analog in autonomous dev agency operation",
+      "References specific game launch case studies to ground recommendations"
+    ],
+    "task_context": "Demarch is an autonomous software development agency platform at v0.6.228. The question is what v1.0.0 should mean and commit to, given the platform's outputs depend on evolving AI models.",
+    "anti_overlap": [
+      "fd-maturity-models covers biological development stages and formal organizational maturity frameworks",
+      "fd-agent-ecosystem-readiness covers AI-specific production readiness and agent framework versioning",
+      "fd-autopoiesis-viability covers complexity-theoretic phase transitions (CAS, stigmergy)"
+    ]
+  }
+]
