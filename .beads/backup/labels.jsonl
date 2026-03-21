@@ -346,6 +346,8 @@
 {"issue_id":"Demarch-czxk","label":"phase:shipping"}
 {"issue_id":"Demarch-czxk","label":"ux"}
 {"issue_id":"Demarch-d3sm","label":"clavain"}
+{"issue_id":"Demarch-dk5","label":"claimed_at:1774081198"}
+{"issue_id":"Demarch-dk5","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-dog5","label":"quick-win"}
 {"issue_id":"Demarch-dog5","label":"skaffen"}
 {"issue_id":"Demarch-dog5","label":"swe-bench"}
