@@ -337,6 +337,16 @@
 {"issue_id":"Demarch-b5md","label":"intersense"}
 {"issue_id":"Demarch-b5md","label":"phase:executing"}
 {"issue_id":"Demarch-b5md","label":"ux"}
+{"issue_id":"Demarch-bncp","label":"artifact_brainstorm:docs/brainstorms/2026-03-21-interlore-brainstorm.md"}
+{"issue_id":"Demarch-bncp","label":"artifact_plan:docs/plans/2026-03-21-interlore.md"}
+{"issue_id":"Demarch-bncp","label":"artifact_prd:docs/prds/2026-03-21-interlore.md"}
+{"issue_id":"Demarch-bncp","label":"artifact_quality-verdict:.clavain/quality-gates/synthesis.md"}
+{"issue_id":"Demarch-bncp","label":"claimed_at:1774138506"}
+{"issue_id":"Demarch-bncp","label":"claimed_by:unknown"}
+{"issue_id":"Demarch-bncp","label":"complexity:4"}
+{"issue_id":"Demarch-bncp","label":"docs"}
+{"issue_id":"Demarch-bncp","label":"epic"}
+{"issue_id":"Demarch-bncp","label":"plugin"}
 {"issue_id":"Demarch-bqm4","label":"installer"}
 {"issue_id":"Demarch-ce29","label":"clavain"}
 {"issue_id":"Demarch-cmc8","label":"claimed_at:1773685672"}
