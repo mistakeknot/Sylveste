@@ -400,7 +400,10 @@
 {"issue_id":"Demarch-edi3","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-edi3","label":"complexity:2"}
 {"issue_id":"Demarch-ef08","label":"artifact_brainstorm:docs/brainstorms/2026-03-22-ideagui-data-pipe-brainstorm.md"}
+{"issue_id":"Demarch-ef08","label":"artifact_plan:docs/plans/2026-03-22-ideagui-data-pipe.md"}
 {"issue_id":"Demarch-ef08","label":"artifact_prd:docs/prds/2026-03-22-ideagui-data-pipe.md"}
+{"issue_id":"Demarch-ef08","label":"claimed_at:1774157714"}
+{"issue_id":"Demarch-ef08","label":"claimed_by:8cc202b2-5932-40c4-83c0-f7c205cd57f7"}
 {"issue_id":"Demarch-enxv","label":"roadmap"}
 {"issue_id":"Demarch-enxv","label":"v1.0"}
 {"issue_id":"Demarch-enxv.1","label":"artifact_brainstorm:.claude/flux-drive-output/synthesis-v1-maturity.md"}
@@ -421,8 +424,9 @@
 {"issue_id":"Demarch-fjvb","label":"interlab"}
 {"issue_id":"Demarch-fjvb","label":"observability"}
 {"issue_id":"Demarch-fq41","label":"clavain"}
-{"issue_id":"Demarch-fqb","label":"claimed_at:0"}
-{"issue_id":"Demarch-fqb","label":"claimed_by:released"}
+{"issue_id":"Demarch-fqb","label":"artifact_implementation:083dfef4683dccaadd816ae20b449c35f178cafc"}
+{"issue_id":"Demarch-fqb","label":"claimed_at:1774190687"}
+{"issue_id":"Demarch-fqb","label":"claimed_by:34d64cda-dd04-432f-a46a-66dfa9d117c5"}
 {"issue_id":"Demarch-fqb","label":"complexity:3"}
 {"issue_id":"Demarch-g3a","label":"claimed_at:1773601532"}
 {"issue_id":"Demarch-g3a","label":"claimed_by:unknown"}
