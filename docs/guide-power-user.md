@@ -60,7 +60,9 @@ Clavain's sprint is a disciplined lifecycle that ensures you think before you co
 
 **Review** (`/clavain:quality-gates`): multi-agent code review. 7 specialized agents (architecture, safety, correctness, quality, user/product, performance, game design) analyze your changes in parallel.
 
-**Ship** (`/clavain:land`): verify, commit, and push. Session reflection captures learnings for next time.
+**Reflect** (`/reflect`): capture what was learned. This is a firm gate — shipping is blocked until a reflection artifact exists (minimum 3 substantive lines). Recent learnings from sibling sprints are surfaced at sprint start.
+
+**Ship** (`/clavain:land`): verify, commit, and push.
 
 ### Common commands
 
