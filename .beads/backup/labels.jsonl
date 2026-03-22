@@ -72,6 +72,14 @@
 {"issue_id":"Demarch-0pvp.7","label":"benchmarks"}
 {"issue_id":"Demarch-0pvp.7","label":"performance"}
 {"issue_id":"Demarch-0ves","label":"installer"}
+{"issue_id":"Demarch-0ztn","label":"artifact_brainstorm:docs/brainstorms/2026-03-22-sprint-flow-improvements-brainstorm.md"}
+{"issue_id":"Demarch-0ztn","label":"artifact_plan:docs/plans/2026-03-22-sprint-flow-improvements.md"}
+{"issue_id":"Demarch-0ztn","label":"artifact_prd:docs/prds/2026-03-22-sprint-flow-improvements.md"}
+{"issue_id":"Demarch-0ztn","label":"artifact_prior-art:none-found"}
+{"issue_id":"Demarch-0ztn","label":"artifact_reflection:docs/sprints/Demarch-0ztn-reflection.md"}
+{"issue_id":"Demarch-0ztn","label":"claimed_at:1774193103"}
+{"issue_id":"Demarch-0ztn","label":"claimed_by:ec180ddd-fb58-43ae-9bdd-9e174eeb65fb"}
+{"issue_id":"Demarch-0ztn","label":"phase:done"}
 {"issue_id":"Demarch-1dtb","label":"artifact_implementation:7c494455b30aeef2133b34c3114e77e2cf170d94"}
 {"issue_id":"Demarch-1dtb","label":"claimed_at:1774157543"}
 {"issue_id":"Demarch-1dtb","label":"claimed_by:34d64cda-dd04-432f-a46a-66dfa9d117c5"}
