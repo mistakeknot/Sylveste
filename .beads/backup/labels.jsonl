@@ -400,6 +400,7 @@
 {"issue_id":"Demarch-edi3","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-edi3","label":"complexity:2"}
 {"issue_id":"Demarch-ef08","label":"artifact_brainstorm:docs/brainstorms/2026-03-22-ideagui-data-pipe-brainstorm.md"}
+{"issue_id":"Demarch-ef08","label":"artifact_closed:1c34c59f0e2baaad53f58c5138c78e9ffbd88b56"}
 {"issue_id":"Demarch-ef08","label":"artifact_plan:docs/plans/2026-03-22-ideagui-data-pipe.md"}
 {"issue_id":"Demarch-ef08","label":"artifact_prd:docs/prds/2026-03-22-ideagui-data-pipe.md"}
 {"issue_id":"Demarch-ef08","label":"claimed_at:1774157714"}
@@ -535,6 +536,10 @@
 {"issue_id":"Demarch-vd1","label":"complexity:3"}
 {"issue_id":"Demarch-wl8","label":"claimed_at:1773593535"}
 {"issue_id":"Demarch-wl8","label":"claimed_by:unknown"}
+{"issue_id":"Demarch-xekv","label":"artifact_implementation:39fb132e3e72814642b9c27ef9791dd6cc4905a3"}
+{"issue_id":"Demarch-xekv","label":"claimed_at:1774192275"}
+{"issue_id":"Demarch-xekv","label":"claimed_by:8cc202b2-5932-40c4-83c0-f7c205cd57f7"}
+{"issue_id":"Demarch-xekv","label":"complexity:2"}
 {"issue_id":"Demarch-xk68","label":"artifact_brainstorm:docs/brainstorms/2026-03-20-khouri-domain-model-brainstorm.md"}
 {"issue_id":"Demarch-xk68","label":"artifact_closed:9fb902db481d9a30d62552ef8b717d20444c7879"}
 {"issue_id":"Demarch-xk68","label":"artifact_plan:docs/plans/2026-03-20-khouri-domain-model.md"}
