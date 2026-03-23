@@ -71,6 +71,13 @@
 {"issue_id":"Demarch-0pvp.6","label":"performance"}
 {"issue_id":"Demarch-0pvp.7","label":"benchmarks"}
 {"issue_id":"Demarch-0pvp.7","label":"performance"}
+{"issue_id":"Demarch-0rgc","label":"calibration"}
+{"issue_id":"Demarch-0rgc","label":"claimed_at:1774294472"}
+{"issue_id":"Demarch-0rgc","label":"claimed_by:unknown"}
+{"issue_id":"Demarch-0rgc","label":"complexity:4"}
+{"issue_id":"Demarch-0rgc","label":"track-a"}
+{"issue_id":"Demarch-0rgc","label":"track-b"}
+{"issue_id":"Demarch-0rgc","label":"v0.7"}
 {"issue_id":"Demarch-0ves","label":"installer"}
 {"issue_id":"Demarch-0ztn","label":"artifact_brainstorm:docs/brainstorms/2026-03-22-sprint-flow-improvements-brainstorm.md"}
 {"issue_id":"Demarch-0ztn","label":"artifact_plan:docs/plans/2026-03-22-sprint-flow-improvements.md"}
@@ -362,6 +369,9 @@
 {"issue_id":"Demarch-bncp","label":"epic"}
 {"issue_id":"Demarch-bncp","label":"plugin"}
 {"issue_id":"Demarch-bqm4","label":"installer"}
+{"issue_id":"Demarch-c44z","label":"artifact"}
+{"issue_id":"Demarch-c44z","label":"roadmap"}
+{"issue_id":"Demarch-c44z","label":"v0.7"}
 {"issue_id":"Demarch-ce29","label":"clavain"}
 {"issue_id":"Demarch-cjgj","label":"claimed_at:1774247808"}
 {"issue_id":"Demarch-cjgj","label":"claimed_by:unknown"}
@@ -417,6 +427,13 @@
 {"issue_id":"Demarch-ef08","label":"artifact_prd:docs/prds/2026-03-22-ideagui-data-pipe.md"}
 {"issue_id":"Demarch-ef08","label":"claimed_at:1774157714"}
 {"issue_id":"Demarch-ef08","label":"claimed_by:8cc202b2-5932-40c4-83c0-f7c205cd57f7"}
+{"issue_id":"Demarch-enxv","label":"artifact_brainstorm:docs/brainstorms/2026-03-23-v1-roadmap-parallel-tracks-brainstorm.md"}
+{"issue_id":"Demarch-enxv","label":"artifact_closed:1db9409f35ffcc0ba7c96976daac114d6ae701ea"}
+{"issue_id":"Demarch-enxv","label":"artifact_plan:docs/plans/2026-03-23-v1-roadmap-artifact.md"}
+{"issue_id":"Demarch-enxv","label":"artifact_prd:docs/prds/2026-03-23-v1-roadmap-milestone-path.md"}
+{"issue_id":"Demarch-enxv","label":"artifact_prior-art:none-found"}
+{"issue_id":"Demarch-enxv","label":"artifact_reflection:docs/reflections/2026-03-23-v1-roadmap-reflect.md"}
+{"issue_id":"Demarch-enxv","label":"artifact_test-pass-sha:6068eb0fdae5f0b04a49243bf365e1dc40853048"}
 {"issue_id":"Demarch-enxv","label":"claimed_at:1774244182"}
 {"issue_id":"Demarch-enxv","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-enxv","label":"complexity:4"}
@@ -673,6 +690,9 @@
 {"issue_id":"Demarch-oyi","label":"easter-egg"}
 {"issue_id":"Demarch-oyi","label":"skaffen"}
 {"issue_id":"Demarch-oyi","label":"tui"}
+{"issue_id":"Demarch-py89","label":"observability"}
+{"issue_id":"Demarch-py89","label":"track-b"}
+{"issue_id":"Demarch-py89","label":"v0.7"}
 {"issue_id":"Demarch-r0kz","label":"artifact_implementation:ca3c23f"}
 {"issue_id":"Demarch-r0kz","label":"claimed_at:1773977755"}
 {"issue_id":"Demarch-r0kz","label":"claimed_by:unknown"}
@@ -713,7 +733,7 @@
 {"issue_id":"Demarch-xekv","label":"claimed_at:1774192275"}
 {"issue_id":"Demarch-xekv","label":"claimed_by:8cc202b2-5932-40c4-83c0-f7c205cd57f7"}
 {"issue_id":"Demarch-xekv","label":"complexity:2"}
-{"issue_id":"Demarch-xhxp","label":"claimed_at:1774281327"}
+{"issue_id":"Demarch-xhxp","label":"claimed_at:1774288008"}
 {"issue_id":"Demarch-xhxp","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-xk68","label":"artifact_brainstorm:docs/brainstorms/2026-03-20-khouri-domain-model-brainstorm.md"}
 {"issue_id":"Demarch-xk68","label":"artifact_closed:9fb902db481d9a30d62552ef8b717d20444c7879"}
@@ -787,3 +807,9 @@
 {"issue_id":"Demarch-z2r","label":"claimed_at:1773647681"}
 {"issue_id":"Demarch-z2r","label":"claimed_by:32806f91-8f63-4823-9f34-92bee2995509"}
 {"issue_id":"Demarch-z2r","label":"complexity:2"}
+{"issue_id":"Demarch-z5qg","label":"artifact_brainstorm:docs/brainstorms/2026-03-23-interflux-pipeline-optimization-brainstorm.md"}
+{"issue_id":"Demarch-z5qg","label":"artifact_plan:docs/plans/2026-03-23-interflux-pipeline-optimization.md"}
+{"issue_id":"Demarch-z5qg","label":"artifact_prd:docs/prds/2026-03-23-interflux-pipeline-optimization.md"}
+{"issue_id":"Demarch-z5qg","label":"artifact_prior-art:none-found"}
+{"issue_id":"Demarch-z5qg","label":"complexity:4"}
+{"issue_id":"Demarch-z5qg","label":"phase:planned"}
