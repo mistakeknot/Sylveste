@@ -472,6 +472,8 @@
 {"issue_id":"Demarch-k2xf.7","label":"claimed_by:3723aa32-b149-4aa0-82b9-0e9349288526"}
 {"issue_id":"Demarch-k2xf.7","label":"phase:done"}
 {"issue_id":"Demarch-l3dr","label":"interlab"}
+{"issue_id":"Demarch-lavt","label":"claimed_at:1774247427"}
+{"issue_id":"Demarch-lavt","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-lcxa","label":"claimed_at:1773904093"}
 {"issue_id":"Demarch-lcxa","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-lcxa","label":"clavain"}
@@ -512,6 +514,8 @@
 {"issue_id":"Demarch-mzxc","label":"swe-bench"}
 {"issue_id":"Demarch-ngwf","label":"interlab"}
 {"issue_id":"Demarch-ngwf","label":"observability"}
+{"issue_id":"Demarch-no1e","label":"claimed_at:1774247525"}
+{"issue_id":"Demarch-no1e","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-oac8.2","label":"claimed_at:1773647871"}
 {"issue_id":"Demarch-oac8.2","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-oac8.3","label":"claimed_at:1773648126"}
