@@ -342,6 +342,8 @@
 {"issue_id":"Demarch-a637.8","label":"multi-agent"}
 {"issue_id":"Demarch-a637.8","label":"provider"}
 {"issue_id":"Demarch-a637.8","label":"skaffen"}
+{"issue_id":"Demarch-agi0","label":"claimed_at:1774247873"}
+{"issue_id":"Demarch-agi0","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-b5md","label":"claimed_at:1773861204"}
 {"issue_id":"Demarch-b5md","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-b5md","label":"epic"}
@@ -361,6 +363,8 @@
 {"issue_id":"Demarch-bncp","label":"plugin"}
 {"issue_id":"Demarch-bqm4","label":"installer"}
 {"issue_id":"Demarch-ce29","label":"clavain"}
+{"issue_id":"Demarch-cjgj","label":"claimed_at:1774247808"}
+{"issue_id":"Demarch-cjgj","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-cmc8","label":"claimed_at:1773685672"}
 {"issue_id":"Demarch-cmc8","label":"claimed_by:71e5bbfc-1984-4042-b90e-83e15c7fd84c"}
 {"issue_id":"Demarch-cmc8","label":"complexity:3"}
@@ -514,7 +518,7 @@
 {"issue_id":"Demarch-mzxc","label":"swe-bench"}
 {"issue_id":"Demarch-ngwf","label":"interlab"}
 {"issue_id":"Demarch-ngwf","label":"observability"}
-{"issue_id":"Demarch-no1e","label":"claimed_at:1774247525"}
+{"issue_id":"Demarch-no1e","label":"claimed_at:1774247583"}
 {"issue_id":"Demarch-no1e","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-oac8.2","label":"claimed_at:1773647871"}
 {"issue_id":"Demarch-oac8.2","label":"claimed_by:unknown"}
@@ -703,6 +707,8 @@
 {"issue_id":"Demarch-vd1","label":"complexity:3"}
 {"issue_id":"Demarch-wl8","label":"claimed_at:1773593535"}
 {"issue_id":"Demarch-wl8","label":"claimed_by:unknown"}
+{"issue_id":"Demarch-wwo9","label":"claimed_at:1774247666"}
+{"issue_id":"Demarch-wwo9","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-xekv","label":"artifact_implementation:39fb132e3e72814642b9c27ef9791dd6cc4905a3"}
 {"issue_id":"Demarch-xekv","label":"claimed_at:1774192275"}
 {"issue_id":"Demarch-xekv","label":"claimed_by:8cc202b2-5932-40c4-83c0-f7c205cd57f7"}
