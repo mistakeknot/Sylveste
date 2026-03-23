@@ -71,6 +71,8 @@
 {"issue_id":"Demarch-0pvp.6","label":"performance"}
 {"issue_id":"Demarch-0pvp.7","label":"benchmarks"}
 {"issue_id":"Demarch-0pvp.7","label":"performance"}
+{"issue_id":"Demarch-0rgc","label":"artifact_brainstorm:docs/brainstorms/2026-03-23-gate-calibration-brainstorm.md"}
+{"issue_id":"Demarch-0rgc","label":"artifact_prior-art:none-found"}
 {"issue_id":"Demarch-0rgc","label":"calibration"}
 {"issue_id":"Demarch-0rgc","label":"claimed_at:1774294472"}
 {"issue_id":"Demarch-0rgc","label":"claimed_by:unknown"}
@@ -813,3 +815,6 @@
 {"issue_id":"Demarch-z5qg","label":"artifact_prior-art:none-found"}
 {"issue_id":"Demarch-z5qg","label":"complexity:4"}
 {"issue_id":"Demarch-z5qg","label":"phase:planned"}
+{"issue_id":"Demarch-z5qg.3","label":"claimed_at:1774297414"}
+{"issue_id":"Demarch-z5qg.3","label":"claimed_by:f9fb1046-9cdb-48e6-8bbc-b20fde3e14df"}
+{"issue_id":"Demarch-z5qg.3","label":"complexity:2"}
