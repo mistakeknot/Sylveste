@@ -27,6 +27,7 @@ bd close <id> && git push                 # Complete work (`bd sync` first only 
 | Critical Patterns | [agents/critical-patterns.md](agents/critical-patterns.md) | Six must-know patterns from production failures |
 | Prerequisites | [agents/prerequisites.md](agents/prerequisites.md) | Required tools, secrets, Go module path convention |
 | Operational Guides | [agents/operational-guides.md](agents/operational-guides.md) | Guide index, prior solutions search, prior art pipeline, operational notes |
+| v1.0 Roadmap | [docs/roadmap-v1.md](docs/roadmap-v1.md) | Parallel track model (Autonomy, Safety, Adoption), version gates, milestone exit criteria |
 
 ## Recent Changes
 
