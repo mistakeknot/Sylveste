@@ -1,0 +1,127 @@
+[
+  {
+    "name": "fd-gate-signal-extraction",
+    "focus": "How to reliably extract false-positive and false-negative signals from existing phase_events and review_events data",
+    "persona": "A database engineer specializing in event-sourced systems and signal extraction from append-only logs. Approaches every design question by asking: what data already exists, what does it prove, and how do we avoid reading the same signal twice?",
+    "decision_lens": "Prioritizes signal fidelity over completeness — a noisy false-positive rate corrupts calibration faster than a sparse one. Prefers direct DB queries inside transactions over external aggregation pipelines.",
+    "review_areas": [
+      "How should human override events (EventOverride already in phase_events) be classified as false positives — does any override count, or only overrides with specific reason tags?",
+      "Where does the false-negative signal come from — review_events with type=execution_defect post-gate-pass, or does it require a separate post-ship defect event type?",
+      "What is the minimum time window needed between gate evaluation and outcome observation to avoid selection bias?",
+      "Is the phase_events.reason JSON field (GateEvidence) rich enough for per-check calibration rather than per-gate calibration?",
+      "How should programmatic bypasses (CLAVAIN_SKIP_GATE) vs human overrides (ic gate override) be distinguished — categorically different signals?",
+      "What is the correct unit of analysis: per (from, to) phase pair, per check type, per priority tier, or cross-product?"
+    ],
+    "success_hints": [
+      "Signal extraction reads from phase_events without adding new event types, using existing EventOverride records",
+      "The extraction query is idempotent — uses a cursor or timestamp window, not a processed flag",
+      "False-positive and false-negative signals are cleanly separable before entering the calibration model"
+    ],
+    "task_context": "Gates in Demarch's intercore kernel are binary existence checks hardcoded in gate.go. The system needs a 4-stage calibration loop following PHILOSOPHY.md patterns.",
+    "anti_overlap": [
+      "fd-gate-calibration-algorithm covers the math for aggregating signals into threshold adjustments",
+      "fd-gate-transaction-safety covers TOCTOU constraints for applying calibrated values",
+      "fd-gate-observability covers monitoring once calibration is running"
+    ]
+  },
+  {
+    "name": "fd-gate-calibration-algorithm",
+    "focus": "The mathematical model for adapting gate behavior from outcome history — update rule, convergence, Goodhart resistance, and the 4-stage fallback pattern",
+    "persona": "A control systems engineer with experience in adaptive threshold tuning for monitoring systems. Treats gate calibration as a feedback control problem and is deeply skeptical of point estimates that ignore variance and sample size.",
+    "decision_lens": "Optimizes for calibration stability over responsiveness — a gate that oscillates between hard and soft destroys sprint predictability. Accepts slower convergence as the price of monotonic, bounded behavior.",
+    "review_areas": [
+      "What is the correct update rule: discrete tier promotion/demotion, continuous confidence score, or per-check skip probability?",
+      "How should sample size requirements gate the calibration itself — the existing calibration.go uses a flat heuristic with no minimum sample count?",
+      "How does the 4-stage pattern apply specifically: stage 1=hardcoded gateRules, stage 2=phase_events, stage 3=calibrate command — what does stage 4 look like in evaluateGate?",
+      "What Goodhart pressure does the calibration loop create — if agents learn soft gates can be calibrated away by generating overrides?",
+      "Should calibration operate per-transition, per-check-type, or per-tier level?",
+      "What should the decay/staleness model look like — sparse P0-1 data vs dense P2-3 requiring different windows?"
+    ],
+    "success_hints": [
+      "The update rule is bounded, monotonic within a window, and reverts to defaults when sample count falls below minimum",
+      "Calibrated state format makes the fallback chain explicit: calibrated → previous → hardcoded default",
+      "Goodhart resistance is structural: minimum sample threshold and maximum rate-of-change per cycle"
+    ],
+    "task_context": "Gates in Demarch's intercore kernel are binary existence checks hardcoded in gate.go. The system needs a 4-stage calibration loop following PHILOSOPHY.md patterns.",
+    "anti_overlap": [
+      "fd-gate-signal-extraction covers upstream signal collection from phase_events",
+      "fd-gate-transaction-safety covers atomic application of calibrated values",
+      "fd-gate-observability covers post-hoc measurement of calibration effectiveness"
+    ]
+  },
+  {
+    "name": "fd-gate-transaction-safety",
+    "focus": "How calibrated gate thresholds are applied inside the existing TOCTOU-safe DB transaction without introducing races, stale reads, or split-brain",
+    "persona": "A distributed systems engineer who has debugged production incidents caused by snapshot isolation anomalies. Treats any state read outside a transaction as guilty until proven innocent.",
+    "decision_lens": "Prioritizes correctness over performance at the gate evaluation path — a wrong gate decision from a stale calibration read is worse than a slow one.",
+    "review_areas": [
+      "If calibrated thresholds are in a JSON file, what is the maximum staleness bound and is it acceptable for non-rollback gate decisions?",
+      "Should calibrated state live in SQLite (gate_calibration table) or external JSON — locking implications with SetMaxOpenConns(1)?",
+      "Where does calibrated state insert in the precedence chain (per-run stored > spec > hardcoded)?",
+      "How is calibrated state atomically swapped during in-flight gate evaluations?",
+      "For hard gates (P0-P1), should calibration be forbidden from demoting hard to soft?",
+      "How to handle calibration promoting soft to hard mid-sprint — prospective only or retroactive?"
+    ],
+    "success_hints": [
+      "Calibrated state is read at most once per gate evaluation, before or as first read inside the transaction",
+      "Hard gate demotion requires explicit authority escalation that calibration alone cannot perform",
+      "Atomic swap uses tmp-rename pattern from calibration.go with explicit staleness SLA"
+    ],
+    "task_context": "Gates in Demarch's intercore kernel are binary existence checks hardcoded in gate.go. The system needs a 4-stage calibration loop following PHILOSOPHY.md patterns.",
+    "anti_overlap": [
+      "fd-gate-signal-extraction covers upstream signal collection",
+      "fd-gate-calibration-algorithm covers the mathematical update rule",
+      "fd-gate-observability covers runtime dashboards"
+    ]
+  },
+  {
+    "name": "fd-gate-tier-priority-mapping",
+    "focus": "Whether the priority-to-tier mapping should be static, calibration-adjustable, or replaced by a richer model tracking per-check-type outcomes",
+    "persona": "A product architect who has designed quality gates for CI/CD at scale. Thinks carefully about the difference between gate strictness and gate composition.",
+    "decision_lens": "Prioritizes the simplest model that correctly separates which checks are required (composition) from how strictly they're enforced (tier). Resists conflating the two.",
+    "review_areas": [
+      "Should calibration shift individual runs within the priority mapping or only shift global tier thresholds?",
+      "Different check types have different false-positive profiles — should calibration be per-check-type?",
+      "Per-run stored rules adjust composition; calibration should adjust tier — are these orthogonal?",
+      "For priority=4+ (no gate), can calibration introduce gates, or is that human-only?",
+      "Projects where same tier shows different rates across phases — does calibration need a (priority, check_type, from_phase) key space?",
+      "Can agency spec rules opt out of calibration?"
+    ],
+    "success_hints": [
+      "Design cleanly separates composition (which checks run) from enforcement (hard vs soft)",
+      "Calibration cannot add/remove checks without human action",
+      "Per-check-type dimension is explicitly modeled or explicitly excluded with rationale"
+    ],
+    "task_context": "Gates in Demarch's intercore kernel are binary existence checks hardcoded in gate.go. The system needs a 4-stage calibration loop following PHILOSOPHY.md patterns.",
+    "anti_overlap": [
+      "fd-gate-calibration-algorithm covers the mathematical update rule",
+      "fd-gate-signal-extraction covers how overrides are classified as false positives",
+      "fd-gate-observability covers runtime dashboards"
+    ]
+  },
+  {
+    "name": "fd-gate-observability",
+    "focus": "Metrics, events, and dashboards to know whether gate calibration is working, drifting, or being gamed",
+    "persona": "A reliability engineer who has operated ML-based threshold systems in production. Treats the calibration system as a system that itself requires observability.",
+    "decision_lens": "Prioritizes metrics that detect failure modes over metrics that confirm success. The most valuable signal fires before a calibration error causes a bad gate decision.",
+    "review_areas": [
+      "Minimum metrics needed: false-positive rate trend, calibrated threshold values over time, sample counts — where emitted?",
+      "How to detect Goodhart pressure — override rates increasing after gate relaxation?",
+      "Output surface: new event type in phase_events, separate calibration log, or extension of canary_outcomes?",
+      "Can humans see gate provenance: 'soft due to calibration' vs 'soft due to priority' vs 'soft due to per-run rules'?",
+      "How to surface data-starvation situations where calibration has insufficient samples?",
+      "Observable failure modes: corrupt file, divergence, defect escape increase, stalled loop?"
+    ],
+    "success_hints": [
+      "ic gate check output includes provenance of why the current tier is what it is",
+      "Calibration divergence alert fires before threshold hits clamp boundary",
+      "At least one structured event per calibration cycle queryable via ic events"
+    ],
+    "task_context": "Gates in Demarch's intercore kernel are binary existence checks hardcoded in gate.go. The system needs a 4-stage calibration loop following PHILOSOPHY.md patterns.",
+    "anti_overlap": [
+      "fd-gate-signal-extraction covers extracting training data",
+      "fd-gate-calibration-algorithm covers Goodhart resistance mechanisms",
+      "fd-gate-transaction-safety covers correctness of the application path"
+    ]
+  }
+]
