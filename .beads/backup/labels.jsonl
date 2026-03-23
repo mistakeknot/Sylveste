@@ -413,6 +413,9 @@
 {"issue_id":"Demarch-ef08","label":"artifact_prd:docs/prds/2026-03-22-ideagui-data-pipe.md"}
 {"issue_id":"Demarch-ef08","label":"claimed_at:1774157714"}
 {"issue_id":"Demarch-ef08","label":"claimed_by:8cc202b2-5932-40c4-83c0-f7c205cd57f7"}
+{"issue_id":"Demarch-enxv","label":"claimed_at:1774244182"}
+{"issue_id":"Demarch-enxv","label":"claimed_by:unknown"}
+{"issue_id":"Demarch-enxv","label":"complexity:4"}
 {"issue_id":"Demarch-enxv","label":"roadmap"}
 {"issue_id":"Demarch-enxv","label":"v1.0"}
 {"issue_id":"Demarch-enxv.1","label":"artifact_brainstorm:.claude/flux-drive-output/synthesis-v1-maturity.md"}
