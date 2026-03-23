@@ -713,6 +713,8 @@
 {"issue_id":"Demarch-xekv","label":"claimed_at:1774192275"}
 {"issue_id":"Demarch-xekv","label":"claimed_by:8cc202b2-5932-40c4-83c0-f7c205cd57f7"}
 {"issue_id":"Demarch-xekv","label":"complexity:2"}
+{"issue_id":"Demarch-xhxp","label":"claimed_at:1774281327"}
+{"issue_id":"Demarch-xhxp","label":"claimed_by:unknown"}
 {"issue_id":"Demarch-xk68","label":"artifact_brainstorm:docs/brainstorms/2026-03-20-khouri-domain-model-brainstorm.md"}
 {"issue_id":"Demarch-xk68","label":"artifact_closed:9fb902db481d9a30d62552ef8b717d20444c7879"}
 {"issue_id":"Demarch-xk68","label":"artifact_plan:docs/plans/2026-03-20-khouri-domain-model.md"}
