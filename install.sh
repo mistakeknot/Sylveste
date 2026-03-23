@@ -303,7 +303,7 @@ if command -v bd &>/dev/null; then
     debug "$(command -v bd)"
     HAS_BD=true
 else
-    warn "Beads CLI (bd) not found. Install with: go install github.com/mistakeknot/beads/cmd/bd@latest"
+    warn "Beads CLI (bd) not found. Install with: go install github.com/steveyegge/beads/cmd/bd@latest"
 fi
 
 log ""
@@ -354,6 +354,22 @@ if [[ "$HAS_CLAUDE" == true ]]; then
                     rm -rf "${HOME}/.claude/plugins/marketplaces/$mkt"
                 fi
                 success "Removed legacy marketplace: $mkt"
+            fi
+        fi
+    done
+
+    # Step 0c: Remove stale plugin cache entries for plugins that moved
+    # interserve was converted from marketplace plugin to Clavain skill — stale cache causes plugin-not-found errors
+    STALE_PLUGINS=(interserve)
+    for sp in "${STALE_PLUGINS[@]}"; do
+        STALE_DIR="${CACHE_DIR}/interagency-marketplace/${sp}"
+        if [[ -d "$STALE_DIR" ]]; then
+            log "  Removing stale plugin cache: $sp"
+            if [[ "$DRY_RUN" == true ]]; then
+                log "  ${DIM}[DRY RUN] Would remove $STALE_DIR${RESET}"
+            else
+                rm -rf "$STALE_DIR"
+                success "Removed stale plugin: $sp"
             fi
         fi
     done
