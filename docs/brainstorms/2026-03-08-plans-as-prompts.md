@@ -63,7 +63,7 @@ Proposed: Add `<verify>` blocks at the end of each task that are machine-parseab
 <verify>
 - run: `pytest tests/models/test_user.py -v`
   expect: exit 0
-- run: `python -c "from src.models.user import validate_email; print(validate_email('bad'))"`
+- run: `python3 -c "from src.models.user import validate_email; print(validate_email('bad'))"`
   expect: contains "invalid"
 </verify>
 ```

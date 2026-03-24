@@ -107,7 +107,7 @@ The validation runner (`RunValidation`) needs to inherit the setup environment. 
 3. Use `bash -c 'source .venv/bin/activate && pytest'` for Python repos
 
 ### P2: Add setup validation step
-Add a pre-flight check between setup and skaffen spawn that verifies the language runtime is accessible (e.g., `go version`, `python -c 'import click'`).
+Add a pre-flight check between setup and skaffen spawn that verifies the language runtime is accessible (e.g., `go version`, `python3 -c 'import click'`).
 
 ### P3: Increase default timeout
 All cells hit 600s. While skaffen completed faster, the tmux session stayed open. Consider: detect skaffen exit from pane output (look for the token usage line) rather than waiting for session exit.
