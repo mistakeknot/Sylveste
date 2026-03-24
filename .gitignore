@@ -66,3 +66,4 @@ docs/research/*/
 # Dolt database files (added by bd init)
 .dolt/
 *.db
+.interkasten.yaml
