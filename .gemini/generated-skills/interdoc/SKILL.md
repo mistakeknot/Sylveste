@@ -7,46 +7,43 @@ description: "Recursive AGENTS.md generator with integrated GPT 5.2 Pro critique
 You have activated the interdoc capability.
 
 ## Base Instructions
-# AGENTS.md
+# AGENTS.md — interdoc
 
-## Canonical References
-1. [`PHILOSOPHY.md`](../../PHILOSOPHY.md) — direction for ideation and planning decisions.
-2. `CLAUDE.md` — implementation details, architecture, testing, and release workflow.
-
-## Philosophy Alignment Protocol
-Review [`PHILOSOPHY.md`](../../PHILOSOPHY.md) during:
-- Intake/scoping
-- Brainstorming
-- Planning
-- Execution kickoff
-- Review/gates
-- Handoff/retrospective
-
-For brainstorming/planning outputs, add two short lines:
-- **Alignment:** one sentence on how the proposal supports the module's purpose within Demarch's philosophy.
-- **Conflict/Risk:** one sentence on any tension with philosophy (or 'none').
-
-If a high-value change conflicts with philosophy, either:
-- adjust the plan to align, or
-- create follow-up work to update `PHILOSOPHY.md` explicitly.
-
-
-> Cross-AI documentation for interdoc. Works with Claude Code, Codex CLI, and other AI coding tools.
-
-## Overview
-
-**interdoc** is a Claude Code plugin that generates and maintains AGENTS.md documentation using parallel subagents. It analyzes project structure, spawns agents per directory, and consolidates into coherent documentation.
-
-**Why AGENTS.md?** Claude Code reads both AGENTS.md and CLAUDE.md, but AGENTS.md is the cross-AI standard that also works with Codex CLI and other AI coding tools.
+Recursive AGENTS.md generator with integrated GPT 5.2 Pro critique. Analyzes project structure via parallel subagents, consolidates into coherent documentation, and optionally sends to GPT for independent review.
 
 **Plugin Type:** Claude Code skill plugin
 **Plugin Namespace:** `interdoc` (from interagency-marketplace)
 **Current Version:** 5.0.0
 
+## Canonical References
+1. [`PHILOSOPHY.md`](../../PHILOSOPHY.md) — direction for ideation and planning decisions.
+2. `CLAUDE.md` — implementation details, architecture, testing, and release workflow.
+
+## Quick Reference
+
+| Trigger | Mode | Scope |
+|---------|------|-------|
+| "generate AGENTS.md" | Generation | Full project |
+| "update AGENTS.md" | Update | Changed directories |
+| "change-set update" | Update | Git diff only |
+| "doc coverage" | Report | Coverage stats |
+| "lint AGENTS.md" / "doc lint" | Lint | Style warnings |
+| "fix stale references" / "interdoc fix" | Fix | Structural only (no LLM) |
+| "dry run" | Any + Preview | No writes |
+
+## Topic Guides
+
+| Topic | File | Covers |
+|-------|------|--------|
+| Skill & Features | [agents/skill-and-features.md](agents/skill-and-features.md) | Skill triggers, key features, interwatch integration, hooks |
+| Development & Versioning | [agents/development.md](agents/development.md) | Editing behavior, testing, version bumps, marketplace publish, commit workflow |
+| GPT Review | [agents/gpt-review.md](agents/gpt-review.md) | Oracle integration, review classification, helper scripts, troubleshooting |
+| Changelog | [agents/changelog.md](agents/changelog.md) | Version history (v4.1.0 through v4.4.3) |
+
 ## Repository Structure
 
 ```
-/ 
+/
 ├── .claude/
 │   └── agents/
 │       └── interdocumentarian.md  # Claude subagent for AGENTS.md authoring
@@ -83,190 +80,24 @@ If a high-value change conflicts with philosophy, either:
 └── AGENTS.md                # This file - cross-AI documentation
 ```
 
-## The Skill
+## Philosophy Alignment Protocol
 
-| Skill | Trigger | Use Case |
-|-------|---------|----------|
-| `interdoc` | Natural language (hooks disabled by default) | Generate/update AGENTS.md documentation |
+**Operational implementation:** The interdoc skill loads PHILOSOPHY.md, MISSION.md, and `.interlore/proposals.yaml` (if present) in Step 0b of the generation workflow. This context informs how the project overview, architecture, and conventions sections are framed.
 
-**Discovery:** In Claude Code, ask “List all available Skills” to see interdoc, or run `/interdoc`.
+Review [`PHILOSOPHY.md`](../../PHILOSOPHY.md) during:
+- Intake/scoping
+- Brainstorming
+- Planning
+- Execution kickoff
+- Review/gates
+- Handoff/retrospective
 
-**Advisory hook (optional):** Run `./hooks/git/install-post-commit.sh` to enable a non-blocking reminder after commits.
+For brainstorming/planning outputs, add two short lines:
+- **Alignment:** one sentence on how the proposal supports the module's purpose within Demarch's philosophy.
+- **Conflict/Risk:** one sentence on any tension with philosophy (or 'none').
 
-**Optional modes:** Use phrases like "change-set update", "doc coverage", or "doc lint" to trigger specialized behaviors.
-
-> **Note:** This is a Claude Code plugin skill, invoked via natural language (e.g., "generate documentation for this project"). It is NOT a slash command.
-
-## Key Features
-
-- **Parallel subagents**: Spawns agents per directory for fast analysis
-- **Incremental updates**: Appends new content, preserves existing documentation
-- **CLAUDE.md harmonization**: Migrates docs from CLAUDE.md → AGENTS.md
-- **Unified diff previews**: Shows actual diffs before applying
-- **Dry run + cached apply**: Preview changes and apply last preview without re-analysis
-- **Structural auto-fix**: Deterministic rename/deletion/link fixes without LLM tokens (`/interdoc fix`)
-- **JSON schema output**: Subagents return structured JSON with sentinel markers
-- **Git-aware**: Uses commit messages and diffs for update context
-- **Scalability guardrails**: Concurrency limits, batch processing for large repos
-- **Claude subagent option**: Specialized subagent for high-quality AGENTS.md content
-
-## Interwatch Integration
-
-interdoc is a generator target for interwatch's drift-detection framework. When interwatch detects that AGENTS.md has drifted (files renamed/deleted/created, commit threshold exceeded), it dispatches to `interdoc:interdoc` for regeneration. interdoc does not compute drift scores — interwatch owns detection, interdoc owns generation. The `scripts/interdoc-generator.sh` marker file signals generator availability to interwatch's discovery system.
-
-## Hooks (Disabled by Default)
-
-Hooks are not enabled by default. Manual invocation is the standard flow.
-
-## Development
-
-### This is Documentation-Driven
-
-There is **no source code** to build or test. The "implementation" is the skill documentation and shell scripts.
-
-**To modify behavior:**
-- Edit `skills/interdoc/SKILL.md` to change workflows
-- Edit `hooks/*.sh` to change trigger logic
-- Update `README.md` for user-facing documentation
-- Update `.claude-plugin/plugin.json` for metadata/version changes
-
-### Testing Changes
-
-1. Make changes to SKILL.md or hook files
-2. Commit and push to GitHub
-3. Run `claude plugin update interdoc@interagency-marketplace` to refresh local cache
-4. Trigger the skill to verify behavior
-
-See `docs/TEST_PLAN.md` for comprehensive test cases.
-
-## Version Management
-
-**Version is declared in `.claude-plugin/plugin.json` (root level).**
-
-| Change Type | Version Bump | Example |
-|-------------|--------------|---------|
-| Bug fix, docs clarification | Patch | 4.3.0 → 4.3.1 |
-| New feature, workflow change | Minor | 4.3.0 → 4.4.0 |
-| Breaking change | Major | 4.3.0 → 5.0.0 |
-
-### Bump Version
-
-After committing skill changes:
-
-```bash
-# 1. Edit plugin.json and increment version
-# 2. Commit and push
-git add .claude-plugin/plugin.json
-git commit -m "Bump version to X.Y.Z"
-git push
-```
-
-### Update the Marketplace
-
-The plugin is distributed via `interagency-marketplace`. After pushing version changes:
-
-1. Edit `~/interagency-marketplace/.claude-plugin/marketplace.json`
-2. Update the `interdoc` entry version
-3. Commit and push
-4. Refresh local cache:
-   ```bash
-   claude plugin marketplace update interagency-marketplace
-   claude plugin update interdoc@interagency-marketplace
-   ```
-
-## Commit Workflow
-
-1. Edit the relevant files (SKILL.md, hooks, etc.)
-2. Commit with descriptive message
-3. **Bump version in plugin.json**
-4. Commit version bump
-5. Push both commits
-6. **Update ~/interagency-marketplace** with new version
-7. Push marketplace changes
-
-## GPT Review Phase
-
-After generation/update, interdoc sends AGENTS.md to GPT 5.2 Pro via Oracle for independent critique.
-
-### How It Works
-
-1. Pre-flight check verifies Oracle session
-2. Gathers evidence (git changes, commit messages, detected languages)
-3. Sends AGENTS.md + source files to GPT with critic prompt
-4. Parses structured JSON suggestions
-5. Classifies by significance:
-   - **Non-controversial** (auto-applied): low severity, additive suggestions
-   - **Significant** (user-prompted): high severity, corrections, 3+ suggestions
-
-### Oracle Dependencies
-
-- Oracle CLI installed (`npm i -g @steipete/oracle`)
-- Active ChatGPT session (X11 stack: Xvfb on :99, Chrome)
-- Environment: `DISPLAY=:99 CHROME_PATH=/usr/local/bin/google-chrome-wrapper`
-
-### Helper Scripts
-
-- `hooks/tools/oracle-review.sh` — Sends AGENTS.md to GPT for critique
-- `hooks/tools/sanitize-review.sh` — Strips code fences, citation artifacts
-- `hooks/tools/secret-scan.sh` — Filters dangerous files before Oracle upload
-
-### Troubleshooting
-
-- **Oracle session expired:** Run `oracle-login` via NoVNC, complete Cloudflare check
-- **X11 not running:** Check `pgrep -f "Xvfb :99"`, restart if needed
-- **Review skipped:** Normal if Oracle unavailable — generation still works
-
-<quick_reference>
-
-## Command Quick Reference
-
-| Trigger | Mode | Scope |
-|---------|------|-------|
-| "generate AGENTS.md" | Generation | Full project |
-| "update AGENTS.md" | Update | Changed directories |
-| "change-set update" | Update | Git diff only |
-| "doc coverage" | Report | Coverage stats |
-| "lint AGENTS.md" / "doc lint" | Lint | Style warnings |
-| "fix stale references" / "interdoc fix" | Fix | Structural only (no LLM) |
-| "dry run" | Any + Preview | No writes |
-
-</quick_reference>
-
-## Recent Changes (January 2026)
-
-### v4.4.3 - Phase 1 Roadmap: Coverage + Lint + Change-Set
-- Added change-set update mode, coverage report, and style lint triggers
-- Added optional local audit script (coverage + lint)
-
-### v4.4.0 - Disable Hooks by Default
-- Removed auto-loaded hooks to avoid Claude Code hook validation errors
-- Manual invocation is the default workflow
-
-### v4.3.3 - Dry Run + Preview Cache
-- Added dry-run mode with summary + diff preview
-- Added "apply last preview" cache (HEAD-validated)
-
-### v4.3.2 - Claude Subagent + Codex Install
-- Added interdocumentarian Claude subagent for directory docs
-- Added Codex CLI install instructions
-
-### v4.3.0 - Splinterpeer Robustness Improvements
-- Rewrote hooks with repo-root handling and HEAD-tracking
-- Added JSON schema with sentinel markers for subagent output
-- Added deterministic CLAUDE.md heading allowlist
-- Added scalability guardrails (concurrency limits, batching)
-- Fixed find commands for filename safety
-- Added comprehensive test plan
-
-### v4.2.0 - CLAUDE.md Harmonization
-- Initial CLAUDE.md → AGENTS.md migration feature
-
-### v4.1.0 - Improved Verification and UX
-- Better subagent verification before consolidation
-- Individual file review option
-
----
-
-*Last updated: 2026-01-18*
+If a high-value change conflicts with philosophy, either:
+- adjust the plan to align, or
+- create follow-up work to update `PHILOSOPHY.md` explicitly.
 
 

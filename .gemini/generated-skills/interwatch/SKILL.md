@@ -1,6 +1,6 @@
 ---
 name: interwatch
-description: "Doc freshness monitoring — auto-discovers watchable docs by convention, detects drift via 14 signal types, scores confidence, and dispatches to generators for auto-refresh. Companion plugin for Clavain."
+description: "Doc freshness and correctness monitoring — auto-discovers watchable docs, detects drift via 17 signal types, scores confidence, dispatches generators for auto-refresh, and runs stranger-perspective correctness audits with cross-document consistency checking. Companion plugin for Clavain."
 ---
 # Gemini Skill: interwatch
 
@@ -90,7 +90,7 @@ Per-project state in `.interwatch/` (gitignored):
 
 ### Commands
 
-- 3 commands in `commands/`: watch.md, status.md, refresh.md
+- 4 commands in `commands/`: audit.md, watch.md, status.md, refresh.md
 - Each has YAML frontmatter with `name` and `description`
 
 ### Hooks
@@ -116,6 +116,26 @@ Per-project state in `.interwatch/` (gitignored):
 | `skills_without_compact` | SKILL.md files >90 lines lacking SKILL-compact.md |
 
 Threshold-based signals use the `THRESHOLD_SIGNALS` dispatch table instead of per-signal `if` checks.
+
+### Correctness Audit
+
+Complements signal-based freshness scanning with agent-dispatched content validation. Freshness asks "has the world changed since this doc was written?" — correctness asks "does what this doc says match reality?"
+
+**Architecture:**
+- `scripts/interwatch-audit.py` — gathers ground truth (plugin counts, build systems, file existence, versions, prerequisites) and generates the audit agent prompt
+- `commands/audit.md` — dispatches a sonnet-tier agent with the ground truth, presents findings, offers auto-fixes
+
+**Drift classes checked:**
+1. Stale counts (hardcoded numbers vs actual)
+2. Wrong commands (build commands vs available build systems)
+3. Broken links (referenced files that don't exist)
+4. Cross-doc consistency (conflicting facts between docs)
+5. Missing prerequisites (unlisted tools needed by install/build)
+6. Deprecated references (removed tools/commands still mentioned)
+7. Version/output staleness (hardcoded versions vs current)
+8. Ambiguous paths (file paths without clear working directory)
+
+**State:** Audit results saved to `.interwatch/last-audit.json` for `/interwatch:status` consumption.
 
 ## Testing
 

@@ -1,6 +1,6 @@
 ---
 name: interstat
-description: "Token efficiency benchmarking for agent workflows"
+description: "Token efficiency benchmarking and session analytics for agent workflows"
 ---
 # Gemini Skill: interstat
 
@@ -32,6 +32,12 @@ For brainstorming/planning outputs, add two short lines:
 If a high-value change conflicts with philosophy, either:
 - adjust the plan to align, or
 - create follow-up work to update 'PHILOSOPHY.md' explicitly.
+
+## Session Search & Analytics
+
+Session search and session-level analytics (stats, activity, projects) have moved to the `intersearch` plugin. Use `/intersearch:session-search` for search, timeline, context, and export.
+
+interstat retains bead-correlated token metrics only (per-session token counts, cost-per-bead, phase breakdowns). These are queried via `scripts/cost-query.sh` and the `/interstat:interstat-report` skill.
 
 ## Execution Rules
 - Keep changes small, testable, and reversible.

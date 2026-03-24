@@ -1,6 +1,6 @@
 ---
 name: interpath
-description: "Product artifact generator — roadmaps, PRDs, vision docs, changelogs, and status reports from beads, brainstorms, and project state. Companion plugin for Clavain."
+description: "Product artifact generator — roadmaps, PRDs, vision docs, changelogs, CUJs, and status reports from beads, brainstorms, and project state. Companion plugin for Clavain."
 ---
 # Gemini Skill: interpath
 
@@ -53,6 +53,7 @@ SKILL.md (router)
   → phases/prd.md                (PRD synthesis)
   → phases/vision.md             (vision doc synthesis)
   → phases/changelog.md          (changelog synthesis)
+  → phases/cuj.md                (CUJ synthesis)
   → phases/status.md             (status report synthesis)
   → phases/discover-monorepo.md  (monorepo source discovery)
   → phases/roadmap-monorepo.md   (monorepo roadmap synthesis)
@@ -66,13 +67,13 @@ SKILL.md (router)
 
 ### Interwatch Integration
 
-interpath is a generator target for interwatch's drift-detection framework. When interwatch detects that a product doc (roadmap, PRD, vision) has drifted, it dispatches to `interpath:artifact-gen` with the artifact type. interpath does not know about drift scores or confidence tiers — it receives a generation request and produces an artifact. The contract is:
+interpath is a generator target for interwatch's drift-detection framework. When interwatch detects that a product doc (roadmap, PRD, vision, CUJ) has drifted, it dispatches to `interpath:artifact-gen` with the artifact type. interpath does not know about drift scores or confidence tiers — it receives a generation request and produces an artifact. The contract is:
 
 - interwatch owns detection and dispatch
 - interpath owns generation
 - Clavain owns when to invoke (via `/interwatch:watch` or `auto-stop-actions.sh`)
 
-interwatch's `signal_templates` in `config/watchables.yaml` declare which signals map to interpath-generated doc types (roadmap, prd, vision).
+interwatch's `signal_templates` in `config/watchables.yaml` declare which signals map to interpath-generated doc types (roadmap, prd, vision, cuj).
 
 ## Component Conventions
 
@@ -85,7 +86,7 @@ interwatch's `signal_templates` in `config/watchables.yaml` declare which signal
 
 ### Commands
 
-- 6 commands in `commands/`: roadmap.md, prd.md, vision.md, changelog.md, status.md, propagate.md
+- 8 commands in `commands/`: roadmap.md, prd.md, vision.md, changelog.md, cuj.md, status.md, propagate.md, all.md
 - Each has YAML frontmatter with `name` and `description`
 - Each invokes the `artifact-gen` skill with the artifact type
 
