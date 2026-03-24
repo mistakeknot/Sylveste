@@ -134,19 +134,17 @@ Six targeted fixes across safety, phase integrity, governance, and routing that 
 ## Execution Order
 
 ```
-Phase A (quick fixes — parallel):
+Phase A (foundations — all parallel, no inter-dependencies):
   ├── A1: Safety floor clamping (F1/.18) — compose.go only
-  └── A2: Phase name dedup (F4/.22) — clavain-cli string→constant
+  ├── A2: Phase name dedup (F4a/.22) — clavain-cli string→constant
+  └── A3: Phase skip prevention (F3/.20) — gate.go default priority
 
-Phase B (security — after A2 for phase constants):
-  └── B1: Phase skip prevention (F3/.20) — gate.go default priority
+Phase B (safety/governance — parallel, after A for verification):
+  ├── B1: Autonomy hysteresis (F2/.19) — lib-interspect.sh aggregator
+  └── B2: Shadow tracker enforcement (F5/.24) — auto-stop-actions.sh
 
-Phase C (safety/governance — parallel with B):
-  ├── C1: Autonomy hysteresis (F2/.19) — lib-interspect.sh aggregator
-  └── C2: Shadow tracker enforcement (F5/.24) — auto-stop-actions.sh tier
-
-Phase D (routing — after all foundations):
-  └── D1: Routing always-on (F6/.3) — Skaffen subagent dispatch
+Phase C (routing — after A1 specifically, may need 2 sessions):
+  └── C1: Routing always-on (F6/.3) — Skaffen subagent + ic route dispatch extension
 ```
 
 ## Non-goals
@@ -160,13 +158,161 @@ Phase D (routing — after all foundations):
 
 - F1 (.18): None — calibration from .25 already landed
 - F2 (.19): None — builds on existing interspect autonomy system
-- F3 (.20): F4 (.22) for clean phase constants in gate documentation
+- F3 (.20): None — gate.go is in L1, no compile-time dependency on Clavain phase constants
 - F4 (.22): None — .14 phase contract already provides constants
 - F5 (.24): None — independent governance change
-- F6 (.3): .14 (closed) + .15 (closed) — both landed in Batch 1
+- F6 (.3): F1 (.18) for correct safety floor behavior + .14 (closed) + .15 (closed)
 
-## Open Questions
+## Open Questions — Resolved
 
-1. **F2 threshold:** Should system breaker trigger at >50% tripped agents, or use a different ratio?
-2. **F3 logging:** Should priority-4 (TierNone) calls emit a warning to stderr when gates are bypassed?
-3. **F6 fallback:** If routing service is slow (>500ms), should subagent dispatch skip routing entirely or wait?
+1. **F2 threshold:** ~~>50%~~ → `>=50%` with minimum 3-agent floor. 1-of-2 = 50% should trip.
+2. **F3 logging:** Yes. `--priority=4` and `--disable-gates` emit structured audit events + stderr warning.
+3. **F6 fallback:** 200ms timeout ceiling. On timeout, use LLM's original choice + log routing-fallback event.
+
+---
+
+## Flux-Drive Review (2026-03-24)
+
+**Reviewers:** fd-architecture, fd-correctness, fd-safety, fd-user-product (4/4 complete)
+
+### Critical Findings (must resolve before implementation)
+
+#### C1: F4 is a data migration, not a find-replace [correctness]
+
+`phase.PlanReviewed` = `Planned` = `"planned"` and `phase.Shipping` = `Polish` = `"polish"` in `core/intercore/pkg/phase/phase.go`. But Clavain CLI runtime uses `"plan-reviewed"` and `"shipping"` as actual string values stored in IC databases. Swapping to constants changes the DB values, silently breaking in-flight sprints.
+
+**Resolution — split F4 into two steps:**
+- **F4a (this batch):** Introduce transition constants in `phase.go` with old string values: `LegacyPlanReviewed = "plan-reviewed"`, `LegacyShipping = "shipping"`. Replace hardcoded strings in Clavain CLI with these constants. No behavioral change — just centralize the strings.
+- **F4b (separate bead, Batch 3):** Migrate all IC database phase records from legacy strings to canonical names, then flip constants. Requires `ic migrate phases` command.
+
+**Updated F4 acceptance criteria:**
+- [ ] New constants `phase.LegacyPlanReviewed` and `phase.LegacyShipping` with old string values
+- [ ] Clavain CLI uses phase constants (mix of canonical + legacy) — zero string literals
+- [ ] `factory_stream.go:statusStr()` renamed to `agentStatusStr()`
+- [ ] No behavioral change — same string values as before
+- [ ] `go build ./...` and existing tests pass
+
+#### C2: F3 TierSoft doesn't block — need TierHard [safety]
+
+`machine.go:188` only hard-blocks on `TierHard` failures. `TierSoft` (priority=2) evaluates gates but still advances on failure — it's observability, not enforcement. The PRD frames F3 as closing a privilege escalation, which requires actual blocking.
+
+**Resolution — change default to 1 (TierHard), not 2:**
+- Default priority for `ic run advance` becomes **1** (TierHard = evaluates AND blocks on failure)
+- `--priority=2` available for "audit but don't block" mode
+- `--priority=4` / `--disable-gates` still available for intentional bypass
+
+**Updated F3 acceptance criteria:**
+- [ ] Default priority for `ic run advance` is **1** (TierHard)
+- [ ] Hard gates (CheckArtifactExists, CheckVerdictExists, budget) fire and **block** by default
+- [ ] `--priority=2` available for audit-only mode (evaluate gates, advance anyway)
+- [ ] `--priority=4` and `--disable-gates` still work but emit structured audit event to `ic events` + stderr warning
+- [ ] Pre-merge audit: grep all `ic run advance` callers without `--priority` — annotate intended tier
+- [ ] Gate block errors include which check failed + bypass flag hint
+- [ ] Clavain's `cmdSprintAdvance()` continues using `--priority=0` (unchanged)
+
+### High Findings
+
+#### H1: F2 threshold edge case at small pools [correctness, user-product]
+
+With 2 agents and 1 tripped, `>50%` = exactly 50% → breaker doesn't fire. System stays autonomous with half the fleet degraded.
+
+**Resolution:** `>=50%` threshold with minimum 3-agent floor. If fewer than 3 agents have evidence, skip aggregate check (per-agent breakers still protect individually).
+
+#### H2: F2 auto-disable needs visible notification [user-product]
+
+Current PRD only logs to `interspect.db`. Operator gets no session-visible feedback when system breaker fires.
+
+**Resolution:** Add stderr output at point of auto-disable: agent count, threshold crossed, what changed. Surface in interline statusline if available.
+
+#### H3: F2 `--revert-all` scope and atomicity [safety, correctness]
+
+- `--revert-all` is destructive; must NOT auto-trigger from system breaker (auto-disable only stops new proposals)
+- Write to `routing-overrides.json` must be atomic (temp file + `mv`)
+- Command must require `--confirm` flag or present dry-run count
+
+**Resolution:** System breaker auto-disables autonomy only. `--revert-all` is manual-only with `--confirm` required. Atomic write via temp+rename.
+
+#### H4: F6 interface mismatch [correctness]
+
+`cmdRouteDispatch()` in `route.go:192` takes `--tier`, not `--type`/`--phase`. The acceptance criteria assume parameters that don't exist.
+
+**Resolution:** Extend `cmdRouteDispatch` with `--type` and `--phase` parameters. When `--type` is provided, resolve subagent type + model; when `--tier` is provided, resolve model only (backward compat).
+
+#### H5: F6 type override invisible to parent LLM [user-product]
+
+When routing overrides the LLM's subagent type choice, the tool result shows nothing. Parent LLM makes decisions assuming the original type ran.
+
+**Resolution:** Tool result annotation: `[routed: explore→general]`. Emit override to interspect evidence for auditability.
+
+#### H6: F1 floor check must be unconditional final line [correctness, safety]
+
+If calibration recommends an unrecognized model string (e.g., `"claude-3-5-sonnet"`), it falls through calibration's whitelist but escapes the floor entirely. The bash reference applies floor unconditionally at the end.
+
+**Resolution:** Safety floor clamp is the absolute last line of `resolveModel()`, applied to the final `model` value regardless of source. Add test: unrecognized calibration model for fd-safety → floor clamps to sonnet.
+
+### Medium Findings
+
+#### M1: F5 false positives on legitimate docs [user-product]
+
+`docs/*.md` with `status: draft` in frontmatter triggers shadow tracker detection. Design docs are not shadow trackers.
+
+**Resolution:** Tighten third category: require `type: task` or `type: todo` in addition to `status:` key. OR require both `status:` AND the file is in `todos/` or matches `pending-beads*`. Block reason must list detected file names so LLM can distinguish real vs false positive.
+
+#### M2: F3 `--disable-gates` has zero audit trail [safety]
+
+`--disable-gates` at `run.go:426` sets `DisableAll: true` with no logging. Gate bypass looks identical to normal advance in event history.
+
+**Resolution:** Addressed in C2 — both `--priority=4` and `--disable-gates` now emit structured audit events.
+
+#### M3: F1 missing upward calibration test [safety]
+
+PRD test cases cover haiku→clamped-to-sonnet but not opus→accepted-above-floor.
+
+**Resolution:** Already in original AC (line 33). Verify the test explicitly confirms `modelSource = "interspect_calibration"` when opus is accepted.
+
+### Architecture Findings (fd-architecture)
+
+#### A1: F5 shadow tracker tier placement is self-defeating [architecture]
+
+Shadow tracker detection at "lowest priority" in the waterfall means it only fires when compound/dispatch/drift-check didn't claim the cycle. Heavy multi-agent sessions — where shadow trackers most likely accumulate — always trigger compound first (weight >= 4). The enforcement fires least when most needed.
+
+**Resolution:** Shadow tracker detection runs as an **independent early check** orthogonal to the tier waterfall. It emits a warning alongside whatever tier action fires. Block escalation only if no other tier claimed the cycle AND shadow files exceed threshold.
+
+#### A2: F5 detection function extraction target not named [architecture]
+
+`doctor.md` is a command markdown file, not a sourceable lib. The extraction needs a named target.
+
+**Resolution:** Extract detection into `lib-shadow-tracker.sh` (new file, sourced by both `auto-stop-actions.sh` and referenced by `doctor.md`). Function: `detect_shadow_trackers()` returns count + file list on stdout.
+
+#### A3: F1 needs tier-ordering comparison, not string equality [architecture]
+
+Safety floor clamp requires comparing `haiku < sonnet < opus`. `compose.go` doesn't have a tier-ordering helper. `core/intercore/internal/routing/resolve.go:83` has `applyFloor()` but that's an internal package.
+
+**Resolution:** Either inline a simple tier map in `compose.go` (3 entries — minimal), or add a `phase.ModelTier()` function to `core/intercore/pkg/phase/` (exported, reusable). Prefer the latter since `lib-routing.sh` already has `_routing_model_tier()`.
+
+#### A4: F6 scope is 3-4x larger than other features [architecture]
+
+F6 requires: extending `cmdRouteDispatch` with `--type`/`--phase`, modifying `SubagentType` struct in `registry.go`, updating `tool.go` call site, replacing `NoOpRouter` in `runner.go`, adding routing config schema for per-type model selection, writing integration tests.
+
+**Resolution:** Flag F6 as a potential 2-session item. If it doesn't complete in one session, the partial state (extended `cmdRouteDispatch` without Skaffen integration) is safe to ship independently.
+
+#### A5: F3 false dependency on F4 removed [architecture]
+
+`gate.go` is in L1 (`core/intercore/internal/phase/`). It has no compile-time dependency on Clavain phase constants. F3 moved to Phase A (parallel with F1 and F4).
+
+#### A6: F2 system breaker should cache with TTL [architecture]
+
+Cross-agent table scan on every `_interspect_should_auto_apply()` call is expensive. At high call frequency this becomes a bottleneck.
+
+**Resolution:** Write `system_breaker_checked_at` sentinel with 60-second TTL. Re-evaluate only when stale. Implementation detail for F2 — not an acceptance criteria change.
+
+### Rollback Safety
+
+| Feature | Rollback | Persistent State | Recovery |
+|---------|----------|-----------------|----------|
+| F1 | Binary revert | None | Clean |
+| F2 | Plugin file revert | `confidence.json` may have `autonomy: false` | Note pre-deploy value |
+| F3 | Binary revert | None | Clean |
+| F4a | Binary revert | None (same string values) | Clean |
+| F5 | Plugin file revert | None | `.claude/clavain.no-shadow-enforce` escape valve |
+| F6 | Binary revert | None | Clean |
