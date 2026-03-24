@@ -60,6 +60,9 @@
 {"created_at":"2026-03-21T09:13:41Z","created_by":"f26df288","depends_on_id":"Demarch-1ifn","issue_id":"Demarch-1ifn.1","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-21T09:15:44Z","created_by":"f26df288","depends_on_id":"Demarch-1ifn","issue_id":"Demarch-1ifn.2","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-21T09:18:02Z","created_by":"f26df288","depends_on_id":"Demarch-1ifn","issue_id":"Demarch-1ifn.3","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-24T14:36:52Z","created_by":"Claude Code","depends_on_id":"Demarch-1qjs","issue_id":"Demarch-1qjs.1","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-24T14:36:52Z","created_by":"Claude Code","depends_on_id":"Demarch-1qjs","issue_id":"Demarch-1qjs.2","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-24T14:37:20Z","created_by":"Claude Code","depends_on_id":"Demarch-1qjs","issue_id":"Demarch-1qjs.3","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-17T07:29:18Z","created_by":"mk","depends_on_id":"Demarch-k2xf","issue_id":"Demarch-1x9l","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-17T07:28:09Z","created_by":"mk","depends_on_id":"Demarch-1x9l","issue_id":"Demarch-1x9l.1","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-17T22:50:51Z","created_by":"mk","depends_on_id":"Demarch-1x9l.1","issue_id":"Demarch-1x9l.1.1","metadata":"{}","type":"parent-child"}
@@ -720,6 +723,9 @@
 {"created_at":"2026-03-16T18:52:51Z","created_by":"mk","depends_on_id":"Demarch-6i0.17","issue_id":"Demarch-orrt","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-23T18:37:59Z","created_by":"Claude Code","depends_on_id":"Demarch-z5qg","issue_id":"Demarch-ozox","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-21T09:09:55Z","created_by":"Claude Code","depends_on_id":"Demarch-jpum","issue_id":"Demarch-p83z","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-24T14:30:30Z","created_by":"Claude Code","depends_on_id":"Demarch-p83z","issue_id":"Demarch-p83z.1","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-24T14:31:45Z","created_by":"Claude Code","depends_on_id":"Demarch-p83z","issue_id":"Demarch-p83z.2","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-24T14:42:30Z","created_by":"Claude Code","depends_on_id":"Demarch-p83z","issue_id":"Demarch-p83z.3","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-24T00:50:30Z","created_by":"Claude Code","depends_on_id":"Demarch-0rgc","issue_id":"Demarch-p9pg","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-24T00:50:38Z","created_by":"Claude Code","depends_on_id":"Demarch-0rgc","issue_id":"Demarch-pgl8","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-24T00:50:21Z","created_by":"Claude Code","depends_on_id":"Demarch-0rgc","issue_id":"Demarch-pix4","metadata":"{}","type":"blocks"}
@@ -795,6 +801,10 @@
 {"created_at":"2026-03-24T08:11:15Z","created_by":"Claude Code","depends_on_id":"Demarch-uboy.6","issue_id":"Demarch-uboy.6.2","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-24T08:15:41Z","created_by":"Claude Code","depends_on_id":"Demarch-uboy.6","issue_id":"Demarch-uboy.6.3","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-24T08:38:27Z","created_by":"Claude Code","depends_on_id":"Demarch-uboy.6","issue_id":"Demarch-uboy.6.4","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-24T08:38:53Z","created_by":"Claude Code","depends_on_id":"Demarch-uboy.6","issue_id":"Demarch-uboy.6.5","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-24T08:38:58Z","created_by":"Claude Code","depends_on_id":"Demarch-uboy.6","issue_id":"Demarch-uboy.6.6","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-24T08:39:15Z","created_by":"Claude Code","depends_on_id":"Demarch-uboy.6","issue_id":"Demarch-uboy.6.7","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-24T08:40:10Z","created_by":"Claude Code","depends_on_id":"Demarch-uboy.6","issue_id":"Demarch-uboy.6.8","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-24T00:49:18Z","created_by":"Claude Code","depends_on_id":"Demarch-uboy","issue_id":"Demarch-uboy.7","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-24T00:49:19Z","created_by":"Claude Code","depends_on_id":"Demarch-uboy","issue_id":"Demarch-uboy.8","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-24T00:49:19Z","created_by":"Claude Code","depends_on_id":"Demarch-uboy","issue_id":"Demarch-uboy.9","metadata":"{}","type":"parent-child"}
