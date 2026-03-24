@@ -91,6 +91,17 @@ debug() {
     fi
 }
 
+find_local_clavain_source() {
+    local candidate
+    for candidate in "os/Clavain" "os/clavain"; do
+        if [[ -f "$candidate/scripts/install-codex-interverse.sh" ]]; then
+            printf '%s\n' "$candidate"
+            return 0
+        fi
+    done
+    return 1
+}
+
 success() {
     printf "${GREEN}  ✓ %s${RESET}\n" "$*"
 }
@@ -540,10 +551,10 @@ if command -v codex &>/dev/null; then
 
     # Determine Clavain source for the interverse installer
     CODEX_SOURCE=""
-    if [[ -n "${CLAVAIN_DIR:-}" ]] && [[ -f "$CLAVAIN_DIR/scripts/install-codex-interverse.sh" ]]; then
+    if LOCAL_CLAVAIN_SOURCE="$(find_local_clavain_source)"; then
+        CODEX_SOURCE="$LOCAL_CLAVAIN_SOURCE"
+    elif [[ -n "${CLAVAIN_DIR:-}" ]] && [[ -f "$CLAVAIN_DIR/scripts/install-codex-interverse.sh" ]]; then
         CODEX_SOURCE="$CLAVAIN_DIR"
-    elif [[ -f "os/clavain/scripts/install-codex-interverse.sh" ]]; then
-        CODEX_SOURCE="os/clavain"
     fi
 
     if [[ -z "$CODEX_SOURCE" ]] && command -v git &>/dev/null; then
@@ -567,8 +578,26 @@ if command -v codex &>/dev/null; then
         else
             if bash "$CODEX_SOURCE/scripts/install-codex-interverse.sh" install --source "$CODEX_SOURCE" 2>&1; then
                 success "Codex skills installed (Clavain + companions)"
+                if bash "$CODEX_SOURCE/scripts/install-codex-interverse.sh" doctor --source "$CODEX_SOURCE" >/tmp/demarch-codex-doctor.out 2>/tmp/demarch-codex-doctor.err; then
+                    success "Codex doctor passed"
+                else
+                    warn "Codex doctor reported issues after install"
+                    if [[ "$VERBOSE" == true ]]; then
+                        log "  --- doctor stdout ---"
+                        sed 's/^/  /' /tmp/demarch-codex-doctor.out || true
+                        log "  --- doctor stderr ---"
+                        sed 's/^/  /' /tmp/demarch-codex-doctor.err || true
+                    fi
+                    fail "Demarch install finished with Codex follow-up errors"
+                    log "  Re-run manually: ${BLUE}bash \"$CODEX_SOURCE/scripts/install-codex-interverse.sh\" doctor --source \"$CODEX_SOURCE\"${RESET}"
+                    rm -f /tmp/demarch-codex-doctor.out /tmp/demarch-codex-doctor.err
+                    exit 1
+                fi
+                rm -f /tmp/demarch-codex-doctor.out /tmp/demarch-codex-doctor.err
             else
-                warn "Codex skill install had errors (non-fatal, Claude Code install succeeded)"
+                fail "Codex skill install failed"
+                log "  Re-run manually: ${BLUE}bash \"$CODEX_SOURCE/scripts/install-codex-interverse.sh\" install --source \"$CODEX_SOURCE\"${RESET}"
+                exit 1
             fi
         fi
     else
