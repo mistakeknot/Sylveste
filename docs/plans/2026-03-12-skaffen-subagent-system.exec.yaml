@@ -1,0 +1,62 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 4
+timeout_per_task: 300
+
+stages:
+  - name: "Foundation types and registry"
+    tasks:
+      - id: task-1
+        title: "Core types — SubagentType, SubagentTask, SubagentResult, SubagentStatus"
+        files: [os/Skaffen/internal/subagent/types.go, os/Skaffen/internal/subagent/types_test.go]
+        depends: []
+      - id: task-2
+        title: "Type Registry — load built-in + custom types from .skaffen/agents/"
+        files: [os/Skaffen/internal/subagent/registry.go, os/Skaffen/internal/subagent/registry_test.go]
+        depends: [task-1]
+
+  - name: "Session, emitter, and reservation"
+    tasks:
+      - id: task-3
+        title: "ScopedSession — context isolation with selective injection"
+        files: [os/Skaffen/internal/subagent/session.go, os/Skaffen/internal/subagent/session_test.go]
+        depends: [task-1]
+      - id: task-4
+        title: "AggregatingEmitter — evidence stream merge with dedup"
+        files: [os/Skaffen/internal/subagent/emitter.go, os/Skaffen/internal/subagent/emitter_test.go]
+        depends: [task-1]
+      - id: task-5
+        title: "Intercore Reservation Bridge — write coordination via ic CLI"
+        files: [os/Skaffen/internal/subagent/reservation.go, os/Skaffen/internal/subagent/reservation_test.go]
+        depends: [task-1]
+
+  - name: "Runner and Agent tool"
+    tasks:
+      - id: task-6
+        title: "SubagentRunner — goroutine lifecycle, concurrency limits, cancellation"
+        files: [os/Skaffen/internal/subagent/runner.go, os/Skaffen/internal/subagent/runner_test.go]
+        depends: [task-2, task-3, task-4, task-5]
+      - id: task-7
+        title: "Agent Tool — LLM-invocable subagent dispatch"
+        files: [os/Skaffen/internal/subagent/tool.go, os/Skaffen/internal/subagent/tool_test.go]
+        depends: [task-6]
+
+  - name: "TUI integration"
+    tasks:
+      - id: task-8
+        title: "TUI collapsible block component for subagent output"
+        files: [masaq/collapsible/collapsible.go, masaq/collapsible/collapsible_test.go]
+        depends: []
+      - id: task-9
+        title: "Wire subagent system into main.go and TUI"
+        files: [os/Skaffen/cmd/skaffen/main.go, os/Skaffen/internal/tui/app.go]
+        depends: [task-7, task-8]
+
+  - name: "Integration test"
+    tasks:
+      - id: task-10
+        title: "End-to-end integration test — mock provider, full subagent lifecycle"
+        files: [os/Skaffen/internal/subagent/integration_test.go]
+        depends: [task-9]
+        tier: fast

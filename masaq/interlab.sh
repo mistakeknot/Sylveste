@@ -4,7 +4,9 @@ set -euo pipefail
 # Primary metric: priompt_render_ns (BenchmarkRender100)
 # Secondary: diff_lcs_ns, compact_format_ns, allocs, bytes
 
-HARNESS="${INTERLAB_HARNESS:-$(git rev-parse --show-toplevel)/interverse/interlab/scripts/go-bench-harness.sh}"
+# masaq has its own .git — walk up to find the monorepo root
+MONOREPO="$(cd "$(dirname "$0")/.." && pwd)"
+HARNESS="${INTERLAB_HARNESS:-$MONOREPO/interverse/interlab/scripts/go-bench-harness.sh}"
 DIR="$(cd "$(dirname "$0")" && pwd)"
 
 echo "--- priompt ---" >&2

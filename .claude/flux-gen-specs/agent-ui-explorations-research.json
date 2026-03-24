@@ -1,0 +1,132 @@
+[
+  {
+    "name": "fd-skaffen-runtime-primitives",
+    "focus": "Map Barber's 50 ideas to Skaffen's sovereign agent runtime (OODARC phases, trust, routing, evidence)",
+    "persona": "A Go systems engineer who has internalized the Skaffen OODARC architecture (brainstorm→plan→build→review→ship phase FSM, phase-gated tool registry, trust evaluator, evidence JSONL, model router). This agent reads UI concepts and asks: what runtime state or agent-loop behavior would this idea require to exist?",
+    "decision_lens": "Prioritize ideas that map to already-existing Skaffen internals (phase FSM, session persistence, trust evaluator, evidence emitter) because those have the shortest implementation path. Flag ideas that require new agent-side state machines or new inter-phase signals as medium-term.",
+    "review_areas": [
+      "For each idea, identify which Skaffen internal package would own the backing state (agent/, agentloop/, router/, trust/, evidence/, session/)",
+      "Identify ideas that require new evidence/event types to be emitted — breadcrumb trail (#14), compass drift (#8), ETA forecast (#11), progress forecasting (#9)",
+      "Identify ideas that need phase-FSM changes or cross-phase signals — parallel exploration (#17, #22, #42, #47), speculative pre-build queue (#48)",
+      "Identify ideas that rely on trust/approval model evolution — permission boundary drag (#26), passive feature toggles (#37), energy-aware decision routing (#18)",
+      "Identify ideas that require session or context management changes — context compaction rules (#29, #31), rolling context window (#31), memory SRS review (#27)",
+      "Flag ideas that are purely UI decorations (victory screen #34, critical hits #35, leaderboards #49/#50) with no required runtime changes"
+    ],
+    "success_hints": [
+      "Produces a mapping table: idea# → Skaffen package → new vs. existing capability",
+      "At least 10 ideas identified as 'already supportable with current evidence/session APIs'",
+      "Speculative queue (#48) and parallel exploration (#17/#22/#47) analyzed for impact on agentloop concurrency model"
+    ],
+    "task_context": "Chris Barber's 50 agent UI ideas are being analyzed for actionability across Skaffen (sovereign Go agent runtime with OODARC phases), Masaq (shared Bubble Tea TUI component library), and Autarch (L3 app layer with Bigend/Coldwine/Gurgeh tools). The goal is to cluster ideas and identify what is buildable in a terminal-first architecture.",
+    "anti_overlap": [
+      "fd-masaq-component-patterns covers Bubble Tea rendering primitives, layout feasibility in lipgloss, and what Masaq widgets need to be created",
+      "fd-autarch-product-surface covers which ideas belong in Autarch's Bigend/Coldwine/Gurgeh apps at the L3 product layer",
+      "fd-theme-clustering covers grouping the 50 ideas into thematic clusters and identifying which clusters have the most density",
+      "fd-terminal-feasibility covers cross-cutting constraints of terminal-first rendering (ASCII art budget, color limits, no mouse drag)"
+    ]
+  },
+  {
+    "name": "fd-masaq-component-patterns",
+    "focus": "Identify which Barber ideas require new or extended Masaq Bubble Tea components, and assess rendering feasibility in lipgloss",
+    "persona": "A Bubble Tea / lipgloss specialist who knows Masaq's existing component surface (viewport, compact, diff, keys, question, priompt, markdown, theme, settings) and the constraints of terminal rendering. This agent evaluates UI concepts against what lipgloss can express and what gaps in Masaq would need to be filled.",
+    "decision_lens": "Favor ideas where a new Masaq component would be reusable across both Skaffen and Autarch — those justify the Masaq abstraction layer. Deprioritize ideas that require one-off custom renderers that won't generalize.",
+    "review_areas": [
+      "For each visual concept, assess whether it maps to a new Masaq component type: sparkline/waveform (tok/s #1), status-colored border (#2), breadcrumb bar (#14), progress bar with forecast (#9, #11), multi-pane split layout (#42, #47)",
+      "Identify ideas that require new Masaq primitives not yet in the package: spatial map (#12, #36), lens/view-switcher (#15), side-by-side diff (#42), notification badge overlay (#24)",
+      "Review the viewport component for scroll and auto-scroll against ideas that require live streaming updates (#1 tok/s waveform, #7 rearview mirror, #14 breadcrumbs) — check if AppendContent + autoScroll is sufficient or needs a ring buffer",
+      "Evaluate the theme system (TokyoNight/Catppuccin, SemanticColors) against ideas that require health-state color coding (#2 terminal frame color, #8 compass) — does the semantic palette cover Success/Warning/Error adequately?",
+      "Identify ideas that need animation or timing-based updates in Bubble Tea (waveform #1, ETA countdown #11, compass heading drift #8) and check whether tea.Tick is sufficient or whether a new timed-renderer model is needed",
+      "Flag ideas that are fundamentally non-terminal (peripheral hardware #4, mobile tap UI #16) and explain what the terminal-adjacent equivalent would be"
+    ],
+    "success_hints": [
+      "Produces a list of 5-8 candidate new Masaq components with a one-line description of each",
+      "Identifies whether the existing viewport's AppendContent/autoScroll is sufficient for waveform/sparkline rendering or needs a new ring-buffer model",
+      "Flags at least 3 ideas as 'lipgloss-native with no new Masaq component required'"
+    ],
+    "task_context": "Chris Barber's 50 agent UI ideas are being analyzed for actionability across Skaffen (sovereign Go agent runtime with OODARC phases), Masaq (shared Bubble Tea TUI component library), and Autarch (L3 app layer with Bigend/Coldwine/Gurgeh tools). The goal is to cluster ideas and identify what is buildable in a terminal-first architecture.",
+    "anti_overlap": [
+      "fd-skaffen-runtime-primitives covers which ideas need new agent-loop or evidence/session backend state — not rendering",
+      "fd-autarch-product-surface covers product-layer assembly in Autarch apps, not the shared component library",
+      "fd-theme-clustering covers thematic grouping of ideas across the full 50, not per-component feasibility",
+      "fd-terminal-feasibility covers high-level terminal constraints (mouse, color depth, layout budget) that gate entire idea categories"
+    ]
+  },
+  {
+    "name": "fd-autarch-product-surface",
+    "focus": "Map Barber's ideas to Autarch's L3 app layer (Bigend mission control, Coldwine orchestration, Gurgeh PRD, Pollard research) and identify product-level features",
+    "persona": "A product engineer who thinks in terms of Autarch's four tools and their existing UX surfaces: Bigend (multi-project mission control, web+TUI), Coldwine (task orchestration, sprints, Epics/Runs toggle), Gurgeh (PRD generation/validation), Pollard (research intelligence). This agent maps UI concepts to concrete feature additions within each tool's existing interaction model.",
+    "decision_lens": "Prioritize ideas that extend Autarch's existing workflow surfaces with minimal new infrastructure — these deliver user value fastest. Flag ideas that belong at L1/L2 (Intercore/Skaffen) because they are out of scope for Autarch's product layer.",
+    "review_areas": [
+      "Map each idea to the most appropriate Autarch tool: Bigend (fleet/agent overview #10, #12, #19, #36, #49/#50 leaderboards), Coldwine (task queue #13, notification queue #24, ETA #11, speculative queue #48), Gurgeh (lens switching #15, alternatives comparison #17/#22/#42), Pollard (#40 /treasures discoveries, #45 proactive exploration, #38 recipe detection)",
+      "Identify which ideas could be slash commands in Autarch's existing CLI surface: /treasures (#40), /wrapped (#41), /shortcuts (#23/#28), /learnings (#21), /lens (#15)",
+      "Assess dashboard aggregation ideas (#19 agent dashboard, #41 wrapped, #49 leaderboard) against Bigend's existing web+TUI split — which fit the TUI and which need the web layer",
+      "Evaluate agent preference learning (#20, #43) and proactive suggestion (#25, #44) as Autarch-level features backed by Pollard's insight pipeline",
+      "Check ideas that require cross-tool coordination signals (#10 unified task dispatch, #36 spatial agent map) against Autarch's existing Intermute integration (REST+WebSocket, Spec/Insight/CUJ entities)",
+      "Flag ideas that are purely cosmetic engagement mechanics (#32 game over, #34 victory, #35 critical hit) — assess whether they belong in Autarch or should be excluded from scope"
+    ],
+    "success_hints": [
+      "Produces a per-tool feature table: Bigend N ideas, Coldwine N ideas, Gurgeh N ideas, Pollard N ideas, out-of-scope N ideas",
+      "At least 3 ideas identified as addable to Autarch as slash commands in the existing CLI surface",
+      "Leaderboard ideas (#49/#50) evaluated against Autarch's local-only default and the explicit 'remote/multi-host deferred' design decision"
+    ],
+    "task_context": "Chris Barber's 50 agent UI ideas are being analyzed for actionability across Skaffen (sovereign Go agent runtime with OODARC phases), Masaq (shared Bubble Tea TUI component library), and Autarch (L3 app layer with Bigend/Coldwine/Gurgeh tools). The goal is to cluster ideas and identify what is buildable in a terminal-first architecture.",
+    "anti_overlap": [
+      "fd-skaffen-runtime-primitives covers the agent-loop backend runtime mapping — not the product-level assembly",
+      "fd-masaq-component-patterns covers what Bubble Tea/lipgloss components need to be built in the shared library",
+      "fd-theme-clustering covers the taxonomy of all 50 ideas as a structured set — not per-tool assignment",
+      "fd-terminal-feasibility covers rendering constraints — not the semantic grouping of ideas"
+    ]
+  },
+  {
+    "name": "fd-theme-clustering",
+    "focus": "Cluster all 50 ideas into 6-8 thematic groups, identify the densest clusters, and rank clusters by implementation leverage across Skaffen/Masaq/Autarch",
+    "persona": "A product analyst with a background in human-computer interaction and agent interface design. This agent reads across all 50 ideas simultaneously to find the latent taxonomy — not one idea at a time — and then evaluates each cluster's strategic value for a terminal-first agent OS.",
+    "decision_lens": "Favor clusters that appear in multiple ideas (high density = strong user signal), that address terminal-native workflows (not mobile/hardware), and that cut across multiple Demarch layers (meaning one cluster effort yields gains in Skaffen, Masaq, and Autarch simultaneously).",
+    "review_areas": [
+      "Identify recurring thematic clusters across all 50: observability/metrics (tok/s, ETA, progress, waveform), multi-agent fleet management (spatial map, dashboard, task dispatch), context/memory management (compaction, SRS review, rolling window), parallel exploration (alternatives, A/B, speculative queue), personalization/learning (taste model, energy-aware routing, auto-shortcuts), gamification (game controls, victory, critical hits, leaderboard)",
+      "Count idea density per cluster and rank clusters by count — which themes did Barber return to most frequently?",
+      "Cross-reference each cluster against which Demarch layer(s) it primarily touches: L2 (Skaffen), shared rendering (Masaq), L3 product (Autarch), or multi-layer",
+      "Identify the 'quick win' cluster: ideas that are thematically related, touch Masaq components only, and could ship together as a single Masaq release",
+      "Identify the 'strategic cluster': ideas that would most differentiate a terminal-first agent OS from GUI-first competitors, even if they require more infrastructure",
+      "Flag any ideas that don't fit cleanly into any cluster and explain why (outliers, hardware-dependent, requires external infrastructure)"
+    ],
+    "success_hints": [
+      "Produces a named cluster taxonomy with 6-8 groups, each with a label, member idea numbers, and a one-line description",
+      "Identifies the top-3 highest-density clusters and explains why that density is a signal worth acting on",
+      "Produces a 2x2 grid or ranking: effort vs. terminal-fit, with cluster labels placed in quadrants"
+    ],
+    "task_context": "Chris Barber's 50 agent UI ideas are being analyzed for actionability across Skaffen (sovereign Go agent runtime with OODARC phases), Masaq (shared Bubble Tea TUI component library), and Autarch (L3 app layer with Bigend/Coldwine/Gurgeh tools). The goal is to cluster ideas and identify what is buildable in a terminal-first architecture.",
+    "anti_overlap": [
+      "fd-skaffen-runtime-primitives covers per-idea backend runtime mapping — not cross-idea pattern taxonomy",
+      "fd-masaq-component-patterns covers per-component Bubble Tea feasibility — not the full-set clustering",
+      "fd-autarch-product-surface covers per-tool product assignment — not the cross-cutting thematic analysis",
+      "fd-terminal-feasibility covers rendering constraints — not the semantic grouping of ideas"
+    ]
+  },
+  {
+    "name": "fd-terminal-feasibility",
+    "focus": "Evaluate each Barber idea against hard terminal-first rendering constraints: ASCII layout budgets, ANSI color limits, keyboard-only interaction, no mouse drag, no spatial canvas",
+    "persona": "A terminal UX specialist who has implemented production Bubble Tea applications and knows exactly what lipgloss, bubbletea, and charmbracelet/x/ansi can and cannot do. This agent is the 'no' voice — it enforces the terminal-first constraint and proposes keyboard-native equivalents for ideas that assume mouse, touch, or graphical rendering.",
+    "decision_lens": "Flag any idea that requires capabilities not expressible in a terminal (drag interaction, pixel-level graphics, persistent spatial canvas, hardware peripherals, mobile touch) as either 'port required' or 'terminal equivalent exists'. For the latter, always propose the specific keyboard/ANSI equivalent.",
+    "review_areas": [
+      "Audit ideas that assume mouse drag or spatial manipulation (#26 drag permission boundaries, #12 spatial agent overview, #36 see where agents are) — what is the keyboard-native equivalent in Bubble Tea?",
+      "Assess waveform/sparkline rendering feasibility (#1 tok/s waveform) in terminal using Unicode block characters and check whether this is implementable in Masaq's viewport without a custom renderer",
+      "Evaluate multi-pane and split-view ideas (#42 side-by-side, #47 A/B split pane, #46 interview question history) against lipgloss's column layout model",
+      "Check ideas that require real-time animation or time-series updates (#1 waveform, #8 compass, #11 ETA countdown) — assess whether tea.Tick + viewport.AppendContent handles this or whether a separate sparkline model with fixed-width ring buffer is required",
+      "Evaluate color depth requirements for state/health visualization (#2 terminal frame colors, #8 compass heading) against the existing Masaq SemanticColors palette",
+      "Flag ideas that are explicitly non-terminal (#4 physical peripheral, #16 mobile tap UI) and propose whether they have a terminal-adjacent analogue (tmux status bar, terminal notification, desktop notification via OSC 9)"
+    ],
+    "success_hints": [
+      "Produces a feasibility tier list: 'terminal-native' / 'terminal-equivalent exists' / 'terminal-adjacent workaround' / 'out of scope for terminal-first'",
+      "Sparkline/waveform (#1) analyzed with a specific Unicode rendering proposal",
+      "Every 'out of scope' verdict includes a one-line explanation of the specific terminal constraint that blocks it"
+    ],
+    "task_context": "Chris Barber's 50 agent UI ideas are being analyzed for actionability across Skaffen (sovereign Go agent runtime with OODARC phases), Masaq (shared Bubble Tea TUI component library), and Autarch (L3 app layer with Bigend/Coldwine/Gurgeh tools). The goal is to cluster ideas and identify what is buildable in a terminal-first architecture.",
+    "anti_overlap": [
+      "fd-skaffen-runtime-primitives covers backend agent-loop state requirements — not rendering constraints",
+      "fd-masaq-component-patterns covers which new Masaq components to build — not whether the ideas are terminal-feasible in principle",
+      "fd-autarch-product-surface covers product-layer feature assignment — not cross-cutting rendering constraint analysis",
+      "fd-theme-clustering covers taxonomic grouping of ideas — not per-idea technical feasibility verdicts"
+    ]
+  }
+]

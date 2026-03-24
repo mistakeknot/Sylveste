@@ -1,0 +1,122 @@
+[
+  {
+    "name": "fd-identity-resolution",
+    "focus": "Whether and how bead IDs, tmux session names, and hex session IDs can be durably joined without a dedicated mapping table",
+    "persona": "A distributed-systems engineer who has spent years debugging ID mismatch bugs in event pipelines. They treat every identifier as opaque until proven otherwise and distrust any join that relies on human-readable naming conventions.",
+    "decision_lens": "Prioritizes join correctness and failure modes over elegance. A join that silently drops 20% of sessions is worse than no join at all.",
+    "review_areas": [
+      "Verify whether clavain-cli WIP output already exposes any field (pid, window title, start timestamp) that could serve as a foreign key back to the Notion roster",
+      "Check whether the Demarch- prefix on bead IDs is a stable convention or could vary by project, and whether that prefix alone is sufficient to infer project context",
+      "Evaluate tmux session name patterns (e.g., warp-demarch-claude) for parseable structure: can project and agent-type be reliably extracted with a regex, or are names ad-hoc?",
+      "Assess whether a mapping table approach is operationally viable: who writes to it, what is the write latency, and what happens when clavain-cli restarts?",
+      "Check if hex session IDs appear anywhere in tmux environment variables (CLAUDE_SESSION_ID, etc.) that would make tmux a reliable bridge",
+      "Determine whether the Notion roster's 85-session snapshot is a point-in-time export or a live-polled feed, and whether its freshness is compatible with live ops join"
+    ],
+    "success_hints": [
+      "A join strategy is only valid if it covers >=95% of active sessions without manual reconciliation",
+      "Any bridge field used for joining must survive a clavain-cli restart without losing the mapping"
+    ],
+    "anti_overlap": [
+      "fd-viz-layer-contracts covers how joined vs. unjoined data is consumed by the 6 visual experiments",
+      "fd-source-emission-design covers changes to factory-status.go to emit new fields",
+      "fd-staleness-and-refresh covers data freshness and polling cadence mismatches"
+    ],
+    "task_context": "Two data sources must be combined for a visualization pipeline: a Notion-sourced IdeaGUI roster (85 agent sessions with project/terminal/agent-type/sync-mode) and clavain-cli live ops (fleet counts, queue by priority, WIP agent-to-bead mappings). The core challenge is that bead IDs encode the DB prefix (Demarch-), not the sub-project, and tmux session names are human-readable but not linked to hex session IDs in WIP output."
+  },
+  {
+    "name": "fd-source-emission-design",
+    "focus": "Whether enriching factory-status.go to emit project context is the right architectural move, and what that emission contract should look like",
+    "persona": "A Go backend engineer who specializes in CLI tool design and data contract evolution. They have a strong opinion that data should be enriched at the source rather than reconstructed downstream.",
+    "decision_lens": "Prefers solutions that push join logic as close to the authoritative data source as possible, and flags any design that forces consumers to re-derive information the producer already knows.",
+    "review_areas": [
+      "Determine what project-context information clavain-cli already holds internally when it constructs WIP agent-to-bead mappings, and whether emitting it is trivial or requires new lookups",
+      "Evaluate whether the bead ID prefix (e.g., Demarch-) is sufficient for project disambiguation in the current deployment, or whether multi-tenant scenarios require a richer field",
+      "Assess the output format: if factory-status.go emits a project field, specify whether it belongs on the bead entry, the agent entry, or a top-level context block",
+      "Check for versioning risk: adding fields to factory-status JSON output is a breaking change for any existing consumers — enumerate known consumers and their tolerance for schema evolution",
+      "Verify whether the sub-project granularity (meadowsyn vs. demarch root) is knowable at factory-status emit time, or whether it requires a separate registry lookup",
+      "Review whether factory-status.go has access to tmux session metadata at emit time, making the tmux-bridge option redundant if project emission is implemented"
+    ],
+    "success_hints": [
+      "If factory-status.go already holds project context internally, emitting it should require fewer than 20 lines of change",
+      "The emitted field must be stable enough that the 6 visualization experiments can depend on it without a versioned schema"
+    ],
+    "anti_overlap": [
+      "fd-identity-resolution covers the join mechanics and identifier matching logic",
+      "fd-viz-layer-contracts covers how the 6 experiments consume the emitted fields",
+      "fd-parallel-layers-tradeoffs covers the no-join alternative where sources remain separate"
+    ],
+    "task_context": "Two data sources must be combined for a visualization pipeline: a Notion-sourced IdeaGUI roster (85 agent sessions with project/terminal/agent-type/sync-mode) and clavain-cli live ops (fleet counts, queue by priority, WIP agent-to-bead mappings). The core challenge is that bead IDs encode the DB prefix (Demarch-), not the sub-project, and tmux session names are human-readable but not linked to hex session IDs in WIP output."
+  },
+  {
+    "name": "fd-parallel-layers-tradeoffs",
+    "focus": "Whether the parallel-layers (no-join) approach is a first-class option or a fallback, and what visualization fidelity is lost by keeping sources separate",
+    "persona": "An information design researcher who has worked on multi-source dashboards where premature joins introduced more bugs than they solved. They evaluate data architecture decisions by asking what questions become unanswerable with each approach.",
+    "decision_lens": "Treats the no-join option as a legitimate design choice, not a compromise. Flags cases where a join is necessary for a specific visualization experiment versus cases where parallel rendering is sufficient.",
+    "review_areas": [
+      "Map each of the 6 visual experiments (split-flap, ambient WebGL, force graph, heatmap, causal loops, process replay) to whether they require a joined record or can render meaningfully from one source alone",
+      "Identify which visualization questions require cross-source correlation (e.g., which agent on this bead is in which project?) versus which can be answered from a single source",
+      "Assess whether parallel layers with visual proximity (side-by-side or overlaid panels) could substitute for a data join for human observers, and under what conditions this breaks down",
+      "Evaluate the operational complexity of maintaining two independent polling/refresh cycles versus a single joined feed, especially for the process-replay experiment which implies temporal ordering",
+      "Check whether the force graph experiment's edge semantics require agent-to-project links (which need a join) or can be derived from bead co-occurrence alone",
+      "Determine if the heatmap and causal-loops experiments have any cross-source aggregation requirements that would make parallel layers produce misleading results"
+    ],
+    "success_hints": [
+      "If >=4 of the 6 experiments can render usefully from a single source, parallel layers is a valid MVP strategy",
+      "The decision to join or not should be made per-experiment, not as a global architecture choice"
+    ],
+    "anti_overlap": [
+      "fd-identity-resolution covers the mechanics of how a join would be implemented if chosen",
+      "fd-source-emission-design covers changes to factory-status.go as one join strategy",
+      "fd-viz-layer-contracts covers the API contract between the data pipe and the visualization layer"
+    ],
+    "task_context": "Two data sources must be combined for a visualization pipeline: a Notion-sourced IdeaGUI roster (85 agent sessions with project/terminal/agent-type/sync-mode) and clavain-cli live ops (fleet counts, queue by priority, WIP agent-to-bead mappings). The core challenge is that bead IDs encode the DB prefix (Demarch-), not the sub-project, and tmux session names are human-readable but not linked to hex session IDs in WIP output."
+  },
+  {
+    "name": "fd-staleness-and-refresh",
+    "focus": "Whether the temporal and refresh-rate mismatches between the two sources create correctness hazards in the combined visualization pipe",
+    "persona": "A streaming data engineer who has debugged more stale-cache bugs than anyone should have to. They model every data flow as a timeline and ask what the maximum observable inconsistency window is for each join strategy.",
+    "decision_lens": "Prioritizes catching cases where the visualization would display a plausible-but-wrong state due to source skew, especially during agent startup/teardown transitions.",
+    "review_areas": [
+      "Determine the refresh cadence of each source: how often does clavain-cli WIP update versus how often does the Notion roster export get polled, and what is the maximum skew?",
+      "Identify the highest-churn event types (agent session start, bead claim, bead close) and check whether both sources would reflect these events within the same refresh window",
+      "Assess whether the process-replay experiment requires synchronized timestamps across sources, and whether the two sources share a common time reference",
+      "Check what happens in the visualization if an agent appears in clavain-cli WIP but has not yet appeared in the Notion roster (e.g., during the first minutes of a new session)",
+      "Evaluate whether the mapping-table approach introduces a third refresh cycle that could lag behind either primary source, creating three-way staleness",
+      "Review whether the ambient WebGL experiment's continuous animation loop would visibly artifact if a source refresh causes an abrupt topology change in the underlying data"
+    ],
+    "success_hints": [
+      "The combined pipe should have a defined maximum staleness SLO (e.g., <=30s for live ops, <=5min for roster) that is documented and enforced in the refresh logic",
+      "Visualization experiments must gracefully handle the case where a session exists in one source but not yet in the other"
+    ],
+    "anti_overlap": [
+      "fd-identity-resolution covers the structural join mechanics, not temporal skew",
+      "fd-viz-layer-contracts covers how experiments handle missing or null fields, not the timing of when those nulls appear",
+      "fd-parallel-layers-tradeoffs covers the architectural choice of joining versus not joining"
+    ],
+    "task_context": "Two data sources must be combined for a visualization pipeline: a Notion-sourced IdeaGUI roster (85 agent sessions with project/terminal/agent-type/sync-mode) and clavain-cli live ops (fleet counts, queue by priority, WIP agent-to-bead mappings). The core challenge is that bead IDs encode the DB prefix (Demarch-), not the sub-project, and tmux session names are human-readable but not linked to hex session IDs in WIP output."
+  },
+  {
+    "name": "fd-viz-layer-contracts",
+    "focus": "What the data contract between the pipe and the 6 visualization experiments must look like, and which join strategy best satisfies that contract",
+    "persona": "A frontend data architect who has built visualization systems over heterogeneous backends and treats the consumer contract as the specification, not the source schema. They work backwards from the rendering requirements to determine what the pipe must emit.",
+    "decision_lens": "Evaluates join strategies by asking whether the output record type is sufficient for all 6 experiments without per-experiment data fetching, and whether the contract is stable enough to develop against.",
+    "review_areas": [
+      "Define the minimum required fields for each of the 6 experiments: which fields are mandatory (null = broken render) versus optional (null = degraded render), and map these back to which source must provide them",
+      "Determine whether the force graph's node and edge schema requires project-level grouping that cannot be inferred from bead ID prefix alone, making a join mandatory for that experiment",
+      "Assess whether the split-flap board experiment requires a stable sort key that is only available after joining (e.g., project-grouped ordering) or can operate on bead IDs directly",
+      "Check whether the causal-loops experiment requires a semantic field (agent-type or sync-mode from the Notion roster) that is absent from factory-status, making it roster-dependent",
+      "Specify how the pipe should represent partial join results: should unmatched sessions emit as null-extended records, be dropped, or be emitted on a separate channel?",
+      "Evaluate whether a normalized output schema (flat record per agent session with all fields from both sources) or a denormalized schema (nested objects per source) better serves the 6 experiments"
+    ],
+    "success_hints": [
+      "The output schema should be defined as a typed struct before any join strategy is implemented — the struct is the contract",
+      "At least one experiment (the simplest one, likely split-flap) should be implementable using only factory-status fields, validating that the pipe works before the join is complete"
+    ],
+    "anti_overlap": [
+      "fd-identity-resolution covers how the join is computed, not what it must produce",
+      "fd-source-emission-design covers upstream changes to factory-status.go",
+      "fd-staleness-and-refresh covers temporal correctness of the pipe, not schema correctness"
+    ],
+    "task_context": "Two data sources must be combined for a visualization pipeline: a Notion-sourced IdeaGUI roster (85 agent sessions with project/terminal/agent-type/sync-mode) and clavain-cli live ops (fleet counts, queue by priority, WIP agent-to-bead mappings). The core challenge is that bead IDs encode the DB prefix (Demarch-), not the sub-project, and tmux session names are human-readable but not linked to hex session IDs in WIP output."
+  }
+]

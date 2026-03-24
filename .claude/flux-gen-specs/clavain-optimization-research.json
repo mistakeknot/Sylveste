@@ -1,0 +1,124 @@
+[
+  {
+    "name": "fd-context-loading-architecture",
+    "focus": "Architectural patterns for token efficiency in session bootstrap and command prompt loading",
+    "persona": "A systems engineer specializing in lazy evaluation and deferred context loading in LLM orchestration frameworks. Approaches every prompt injection as a cost center that must justify its presence at load time versus on demand.",
+    "decision_lens": "Prioritizes findings where context is loaded unconditionally but used conditionally, and where structural changes (lazy loading, progressive disclosure, on-demand fetch) would reduce median session token cost without degrading routing accuracy.",
+    "review_areas": [
+      "session-start.sh: the full using-clavain SKILL.md is injected via additionalContext on every session start — audit whether this content is used in every session or only when commands are invoked, and whether it could be replaced with a compact index",
+      "session-start.sh: delegation policy text, drift summary, companion context, upstream staleness, and sprint scan are all assembled and injected unconditionally — identify which are high-frequency no-ops (no drift, no companions, no active sprint) and could be gated behind a cheap pre-check",
+      "commands/*.md: commands reference skills and agents by sourcing lib-routing.sh which loads and parses routing.yaml into associative arrays — verify whether this parse is happening multiple times per session or is properly guarded by the _ROUTING_LOADED sentinel across hook invocations",
+      "lib-sprint.sh sources lib-intercore.sh, lib-spec.sh, and lib-compose.sh at source time — identify which of these are only needed for sprint_claim/sprint_create paths and could be deferred to call time",
+      "Companion discovery in lib.sh uses a single batched find but falls through to a full traversal on cache miss — verify cache key correctness (session ID) and whether stale-session cache entries accumulate across sessions"
+    ],
+    "success_hints": [
+      "Median session-start additionalContext token count reduced by >30% without changing routing accuracy on the heuristic routing table",
+      "At least 2 injection blocks in session-start.sh are gated behind a cheap sentinel (file existence, env var, or cached bool) that was previously always evaluated"
+    ],
+    "task_context": "Clavain is the L2 OS layer of the Demarch autonomous software agency stack, with 18 skills, 48 commands, and 10 hooks. The session-start.sh hook (524 lines) assembles a multi-part additionalContext payload injected on every session start.",
+    "anti_overlap": [
+      "fd-routing-dispatch-quality covers whether routing decisions degrade when prompts are compressed",
+      "fd-session-startup-latency covers wall-clock time and subprocess counts at startup",
+      "fd-plugin-scaling covers what happens as plugin/command counts grow"
+    ]
+  },
+  {
+    "name": "fd-routing-dispatch-quality",
+    "focus": "Whether heuristic and LLM-fallback routing produce correct sprint/work dispatch decisions under compressed or incomplete context",
+    "persona": "An ML evaluation engineer who has built routing quality benchmarks for multi-agent systems. Treats every routing rule as a hypothesis with a measurable false-positive and false-negative rate.",
+    "decision_lens": "Prioritizes routing rules that fire on ambiguous inputs (confidence 0.85) and places where the LLM fallback (haiku) is the tiebreaker — these are the highest-variance decisions where calibration data matters most.",
+    "review_areas": [
+      "route.md fast-path heuristics table: 14 rules share confidence 0.85 — audit for rule ordering conflicts where two rules match the same bead state and produce contradictory routes",
+      "route.md Step 4b LLM classification: the fallback haiku subagent receives bead metadata but no examples — assess whether the prompt includes sufficient negative examples to prevent systematic bias toward /sprint",
+      "routing.yaml complexity section: B2 is in shadow mode — audit whether the shadow mode logging is actually capturing classification outcomes",
+      "routing.yaml calibration section: B3 is also shadow mode — verify whether interspect routing-calibration.json is being written and whether per-agent hit rates are being fed back into safety floor overrides",
+      "config/agent-roles.yaml safety floors: verify that safety floor clamping handles namespaced agent IDs (interflux:review:fd-safety vs fd-safety) consistently"
+    ],
+    "success_hints": [
+      "Zero routing rule conflicts in the fast-path table",
+      "B2 shadow mode log output is parseable and shows classification distribution across a real backlog",
+      "The haiku fallback prompt includes at least 3 negative examples"
+    ],
+    "task_context": "Clavain's route command uses a 14-rule fast-path heuristic table plus a haiku LLM fallback. The routing.yaml defines a 4-track system where B2 and B3 are in shadow mode.",
+    "anti_overlap": [
+      "fd-context-loading-architecture covers what context is loaded before routing runs",
+      "fd-session-startup-latency covers timing cost of the haiku fallback subprocess",
+      "fd-competitive-workflow-gaps covers features other orchestration systems have"
+    ]
+  },
+  {
+    "name": "fd-session-startup-latency",
+    "focus": "Wall-clock latency contributors in session-start.sh and the developer experience of the first 5 seconds",
+    "persona": "A developer experience engineer who has profiled Claude Code plugin startup paths and treats every blocking subprocess in a session hook as a user-visible delay.",
+    "decision_lens": "Ranks findings by position on the critical path: blocking serial calls before additionalContext assembly rank highest, followed by calls that scale with project size.",
+    "review_areas": [
+      "session-start.sh: Intermute health check (curl --connect-timeout 1 --max-time 2) is on the critical path — if unreachable, adds 2-second stall",
+      "session-start.sh: bd doctor --json called synchronously on every startup when .beads exists — profile latency on >100 beads projects",
+      "session-start.sh: sprint_brief_scan performs filesystem walks on docs/ directories — measure latency as directories grow",
+      "session-start.sh: count distinct ic subprocess invocations in full startup and identify consolidation opportunities",
+      "session-start.sh stale cache cleanup: four separate find calls on /tmp — assess whether a single OR'd find would reduce overhead",
+      "First-run setup verification: verify PyYAML and yq soft checks are gated behind .clavain/setup-verified"
+    ],
+    "success_hints": [
+      "Intermute curl check moved off critical path or timeout reduced to ≤200ms",
+      "Total blocking subprocess count ≤5 for a project with no active sprints",
+      "bd doctor either backgrounded or file-cached between sessions"
+    ],
+    "task_context": "Session-start.sh is 524 lines assembling additionalContext. Several paths require network calls (Intermute) or subprocess execution (bd, ic, clavain-cli) before context can be presented.",
+    "anti_overlap": [
+      "fd-context-loading-architecture covers what tokens are loaded",
+      "fd-routing-dispatch-quality covers correctness of routing decisions",
+      "fd-plugin-scaling covers latency as plugin count grows"
+    ]
+  },
+  {
+    "name": "fd-competitive-workflow-gaps",
+    "focus": "Workflow capabilities present in comparable agent orchestration systems that Clavain does not yet expose",
+    "persona": "A product-minded engineer who has used LangGraph, CrewAI, AutoGen, and Cursor's agent loop. Evaluates from the perspective of a solo developer delegating entire features.",
+    "decision_lens": "Prioritizes gaps that block common delegation patterns (parallel fan-out, resumable interrupts, cost-preview) over aspirational features.",
+    "review_areas": [
+      "Parallel task fan-out: sprint pipeline is sequential by BEHAVIORAL-RULES — assess whether there is a mechanism for fan-out to multiple agents simultaneously",
+      "Workflow visualization: sprint phases exist but no DAG/timeline rendering — compare to LangGraph's graph visualization",
+      "Cost preview before dispatch: fleet-registry.yaml has per-agent baselines but no --dry-run for cost estimation",
+      "Mid-task checkpoint interrupts: gates are reactive — assess whether proactive course-correction exists without losing completed steps",
+      "Resumable agent delegation: codex-delegate dispatches to Codex — assess whether partial results survive session interruption",
+      "Cross-project context: discovery is scoped to single project — assess cross-monorepo bead/plan surfacing"
+    ],
+    "success_hints": [
+      "At least 2 high-value gaps where infrastructure already exists to close them in <1 sprint",
+      "Parallel fan-out is either documented as 'deliberately sequential' with rationale, or a concrete proposal exists",
+      "Cost-preview path identified as a 1-command addition using fleet-registry data"
+    ],
+    "task_context": "Clavain has 48 commands, 18 skills, a 10-phase sprint pipeline, and integrates with Codex CLI, interflux, interphase, and intercore. B4 delegation is in enforce mode.",
+    "anti_overlap": [
+      "fd-routing-dispatch-quality covers existing routing correctness",
+      "fd-context-loading-architecture covers token efficiency",
+      "fd-plugin-scaling covers capacity under load"
+    ]
+  },
+  {
+    "name": "fd-plugin-scaling",
+    "focus": "Performance and correctness as commands, skills, companions, and concurrent sessions scale up",
+    "persona": "A reliability engineer who understands how O(n) startup scans, in-memory caches with no eviction, and global temp file namespaces degrade under load.",
+    "decision_lens": "Prioritizes issues visible in the current codebase (53 plugins, 48 commands, 10+ concurrent sessions) and issues that become blockers within 2x growth.",
+    "review_areas": [
+      "Companion discovery: lib.sh find traversal across plugins/cache/ with 7 OR'd patterns — measure scaling as plugins grow from 53",
+      "/tmp namespace collisions: multiple sentinel files use flat namespaces — with parallel interserve sessions, assess collision risk and CLAUDE_SESSION_ID discriminator usage",
+      "routing.yaml parsing: lib-routing.sh parses into bash arrays guarded by _ROUTING_LOADED per-process — Codex workers each incur full parse",
+      "help command: static markdown — as commands grow beyond 48, assess table degradation and sync validation",
+      "agent-rig.json (13.3KB): audit for stale entries, duplication with routing.yaml, and whether size scales with command count",
+      "skills/ directory: assess whether any skill loading at session start is O(skills) rather than lazy"
+    ],
+    "success_hints": [
+      "Concrete upper bound on companion discovery time (N plugins → M ms)",
+      "All /tmp sentinels verified to use CLAUDE_SESSION_ID as discriminator",
+      "help.md has automated sync check or drift risk is flagged"
+    ],
+    "task_context": "Clavain manages 48 commands, 18 skills, 6 agents, 10 hooks, and 53 Interverse companions. Interserve mode spawns concurrent Codex sessions each running their own Clavain hooks.",
+    "anti_overlap": [
+      "fd-session-startup-latency covers single-session latency",
+      "fd-context-loading-architecture covers token budget",
+      "fd-competitive-workflow-gaps covers missing features"
+    ]
+  }
+]

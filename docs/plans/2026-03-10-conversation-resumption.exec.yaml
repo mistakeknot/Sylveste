@@ -1,0 +1,36 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 2
+timeout_per_task: 300
+
+stages:
+  - name: "Protocol & Schema"
+    tasks:
+      - id: task-1
+        title: "Add previousContext to ContainerInput protocol"
+        files: [apps/intercom/container/shared/protocol.ts, apps/intercom/rust/intercom-core/src/container.rs, apps/intercom/rust/intercomd/src/process_group.rs]
+        depends: []
+      - id: task-2
+        title: "Write handoff note schema and helpers with tests"
+        files: [apps/intercom/container/agent-runner/src/handoff.ts, apps/intercom/container/agent-runner/src/handoff.test.ts]
+        depends: []
+
+  - name: "Integration"
+    tasks:
+      - id: task-3
+        title: "Wire PreCompact hook to write handoff note"
+        files: [apps/intercom/container/agent-runner/src/index.ts]
+        depends: [task-2]
+      - id: task-4
+        title: "Wire session startup to read handoff note and inject context"
+        files: [apps/intercom/container/agent-runner/src/index.ts]
+        depends: [task-1, task-2, task-3]
+
+  - name: "Verification"
+    tasks:
+      - id: task-5
+        title: "Rust build verification and integration test"
+        files: [apps/intercom/rust/intercomd/src/process_group.rs]
+        depends: [task-1, task-4]
+        tier: fast

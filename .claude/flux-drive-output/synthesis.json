@@ -1,0 +1,439 @@
+{
+  "synthesis_date": "2026-03-12",
+  "review_context": "Chris Barber 50 agent UI concept explorations → Demarch architectural fit",
+  "reviewed_agents": [
+    "fd-theme-clustering",
+    "fd-skaffen-runtime-primitives",
+    "fd-masaq-component-patterns",
+    "fd-autarch-product-surface",
+    "fd-terminal-feasibility"
+  ],
+  "verdict": "safe-to-proceed",
+  "verdict_rationale": "Comprehensive cross-layer alignment on immediate priorities (Masaq quick-wins), clear architectural mapping (Skaffen evidence extensions + phase-FSM), and strategic moat (Autarch speculative fleet). No blocking disagreements; all agents converge on implementation sequence.",
+  "findings_summary": {
+    "total_concepts": 50,
+    "immediately_shippable": 12,
+    "next_quarter": 18,
+    "strategic_roadmap": 15,
+    "out_of_scope": 8,
+    "deferred": 3
+  },
+  "convergence": {
+    "highest_priority": [
+      {
+        "idea": 15,
+        "name": "Lens switching (convo/edits/files/cost/timeline/learnings/decisions)",
+        "agent_agreement": 5,
+        "reasoning": "Immediate productivity win; same data, multiple interpretive frames; no runtime changes required"
+      },
+      {
+        "idea": 2,
+        "name": "Terminal frame health-state coloring",
+        "agent_agreement": 5,
+        "reasoning": "Trivial to implement; high observability; pure lipgloss styling"
+      },
+      {
+        "idea": 1,
+        "name": "Waveform tok/s usage display",
+        "agent_agreement": 5,
+        "reasoning": "Requires new sparkline component; feeds into broader real-time awareness suite"
+      },
+      {
+        "idea": 9,
+        "name": "Smart progress bars with ETA forecasting",
+        "agent_agreement": 5,
+        "reasoning": "Closes OODARC loop on phase estimates; data already exists in interstat"
+      },
+      {
+        "idea": 24,
+        "name": "Notification queue",
+        "agent_agreement": 5,
+        "reasoning": "Unblocks agents faster; reduces manual polling; fundamental for multi-agent orchestration"
+      }
+    ],
+    "strategic_moat": [
+      {
+        "idea": 17,
+        "name": "Parallel exploration mode (N branches)",
+        "agent_agreement": 5,
+        "rationale": "Terminal-first differentiator vs GUI competitors; executable via Skaffen's OODARC + ParallelRunner"
+      },
+      {
+        "idea": 22,
+        "name": "Multi-path exploration with branch selection",
+        "agent_agreement": 5,
+        "rationale": "Extends #17 with branch scoring; foundation for A/B testing and alternatives comparison"
+      },
+      {
+        "idea": 48,
+        "name": "Speculative pre-build queue",
+        "agent_agreement": 5,
+        "rationale": "Pre-warms context for likely next tasks; radical latency reduction; requires Skaffen + Coldwine + Pollard coordination"
+      }
+    ],
+    "preference_learning": [
+      {
+        "idea": 20,
+        "name": "Auto-pick high-confidence preferences",
+        "agent_agreement": 5,
+        "rationale": "Foundation for proactive layer; trust.Learn() already exists; needs confidence counter + auto-promote threshold"
+      },
+      {
+        "idea": 43,
+        "name": "Proactive preference calibration",
+        "agent_agreement": 5,
+        "rationale": "Systematizes PRD intake; Gurgeh detects ambiguity and asks before generating; closes feedback loop"
+      }
+    ]
+  },
+  "key_tensions": [
+    {
+      "tension": "Gamification vs PHILOSOPHY.md receipts-first stance",
+      "position_1": "fd-theme-clustering: gamification ideas (#32-35) form a 6-idea cluster; strong creative preoccupation",
+      "position_2": "fd-autarch-product-surface: hard-exclude #32/#35 (pure theater); reframe #33/#34/#41 as evidence-producing features",
+      "resolution": "All agents agree: exclude #32 (failed-deploy-pwned), #35 (random critical hits); include #33 (rationale mode), #34 (sprint receipt), #41 (wrapped summary), #49 (opt-in leaderboard). Theater is secondary; evidence is primary.",
+      "recommendation": "Proceed with evidence-first framing. Victory celebrations are receipts (cost, duration, model performance), not cosmetics."
+    },
+    {
+      "tension": "Single-agent vs multi-agent runtime model",
+      "position_1": "fd-skaffen-runtime-primitives: ParallelRunner requires new agent/parallel/ package; phase-FSM must fork",
+      "position_2": "fd-masaq-component-patterns: focus on splitpane for multi-pane display; TUI layout is orthogonal to runtime",
+      "position_3": "fd-terminal-feasibility: column width at 80 cols limits splitpane readability; graceful fallback to toggle view",
+      "resolution": "All three are compatible. Skaffen owns runtime (branch spawning); Masaq owns display (splitpane layout); terminal constraints are respected (80-col fallback).",
+      "recommendation": "Proceed in parallel: Skaffen ParallelRunner in next sprint; Masaq splitpane + tabbar in same sprint."
+    },
+    {
+      "tension": "Preference learning persistence model",
+      "position_1": "fd-skaffen-runtime-primitives: C3 learned preferences in Skaffen's session context",
+      "position_2": "fd-autarch-product-surface: C3 learned preferences in ~/.config/autarch/preferences.db (per PHILOSOPHY.md)",
+      "position_3": "fd-masaq-component-patterns: UI surface for preference dialogs; persistent backend is orthogonal",
+      "resolution": "No conflict. Autarch owns preferences.db per PHILOSOPHY.md C3 tier (per-project, not kernel). Skaffen reads/writes session-level confidence signals. Masaq renders calibration dialogs.",
+      "recommendation": "Proceed. Autarch allocates preferences.db; Skaffen feeds confidence metrics into it."
+    }
+  ],
+  "implementation_sequence": {
+    "phase_1_masaq_quick_wins": {
+      "duration": "1-2 sprints",
+      "description": "Zero-dependency Masaq rendering components for Clusters A+C+F (Temporal Awareness + View Switching + Affect subset)",
+      "deliverables": [
+        {
+          "component": "sparkline",
+          "covers_ideas": [1, 9, 11, 21, 41],
+          "effort": "Medium"
+        },
+        {
+          "component": "statusbar",
+          "covers_ideas": [2, 8, 11, 24, 37],
+          "effort": "Low"
+        },
+        {
+          "component": "tabbar",
+          "covers_ideas": [15, 30],
+          "effort": "Low"
+        },
+        {
+          "component": "breadcrumb",
+          "covers_ideas": [14, 7],
+          "effort": "Low"
+        },
+        {
+          "component": "meter",
+          "covers_ideas": [9, 11, 21, 49, 50],
+          "effort": "Medium"
+        },
+        {
+          "component": "theme.Active field",
+          "covers_ideas": [2, 19, 36],
+          "effort": "Minimal"
+        }
+      ],
+      "blocking_criteria": "None; these consume existing Skaffen evidence stream"
+    },
+    "phase_2_skaffen_evidence_extensions": {
+      "duration": "1-2 sprints",
+      "description": "New Skaffen evidence types and session management for proactive layer foundation",
+      "deliverables": [
+        {
+          "feature": "FileActivity event type",
+          "covers_ideas": [6, 36],
+          "effort": "Low",
+          "depends_on": "evidence/ToolCallDetail extraction"
+        },
+        {
+          "feature": "SkillMetric post-session aggregation",
+          "covers_ideas": [21],
+          "effort": "Low"
+        },
+        {
+          "feature": "Discovery event type + /treasures command",
+          "covers_ideas": [40],
+          "effort": "Low"
+        },
+        {
+          "feature": "Decision record parsing from model output",
+          "covers_ideas": [15],
+          "effort": "Medium",
+          "note": "Agent detects <decision>...</decision> markers"
+        },
+        {
+          "feature": "PostSessionHook for Suggestion generation",
+          "covers_ideas": [25, 44],
+          "effort": "Medium"
+        },
+        {
+          "feature": "Confidence counter increment in trust.Learn()",
+          "covers_ideas": [20, 43],
+          "effort": "Minimal"
+        }
+      ],
+      "blocking_criteria": "None; these extend existing APIs without breaking changes"
+    },
+    "phase_3_skaffen_parallel_runtime": {
+      "duration": "2-3 sprints",
+      "description": "Phase-FSM fork, ParallelRunner, BranchRunner for Cluster D (Speculative & Exploratory)",
+      "deliverables": [
+        {
+          "feature": "ParallelRunner abstraction",
+          "covers_ideas": [17, 22, 42, 47],
+          "effort": "High",
+          "critical": true,
+          "note": "Foundation for all branching modes; requires session.Snapshot() + session.Merge()"
+        },
+        {
+          "feature": "BranchScorer interface + ranking",
+          "covers_ideas": [22, 47],
+          "effort": "Medium"
+        },
+        {
+          "feature": "SpeculativeRunner for pre-warming",
+          "covers_ideas": [48],
+          "effort": "High",
+          "note": "Loop.Suspend()/Resume(); predicted task inference"
+        },
+        {
+          "feature": "StreamBranchStart / StreamBranchComplete events",
+          "covers_ideas": [17, 22, 42, 47, 48],
+          "effort": "Low"
+        }
+      ],
+      "blocking_criteria": "Blocks all speculative/exploration features; highest architectural impact"
+    },
+    "phase_4_masaq_multi_pane": {
+      "duration": "1 sprint",
+      "description": "splitpane component for side-by-side visualization; conditional on Phase 3 runtime work",
+      "deliverables": [
+        {
+          "component": "splitpane",
+          "covers_ideas": [17, 42, 47],
+          "effort": "Medium",
+          "note": "lipgloss.JoinHorizontal wrapper; fixed-ratio split; graceful 80-col fallback to toggle"
+        },
+        {
+          "component": "toast/notification overlay",
+          "covers_ideas": [24, 34, 35],
+          "effort": "Low"
+        }
+      ],
+      "blocking_criteria": "Depends on ParallelRunner producing branch-tagged evidence"
+    },
+    "phase_5_autarch_tools": {
+      "duration": "2-3 sprints",
+      "description": "Slice the 4 Autarch tools (Bigend, Coldwine, Gurgeh, Pollard) by feature priority and cross-tool signaling",
+      "deliverables": [
+        {
+          "tool": "Bigend",
+          "features": ["Lens switching (#15)", "ETA forecasts (#11)", "Task queue (#13)", "Breadcrumb trail (#14)"],
+          "effort": "Medium",
+          "note": "All read existing evidence; no new Coldwine/Gurgeh/Pollard changes needed"
+        },
+        {
+          "tool": "Coldwine",
+          "features": ["Compass drift score (#8)", "Parallel exploration flag --explore N (#17)"],
+          "effort": "Medium",
+          "note": "#17 requires Skaffen ParallelRunner to be stable"
+        },
+        {
+          "tool": "Gurgeh",
+          "features": ["Proactive pref calibration (#43)", "/discoveries slash command (#40)"],
+          "effort": "Medium"
+        },
+        {
+          "tool": "Pollard",
+          "features": ["Next work suggestions (#25)", "Preference learning (#20)", "Pattern → recipes (#38)"],
+          "effort": "High",
+          "note": "Requires CASS integration for session context; foundation for proactive layer"
+        }
+      ],
+      "new_intermute_event_types": [
+        "SpecScopeUpdated",
+        "ToolUsed",
+        "EnergyLevelUpdated",
+        "SpeculativeTasksReady",
+        "ContextPreWarmed"
+      ]
+    }
+  },
+  "masaq_component_priority": {
+    "tier_1_highest_leverage": [
+      {
+        "component": "sparkline",
+        "justification": "Covers 5 ideas (1, 9, 11, 21, 41); token rate visualization is foundational observability",
+        "effort": "Medium",
+        "ready_to_build": true
+      },
+      {
+        "component": "statusbar",
+        "justification": "Covers 5 ideas (2, 8, 11, 24, 37); state-at-a-glance primitives",
+        "effort": "Low",
+        "ready_to_build": true
+      },
+      {
+        "component": "tabbar",
+        "justification": "Covers 3 ideas (15, 30, 42); lens switching is top priority; broadly reusable",
+        "effort": "Low",
+        "ready_to_build": true
+      }
+    ],
+    "tier_2_next": [
+      {
+        "component": "breadcrumb",
+        "justification": "Covers 3 ideas (14, 7, 38); navigation context",
+        "effort": "Low"
+      },
+      {
+        "component": "meter",
+        "justification": "Covers 5 ideas (9, 11, 21, 8, 49); progress/gauge display",
+        "effort": "Medium"
+      },
+      {
+        "component": "splitpane",
+        "justification": "Covers 3 ideas (17, 42, 47); conditional on Skaffen ParallelRunner",
+        "effort": "Medium"
+      }
+    ],
+    "tier_3_conditional": [
+      {
+        "component": "filetree with heatmap",
+        "justification": "Covers 2 ideas (6, 36-equivalent); needed for codebase awareness",
+        "effort": "Medium"
+      },
+      {
+        "component": "srs-review flashcard",
+        "justification": "Covers 1 idea (27); niche but self-contained",
+        "effort": "Medium"
+      },
+      {
+        "component": "toast notification overlay",
+        "justification": "Covers 3 ideas (24, 34, 35); essential for event feedback",
+        "effort": "Low"
+      }
+    ]
+  },
+  "out_of_scope_and_rationale": [
+    {
+      "idea": 4,
+      "name": "Desktop peripheral controller",
+      "reason": "Hardware HID integration outside terminal scope"
+    },
+    {
+      "idea": 16,
+      "name": "Mobile tap UI",
+      "reason": "Touch events not representable in terminal escape sequences; requires native mobile app"
+    },
+    {
+      "idea": 18,
+      "name": "Energy-aware decision routing",
+      "reason": "Hardware sensor access; routing logic not UI concern"
+    },
+    {
+      "idea": 32,
+      "name": "Coding agent as video game (failed deploy = pwned)",
+      "reason": "Pure theater; produces no evidence; conflicts with PHILOSOPHY.md receipts-first"
+    },
+    {
+      "idea": 35,
+      "name": "Critical hits (random bonus events)",
+      "reason": "Noise in signal-quality system; evidence-hostile"
+    },
+    {
+      "idea": 3,
+      "name": "Slash command familiarity (cosmetic)",
+      "reason": "Low signal; explicit /help already exists; not worth UX complexity"
+    },
+    {
+      "idea": 23,
+      "name": "Auto-generated shortcuts",
+      "reason": "Conflicts with explicit keybinding philosophy; breaks muscle memory"
+    },
+    {
+      "idea": 28,
+      "name": "Auto shortcuts + gamified learning",
+      "reason": "Auto-gen part is out of scope; discovery is a separate feature (conditional include)"
+    },
+    {
+      "idea": 50,
+      "name": "Cross-company leaderboard",
+      "reason": "Requires established cross-org privacy model; deferred"
+    }
+  ],
+  "next_immediate_actions": {
+    "masaq_branch": [
+      "Build sparkline component (ring buffer + Unicode blocks)",
+      "Build statusbar component (slot-based status strip)",
+      "Build tabbar component (lens switching tab row)",
+      "Add Active color to SemanticColors (both themes)",
+      "Pull into Skaffen via local replace, test with existing evidence stream"
+    ],
+    "skaffen_branch": [
+      "Implement FileActivity evidence extraction in ToolCallDetail hook",
+      "Add SkillMetric post-session aggregation",
+      "Add Discovery event type + /treasures slash command",
+      "Implement PostSessionHook for Suggestion generation (integrate CASS context)",
+      "Increment trust.Learn() confidence counters"
+    ],
+    "autarch_bigend": [
+      "Implement Lens tab bar (Convo | Edits | Files | Cost | Timeline | Decisions)",
+      "Add ETA forecast column to agent list (sources from interstat calibrate-phase-costs)",
+      "Add Task queue panel (filterable, prioritizable)",
+      "Add Breadcrumb trail per-agent (phase + file + tool)"
+    ],
+    "cross_tool_coordination": [
+      "Define 5 new Intermute event types (SpecScopeUpdated, ToolUsed, EnergyLevelUpdated, SpeculativeTasksReady, ContextPreWarmed)",
+      "Wire Intermute subscribers in each tool (Gurgeh → Coldwine drift scorer, Pollard → Bigend suggestions, Coldwine → Bigend status)"
+    ]
+  },
+  "risk_assessment": {
+    "phase_3_parallel_runtime": {
+      "risk_level": "High",
+      "mitigations": [
+        "Design ParallelRunner as a clean abstraction; respect agentloop import constraints",
+        "Add comprehensive evidence isolation per-branch (BranchID field)",
+        "Phase-FSM fork requires careful handling of shared state (budget, context) — prefer snapshot-per-branch",
+        "Test branching extensively before shipping; speculative runs are a new execution model"
+      ]
+    },
+    "masaq_component_adoption": {
+      "risk_level": "Low",
+      "mitigations": [
+        "Each new component is isolated; existing viewport/compact/diff unchanged",
+        "Theme.Active color addition is backward-compatible",
+        "tea.Tick sufficiency verified for all animation requirements"
+      ]
+    },
+    "autarch_cross_tool_signaling": {
+      "risk_level": "Medium",
+      "mitigations": [
+        "Intermute already proven for REST + WebSocket; new event types are conservative extensions",
+        "Prefer push events over pull; tools subscribe to only events they need",
+        "Circuit breaker on event processing; dropped events should not block tool startup"
+      ]
+    }
+  },
+  "success_criteria": [
+    "Masaq quick-wins ship within 2 sprints (12 components, zero Skaffen dependencies)",
+    "Bigend shows Lens tabs, ETA forecasts, Task queue within 2 sprints",
+    "ParallelRunner design doc completed and reviewed before Phase 3 starts",
+    "All 50 ideas either assigned, deferred, or explicitly rejected with rationale",
+    "No agent UI idea blocks Skaffen or Autarch core functionality"
+  ]
+}

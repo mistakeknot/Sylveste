@@ -1,0 +1,64 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 300
+
+stages:
+  - name: "Core types and policy"
+    tasks:
+      - id: task-1
+        title: "Policy types and defaults"
+        files: [os/Skaffen/internal/sandbox/policy.go, os/Skaffen/internal/sandbox/policy_test.go]
+        depends: []
+      - id: task-2
+        title: "Config loading from sandbox.json"
+        files: [os/Skaffen/internal/sandbox/policy.go, os/Skaffen/internal/sandbox/policy_test.go]
+        depends: [task-1]
+      - id: task-3
+        title: "Sandbox enforcer with CheckPath"
+        files: [os/Skaffen/internal/sandbox/sandbox.go, os/Skaffen/internal/sandbox/sandbox_test.go]
+        depends: [task-1]
+
+  - name: "Platform backends"
+    tasks:
+      - id: task-4
+        title: "bwrap backend (Linux)"
+        files: [os/Skaffen/internal/sandbox/bwrap.go, os/Skaffen/internal/sandbox/bwrap_test.go, os/Skaffen/internal/sandbox/wrap_other.go]
+        depends: [task-3]
+      - id: task-5
+        title: "Seatbelt backend (macOS)"
+        files: [os/Skaffen/internal/sandbox/seatbelt.go, os/Skaffen/internal/sandbox/seatbelt_test.go]
+        depends: [task-3]
+
+  - name: "Integration wiring"
+    tasks:
+      - id: task-6
+        title: "Wire sandbox into BashTool"
+        files: [os/Skaffen/internal/tool/bash.go, os/Skaffen/internal/tool/bash_test.go]
+        depends: [task-4, task-5]
+      - id: task-7
+        title: "Wire sandbox into Registry for path validation"
+        files: [os/Skaffen/internal/tool/registry.go, os/Skaffen/internal/tool/registry_test.go]
+        depends: [task-3]
+      - id: task-8
+        title: "Wire sandbox into MCP Manager"
+        files: [os/Skaffen/internal/mcp/client.go, os/Skaffen/internal/mcp/manager.go]
+        depends: [task-4, task-5]
+
+  - name: "CLI and verification"
+    tasks:
+      - id: task-9
+        title: "CLI flags and main.go wiring"
+        files: [os/Skaffen/cmd/skaffen/main.go]
+        depends: [task-6, task-7, task-8]
+      - id: task-10
+        title: "Integration test — bwrap e2e"
+        files: [os/Skaffen/internal/sandbox/integration_test.go]
+        depends: [task-4]
+        tier: fast
+      - id: task-11
+        title: "Full build verification"
+        files: []
+        depends: [task-9, task-10]
+        tier: fast

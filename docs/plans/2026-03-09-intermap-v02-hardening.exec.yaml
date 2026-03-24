@@ -1,0 +1,53 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 300
+
+stages:
+  - name: "Go Caching"
+    tasks:
+      - id: task-1
+        title: "Add Go-level cache for detect_patterns"
+        files: [interverse/intermap/internal/tools/tools.go, interverse/intermap/internal/tools/tools_test.go]
+        depends: []
+      - id: task-2
+        title: "Add Go-level cache for cross_project_deps"
+        files: [interverse/intermap/internal/tools/tools.go]
+        depends: [task-1]
+
+  - name: "Structured Errors"
+    tasks:
+      - id: task-3
+        title: "Add structured error types to Python sidecar"
+        files: [interverse/intermap/python/intermap/errors.py, interverse/intermap/python/intermap/__main__.py, interverse/intermap/python/tests/test_sidecar.py]
+        depends: []
+      - id: task-4
+        title: "Update Go bridge to parse structured errors"
+        files: [interverse/intermap/internal/python/bridge.go, interverse/intermap/internal/python/bridge_test.go]
+        depends: [task-3]
+
+  - name: "Body-Range Fix"
+    tasks:
+      - id: task-5
+        title: "Fix body-range detection in live_changes"
+        files: [interverse/intermap/python/intermap/live_changes.py, interverse/intermap/python/tests/test_live_changes.py]
+        depends: []
+
+  - name: "Benchmarks & Integration"
+    tasks:
+      - id: task-6
+        title: "Add Go performance benchmarks"
+        files: [interverse/intermap/internal/tools/tools_test.go]
+        depends: [task-1, task-2]
+        tier: fast
+      - id: task-7
+        title: "Add Python performance baselines"
+        files: [interverse/intermap/python/tests/test_live_changes_perf.py]
+        depends: [task-5]
+        tier: fast
+      - id: task-8
+        title: "Final integration test and roadmap update"
+        files: [interverse/intermap/docs/intermap-roadmap.md]
+        depends: [task-1, task-2, task-3, task-4, task-5, task-6, task-7]
+        tier: fast

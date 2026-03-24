@@ -1,0 +1,26 @@
+
+=== Daemon dispatch: Demarch-1mz at 2026-03-08T18:21:19-07:00 ===
+## Sprint Complete
+
+**Bead:** Demarch-1mz (closed)
+**Steps completed:** 10/10
+
+### What changed
+
+tuivision v0.1.7 → v0.2.0. The plugin now starts successfully on systems without C/C++ build toolchains.
+
+**Files modified (7) + created (1):**
+| File | Change |
+|------|--------|
+| `src/canvas-loader.ts` | **New** — dynamic import chain: `@napi-rs/canvas` → `canvas` → null |
+| `src/screenshot.ts` | `renderToPng()` now async, uses canvas-loader, deferred font registration |
+| `src/tools/screenshot.ts` | Auto-degrades PNG→SVG when canvas unavailable, includes note |
+| `src/cli.ts` | Async daemon handler, graceful degradation for CLI screenshots |
+| `src/index.ts` | Startup checks for node-pty and canvas, logs backend status |
+| `package.json` | `canvas` → `optionalDependencies`, added `@napi-rs/canvas`, version 0.2.0 |
+| `scripts/start.sh` | Simplified, added health check, removed libgif-dev auto-install |
+| `src/screenshot.test.ts` | Updated for new async API |
+
+`★ Insight ─────────────────────────────────────`
+**The pattern here is reusable:** when a Node.js plugin has native dependencies that may fail to compile, the graceful degradation ladder is: (1) try prebuilt binary variant → (2) try compiled variant → (3) run in reduced mode. The key mechanism is `optionalDependencies` in package.json (npm won't fail if they don't install) combined with `try { await import() } catch {}` in code (runtime fallback). This same pattern applies to any Node.js project with cross-platform native deps.
+`─────────────────────────────────────────────────`

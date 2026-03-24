@@ -1,0 +1,35 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 5
+timeout_per_task: 300
+
+stages:
+  - name: "Wave 1 — independent foundations"
+    tasks:
+      - id: task-1
+        title: "Create MISSION.md and update doc hierarchy"
+        files: [MISSION.md, PHILOSOPHY.md, docs/canon/doc-structure.md, docs/canon/plugin-standard.md]
+        depends: []
+      - id: task-2
+        title: "Scaffold interlore plugin"
+        files: [interverse/interlore/]
+        depends: []
+  - name: "Wave 2 — scan skill"
+    tasks:
+      - id: task-3
+        title: "Implement interlore:scan observe skill"
+        files: [interverse/interlore/skills/observe/SKILL.md, interverse/interlore/skills/observe/references/]
+        depends: [task-2]
+  - name: "Wave 3 — commands"
+    tasks:
+      - id: task-4
+        title: "Finalize scan, review, status commands"
+        files: [interverse/interlore/commands/]
+        depends: [task-3]
+  - name: "Wave 4 — integration validation"
+    tasks:
+      - id: task-5
+        title: "End-to-end scan test on real artifacts"
+        files: [.gitignore]
+        depends: [task-1, task-2, task-3, task-4]

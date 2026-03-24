@@ -226,6 +226,8 @@ Next gate: v0.7 (A:L3 + B:L2 + C:L1)
 
 ## Progress Tracking
 
+**Bead labels:** Every roadmap-relevant bead carries one or more track labels: `autonomy`, `safety`, `adoption`. Query with `bd list --label=autonomy` etc.
+
 This document is updated when:
 1. A track level is reached (evidence link added to the level section)
 2. A version gate's exit criteria changes

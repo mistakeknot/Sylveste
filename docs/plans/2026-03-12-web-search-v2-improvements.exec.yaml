@@ -1,0 +1,40 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 300
+
+stages:
+  - name: "Foundation"
+    tasks:
+      - id: task-1
+        title: "PhasedTool interface + registry wiring"
+        files: [os/Skaffen/internal/tool/tool.go, os/Skaffen/internal/tool/registry.go, os/Skaffen/internal/tool/registry_test.go]
+        depends: []
+
+  - name: "Core Features"
+    tasks:
+      - id: task-2
+        title: "Phase-based Exa tier routing"
+        files: [os/Skaffen/internal/tool/web_search.go, os/Skaffen/internal/tool/web_search_test.go]
+        depends: [task-1]
+      - id: task-3
+        title: "Domain and recency filtering"
+        files: [os/Skaffen/internal/tool/web_search.go, os/Skaffen/internal/tool/web_search_test.go]
+        depends: [task-2]
+      - id: task-4
+        title: "Session result caching"
+        files: [os/Skaffen/internal/tool/web_search.go, os/Skaffen/internal/tool/web_search_test.go]
+        depends: [task-3]
+      - id: task-5
+        title: "Jina Reader fallback for WebFetch"
+        files: [os/Skaffen/internal/tool/web_fetch.go, os/Skaffen/internal/tool/web_fetch_test.go]
+        depends: [task-1]
+
+  - name: "Verification"
+    tasks:
+      - id: task-6
+        title: "Full integration test + build verification"
+        files: []
+        depends: [task-4, task-5]
+        tier: fast

@@ -1,0 +1,47 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 300
+
+stages:
+  - name: "Foundation — Types & Config"
+    tasks:
+      - id: task-1
+        title: "Define hook event types and payload structs"
+        files: [internal/hooks/types.go]
+        depends: []
+      - id: task-2
+        title: "Config loader with two-level merge"
+        files: [internal/hooks/loader.go, internal/hooks/loader_test.go, internal/config/config.go]
+        depends: [task-1]
+
+  - name: "Core — Executor"
+    tasks:
+      - id: task-3
+        title: "Hook executor with timeout and fail-open"
+        files: [internal/hooks/executor.go, internal/hooks/executor_test.go]
+        depends: [task-1]
+
+  - name: "Integration — Wiring"
+    tasks:
+      - id: task-4
+        title: "Wire HookRunner into agentloop.Loop"
+        files: [internal/agentloop/types.go, internal/agentloop/loop.go]
+        depends: [task-3]
+      - id: task-5
+        title: "Wire hooks through agent layer"
+        files: [internal/agent/deps.go, internal/agent/agent.go]
+        depends: [task-4]
+      - id: task-6
+        title: "Wire hooks into main.go with SessionStart"
+        files: [cmd/skaffen/main.go]
+        depends: [task-5]
+
+  - name: "Verification"
+    tasks:
+      - id: task-7
+        title: "Integration test — end-to-end hook flow"
+        files: [internal/hooks/integration_test.go]
+        depends: [task-3]
+        tier: fast

@@ -73,6 +73,11 @@ type Theme struct {
 	semantic SemanticColors
 }
 
+// NewTheme creates a theme with the given name and semantic colors.
+func NewTheme(name string, colors SemanticColors) Theme {
+	return Theme{Name: name, semantic: colors}
+}
+
 // Semantic returns the semantic color mapping for this theme.
 func (t Theme) Semantic() SemanticColors {
 	return t.semantic

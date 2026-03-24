@@ -1,0 +1,62 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 300
+
+stages:
+  - name: "Foundation"
+    tasks:
+      - id: task-1
+        title: "Scaffold interlab plugin"
+        files: [interverse/interlab/.claude-plugin/plugin.json, interverse/interlab/bin/launch-mcp.sh, interverse/interlab/go.mod, interverse/interlab/CLAUDE.md, interverse/interlab/README.md]
+        depends: []
+
+  - name: "Core Engine"
+    tasks:
+      - id: task-2
+        title: "MCP server entry point + tool registration skeleton"
+        files: [interverse/interlab/cmd/interlab-mcp/main.go, interverse/interlab/internal/experiment/tools.go, interverse/interlab/internal/experiment/tools_test.go]
+        depends: []
+      - id: task-3
+        title: "JSONL state model — types, write, reconstruct, circuit breaker"
+        files: [interverse/interlab/internal/experiment/state.go, interverse/interlab/internal/experiment/state_test.go]
+        depends: []
+
+  - name: "Tool Handlers"
+    tasks:
+      - id: task-4
+        title: "init_experiment handler"
+        files: [interverse/interlab/internal/experiment/tools.go, interverse/interlab/internal/experiment/init_test.go]
+        depends: [task-2, task-3]
+      - id: task-5
+        title: "run_experiment handler"
+        files: [interverse/interlab/internal/experiment/tools.go, interverse/interlab/internal/experiment/run_test.go]
+        depends: [task-2, task-3]
+      - id: task-6
+        title: "log_experiment handler"
+        files: [interverse/interlab/internal/experiment/tools.go, interverse/interlab/internal/experiment/log_test.go]
+        depends: [task-4, task-5]
+
+  - name: "Integration"
+    tasks:
+      - id: task-7
+        title: "ic events bridge — experiment_outcome emission, run creation"
+        files: [interverse/interlab/internal/experiment/ic.go, interverse/interlab/internal/experiment/ic_test.go]
+        depends: [task-6]
+      - id: task-8
+        title: "Clavain /autoresearch skill — loop protocol, living-document pattern"
+        files: [interverse/interlab/skills/autoresearch/SKILL.md]
+        depends: []
+      - id: task-9
+        title: "SessionStart hook — detect active campaign, prompt resume"
+        files: [interverse/interlab/hooks/hooks.json, interverse/interlab/hooks/detect-campaign.sh]
+        depends: []
+
+  - name: "Validation"
+    tasks:
+      - id: task-10
+        title: "Structural tests + dogfood campaign"
+        files: [interverse/interlab/tests/structural/test_structure.py]
+        depends: [task-7, task-8, task-9]
+        tier: fast

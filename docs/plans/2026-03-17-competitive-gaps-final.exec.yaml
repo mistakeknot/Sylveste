@@ -1,0 +1,51 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 300
+
+stages:
+  - name: "Foundation"
+    tasks:
+      - id: task-1
+        title: "Add ActionSidebar keybinding"
+        files: [os/Skaffen/internal/tui/keybindings.go, os/Skaffen/internal/tui/keybindings_test.go]
+        depends: []
+      - id: task-5
+        title: "Subagent ActiveCount helper"
+        files: [os/Skaffen/internal/tui/subagent.go, os/Skaffen/internal/tui/subagent_test.go]
+        depends: []
+
+  - name: "Sidebar Core"
+    tasks:
+      - id: task-2
+        title: "Create sidebar model"
+        files: [os/Skaffen/internal/tui/sidebar.go, os/Skaffen/internal/tui/sidebar_test.go]
+        depends: [task-1]
+      - id: task-3
+        title: "Integrate sidebar into appModel"
+        files: [os/Skaffen/internal/tui/app.go, os/Skaffen/internal/git/git.go]
+        depends: [task-1, task-2, task-5]
+      - id: task-4
+        title: "Add sidebar to keyboard help"
+        files: [os/Skaffen/internal/tui/keyhelp.go, os/Skaffen/internal/tui/keyhelp_test.go]
+        depends: [task-1]
+
+  - name: "VS Code Extension"
+    tasks:
+      - id: task-6
+        title: "VS Code extension scaffold"
+        files: [os/Skaffen/vscode-skaffen/]
+        depends: []
+      - id: task-7
+        title: "VS Code extension README and packaging"
+        files: [os/Skaffen/vscode-skaffen/README.md]
+        depends: [task-6]
+
+  - name: "Verification"
+    tasks:
+      - id: task-8
+        title: "Final integration test and vet"
+        files: []
+        depends: [task-3, task-4, task-7]
+        tier: fast

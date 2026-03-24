@@ -1,0 +1,5 @@
+
+=== Daemon dispatch: iv-wie5i.2 at 2026-03-08T18:20:28-07:00 ===
+Error: Claude Code cannot be launched inside another Claude Code session.
+Nested sessions share runtime resources and will crash all active sessions.
+To bypass this check, unset the CLAUDECODE environment variable.

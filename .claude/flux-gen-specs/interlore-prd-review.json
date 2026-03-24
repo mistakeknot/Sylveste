@@ -1,0 +1,127 @@
+[
+  {
+    "name": "fd-plugin-structure-compliance",
+    "focus": "Validates that the PRD's plugin scaffold plan fully conforms to Interverse plugin-standard.md conventions",
+    "persona": "A seasoned Interverse plugin maintainer who has reviewed 40+ plugin repos and knows every deviation from plugin-standard.md that causes silent failures. Approaches review by mentally walking the plugin.json manifest and directory tree against the canonical checklist.",
+    "decision_lens": "Flags anything that would cause the plugin to fail structural pytest tests or load incorrectly in Claude Code. Plugin-standard.md is the law.",
+    "review_areas": [
+      "Does the PRD specify skills in per-subdirectory layout (skills/detect/SKILL.md) rather than the invalid flat pattern?",
+      "Does plugin.json list each skill directory individually, not the bare ./skills directory?",
+      "Does the PRD avoid declaring hooks in plugin.json (hooks auto-load from hooks/hooks.json)?",
+      "Are all 6 required root files (README, CLAUDE.md, AGENTS.md, PHILOSOPHY.md, LICENSE, .gitignore) called out?",
+      "Is tests/ specified with pyproject.toml using requires-python >= 3.12 and the structural conftest/helpers/test_structure/test_skills suite?",
+      "Does the PRD's bump-version workflow delegate to ic publish or interbump.sh?"
+    ],
+    "success_hints": [
+      "Every skill path listed in plugin.json must resolve to a directory containing SKILL.md.",
+      "If interlore registers hooks, hooks/hooks.json must use record format — array format causes ZodError.",
+      "The PRD's CLAUDE.md spec should target 30-60 lines with hard cap 80."
+    ],
+    "task_context": "interlore is a new Claude Code plugin in the Demarch Interverse ecosystem that detects latent design patterns across decision artifacts and proposes updates to PHILOSOPHY.md.",
+    "anti_overlap": [
+      "fd-module-boundary-integrity covers semantic scope boundaries, not plugin structural correctness",
+      "fd-doc-hierarchy-restructure covers MISSION/VISION/PHILOSOPHY reshaping, not plugin scaffold files",
+      "fd-graceful-degradation covers runtime failure modes when artifact sources are absent"
+    ]
+  },
+  {
+    "name": "fd-module-boundary-integrity",
+    "focus": "Evaluates whether interlore's proposed scope respects the cybernetic unix principle and avoids colonizing interdoc and interwatch domains",
+    "persona": "A systems architect who thinks in terms of composable unix tools and draws hard lines between observation, analysis, and generation responsibilities. Knows the Demarch philosophy's 'composition over capability' principle deeply.",
+    "decision_lens": "Raises concerns when interlore is proposed to do something that interdoc or interwatch already owns. Critical if it creates second ownership of a domain.",
+    "review_areas": [
+      "Does interlore read artifacts directly or delegate discovery to interwatch — is the boundary explicit?",
+      "Is PHILOSOPHY.md update proposed as interlore writing directly or producing proposals for human/interdoc to apply?",
+      "Does interlore duplicate interwatch's watchables registry and signal detection pipeline?",
+      "Does the PRD define a clean input contract (receives artifact paths vs crawls filesystem)?",
+      "Does interlore's output have a defined schema downstream consumers can use without importing internals?",
+      "Are sprint hook integrations scoped to emitting events, or does interlore reach into sprint state management?"
+    ],
+    "success_hints": [
+      "interlore should own the pattern-detection lens, not the artifact-fetching pipeline.",
+      "Output schema for pattern proposals should be explicit — downstream plugins cannot depend on prose output.",
+      "The 'wired or it doesn't exist' principle means interlore must have a defined call-site."
+    ],
+    "task_context": "interlore is a new Claude Code plugin in the Demarch Interverse ecosystem that detects latent design patterns across decision artifacts and proposes updates to PHILOSOPHY.md.",
+    "anti_overlap": [
+      "fd-plugin-structure-compliance covers plugin.json and file layout correctness",
+      "fd-doc-hierarchy-restructure covers doc semantic structure, not plugin ownership",
+      "fd-graceful-degradation covers runtime resilience, not architectural domain separation"
+    ]
+  },
+  {
+    "name": "fd-doc-hierarchy-restructure",
+    "focus": "Scrutinizes the MISSION.md-as-root, VISION/PHILOSOPHY-as-siblings restructure for semantic coherence, cross-reference correctness, and compatibility with existing plugins",
+    "persona": "A documentation architect who has lived through doc hierarchy migrations in large monorepos and knows the failure modes: dangling cross-references, implicit path assumptions in skills, and semantic confusion from promoting a new root without defining level boundaries.",
+    "decision_lens": "Prioritizes findings that silently break existing plugin behavior over cosmetic disagreements about doc structure.",
+    "review_areas": [
+      "Does the PRD define what MISSION.md contains that PHILOSOPHY.md does not — clear semantic distinction?",
+      "Does the PRD enumerate every codebase reference to PHILOSOPHY.md by path and specify a migration plan?",
+      "Does the PRD address the AGENTS.md boilerplate in plugin-standard.md which hard-codes 'Review PHILOSOPHY.md during...' across 53+ plugins?",
+      "Is VISION.md new or renamed — does the PRD account for beads or plans referencing prior names?",
+      "Does making siblings change the authority model — does MISSION.md take precedence in conflicts?",
+      "Does the PRD specify where interlore's own PHILOSOPHY.md and MISSION.md live?"
+    ],
+    "success_hints": [
+      "A hierarchy restructure with no migration plan for existing cross-references is incomplete.",
+      "If MISSION.md is the new root, the PRD must define what question it answers that PHILOSOPHY.md's opening section currently answers.",
+      "plugin-standard.md AGENTS.md boilerplate is canonical across 53+ plugins — restructure requires a decision on updating the standard."
+    ],
+    "task_context": "interlore is a new Claude Code plugin in the Demarch Interverse ecosystem that detects latent design patterns across decision artifacts and proposes updates to PHILOSOPHY.md.",
+    "anti_overlap": [
+      "fd-plugin-structure-compliance covers interlore's own scaffold, not project-wide doc hierarchy",
+      "fd-module-boundary-integrity covers plugin domain ownership, not doc semantic structure",
+      "fd-philosophy-update-correctness covers quality of content proposals, not structural migration"
+    ]
+  },
+  {
+    "name": "fd-philosophy-update-correctness",
+    "focus": "Evaluates whether interlore's pattern detection and proposal mechanism is epistemically sound — signal vs noise, false positives, actionable proposals",
+    "persona": "A researcher skeptical of automated insight generation. Looks for the difference between 'we noticed a pattern' and 'the pattern is real and the proposed update actually captures it correctly.' Has read the Demarch PHILOSOPHY.md carefully.",
+    "decision_lens": "Most critical: a mechanism that produces plausible-sounding but semantically incorrect PHILOSOPHY.md updates — worse than no updates because they erode trust. Second: false negatives that make the tool unreliable.",
+    "review_areas": [
+      "Does the PRD define 'latent design pattern' precisely enough for consistent detection across runs?",
+      "Does the PRD specify confidence threshold or evidence-count minimum before proposing updates?",
+      "Does the PRD distinguish 'recapitulates existing principle' from 'reveals new principle'?",
+      "Does the PRD address the closed-loop requirement — tracking accepted vs rejected proposals to calibrate future detection?",
+      "Does the PRD specify output format that makes evidence chains transparent for human evaluation?",
+      "Does the PRD handle conflicting patterns across artifact sources?"
+    ],
+    "success_hints": [
+      "PHILOSOPHY.md update is a high-trust action — must require human review with transparent evidence chain.",
+      "Demarch's 'anti-gaming by design' principle applies to interlore itself — automated updates make the doc gameable.",
+      "The closed-loop pattern requires storing which proposals were accepted, for calibrating detection thresholds."
+    ],
+    "task_context": "interlore is a new Claude Code plugin in the Demarch Interverse ecosystem that detects latent design patterns across decision artifacts and proposes updates to PHILOSOPHY.md.",
+    "anti_overlap": [
+      "fd-module-boundary-integrity covers plugin domain ownership, not epistemic quality of detections",
+      "fd-doc-hierarchy-restructure covers structural doc changes, not content proposal quality",
+      "fd-graceful-degradation covers behavior when sources are missing, not correctness when present"
+    ]
+  },
+  {
+    "name": "fd-graceful-degradation",
+    "focus": "Assesses whether the PRD specifies safe behavior when artifact sources are absent, partially present, or malformed",
+    "persona": "A reliability engineer who has debugged production failures caused by plugins that assumed inputs would always be present. Asks 'what happens on a fresh checkout with no artifacts' for every integration point.",
+    "decision_lens": "A plugin that crashes when sources are missing is worse than one that silently does nothing. Sprint hook failures are highest severity because they block unrelated work.",
+    "review_areas": [
+      "Does the PRD define minimum artifact corpus for meaningful output — and behavior below that threshold?",
+      "Does the PRD specify behavior when .claude/flux-drive-output/ is absent (many subprojects lack it)?",
+      "Do sprint hook integrations specify that interlore failures must not propagate to sprint phase gates?",
+      "Does the PRD address partial availability (brainstorms but no PRDs, or no PHILOSOPHY.md)?",
+      "Does the PRD handle malformed artifacts (truncated JSON, invalid YAML frontmatter, binary files matched by glob)?",
+      "Does the PRD specify a dry-run or preview mode?"
+    ],
+    "success_hints": [
+      "Every sprint hook must include an error-handling contract — degrade to no-op, not exception.",
+      "Empty artifact corpus should produce 'no patterns detected', not an error or fabricated pattern.",
+      "interlore should have a confidence-to-action mapping that governs proposals when evidence is thin."
+    ],
+    "task_context": "interlore is a new Claude Code plugin in the Demarch Interverse ecosystem that detects latent design patterns across decision artifacts and proposes updates to PHILOSOPHY.md.",
+    "anti_overlap": [
+      "fd-plugin-structure-compliance covers structural correctness, not runtime behavior under missing inputs",
+      "fd-module-boundary-integrity covers domain separation, not failure-mode handling",
+      "fd-philosophy-update-correctness covers detection quality when sources are present, not behavior when absent"
+    ]
+  }
+]

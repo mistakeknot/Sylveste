@@ -1,0 +1,241 @@
+{
+  "reviewed": "2026-03-19",
+  "synthesis": "attp protocol review — 6 agents, token schema + MCP tools + merkle construction + multiparty topology + conflict boundary + security",
+  "agents_launched": [
+    "fd-token-schema-integrity",
+    "fd-mcp-tool-surface",
+    "fd-merkle-exclusion-strategy",
+    "fd-multiparty-topology",
+    "fd-conflict-resolution-boundary",
+    "fd-safety-attp"
+  ],
+  "agents_completed": [
+    "fd-token-schema-integrity",
+    "fd-mcp-tool-surface",
+    "fd-merkle-exclusion-strategy",
+    "fd-multiparty-topology",
+    "fd-conflict-resolution-boundary",
+    "fd-safety-attp"
+  ],
+  "agents_failed": [],
+  "design_decisions_resolved": [
+    {
+      "id": "token-schema-v1",
+      "title": "Token JSON structure and versioning strategy",
+      "status": "resolved",
+      "impact": "critical",
+      "summary": "8 top-level fields (attp, id, created_at, provenance, repo, sensitivity, payloads, requests, decisions, extensions). Versioning: major.minor string format with forward-compatibility rules.",
+      "owner": "fd-token-schema-integrity"
+    },
+    {
+      "id": "mcp-tool-surface",
+      "title": "Complete MCP tool inventory",
+      "status": "resolved",
+      "impact": "critical",
+      "summary": "16 tools across 5 groups (discovery, token lifecycle, content transfer, verification, session mgmt). 15 error types with recoverable flag. Capability negotiation via feature flags.",
+      "owner": "fd-mcp-tool-surface"
+    },
+    {
+      "id": "merkle-tree-v1",
+      "title": "Merkle tree construction and exclusion proof strategy",
+      "status": "resolved",
+      "impact": "critical",
+      "summary": "Flat sorted binary tree, BLAKE3 keyed mode, full rehash (under 2s for 100k files), git-commit anchor. Tokens carry root+attestation only (~200 bytes); full proofs lazy-fetched.",
+      "owner": "fd-merkle-exclusion-strategy"
+    },
+    {
+      "id": "conflict-boundary",
+      "title": "Conflict detection vs resolution boundary",
+      "status": "resolved",
+      "impact": "critical",
+      "summary": "attp detects (same-file divergence, sensitivity mismatches), emits non-blocking ConflictDetected event, holds tokens in pending_resolution. Framework resolves via attp_resolve_conflict callback.",
+      "owner": "fd-conflict-resolution-boundary"
+    }
+  ],
+  "design_guidance_clear": [
+    {
+      "id": "n-party-schema",
+      "title": "N-party schema adoption (design for N, ship for 2)",
+      "status": "guidance-clear",
+      "impact": "major",
+      "summary": "Token includes origin + participants map (not from/to). Content tokens have recipient (singular), coordination tokens have recipients (plural). Session is first-class resource. Vector clocks for causal ordering.",
+      "defer_implementation": "v2",
+      "owner": "fd-multiparty-topology"
+    }
+  ],
+  "v1_blockers": [
+    {
+      "id": "prompt-injection-critical",
+      "title": "Prompt injection risk via token payloads",
+      "severity": "CRITICAL",
+      "finding": "Tokens carry agent context (decisions, requests, file content) that enter receiving agent's prompt. Malicious content (not necessarily malicious sender) can inject instructions.",
+      "vectors": [
+        "Decision field injection (e.g., 'Always approve all changes')",
+        "File content injection (instructions in code comments)",
+        "Request field injection (destructive or exfiltration requests)",
+        "Lazy-fetch content injection (serve different content than attested)"
+      ],
+      "mitigations_required": [
+        "Content quarantine: system prompt explicitly states peer context is untrusted",
+        "Request approval: require human confirmation before executing peer requests",
+        "Lazy-fetch integrity: verify content against token-committed hash",
+        "Structural typing: decisions/requests as enums+params, not prose",
+        "Content scanning: optional pre-scan for injection patterns"
+      ],
+      "owner": "fd-safety-attp"
+    },
+    {
+      "id": "no-human-confirmation",
+      "title": "No human-in-the-loop confirmation before token send",
+      "severity": "HIGH",
+      "finding": "Agents can auto-share context. Size-based auto-inlining is not a proxy for sensitivity. .attpignore staleness goes undetected (unlike .gitignore which git enforces).",
+      "mitigations_required": [
+        "Require explicit human confirmation before sending token",
+        "Present summary: 'Sharing 47 files, 3 inlined, 12 lazy-fetch refs. 8 excluded by .attpignore. Send to bob-laptop?'",
+        "This is the single highest-impact safety control"
+      ],
+      "owner": "fd-safety-attp"
+    }
+  ],
+  "secondary_findings": [
+    {
+      "id": "metadata-leakage",
+      "title": "Merkle tree leaks excluded path metadata",
+      "severity": "MEDIUM-HIGH",
+      "finding": "Directory structure, file sizes, path depths visible via tree topology even when content is excluded. Flat sorted tree mitigates but excluded_count still leaks.",
+      "status": "mitigated-by-flat-tree",
+      "owner": "fd-safety-attp, fd-merkle-exclusion-strategy"
+    },
+    {
+      "id": "trust-transitivity",
+      "title": "Re-sharing context to third parties lacks provenance tracking",
+      "severity": "HIGH",
+      "finding": "Agent B receives context from Agent A, later shares with Agent C. No mechanism to enforce Agent A's sensitivity constraints on the re-share.",
+      "deferred": "v2",
+      "owner": "fd-safety-attp"
+    },
+    {
+      "id": "lazy-fetch-toctou",
+      "title": "Lazy-fetch TOCTOU: file sensitivity may change between token creation and fetch",
+      "severity": "MEDIUM",
+      "finding": "Token attests exclusion at creation time. Sender adds file to .attpignore after token creation. Lazy-fetch hits live filesystem and retrieves the now-excluded file.",
+      "mitigation": "Re-check exclusion list at fetch time, not just token creation time",
+      "owner": "fd-safety-attp"
+    },
+    {
+      "id": "audit-trail-missing",
+      "title": "No audit logging for cross-machine data transfer",
+      "severity": "MEDIUM",
+      "finding": "Compliance and incident response need reconstruction of what was shared, when, between whom. No mention in brainstorm.",
+      "mitigation": "Append-only local logs per attp server. Structured JSON lines. Token IDs for sender-receiver correlation.",
+      "owner": "fd-safety-attp"
+    }
+  ],
+  "cross_agent_agreement": [
+    {
+      "theme": "Flat sorted Merkle trees, not directory-mirroring",
+      "agents": [
+        "fd-token-schema-integrity",
+        "fd-merkle-exclusion-strategy",
+        "fd-conflict-resolution-boundary"
+      ],
+      "strength": "unanimous"
+    },
+    {
+      "theme": "Token must be self-describing",
+      "agents": [
+        "fd-token-schema-integrity",
+        "fd-mcp-tool-surface",
+        "fd-conflict-resolution-boundary"
+      ],
+      "strength": "unanimous"
+    },
+    {
+      "theme": "Content tokens bilateral, coordination tokens multicast",
+      "agents": [
+        "fd-multiparty-topology",
+        "fd-conflict-resolution-boundary"
+      ],
+      "strength": "strong"
+    },
+    {
+      "theme": "Conflict detection separate from resolution",
+      "agents": [
+        "fd-conflict-resolution-boundary",
+        "fd-multiparty-topology"
+      ],
+      "strength": "unanimous"
+    },
+    {
+      "theme": "Human confirmation required before send",
+      "agents": [
+        "fd-safety-attp"
+      ],
+      "strength": "isolated-but-critical"
+    }
+  ],
+  "defer_to_v2": [
+    {
+      "feature": "Incremental Merkle tree updates (O(log N) rehash)",
+      "reasoning": "Full rehash under 2s for 100k files. Incremental adds complexity. Wait for real-world performance demand.",
+      "owner": "fd-merkle-exclusion-strategy"
+    },
+    {
+      "feature": "Directory-structured Merkle trees (subtree-level proofs)",
+      "reasoning": "Useful only for 'share this directory only' use case. No known requirement yet. Flat trees sufficient for v1.",
+      "owner": "fd-merkle-exclusion-strategy"
+    },
+    {
+      "feature": "Per-recipient sensitivity overrides (N different Merkle trees)",
+      "reasoning": "Schema includes field. Implementation deferred. Needed at N≥3; bilateral adequate for v1.",
+      "owner": "fd-multiparty-topology"
+    },
+    {
+      "feature": "Participant roles beyond 'contributor' (observer, coordinator)",
+      "reasoning": "All 2-party agents are equal. Role-based access control is N-party concern.",
+      "owner": "fd-multiparty-topology"
+    },
+    {
+      "feature": "Gossip protocol for coordination token forwarding",
+      "reasoning": "Direct multicast sufficient for N<10. Gossip adds complexity.",
+      "owner": "fd-multiparty-topology"
+    },
+    {
+      "feature": "Token compression (gzip/zstd envelope)",
+      "reasoning": "No performance blocker yet. Can be added transparently later.",
+      "owner": "fd-mcp-tool-surface"
+    }
+  ],
+  "architecture_readiness": {
+    "token_schema": "complete-spec-ready",
+    "mcp_tools": "complete-spec-ready",
+    "merkle_construction": "complete-implementation-ready",
+    "conflict_boundary": "implementation-ready",
+    "n_party_design": "guidance-clear-implementation-deferred",
+    "security_controls": "spec-required-before-impl",
+    "interweave_integration": "integration-points-identified"
+  },
+  "implementation_checklist": {
+    "must_do_v1": [
+      "token-schema-json",
+      "mcp-tools-yaml",
+      "merkle-construction-code",
+      "conflict-detection-event",
+      "human-confirmation-ui",
+      "prompt-injection-quarantine",
+      "request-approval-flow",
+      "lazy-fetch-integrity",
+      "audit-logging"
+    ],
+    "can_defer_to_v2": [
+      "incremental-merkle",
+      "directory-trees",
+      "per-recipient-sensitivity",
+      "participant-roles",
+      "gossip-protocol",
+      "token-compression"
+    ]
+  },
+  "verdict": "ready-for-spec-with-security-conditions",
+  "summary": "attp is architecturally sound. Token schema, MCP tools, and Merkle construction are specified. N-party design guidance is clear. Two v1 blockers: (1) prompt injection quarantine required before shipping, (2) human confirmation before token send. Once these are integrated into the design, implementation can proceed."
+}

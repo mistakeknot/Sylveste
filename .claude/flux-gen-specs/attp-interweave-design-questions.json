@@ -1,0 +1,127 @@
+[
+  {
+    "name": "fd-token-schema-integrity",
+    "focus": "Correctness and completeness of the attp token JSON schema, versioning strategy, and field semantics",
+    "persona": "A protocol specification engineer with deep experience designing interchange formats for distributed systems. Approaches schema design from the perspective of forward compatibility, parsability under adversarial conditions, and unambiguous field semantics.",
+    "decision_lens": "Prioritizes findings that would cause silent data loss, schema version collisions, or ambiguous field interpretation across heterogeneous agent implementations. Correctness of the canonical token representation is the primary criterion.",
+    "review_areas": [
+      "Verify that the token schema has a top-level `version` field with a well-defined semver or monotonic versioning strategy and that unknown fields are handled explicitly (reject vs ignore-and-forward)",
+      "Check that all fields have unambiguous types — no union types that collapse at serialization boundaries, no fields that are optional in some versions but required in others without a discriminator",
+      "Confirm that sensitivity metadata (which subtrees are excluded) is represented in the token itself, not just in the Merkle proof, so tokens are self-describing without requiring the proof",
+      "Audit field naming for consistency with attp's framework-agnostic positioning — no Demarch-specific field names should appear in the base token spec; interweave extensions must be namespaced",
+      "Evaluate whether the schema supports hybrid payloads (inline context vs reference by hash) without ambiguity — the token must be parseable without fetching external content",
+      "Assess whether the schema encodes enough provenance (origin agent, timestamp, chain of custody) to support audit trails and conflict attribution downstream"
+    ],
+    "success_hints": [
+      "A schema reviewer from a non-Demarch framework can implement a compliant attp token producer/consumer using only the spec, without reading interweave source",
+      "Adding a new field in a future version does not require a flag day across all agents — old consumers degrade gracefully",
+      "Sensitivity exclusion metadata in the token is sufficient to reconstruct which paths were withheld, even without the Merkle proof"
+    ],
+    "task_context": "attp is a standalone, framework-agnostic protocol for structured bidirectional context transfer between AI coding agents on separate machines, using crypto-enforced sensitivity boundaries via Merkle tree exclusion proofs and Tailscale MCP relay for transport.",
+    "anti_overlap": [
+      "fd-mcp-tool-surface covers the MCP request/response shapes and tool API design",
+      "fd-merkle-exclusion-strategy covers the cryptographic correctness and performance of the Merkle tree implementation",
+      "fd-multiparty-topology covers N-agent coordination semantics"
+    ]
+  },
+  {
+    "name": "fd-mcp-tool-surface",
+    "focus": "Design of the MCP tool surface each attp server exposes — tool names, request/response shapes, error contracts, and capability negotiation",
+    "persona": "An API designer specializing in MCP server implementations and tool-calling interfaces for AI agents. Evaluates tool surfaces from the perspective of discoverability, composability, and safe invocation under partial failure.",
+    "decision_lens": "Prioritizes findings where ambiguous tool contracts would cause agents to silently misuse a capability, where error responses lose information needed for retry decisions, or where the tool surface couples attp to a specific framework.",
+    "review_areas": [
+      "Enumerate every tool the attp MCP server must expose and verify each has a clearly defined idempotency guarantee — agents must know whether retrying a failed call is safe",
+      "Check that request shapes include enough context for the server to enforce sensitivity policy without a round-trip",
+      "Verify that error responses distinguish between recoverable errors (retry), permanent rejections (bad schema, policy violation), and deferred responses (peer not yet ready)",
+      "Evaluate whether the tool surface exposes capability negotiation — a way for one agent to discover what attp version and features the peer server supports before attempting a transfer",
+      "Assess whether the MCP tool surface leaks Tailscale-specific transport details into the tool contract",
+      "Check that tools are atomic enough to be composed by interweave without requiring interweave to know attp internals"
+    ],
+    "success_hints": [
+      "A new attp MCP server implementation can be written against the tool surface spec without reading the reference implementation",
+      "An agent that calls attp_push on a peer running an older attp version receives a structured error that tells it exactly which capability is missing",
+      "No MCP tool name or parameter field contains a Tailscale, Demarch, or interweave identifier"
+    ],
+    "task_context": "attp is a standalone, framework-agnostic protocol for structured bidirectional context transfer between AI coding agents on separate machines, using crypto-enforced sensitivity boundaries via Merkle tree exclusion proofs and Tailscale MCP relay for transport.",
+    "anti_overlap": [
+      "fd-token-schema-integrity covers the internal structure of the attp token payload",
+      "fd-merkle-exclusion-strategy covers how exclusion proofs are generated and verified",
+      "fd-conflict-resolution-boundary covers how conflicts are surfaced through the tool surface"
+    ]
+  },
+  {
+    "name": "fd-merkle-exclusion-strategy",
+    "focus": "Correctness, performance, and operational feasibility of the Merkle tree exclusion proof approach for crypto-enforced sensitivity boundaries",
+    "persona": "A cryptographic systems engineer with experience implementing content-addressed storage and Merkle proof systems in production. Evaluates designs for soundness of the security model, performance under realistic repo sizes, and operational complexity for implementors.",
+    "decision_lens": "Prioritizes findings where the exclusion proof model has unsound security properties, where performance on large repos makes the protocol unusable in practice, or where the incremental update strategy has correctness gaps.",
+    "review_areas": [
+      "Verify that the Merkle exclusion proof design provides zero-knowledge properties for excluded subtrees — sharing a proof for path A while excluding path B reveals nothing about B's content or structure beyond its existence",
+      "Evaluate full-repo-hash vs incremental-hash tradeoff with concrete numbers: estimate hash computation time for a 100k-file monorepo and determine whether incremental hashing is required for practical latency",
+      "Check whether the Merkle tree is computed over file content only or also over directory structure and metadata — directory structure leakage can reveal excluded paths",
+      "Assess the incremental update strategy: when a file changes, what is the minimal set of Merkle nodes that must be recomputed",
+      "Evaluate whether the proof format is self-contained enough to verify offline without querying the sender",
+      "Check for degenerate cases: empty repos, single-file repos, repos where the sensitivity policy excludes the root"
+    ],
+    "success_hints": [
+      "Exclusion proof for a 50k-file repo with 10 excluded subtrees can be generated in under 2 seconds on commodity hardware",
+      "A recipient given a valid exclusion proof cannot determine the file count, names, or sizes of excluded paths beyond what the proof explicitly reveals",
+      "Incremental rehashing after a single file change recomputes O(log N) nodes, not O(N)"
+    ],
+    "task_context": "attp is a standalone, framework-agnostic protocol for structured bidirectional context transfer between AI coding agents on separate machines, using crypto-enforced sensitivity boundaries via Merkle tree exclusion proofs and Tailscale MCP relay for transport.",
+    "anti_overlap": [
+      "fd-token-schema-integrity covers how exclusion metadata is represented in the token schema",
+      "fd-mcp-tool-surface covers how proofs are referenced in MCP tool calls",
+      "fd-conflict-resolution-boundary covers conflict semantics, not proof integrity"
+    ]
+  },
+  {
+    "name": "fd-multiparty-topology",
+    "focus": "Whether the attp protocol design generalizes cleanly from 2-agent to N-agent topologies without requiring breaking changes",
+    "persona": "A distributed systems architect who has designed peer-to-peer and federated protocols. Evaluates protocol designs for whether two-party assumptions are baked into the core in ways that would require a flag day to extend.",
+    "decision_lens": "Prioritizes findings where the two-party design bakes in assumptions (single sender, single recipient, bilateral trust) that are architecturally incompatible with N-party extension, versus findings that are additive.",
+    "review_areas": [
+      "Check whether agent identity is bilateral (sender + receiver hardcoded) or general participant identity that works for N parties",
+      "Evaluate whether the sensitivity policy model supports multi-party trust differentiation — can agent A share path X with agent B but not agent C",
+      "Assess the conflict resolution model for N-party scenarios: if three agents push conflicting edits, does the protocol have enough information to reconstruct causal ordering",
+      "Check whether the Tailscale relay design scales to N agents — hub-and-spoke vs mesh topology assumptions",
+      "Evaluate session/handshake design: bilateral capability negotiation (O(N²)) or broadcast-compatible",
+      "Identify which parts are inherently bilateral versus which generalize to N-party without redesign"
+    ],
+    "success_hints": [
+      "The two-party protocol is a strict subset of the N-party protocol — no field would be invalid in a 3-agent session",
+      "Adding a third agent requires only incremental negotiation, not a full session restart",
+      "The sensitivity policy can express per-recipient exclusion within a single session"
+    ],
+    "task_context": "attp is a standalone, framework-agnostic protocol for structured bidirectional context transfer between AI coding agents on separate machines, using crypto-enforced sensitivity boundaries via Merkle tree exclusion proofs and Tailscale MCP relay for transport.",
+    "anti_overlap": [
+      "fd-token-schema-integrity covers token field semantics for a single transfer",
+      "fd-mcp-tool-surface covers tool API design for individual agent servers",
+      "fd-conflict-resolution-boundary covers resolution mechanics, not topology"
+    ]
+  },
+  {
+    "name": "fd-conflict-resolution-boundary",
+    "focus": "Where attp's responsibility for conflict detection ends and interlock/interweave's responsibility begins",
+    "persona": "A protocol boundary designer who specializes in defining clean separation of concerns between layers in multi-layer distributed systems. Evaluates designs for whether handoffs carry enough information for the receiving layer to act correctly.",
+    "decision_lens": "Prioritizes findings where attp retains too much conflict resolution logic (coupling to Demarch) or too little (insufficient information for interweave to resolve correctly). Clean boundary definition is the primary criterion.",
+    "review_areas": [
+      "Define exactly what attp is responsible for detecting: file-level conflicts, token-level conflicts, or semantic conflicts — verify the design stays within that boundary",
+      "Check that conflict reports include enough for interlock/interweave to resolve without querying attp again — conflicting token hashes, last-common-ancestor reference, which agents produced each version",
+      "Evaluate whether conflict surface is event/callback or blocking — blocking would stall all transfers during resolution",
+      "Assess the case where attp receives a valid token that conflicts with local state the peer doesn't know about — must surface ambiguity, not silently accept or reject",
+      "Check that the delegation interface to interweave is a stable contract, not direct function calls — so attp works with non-Demarch conflict resolvers",
+      "Verify distinction between structural conflicts (same file edited) and sensitivity conflicts (path exclusion disagreement)"
+    ],
+    "success_hints": [
+      "A non-Demarch framework can implement a conflict resolver that consumes attp's conflict events without reading interweave source",
+      "attp never makes resolution decisions — always surfaces, delegates, and waits",
+      "The conflict event payload is sufficient for interlock to reconstruct the causal graph without additional queries"
+    ],
+    "task_context": "attp is a standalone, framework-agnostic protocol for structured bidirectional context transfer between AI coding agents on separate machines, using crypto-enforced sensitivity boundaries via Merkle tree exclusion proofs and Tailscale MCP relay for transport.",
+    "anti_overlap": [
+      "fd-token-schema-integrity covers token field design for provenance and audit trails",
+      "fd-mcp-tool-surface covers how conflicts are exposed through MCP tool responses",
+      "fd-multiparty-topology covers whether the conflict model scales to N agents"
+    ]
+  }
+]

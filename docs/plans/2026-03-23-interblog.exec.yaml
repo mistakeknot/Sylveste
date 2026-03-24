@@ -1,0 +1,76 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 5
+timeout_per_task: 300
+
+stages:
+  - name: "Wave 1 — Independent foundations"
+    tasks:
+      - id: task-1
+        title: "Scaffold Astro project + plugin registration"
+        files: [apps/interblog/package.json, apps/interblog/astro.config.mjs, apps/interblog/.claude-plugin/plugin.json, apps/interblog/CLAUDE.md]
+        depends: []
+      - id: task-9
+        title: "Texturaize bridge API endpoint"
+        files: [apps/web/src/app/api/bridge/ingest/route.ts]
+        depends: []
+        repo: /home/mk/projects/texturaize
+      - id: task-10
+        title: "Texturaize webhook callback sender"
+        files: [apps/web/src/app/api/bridge/callback/route.ts]
+        depends: []
+        repo: /home/mk/projects/texturaize
+
+  - name: "Wave 2 — Schema, skills, deployment (after scaffold)"
+    tasks:
+      - id: task-2
+        title: "Content collection schema + post frontmatter"
+        files: [apps/interblog/src/content/config.ts]
+        depends: [task-1]
+      - id: task-6
+        title: "Scan skill — theme surfacing"
+        files: [apps/interblog/skills/scan/SKILL.md, apps/interblog/commands/scan.md]
+        depends: [task-1]
+      - id: task-7
+        title: "Pitch skill — curation dialogue"
+        files: [apps/interblog/skills/pitch/SKILL.md, apps/interblog/commands/pitch.md]
+        depends: [task-1]
+      - id: task-8
+        title: "Draft skill — post generation"
+        files: [apps/interblog/skills/draft/SKILL.md, apps/interblog/commands/draft.md]
+        depends: [task-1]
+      - id: task-13
+        title: "Vercel + Cloudflare deployment"
+        files: [apps/interblog/vercel.json]
+        depends: [task-1]
+
+  - name: "Wave 3 — Layout, webhook, dashboard, voice (after schema + skills)"
+    tasks:
+      - id: task-3
+        title: "Post layout with sidenotes + base styles"
+        files: [apps/interblog/src/layouts/Post.astro, apps/interblog/src/components/Sidenote.astro, apps/interblog/src/styles/global.css]
+        depends: [task-2]
+      - id: task-11
+        title: "Interblog webhook receiver"
+        files: [apps/interblog/src/pages/api/webhook/texturaize.ts]
+        depends: [task-1]
+      - id: task-12
+        title: "Publish command + editorial dashboard"
+        files: [apps/interblog/commands/publish.md, apps/interblog/src/pages/dashboard.astro]
+        depends: [task-1]
+      - id: task-14
+        title: "Voice profile + backfill preparation"
+        files: [apps/interblog/.interfluence/config.yaml]
+        depends: [task-6, task-7, task-8]
+
+  - name: "Wave 4 — Index page + RSS (after layout)"
+    tasks:
+      - id: task-4
+        title: "Index page + post listing"
+        files: [apps/interblog/src/pages/index.astro, apps/interblog/src/components/PostCard.astro]
+        depends: [task-3]
+      - id: task-5
+        title: "RSS feed"
+        files: [apps/interblog/src/pages/rss.xml.ts]
+        depends: [task-3]

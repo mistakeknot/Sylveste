@@ -1,0 +1,170 @@
+[
+  {
+    "name": "fd-ops-room-ux",
+    "focus": "Real-time operations room and control room UX patterns for high-stakes monitoring",
+    "persona": "A human factors engineer and UX researcher who has studied NASA mission control, nuclear plant HMIs, and air traffic control centers. Approaches design through the lens of situation awareness (Endsley's model) and cognitive load under high-stakes conditions.",
+    "decision_lens": "Prioritizes findings that translate directly to Meadowsyn's need to communicate live agent state without overwhelming operators. Flags patterns that have been validated under genuine high-stress, high-fidelity conditions rather than demo environments.",
+    "review_areas": [
+      "Cybersyn Opsroom: Chile 1971 design principles — hexagonal seating, real-time datafeed panels, absence of paper — what survives in modern digital interpretations",
+      "NASA HOSC and Mission Control console layout: alarm triage hierarchy, go/no-go readiness boards, attention-management via spatial zoning",
+      "Nuclear plant HMI standards (NUREG-0700, IEC 62241): alarm rationalization, state-transition diagrams, disturbance detection vs diagnosis separation",
+      "Air traffic control radar scopes: track labeling density, conflict alerts, sector handoff protocols — showing many simultaneous moving objects without clutter",
+      "Dark-room readability standards: contrast ratios, red-only lighting compatibility, chromaticity choices that survive low-ambient conditions",
+      "Transition from analog big board to SCADA/DCS touchscreen: what was lost and what interaction patterns from analog persist as best practice"
+    ],
+    "success_hints": [
+      "Identifies at least 3 concrete UI patterns directly applicable to an agent fleet dashboard",
+      "Finds published HMI guidelines (IEC, NUREG, EEMUA 191) that could inform Meadowsyn alarm/alert design",
+      "Surfaces the Cybersyn Opsroom source documents and subsequent academic critique"
+    ],
+    "task_context": "Meadowsyn is a public-facing web visualization frontend for an AI agent factory — autonomous software development with dozens of simultaneous agents.",
+    "anti_overlap": ["fd-agent-swarm-viz covers robotics fleet and drone swarm UIs", "fd-competitive-landscape covers commercial dashboards", "fd-systems-thinking-viz covers stock-and-flow and causal loop diagrams"]
+  },
+  {
+    "name": "fd-systems-thinking-viz",
+    "focus": "Systems dynamics visualization — stock-and-flow, causal loop diagrams, feedback modeling tools",
+    "persona": "A systems dynamics modeler trained in Forrester/Meadows traditions, who also tracks the academic literature on interactive causal modeling and tools like Vensim, Stella Architect, and Insight Maker.",
+    "decision_lens": "Prioritizes findings that help non-experts read a complex adaptive system at a glance — especially techniques for showing accumulation, delay, and feedback. Values research that distinguishes what is beautiful in static publication from what survives interactive use.",
+    "review_areas": [
+      "Vensim, Stella Architect, Insight Maker: compare CLD and SFD rendering — what works for comprehension vs what becomes spaghetti at scale",
+      "Kumu and Loopy: web-native causal diagram tools — interaction models and community adoption signals",
+      "System archetypes as UI components: limits to growth, shifting the burden, tragedy of the commons — reusable visual widgets for agent factory context",
+      "Animated stock-and-flow: research on whether animating flow rates aids or hinders comprehension vs static diagrams",
+      "Jay Forrester's original Urban Dynamics diagrams reinterpreted in modern web tooling — open-source JS/WASM implementations",
+      "Leverage points (Meadows 1999) as a UI metaphor: visualizing which nodes have highest sensitivity to intervention — showing bottleneck agents or queues"
+    ],
+    "success_hints": [
+      "Identifies at least one open-source JS library for interactive CLD/SFD rendering suitable for React/Svelte",
+      "Finds concrete research on animated flow comprehension",
+      "Maps at least 3 system archetypes to visual idioms applicable to agent factory state"
+    ],
+    "task_context": "Meadowsyn is a public-facing web visualization frontend for an AI agent factory — autonomous software development with dozens of simultaneous agents.",
+    "anti_overlap": ["fd-ops-room-ux covers operator HMI patterns", "fd-esoteric-viz covers sheaf-theoretic and category-theory visualization", "fd-bio-ecological covers biological monitoring dashboards"]
+  },
+  {
+    "name": "fd-agent-swarm-viz",
+    "focus": "Multi-agent and swarm visualization — robotics fleet dashboards, drone UIs, game AI debug views",
+    "persona": "A robotics software engineer who has built ground station UIs for UAV fleets and studied game AI debugging tools. Asks: how do you maintain situational awareness over N autonomous entities without requiring N separate attention threads?",
+    "decision_lens": "Prioritizes scalability — patterns that work at 5 agents and still work at 500. Flags the difference between designed for demos and designed for operators.",
+    "review_areas": [
+      "QGroundControl and Mission Planner: drone fleet ground station UIs — vehicle state aggregation, geofence visualization, simultaneous telemetry streams",
+      "ROS 2 rqt and Foxglove Studio: robotics process visualization — panel layouts, topic graphs, time-scrubbing, replay",
+      "Game AI behavior tree visualizers (Unity ML-Agents, Unreal BehaviorTree debugger, Halo AI debug overlay): showing running vs suspended vs failed branches in real time",
+      "Swarm intelligence research UI: ACO, PSO interactive demos showing emergent coordination",
+      "Starcraft 2 / OpenAI Five spectator interfaces: showing N units with individual states in a way non-experts can follow",
+      "NASA JPL MSLICE / PLEXIL: constraint-based scheduling visualizations for multi-rover coordination"
+    ],
+    "success_hints": [
+      "Identifies at least 2 open-source fleet/swarm visualization libraries with web frontends",
+      "Finds the interaction pattern for follow one agent while showing the rest",
+      "Surfaces academic work on scalable agent state summary (aggregate views that collapse N agents)"
+    ],
+    "task_context": "Meadowsyn is a public-facing web visualization frontend for an AI agent factory — autonomous software development with dozens of simultaneous agents.",
+    "anti_overlap": ["fd-ops-room-ux covers operator workstation design", "fd-bio-ecological covers biological swarm analogs", "fd-competitive-landscape covers commercial workflow products"]
+  },
+  {
+    "name": "fd-esoteric-viz",
+    "focus": "Novel and esoteric visualization paradigms — dataflow languages, TDA, sheaf theory, category theory as UI",
+    "persona": "A mathematician-turned-visualization researcher who reads both SIGCHI proceedings and applied category theory papers. Looks for visualization ideas in places dashboard designers have never thought to look.",
+    "decision_lens": "Prioritizes ideas with genuine expressive power for showing relational and compositional structure, not just aesthetic novelty. Flags when an esoteric technique has secretly already been industrialized in a niche tool.",
+    "review_areas": [
+      "Dataflow visual programming: Pure Data, Max/MSP, Cables.gl, vvvv — node-and-wire interaction patterns that survive large graphs (folding, regions, abstraction)",
+      "Topological data analysis visualization: mapper algorithm outputs, persistence diagrams, barcodes — web-based interactive TDA viz tools",
+      "Sheaf-theoretic data fusion: papers/tools that attempt to visualize sheaf consistency (assignment maps, restriction maps, coboundary failures)",
+      "String diagrams and monoidal category visualization: Globular, homotopy.io, Quantomatic — interactive category theory string diagrams",
+      "Bidirectional programming / lens visualization: can the lens get/put abstraction be shown as a UI widget for agent state synchronization",
+      "Concept lattice and formal concept analysis: Conexp-Clj and similar tools for Galois lattice visualization — agent-task-capability relationships"
+    ],
+    "success_hints": [
+      "Finds at least one existing web-based tool implementing each of: node-wire dataflow, TDA visualization, and category-theory string diagrams",
+      "Makes a concrete mapping from sheaf-theoretic concepts to Meadowsyn UI components",
+      "Identifies at least 2 esoteric viz paradigms that are genuinely interaction-friendly at web scale"
+    ],
+    "task_context": "Meadowsyn is a public-facing web visualization frontend for an AI agent factory — autonomous software development with dozens of simultaneous agents.",
+    "anti_overlap": ["fd-systems-thinking-viz covers Vensim/Stella and causal loop diagrams", "fd-ops-room-ux covers HMI patterns", "fd-competitive-landscape covers commercial workflow tools"]
+  },
+  {
+    "name": "fd-bio-ecological",
+    "focus": "Biological and ecological monitoring dashboards — SCADA for ecosystems, ant colony viz, neural activity maps",
+    "persona": "A computational biologist who has built real-time neural data visualization pipelines and consulted on ecological sensor network dashboards. Draws analogies between biological self-organizing systems and software agent factories where the causal structure genuinely matches.",
+    "decision_lens": "Prioritizes cross-domain metaphors that carry genuine structural isomorphism — not just visual similarity. Flags the difference between ant colony UI as metaphor and ant colony UI as genuinely applicable pattern.",
+    "review_areas": [
+      "Neural population activity visualization: raster plots, firing rate heatmaps, dimensionality-reduced trajectories (UMAP/t-SNE) — web-based tools like NWB Explorer",
+      "EEG/fMRI analysis UIs: MNE-Python browser, FSLeyes — time-synchronized multi-channel data with spatial context",
+      "Ant colony and stigmergic process visualization: NetLogo models, academic demos showing pheromone trail formation and decay",
+      "Ecological sensor network dashboards: NEON data portal, Ocean Observatory Initiative — aggregating sparse, heterogeneous sensor data",
+      "Protein interaction network visualization: Cytoscape.js, STRING, BioGRID — scalable biology-native graph visualizers with layout algorithms",
+      "Epidemiological outbreak dashboards (NextStrain, CDC SVI): spatial + temporal + confidence-interval data"
+    ],
+    "success_hints": [
+      "Identifies at least one biological viz technique with a direct structural mapping to agent factory state",
+      "Finds open-source web-based tools from biology with novel interaction patterns",
+      "Surfaces NextStrain phylogenetic tree animation approach and assesses applicability to agent lineage"
+    ],
+    "task_context": "Meadowsyn is a public-facing web visualization frontend for an AI agent factory — autonomous software development with dozens of simultaneous agents.",
+    "anti_overlap": ["fd-agent-swarm-viz covers engineered swarm systems", "fd-systems-thinking-viz covers formal systems dynamics", "fd-esoteric-viz covers formal mathematical visualization"]
+  },
+  {
+    "name": "fd-competitive-landscape",
+    "focus": "Competitive analysis of existing workflow orchestration and agent observability dashboards",
+    "persona": "A product manager who has evaluated Grafana, Temporal, Prefect, Dagster, n8n, LangSmith, and Braintrust in production. Assesses what operators actually click on during incidents, not marketing screenshots.",
+    "decision_lens": "Prioritizes findings that identify genuine whitespace — capabilities none of the existing tools cover well, especially for autonomous multi-agent systems. Flags best in class patterns and industry-wide gaps.",
+    "review_areas": [
+      "Temporal UI and Prefect: workflow DAG visualization, retry/failure state rendering, timeline views",
+      "Dagster asset graph and lineage view: asset-centric vs run-centric mental model — should Meadowsyn adopt asset-centric framing",
+      "LangSmith and Braintrust trace viewers: LLM call trees, token attribution, eval scoring interaction patterns",
+      "n8n and Windmill: builder/operator split — lessons in separating workflow design from live execution monitoring",
+      "Grafana panel ecosystem: state timeline, status history, canvas panel — what Grafana cannot do that Meadowsyn needs",
+      "Emerging agent tools: AgentOps, Helicone, Phoenix (Arize), Weave (W&B) — multi-turn agent traces, cost per trace"
+    ],
+    "success_hints": [
+      "Produces a gap matrix: for each competitor, 2-3 strengths and 1-2 explicit gaps for multi-agent factory monitoring",
+      "Identifies the single strongest interaction pattern from each tool to adopt",
+      "Finds at least one hidden gem tool with production adoption"
+    ],
+    "task_context": "Meadowsyn is a public-facing web visualization frontend for an AI agent factory — autonomous software development with dozens of simultaneous agents.",
+    "anti_overlap": ["fd-ops-room-ux covers physical control room HMI", "fd-agent-swarm-viz covers robotics and game AI", "fd-bio-ecological covers biological monitoring"]
+  },
+  {
+    "name": "fd-time-and-history-viz",
+    "focus": "Temporal visualization and historical replay — showing past, present, and projected future simultaneously",
+    "persona": "A data visualization researcher specializing in temporal data, from Tufte's sparklines to financial trading terminals to version control history visualizers. Most dashboards fail because they show only the present snapshot and discard the narrative of how the system arrived there.",
+    "decision_lens": "Prioritizes patterns that give both operational present-state awareness and historical context without mode switches. Flags the interaction design problem of time travel in live systems.",
+    "review_areas": [
+      "Git history visualizers: Gource, GitKraken graph, GitHub network graph — showing branching, merging, parallel work streams over time",
+      "Financial terminal temporal displays: Bloomberg time-series overlays, TradingView indicator stacking — multiple simultaneous time-series at different granularities",
+      "Event sourcing replay UIs: open-source event-sourced application debuggers with rewind-and-replay",
+      "TimelineJS and journalistic timeline tools: non-linear time navigation and annotation",
+      "Video game replay systems: Starcraft 2, chess.com analysis board — scrubbing, playback speed, branch at point",
+      "Process mining visualization: Disco, ProM, Celonis — reconstructing process flows from event logs, Petri net and directly-follows-graph rendering"
+    ],
+    "success_hints": [
+      "Identifies a concrete UI pattern for live + history coexistence with best-in-class implementation",
+      "Finds process mining tools with embeddable JS components that could ingest Demarch event logs",
+      "Surfaces Starcraft 2 replay branch and compare technique and assesses web feasibility"
+    ],
+    "task_context": "Meadowsyn is a public-facing web visualization frontend for an AI agent factory — autonomous software development with dozens of simultaneous agents.",
+    "anti_overlap": ["fd-competitive-landscape covers SaaS dashboards temporal features", "fd-ops-room-ux covers real-time operational awareness", "fd-systems-thinking-viz covers feedback-loop dynamics"]
+  },
+  {
+    "name": "fd-spatial-and-ambient-viz",
+    "focus": "Spatial, ambient, and peripheral display paradigms — calm technology, data physicalization, information radiators",
+    "persona": "A ubiquitous computing researcher influenced by Mark Weiser's calm technology and Hiroshi Ishii's Tangible Media group. Studies information radiator design and large-format public displays. Asks: what should be always visible in the periphery vs what requires deliberate attention?",
+    "decision_lens": "Prioritizes the attention architecture of Meadowsyn as a public-facing display — glanceable from across a room vs requiring focused interaction. Flags patterns that reduce alarm fatigue by designing for peripheral awareness.",
+    "review_areas": [
+      "Ambient displays and information radiators: XFD, traffic-light build monitors, Panic Status Board — what makes a public display actually read rather than ignored after day 3",
+      "Large-format public display design: airport departure boards (FIDS), stadium video boards, stock exchange tickers — high-density, high-legibility information at distance",
+      "Data physicalization: Yvonne Jansen's research — physicalization metaphors that translate to web animation (weight via spring physics, temperature via color-temperature)",
+      "Calm technology and attention tiers: Weiser and Brown 1996 paper and descendants — modern web implementations of calm notification design",
+      "Sonification and peripheral audio: production systems using ambient audio for system state — server room health music, trading floor signals",
+      "Live coding performance visuals: algorave (TidalCycles, Hydra, Estuary) — most creative real-time generative display systems available in browser — encoding agent state in aesthetically compelling generative visuals"
+    ],
+    "success_hints": [
+      "Identifies research-backed design principles for what makes an information radiator actually used with HCI citations",
+      "Finds at least one web-based generative visualization library that could encode agent factory state as ambient display",
+      "Makes concrete recommendation on glanceable vs interactive information split grounded in cited research"
+    ],
+    "task_context": "Meadowsyn is a public-facing web visualization frontend for an AI agent factory — autonomous software development with dozens of simultaneous agents.",
+    "anti_overlap": ["fd-ops-room-ux covers operator workstation HMI", "fd-competitive-landscape covers interactive SaaS dashboards", "fd-bio-ecological covers biological monitoring"]
+  }
+]

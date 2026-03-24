@@ -1,0 +1,127 @@
+[
+  {
+    "name": "fd-plugin-scaffold-correctness",
+    "focus": "Validates that the plugin scaffold (Task 2) strictly conforms to plugin-standard.md and will load without error in Claude Code",
+    "persona": "A plugin ecosystem engineer who has reviewed 40+ Interverse plugin scaffolds and knows every loader edge case. Approaches the plan by treating plugin-standard.md as an executable specification.",
+    "decision_lens": "Findings that would cause Claude Code to silently not load the plugin are P0. Findings that cause test failures are P1. Style deviations are P3.",
+    "review_areas": [
+      "plugin.json declares commands as './commands/scan.md' etc. — verify this format is correct vs. the skills subdirectory convention",
+      "AGENTS.md canonical references point to '../../MISSION.md' and '../../PHILOSOPHY.md' — verify relative paths resolve from interverse/interlore/",
+      "CLAUDE.md content boundary — verify Design Decisions don't constitute project knowledge that belongs in AGENTS.md",
+      "test_skills.py imports from 'helpers' with bare import — verify this works with pytest's discovery when pyproject.toml is in tests/structural/",
+      "The plan's test_structure.py uses pytest fixtures from conftest.py — verify fixture-based approach works vs module-level constant pattern used by other plugins",
+      "No hooks declared in plugin.json — verify this is correct for a hookless plugin"
+    ],
+    "success_hints": [
+      "uv run pytest tests/structural/ -v exits 0 with all tests passing on first attempt",
+      "plugin.json contains exactly the fields plugin-standard.md marks as required",
+      "Claude Code plugin loader finds the plugin via autodiscovery without collision"
+    ],
+    "task_context": "The plan scaffolds interlore at interverse/interlore/ with one skill (observe), three commands, and a pytest structural test suite conforming to plugin-standard.md.",
+    "anti_overlap": [
+      "fd-scan-skill-executability covers SKILL.md logic — this agent only checks scaffold structure",
+      "fd-doc-hierarchy-blast-radius covers MISSION.md migration — this agent only checks plugin files",
+      "fd-exec-yaml-orchestration covers wave sequencing — this agent only checks plugin-standard.md conformance"
+    ]
+  },
+  {
+    "name": "fd-scan-skill-executability",
+    "focus": "Reviews whether the observe SKILL.md scan logic is executable as written — artifact discovery, pattern extraction, YAML write, and state management",
+    "persona": "A Claude Code skill author who has written production SKILL.md files and knows where LLM-executed skills fail: ambiguous routing, missing error paths, state race conditions, and YAML schema mismatches.",
+    "decision_lens": "Paths where the skill silently produces wrong output are P0. Paths where it fails loudly are P1. Suboptimal but recoverable output is P2.",
+    "review_areas": [
+      "Scan Phase 3 says 'Read first 100 lines' per artifact — most brainstorms/PRDs are >200 lines; verify if this misses tradeoff language",
+      "Phase 6 'merge new proposals with existing pending ones' — what happens when a previously-emerging pattern now qualifies as established?",
+      "Routing logic is string-match ('Contains scan or pattern → Scan mode') — verify command files pass unambiguous instructions",
+      "Review Mode 'Update .interlore/proposals.yaml after EACH decision' — verify skill has enough specificity to write YAML correctly after each step",
+      "Phase 5 rejected_patterns uses tradeoff_axis strings but Phase 4 uses fuzzy matching — suppression may silently fail if axis strings vary",
+      "--dry-run flag in review.md but no dry-run branch in observe skill — verify instruction injection is sufficient"
+    ],
+    "success_hints": [
+      "/interlore:scan produces proposals.yaml matching schema with no null/missing fields",
+      "Running scan twice produces idempotent results with merged not duplicated evidence",
+      "The 'integration over reimplementation' pattern is detectable from real Demarch artifacts"
+    ],
+    "task_context": "The observe skill implements a multi-phase scan pipeline: artifact discovery, PHILOSOPHY.md baseline, content-based extraction, classification, deduplication, and structured YAML output. Also handles Review and Status modes via routing.",
+    "anti_overlap": [
+      "fd-plugin-scaffold-correctness covers structural conformance — this agent covers skill execution logic",
+      "fd-proposals-schema-integrity covers schema design — this agent covers whether skill correctly implements it",
+      "fd-doc-hierarchy-blast-radius covers MISSION.md migration — this agent only reviews scan mechanics"
+    ]
+  },
+  {
+    "name": "fd-doc-hierarchy-blast-radius",
+    "focus": "Reviews Task 1's MISSION.md creation and doc hierarchy changes for migration completeness and ecosystem-wide impact",
+    "persona": "A codebase archaeologist who specializes in finding hidden coupling in documentation systems. Knows how 48 plugin AGENTS.md boilerplates and 47 structural test suites will be affected.",
+    "decision_lens": "Changes to plugin-standard.md that propagate silently to 48+ plugins causing confusion are P0. Structural test breakage is P0. Semantic overlap between MISSION.md and PHILOSOPHY.md is P1.",
+    "review_areas": [
+      "Task 1 Step 4 adds MISSION.md to plugin-standard.md boilerplate — but plugins don't have their own MISSION.md; the ../../MISSION.md reference would be broken for plugins not in the monorepo",
+      "Verify block doesn't check PHILOSOPHY.md was actually trimmed — risking duplication between MISSION.md and PHILOSOPHY.md",
+      "Task 1 Step 3 replaces lines 76-87 of doc-structure.md — verify these are correct line numbers in current file",
+      "VISION.md hierarchy diagram references 'existing: docs/demarch-vision.md' but no aliasing step exists — is this a dangling reference?",
+      "Plugin-standard.md referencing MISSION.md while no plugin has one makes every plugin technically non-conformant to updated standard",
+      "interlore's own AGENTS.md references MISSION.md directly — verify this follows the new boilerplate or old"
+    ],
+    "success_hints": [
+      "After Task 1, PHILOSOPHY.md opening and MISSION.md are semantically non-overlapping",
+      "doc-structure.md conflict resolution rule is explicit and unambiguous",
+      "Plugin AGENTS.md boilerplate change is additive, not breaking"
+    ],
+    "task_context": "Task 1 creates MISSION.md and updates doc-structure.md and plugin-standard.md — canonical documents that 48 plugins reference. Any change propagates across the ecosystem.",
+    "anti_overlap": [
+      "fd-plugin-scaffold-correctness covers interlore's own scaffold — this covers upstream plugin-standard.md changes",
+      "fd-scan-skill-executability covers skill mechanics — this covers doc hierarchy migration",
+      "fd-exec-yaml-orchestration covers wave sequencing — this covers Task 1 content completeness"
+    ]
+  },
+  {
+    "name": "fd-proposals-schema-integrity",
+    "focus": "Reviews proposals-schema.md design and YAML lifecycle state machine for correctness and durability as shared state between scan and review",
+    "persona": "A state machine designer who has debugged YAML-based proposal pipelines. Focuses on whether the schema represents all possible states and whether transitions are lossless.",
+    "decision_lens": "States the skill can produce but schema cannot represent are P0. Transitions that lose information are P1. Defined but never-written fields are P2.",
+    "review_areas": [
+      "Merge logic: scan adds evidence and recomputes unique_decisions — but schema has no evidence_history or version field for audit",
+      "Defer says 'Keep as pending' — so 'deferred' status is never written but Status Mode shows 'Deferred: N'. Is this always 0?",
+      "rejected_patterns has no schema version — future tradeoff_axis format changes make suppression silently useless",
+      "proposed_section is a string like 'Composition Over Capability' — fuzzy vs exact match when finding PHILOSOPHY.md section to append",
+      "conforming_patterns in scan_stats but no conforming entries in proposals array — verify Status Mode accounts for this",
+      "No scan_id or run provenance — are multiple scans mergeable or does each overwrite?"
+    ],
+    "success_hints": [
+      "After two sequential scans, evidence lists for matching axes contain evidence from both runs",
+      "Accepting a proposal writes decided_at and proposed_text matches exactly in PHILOSOPHY.md",
+      "Status counts sum correctly: pending + accepted + rejected equals total proposals generated"
+    ],
+    "task_context": "proposals-schema.md defines the YAML contract between scan (writer) and review/status (readers), plus the lifecycle state machine and rejected_patterns suppression list.",
+    "anti_overlap": [
+      "fd-scan-skill-executability covers whether skill implements schema correctly — this covers schema design soundness",
+      "fd-plugin-scaffold-correctness covers structural test suite — this covers runtime data contract",
+      "fd-doc-hierarchy-blast-radius covers project-level doc changes — this covers interlore-specific data format"
+    ]
+  },
+  {
+    "name": "fd-exec-yaml-orchestration",
+    "focus": "Reviews .exec.yaml manifest for dependency correctness, wave sequencing, and executability as an orchestrated delegation spec",
+    "persona": "An orchestration systems engineer who has executed multiple .exec.yaml plans in Demarch. Focuses on dependency graph correctness and verify block sufficiency.",
+    "decision_lens": "Wrong dependency edges causing premature task execution are P0. Bead ID mismatches are P1. Verify blocks that check surface but miss depth are P2.",
+    "review_areas": [
+      "task-5 depends on [task-1, task-3, task-4] but not task-2 — task-5's verify checks plugin.json created by task-2; missing dependency",
+      "Bead Demarch-7a8c assigned to both Task 3 and Task 5 — intentional or copy-paste error?",
+      "Task 1 verify 'grep -c MISSION' exits 0 but doesn't confirm actual hierarchy content is correct",
+      "timeout_per_task: 300 (5 min) — is Task 2's 15-file scaffold completable in 5 minutes?",
+      "task-2 files field is '[interverse/interlore/]' (directory) — does orchestrator use this for write permissions?",
+      "max_parallel: 5 but only tasks 1+2 can run in parallel — verify orchestrator respects dependency edges"
+    ],
+    "success_hints": [
+      "task-2 completes and verifies before task-3 begins",
+      "Bead IDs are consistent between plan and exec.yaml",
+      "Verify blocks confirm both existence and content validity for critical artifacts"
+    ],
+    "task_context": "The .exec.yaml defines a 3-wave, 5-task dependency graph for orchestrated delegation — the machine-readable contract for parallel execution.",
+    "anti_overlap": [
+      "fd-plugin-scaffold-correctness covers scaffold content — this covers exec.yaml sequencing of scaffold",
+      "fd-doc-hierarchy-blast-radius covers Task 1 content — this covers Task 1 verify sufficiency",
+      "fd-scan-skill-executability covers skill logic — this covers orchestration layer above it"
+    ]
+  }
+]

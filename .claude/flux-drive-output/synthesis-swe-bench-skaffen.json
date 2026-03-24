@@ -1,0 +1,375 @@
+{
+  "review_metadata": {
+    "date": "2026-03-15",
+    "target": "os/Skaffen/",
+    "review_type": "swe-bench-readiness",
+    "agents": [
+      "fd-issue-comprehension",
+      "fd-localization-toolchain",
+      "fd-test-validation-loop",
+      "fd-model-routing-calibration",
+      "fd-patch-correctness-signals"
+    ],
+    "agents_launched": 5,
+    "agents_completed": 5,
+    "agents_failed": 0
+  },
+  "baseline_metrics": {
+    "pass_rate": "1/10 (10%)",
+    "patch_production_rate": "9/10 (90%)",
+    "goal": "60% (top 1 on SWE-bench Lite)",
+    "key_gap": "High patch production, low pass validation"
+  },
+  "verdict": "needs-changes",
+  "verdict_rationale": "Skaffen is architecturally sound but has critical gaps in test validation, localization instruction, and patch verification. The 9/10 patch production vs 1/10 pass gap indicates agent can generate changes but cannot verify correctness. Top 10 P0 findings are fixable in 15-20 hours and should yield +20-35% improvement.",
+  "severity_summary": {
+    "p0_critical": 10,
+    "p1_high": 10,
+    "p2_medium": 5,
+    "total_findings": 25
+  },
+  "convergence": {
+    "unanimous_issues": [
+      "bash_output_truncation",
+      "reflect_phase_unimplemented",
+      "grep_context_lines_missing"
+    ],
+    "strong_consensus": [
+      "fault_hypothesis_instruction_missing",
+      "no_pre_post_test_comparison",
+      "no_system_prompt_tool_guidance"
+    ],
+    "agents_reporting_convergence": {
+      "bash_truncation": [
+        "fd-issue-comprehension",
+        "fd-localization-toolchain",
+        "fd-test-validation-loop",
+        "fd-patch-correctness-signals"
+      ],
+      "reflect_unimplemented": [
+        "fd-issue-comprehension",
+        "fd-test-validation-loop",
+        "fd-patch-correctness-signals"
+      ],
+      "grep_context": [
+        "fd-issue-comprehension",
+        "fd-localization-toolchain"
+      ]
+    }
+  },
+  "critical_findings_ranked": [
+    {
+      "rank": 1,
+      "id": "reflect-no-behavior",
+      "title": "Reflect Phase Has No Behavioral Implementation",
+      "severity": "P0",
+      "agents": [
+        "fd-test-validation-loop",
+        "fd-patch-correctness-signals"
+      ],
+      "impact": "Agent never runs tests systematically; validation is LLM-discretionary",
+      "expected_improvement": "+15-20%",
+      "effort_hours": 3,
+      "file_locations": [
+        "internal/agentloop/loop.go:95-245",
+        "internal/agent/agent.go:177-238"
+      ]
+    },
+    {
+      "rank": 2,
+      "id": "no-test-baseline",
+      "title": "No Pre/Post Test Baseline Comparison",
+      "severity": "P0",
+      "agents": [
+        "fd-test-validation-loop",
+        "fd-patch-correctness-signals"
+      ],
+      "impact": "Agent cannot measure patch progress or regressions",
+      "expected_improvement": "+10-15%",
+      "effort_hours": 2.5,
+      "file_locations": [
+        "missing-feature"
+      ]
+    },
+    {
+      "rank": 3,
+      "id": "no-fault-hypothesis",
+      "title": "No Fault Hypothesis Instruction in Orient",
+      "severity": "P0",
+      "agents": [
+        "fd-issue-comprehension"
+      ],
+      "impact": "Agent explores code without articulating what's broken or where",
+      "expected_improvement": "+5-10%",
+      "effort_hours": 1,
+      "file_locations": [
+        "internal/session/session.go:77-93",
+        "cmd/skaffen/main.go:629-638"
+      ]
+    },
+    {
+      "rank": 4,
+      "id": "bash-truncation",
+      "title": "Bash Output Truncation Preserves Head, Loses Tail",
+      "severity": "P0",
+      "agents": [
+        "fd-issue-comprehension",
+        "fd-localization-toolchain",
+        "fd-test-validation-loop",
+        "fd-patch-correctness-signals"
+      ],
+      "impact": "Test failure details (assertion diffs) at end of output are lost to 10KB cap",
+      "expected_improvement": "+5-8%",
+      "effort_hours": 0.5,
+      "file_locations": [
+        "internal/tool/bash.go:14-15,67-69"
+      ]
+    },
+    {
+      "rank": 5,
+      "id": "fsm-forward-only",
+      "title": "Phase FSM Forward-Only, No Retry Cycle",
+      "severity": "P0",
+      "agents": [
+        "fd-issue-comprehension",
+        "fd-test-validation-loop"
+      ],
+      "impact": "Agent cannot re-enter Orient after failed patch; no Act-Reflect-Act iteration",
+      "expected_improvement": "+10-15%",
+      "effort_hours": 3,
+      "file_locations": [
+        "internal/agent/phase.go:40-47",
+        "internal/agent/agent.go:177-238"
+      ]
+    },
+    {
+      "rank": 6,
+      "id": "grep-no-context",
+      "title": "Grep Missing -A/-B/-C Context Lines",
+      "severity": "P0",
+      "agents": [
+        "fd-issue-comprehension",
+        "fd-localization-toolchain"
+      ],
+      "impact": "Every grep requires separate read call; wastes 5-20K tokens per session",
+      "expected_improvement": "+3-5%",
+      "effort_hours": 1,
+      "file_locations": [
+        "internal/tool/grep.go:14-19,81-96"
+      ]
+    },
+    {
+      "rank": 7,
+      "id": "no-post-edit-validation",
+      "title": "No Post-Edit Syntax Validation",
+      "severity": "P0",
+      "agents": [
+        "fd-patch-correctness-signals"
+      ],
+      "impact": "Agent produces syntactically broken patches without feedback",
+      "expected_improvement": "+3-5%",
+      "effort_hours": 0.5,
+      "file_locations": [
+        "internal/tool/edit.go:36-75",
+        "internal/tool/write.go:32-58"
+      ]
+    },
+    {
+      "rank": 8,
+      "id": "empty-diff-not-detected",
+      "title": "Empty Diff Not Detected as Failure",
+      "severity": "P0",
+      "agents": [
+        "fd-patch-correctness-signals"
+      ],
+      "impact": "No-op sessions recorded as success; pollutes quality history Pareto front",
+      "expected_improvement": "+2-3%",
+      "effort_hours": 0.25,
+      "file_locations": [
+        "internal/agentloop/loop.go:177-213",
+        "internal/git/git.go:27-32"
+      ]
+    },
+    {
+      "rank": 9,
+      "id": "glob-doublestar-broken",
+      "title": "Glob `**` Pattern Silently Broken",
+      "severity": "P0",
+      "agents": [
+        "fd-localization-toolchain"
+      ],
+      "impact": "Agent cannot recursively discover Python files; falls back to bash find",
+      "expected_improvement": "+2-3%",
+      "effort_hours": 1,
+      "file_locations": [
+        "internal/tool/glob.go:48-49"
+      ]
+    },
+    {
+      "rank": 10,
+      "id": "setinputtokens-never-called",
+      "title": "SetInputTokens Never Called from Production",
+      "severity": "P0",
+      "agents": [
+        "fd-model-routing-calibration"
+      ],
+      "impact": "Complexity classifier receives inputTokens=0; shadow data is garbage",
+      "expected_improvement": "+0% (now), critical for future",
+      "effort_hours": 0.5,
+      "file_locations": [
+        "internal/router/router.go:152-155",
+        "internal/agentloop/loop.go:121"
+      ]
+    }
+  ],
+  "implementation_phases": {
+    "phase_1_foundational": {
+      "duration_hours": "15-20",
+      "expected_improvement": "+20-30%",
+      "findings": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      "sequence": [
+        "Add fault hypothesis instruction to Orient",
+        "Fix bash truncation",
+        "Implement Reflect orchestrator",
+        "Add pre/post test baseline",
+        "Add post-edit syntax validation",
+        "Detect empty diff",
+        "Wire SetInputTokens",
+        "Fix FSM to enable Act-Reflect-Act",
+        "Add grep context lines",
+        "Fix glob ** pattern"
+      ]
+    },
+    "phase_2_polish": {
+      "duration_hours": "10-15",
+      "expected_improvement": "+3-8%",
+      "findings": [11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+      "sequence": [
+        "Structured issue parsing",
+        "Observe phase unreachable fix",
+        "System prompt tool guidance",
+        "Test framework output parsing",
+        "Hypothesis retry budgeting",
+        "Quality history localization strategy"
+      ]
+    },
+    "phase_3_optimization": {
+      "duration_hours": "15-20",
+      "expected_improvement": "+5-15% (post-40% baseline)",
+      "findings": [21, 22, 23, 24, 25],
+      "sequence": [
+        "Complexity tier feature engineering",
+        "Budget demotion step function",
+        "Aggregate diff review",
+        "Quality signal correctness axis"
+      ]
+    }
+  },
+  "timeline_projection": [
+    {
+      "phase": "Current (baseline)",
+      "hours": 0,
+      "pass_rate": "10%",
+      "confidence": "high"
+    },
+    {
+      "phase": "Phase 1 (top 10)",
+      "hours": 15,
+      "pass_rate": "40-60%",
+      "confidence": "high"
+    },
+    {
+      "phase": "Phase 1+2 (top 15)",
+      "hours": 25,
+      "pass_rate": "50-70%",
+      "confidence": "medium"
+    },
+    {
+      "phase": "All phases (25 findings)",
+      "hours": 40,
+      "pass_rate": "60-80%",
+      "confidence": "low"
+    }
+  ],
+  "top_5_quick_wins": {
+    "total_effort_hours": 5.5,
+    "expected_improvement": "+15-20%",
+    "fixes": [
+      {
+        "finding": "fault_hypothesis_instruction",
+        "hours": 1,
+        "expected_improvement": "+5-10%"
+      },
+      {
+        "finding": "bash_truncation",
+        "hours": 0.5,
+        "expected_improvement": "+5-8%"
+      },
+      {
+        "finding": "reflect_orchestrator",
+        "hours": 3,
+        "expected_improvement": "+15-20%"
+      },
+      {
+        "finding": "pre_post_test_baseline",
+        "hours": 2.5,
+        "expected_improvement": "+10-15%"
+      },
+      {
+        "finding": "post_edit_validation_empty_diff",
+        "hours": 0.75,
+        "expected_improvement": "+5-8%"
+      }
+    ]
+  },
+  "risk_assessment": {
+    "low_risk": [
+      "fault_hypothesis_instruction",
+      "bash_truncation",
+      "post_edit_syntax_validation",
+      "empty_diff_detection",
+      "setinputtokens_wiring"
+    ],
+    "medium_risk": [
+      "reflect_orchestrator",
+      "pre_post_test_baseline",
+      "fsm_phase_loopback",
+      "grep_context_lines"
+    ],
+    "high_risk": [
+      "system_prompt_tool_guidance",
+      "test_framework_parsing",
+      "hypothesis_retry_budgeting"
+    ]
+  },
+  "success_criteria": {
+    "pass_rate": {
+      "current": "10%",
+      "target": "60%",
+      "confidence": "medium"
+    },
+    "patch_production": {
+      "current": "90%",
+      "target": "80%",
+      "rationale": "Some early terminations when hypothesis detected wrong"
+    },
+    "avg_turns": {
+      "current": "~50",
+      "target": "~40-45",
+      "confidence": "medium"
+    },
+    "test_validation_coverage": {
+      "current": "<10%",
+      "target": ">95%",
+      "confidence": "high"
+    }
+  },
+  "key_insights": {
+    "mutation_system": "Over-engineered for token efficiency, under-fed for correctness signals. Infrastructure exists; needs correctness plumbing.",
+    "reflect_phase": "Ghost code — exists conceptually but has zero behavioral implementation. LLM must fill in all test validation logic.",
+    "print_mode": "Assumes external orchestration for multi-phase. Single-pass insufficient for SWE-bench.",
+    "truncation_design": "Universal assumption that big output = unnecessary. Reality: SWE-bench needs tail (errors) not head (setup)."
+  },
+  "recommendation": "Implement Phase 1 (top 10 findings) immediately. Low risk, high impact. Will establish whether 60% goal is achievable. If Phase 1 reaches 40-50%, proceed to Phase 2. Phase 3 only if Phase 2 targets are hit.",
+  "gate": "NEEDS-CHANGES"
+}

@@ -1,0 +1,68 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 300
+
+stages:
+  - name: "Foundation"
+    tasks:
+      - id: task-1
+        title: "Add YAML dependency"
+        files: [os/Skaffen/go.mod, os/Skaffen/go.sum]
+        depends: []
+        tier: fast
+      - id: task-2
+        title: "Add SkillDirs() to config package"
+        files: [os/Skaffen/internal/config/config.go, os/Skaffen/internal/config/config_test.go]
+        depends: []
+
+  - name: "Skill Package Core"
+    tasks:
+      - id: task-3
+        title: "Skill loader — types, parsing, discovery"
+        files: [os/Skaffen/internal/skill/skill.go, os/Skaffen/internal/skill/skill_test.go]
+        depends: [task-1]
+      - id: task-4
+        title: "Skill injector"
+        files: [os/Skaffen/internal/skill/inject.go, os/Skaffen/internal/skill/skill_test.go]
+        depends: [task-3]
+      - id: task-5
+        title: "Implicit trigger matching"
+        files: [os/Skaffen/internal/skill/trigger.go, os/Skaffen/internal/skill/skill_test.go]
+        depends: [task-3]
+      - id: task-6
+        title: "Skill pinning"
+        files: [os/Skaffen/internal/skill/pin.go, os/Skaffen/internal/skill/skill_test.go]
+        depends: [task-3]
+
+  - name: "TUI Integration"
+    tasks:
+      - id: task-7
+        title: "Wire skill loading into main.go and TUI Config"
+        files: [os/Skaffen/cmd/skaffen/main.go, os/Skaffen/internal/tui/app.go]
+        depends: [task-2, task-3]
+      - id: task-8
+        title: "TUI slash command invocation"
+        files: [os/Skaffen/internal/tui/commands.go, os/Skaffen/internal/tui/app.go]
+        depends: [task-7, task-4, task-6]
+      - id: task-9
+        title: "/skills management command"
+        files: [os/Skaffen/internal/tui/commands.go]
+        depends: [task-8]
+      - id: task-10
+        title: "/help integration and tab completion"
+        files: [os/Skaffen/internal/tui/commands.go, os/Skaffen/internal/tui/cmdcomplete.go, os/Skaffen/internal/tui/prompt.go]
+        depends: [task-8]
+      - id: task-11
+        title: "Implicit trigger activation in submitMsg"
+        files: [os/Skaffen/internal/tui/app.go]
+        depends: [task-8, task-5]
+
+  - name: "Verification"
+    tasks:
+      - id: task-12
+        title: "Full integration test"
+        files: []
+        depends: [task-9, task-10, task-11]
+        tier: fast
