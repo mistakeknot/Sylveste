@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Hook: Detect browser/screenshot tool usage on native app projects
 # Suggests diagnostic CLI instead of visual inspection
-set -euo pipefail
+set -uo pipefail
+trap 'exit 0' ERR
 
 # Q-05: Drain stdin to prevent pipe blockage on large tool responses
 cat > /dev/null

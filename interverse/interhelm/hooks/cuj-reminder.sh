@@ -2,7 +2,8 @@
 # Hook: Remind agents to run CUJ verification after significant changes
 # Triggers after git commit (detected via Bash tool running git commit)
 # PostToolUse hooks receive JSON on stdin: {"tool_name", "tool_input", "tool_response"}
-set -euo pipefail
+set -uo pipefail
+trap 'exit 0' ERR
 
 # Parse the command from stdin JSON
 HOOK_INPUT=$(cat)

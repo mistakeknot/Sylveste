@@ -2,7 +2,8 @@
 # Hook: Auto-run health check after Rust/Tauri source file changes
 # Advisory only — reports regressions without blocking
 # PostToolUse hooks receive JSON on stdin: {"tool_name", "tool_input", "tool_response"}
-set -euo pipefail
+set -uo pipefail
+trap 'exit 0' ERR
 
 # Parse the edited file path from stdin JSON
 HOOK_INPUT=$(cat)
