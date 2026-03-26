@@ -1,0 +1,127 @@
+[
+  {
+    "name": "fd-mlx-metal-correctness",
+    "focus": "MLX/Metal API correctness and Apple Silicon process model compliance",
+    "persona": "A systems engineer with deep MLX internals knowledge and experience debugging Metal GPU context errors on Apple Silicon. Approaches every tensor operation and memory call with knowledge of where MLX diverges from PyTorch idioms.",
+    "decision_lens": "Prioritize anything that would silently produce wrong gradients or crash the Metal subprocess at training time. Flag API misuse before flag design issues.",
+    "review_areas": [
+      "Verify that mx.eval() is called at the right points during partial forward pass to avoid lazy evaluation leaving stale computation graphs when hidden states are captured mid-model",
+      "Check that all MLX tensor operations in the training script use mx.value_and_grad or nn.value_and_grad correctly",
+      "Confirm that ReservoirReadout parameter updates are applied via mx.eval(model.parameters(), optimizer.state) after each step",
+      "Verify that the partial forward pass does not inadvertently fork or alias the KV cache state used by the main generation loop",
+      "Check that the training script uses spawn context if it imports MLX alongside the existing MetalWorker",
+      "Confirm mx.metal.set_memory_limit version fallback is accounted for in training infrastructure"
+    ],
+    "success_hints": [
+      "All tensor operations on hidden states call mx.eval() before passing arrays across process or function boundaries",
+      "Training loop uses nn.value_and_grad and applies optimizer.update followed by mx.eval on every step",
+      "No MLX imports occur in the HTTP (main) process path"
+    ],
+    "task_context": "The plan adds reservoir routing to an MLX-LM inference server that isolates Metal GPU access in a spawned subprocess. The campaign requires partial forward passes through transformer layers and a training loop for ReservoirReadout MLP.",
+    "anti_overlap": [
+      "fd-model-internals-stability covers stability of accessing model.model.layers directly",
+      "fd-synthetic-feature-gap covers training data quality",
+      "fd-interlab-harness-integration covers evaluation harness and METRIC line parsing"
+    ]
+  },
+  {
+    "name": "fd-model-internals-stability",
+    "focus": "Stability and correctness of accessing mlx-lm model internals for hidden state extraction",
+    "persona": "An ML infrastructure engineer who knows which model attributes are stable public API versus implementation details that change across model families and library versions.",
+    "decision_lens": "Treat any access path to internal model state as a versioning risk. Flag anything that will silently return wrong shapes or break on a model family change.",
+    "review_areas": [
+      "Verify that model.model.layers is consistent across target model families (Qwen2.5, Llama-3, Mistral)",
+      "Check that the partial forward pass handles models with fewer layers than the configured tap_layer",
+      "Confirm captured hidden state tensor shape before slicing for the readout",
+      "Verify that intercepting a mid-stack hidden state does not force full KV cache materialization",
+      "Check whether a separate non-streaming model call is needed for extraction",
+      "Review whether the layer config is validated against loaded model depth at startup"
+    ],
+    "success_hints": [
+      "Hidden state extraction is gated by a shape assertion before training begins",
+      "Layer index is validated against len(model.model.layers) at hook initialization",
+      "Plan documents which token position is used for readout input with justification"
+    ],
+    "task_context": "The plan adds reservoir routing to an MLX-LM inference server that isolates Metal GPU access in a spawned subprocess. The campaign requires partial forward passes through transformer layers and a training loop for ReservoirReadout MLP.",
+    "anti_overlap": [
+      "fd-mlx-metal-correctness covers MLX API correctness",
+      "fd-synthetic-feature-gap covers training data quality",
+      "fd-interlab-harness-integration covers evaluation harness"
+    ]
+  },
+  {
+    "name": "fd-synthetic-feature-gap",
+    "focus": "Training data validity and synthetic-vs-real feature distribution risk",
+    "persona": "A machine learning researcher specializing in weak supervision and distribution shift who has run routing/gating experiments on LLMs. Skeptical of shortcuts that look good on synthetic benchmarks.",
+    "decision_lens": "Flag anything where synthetic label generation leaks information that won't exist at inference time, or where prompt distribution would cause the readout to memorize surface features.",
+    "review_areas": [
+      "Audit how synthetic prompts are labeled — verify labels are not derived from features the hidden state trivially encodes",
+      "Check whether the synthetic prompt generator covers actual query distribution the server will see",
+      "Verify that data generation uses random split not structured split for validation",
+      "Review whether hidden states are extracted at the same settings used in production inference",
+      "Check training data volume and class balance across routing targets",
+      "Assess whether plan includes any real-traffic shadow evaluation"
+    ],
+    "success_hints": [
+      "Validation set uses a different random seed than training set",
+      "At least one evaluation uses hidden states from real prompts",
+      "Class balance is logged and flagged if any class falls below minimum threshold"
+    ],
+    "task_context": "The plan adds reservoir routing to an MLX-LM inference server that isolates Metal GPU access in a spawned subprocess. The campaign requires partial forward passes through transformer layers and a training loop for ReservoirReadout MLP.",
+    "anti_overlap": [
+      "fd-mlx-metal-correctness covers MLX API and Metal correctness",
+      "fd-model-internals-stability covers hidden state extraction from layers",
+      "fd-interlab-harness-integration covers evaluation harness"
+    ]
+  },
+  {
+    "name": "fd-training-loop-correctness",
+    "focus": "Correctness of the AdamW training script for ReservoirReadout given MLX functional optimizer API",
+    "persona": "An ML engineer who has written custom training loops in MLX and is familiar with ways its functional lazy-evaluation model creates subtle bugs that PyTorch muscle memory misses.",
+    "decision_lens": "Any bug that silently trains the wrong parameters, accumulates stale gradients, or reports zero loss without actual learning is critical.",
+    "review_areas": [
+      "Verify that frozen reservoir parameters are excluded from optimizer — MLX requires explicit parameter filtering",
+      "Check that cross-entropy loss is computed from raw logits not post-softmax probabilities",
+      "Confirm training loop calls optimizer.update and mx.eval together on every step",
+      "Verify data loader yields batches as mx.array objects before forward pass",
+      "Check whether training script supports resuming from checkpoint with optimizer state",
+      "Review whether gradient clipping uses mx.clip correctly on the gradient tree"
+    ],
+    "success_hints": [
+      "Per-step loss is logged and decreases monotonically on synthetic training set within first 100 steps",
+      "Parameter count at init matches only ReservoirReadout parameters",
+      "Checkpoint save/load round-trips model weights and optimizer state"
+    ],
+    "task_context": "The plan adds reservoir routing to an MLX-LM inference server that isolates Metal GPU access in a spawned subprocess. The campaign requires partial forward passes through transformer layers and a training loop for ReservoirReadout MLP.",
+    "anti_overlap": [
+      "fd-mlx-metal-correctness covers Metal process model and subprocess isolation",
+      "fd-model-internals-stability covers hidden state extraction",
+      "fd-interlab-harness-integration covers shell harness and METRIC lines"
+    ]
+  },
+  {
+    "name": "fd-interlab-harness-integration",
+    "focus": "Correctness of the shell evaluation harness and METRIC line protocol for interlab ingestion",
+    "persona": "A developer-tooling engineer who has built CI/evaluation pipelines and knows how fragile stdout-parsing integration points become under real experimental conditions.",
+    "decision_lens": "Prioritize anything that causes interlab to silently ingest wrong metrics or miss runs entirely over cosmetic issues.",
+    "review_areas": [
+      "Verify METRIC line format matches what interlab run_experiment / log_experiment expects",
+      "Check that harness propagates non-zero exit codes from Python process",
+      "Confirm harness captures stderr separately from stdout to avoid corrupting METRIC lines",
+      "Review handling of Metal subprocess crash mid-evaluation",
+      "Check that experiment parameters are emitted as METRIC or PARAM lines for genealogy",
+      "Verify harness is idempotent for the same run ID on retry"
+    ],
+    "success_hints": [
+      "Dry-run produces METRIC lines that interlab log_experiment accepts without error",
+      "Deliberately crashed evaluation results in clearly marked failure record",
+      "All hyperparameters are present in emitted lines for full reconstruction"
+    ],
+    "task_context": "The plan adds reservoir routing to an MLX-LM inference server that isolates Metal GPU access in a spawned subprocess. The campaign requires partial forward passes through transformer layers and a training loop for ReservoirReadout MLP.",
+    "anti_overlap": [
+      "fd-mlx-metal-correctness covers Metal process model correctness",
+      "fd-model-internals-stability covers hidden state extraction",
+      "fd-synthetic-feature-gap covers training data quality"
+    ]
+  }
+]
