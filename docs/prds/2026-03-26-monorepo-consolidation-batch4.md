@@ -1,8 +1,9 @@
 ---
 artifact_type: prd
 bead: Demarch-og7m
-stage: design
+stage: plan-reviewed
 batch: 4
+review_status: revised after flux-drive
 ---
 # PRD: Monorepo Consolidation Batch 4
 
@@ -37,42 +38,38 @@ Three targeted fixes: per-source sub-limits in ListEvents, a JSON Schema contrac
 
 ### F2: Event Schema Contract (.21)
 
-**What:** Publish JSON Schema contracts for the event types and EventEnvelope, create a validation helper, and document the event vocabulary.
+**What:** Enrich existing generated schemas with source enum constraint, add `Event.Validate()`, and document the event vocabulary. Preparatory for .2.1 (unified envelope v2).
 
-**Root cause:** Event vocabulary grew organically across `event.go` (7 source constants), `envelope.go` (10 fields, 6 dead per .17 analysis), and 5 table schemas. No single document defines what a valid event looks like. 6+ consumers (interspect, intertrace, Clavain gate_calibration, Skaffen evidence emitter, interlab, intermix) parse events with ad-hoc assumptions.
+**Root cause:** Event vocabulary grew organically across `event.go` (7 source constants), `envelope.go` (10 fields), and 5 table schemas. The existing generated schemas (`contracts/events/*.json` via `go generate`) lack enum constraints. No README documents which sources appear in the unified stream vs dedicated query methods.
 
 **Files:**
-- Create: `core/intercore/contracts/events/event.schema.json` — JSON Schema for unified Event type
-- Create: `core/intercore/contracts/events/envelope.schema.json` — JSON Schema for EventEnvelope
+- `core/intercore/internal/event/event.go` — add `jsonschema:"enum=..."` struct tag on Source, add Validate()
 - Create: `core/intercore/contracts/events/README.md` — event vocabulary reference
-- `core/intercore/internal/event/event.go` — add Source/EventType validation method
+- Regenerate: `core/intercore/contracts/events/event.json` — via `go generate` (now includes source enum)
 
 **Acceptance criteria:**
-- [ ] JSON Schema covers all 7 source values: phase, dispatch, interspect, discovery, coordination, review, intent
-- [ ] JSON Schema covers EventEnvelope's 10 fields with types and constraints
-- [ ] README documents each event type, which table it comes from, and which consumers read it
-- [ ] `Event.Validate()` method checks Source against allowed values (returns error for unknown source)
-- [ ] Schema files are valid JSON Schema Draft 2020-12
-- [ ] `go build ./...` and `go test ./...` pass
+- [ ] Generated `event.json` includes source enum constraint with all 7 values
+- [ ] README documents each source, which table it comes from, whether it's in unified stream, and key consumers
+- [ ] `Event.Validate()` checks Source against unexported `validSources` map (returns error for unknown source)
+- [ ] Stale `Event.Source` comment fixed (was listing 3 of 7 values)
+- [ ] `go generate ./contracts/...`, `go build ./...`, and `go test ./...` pass
 
 ### F3: Closed-Loop Calibration Stage Reporting (.23)
 
-**What:** Add a `/doctor` check that reports calibration stage maturity for each of the 6 PHILOSOPHY.md domains, and promote the gate threshold calibration (B3) from shadow to active.
+**What:** Add a `/doctor` check (section 3c) that reports calibration stage maturity for each of the 6 PHILOSOPHY.md domains. **Reporting only** — does not promote any domain from shadow to active.
 
-**Root cause:** PHILOSOPHY.md defines a 4-stage pattern (defaults → collect → calibrate → fallback) and lists 6 domains. Only fleet budgets (stage 4) and review triage (stage 3-4) are complete. Cost estimation, complexity scoring, gate thresholds, and agent routing are stuck at stages 1-2 — but nothing reports this gap, so it's invisible to sprint planning.
+**Root cause:** PHILOSOPHY.md defines a 4-stage pattern (defaults → collect → calibrate → fallback) and lists 6 domains. Only fleet budgets is at stage 4, review triage at stage 3. Cost estimation, complexity scoring, gate thresholds, and agent routing are stuck at stages 1-2 — but nothing reports this gap, so it's invisible to sprint planning.
 
 **Files:**
-- `os/Clavain/commands/doctor.md` — add calibration stage check
-- `os/Clavain/hooks/lib-doctor.sh` (or equivalent) — implement stage detection logic
-- Create: `core/intercore/contracts/calibration-stages.yaml` — machine-readable stage definitions per domain
+- `os/Clavain/commands/doctor.md` — add calibration stage check (section 3c)
+- Create: `docs/calibration-stages.yaml` — machine-readable stage definitions (project-level, not in core/intercore)
 
 **Acceptance criteria:**
-- [ ] `/doctor` outputs a table: Domain | Current Stage | Target Stage | Evidence
+- [ ] `/doctor` outputs per-domain: name, stage N/4, PASS/WARN/GAP marker
 - [ ] All 6 domains from PHILOSOPHY.md are represented
-- [ ] Stage detection is evidence-based: checks for actual files/functions, not hardcoded claims
-- [ ] Gate threshold calibration (Demarch-0rgc) status accurately reflected
+- [ ] Stage claims are evidence-based (review_triage at stage 3, not 4 — overrides are proposals, not automatic)
+- [ ] Uses awk for YAML parsing (no pyyaml dependency, matching section 2e convention)
 - [ ] Calibration stages YAML is the single source of truth — /doctor reads it, not hardcoded
-- [ ] `bash -n` syntax check passes on all modified shell files
 
 ## Execution Order
 
