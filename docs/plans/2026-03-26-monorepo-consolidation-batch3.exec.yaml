@@ -1,0 +1,22 @@
+version: 1
+mode: all-parallel
+tier: deep
+max_parallel: 3
+timeout_per_task: 300
+
+stages:
+  - name: "All parallel — no dependencies"
+    tasks:
+      - id: task-1
+        title: "F1: Reservation resource limits (intermute)"
+        files: [core/intermute/internal/storage/sqlite/sqlite.go, core/intermute/internal/http/handlers_reservations.go]
+        depends: []
+      - id: task-2
+        title: "F2: Evidence write durability (interspect)"
+        files: [interverse/interspect/hooks/lib-interspect.sh]
+        depends: []
+      - id: task-3
+        title: "F3: CODEOWNERS"
+        files: [.github/CODEOWNERS]
+        depends: []
+        tier: fast
