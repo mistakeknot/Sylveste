@@ -1,0 +1,72 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 5
+timeout_per_task: 300
+
+stages:
+  - name: "Phase 1 — Plugin Scaffold + Minimal Server"
+    tasks:
+      - id: task-1
+        title: "Plugin directory scaffold"
+        files: [interverse/interfere/.claude-plugin/plugin.json, interverse/interfere/CLAUDE.md, interverse/interfere/pyproject.toml, interverse/interfere/server/__init__.py]
+        depends: []
+      - id: task-2
+        title: "Metal subprocess with memory safety"
+        files: [interverse/interfere/server/metal_worker.py, interverse/interfere/tests/test_metal_worker.py]
+        depends: [task-1]
+      - id: task-3
+        title: "Priority request queue with backpressure"
+        files: [interverse/interfere/server/queue.py, interverse/interfere/tests/test_queue.py]
+        depends: [task-1]
+      - id: task-4
+        title: "Starlette HTTP server with OpenAI-compatible streaming"
+        files: [interverse/interfere/server/main.py, interverse/interfere/server/schema.py, interverse/interfere/tests/test_server.py]
+        depends: [task-1]
+
+  - name: "Phase 2 — Model Loading + Inference Loop"
+    tasks:
+      - id: task-5
+        title: "Model registry with memory budget"
+        files: [interverse/interfere/server/models.py, interverse/interfere/tests/test_models.py]
+        depends: [task-2]
+      - id: task-6
+        title: "MLX inference engine with generate_step"
+        files: [interverse/interfere/server/inference.py, interverse/interfere/tests/test_inference.py]
+        depends: [task-2]
+      - id: task-7
+        title: "End-to-end streaming (wire server to worker)"
+        files: [interverse/interfere/server/metal_worker.py, interverse/interfere/server/main.py, interverse/interfere/tests/test_e2e.py]
+        depends: [task-4, task-5, task-6]
+
+  - name: "Phase 3 — Clavain Integration"
+    tasks:
+      - id: task-8
+        title: "Track B5 in routing.yaml + lib-routing.sh"
+        files: [os/Clavain/config/routing.yaml, os/Clavain/scripts/lib-routing.sh]
+        depends: [task-7]
+      - id: task-9
+        title: "Thermal monitor via macOS notify API"
+        files: [interverse/interfere/server/thermal.py, interverse/interfere/tests/test_thermal.py]
+        depends: [task-1]
+        tier: fast
+
+  - name: "Phase 4 — Experiment Hooks"
+    tasks:
+      - id: task-10
+        title: "Early exit experiment hook"
+        files: [interverse/interfere/server/experiments/early_exit.py, interverse/interfere/tests/test_early_exit.py]
+        depends: [task-6]
+        tier: fast
+      - id: task-11
+        title: "Reservoir routing readout MLP"
+        files: [interverse/interfere/server/experiments/reservoir_routing.py, interverse/interfere/tests/test_reservoir_routing.py]
+        depends: [task-6]
+        tier: fast
+
+  - name: "Phase 5 — Documentation + Ship"
+    tasks:
+      - id: task-12
+        title: "AGENTS.md, MCP server config, final integration"
+        files: [interverse/interfere/AGENTS.md, interverse/interfere/CLAUDE.md, interverse/interfere/.claude-plugin/plugin.json]
+        depends: [task-7, task-8, task-9, task-10, task-11]
