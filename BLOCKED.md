@@ -16,4 +16,4 @@ Clavain's 4-track routing is more intelligent than LiteLLM (task-aware complexit
 5. **Usage observability** — Token usage dashboards, cost trends, model utilization
 6. **Privacy-aware routing** — Classification of sensitive vs public code for routing decisions
 
-With interinfer providing local model serving, Clavain needs these to route between local and cloud without an intermediate proxy.
+With interfere providing local model serving, Clavain needs these to route between local and cloud without an intermediate proxy.
