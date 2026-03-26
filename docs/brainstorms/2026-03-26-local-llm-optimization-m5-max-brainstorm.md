@@ -39,9 +39,9 @@ Key insight: T1 local (Qwen3-30B) matches Haiku quality at zero marginal cost. T
 
 Rationale:
 1. **Follows established pattern** — interspect, interrank, interlab are all companion plugins that Clavain delegates to. An inference server is a service, not an orchestration concern.
-2. **MCP-native** — Plugin's MCP server exposes tools for model management, health checks, benchmarking. Clavain's dispatch calls interinfer via its API, not through plugin MCP.
-3. **Experiment integration** — interlab is already a plugin; interinfer experiments use interlab campaigns directly.
-4. **Clavain stays focused** — Clavain dispatches (which model for which task). interinfer serves (how to run the model). Clean separation.
+2. **MCP-native** — Plugin's MCP server exposes tools for model management, health checks, benchmarking. Clavain's dispatch calls interfere via its API, not through plugin MCP.
+3. **Experiment integration** — interlab is already a plugin; interfere experiments use interlab campaigns directly.
+4. **Clavain stays focused** — Clavain dispatches (which model for which task). interfere serves (how to run the model). Clean separation.
 
 ### Serving: Custom MLX-LM (not vllm-mlx, not Ollama, not LiteLLM)
 
@@ -107,7 +107,7 @@ With quantized KV cache, this supports ~64-96k context for the primary model.
 
 ## Esoteric Experiment Roadmap
 
-Each is an interlab experiment campaign on interinfer:
+Each is an interlab experiment campaign on interfere:
 
 ### Experiment 1: Entropy-Based Early Exit (Near-term)
 - **Source**: BEEM (ICLR 2025), arXiv 2412.01455
