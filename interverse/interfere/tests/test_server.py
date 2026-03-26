@@ -60,6 +60,21 @@ async def test_chat_completions_returns_sse(client: httpx.AsyncClient) -> None:
     assert first_data["model"] == "test-model"
 
 
+def test_parse_args_defaults() -> None:
+    """__main__ parser has correct defaults."""
+    args = _parse_args([])
+    assert args.port == 8421
+    assert args.host == "127.0.0.1"
+    assert args.dry_run is False
+
+
+def test_parse_args_dry_run() -> None:
+    """--dry-run flag is parsed correctly."""
+    args = _parse_args(["--dry-run", "--port", "9000"])
+    assert args.dry_run is True
+    assert args.port == 9000
+
+
 @pytest.mark.asyncio
 async def test_chat_completions_rejects_missing_messages(
     client: httpx.AsyncClient,
