@@ -7648,3 +7648,5 @@
 {"actor":"Claude Code","comment":"Added label: artifact_closed:f1c5752c113000d881769d5b2a47049e8c0a99a6","created_at":"2026-03-26T22:51:20Z","event_type":"label_added","id":"109d2d06-9916-4309-b328-a64a4f497b69","issue_id":"Demarch-og7m.2.1","new_value":null,"old_value":null}
 {"actor":"Claude Code","comment":null,"created_at":"2026-03-26T22:51:20Z","event_type":"created","id":"72a6cc74-2ca1-4d71-9842-17eb5b555239","issue_id":"Demarch-og7m.2.1.4","new_value":"","old_value":""}
 {"actor":"40d247eb","comment":null,"created_at":"2026-03-26T22:54:07Z","event_type":"closed","id":"31d98e11-ea1c-4120-9c46-3b99126545ed","issue_id":"Demarch-uboy.2","new_value":"Closed","old_value":""}
+{"actor":"40d247eb","comment":null,"created_at":"2026-03-26T23:15:25Z","event_type":"closed","id":"0ad2ff57-3494-4b95-9fca-94da4b38e8e8","issue_id":"Demarch-uboy.3","new_value":"Closed","old_value":""}
+{"actor":"40d247eb","comment":null,"created_at":"2026-03-26T23:15:26Z","event_type":"closed","id":"39720d1f-610e-4ac0-bed3-dea718152a8d","issue_id":"Demarch-uboy","new_value":"all steps complete","old_value":""}
