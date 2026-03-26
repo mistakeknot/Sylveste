@@ -60,6 +60,6 @@
 
 These plugins are hooks/skills/commands only (no compilable source, no test suite). They have `secret-scan.yml` but no test CI:
 
-intercheck, intercraft, interdev, interdoc, interfin, interfluence, interform, interkasten, interknow, interlearn, interleave, interlens, interline, intername, internext, interpeer, interplug, interpub, interpulse, intersense, intership, interskill, interslack, interspect, intersynth, intertest, intertree, intertrust, tuivision
+intercheck, intercraft, interdev, interdoc, interfin, interfluence, interform, interkasten, interknow, interlearn, interleave, interlens, interline, intername, internext, interpeer, interplug, interpub, interpulse, intership, interskill, interslack, interspect, intersynth, intertest, intertree, intertrust, tuivision
 
 If any of these adds a test suite in the future, add a `ci.yml` workflow.

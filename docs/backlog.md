@@ -201,7 +201,7 @@ Major dependency chains spanning multiple modules. Query live state with `bd blo
 - `interverse/interkasten`, `interverse/interknow`, `interverse/interleave`
 - `interverse/intermonk`, `interverse/intername`, `interverse/interpeer`
 - `interverse/interplug`, `interverse/interpulse`, `interverse/interrank`
-- `interverse/interscribe`, `interverse/intersense`, `interverse/intership`
+- `interverse/interscribe`, `interverse/intership`
 - `interverse/intersight`, `interverse/interskill`, `interverse/intersynth`
 - `interverse/intertest`, `interverse/intertrace`, `interverse/intertree`
 - `interverse/intertrust`

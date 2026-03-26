@@ -128,7 +128,7 @@ Longer-term directions, not yet scoped into specific items. Full inventory: [bac
 | interrank | interverse/interrank | 0.1.0 | early | no | n/a |
 | interscribe | interverse/interscribe | 0.1.1 | early | no | n/a |
 | intersearch | interverse/intersearch | 0.2.0 | active | yes | 4 |
-| intersense | interverse/intersense | 0.1.0 | early | no | n/a |
+| ~~intersense~~ | ~~interverse/intersense~~ | — | archived | — | — |
 | interserve | interverse/interserve | 0.1.5 | active | yes | 4 |
 | intership | interverse/intership | 0.3.0 | early | no | n/a |
 | intersight | interverse/intersight | 0.1.3 | early | no | n/a |

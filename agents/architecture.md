@@ -67,7 +67,7 @@ Meadowsyn (L3) → Ockham (L2)                   # UI → governor
 interlab → interlock                           # delta sharing — mutation broadcast across sessions
 ```
 
-Standalone plugins (no cross-deps): intercache, interchart, intercheck, intercraft, interdev, interfluence, interform, interhelm, interkasten, interknow, interlearn, interleave, interlens, intermap, intermix, intermonk, intermux, intername, internext, interpeer, interplug, interpub, interrank, interscribe, intersense, intership, intersight, interskill, interslack, interspect, interstat, intersynth, intertest, intertrace, intertrack, intertree, tldr-swinton, tool-time, tuivision.
+Standalone plugins (no cross-deps): intercache, interchart, intercheck, intercraft, interdev, interfluence, interform, interhelm, interkasten, interknow, interlearn, interleave, interlens, intermap, intermix, intermonk, intermux, intername, internext, interpeer, interplug, interpub, interrank, interscribe, intership, intersight, interskill, interslack, interspect, interstat, intersynth, intertest, intertrace, intertrack, intertree, tldr-swinton, tool-time, tuivision.
 
 ## Compatibility
 
