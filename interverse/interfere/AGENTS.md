@@ -31,7 +31,9 @@ Experiment Hooks (inside Metal subprocess):
 
 ```bash
 cd interverse/interfere
-uv run python -m server.main  # starts on port 8421
+uv run python -m server              # starts on port 8421 (MLX inference)
+uv run python -m server --dry-run    # dry-run mode (fake tokens, no MLX)
+uv run python -m server --port 9000  # custom port
 ```
 
 ## API
