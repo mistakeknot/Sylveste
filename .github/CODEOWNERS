@@ -1,0 +1,36 @@
+# Demarch monorepo — code ownership for review routing
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default: all paths require owner review
+* @mistakeknot
+
+# L1 Kernel — intercore + intermute
+/core/intercore/ @mistakeknot
+/core/intermute/ @mistakeknot
+
+# L2 OS — Clavain, Skaffen, Zaka, Alwe, Ockham
+/os/Clavain/ @mistakeknot
+/os/Skaffen/ @mistakeknot
+/os/Zaka/ @mistakeknot
+/os/Alwe/ @mistakeknot
+/os/Ockham/ @mistakeknot
+
+# L1 SDK
+/sdk/interbase/ @mistakeknot
+
+# Key Interverse plugins
+/interverse/interspect/ @mistakeknot
+/interverse/interflux/ @mistakeknot
+/interverse/interlock/ @mistakeknot
+
+# L3 Apps
+/apps/Autarch/ @mistakeknot
+/apps/Intercom/ @mistakeknot
+
+# CI/CD and GitHub config
+/.github/ @mistakeknot
+
+# Root config
+/CLAUDE.md @mistakeknot
+/AGENTS.md @mistakeknot
+/PHILOSOPHY.md @mistakeknot
