@@ -116,11 +116,12 @@ Each is an interlab experiment campaign on interfere:
 - **Implementation**: Attach lightweight confidence estimators at intermediate layers. If entropy at layer K < threshold tau, exit early.
 - **Expected**: 1.3x wall-time speedup on routine code generation
 
-### Experiment 2: Speculative Streaming (Near-term)
-- **Source**: Apple ML Research (January 2026)
-- **Hypothesis**: Single-model speculative decoding (intermediate layers as draft) eliminates memory cost of a second model
-- **Metric**: tok/s vs baseline, memory saved vs traditional speculative decoding
-- **Expected**: 2.3x speedup on M-series chips (Apple's published number)
+### Experiment 2: Speculative Decoding with Draft Model (Near-term)
+- **Source**: mlx-lm native `--draft-model` support; EAGLE-3 (NeurIPS '25)
+- **Hypothesis**: Classic two-model speculative decoding (small draft + large verifier) accelerates generation with minimal quality loss
+- **Metric**: tok/s vs baseline, acceptance rate on coding tasks, memory overhead of draft model
+- **Implementation**: Use mlx-lm's native `--num-draft-tokens` with a 3B Q4 draft model (~2GB). Apple's Speculative Streaming and Mirror-SD are PyTorch-only and Mirror-SD requires separate GPU+NPU — NOT viable on single M5 Max.
+- **Expected**: 1.8-2.5x speedup with 65%+ acceptance rate on code completion
 
 ### Experiment 3: Reservoir Routing (Medium-term)
 - **Source**: arXiv 2507.15779, AIP Chaos 2025
