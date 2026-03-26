@@ -6,12 +6,35 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+PROJECT_COMMANDS_DIR="$PROJECT_ROOT/.gemini/commands"
+GEMINI_HOME="${GEMINI_HOME:-$HOME/.gemini}"
+GEMINI_COMMANDS_DIR="${GEMINI_COMMANDS_DIR:-$GEMINI_HOME/commands}"
 
 ACTION="install"
 if [[ $# -gt 0 && "${1#-}" == "$1" ]]; then
   ACTION="$1"
   shift
 fi
+
+safe_link() {
+    local target="$1"
+    local link_path="$2"
+
+    mkdir -p "$(dirname "$link_path")"
+    if [[ -L "$link_path" ]]; then
+        local current
+        current="$(readlink "$link_path")"
+        if [[ "$current" == "$target" ]]; then
+            return 0
+        fi
+        rm -f "$link_path"
+    elif [[ -e "$link_path" ]]; then
+        echo "Refusing to overwrite non-symlink Gemini command path: $link_path" >&2
+        return 1
+    fi
+
+    ln -s "$target" "$link_path"
+}
 
 if ! command -v gemini &>/dev/null; then
     echo "Error: Gemini CLI (gemini) not found on PATH."
@@ -23,7 +46,10 @@ case "$ACTION" in
     install)
         echo "Generating Gemini CLI skills..."
         bash "$SCRIPT_DIR/gen-gemini-skills.sh"
-        
+
+        echo "Generating Gemini CLI slash commands..."
+        bash "$SCRIPT_DIR/gen-gemini-commands.sh"
+
         echo "Linking skills to Gemini global scope..."
         cd "$PROJECT_ROOT"
         
@@ -40,8 +66,20 @@ case "$ACTION" in
         done
 
         gemini skills link .gemini/generated-skills --scope user --consent
-        
-        echo "Successfully installed Gemini CLI skills!"
+
+        echo "Linking Gemini slash commands to global scope..."
+        mkdir -p "$GEMINI_COMMANDS_DIR"
+        for namespace_dir in "$PROJECT_COMMANDS_DIR"/*; do
+            [[ -d "$namespace_dir" ]] || continue
+            namespace="$(basename "$namespace_dir")"
+            safe_link "$namespace_dir" "$GEMINI_COMMANDS_DIR/$namespace"
+        done
+
+        echo "Gemini custom commands are available from:"
+        echo "  project: $PROJECT_COMMANDS_DIR"
+        echo "  global:  $GEMINI_COMMANDS_DIR"
+
+        echo "Successfully installed Gemini CLI skills and slash commands."
         ;;
     uninstall)
         echo "Unlinking Gemini CLI skills..."
@@ -53,7 +91,18 @@ case "$ACTION" in
                 gemini skills uninstall "$skill_name" --scope user || true
             fi
         done
-        echo "Successfully uninstalled Gemini CLI skills!"
+
+        echo "Removing Gemini slash command links..."
+        for namespace_dir in "$PROJECT_COMMANDS_DIR"/*; do
+            [[ -d "$namespace_dir" ]] || continue
+            namespace="$(basename "$namespace_dir")"
+            link_path="$GEMINI_COMMANDS_DIR/$namespace"
+            if [[ -L "$link_path" ]] && [[ "$(readlink "$link_path")" == "$namespace_dir" ]]; then
+                rm -f "$link_path"
+            fi
+        done
+
+        echo "Successfully uninstalled Gemini CLI skills and slash commands."
         ;;
     *)
         echo "Usage: $0 [install|uninstall]"

@@ -1,132 +1,132 @@
 [
   {
-    "title": "AI-resistant-technical-evaluations",
-    "url": "https://www.anthropic.com/engineering/AI-resistant-technical-evaluations",
-    "section": "engineering",
-    "filename": "engineering--AI-resistant-technical-evaluations.md",
-    "words": 2677
-  },
-  {
-    "title": "a-postmortem-of-three-recent-issues",
+    "title": "A postmortem of three recent issues \\ Anthropic",
     "url": "https://www.anthropic.com/engineering/a-postmortem-of-three-recent-issues",
     "section": "engineering",
     "filename": "engineering--a-postmortem-of-three-recent-issues.md",
     "words": 1985
   },
   {
-    "title": "advanced-tool-use",
+    "title": "Introducing advanced tool use on the Claude Developer Platform \\ Anthropic",
     "url": "https://www.anthropic.com/engineering/advanced-tool-use",
     "section": "engineering",
     "filename": "engineering--advanced-tool-use.md",
     "words": 3223
   },
   {
-    "title": "building-c-compiler",
+    "title": "Designing AI resistant technical evaluations \\ Anthropic",
+    "url": "https://www.anthropic.com/engineering/AI-resistant-technical-evaluations",
+    "section": "engineering",
+    "filename": "engineering--AI-resistant-technical-evaluations.md",
+    "words": 2677
+  },
+  {
+    "title": "Building a C compiler with a team of parallel Claudes \\ Anthropic",
     "url": "https://www.anthropic.com/engineering/building-c-compiler",
     "section": "engineering",
     "filename": "engineering--building-c-compiler.md",
     "words": 2460
   },
   {
-    "title": "building-effective-agents",
+    "title": "Building Effective AI Agents \\ Anthropic",
     "url": "https://www.anthropic.com/engineering/building-effective-agents",
     "section": "engineering",
     "filename": "engineering--building-effective-agents.md",
     "words": 2804
   },
   {
-    "title": "claude-code-sandboxing",
+    "title": "Making Claude Code more secure and autonomous with sandboxing \\ Anthropic",
     "url": "https://www.anthropic.com/engineering/claude-code-sandboxing",
     "section": "engineering",
     "filename": "engineering--claude-code-sandboxing.md",
     "words": 1074
   },
   {
-    "title": "claude-think-tool",
+    "title": "The &quot;think&quot; tool: Enabling Claude to stop and think \\ Anthropic",
     "url": "https://www.anthropic.com/engineering/claude-think-tool",
     "section": "engineering",
     "filename": "engineering--claude-think-tool.md",
     "words": 2250
   },
   {
-    "title": "code-execution-with-mcp",
+    "title": "Code execution with MCP: building more efficient AI agents \\ Anthropic",
     "url": "https://www.anthropic.com/engineering/code-execution-with-mcp",
     "section": "engineering",
     "filename": "engineering--code-execution-with-mcp.md",
     "words": 1900
   },
   {
-    "title": "contextual-retrieval",
+    "title": "Contextual Retrieval in AI Systems \\ Anthropic",
     "url": "https://www.anthropic.com/engineering/contextual-retrieval",
     "section": "engineering",
     "filename": "engineering--contextual-retrieval.md",
     "words": 2243
   },
   {
-    "title": "demystifying-evals-for-ai-agents",
+    "title": "Demystifying evals for AI agents \\ Anthropic",
     "url": "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents",
     "section": "engineering",
     "filename": "engineering--demystifying-evals-for-ai-agents.md",
     "words": 5761
   },
   {
-    "title": "desktop-extensions",
+    "title": "Claude Desktop Extensions: One-click MCP server installation for Claude Desktop \\ Anthropic",
     "url": "https://www.anthropic.com/engineering/desktop-extensions",
     "section": "engineering",
     "filename": "engineering--desktop-extensions.md",
     "words": 2439
   },
   {
-    "title": "effective-context-engineering-for-ai-agents",
+    "title": "Effective context engineering for AI agents \\ Anthropic",
     "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
     "section": "engineering",
     "filename": "engineering--effective-context-engineering-for-ai-agents.md",
     "words": 3039
   },
   {
-    "title": "effective-harnesses-for-long-running-agents",
+    "title": "Effective harnesses for long-running agents \\ Anthropic",
     "url": "https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents",
     "section": "engineering",
     "filename": "engineering--effective-harnesses-for-long-running-agents.md",
     "words": 1918
   },
   {
-    "title": "eval-awareness-browsecomp",
+    "title": "Eval awareness in Claude Opus 4.6\u2019s BrowseComp performance \\ Anthropic",
     "url": "https://www.anthropic.com/engineering/eval-awareness-browsecomp",
     "section": "engineering",
     "filename": "engineering--eval-awareness-browsecomp.md",
     "words": 2055
   },
   {
-    "title": "harness-design-long-running-apps",
+    "title": "Harness design for long-running application development \\ Anthropic",
     "url": "https://www.anthropic.com/engineering/harness-design-long-running-apps",
     "section": "engineering",
     "filename": "engineering--harness-design-long-running-apps.md",
     "words": 4959
   },
   {
-    "title": "infrastructure-noise",
+    "title": "Quantifying infrastructure noise in agentic coding evals \\ Anthropic",
     "url": "https://www.anthropic.com/engineering/infrastructure-noise",
     "section": "engineering",
     "filename": "engineering--infrastructure-noise.md",
     "words": 1789
   },
   {
-    "title": "multi-agent-research-system",
+    "title": "How we built our multi-agent research system \\ Anthropic",
     "url": "https://www.anthropic.com/engineering/multi-agent-research-system",
     "section": "engineering",
     "filename": "engineering--multi-agent-research-system.md",
     "words": 3501
   },
   {
-    "title": "swe-bench-sonnet",
+    "title": "Claude SWE-Bench Performance \\ Anthropic",
     "url": "https://www.anthropic.com/engineering/swe-bench-sonnet",
     "section": "engineering",
     "filename": "engineering--swe-bench-sonnet.md",
     "words": 2815
   },
   {
-    "title": "writing-tools-for-agents",
+    "title": "Writing effective tools for AI agents\u2014using AI agents \\ Anthropic",
     "url": "https://www.anthropic.com/engineering/writing-tools-for-agents",
     "section": "engineering",
     "filename": "engineering--writing-tools-for-agents.md",
@@ -238,18 +238,18 @@
     "words": 618
   },
   {
-    "title": "Powering the next generation of AI development with AWS",
-    "url": "https://www.anthropic.com/news/anthropic-amazon-trainium",
-    "section": "news",
-    "filename": "news--anthropic-amazon-trainium.md",
-    "words": 589
-  },
-  {
     "title": "Expanding access to safer AI with Amazon",
     "url": "https://www.anthropic.com/news/anthropic-amazon",
     "section": "news",
     "filename": "news--anthropic-amazon.md",
     "words": 689
+  },
+  {
+    "title": "Powering the next generation of AI development with AWS",
+    "url": "https://www.anthropic.com/news/anthropic-amazon-trainium",
+    "section": "news",
+    "filename": "news--anthropic-amazon-trainium.md",
+    "words": 589
   },
   {
     "title": "Anthropic and Iceland announce one of the world\u2019s first national AI education pilots",
@@ -434,11 +434,74 @@
     "words": 522
   },
   {
+    "title": "Anthropic Raises $450 Million in Series C Funding to Scale Reliable AI Products",
+    "url": "https://www.anthropic.com/news/anthropic-series-c",
+    "section": "news",
+    "filename": "news--anthropic-series-c.md",
+    "words": 510
+  },
+  {
+    "title": "Anthropic Signs CMS Health Tech Ecosystem Pledge to Advance Healthcare Interoperability",
+    "url": "https://www.anthropic.com/news/anthropic-signs-cms-health-tech-ecosystem-pledge-to-advance-healthcare-interoperability",
+    "section": "news",
+    "filename": "news--anthropic-signs-cms-health-tech-ecosystem-pledge-to-advance-healthcare-interoperability.md",
+    "words": 449
+  },
+  {
+    "title": "Anthropic Signs White House Pledge to America's Youth: Investing in AI Education",
+    "url": "https://www.anthropic.com/news/anthropic-signs-pledge-to-americas-youth-investing-in-ai-education",
+    "section": "news",
+    "filename": "news--anthropic-signs-pledge-to-americas-youth-investing-in-ai-education.md",
+    "words": 770
+  },
+  {
     "title": "Anthropic and Teach For All launch global AI training initiative for educators",
     "url": "https://www.anthropic.com/news/anthropic-teach-for-all",
     "section": "news",
     "filename": "news--anthropic-teach-for-all.md",
     "words": 856
+  },
+  {
+    "title": "Anthropic's Responsible Scaling Policy",
+    "url": "https://www.anthropic.com/news/anthropics-responsible-scaling-policy",
+    "section": "news",
+    "filename": "news--anthropics-responsible-scaling-policy.md",
+    "words": 943
+  },
+  {
+    "title": "Apple\u2019s Xcode now supports the Claude Agent SDK",
+    "url": "https://www.anthropic.com/news/apple-xcode-claude-agent-sdk",
+    "section": "news",
+    "filename": "news--apple-xcode-claude-agent-sdk.md",
+    "words": 544
+  },
+  {
+    "title": "Anthropic opens Bengaluru office and announces new partnerships across India",
+    "url": "https://www.anthropic.com/news/bengaluru-office-partnerships-across-india",
+    "section": "news",
+    "filename": "news--bengaluru-office-partnerships-across-india.md",
+    "words": 1204
+  },
+  {
+    "title": "Build AI in America",
+    "url": "https://www.anthropic.com/news/build-ai-in-america",
+    "section": "news",
+    "filename": "news--build-ai-in-america.md",
+    "words": 912
+  },
+  {
+    "title": "Building safeguards for Claude",
+    "url": "https://www.anthropic.com/news/building-safeguards-for-claude",
+    "section": "news",
+    "filename": "news--building-safeguards-for-claude.md",
+    "words": 1546
+  },
+  {
+    "title": "Challenges in red teaming AI systems",
+    "url": "https://www.anthropic.com/news/challenges-in-red-teaming-ai-systems",
+    "section": "news",
+    "filename": "news--challenges-in-red-teaming-ai-systems.md",
+    "words": 2032
   },
   {
     "title": "Charting a Path to AI Accountability",
@@ -448,11 +511,116 @@
     "words": 1532
   },
   {
+    "title": "Aligning on child safety principles",
+    "url": "https://www.anthropic.com/news/child-safety-principles",
+    "section": "news",
+    "filename": "news--child-safety-principles.md",
+    "words": 554
+  },
+  {
+    "title": "Chris Liddell appointed to Anthropic\u2019s board of directors",
+    "url": "https://www.anthropic.com/news/chris-liddell-appointed-anthropic-board",
+    "section": "news",
+    "filename": "news--chris-liddell-appointed-anthropic-board.md",
+    "words": 388
+  },
+  {
+    "title": "Claude 2",
+    "url": "https://www.anthropic.com/news/claude-2",
+    "section": "news",
+    "filename": "news--claude-2.md",
+    "words": 950
+  },
+  {
+    "title": "Introducing Claude 2.1",
+    "url": "https://www.anthropic.com/news/claude-2-1",
+    "section": "news",
+    "filename": "news--claude-2-1.md",
+    "words": 914
+  },
+  {
+    "title": "Claude 3.5 Sonnet",
+    "url": "https://www.anthropic.com/news/claude-3-5-sonnet",
+    "section": "news",
+    "filename": "news--claude-3-5-sonnet.md",
+    "words": 963
+  },
+  {
+    "title": "Claude 3.7 Sonnet and Claude Code",
+    "url": "https://www.anthropic.com/news/claude-3-7-sonnet",
+    "section": "news",
+    "filename": "news--claude-3-7-sonnet.md",
+    "words": 1671
+  },
+  {
+    "title": "Introducing the next generation of Claude",
+    "url": "https://www.anthropic.com/news/claude-3-family",
+    "section": "news",
+    "filename": "news--claude-3-family.md",
+    "words": 1648
+  },
+  {
     "title": "Claude 3 Haiku: our fastest model yet",
     "url": "https://www.anthropic.com/news/claude-3-haiku",
     "section": "news",
     "filename": "news--claude-3-haiku.md",
     "words": 457
+  },
+  {
+    "title": "Introducing Claude 4",
+    "url": "https://www.anthropic.com/news/claude-4",
+    "section": "news",
+    "filename": "news--claude-4.md",
+    "words": 1635
+  },
+  {
+    "title": "Claude and Alexa+",
+    "url": "https://www.anthropic.com/news/claude-and-alexa-plus",
+    "section": "news",
+    "filename": "news--claude-and-alexa-plus.md",
+    "words": 185
+  },
+  {
+    "title": "Claude is now available in Brazil",
+    "url": "https://www.anthropic.com/news/claude-brazil",
+    "section": "news",
+    "filename": "news--claude-brazil.md",
+    "words": 301
+  },
+  {
+    "title": "Claude Code and new admin controls for business plans",
+    "url": "https://www.anthropic.com/news/claude-code-on-team-and-enterprise",
+    "section": "news",
+    "filename": "news--claude-code-on-team-and-enterprise.md",
+    "words": 718
+  },
+  {
+    "title": "Making frontier cybersecurity capabilities available to defenders",
+    "url": "https://www.anthropic.com/news/claude-code-security",
+    "section": "news",
+    "filename": "news--claude-code-security.md",
+    "words": 797
+  },
+  {
+    "title": "Claude is now available in Europe",
+    "url": "https://www.anthropic.com/news/claude-europe",
+    "section": "news",
+    "filename": "news--claude-europe.md",
+    "words": 352
+  },
+  {
+    "title": "Claude for Financial Services",
+    "url": "https://www.anthropic.com/news/claude-for-financial-services",
+    "section": "news",
+    "filename": "news--claude-for-financial-services.md",
+    "words": 1169
+  },
+  {
+    "title": "Claude for Life Sciences",
+    "url": "https://www.anthropic.com/news/claude-for-life-sciences",
+    "section": "news",
+    "filename": "news--claude-for-life-sciences.md",
+    "words": 1803
   },
   {
     "title": "Claude for Nonprofits",
@@ -462,11 +630,200 @@
     "words": 1361
   },
   {
+    "title": "Claude Gov models for U.S. national security customers",
+    "url": "https://www.anthropic.com/news/claude-gov-models-for-u-s-national-security-customers",
+    "section": "news",
+    "filename": "news--claude-gov-models-for-u-s-national-security-customers.md",
+    "words": 332
+  },
+  {
+    "title": "Introducing Claude Haiku 4.5",
+    "url": "https://www.anthropic.com/news/claude-haiku-4-5",
+    "section": "news",
+    "filename": "news--claude-haiku-4-5.md",
+    "words": 1227
+  },
+  {
+    "title": "Claude in Amazon Bedrock: Approved for use in FedRAMP High and DoD IL4/5 workloads",
+    "url": "https://www.anthropic.com/news/claude-in-amazon-bedrock-fedramp-high",
+    "section": "news",
+    "filename": "news--claude-in-amazon-bedrock-fedramp-high.md",
+    "words": 451
+  },
+  {
+    "title": "Claude now available in Microsoft Foundry and Microsoft 365 Copilot",
+    "url": "https://www.anthropic.com/news/claude-in-microsoft-foundry",
+    "section": "news",
+    "filename": "news--claude-in-microsoft-foundry.md",
+    "words": 571
+  },
+  {
+    "title": "Claude is now generally available in Xcode",
+    "url": "https://www.anthropic.com/news/claude-in-xcode",
+    "section": "news",
+    "filename": "news--claude-in-xcode.md",
+    "words": 306
+  },
+  {
+    "title": "Claude is a space to think",
+    "url": "https://www.anthropic.com/news/claude-is-a-space-to-think",
+    "section": "news",
+    "filename": "news--claude-is-a-space-to-think.md",
+    "words": 1201
+  },
+  {
+    "title": "Claude's new constitution",
+    "url": "https://www.anthropic.com/news/claude-new-constitution",
+    "section": "news",
+    "filename": "news--claude-new-constitution.md",
+    "words": 1984
+  },
+  {
+    "title": "Claude Opus 4.1",
+    "url": "https://www.anthropic.com/news/claude-opus-4-1",
+    "section": "news",
+    "filename": "news--claude-opus-4-1.md",
+    "words": 583
+  },
+  {
+    "title": "Introducing Claude Opus 4.5",
+    "url": "https://www.anthropic.com/news/claude-opus-4-5",
+    "section": "news",
+    "filename": "news--claude-opus-4-5.md",
+    "words": 2456
+  },
+  {
+    "title": "Introducing Claude Opus 4.6",
+    "url": "https://www.anthropic.com/news/claude-opus-4-6",
+    "section": "news",
+    "filename": "news--claude-opus-4-6.md",
+    "words": 2964
+  },
+  {
+    "title": "Anthropic invests $100 million into the Claude Partner Network",
+    "url": "https://www.anthropic.com/news/claude-partner-network",
+    "section": "news",
+    "filename": "news--claude-partner-network.md",
+    "words": 873
+  },
+  {
+    "title": "Introducing Claude Pro",
+    "url": "https://www.anthropic.com/news/claude-pro",
+    "section": "news",
+    "filename": "news--claude-pro.md",
+    "words": 261
+  },
+  {
+    "title": "Introducing Claude Sonnet 4.5",
+    "url": "https://www.anthropic.com/news/claude-sonnet-4-5",
+    "section": "news",
+    "filename": "news--claude-sonnet-4-5.md",
+    "words": 2259
+  },
+  {
+    "title": "Introducing Claude Sonnet 4.6",
+    "url": "https://www.anthropic.com/news/claude-sonnet-4-6",
+    "section": "news",
+    "filename": "news--claude-sonnet-4-6.md",
+    "words": 2166
+  },
+  {
+    "title": "Claude\u2019s Constitution",
+    "url": "https://www.anthropic.com/news/claudes-constitution",
+    "section": "news",
+    "filename": "news--claudes-constitution.md",
+    "words": 3177
+  },
+  {
+    "title": "Cognizant will make Claude available to 350,000 employees, accelerating enterprise AI adoption and internal transformation",
+    "url": "https://www.anthropic.com/news/cognizant-partnership",
+    "section": "news",
+    "filename": "news--cognizant-partnership.md",
+    "words": 630
+  },
+  {
     "title": "Sharing our compliance framework for California's Transparency in Frontier AI Act",
     "url": "https://www.anthropic.com/news/compliance-framework-SB53",
     "section": "news",
     "filename": "news--compliance-framework-SB53.md",
     "words": 770
+  },
+  {
+    "title": "Contextual Retrieval in AI Systems \\ Anthropic",
+    "url": "https://www.anthropic.com/news/contextual-retrieval",
+    "section": "news",
+    "filename": "news--contextual-retrieval.md",
+    "words": 2243
+  },
+  {
+    "title": "Core Views on AI Safety: When, Why, What, and How",
+    "url": "https://www.anthropic.com/news/core-views-on-ai-safety",
+    "section": "news",
+    "filename": "news--core-views-on-ai-safety.md",
+    "words": 6745
+  },
+  {
+    "title": "Covering electricity price increases from our data centers",
+    "url": "https://www.anthropic.com/news/covering-electricity-price-increases",
+    "section": "news",
+    "filename": "news--covering-electricity-price-increases.md",
+    "words": 507
+  },
+  {
+    "title": "Deloitte will make Claude available to 470,000 people across its global network",
+    "url": "https://www.anthropic.com/news/deloitte-anthropic-partnership",
+    "section": "news",
+    "filename": "news--deloitte-anthropic-partnership.md",
+    "words": 631
+  },
+  {
+    "title": "Detecting and countering malicious uses of Claude: March 2025",
+    "url": "https://www.anthropic.com/news/detecting-and-countering-malicious-uses-of-claude-march-2025",
+    "section": "news",
+    "filename": "news--detecting-and-countering-malicious-uses-of-claude-march-2025.md",
+    "words": 1702
+  },
+  {
+    "title": "Detecting and preventing distillation attacks",
+    "url": "https://www.anthropic.com/news/detecting-and-preventing-distillation-attacks",
+    "section": "news",
+    "filename": "news--detecting-and-preventing-distillation-attacks.md",
+    "words": 1427
+  },
+  {
+    "title": "Detecting and countering misuse of AI: August 2025",
+    "url": "https://www.anthropic.com/news/detecting-countering-misuse-aug-2025",
+    "section": "news",
+    "filename": "news--detecting-countering-misuse-aug-2025.md",
+    "words": 1570
+  },
+  {
+    "title": "Developing a computer use model",
+    "url": "https://www.anthropic.com/news/developing-computer-use",
+    "section": "news",
+    "filename": "news--developing-computer-use.md",
+    "words": 1447
+  },
+  {
+    "title": "Developing nuclear safeguards for AI through public-private partnership",
+    "url": "https://www.anthropic.com/news/developing-nuclear-safeguards-for-ai-through-public-private-partnership",
+    "section": "news",
+    "filename": "news--developing-nuclear-safeguards-for-ai-through-public-private-partnership.md",
+    "words": 391
+  },
+  {
+    "title": "Disrupting the first reported AI-orchestrated cyber espionage campaign",
+    "url": "https://www.anthropic.com/news/disrupting-AI-espionage",
+    "section": "news",
+    "filename": "news--disrupting-AI-espionage.md",
+    "words": 1431
+  },
+  {
+    "title": "Anthropic is donating $20 million to Public First Action",
+    "url": "https://www.anthropic.com/news/donate-public-first-action",
+    "section": "news",
+    "filename": "news--donate-public-first-action.md",
+    "words": 687
   },
   {
     "title": "Donating the Model Context Protocol and establishing the Agentic AI Foundation",
@@ -476,11 +833,200 @@
     "words": 611
   },
   {
+    "title": "Launching the Anthropic Economic Futures Programme in the UK and Europe",
+    "url": "https://www.anthropic.com/news/economic-futures-uk-europe",
+    "section": "news",
+    "filename": "news--economic-futures-uk-europe.md",
+    "words": 825
+  },
+  {
+    "title": "Elections and AI in 2024: observations and learnings",
+    "url": "https://www.anthropic.com/news/elections-ai-2024",
+    "section": "news",
+    "filename": "news--elections-ai-2024.md",
+    "words": 828
+  },
+  {
+    "title": "Enabling Claude Code to work more autonomously",
+    "url": "https://www.anthropic.com/news/enabling-claude-code-to-work-more-autonomously",
+    "section": "news",
+    "filename": "news--enabling-claude-code-to-work-more-autonomously.md",
+    "words": 603
+  },
+  {
+    "title": "Anthropic to sign the EU Code of Practice",
+    "url": "https://www.anthropic.com/news/eu-code-practice",
+    "section": "news",
+    "filename": "news--eu-code-practice.md",
+    "words": 548
+  },
+  {
+    "title": "Expanded legal protections and improvements to our API",
+    "url": "https://www.anthropic.com/news/expanded-legal-protections-api-improvements",
+    "section": "news",
+    "filename": "news--expanded-legal-protections-api-improvements.md",
+    "words": 448
+  },
+  {
+    "title": "Expanding access to Claude for government",
+    "url": "https://www.anthropic.com/news/expanding-access-to-claude-for-government",
+    "section": "news",
+    "filename": "news--expanding-access-to-claude-for-government.md",
+    "words": 551
+  },
+  {
+    "title": "Expanding our global operations to India with our second Asia Pacific office",
+    "url": "https://www.anthropic.com/news/expanding-global-operations-to-india",
+    "section": "news",
+    "filename": "news--expanding-global-operations-to-india.md",
+    "words": 602
+  },
+  {
+    "title": "Expanding our use of Google Cloud TPUs and Services",
+    "url": "https://www.anthropic.com/news/expanding-our-use-of-google-cloud-tpus-and-services",
+    "section": "news",
+    "filename": "news--expanding-our-use-of-google-cloud-tpus-and-services.md",
+    "words": 423
+  },
+  {
+    "title": "Federal government departments and agencies can now purchase Claude through the GSA schedule",
+    "url": "https://www.anthropic.com/news/federal-government-departments-and-agencies-can-now-purchase-claude-through-the-gsa-schedule",
+    "section": "news",
+    "filename": "news--federal-government-departments-and-agencies-can-now-purchase-claude-through-the-gsa-schedule.md",
+    "words": 285
+  },
+  {
+    "title": "Frontier Model Security",
+    "url": "https://www.anthropic.com/news/frontier-model-security",
+    "section": "news",
+    "filename": "news--frontier-model-security.md",
+    "words": 1043
+  },
+  {
+    "title": "Frontier Threats Red Teaming for AI Safety",
+    "url": "https://www.anthropic.com/news/frontier-threats-red-teaming-for-ai-safety",
+    "section": "news",
+    "filename": "news--frontier-threats-red-teaming-for-ai-safety.md",
+    "words": 1513
+  },
+  {
+    "title": "Working with the US Department of Energy to unlock the next era of scientific discovery",
+    "url": "https://www.anthropic.com/news/genesis-mission-partnership",
+    "section": "news",
+    "filename": "news--genesis-mission-partnership.md",
+    "words": 588
+  },
+  {
     "title": "Claude 3.5 Sonnet on GitHub Copilot",
     "url": "https://www.anthropic.com/news/github-copilot",
     "section": "news",
     "filename": "news--github-copilot.md",
     "words": 362
+  },
+  {
+    "title": "Golden Gate Claude",
+    "url": "https://www.anthropic.com/news/golden-gate-claude",
+    "section": "news",
+    "filename": "news--golden-gate-claude.md",
+    "words": 583
+  },
+  {
+    "title": "Claude 3 models on Vertex AI",
+    "url": "https://www.anthropic.com/news/google-vertex-general-availability",
+    "section": "news",
+    "filename": "news--google-vertex-general-availability.md",
+    "words": 378
+  },
+  {
+    "title": "Anthropic partners with the UK Government to bring AI assistance to GOV.UK services",
+    "url": "https://www.anthropic.com/news/gov-UK-partnership",
+    "section": "news",
+    "filename": "news--gov-UK-partnership.md",
+    "words": 767
+  },
+  {
+    "title": "Anthropic appoints Guillaume Princen as Head of EMEA and announces 100+ new roles across the region",
+    "url": "https://www.anthropic.com/news/head-of-EMEA-new-roles",
+    "section": "news",
+    "filename": "news--head-of-EMEA-new-roles.md",
+    "words": 514
+  },
+  {
+    "title": "Anthropic appoints Hidetoshi Tojo as Head of Japan and announces hiring plans",
+    "url": "https://www.anthropic.com/news/head-of-japan-hiring-plans",
+    "section": "news",
+    "filename": "news--head-of-japan-hiring-plans.md",
+    "words": 424
+  },
+  {
+    "title": "Advancing Claude in healthcare and the life sciences",
+    "url": "https://www.anthropic.com/news/healthcare-life-sciences",
+    "section": "news",
+    "filename": "news--healthcare-life-sciences.md",
+    "words": 2416
+  },
+  {
+    "title": "How people use Claude for support, advice, and companionship",
+    "url": "https://www.anthropic.com/news/how-people-use-claude-for-support-advice-and-companionship",
+    "section": "news",
+    "filename": "news--how-people-use-claude-for-support-advice-and-companionship.md",
+    "words": 2717
+  },
+  {
+    "title": "Introducing Labs",
+    "url": "https://www.anthropic.com/news/introducing-anthropic-labs",
+    "section": "news",
+    "filename": "news--introducing-anthropic-labs.md",
+    "words": 390
+  },
+  {
+    "title": "Introducing Anthropic's Transparency Hub",
+    "url": "https://www.anthropic.com/news/introducing-anthropic-transparency-hub",
+    "section": "news",
+    "filename": "news--introducing-anthropic-transparency-hub.md",
+    "words": 351
+  },
+  {
+    "title": "Introducing Claude",
+    "url": "https://www.anthropic.com/news/introducing-claude",
+    "section": "news",
+    "filename": "news--introducing-claude.md",
+    "words": 1026
+  },
+  {
+    "title": "Introducing Claude for Education",
+    "url": "https://www.anthropic.com/news/introducing-claude-for-education",
+    "section": "news",
+    "filename": "news--introducing-claude-for-education.md",
+    "words": 1083
+  },
+  {
+    "title": "Introducing Claude to Canada",
+    "url": "https://www.anthropic.com/news/introducing-claude-to-canada",
+    "section": "news",
+    "filename": "news--introducing-claude-to-canada.md",
+    "words": 262
+  },
+  {
+    "title": "Introducing Anthropic's first developer conference: Code with Claude",
+    "url": "https://www.anthropic.com/news/Introducing-code-with-claude",
+    "section": "news",
+    "filename": "news--Introducing-code-with-claude.md",
+    "words": 296
+  },
+  {
+    "title": "Introducing the Anthropic Economic Advisory Council",
+    "url": "https://www.anthropic.com/news/introducing-the-anthropic-economic-advisory-council",
+    "section": "news",
+    "filename": "news--introducing-the-anthropic-economic-advisory-council.md",
+    "words": 856
+  },
+  {
+    "title": "Introducing the Anthropic Economic Futures Program",
+    "url": "https://www.anthropic.com/news/introducing-the-anthropic-economic-futures-program",
+    "section": "news",
+    "filename": "news--introducing-the-anthropic-economic-futures-program.md",
+    "words": 826
   },
   {
     "title": "Introducing the Anthropic National Security and Public Sector Advisory Council",
@@ -490,11 +1036,165 @@
     "words": 1134
   },
   {
+    "title": "Investing in energy to secure America's AI future",
+    "url": "https://www.anthropic.com/news/investing-in-energy-to-secure-america-s-ai-future",
+    "section": "news",
+    "filename": "news--investing-in-energy-to-secure-america-s-ai-future.md",
+    "words": 517
+  },
+  {
+    "title": "Jay Kreps appointed to Anthropic's Board of Directors",
+    "url": "https://www.anthropic.com/news/jay-kreps-appointed-to-board-of-directors",
+    "section": "news",
+    "filename": "news--jay-kreps-appointed-to-board-of-directors.md",
+    "words": 455
+  },
+  {
+    "title": "Krishna Rao joins Anthropic as Chief Financial Officer",
+    "url": "https://www.anthropic.com/news/krishna-rao-joins-anthropic",
+    "section": "news",
+    "filename": "news--krishna-rao-joins-anthropic.md",
+    "words": 419
+  },
+  {
+    "title": "Lawrence Livermore National Laboratory expands Claude for Enterprise use to empower scientists and researchers",
+    "url": "https://www.anthropic.com/news/lawrence-livermore-national-laboratory-expands-claude-for-enterprise-to-empower-scientists-and",
+    "section": "news",
+    "filename": "news--lawrence-livermore-national-laboratory-expands-claude-for-enterprise-to-empower-scientists-and.md",
+    "words": 674
+  },
+  {
+    "title": "Lyft to bring Claude to more than 40 million riders and over 1 million drivers",
+    "url": "https://www.anthropic.com/news/lyft-announcement",
+    "section": "news",
+    "filename": "news--lyft-announcement.md",
+    "words": 553
+  },
+  {
+    "title": "Mariano-Florentino Cu\u00e9llar appointed to Anthropic\u2019s Long-Term Benefit Trust",
+    "url": "https://www.anthropic.com/news/mariano-florentino-long-term-benefit-trust",
+    "section": "news",
+    "filename": "news--mariano-florentino-long-term-benefit-trust.md",
+    "words": 857
+  },
+  {
+    "title": "The state of Maryland partners with Anthropic to better serve residents",
+    "url": "https://www.anthropic.com/news/maryland-partnership",
+    "section": "news",
+    "filename": "news--maryland-partnership.md",
+    "words": 457
+  },
+  {
+    "title": "Microsoft, NVIDIA, and Anthropic announce strategic partnerships",
+    "url": "https://www.anthropic.com/news/microsoft-nvidia-anthropic-announce-strategic-partnerships",
+    "section": "news",
+    "filename": "news--microsoft-nvidia-anthropic-announce-strategic-partnerships.md",
+    "words": 380
+  },
+  {
+    "title": "Mike Krieger joins Anthropic as Chief Product Officer",
+    "url": "https://www.anthropic.com/news/mike-krieger-joins-anthropic",
+    "section": "news",
+    "filename": "news--mike-krieger-joins-anthropic.md",
+    "words": 342
+  },
+  {
+    "title": "Introducing the Model Context Protocol",
+    "url": "https://www.anthropic.com/news/model-context-protocol",
+    "section": "news",
+    "filename": "news--model-context-protocol.md",
+    "words": 696
+  },
+  {
+    "title": "Expanding our model safety bug bounty program",
+    "url": "https://www.anthropic.com/news/model-safety-bug-bounty",
+    "section": "news",
+    "filename": "news--model-safety-bug-bounty.md",
+    "words": 748
+  },
+  {
     "title": "Anthropic signs MOU with UK Government to explore how AI can transform UK public services",
     "url": "https://www.anthropic.com/news/mou-uk-government",
     "section": "news",
     "filename": "news--mou-uk-government.md",
     "words": 520
+  },
+  {
+    "title": "Partnering with Mozilla to improve Firefox\u2019s security",
+    "url": "https://www.anthropic.com/news/mozilla-firefox-security",
+    "section": "news",
+    "filename": "news--mozilla-firefox-security.md",
+    "words": 1983
+  },
+  {
+    "title": "National security expert Richard Fontaine appointed to Anthropic\u2019s long-term benefit trust",
+    "url": "https://www.anthropic.com/news/national-security-expert-richard-fontaine-appointed-to-anthropic-s-long-term-benefit-trust",
+    "section": "news",
+    "filename": "news--national-security-expert-richard-fontaine-appointed-to-anthropic-s-long-term-benefit-trust.md",
+    "words": 506
+  },
+  {
+    "title": "New offices in Paris and Munich expand Anthropic\u2019s European presence",
+    "url": "https://www.anthropic.com/news/new-offices-in-paris-and-munich-expand-european-presence",
+    "section": "news",
+    "filename": "news--new-offices-in-paris-and-munich-expand-european-presence.md",
+    "words": 809
+  },
+  {
+    "title": "Offering expanded Claude access across all three branches of the U.S. government",
+    "url": "https://www.anthropic.com/news/offering-expanded-claude-access-across-all-three-branches-of-government",
+    "section": "news",
+    "filename": "news--offering-expanded-claude-access-across-all-three-branches-of-government.md",
+    "words": 609
+  },
+  {
+    "title": "Anthropic officially opens Tokyo office, signs Memorandum of Cooperation with the Japan AI Safety Institute",
+    "url": "https://www.anthropic.com/news/opening-our-tokyo-office",
+    "section": "news",
+    "filename": "news--opening-our-tokyo-office.md",
+    "words": 754
+  },
+  {
+    "title": "Our approach to understanding and addressing AI harms",
+    "url": "https://www.anthropic.com/news/our-approach-to-understanding-and-addressing-ai-harms",
+    "section": "news",
+    "filename": "news--our-approach-to-understanding-and-addressing-ai-harms.md",
+    "words": 978
+  },
+  {
+    "title": "Our framework for developing safe and trustworthy agents",
+    "url": "https://www.anthropic.com/news/our-framework-for-developing-safe-and-trustworthy-agents",
+    "section": "news",
+    "filename": "news--our-framework-for-developing-safe-and-trustworthy-agents.md",
+    "words": 1423
+  },
+  {
+    "title": "Statement from Dario Amodei on the Paris AI Action Summit",
+    "url": "https://www.anthropic.com/news/paris-ai-summit",
+    "section": "news",
+    "filename": "news--paris-ai-summit.md",
+    "words": 681
+  },
+  {
+    "title": "Partnering with Scale to Bring Generative AI to Enterprises",
+    "url": "https://www.anthropic.com/news/partnering-with-scale",
+    "section": "news",
+    "filename": "news--partnering-with-scale.md",
+    "words": 331
+  },
+  {
+    "title": "Paul Smith to join Anthropic as Chief Commercial Officer",
+    "url": "https://www.anthropic.com/news/paul-smith-to-join-anthropic",
+    "section": "news",
+    "filename": "news--paul-smith-to-join-anthropic.md",
+    "words": 337
+  },
+  {
+    "title": "Thoughts on the US Executive Order, G7 Code of Conduct, and Bletchley Park Summit",
+    "url": "https://www.anthropic.com/news/policy-recap-q4-2023",
+    "section": "news",
+    "filename": "news--policy-recap-q4-2023.md",
+    "words": 986
   },
   {
     "title": "Measuring political bias in Claude",
@@ -516,6 +1216,272 @@
     "section": "news",
     "filename": "news--projects.md",
     "words": 729
+  },
+  {
+    "title": "Prompt engineering for business performance",
+    "url": "https://www.anthropic.com/news/prompt-engineering-for-business-performance",
+    "section": "news",
+    "filename": "news--prompt-engineering-for-business-performance.md",
+    "words": 1431
+  },
+  {
+    "title": "Prompt engineering for Claude's long context window",
+    "url": "https://www.anthropic.com/news/prompting-long-context",
+    "section": "news",
+    "filename": "news--prompting-long-context.md",
+    "words": 1749
+  },
+  {
+    "title": "Protecting the wellbeing of our users",
+    "url": "https://www.anthropic.com/news/protecting-well-being-of-users",
+    "section": "news",
+    "filename": "news--protecting-well-being-of-users.md",
+    "words": 2094
+  },
+  {
+    "title": "Rahul Patil joins Anthropic as Chief Technology Officer",
+    "url": "https://www.anthropic.com/news/rahul-patil-joins-anthropic",
+    "section": "news",
+    "filename": "news--rahul-patil-joins-anthropic.md",
+    "words": 359
+  },
+  {
+    "title": "Reed Hastings appointed to Anthropic\u2019s board of directors",
+    "url": "https://www.anthropic.com/news/reed-hastings",
+    "section": "news",
+    "filename": "news--reed-hastings.md",
+    "words": 490
+  },
+  {
+    "title": "Reflections on our Responsible Scaling Policy",
+    "url": "https://www.anthropic.com/news/reflections-on-our-responsible-scaling-policy",
+    "section": "news",
+    "filename": "news--reflections-on-our-responsible-scaling-policy.md",
+    "words": 3771
+  },
+  {
+    "title": "Releasing Claude Instant 1.2",
+    "url": "https://www.anthropic.com/news/releasing-claude-instant-1-2",
+    "section": "news",
+    "filename": "news--releasing-claude-instant-1-2.md",
+    "words": 269
+  },
+  {
+    "title": "Anthropic\u2019s Responsible Scaling Policy: Version 3.0",
+    "url": "https://www.anthropic.com/news/responsible-scaling-policy-v3",
+    "section": "news",
+    "filename": "news--responsible-scaling-policy-v3.md",
+    "words": 2455
+  },
+  {
+    "title": "Anthropic partners with Rwandan Government and ALX to bring AI education to hundreds of thousands of learners across Africa",
+    "url": "https://www.anthropic.com/news/rwandan-government-partnership-ai-education",
+    "section": "news",
+    "filename": "news--rwandan-government-partnership-ai-education.md",
+    "words": 947
+  },
+  {
+    "title": "Anthropic and Salesforce expand partnership to bring Claude to regulated industries",
+    "url": "https://www.anthropic.com/news/salesforce-anthropic-expanded-partnership",
+    "section": "news",
+    "filename": "news--salesforce-anthropic-expanded-partnership.md",
+    "words": 842
+  },
+  {
+    "title": "Salesforce teams up with Anthropic to enhance Einstein capabilities with Claude",
+    "url": "https://www.anthropic.com/news/salesforce-partnership",
+    "section": "news",
+    "filename": "news--salesforce-partnership.md",
+    "words": 576
+  },
+  {
+    "title": "Securing America's compute advantage: Anthropic\u2019s position on the diffusion rule",
+    "url": "https://www.anthropic.com/news/securing-america-s-compute-advantage-anthropic-s-position-on-the-diffusion-rule",
+    "section": "news",
+    "filename": "news--securing-america-s-compute-advantage-anthropic-s-position-on-the-diffusion-rule.md",
+    "words": 907
+  },
+  {
+    "title": "Seoul becomes Anthropic\u2019s third office in Asia-Pacific as we continue our international growth",
+    "url": "https://www.anthropic.com/news/seoul-becomes-third-anthropic-office-in-asia-pacific",
+    "section": "news",
+    "filename": "news--seoul-becomes-third-anthropic-office-in-asia-pacific.md",
+    "words": 581
+  },
+  {
+    "title": "ServiceNow chooses Claude to power customer apps and increase internal productivity",
+    "url": "https://www.anthropic.com/news/servicenow-anthropic-claude",
+    "section": "news",
+    "filename": "news--servicenow-anthropic-claude.md",
+    "words": 907
+  },
+  {
+    "title": "SKT Partnership Announcement",
+    "url": "https://www.anthropic.com/news/skt-partnership-announcement",
+    "section": "news",
+    "filename": "news--skt-partnership-announcement.md",
+    "words": 362
+  },
+  {
+    "title": "Snowflake and Anthropic announce $200 million partnership to bring agentic AI to global enterprises",
+    "url": "https://www.anthropic.com/news/snowflake-anthropic-expanded-partnership",
+    "section": "news",
+    "filename": "news--snowflake-anthropic-expanded-partnership.md",
+    "words": 882
+  },
+  {
+    "title": "Statement on the comments from Secretary of War Pete Hegseth",
+    "url": "https://www.anthropic.com/news/statement-comments-secretary-war",
+    "section": "news",
+    "filename": "news--statement-comments-secretary-war.md",
+    "words": 609
+  },
+  {
+    "title": "A statement from Dario Amodei on Anthropic's commitment to American AI leadership",
+    "url": "https://www.anthropic.com/news/statement-dario-amodei-american-ai-leadership",
+    "section": "news",
+    "filename": "news--statement-dario-amodei-american-ai-leadership.md",
+    "words": 1300
+  },
+  {
+    "title": "Statement from Dario Amodei on our discussions with the Department of War",
+    "url": "https://www.anthropic.com/news/statement-department-of-war",
+    "section": "news",
+    "filename": "news--statement-department-of-war.md",
+    "words": 890
+  },
+  {
+    "title": "Progress from our Frontier Red Team",
+    "url": "https://www.anthropic.com/news/strategic-warning-for-ai-risk-progress-and-insights-from-our-frontier-red-team",
+    "section": "news",
+    "filename": "news--strategic-warning-for-ai-risk-progress-and-insights-from-our-frontier-red-team.md",
+    "words": 1423
+  },
+  {
+    "title": "Strengthening our safeguards through collaboration with US CAISI and UK AISI",
+    "url": "https://www.anthropic.com/news/strengthening-our-safeguards-through-collaboration-with-us-caisi-and-uk-aisi",
+    "section": "news",
+    "filename": "news--strengthening-our-safeguards-through-collaboration-with-us-caisi-and-uk-aisi.md",
+    "words": 1100
+  },
+  {
+    "title": "Sydney will become Anthropic\u2019s fourth office in Asia-Pacific",
+    "url": "https://www.anthropic.com/news/sydney-fourth-office-asia-pacific",
+    "section": "news",
+    "filename": "news--sydney-fourth-office-asia-pacific.md",
+    "words": 474
+  },
+  {
+    "title": "Testing and mitigating elections-related risks",
+    "url": "https://www.anthropic.com/news/testing-and-mitigating-elections-related-risks",
+    "section": "news",
+    "filename": "news--testing-and-mitigating-elections-related-risks.md",
+    "words": 2627
+  },
+  {
+    "title": "Testing our safety defenses with a new bug bounty program",
+    "url": "https://www.anthropic.com/news/testing-our-safety-defenses-with-a-new-bug-bounty-program",
+    "section": "news",
+    "filename": "news--testing-our-safety-defenses-with-a-new-bug-bounty-program.md",
+    "words": 567
+  },
+  {
+    "title": "The Anthropic Economic Index",
+    "url": "https://www.anthropic.com/news/the-anthropic-economic-index",
+    "section": "news",
+    "filename": "news--the-anthropic-economic-index.md",
+    "words": 1883
+  },
+  {
+    "title": "Introducing The Anthropic Institute",
+    "url": "https://www.anthropic.com/news/the-anthropic-institute",
+    "section": "news",
+    "filename": "news--the-anthropic-institute.md",
+    "words": 883
+  },
+  {
+    "title": "The case for targeted regulation",
+    "url": "https://www.anthropic.com/news/the-case-for-targeted-regulation",
+    "section": "news",
+    "filename": "news--the-case-for-targeted-regulation.md",
+    "words": 2638
+  },
+  {
+    "title": "The Long-Term Benefit Trust",
+    "url": "https://www.anthropic.com/news/the-long-term-benefit-trust",
+    "section": "news",
+    "filename": "news--the-long-term-benefit-trust.md",
+    "words": 2043
+  },
+  {
+    "title": "The need for transparency in Frontier AI",
+    "url": "https://www.anthropic.com/news/the-need-for-transparency-in-frontier-ai",
+    "section": "news",
+    "filename": "news--the-need-for-transparency-in-frontier-ai.md",
+    "words": 975
+  },
+  {
+    "title": "Third-party testing as a key ingredient of AI policy",
+    "url": "https://www.anthropic.com/news/third-party-testing",
+    "section": "news",
+    "filename": "news--third-party-testing.md",
+    "words": 3663
+  },
+  {
+    "title": "Thoughts on America\u2019s AI Action Plan",
+    "url": "https://www.anthropic.com/news/thoughts-on-america-s-ai-action-plan",
+    "section": "news",
+    "filename": "news--thoughts-on-america-s-ai-action-plan.md",
+    "words": 1352
+  },
+  {
+    "title": "Dario Amodei\u2019s prepared remarks from the AI Safety Summit on Anthropic\u2019s Responsible Scaling Policy",
+    "url": "https://www.anthropic.com/news/uk-ai-safety-summit",
+    "section": "news",
+    "filename": "news--uk-ai-safety-summit.md",
+    "words": 1185
+  },
+  {
+    "title": "Updates to Consumer Terms and Privacy Policy",
+    "url": "https://www.anthropic.com/news/updates-to-our-consumer-terms",
+    "section": "news",
+    "filename": "news--updates-to-our-consumer-terms.md",
+    "words": 1303
+  },
+  {
+    "title": "Updating our Usage Policy",
+    "url": "https://www.anthropic.com/news/updating-our-usage-policy",
+    "section": "news",
+    "filename": "news--updating-our-usage-policy.md",
+    "words": 755
+  },
+  {
+    "title": "Updating restrictions of sales to unsupported regions",
+    "url": "https://www.anthropic.com/news/updating-restrictions-of-sales-to-unsupported-regions",
+    "section": "news",
+    "filename": "news--updating-restrictions-of-sales-to-unsupported-regions.md",
+    "words": 431
+  },
+  {
+    "title": "U.S. Elections Readiness",
+    "url": "https://www.anthropic.com/news/us-elections-readiness",
+    "section": "news",
+    "filename": "news--us-elections-readiness.md",
+    "words": 951
+  },
+  {
+    "title": "Usage policy update",
+    "url": "https://www.anthropic.com/news/usage-policy-update",
+    "section": "news",
+    "filename": "news--usage-policy-update.md",
+    "words": 653
+  },
+  {
+    "title": "Where things stand with the Department of War",
+    "url": "https://www.anthropic.com/news/where-stand-department-war",
+    "section": "news",
+    "filename": "news--where-stand-department-war.md",
+    "words": 707
   },
   {
     "title": "Zoom Partnership and Investment in Anthropic",

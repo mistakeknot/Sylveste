@@ -1,0 +1,81 @@
+# Calibration stages per PHILOSOPHY.md's 4-stage closed-loop pattern:
+# 1: Hardcoded defaults
+# 2: Collect actuals
+# 3: Calibrate from history
+# 4: Defaults become fallback
+#
+# Source of truth for /clavain:doctor calibration check.
+# Update this file when a domain advances stages.
+
+domains:
+  cost_estimation:
+    description: "Sprint/phase cost prediction"
+    prediction: "phaseCostEstimate()"
+    current_stage: 2
+    evidence:
+      stage_1: "os/Clavain/config/budget.yaml (hardcoded defaults)"
+      stage_2: "interverse/interstat — per-phase token actuals collected"
+      stage_3: null
+      stage_4: null
+    next_step: "calibrate-phase-costs reads interstat history to adjust estimates"
+    related_bead: null
+
+  agent_routing:
+    description: "Model tier selection for agent dispatch"
+    prediction: "selectQuality() model tier"
+    current_stage: 2
+    evidence:
+      stage_1: "os/Clavain/config/routing.yaml (tier defaults)"
+      stage_2: "interspect canary monitoring collects post-dispatch outcomes"
+      stage_3: null
+      stage_4: null
+    next_step: "interspect evidence → automatic routing override adjustments"
+    related_bead: null
+
+  complexity_scoring:
+    description: "Task complexity classification"
+    prediction: "classifyComplexity()"
+    current_stage: 1
+    evidence:
+      stage_1: "core/intercore complexity classifier (hardcoded thresholds)"
+      stage_2: null
+      stage_3: null
+      stage_4: null
+    next_step: "instrument actual sprint duration/tokens alongside predictions"
+    related_bead: null
+
+  review_triage:
+    description: "Agent relevance scoring for review findings"
+    prediction: "agent relevance scores"
+    current_stage: 3
+    evidence:
+      stage_1: "interflux default relevance weights"
+      stage_2: "interspect evidence tracks which findings got acted on"
+      stage_3: "interspect evidence → routing override proposals (calibration active, human-approved)"
+      stage_4: null
+    next_step: "automate override promotion (currently requires human approval via _interspect_apply_propose)"
+    related_bead: null
+
+  gate_thresholds:
+    description: "Phase gate pass/fail thresholds"
+    prediction: "gate hardness levels"
+    current_stage: 2
+    evidence:
+      stage_1: "interphase hardcoded gate thresholds (TierHard/TierSoft)"
+      stage_2: "Demarch-0rgc: outcome recording schema + shadow mode active"
+      stage_3: null
+      stage_4: null
+    next_step: "promote B3 calibration from shadow — threshold tuning from outcomes"
+    related_bead: "Demarch-0rgc"
+
+  fleet_budgets:
+    description: "Agent token budget estimation"
+    prediction: "agent token estimates"
+    current_stage: 4
+    evidence:
+      stage_1: "os/Clavain/config/budget.yaml defaults"
+      stage_2: "interstat per-agent token actuals"
+      stage_3: "scan-fleet.sh --enrich-costs calibrates from history"
+      stage_4: "estimate-costs.sh falls back to budget.yaml when no history"
+    next_step: "complete — monitor for regression"
+    related_bead: null

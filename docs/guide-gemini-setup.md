@@ -18,12 +18,12 @@ Since Gemini CLI uses specialized `SKILL.md` instructions dynamically generated 
    ```
 
 2. **Run the Gemini Installer**
-   This script will compile the phase documents into Gemini skills and link them globally:
+   This script will compile the phase documents into Gemini skills, generate Gemini slash-command wrappers from Demarch `commands/*.md`, and link both globally:
    ```bash
    bash scripts/install-gemini-interverse.sh install
    ```
 
-This generates all the required `SKILL.md` files locally and registers the directory (`~/.local/share/Demarch/.gemini/generated-skills`) to your global `~/.gemini/skills` directory so you can invoke them via `gemini` in any project workspace.
+This generates all the required `SKILL.md` files locally, generates project commands in `~/.local/share/Demarch/.gemini/commands`, registers the skills directory (`~/.local/share/Demarch/.gemini/generated-skills`) to your global `~/.gemini/skills` directory, and symlinks each command namespace into `~/.gemini/commands`.
 
 ## Verify
 
@@ -34,6 +34,14 @@ gemini skills list --all
 ```
 
 You should see `clavain`, `interdoc`, `tool-time`, `interflux`, and the rest of the Interverse companion skills in the list.
+
+Check that the commands were generated:
+
+```bash
+find ~/.gemini/commands -maxdepth 2 -type f -name '*.toml' | rg 'clavain|interflux|interpath'
+```
+
+If Gemini is already running, use `/commands reload` to refresh command discovery without restarting the CLI.
 
 ## Update
 
@@ -59,6 +67,10 @@ Then you may safely remove the `Demarch` clone directory.
 
 ## Working with Clavain in Gemini CLI
 
-Gemini CLI works directly with standard Bash commands via `run_command` tools and doesn't rely on Claude Code slash commands like `/clavain:route`.
+Gemini CLI supports Demarch slash commands through custom `.toml` command files. Namespaced paths under `.gemini/commands/` map directly to slash commands:
 
-To use your installed skills, you can use the built-in global `activate_skill` tool or let the Gemini CLI autonomously utilize them depending on the task context. 
+- `.gemini/commands/clavain/route.toml` → `/clavain:route`
+- `.gemini/commands/interflux/flux-drive.toml` → `/interflux:flux-drive`
+- `.gemini/commands/interpath/roadmap.toml` → `/interpath:roadmap`
+
+To use the installed skills directly, you can also use the built-in `activate_skill` tool or let Gemini autonomously activate them depending on the task context.

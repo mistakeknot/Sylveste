@@ -80,6 +80,11 @@ The exact companion set is intentionally dynamic: it follows the current recomme
 
 Clavain commands are also available as prompt wrappers in `~/.codex/prompts/clavain-*.md`, and companion commands are generated as `~/.codex/prompts/<plugin>-<command>.md`.
 
+The installer also generates namespaced prompt aliases so the prompt namespace is easier to search and remember:
+
+- `~/.codex/prompts/clavain:sprint.md` → `/prompts:clavain:sprint`
+- `~/.codex/prompts/interflux:flux-drive.md` → `/prompts:interflux:flux-drive`
+
 ## Verify
 
 ```bash
