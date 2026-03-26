@@ -248,6 +248,28 @@ Each is an interlab experiment campaign on interfere:
 - arXiv 2504.17768: The Sparse Frontier — Sparse Attention Trade-offs
 - KVSplit: Differentiated KV cache precision for Apple Silicon
 
+### Round 2: Implementation
+- mlx-lm generate.py source, SERVER.md, cache module (github.com/ml-explore/mlx-lm)
+- mlx-openai-server: multiprocessing spawn pattern (github.com/cubist38/mlx-openai-server)
+- vMLX: continuous batching + paged KV (github.com/jjang-ai/vmlx)
+- agent-memory: Persistent Q4 KV Cache (arXiv 2603.04428, github.com/yshk-mxim/agent-memory)
+- oMLX: SSD paging, CoW prefix sharing (github.com/jundot/omlx)
+- arXiv 2412.01455: Early Exit Is a Natural Capability in Transformers
+- arXiv 2603.21365: TIDE — Token-Informed Depth Execution
+- LayerSkip: Early Exit and Self-Speculative Decoding (ACL 2024)
+- AMRO-S implementation details (arXiv 2603.12933)
+- RouteLLM BERT throughput benchmarks (arXiv 2406.18665)
+- MInference 1.0: Dynamic Sparse Attention (NeurIPS 2024)
+- MAPS: Inferring Functionality of Attention Heads (ACL 2025)
+- Language Modeling Is Compression (ICLR 2024, DeepMind)
+- KVFlow: Prefix Caching for Multi-Agent Workflows (NeurIPS 2025)
+- Activation Steering (ACL 2024)
+- KVSplit implementation (github.com/dipampaul17/KVSplit)
+- KIVI: KV Cache Quantization (ICML 2024)
+- Apple Speculative Streaming source (github.com/apple/ml-speculative-streaming) — PyTorch only
+- mlx-lm issue #980: prefix caching broken for hybrid models
+- mlx-lm issue #883: IOGPUMemory kernel panic from unbounded KV growth
+
 ### Clavain Integration Points
 - `os/Clavain/config/routing.yaml` — 4-track routing configuration
 - `os/Clavain/scripts/lib-routing.sh` — Model resolution library
