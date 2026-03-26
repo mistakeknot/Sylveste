@@ -1,0 +1,296 @@
+{
+  "reviewed": "2026-03-26",
+  "plan": "docs/plans/2026-03-26-event-envelope-v2.md",
+  "bead": "Demarch-og7m.2.1",
+  "agents_launched": 7,
+  "agents_complete": 7,
+  "agents_complete_list": [
+    "fd-architecture",
+    "fd-correctness",
+    "fd-quality",
+    "fd-schema-evolution",
+    "fd-envelope-semantics",
+    "fd-payload-typing",
+    "fd-json-schema-gen"
+  ],
+  "agents_failed": 0,
+  "verdict": "risky",
+  "consensus": {
+    "blocking_issues": 3,
+    "important_issues": 5,
+    "informational_issues": 8
+  },
+  "findings": [
+    {
+      "id": "C1",
+      "severity": "P1",
+      "title": "MarshalEnvelopeV2JSON mutates caller's struct in place",
+      "section": "Task 2: MarshalEnvelopeV2JSON",
+      "agents": [
+        "fd-architecture (A4)",
+        "fd-correctness (C1)",
+        "fd-quality (Q-01)",
+        "fd-payload-typing (P3)",
+        "fd-json-schema-gen (P2)"
+      ],
+      "convergence": 5,
+      "description": "The function sets e.Version = 2 as a side effect, violating marshal-is-read-only convention. Breaks round-trip fidelity, concurrent safety, and caller expectations.",
+      "minimal_fix": "Replace mutation with stack copy: out := *e; if out.Version == 0 { out.Version = 2 }; json.Marshal(&out)",
+      "blocks_implementation": true
+    },
+    {
+      "id": "C2",
+      "severity": "P1",
+      "title": "v1 fallback silently drops 5-6 live fields (P0 per fd-schema-evolution)",
+      "section": "Task 2: ParseEnvelopeV2JSON v1 fallback",
+      "agents": [
+        "fd-architecture (A1)",
+        "fd-correctness (C2)",
+        "fd-schema-evolution (Finding 1)",
+        "fd-envelope-semantics (S2)",
+        "fd-payload-typing (Finding 2)"
+      ],
+      "convergence": 6,
+      "description": "Fields dropped: PolicyVersion, CapabilityScope, InputArtifactRefs, OutputArtifactRefs, RequestedSandbox, EffectiveSandbox. Active consumers: replay/reconstruct.go reads InputArtifactRefs/OutputArtifactRefs for timeline; store_test asserts sandbox non-empty; all writers produce PolicyVersion.",
+      "concrete_failure": "dispatch_events row with requested_sandbox parsed via v1 fallback loses sandbox data. After og7m.2.2 lands and scanEvents switches to v2 parsing, all v1 rows report empty sandboxes.",
+      "fix_options": [
+        "Option A (preferred): Store entire v1 JSON as Payload (round-trip safe)",
+        "Option B: Map all six fields into top-level EventEnvelopeV2",
+        "Option C: Document that Version=1 callers MUST fall back to ParseEnvelopeJSON (unsafe during migration)"
+      ],
+      "blocks_implementation": true
+    },
+    {
+      "id": "C3",
+      "severity": "P1",
+      "title": "scanEvents calls v1 parser — v2 envelopes silently zero after og7m.2.2",
+      "section": "Task 2 (cross-cutting) and store.go scanEvents",
+      "agents": [
+        "fd-correctness (C3)",
+        "fd-schema-evolution (Finding 2)",
+        "fd-envelope-semantics (implicit)",
+        "fd-payload-typing (P4)"
+      ],
+      "convergence": 4,
+      "description": "When og7m.2.2 writes v2 blobs with only payload (no tracing fields), v1 parser sees IsZero()=true and returns nil. All new rows lose their envelope. TestListEvents_CausalReconstructionByTraceID fails in production.",
+      "migration_contract_required": "og7m.2.2 must NOT land until og7m.2.x (Event.Envelope type upgrade + scanEvents migration to v2) completes",
+      "minimal_fix": "Add explicit TODO comment linking og7m.2.2 dependency, or include compile-time gate",
+      "blocks_implementation": false,
+      "blocks_og7m_2_2": true
+    },
+    {
+      "id": "P2-1",
+      "severity": "P2",
+      "title": "phaseEventEnvelope shadow type unaddressed",
+      "section": "core/intercore/internal/phase/event_envelope.go",
+      "agents": [
+        "fd-architecture (A2)",
+        "fd-correctness (implicit C7)",
+        "fd-schema-evolution (Finding 6)"
+      ],
+      "convergence": 3,
+      "description": "Private duplicate of EventEnvelope (8 vs 10 fields, missing RequestedSandbox/EffectiveSandbox). Marshals independently. After v2 lands, three parallel types exist with no consolidation plan.",
+      "fix": "Add // TODO(og7m.2.2): replace with event.EventEnvelopeV2 and include elimination in og7m.2.2 scope"
+    },
+    {
+      "id": "P2-2",
+      "severity": "P2",
+      "title": "Payload type discriminator absent from envelope",
+      "section": "Task 1: Payload types + envelope definition",
+      "agents": [
+        "fd-architecture (A3)",
+        "fd-envelope-semantics (S7)",
+        "fd-payload-typing (P1)",
+        "fd-quality (implicit)"
+      ],
+      "convergence": 4,
+      "description": "Three typed payloads share untyped json.RawMessage with no type/kind field. Caller must know type from Event.Source. No runtime dispatch capability.",
+      "impact": [
+        "No runtime dispatch without Event.Source coupling",
+        "Schema is non-self-describing",
+        "Future extensibility risk (field collisions)"
+      ],
+      "minimal_fix": "Add PayloadType string json:\"payload_type,omitempty\" with values 'phase', 'dispatch', 'coordination', ''"
+    },
+    {
+      "id": "P2-3",
+      "severity": "P2",
+      "title": "PhasePayload duplicates Event.FromState/ToState (semantic double-write)",
+      "section": "Task 1: PhasePayload, DispatchPayload definitions",
+      "agents": [
+        "fd-correctness (C5)",
+        "fd-envelope-semantics (S1)",
+        "fd-payload-typing (implicit)"
+      ],
+      "convergence": 3,
+      "description": "PhasePayload.FromPhase/ToPhase duplicate Event.FromState/ToState. DispatchPayload.FromStatus/ToStatus duplicate the same. Creates two sources of truth with no consistency invariant.",
+      "risk": "Writer bug populates payload and column differently with no detector",
+      "fix_options": [
+        "Remove payload fields (keep only on Event)",
+        "Document that payload is canonical and Event is denormalized copy, with single writer function"
+      ]
+    },
+    {
+      "id": "P2-4",
+      "severity": "P2",
+      "title": "MarshalEnvelopeV2JSON has no IsZero guard",
+      "section": "Task 2: MarshalEnvelopeV2JSON",
+      "agents": [
+        "fd-correctness (C6)",
+        "fd-envelope-semantics (implicit)"
+      ],
+      "convergence": 2,
+      "description": "v1 returns nil,nil for zero envelopes (stored as NULL). v2 marshals zero-value as {\"v\":2}. Asymmetric with v1 behavior.",
+      "impact": "scanEvents (C3) will parse {\"v\":2} with v1 parser, trigger IsZero, and discard silently",
+      "fix": "Add IsZero() check to EventEnvelopeV2 and guard marshal"
+    },
+    {
+      "id": "P2-5",
+      "severity": "P2",
+      "title": "Version=0 serializes as \"v\":0 without omitempty",
+      "section": "Task 1: EventEnvelopeV2 struct definition",
+      "agents": [
+        "fd-correctness (C4)",
+        "fd-payload-typing (Finding 3)"
+      ],
+      "convergence": 2,
+      "description": "Version int json:\"v\" has no omitempty. Zero-value serializes as {\"v\":0,...}, which parses as v1 with Version=1. Round-trip break.",
+      "fix": "Add omitempty to Version tag: json:\"v,omitempty\""
+    },
+    {
+      "id": "P2-6",
+      "severity": "P2",
+      "title": "ParsePayload returns nil,nil for missing; indistinguishable from zero-value",
+      "section": "Task 2: ParsePayload[T] generic",
+      "agents": [
+        "fd-payload-typing (P2)",
+        "fd-json-schema-gen (implicit)"
+      ],
+      "convergence": 2,
+      "description": "Returns (nil, nil) for absent payload. Same return for zero-value struct (PhasePayload{}). Caller cannot distinguish 'no payload' from 'zero-value payload'.",
+      "fix_options": [
+        "Add IsZero() to payload types and have marshal check it",
+        "Document that zero-value payloads are semantically valid, callers must use nil to signal absence"
+      ]
+    },
+    {
+      "id": "P3-1",
+      "severity": "P3",
+      "title": "json.RawMessage renders as 'true' in schema, not '{}'",
+      "section": "Task 3: contracts/registry.go schema generation",
+      "agents": [
+        "fd-json-schema-gen (Finding 1)",
+        "fd-quality (implicit)"
+      ],
+      "convergence": 2,
+      "description": "invopop/jsonschema special-cases json.RawMessage as \"payload\": true (meaning 'any value'), not empty object. Both are semantically equivalent in JSON Schema 2020-12.",
+      "fix": "Document in contracts/events/README.md"
+    },
+    {
+      "id": "P3-2",
+      "severity": "P3",
+      "title": "Schema additionalProperties:false blocks v1 cross-validation",
+      "section": "Task 3: Generated v2 schema",
+      "agents": [
+        "fd-json-schema-gen (Finding 6)",
+        "fd-architecture (implicit)"
+      ],
+      "convergence": 2,
+      "description": "Generated v2 schema has additionalProperties:false, which rejects v1 documents. But Go code accepts both via fallback parsing. Mismatch between schema and runtime.",
+      "fix_options": [
+        "Document that schema validation should be skipped during v1→v2 migration",
+        "Publish event-envelope-any.json schema accepting either version"
+      ]
+    },
+    {
+      "id": "P3-3",
+      "severity": "P3",
+      "title": "json:\"v\" diverges from package naming convention",
+      "section": "Task 1: EventEnvelopeV2 struct, Version field",
+      "agents": [
+        "fd-quality (Q-03)",
+        "fd-architecture (implicit)"
+      ],
+      "convergence": 2,
+      "description": "All v1 fields use full snake_case (policy_version, caller_identity, trace_id). New Version field uses single-letter 'v'. Breaks consistency.",
+      "fix": "Use json:\"version\" or document abbreviation rationale"
+    },
+    {
+      "id": "P3-4",
+      "severity": "P3",
+      "title": "Generated schemas are structurally unlinked",
+      "section": "Task 3: contracts/registry.go",
+      "agents": [
+        "fd-architecture (Finding 5)",
+        "fd-payload-typing (implicit)"
+      ],
+      "convergence": 2,
+      "description": "Four contract entries (event-envelope-v2, phase-payload, dispatch-payload, coordination-payload) generate independent files with no oneOf references",
+      "fix": "Add oneOf annotation or document in contracts/events/README.md that schemas form a group"
+    },
+    {
+      "id": "P3-5",
+      "severity": "P3",
+      "title": "Test fixtures missing for v1 fallback cases",
+      "section": "Task 4: Test specification",
+      "agents": [
+        "fd-quality (Q-04)"
+      ],
+      "convergence": 1,
+      "description": "Plan lists 'parse actual v1 JSON' test cases without providing fixture strings. Implementor must reverse-engineer the shape.",
+      "fix": "Provide literal JSON constants in test spec"
+    },
+    {
+      "id": "P3-6",
+      "severity": "P3",
+      "title": "CapabilityScope dropped without replacement",
+      "section": "Task 2: ParseEnvelopeV2JSON v1 fallback",
+      "agents": [
+        "fd-envelope-semantics (S3)",
+        "fd-schema-evolution (Finding 1 partial)"
+      ],
+      "convergence": 2,
+      "description": "CapabilityScope carries authorization boundary (run:{id}, dispatch:{id}, scope:{scope}). Not derivable from TraceID alone.",
+      "fix": "Add to top-level fields or document as deliberately dropped (verify no consumer reads it)"
+    },
+    {
+      "id": "P3-7",
+      "severity": "P3",
+      "title": "CoordinationPayload lacks owner field",
+      "section": "Task 1: CoordinationPayload definition",
+      "agents": [
+        "fd-envelope-semantics (S5)"
+      ],
+      "convergence": 1,
+      "description": "v1 has owner AS from_state for coordination. v2 CoordinationPayload has no owner field. Forces callers to read overloaded Event.FromState.",
+      "fix": "Add Owner string json:\"owner,omitempty\" to CoordinationPayload"
+    },
+    {
+      "id": "P3-8",
+      "severity": "P3",
+      "title": "Payload types have inconsistent required-field coverage",
+      "section": "Task 3: contracts/registry.go schema generation",
+      "agents": [
+        "fd-json-schema-gen (Finding 4)"
+      ],
+      "convergence": 1,
+      "description": "PhasePayload requires from_phase/to_phase; DispatchPayload and CoordinationPayload have all fields optional",
+      "fix": "Audit against writers to determine which fields are always populated"
+    }
+  ],
+  "improvements": [],
+  "verdict_detail": {
+    "p0_count": 1,
+    "p1_count": 3,
+    "p2_count": 6,
+    "p3_count": 8,
+    "blocking_issues": 3,
+    "blocking_issue_ids": [
+      "C1",
+      "C2",
+      "P2-3"
+    ],
+    "verdict_explanation": "Three P1 blocking issues require fixes before implementation: marshal mutation, v1 field loss, and payload duplication. Five P2 important issues must be addressed before og7m.2.2. Eight P3 informational issues should be completed during schema generation.",
+    "recommend_action": "Return to author with consolidated feedback; fix C1, C2, P2-3; document P2-1, P2-2, C3; finalize P3 items before merge gate."
+  }
+}
