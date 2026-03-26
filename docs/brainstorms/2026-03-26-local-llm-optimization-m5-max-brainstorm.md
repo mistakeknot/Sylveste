@@ -172,6 +172,53 @@ Each is an interlab experiment campaign on interfere:
 
 5. **Apple Neural Engine**: M5 Max has neural accelerators in every GPU core. Can we offload embedding lookups or normalization layers to ANE while the GPU handles attention? No MLX API for this yet.
 
+## Round 2 Implementation Research Findings (2026-03-26)
+
+### Server Architecture (Confirmed)
+- **Must use `multiprocessing.get_context("spawn")`** — fork causes Metal GPU semaphore leaks on macOS
+- Pattern: Main process (Starlette HTTP) → spawned subprocess (Metal context) → inference ThreadPoolExecutor
+- **Cannot cancel mid-forward-pass** — cooperative cancellation between `generate_step` iterations only (~20ms for 30B)
+- `mx.compile(shapeless=True)` required or prefill recompiles on every sequence length
+- Metal buffers are wired (non-pageable) — OOM causes kernel panic without `mx.metal.set_memory_limit(relaxed=False)`
+
+### Early Exit (Zero Training Required)
+- Reuse the model's own LM head at intermediate layers — Qwen3 uses `tie_word_embeddings=True` so `embed_tokens.as_linear()` gives free projection
+- 88.9% of tokens do NOT need the final layer; average exit at 72% depth
+- Monkey-patch `LlamaModel.__call__` — no fork of mlx-lm needed
+- Check every 4 layers starting at 25% depth; ~0.4ms per check on M5 Max; break-even at ~1-2% of layer cost
+- Per-layer thresholds required; calibrate with 500-2000 code completions
+
+### Reservoir + ACO Routing (Concrete Numbers)
+- Qwen3-8B: hidden_dim=4096, 36 layers. Best tap: layer 24 (~67% depth)
+- MLP readout: 262K params (4096→64→K), <0.1ms, zero extra compute if model already running
+- Training: 200-500 examples per class, use Clavain's routing decisions as labels
+- ACO pheromone: ~432 floats, serialize as JSON, Thompson sampling cold start until 20+ observations
+
+### Thermal Monitoring
+- No-sudo path: `notify_register_check("com.apple.system.thermalpressurelevel")` — zero overhead, 5 levels
+- For actual temperatures: compiled IOKit helper or sudoers entry for powermetrics
+- Use notify API for detection, poll powermetrics only when Moderate+
+
+### KV Cache (Critical Updates)
+- KV serialization works natively via safetensors: `save_prompt_cache()` / `load_prompt_cache()` — 500ms reload
+- oMLX has block-level SSD paging with LRU eviction and CoW prefix sharing (90s → 1s TTFT)
+- **mlx-lm prefix caching broken** for sliding-window and hybrid models (Qwen 3.5, Gemma 3)
+- SnapKV/CAKE are closest to Hebbian warming (attention-frequency scores) — neither ported to MLX
+- KV quantization must be online (during generation), not post-hoc. Q8K/Q4V = 59% memory reduction
+
+### Speculative Decoding (Reality Check)
+- Apple's Speculative Streaming: PyTorch-only, no MLX port
+- Mirror-SD: requires separate GPU+NPU — NOT viable on single M5 Max chip
+- EAGLE-3: PyTorch-only, no MLX port, needs tree attention kernel
+- **What works on MLX today**: Classic two-model draft+verifier via mlx-lm `--draft-model`
+
+### New Esoteric Experiments from Round 2
+- **Experiment 9: Compression-Ratio Routing** — gzip on prompt (~0.1ms) as zero-shot complexity signal. DeepMind proved LLM quality = compression. Nobody has published this as routing. Novel.
+- **Experiment 10: MInference Sparse Attention** — per-head sparse patterns (NeurIPS 2024), 95% FLOP reduction in attention, 10x on long context
+- **Experiment 11: KVFlow Stigmergic Prefetch** — predict next agent from workflow graph, pre-load KV (NeurIPS 2025). 15x throughput with LMCache
+- **Experiment 12: Activation Steering for NL→Code Priming** — inject structural reasoning vectors from NL description into code gen. MAPS + activation steering (ACL 2024). Components proven, combination novel.
+- **Experiment 13: Allostatic Load Monitoring** — EWMA of (throttle events + OOM near-misses + cache eviction rate) per model instance. Swap degraded instances proactively.
+
 ## Research Sources
 
 ### MLX / Apple Silicon
