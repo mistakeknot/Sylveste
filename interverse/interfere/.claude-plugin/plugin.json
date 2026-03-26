@@ -1,0 +1,16 @@
+{
+  "name": "interfere",
+  "version": "0.1.0",
+  "description": "Local MLX-LM inference server for Apple Silicon. Custom serving layer with priority queuing, thermal-aware scheduling, and experiment hooks for Demarch/Clavain.",
+  "author": {
+    "name": "mistakeknot"
+  },
+  "license": "MIT",
+  "keywords": [
+    "inference",
+    "mlx",
+    "apple-silicon",
+    "local-model",
+    "serving"
+  ]
+}
