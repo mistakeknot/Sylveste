@@ -21,12 +21,19 @@ Beads use a two-dimensional label system. Backfill/apply with `scripts/backfill-
  | tr ' ' '\n' | sort | paste -d'  ' - - - - -
 ```
 
-**Theme labels** (`theme:<name>`) — what kind of work:
-```
-theme:tech-debt  theme:performance  theme:security  theme:ux
-theme:observability  theme:dx  theme:infra  theme:docs
-theme:testing  theme:architecture  theme:coordination  theme:research
-```
+**Theme labels** (`theme:<name>`) — cross-cutting concern the work addresses:
+
+| Theme | Covers |
+|-------|--------|
+| `theme:reliability` | Bug fixes, crash recovery, data integrity, defensive hardening |
+| `theme:architecture` | Contracts, module boundaries, consolidation, system design |
+| `theme:observability` | Metrics, cost tracking, calibration, monitoring, attribution |
+| `theme:dx` | Developer experience, docs, tooling, onboarding, quality-of-life |
+| `theme:research` | External assessments, benchmarks, discovery, SWE-bench |
+| `theme:product` | User-facing features, apps, UX |
+| `theme:autonomy` | Agent self-governance, routing, dispatch, self-modification |
+
+A bead can have multiple themes (e.g., `theme:reliability` + `theme:architecture` for a bug that required design changes). Every bead should have at least one theme.
 
 Labels are inferred from `[module]` bracket prefixes in titles and keyword patterns in title+description. The backfill script is idempotent and additive — it never removes existing labels.
 

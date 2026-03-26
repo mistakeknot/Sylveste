@@ -104,11 +104,22 @@ bd close bd-42 --reason "Completed" --json
 
 ### Priorities
 
-- `0` - Critical (security, data loss, broken builds)
-- `1` - High (major features, important bugs)
-- `2` - Medium (default, nice-to-have)
-- `3` - Low (polish, optimization)
-- `4` - Backlog (future ideas)
+Priorities encode **urgency relative to the next version gate** (see `docs/roadmap-v1.md`). The current gate is **v0.7** (A:L3 + B:L2 + C:L1).
+
+| Priority | Name | Meaning | Typical count |
+|----------|------|---------|---------------|
+| P0 | Critical | Blocks other work or causes data loss/corruption. Drop everything. | 0-2 |
+| P1 | Gate-blocking | Required to exit the current version gate. If this doesn't ship, v0.7 doesn't ship. | 10-15 |
+| P2 | Next | Valuable but not on the critical path to the current gate. Ships after P1s or in parallel if cheap. | 15-30 |
+| P3 | Later | Tracked ideas with clear value but no urgency. Revisit at next gate cycle. | any |
+| P4 | Someday | Speculative or low-signal. May never ship. | any |
+
+**Triage rules:**
+- A bead is P1 only if removing it would block a v0.7 exit criterion or is a dependency of one that does.
+- Epic children inherit their parent's priority unless individually justified higher or lower.
+- Research/assessment beads are P2 by default unless their findings are blocking a P1 decision.
+- Speculative designs (brainstorm phase, no plan) are P2 at most until a plan is reviewed.
+- Re-triage when the version gate changes (e.g., v0.7 ships → P1 set resets against v0.8 criteria).
 
 ### Workflow for AI Agents
 
