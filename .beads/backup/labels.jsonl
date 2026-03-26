@@ -812,6 +812,8 @@
 {"issue_id":"Demarch-og7m.2","label":"kernel"}
 {"issue_id":"Demarch-og7m.2","label":"theme:architecture"}
 {"issue_id":"Demarch-og7m.2.1","label":"architecture"}
+{"issue_id":"Demarch-og7m.2.1","label":"artifact_brainstorm:docs/brainstorms/2026-03-26-event-envelope-v2.md"}
+{"issue_id":"Demarch-og7m.2.1","label":"artifact_prd:docs/prd/2026-03-26-event-envelope-v2.md"}
 {"issue_id":"Demarch-og7m.2.1","label":"consolidation"}
 {"issue_id":"Demarch-og7m.2.1","label":"intercore"}
 {"issue_id":"Demarch-og7m.2.1","label":"kernel"}
@@ -976,7 +978,9 @@
 {"issue_id":"Demarch-pix4","label":"autonomy"}
 {"issue_id":"Demarch-pix4","label":"theme:autonomy"}
 {"issue_id":"Demarch-pix4","label":"theme:observability"}
+{"issue_id":"Demarch-py89","label":"artifact_plan:docs/plans/2026-03-26-bd-doctor-auto-block.md"}
 {"issue_id":"Demarch-py89","label":"observability"}
+{"issue_id":"Demarch-py89","label":"phase:done"}
 {"issue_id":"Demarch-py89","label":"safety"}
 {"issue_id":"Demarch-py89","label":"theme:reliability"}
 {"issue_id":"Demarch-py89","label":"v0.7"}
