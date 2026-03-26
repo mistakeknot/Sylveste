@@ -59,14 +59,22 @@ class InferenceEngine:
                 enabled=True,
             )
 
+        self._reservoir_cfg: ExperimentConfig | None = None
         reservoir_cfg = self._experiment_configs.get("reservoir_routing")
         if reservoir_cfg and reservoir_cfg.enabled:
-            from .experiments.reservoir_routing import ReservoirReadout
+            from .experiments.reservoir_routing import CLASS_LABELS, ReservoirReadout
 
+            num_models = int(reservoir_cfg.get("num_models", 4))
+            label_scheme = reservoir_cfg.get("label_scheme", "4class")
+            class_labels = CLASS_LABELS.get(label_scheme)
+
+            self._reservoir_cfg = reservoir_cfg
             self._reservoir_hook = ReservoirReadout(
                 hidden_dim=int(reservoir_cfg.get("hidden_dim", 4096)),
                 bottleneck=int(reservoir_cfg.get("bottleneck", 64)),
-                num_models=int(reservoir_cfg.get("num_models", 4)),
+                num_models=num_models,
+                activation=reservoir_cfg.get("activation", "relu"),
+                class_labels=class_labels,
             )
 
     @property
@@ -87,6 +95,43 @@ class InferenceEngine:
         if self._reservoir_hook is not None:
             stats["reservoir_routing"] = {"enabled": True}
         return stats
+
+    def _extract_hidden_state(self, model, tokens, tap_layer: int = 24):
+        """Run partial forward pass and return last-token hidden state at tap_layer.
+
+        Args:
+            model: mlx-lm Model object (has model.model.layers).
+            tokens: Tokenized prompt as mx.array of shape (1, seq_len).
+            tap_layer: Which transformer layer to tap (1-indexed from top).
+
+        Returns:
+            Hidden state tensor of shape (1, hidden_dim).
+
+        Raises:
+            ValueError: If tap_layer exceeds model depth.
+        """
+        import mlx.core as mx
+        from mlx_lm.models.cache import make_prompt_cache
+
+        # make_prompt_cache allocates fresh KV cache per call — these entries are
+        # local to this partial pass and do not affect stream_generate's own cache.
+        num_layers = len(model.model.layers)
+        if tap_layer > num_layers:
+            raise ValueError(
+                f"tap_layer={tap_layer} exceeds model depth ({num_layers} layers)"
+            )
+
+        h = model.model.embed_tokens(tokens)
+        cache = make_prompt_cache(model)
+
+        for i in range(tap_layer):
+            h = model.model.layers[i](h, mask=None, cache=cache[i])
+
+        # Last token attends to all prior tokens in causal models
+        hidden = h[:, -1:, :]  # (1, 1, hidden_dim) -> squeeze to (1, hidden_dim)
+        hidden = hidden.squeeze(1)
+        mx.eval(hidden)  # Materialize before returning to prevent graph bleed
+        return hidden
 
     def _ensure_loaded(self, model_name: str) -> None:
         """Load *model_name* via mlx-lm if not already cached."""
@@ -200,6 +245,20 @@ class InferenceEngine:
         # Track confidence across generation
         confidences: list[float] = []
         metrics = GenerationMetrics(kv_bits=kv_bits)
+
+        # --- Experiment hook: reservoir routing classification ---
+        if self._reservoir_hook is not None and self._reservoir_cfg is not None:
+            tokens = mx.array(tokenizer.encode(prompt))[None]
+            tap_layer = int(self._reservoir_cfg.get("layer", 24))
+            hidden = self._extract_hidden_state(model, tokens, tap_layer)
+            probs = self._reservoir_hook.classify(hidden)
+            mx.eval(probs)
+            labels = self._reservoir_hook.class_labels or [
+                f"model_{i}" for i in range(probs.shape[-1])
+            ]
+            metrics.routing_probs = {
+                label: float(probs[0, i]) for i, label in enumerate(labels)
+            }
 
         for response in stream_generate(
             model,
