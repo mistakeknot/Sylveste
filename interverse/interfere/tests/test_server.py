@@ -7,6 +7,7 @@ import json
 import httpx
 import pytest
 
+from server.__main__ import _parse_args
 from server.main import create_app
 
 
