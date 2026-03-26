@@ -1,0 +1,40 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 300
+
+stages:
+  - name: "Phase A — Foundations (parallel)"
+    tasks:
+      - id: task-1
+        title: "F1: Safety floor clamping (compose.go)"
+        files: [os/Clavain/cmd/clavain-cli/compose.go, os/Clavain/cmd/clavain-cli/compose_test.go, core/intercore/pkg/phase/phase.go]
+        depends: []
+      - id: task-2
+        title: "F3: Phase skip prevention (run.go, gate.go)"
+        files: [core/intercore/cmd/ic/run.go, core/intercore/internal/phase/gate.go]
+        depends: []
+      - id: task-3
+        title: "F4a: Phase name deduplication (clavain-cli)"
+        files: [core/intercore/pkg/phase/phase.go, os/Clavain/cmd/clavain-cli/budget.go, os/Clavain/cmd/clavain-cli/phase.go, os/Clavain/cmd/clavain-cli/policy.go, os/Clavain/cmd/clavain-cli/stats.go, os/Clavain/cmd/clavain-cli/factory_stream.go]
+        depends: []
+
+  - name: "Phase B — Safety & Governance (parallel)"
+    tasks:
+      - id: task-4
+        title: "F2: Autonomy hysteresis (lib-interspect.sh)"
+        files: [interverse/interspect/hooks/lib-interspect.sh, interverse/interspect/commands/interspect-disable-autonomy.md]
+        depends: []
+      - id: task-5
+        title: "F5: Shadow tracker enforcement (Stop hook)"
+        files: [os/Clavain/hooks/lib-shadow-tracker.sh, os/Clavain/hooks/auto-stop-actions.sh]
+        depends: []
+
+  - name: "Phase C — Routing (after F1)"
+    tasks:
+      - id: task-6
+        title: "F6: Routing always-on (Skaffen + ic route dispatch)"
+        files: [core/intercore/cmd/ic/route.go, os/Skaffen/internal/subagent/tool.go, os/Skaffen/internal/subagent/runner.go, os/Skaffen/internal/subagent/registry.go]
+        depends: [task-1]
+        tier: deep
