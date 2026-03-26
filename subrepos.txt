@@ -1,41 +1,3 @@
-#!/bin/bash
-# Clone all Demarch subrepos to match slse layout
-set -e
-cd /Users/sma/projects/Demarch
-
-# Create parent directories
-mkdir -p apps core interverse masaq os research sdk
-
-# Function to clone a repo
-clone_repo() {
-    local dir="$1"
-    local url="$2"
-    local branch="$3"
-
-    if [ -d "$dir/.git" ]; then
-        echo "SKIP $dir (already exists)"
-        return 0
-    fi
-
-    # Convert SSH URLs to HTTPS for consistency
-    url=$(echo "$url" | sed 's|git@github.com:|https://github.com/|')
-
-    if [ "$branch" = "HEAD" ] || [ -z "$branch" ]; then
-        git clone "$url" "$dir" 2>&1 && echo "OK $dir" || echo "FAIL $dir"
-    else
-        git clone -b "$branch" "$url" "$dir" 2>&1 && echo "OK $dir" || echo "FAIL $dir"
-    fi
-}
-
-export -f clone_repo
-
-# All repos as "dir|url|branch" lines
-cat <<'REPOS' | xargs -P 8 -I{} bash -c '
-    dir=$(echo "{}" | cut -d"|" -f1)
-    url=$(echo "{}" | cut -d"|" -f2)
-    branch=$(echo "{}" | cut -d"|" -f3)
-    clone_repo "$dir" "$url" "$branch"
-'
 apps/Autarch|https://github.com/mistakeknot/Autarch.git|main
 apps/interblog|https://github.com/mistakeknot/interblog.git|main
 apps/Intercom|https://github.com/mistakeknot/intercom.git|main
@@ -146,7 +108,3 @@ research/slb|https://github.com/Dicklesworthstone/slb.git|main
 research/ultimate_bug_scanner|https://github.com/Dicklesworthstone/ultimate_bug_scanner.git|master
 research/your-source-to-prompt.html|https://github.com/Dicklesworthstone/your-source-to-prompt.html.git|main
 sdk/interbase|https://github.com/mistakeknot/interbase.git|main
-REPOS
-
-echo ""
-echo "=== Done ==="
