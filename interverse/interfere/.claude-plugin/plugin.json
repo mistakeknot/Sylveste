@@ -12,5 +12,18 @@
     "apple-silicon",
     "local-model",
     "serving"
-  ]
+  ],
+  "mcpServers": {
+    "interfere": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        "-m",
+        "server.mcp"
+      ],
+      "cwd": "${CLAUDE_PLUGIN_ROOT}"
+    }
+  }
 }
