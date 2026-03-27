@@ -1,1 +1,0 @@
-{"mtime_ns":1772398344047325077,"size":70,"module_info":{"file_path":"/home/mk/projects/Demarch/research/gpt-researcher/gpt_researcher/llm_provider/generic/__init__.py","language":"python","docstring":null,"imports":[{"module":"base","names":["GenericLLMProvider"],"is_from":true,"line_number":1}],"classes":[],"functions":[],"call_graph":{"calls":{},"called_by":{}}}}

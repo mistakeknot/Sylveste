@@ -1,1 +1,0 @@
-{"mtime_ns":1772149684736598011,"size":807,"module_info":{"file_path":"/home/mk/projects/Demarch/core/agent-rig/src/adapters/types.ts","language":"typescript","docstring":null,"imports":[{"module":"type { AgentRig } from \"../schema.js\"","names":[],"is_from":false,"line_number":1}],"classes":[],"functions":[],"call_graph":{"calls":{},"called_by":{}}}}

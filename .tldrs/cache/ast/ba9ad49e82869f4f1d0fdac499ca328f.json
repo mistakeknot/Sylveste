@@ -1,1 +1,0 @@
-{"mtime_ns":1772211663646482937,"size":290,"module_info":{"file_path":"/home/mk/projects/Demarch/research/fastmcp_rust/crates/fastmcp-console/src/error/mod.rs","language":"rust","docstring":null,"imports":[{"module":"pub boundary::ErrorBoundary","names":[],"is_from":false,"line_number":9}],"classes":[],"functions":[],"call_graph":{"calls":{},"called_by":{}}}}
