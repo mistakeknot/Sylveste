@@ -10,6 +10,6 @@ Gemini should expose the same Sylveste slash commands as Claude Code and Codex. 
 
 Follow these environment-specific deviations:
 
-1. **Slash Commands Are Supported**: Prefer Demarch slash commands when they exist (for example `/clavain:route`, `/interflux:flux-drive`, `/interpath:roadmap`). If a workflow has no slash command entrypoint, run the underlying shell commands directly.
+1. **Slash Commands Are Supported**: Prefer Sylveste slash commands when they exist (for example `/clavain:route`, `/interflux:flux-drive`, `/interpath:roadmap`). If a workflow has no slash command entrypoint, run the underlying shell commands directly.
 2. **Issue Tracking (Beads)**: Never run the interactive `bv` TUI command, as it blocks the automated terminal. Stick strictly to the `bd` CLI (e.g., `bd ready`, `bd list --status=open`).
 3. **Execution Autonomy**: You have the ability to run terminal commands via the `run_command` tool. Proactively build, test, and run validation scripts (e.g., `go test ./...`, `uv run pytest`) without asking for explicit permission.
