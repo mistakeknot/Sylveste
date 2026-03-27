@@ -1,4 +1,4 @@
-# Demarch monorepo .gitignore
+# Sylveste monorepo .gitignore
 # Each subproject has its own .git — ignore them all here.
 # Only the monorepo skeleton, beads, and shared docs are tracked.
 
