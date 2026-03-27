@@ -1,6 +1,6 @@
-# Demarch
+# Sylveste
 
-Monorepo for the Demarch open-source autonomous software development agency platform. **Interverse** (`/interverse`) is the companion plugin ecosystem (`ls interverse/ | wc -l` for current count).
+Monorepo for the Sylveste open-source autonomous software development agency platform. **Interverse** (`/interverse`) is the companion plugin ecosystem (`ls interverse/ | wc -l` for current count).
 
 ## Working Style
 
@@ -13,7 +13,7 @@ When you have enough context to start implementing, do it. Write a 3-bullet inli
 ## Naming Convention
 
 - All module names are **lowercase** — `interflux`, `intermute`, `interkasten`
-- Exception: **Clavain** (proper noun), **Interverse** (plugin ecosystem name), **Demarch** (project name), **Autarch** (proper noun), **Interspect** (proper noun), **Intercore** (proper noun), **Skaffen** (proper noun), **Zaka** (proper noun), **Alwe** (proper noun), **Ockham** (proper noun)
+- Exception: **Clavain** (proper noun), **Interverse** (plugin ecosystem name), **Sylveste** (project name), **Autarch** (proper noun), **Interspect** (proper noun), **Intercore** (proper noun), **Skaffen** (proper noun), **Zaka** (proper noun), **Alwe** (proper noun), **Ockham** (proper noun)
 - GitHub repos match: `github.com/mistakeknot/interflux`
 - **Pillars** are the 6 top-level components: Intercore, Clavain, Skaffen, Interverse, Autarch, Interspect
 - **Layers** (L1/L2/L3) describe architectural dependency; pillars describe organizational structure
