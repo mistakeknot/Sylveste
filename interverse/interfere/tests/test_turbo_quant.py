@@ -2,7 +2,10 @@
 
 import mlx.core as mx
 
+import pytest
+
 from server.experiments.turbo_quant import (
+    PolarCacheWrapper,
     inverse_polar_transform,
     make_jl_projection,
     polar_transform,
@@ -184,3 +187,100 @@ def test_qjl_encode_shape():
     bits = qjl_encode(residual, projection)
     mx.eval(bits)
     assert bits.shape == (2, 4, 16, 64)
+
+
+# ---------------------------------------------------------------------------
+# PolarCacheWrapper tests
+# ---------------------------------------------------------------------------
+
+
+class _FakeCache:
+    """Minimal cache mock for testing PolarCacheWrapper."""
+
+    def __init__(self):
+        self.offset = 0
+        self._keys = None
+        self._values = None
+
+    def update_and_fetch(self, keys, values):
+        if self._keys is None:
+            self._keys = keys
+            self._values = values
+        else:
+            self._keys = mx.concatenate([self._keys, keys], axis=2)
+            self._values = mx.concatenate([self._values, values], axis=2)
+        self.offset += keys.shape[2]
+        return self._keys, self._values
+
+
+def test_polar_cache_wrapper_round_trip():
+    """PolarCacheWrapper should polar-transform before store and inverse after."""
+    inner = _FakeCache()
+    wrapper = PolarCacheWrapper(inner)
+
+    keys = mx.random.normal(shape=(1, 4, 8, 128))
+    values = mx.random.normal(shape=(1, 4, 8, 128))
+
+    out_k, out_v = wrapper.update_and_fetch(keys, values)
+    mx.eval(out_k, out_v)
+
+    # Output should be close to input (polar transform is lossless, inner cache is fp32)
+    mse_k = mx.mean((keys - out_k) ** 2).item()
+    mse_v = mx.mean((values - out_v) ** 2).item()
+    norm_k = mx.mean(keys**2).item()
+    norm_v = mx.mean(values**2).item()
+    assert mse_k / (norm_k + 1e-10) < 1e-4, f"Key NMSE {mse_k/norm_k:.6f} too high"
+    assert mse_v / (norm_v + 1e-10) < 1e-4, f"Value NMSE {mse_v/norm_v:.6f} too high"
+
+
+def test_polar_cache_wrapper_delegates_offset():
+    """Wrapper should delegate offset to inner cache."""
+    inner = _FakeCache()
+    wrapper = PolarCacheWrapper(inner)
+    assert wrapper.offset == 0
+
+    keys = mx.random.normal(shape=(1, 4, 5, 128))
+    values = mx.random.normal(shape=(1, 4, 5, 128))
+    wrapper.update_and_fetch(keys, values)
+    mx.eval(inner._keys)
+    assert wrapper.offset == 5
+
+
+def test_polar_cache_wrapper_accumulates():
+    """Multiple updates should accumulate in the inner cache."""
+    inner = _FakeCache()
+    wrapper = PolarCacheWrapper(inner)
+
+    for _ in range(3):
+        k = mx.random.normal(shape=(1, 4, 4, 128))
+        v = mx.random.normal(shape=(1, 4, 4, 128))
+        wrapper.update_and_fetch(k, v)
+
+    mx.eval(inner._keys)
+    assert wrapper.offset == 12
+    assert inner._keys.shape[2] == 12
+
+
+# ---------------------------------------------------------------------------
+# Integration tests
+# ---------------------------------------------------------------------------
+
+
+def test_turbo_quant_mutual_exclusion():
+    """TurboQuant + explicit kv_bits should raise ValueError."""
+    from server.experiments.config import ExperimentConfig
+    from server.inference import InferenceEngine
+
+    tq_cfg = ExperimentConfig(name="turbo_quant", enabled=True, params={"kv_bits": 4})
+    engine = InferenceEngine(experiment_configs={"turbo_quant": tq_cfg})
+
+    with pytest.raises(ValueError, match="Cannot set kv_bits"):
+        # Pass kv_bits explicitly while turbo_quant is enabled
+        list(
+            engine.generate(
+                prompt="test",
+                model_name="mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+                kv_bits=8,
+                max_tokens=1,
+            )
+        )

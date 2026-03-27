@@ -20,6 +20,8 @@ never imports this module directly.
 
 from __future__ import annotations
 
+from typing import Any
+
 import mlx.core as mx
 
 
@@ -136,3 +138,50 @@ def qjl_decode(bits: mx.array, projection: mx.array) -> mx.array:
     jl_dim = projection.shape[0]
     # (..., jl_dim) @ (jl_dim, head_dim) -> (..., head_dim)
     return (bits.astype(mx.float32) @ projection) / jl_dim
+
+
+# ---------------------------------------------------------------------------
+# Cache wrapper — polar transform around any mlx-lm cache
+# ---------------------------------------------------------------------------
+
+
+class PolarCacheWrapper:
+    """Wraps an mlx-lm cache to apply polar transform on K/V before storage.
+
+    This is model-agnostic: it wraps any cache object and intercepts
+    update_and_fetch to transform K/V to polar coords before the underlying
+    cache quantizes them, then inverse-transforms on retrieval.
+
+    The underlying cache (e.g., QuantizedKVCache at 4-bit) handles storage
+    and its fused attention kernel handles decompression — no custom
+    dequantize-on-fetch needed.
+    """
+
+    def __init__(self, inner_cache: Any):
+        self._inner = inner_cache
+
+    def update_and_fetch(
+        self, keys: mx.array, values: mx.array
+    ) -> tuple[mx.array, mx.array]:
+        # Transform to polar before cache stores (and quantizes)
+        polar_keys = polar_transform(keys)
+        polar_values = polar_transform(values)
+        # Inner cache stores quantized polar representation
+        cached_keys, cached_values = self._inner.update_and_fetch(
+            polar_keys, polar_values
+        )
+        # Inverse transform after cache retrieval (possibly dequantized by fused kernel)
+        return inverse_polar_transform(cached_keys), inverse_polar_transform(
+            cached_values
+        )
+
+    # Delegate all other attributes to the inner cache
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._inner, name)
+
+
+def wrap_prompt_cache(
+    prompt_cache: list[Any],
+) -> list[PolarCacheWrapper]:
+    """Wrap each layer's cache with polar transform."""
+    return [PolarCacheWrapper(c) for c in prompt_cache]

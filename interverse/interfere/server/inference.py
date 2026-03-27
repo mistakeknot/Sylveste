@@ -28,6 +28,7 @@ class GenerationMetrics:
     generation_tps: float = 0.0
     peak_memory_gb: float = 0.0
     kv_bits: int | None = None
+    kv_mode: str | None = None  # "turbo_quant" when polar transform active
 
 
 class InferenceEngine:
@@ -77,6 +78,12 @@ class InferenceEngine:
                 class_labels=class_labels,
             )
 
+        # TurboQuant: polar-transformed KV cache quantization
+        self._turbo_quant_cfg: ExperimentConfig | None = None
+        tq_cfg = self._experiment_configs.get("turbo_quant")
+        if tq_cfg and tq_cfg.enabled:
+            self._turbo_quant_cfg = tq_cfg
+
     @property
     def last_metrics(self) -> GenerationMetrics | None:
         """Metrics from the most recent generate() call."""
@@ -94,6 +101,11 @@ class InferenceEngine:
             }
         if self._reservoir_hook is not None:
             stats["reservoir_routing"] = {"enabled": True}
+        if self._turbo_quant_cfg is not None and self._turbo_quant_cfg.enabled:
+            stats["turbo_quant"] = {
+                "enabled": True,
+                "kv_bits": int(self._turbo_quant_cfg.get("kv_bits", 4)),
+            }
         return stats
 
     def _extract_hidden_state(self, model, tokens, tap_layer: int = 24):
@@ -229,9 +241,30 @@ class InferenceEngine:
 
         # Build kwargs for generate_step (passed through stream_generate)
         gen_kwargs: dict[str, Any] = {}
-        if kv_bits is not None:
+
+        # --- Experiment: TurboQuant polar-transformed KV cache ---
+        if self._turbo_quant_cfg is not None and self._turbo_quant_cfg.enabled:
+            if kv_bits is not None:
+                raise ValueError(
+                    "Cannot set kv_bits when turbo_quant is enabled. "
+                    "Configure kv_bits in turbo_quant experiment config instead."
+                )
+            from .experiments.turbo_quant import wrap_prompt_cache
+
+            tq_kv_bits = int(self._turbo_quant_cfg.get("kv_bits", 4))
+            tq_group_size = int(self._turbo_quant_cfg.get("kv_group_size", 64))
+            gen_kwargs["kv_bits"] = tq_kv_bits
+            gen_kwargs["kv_group_size"] = tq_group_size
+            # Create cache, wrap with polar transform, pass as prompt_cache.
+            # stream_generate will use our wrapped cache instead of creating its own.
+            from mlx_lm.models.cache import make_prompt_cache
+
+            raw_cache = make_prompt_cache(model, max_kv_size)
+            gen_kwargs["prompt_cache"] = wrap_prompt_cache(raw_cache)
+        elif kv_bits is not None:
             gen_kwargs["kv_bits"] = kv_bits
             gen_kwargs["kv_group_size"] = kv_group_size
+
         if max_kv_size is not None:
             gen_kwargs["max_kv_size"] = max_kv_size
 
@@ -244,7 +277,17 @@ class InferenceEngine:
 
         # Track confidence across generation
         confidences: list[float] = []
-        metrics = GenerationMetrics(kv_bits=kv_bits)
+        effective_kv_bits = (
+            int(self._turbo_quant_cfg.get("kv_bits", 4))
+            if self._turbo_quant_cfg and self._turbo_quant_cfg.enabled
+            else kv_bits
+        )
+        metrics = GenerationMetrics(
+            kv_bits=effective_kv_bits,
+            kv_mode="turbo_quant"
+            if self._turbo_quant_cfg and self._turbo_quant_cfg.enabled
+            else None,
+        )
 
         # --- Experiment hook: reservoir routing classification ---
         if self._reservoir_hook is not None and self._reservoir_cfg is not None:
