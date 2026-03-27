@@ -73,7 +73,7 @@ See [PHILOSOPHY.md](PHILOSOPHY.md) for the full design bets, tradeoffs, and conv
 
 ## Architecture
 
-Demarch is a monorepo with 5 pillars:
+Sylveste is a monorepo with 5 pillars:
 
 | Pillar | Layer | Description |
 |--------|-------|-------------|
