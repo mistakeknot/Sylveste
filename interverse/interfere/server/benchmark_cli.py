@@ -78,9 +78,9 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument(
         "--kv-mode",
         type=str,
-        choices=["standard", "turbo_quant"],
+        choices=["standard", "turbo_quant", "bhq"],
         default="standard",
-        help="KV cache mode: 'standard' (mlx-lm quantization) or 'turbo_quant' (polar transform)",
+        help="KV cache mode: 'standard' (mlx-lm), 'turbo_quant' (rotation+affine), or 'bhq' (Lloyd-Max centroids)",
     )
     parser.add_argument(
         "--save",

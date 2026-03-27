@@ -1,25 +1,10 @@
 """TurboQuant: KV cache quantization experiments.
 
-RESULT: NEGATIVE for both approaches tested with MLX's native quantization.
-
-Approach 1 — Polar coordinates (PolarCacheWrapper):
-  Inverse trig amplifies quantization error by 2.7x. Garbage at all bit widths.
-
-Approach 2 — Orthogonal rotation (TurboQuantCacheWrapper):
-  Mathematically correct (dot product preserved, fp16 path perfect).
-  Per-element K quantization error reduced by 7%.
-  Attention score error reduced by 8%.
-  BUT: final attention output is 1.3x worse via manual dequant and 5x worse
-  via fused mx.quantized_matmul kernel. The fused kernel has distribution-
-  dependent precision optimizations that the rotation disrupts. And the
-  paper's benefit comes from Lloyd-Max centroids specifically tuned to the
-  post-rotation Beta distribution — MLX's affine quantizer (uniform grid +
-  scale + bias) doesn't get significant benefit from the rotation.
-
-To actually implement TurboQuant would require:
-  1. Custom Lloyd-Max quantizer (non-uniform centroids for Beta distribution)
-  2. Custom attention kernel (can't use mx.quantized_matmul with non-affine quant)
-  3. ~3-5x more implementation effort
+v1 (PolarCacheWrapper) — NEGATIVE: inverse trig amplifies error 2.7x.
+v2 (TurboQuantCacheWrapper) — NEGATIVE: MLX affine quant negates rotation benefit.
+v3 (BHQCacheWrapper) — Custom Lloyd-Max centroids for Beta distribution.
+    This is the paper-faithful implementation: rotation + non-uniform scalar
+    quantization with precomputed optimal centroids, bypassing mx.quantized_matmul.
 
 References:
   - TurboQuant (ICLR 2026, arxiv.org/abs/2504.19874)
@@ -32,6 +17,7 @@ never imports this module directly.
 
 from __future__ import annotations
 
+import math
 from typing import Any
 
 import mlx.core as mx
@@ -88,6 +74,423 @@ def rotate_inverse(x: mx.array, pi: mx.array) -> mx.array:
         Tensor rotated back to original space, same shape and dtype.
     """
     return x @ pi
+
+
+# ---------------------------------------------------------------------------
+# Lloyd-Max optimal scalar quantizer for Beta(d/2, d/2) distribution
+# ---------------------------------------------------------------------------
+
+# The coordinate distribution of a uniformly random point on S^{d-1} is:
+#   f_X(x) = Γ(d/2) / (√π · Γ((d-1)/2)) · (1 - x²)^{(d-3)/2}  for x ∈ [-1, 1]
+# This is a scaled/shifted Beta(α, α) with α = (d-1)/2.
+# The Lloyd-Max algorithm finds optimal non-uniform centroids that minimize MSE
+# under this distribution, which is the core of TurboQuant.
+
+
+def _beta_pdf(x: float, d: int) -> float:
+    """Evaluate the coordinate PDF of a uniform point on S^{d-1}.
+
+    f_X(x) = Γ(d/2) / (√π · Γ((d-1)/2)) · (1 - x²)^{(d-3)/2}
+    """
+    if abs(x) >= 1.0:
+        return 0.0
+    log_coeff = (
+        math.lgamma(d / 2.0) - 0.5 * math.log(math.pi) - math.lgamma((d - 1) / 2.0)
+    )
+    exponent = (d - 3) / 2.0
+    log_body = exponent * math.log(1.0 - x * x) if exponent != 0 else 0.0
+    return math.exp(log_coeff + log_body)
+
+
+def _integrate_weighted(
+    f_weight, f_pdf, a: float, b: float, d: int, n_points: int = 200
+) -> float:
+    """Numerical integration of f_weight(x) * f_pdf(x, d) over [a, b].
+
+    Uses composite Simpson's rule for accuracy.
+    """
+    if a >= b:
+        return 0.0
+    n = n_points if n_points % 2 == 0 else n_points + 1
+    h = (b - a) / n
+    total = 0.0
+    for i in range(n + 1):
+        x = a + i * h
+        val = f_weight(x) * f_pdf(x, d)
+        if i == 0 or i == n:
+            total += val
+        elif i % 2 == 1:
+            total += 4.0 * val
+        else:
+            total += 2.0 * val
+    return total * h / 3.0
+
+
+def _cdf_inverse_approx(d: int, n_centroids: int) -> list[float]:
+    """Initialize centroids at quantiles of the Beta coordinate distribution.
+
+    Computes the CDF numerically, then picks n_centroids evenly-spaced
+    quantiles. This avoids the problem of uniform initialization placing
+    centroids in the near-zero-density tails.
+    """
+    n_grid = 2000
+    xs = [-1.0 + 2.0 * i / n_grid for i in range(n_grid + 1)]
+    # Compute CDF via trapezoidal rule
+    cdf = [0.0]
+    for i in range(1, n_grid + 1):
+        h = xs[i] - xs[i - 1]
+        cdf.append(cdf[-1] + 0.5 * h * (_beta_pdf(xs[i - 1], d) + _beta_pdf(xs[i], d)))
+    # Normalize
+    total = cdf[-1]
+    if total > 0:
+        cdf = [c / total for c in cdf]
+
+    # Pick quantiles at (0.5/n, 1.5/n, ..., (n-0.5)/n)
+    centroids = []
+    for k in range(n_centroids):
+        target = (k + 0.5) / n_centroids
+        # Binary search in CDF
+        lo, hi = 0, n_grid
+        while lo < hi:
+            mid = (lo + hi) // 2
+            if cdf[mid] < target:
+                lo = mid + 1
+            else:
+                hi = mid
+        centroids.append(xs[lo])
+    return centroids
+
+
+def _lloyd_max_centroids(
+    d: int, bits: int, max_iters: int = 200, tol: float = 1e-12
+) -> list[float]:
+    """Compute optimal Lloyd-Max centroids for the Beta coordinate distribution.
+
+    Solves the 1D k-means problem: find c_1 <= c_2 <= ... <= c_{2^b} in [-1, 1]
+    that minimize ∑_i ∫_{boundary_i} |x - c_i|² · f_X(x) dx.
+
+    The algorithm alternates:
+      1. Update boundaries: b_i = (c_i + c_{i+1}) / 2  (Voronoi)
+      2. Update centroids: c_i = E[X | X ∈ [b_{i-1}, b_i]] (conditional mean)
+
+    Args:
+        d: Dimension of the vector space (head_dim).
+        bits: Number of bits per coordinate.
+        max_iters: Maximum Lloyd-Max iterations.
+        tol: Convergence tolerance on centroid movement.
+
+    Returns:
+        Sorted list of 2^bits centroids in [-1, 1].
+    """
+    n_centroids = 1 << bits
+    # Initialize at CDF quantiles for robust convergence
+    centroids = _cdf_inverse_approx(d, n_centroids)
+
+    pdf = _beta_pdf
+
+    for _iteration in range(max_iters):
+        # Compute Voronoi boundaries (midpoints between consecutive centroids)
+        boundaries = [-1.0]
+        for i in range(n_centroids - 1):
+            boundaries.append((centroids[i] + centroids[i + 1]) / 2.0)
+        boundaries.append(1.0)
+
+        # Update centroids to conditional means
+        new_centroids = []
+        for i in range(n_centroids):
+            lo, hi = boundaries[i], boundaries[i + 1]
+            mass = _integrate_weighted(lambda x: 1.0, pdf, lo, hi, d)
+            if mass < 1e-30:
+                # Dead centroid — keep old position
+                new_centroids.append(centroids[i])
+            else:
+                moment = _integrate_weighted(lambda x: x, pdf, lo, hi, d)
+                new_centroids.append(moment / mass)
+
+        # Check convergence
+        max_shift = max(
+            abs(new_centroids[i] - centroids[i]) for i in range(n_centroids)
+        )
+        centroids = new_centroids
+        if max_shift < tol:
+            break
+
+    return centroids
+
+
+# Centroid cache: (d, bits) -> list of centroids
+_centroid_cache: dict[tuple[int, int], list[float]] = {}
+
+
+def get_lloyd_max_centroids(d: int, bits: int) -> list[float]:
+    """Get precomputed Lloyd-Max centroids for the given dimension and bit width.
+
+    Results are cached after first computation. For typical head_dims
+    (64, 128, 192, 256) this runs in ~100ms per (d, bits) pair.
+    """
+    key = (d, bits)
+    if key not in _centroid_cache:
+        _centroid_cache[key] = _lloyd_max_centroids(d, bits)
+    return _centroid_cache[key]
+
+
+def centroids_to_mx(centroids: list[float]) -> mx.array:
+    """Convert centroid list to an MLX float32 array for GPU operations."""
+    return mx.array(centroids, dtype=mx.float32)
+
+
+def compute_centroid_mse(d: int, bits: int) -> float:
+    """Compute the MSE achieved by Lloyd-Max centroids for given d and bits.
+
+    Returns E[|X - Q(X)|²] where Q maps each x to its nearest centroid.
+    """
+    centroids = get_lloyd_max_centroids(d, bits)
+    n = len(centroids)
+    boundaries = [-1.0]
+    for i in range(n - 1):
+        boundaries.append((centroids[i] + centroids[i + 1]) / 2.0)
+    boundaries.append(1.0)
+
+    total_mse = 0.0
+    for i in range(n):
+        lo, hi = boundaries[i], boundaries[i + 1]
+        c = centroids[i]
+        total_mse += _integrate_weighted(
+            lambda x, _c=c: (x - _c) ** 2, _beta_pdf, lo, hi, d
+        )
+    return total_mse
+
+
+# ---------------------------------------------------------------------------
+# BHQ (Beta-distribution Haar-rotation Quantizer) — custom quantize/dequantize
+# ---------------------------------------------------------------------------
+
+
+def bhq_quantize(x_rotated: mx.array, centroids_mx: mx.array) -> mx.array:
+    """Quantize rotated coordinates to nearest centroid indices.
+
+    Args:
+        x_rotated: (..., head_dim) tensor of rotated values in [-1, 1].
+        centroids_mx: (n_centroids,) sorted centroid values.
+
+    Returns:
+        Indices tensor of shape (..., head_dim) as uint8 (up to 256 centroids).
+    """
+    # Compute distances to all centroids: (..., head_dim, n_centroids)
+    diffs = mx.abs(mx.expand_dims(x_rotated, -1) - centroids_mx)
+    indices = mx.argmin(diffs, axis=-1).astype(mx.uint8)
+    return indices
+
+
+def bhq_dequantize(indices: mx.array, centroids_mx: mx.array) -> mx.array:
+    """Dequantize centroid indices back to coordinate values.
+
+    Args:
+        indices: (..., head_dim) uint8 centroid indices.
+        centroids_mx: (n_centroids,) centroid lookup table.
+
+    Returns:
+        Dequantized values of shape (..., head_dim), float32.
+    """
+    return mx.take(centroids_mx, indices.astype(mx.uint32), axis=0)
+
+
+# ---------------------------------------------------------------------------
+# BHQ KV Cache wrapper — stores rotation + centroid indices
+# ---------------------------------------------------------------------------
+
+
+class BHQCacheWrapper:
+    """Custom KV cache that uses Lloyd-Max centroid quantization.
+
+    Instead of MLX's affine quantization (uniform grid + scale + bias),
+    this stores centroid indices from the optimal non-uniform quantizer
+    for the post-rotation Beta distribution. Dequantization is a simple
+    table lookup.
+
+    Flow:
+      Store K: K_rot = K @ Π^T → indices = nearest_centroid(K_rot)
+      Fetch K: K_approx = centroids[indices]  (stays in rotated space)
+      Attention: Q_rot = Q @ Π^T, then Q_rot @ K_approx^T (non-fused)
+    """
+
+    def __init__(
+        self,
+        pi: mx.array,
+        centroids_mx: mx.array,
+        head_dim: int,
+        n_kv_heads: int,
+        max_size: int | None = None,
+    ):
+        self._pi = pi
+        self._centroids = centroids_mx
+        self._head_dim = head_dim
+        self._n_kv_heads = n_kv_heads
+        self._max_size = max_size
+
+        # Storage for quantized keys and full-precision values
+        # Keys: uint8 centroid indices (batch, n_kv_heads, seq, head_dim)
+        # Norms: float16 per-vector norms (batch, n_kv_heads, seq, 1)
+        # Values: float16 (batch, n_kv_heads, seq, head_dim)
+        self._key_indices: mx.array | None = None
+        self._key_norms: mx.array | None = None
+        self._values: mx.array | None = None
+        self.offset = 0
+
+    def update_and_fetch(
+        self, keys: mx.array, values: mx.array
+    ) -> tuple[mx.array, mx.array]:
+        """Normalize, rotate, quantize and store keys; store values as-is.
+
+        The paper assumes unit vectors on S^{d-1}. Real key vectors have
+        large norms (especially after RoPE), so we:
+          1. Store per-vector norms separately (float16)
+          2. Normalize keys to unit sphere
+          3. Rotate normalized keys
+          4. Quantize rotated coordinates to centroids
+          5. On fetch: dequantize, then rescale by stored norms
+
+        Args:
+            keys: (batch, n_kv_heads, seq_new, head_dim) new key vectors.
+            values: (batch, n_kv_heads, seq_new, head_dim) new value vectors.
+
+        Returns:
+            (all_dequantized_keys, all_values) for the full sequence so far.
+            Keys are returned in rotated space (dequantized and rescaled).
+        """
+        keys_f32 = keys.astype(mx.float32)
+        # Per-vector norms: (batch, n_kv_heads, seq_new, 1)
+        norms = mx.sqrt(mx.sum(keys_f32 * keys_f32, axis=-1, keepdims=True))
+        norms = mx.maximum(norms, 1e-8)
+        # Normalize to unit sphere, rotate, quantize
+        rotated_keys = (keys_f32 / norms) @ self._pi.T
+        new_indices = bhq_quantize(rotated_keys, self._centroids)
+        new_norms = norms.astype(mx.float16)
+
+        if self._key_indices is None:
+            self._key_indices = new_indices
+            self._key_norms = new_norms
+            self._values = values
+        else:
+            self._key_indices = mx.concatenate([self._key_indices, new_indices], axis=2)
+            self._key_norms = mx.concatenate([self._key_norms, new_norms], axis=2)
+            self._values = mx.concatenate([self._values, values], axis=2)
+
+        # Apply max_size sliding window if configured
+        if self._max_size is not None and self._key_indices.shape[2] > self._max_size:
+            trim = self._key_indices.shape[2] - self._max_size
+            self._key_indices = self._key_indices[:, :, trim:]
+            self._key_norms = self._key_norms[:, :, trim:]
+            self._values = self._values[:, :, trim:]
+
+        self.offset = self._key_indices.shape[2]
+
+        # Dequantize and rescale by stored norms
+        all_keys_dequant = bhq_dequantize(self._key_indices, self._centroids)
+        all_keys_dequant = all_keys_dequant * self._key_norms.astype(mx.float32)
+        return all_keys_dequant, self._values
+
+    @property
+    def state(self):
+        """Return cache state for compatibility with mlx-lm internals."""
+        return self._key_indices, self._key_norms, self._values
+
+
+def wrap_prompt_cache_bhq(
+    head_dim: int,
+    n_kv_heads: int,
+    n_layers: int,
+    bits: int = 4,
+    seed: int = 0,
+    max_size: int | None = None,
+) -> tuple[list[BHQCacheWrapper], mx.array]:
+    """Create a BHQ cache for each layer with shared rotation matrix and centroids.
+
+    Args:
+        head_dim: Dimension per attention head.
+        n_kv_heads: Number of KV attention heads.
+        n_layers: Number of transformer layers.
+        bits: Bit width for centroid quantization (2, 3, 4, or 8).
+        seed: Random seed for rotation matrix.
+        max_size: Optional sliding window size.
+
+    Returns:
+        (list of BHQCacheWrapper, rotation matrix Π)
+    """
+    pi = make_rotation_matrix(head_dim, seed)
+    centroids = get_lloyd_max_centroids(head_dim, bits)
+    centroids_mx = centroids_to_mx(centroids)
+
+    caches = [
+        BHQCacheWrapper(pi, centroids_mx, head_dim, n_kv_heads, max_size)
+        for _ in range(n_layers)
+    ]
+    return caches, pi
+
+
+# ---------------------------------------------------------------------------
+# Non-fused attention with BHQ dequantized keys
+# ---------------------------------------------------------------------------
+
+
+def bhq_attention(
+    queries: mx.array,
+    keys_dequant: mx.array,
+    values: mx.array,
+    pi: mx.array,
+    scale: float,
+    mask: mx.array | None = None,
+) -> mx.array:
+    """Compute scaled dot-product attention with BHQ-dequantized keys.
+
+    Since BHQ keys are stored in rotated space, Q must be rotated too:
+      Q_rot = Q @ Π^T
+      scores = Q_rot @ K_dequant^T * scale
+      output = softmax(scores) @ V
+
+    Args:
+        queries: (batch, n_heads, seq_q, head_dim)
+        keys_dequant: (batch, n_kv_heads, seq_kv, head_dim) — already dequantized
+        values: (batch, n_kv_heads, seq_kv, head_dim)
+        pi: (head_dim, head_dim) rotation matrix
+        scale: Attention scale factor (typically 1/√head_dim)
+        mask: Optional attention mask
+
+    Returns:
+        Attention output (batch, n_heads, seq_q, head_dim)
+    """
+    # Rotate queries into the same space as dequantized keys
+    q_rot = queries @ pi.T
+
+    # Handle GQA: repeat KV heads if n_heads > n_kv_heads
+    n_heads = q_rot.shape[1]
+    n_kv_heads = keys_dequant.shape[1]
+    if n_heads > n_kv_heads:
+        repeats = n_heads // n_kv_heads
+        keys_dequant = mx.repeat(keys_dequant, repeats, axis=1)
+        values = mx.repeat(values, repeats, axis=1)
+
+    # Compute attention scores
+    scores = (q_rot @ mx.swapaxes(keys_dequant, -2, -1)) * scale
+
+    if mask is not None:
+        if isinstance(mask, str) and mask == "causal":
+            # Create causal mask for non-fused attention path
+            seq_q_len = q_rot.shape[2]
+            seq_kv_len = keys_dequant.shape[2]
+            if seq_q_len > 1:
+                row_idx = mx.arange(seq_kv_len - seq_q_len, seq_kv_len)[:, None]
+                col_idx = mx.arange(seq_kv_len)[None, :]
+                causal = mx.where(col_idx <= row_idx, 0.0, -float("inf"))
+                scores = scores + causal
+        else:
+            scores = scores + mask
+
+    # Softmax and weighted sum
+    weights = mx.softmax(scores.astype(mx.float32), axis=-1).astype(queries.dtype)
+    output = weights @ values
+
+    return output
 
 
 # ---------------------------------------------------------------------------
@@ -208,14 +611,13 @@ _original_sdpa: Any = None
 
 
 def install_turbo_quant_attention(pi: mx.array) -> None:
-    """Monkey-patch scaled_dot_product_attention to rotate Q vectors.
+    """Monkey-patch scaled_dot_product_attention to handle TurboQuant caches.
 
-    When K vectors are stored rotated by Π in the cache, Q must also be
-    rotated so that Q_rot · K_rot^T = Q · K^T.
+    For TurboQuantCacheWrapper (v2): rotates Q vectors so Q_rot · K_rot^T = Q · K^T.
+    For BHQCacheWrapper (v3): uses non-fused bhq_attention with centroid dequantization.
 
     This patches mlx_lm.models.base.scaled_dot_product_attention, which
-    all model implementations import. The patch checks for a marker attribute
-    on the cache and only applies rotation when TurboQuant is active.
+    all model implementations import.
 
     Must be called once before generation starts. Call
     uninstall_turbo_quant_attention() to restore the original function.
@@ -229,6 +631,9 @@ def install_turbo_quant_attention(pi: mx.array) -> None:
     _original_sdpa = base.scaled_dot_product_attention
 
     def turbo_sdpa(queries, keys, values, cache, scale, mask, sinks=None):
+        if cache is not None and isinstance(cache, BHQCacheWrapper):
+            # BHQ path: keys are already dequantized by update_and_fetch
+            return bhq_attention(queries, keys, values, cache._pi, scale, mask)
         if cache is not None and isinstance(cache, TurboQuantCacheWrapper):
             queries = rotate(queries, cache._pi)
         return _original_sdpa(queries, keys, values, cache, scale, mask, sinks)

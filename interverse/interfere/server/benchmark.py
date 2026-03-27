@@ -162,7 +162,7 @@ def run_benchmark(
     if prompts is None:
         prompts = PROMPT_CORPUS
 
-    # Build experiment configs for TurboQuant mode
+    # Build experiment configs for TurboQuant / BHQ modes
     experiment_configs = {}
     if kv_mode == "turbo_quant":
         experiment_configs["turbo_quant"] = ExperimentConfig(
@@ -171,6 +171,13 @@ def run_benchmark(
             params={"kv_bits": kv_bits or 4, "kv_group_size": kv_group_size},
         )
         # Engine handles kv_bits internally when turbo_quant is active
+        kv_bits = None
+    elif kv_mode == "bhq":
+        experiment_configs["bhq"] = ExperimentConfig(
+            name="bhq",
+            enabled=True,
+            params={"kv_bits": kv_bits or 4},
+        )
         kv_bits = None
 
     engine = InferenceEngine(experiment_configs=experiment_configs or None)

@@ -84,6 +84,12 @@ class InferenceEngine:
         if tq_cfg and tq_cfg.enabled:
             self._turbo_quant_cfg = tq_cfg
 
+        # BHQ: Lloyd-Max centroid quantization (TurboQuant v3)
+        self._bhq_cfg: ExperimentConfig | None = None
+        bhq_cfg = self._experiment_configs.get("bhq")
+        if bhq_cfg and bhq_cfg.enabled:
+            self._bhq_cfg = bhq_cfg
+
     @property
     def last_metrics(self) -> GenerationMetrics | None:
         """Metrics from the most recent generate() call."""
@@ -105,6 +111,11 @@ class InferenceEngine:
             stats["turbo_quant"] = {
                 "enabled": True,
                 "kv_bits": int(self._turbo_quant_cfg.get("kv_bits", 4)),
+            }
+        if self._bhq_cfg is not None and self._bhq_cfg.enabled:
+            stats["bhq"] = {
+                "enabled": True,
+                "kv_bits": int(self._bhq_cfg.get("kv_bits", 4)),
             }
         return stats
 
@@ -242,8 +253,46 @@ class InferenceEngine:
         # Build kwargs for generate_step (passed through stream_generate)
         gen_kwargs: dict[str, Any] = {}
 
+        # --- Experiment: BHQ (TurboQuant v3) — Lloyd-Max centroid quantization ---
+        if self._bhq_cfg is not None and self._bhq_cfg.enabled:
+            if kv_bits is not None:
+                raise ValueError(
+                    "Cannot set kv_bits when bhq is enabled. "
+                    "Configure kv_bits in bhq experiment config instead."
+                )
+            from .experiments.turbo_quant import (
+                install_turbo_quant_attention,
+                wrap_prompt_cache_bhq,
+            )
+
+            bhq_bits = int(self._bhq_cfg.get("kv_bits", 4))
+            bhq_seed = int(self._bhq_cfg.get("rotation_seed", 0))
+            bhq_max_size = (
+                int(self._bhq_cfg.get("max_kv_size", 0)) or max_kv_size or None
+            )
+            model_args = model.args if hasattr(model, "args") else model.model.args
+            hidden = getattr(model_args, "hidden_size", None) or model_args.d_model
+            head_dim = getattr(model_args, "head_dim", None) or (
+                hidden // model_args.num_attention_heads
+            )
+            n_kv_heads = getattr(
+                model_args, "num_key_value_heads", model_args.num_attention_heads
+            )
+            n_layers = len(model.model.layers)
+
+            bhq_cache, pi = wrap_prompt_cache_bhq(
+                head_dim=head_dim,
+                n_kv_heads=n_kv_heads,
+                n_layers=n_layers,
+                bits=bhq_bits,
+                seed=bhq_seed,
+                max_size=bhq_max_size,
+            )
+            gen_kwargs["prompt_cache"] = bhq_cache
+            install_turbo_quant_attention(pi)
+
         # --- Experiment: TurboQuant rotation-based KV cache ---
-        if self._turbo_quant_cfg is not None and self._turbo_quant_cfg.enabled:
+        elif self._turbo_quant_cfg is not None and self._turbo_quant_cfg.enabled:
             if kv_bits is not None:
                 raise ValueError(
                     "Cannot set kv_bits when turbo_quant is enabled. "
@@ -294,16 +343,18 @@ class InferenceEngine:
 
         # Track confidence across generation
         confidences: list[float] = []
-        effective_kv_bits = (
-            int(self._turbo_quant_cfg.get("kv_bits", 4))
-            if self._turbo_quant_cfg and self._turbo_quant_cfg.enabled
-            else kv_bits
-        )
+        if self._bhq_cfg and self._bhq_cfg.enabled:
+            effective_kv_bits = int(self._bhq_cfg.get("kv_bits", 4))
+            effective_kv_mode = "bhq"
+        elif self._turbo_quant_cfg and self._turbo_quant_cfg.enabled:
+            effective_kv_bits = int(self._turbo_quant_cfg.get("kv_bits", 4))
+            effective_kv_mode = "turbo_quant"
+        else:
+            effective_kv_bits = kv_bits
+            effective_kv_mode = None
         metrics = GenerationMetrics(
             kv_bits=effective_kv_bits,
-            kv_mode="turbo_quant"
-            if self._turbo_quant_cfg and self._turbo_quant_cfg.enabled
-            else None,
+            kv_mode=effective_kv_mode,
         )
 
         # --- Experiment hook: reservoir routing classification ---

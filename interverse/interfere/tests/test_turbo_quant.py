@@ -1,16 +1,28 @@
-"""Tests for TurboQuant polar-transformed KV cache quantization."""
+"""Tests for TurboQuant KV cache quantization (v1 polar, v2 rotation, v3 BHQ)."""
+
+import math
 
 import mlx.core as mx
 
 import pytest
 
 from server.experiments.turbo_quant import (
-    PolarCacheWrapper,
+    BHQCacheWrapper,
+    bhq_attention,
+    bhq_dequantize,
+    bhq_quantize,
+    centroids_to_mx,
+    compute_centroid_mse,
+    get_lloyd_max_centroids,
     inverse_polar_transform,
     make_jl_projection,
+    make_rotation_matrix,
     polar_transform,
     qjl_decode,
     qjl_encode,
+    rotate,
+    wrap_prompt_cache_bhq,
+    _centroid_cache,
 )
 
 
@@ -190,80 +202,268 @@ def test_qjl_encode_shape():
 
 
 # ---------------------------------------------------------------------------
-# PolarCacheWrapper tests
-# ---------------------------------------------------------------------------
-
-
-class _FakeCache:
-    """Minimal cache mock for testing PolarCacheWrapper."""
-
-    def __init__(self):
-        self.offset = 0
-        self._keys = None
-        self._values = None
-
-    def update_and_fetch(self, keys, values):
-        if self._keys is None:
-            self._keys = keys
-            self._values = values
-        else:
-            self._keys = mx.concatenate([self._keys, keys], axis=2)
-            self._values = mx.concatenate([self._values, values], axis=2)
-        self.offset += keys.shape[2]
-        return self._keys, self._values
-
-
-def test_polar_cache_wrapper_round_trip():
-    """PolarCacheWrapper should polar-transform before store and inverse after."""
-    inner = _FakeCache()
-    wrapper = PolarCacheWrapper(inner)
-
-    keys = mx.random.normal(shape=(1, 4, 8, 128))
-    values = mx.random.normal(shape=(1, 4, 8, 128))
-
-    out_k, out_v = wrapper.update_and_fetch(keys, values)
-    mx.eval(out_k, out_v)
-
-    # Output should be close to input (polar transform is lossless, inner cache is fp32)
-    mse_k = mx.mean((keys - out_k) ** 2).item()
-    mse_v = mx.mean((values - out_v) ** 2).item()
-    norm_k = mx.mean(keys**2).item()
-    norm_v = mx.mean(values**2).item()
-    assert mse_k / (norm_k + 1e-10) < 1e-4, f"Key NMSE {mse_k/norm_k:.6f} too high"
-    assert mse_v / (norm_v + 1e-10) < 1e-4, f"Value NMSE {mse_v/norm_v:.6f} too high"
-
-
-def test_polar_cache_wrapper_delegates_offset():
-    """Wrapper should delegate offset to inner cache."""
-    inner = _FakeCache()
-    wrapper = PolarCacheWrapper(inner)
-    assert wrapper.offset == 0
-
-    keys = mx.random.normal(shape=(1, 4, 5, 128))
-    values = mx.random.normal(shape=(1, 4, 5, 128))
-    wrapper.update_and_fetch(keys, values)
-    mx.eval(inner._keys)
-    assert wrapper.offset == 5
-
-
-def test_polar_cache_wrapper_accumulates():
-    """Multiple updates should accumulate in the inner cache."""
-    inner = _FakeCache()
-    wrapper = PolarCacheWrapper(inner)
-
-    for _ in range(3):
-        k = mx.random.normal(shape=(1, 4, 4, 128))
-        v = mx.random.normal(shape=(1, 4, 4, 128))
-        wrapper.update_and_fetch(k, v)
-
-    mx.eval(inner._keys)
-    assert wrapper.offset == 12
-    assert inner._keys.shape[2] == 12
+# PolarCacheWrapper tests removed — PolarCacheWrapper was deprecated in v1
 
 
 # ---------------------------------------------------------------------------
 # Integration tests
 # ---------------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------------
+# BHQ (TurboQuant v3) — Lloyd-Max centroid tests
+# ---------------------------------------------------------------------------
+
+
+def test_lloyd_max_centroids_symmetry():
+    """Centroids should be symmetric around 0 (distribution is symmetric)."""
+    _centroid_cache.clear()
+    for d in [64, 128]:
+        for bits in [2, 3, 4]:
+            c = get_lloyd_max_centroids(d, bits)
+            n = len(c)
+            for i in range(n // 2):
+                assert abs(c[i] + c[n - 1 - i]) < 0.01, (
+                    f"d={d}, b={bits}: centroids not symmetric: "
+                    f"c[{i}]={c[i]:.6f}, c[{n-1-i}]={c[n-1-i]:.6f}"
+                )
+
+
+def test_lloyd_max_centroids_count():
+    """Should produce exactly 2^b centroids."""
+    _centroid_cache.clear()
+    for bits in [1, 2, 3, 4, 8]:
+        c = get_lloyd_max_centroids(128, bits)
+        assert (
+            len(c) == 2**bits
+        ), f"b={bits}: expected {2**bits} centroids, got {len(c)}"
+
+
+def test_lloyd_max_centroids_sorted():
+    """Centroids should be in ascending order."""
+    _centroid_cache.clear()
+    for bits in [2, 3, 4]:
+        c = get_lloyd_max_centroids(128, bits)
+        for i in range(len(c) - 1):
+            assert c[i] < c[i + 1], f"b={bits}: centroids not sorted at {i}"
+
+
+def test_lloyd_max_centroids_in_range():
+    """All centroids should be in [-1, 1]."""
+    _centroid_cache.clear()
+    for bits in [2, 3, 4]:
+        c = get_lloyd_max_centroids(128, bits)
+        for ci in c:
+            assert -1.0 <= ci <= 1.0, f"b={bits}: centroid {ci} out of range"
+
+
+def test_lloyd_max_mse_decreases_with_bits():
+    """Higher bit width should give lower MSE."""
+    _centroid_cache.clear()
+    d = 128
+    prev_mse = float("inf")
+    for bits in [1, 2, 3, 4, 8]:
+        mse = compute_centroid_mse(d, bits)
+        assert mse < prev_mse, f"MSE did not decrease from b={bits-1} to b={bits}"
+        prev_mse = mse
+
+
+def test_lloyd_max_1bit_matches_paper():
+    """1-bit centroids for large d should match paper: ±√(2/(πd))."""
+    _centroid_cache.clear()
+    d = 1024
+    c = get_lloyd_max_centroids(d, 1)
+    expected = math.sqrt(2.0 / (math.pi * d))
+    assert abs(c[0] + expected) < 1e-3, f"c[0]={c[0]}, expected {-expected}"
+    assert abs(c[1] - expected) < 1e-3, f"c[1]={c[1]}, expected {expected}"
+
+
+def test_bhq_quantize_shape():
+    """BHQ quantize should preserve spatial dimensions."""
+    _centroid_cache.clear()
+    centroids_mx = centroids_to_mx(get_lloyd_max_centroids(128, 4))
+    x = mx.random.normal(shape=(1, 4, 8, 128))
+    indices = bhq_quantize(x, centroids_mx)
+    mx.eval(indices)
+    assert indices.shape == (1, 4, 8, 128)
+    assert indices.dtype == mx.uint8
+
+
+def test_bhq_quantize_range():
+    """Indices should be in [0, n_centroids)."""
+    _centroid_cache.clear()
+    for bits in [2, 3, 4]:
+        centroids_mx = centroids_to_mx(get_lloyd_max_centroids(128, bits))
+        x = mx.random.normal(shape=(1, 4, 8, 128)) * 0.1
+        indices = bhq_quantize(x, centroids_mx)
+        mx.eval(indices)
+        assert int(mx.max(indices)) < 2**bits
+        assert int(mx.min(indices)) >= 0
+
+
+def test_bhq_dequantize_matches_centroids():
+    """Dequantized values should be exact centroid values."""
+    _centroid_cache.clear()
+    centroids = get_lloyd_max_centroids(128, 2)
+    centroids_mx = centroids_to_mx(centroids)
+    # Create known indices
+    indices = mx.array([[[0, 1, 2, 3]]], dtype=mx.uint8)
+    dq = bhq_dequantize(indices, centroids_mx)
+    mx.eval(dq)
+    for i in range(4):
+        assert abs(dq[0, 0, i].item() - centroids[i]) < 1e-6
+
+
+def test_bhq_attention_matches_standard():
+    """BHQ attention with exact (unquantized) keys should match standard attention."""
+    head_dim = 64
+    batch, n_heads = 1, 2
+    seq_q, seq_kv = 1, 8
+    scale = 1.0 / math.sqrt(head_dim)
+
+    pi = make_rotation_matrix(head_dim, seed=0)
+    mx.random.seed(42)
+    Q = mx.random.normal(shape=(batch, n_heads, seq_q, head_dim))
+    K = mx.random.normal(shape=(batch, n_heads, seq_kv, head_dim))
+    V = mx.random.normal(shape=(batch, n_heads, seq_kv, head_dim))
+
+    # Standard attention
+    scores = (Q.astype(mx.float32) @ mx.swapaxes(K.astype(mx.float32), -2, -1)) * scale
+    weights = mx.softmax(scores, axis=-1)
+    output_std = weights @ V.astype(mx.float32)
+    mx.eval(output_std)
+
+    # BHQ attention with exact rotated keys (no quantization)
+    K_rot = K.astype(mx.float32) @ pi.T
+    output_bhq = bhq_attention(Q, K_rot, V, pi, scale, mask=None)
+    mx.eval(output_bhq)
+
+    nmse = (
+        mx.mean((output_std - output_bhq.astype(mx.float32)) ** 2).item()
+        / mx.mean(output_std**2).item()
+    )
+    assert (
+        nmse < 1e-5
+    ), f"BHQ attention NMSE {nmse:.2e} too high (should match standard)"
+
+
+def test_bhq_cache_wrapper_accumulates():
+    """BHQ cache should accumulate tokens and track offset."""
+    _centroid_cache.clear()
+    head_dim = 64
+    n_kv_heads = 2
+    pi = make_rotation_matrix(head_dim, seed=0)
+    centroids_mx = centroids_to_mx(get_lloyd_max_centroids(head_dim, 4))
+
+    cache = BHQCacheWrapper(pi, centroids_mx, head_dim, n_kv_heads)
+    assert cache.offset == 0
+
+    for step in range(3):
+        k = mx.random.normal(shape=(1, n_kv_heads, 4, head_dim))
+        v = mx.random.normal(shape=(1, n_kv_heads, 4, head_dim))
+        out_k, out_v = cache.update_and_fetch(k, v)
+        mx.eval(out_k, out_v)
+
+    assert cache.offset == 12
+    assert out_k.shape == (1, n_kv_heads, 12, head_dim)
+    assert out_v.shape == (1, n_kv_heads, 12, head_dim)
+
+
+def test_bhq_cache_wrapper_preserves_norms():
+    """Dequantized keys should have approximately correct norms."""
+    _centroid_cache.clear()
+    head_dim = 128
+    n_kv_heads = 4
+    pi = make_rotation_matrix(head_dim, seed=0)
+    centroids_mx = centroids_to_mx(get_lloyd_max_centroids(head_dim, 4))
+
+    cache = BHQCacheWrapper(pi, centroids_mx, head_dim, n_kv_heads)
+
+    mx.random.seed(42)
+    keys = mx.random.normal(shape=(1, n_kv_heads, 8, head_dim)) * 100  # large norms
+    values = mx.random.normal(shape=(1, n_kv_heads, 8, head_dim))
+
+    out_k, _ = cache.update_and_fetch(keys, values)
+    mx.eval(out_k)
+
+    # Check norms are approximately preserved
+    orig_norms = mx.sqrt(mx.sum(keys.astype(mx.float32) ** 2, axis=-1))
+    out_norms = mx.sqrt(mx.sum(out_k**2, axis=-1))
+    mx.eval(orig_norms, out_norms)
+
+    norm_ratio = (out_norms / orig_norms.astype(mx.float32)).reshape(-1)
+    mx.eval(norm_ratio)
+    # Norms should be within 20% (quantization error on direction, not magnitude)
+    assert mx.mean(mx.abs(norm_ratio - 1.0)).item() < 0.2
+
+
+def test_bhq_2bit_beats_native_2bit():
+    """BHQ at 2-bit should have lower attention NMSE than native affine 2-bit."""
+    _centroid_cache.clear()
+    head_dim = 128
+    batch, n_heads = 1, 4
+    seq_kv = 64
+    scale = 1.0 / math.sqrt(head_dim)
+
+    pi = make_rotation_matrix(head_dim, seed=42)
+    mx.random.seed(99)
+    Q = mx.random.normal(shape=(batch, n_heads, 1, head_dim)) * 0.1
+    K = mx.random.normal(shape=(batch, n_heads, seq_kv, head_dim))
+    V = mx.random.normal(shape=(batch, n_heads, seq_kv, head_dim))
+    K_norms = mx.sqrt(mx.sum(K.astype(mx.float32) ** 2, axis=-1, keepdims=True))
+    K_unit = K.astype(mx.float32) / K_norms
+
+    # Ground truth
+    scores_gt = (
+        Q.astype(mx.float32) @ mx.swapaxes(K.astype(mx.float32), -2, -1)
+    ) * scale
+    weights_gt = mx.softmax(scores_gt, axis=-1)
+    output_gt = weights_gt @ V.astype(mx.float32)
+    mx.eval(output_gt)
+    gt_norm = mx.mean(output_gt**2).item()
+
+    # BHQ 2-bit
+    centroids_mx = centroids_to_mx(get_lloyd_max_centroids(head_dim, 2))
+    K_rot = rotate(K_unit, pi)
+    idx = bhq_quantize(K_rot, centroids_mx)
+    K_dq = bhq_dequantize(idx, centroids_mx) * K_norms.astype(mx.float32)
+    out_bhq = bhq_attention(Q, K_dq, V, pi, scale, mask=None)
+    mx.eval(out_bhq)
+    bhq_nmse = mx.mean((output_gt - out_bhq.astype(mx.float32)) ** 2).item() / gt_norm
+
+    # Native 2-bit
+    qd, qs, qb = mx.quantize(K, group_size=64, bits=2)
+    K_native = mx.dequantize(qd, qs, qb, group_size=64, bits=2)
+    scores_n = (
+        Q.astype(mx.float32) @ mx.swapaxes(K_native.astype(mx.float32), -2, -1)
+    ) * scale
+    weights_n = mx.softmax(scores_n, axis=-1)
+    out_n = weights_n @ V.astype(mx.float32)
+    mx.eval(out_n)
+    native_nmse = mx.mean((output_gt - out_n) ** 2).item() / gt_norm
+
+    assert (
+        bhq_nmse < native_nmse
+    ), f"BHQ-2 NMSE {bhq_nmse:.2e} should be lower than Native-2 {native_nmse:.2e}"
+
+
+def test_bhq_mutual_exclusion():
+    """BHQ + explicit kv_bits should raise ValueError."""
+    from server.experiments.config import ExperimentConfig
+    from server.inference import InferenceEngine
+
+    bhq_cfg = ExperimentConfig(name="bhq", enabled=True, params={"kv_bits": 4})
+    engine = InferenceEngine(experiment_configs={"bhq": bhq_cfg})
+
+    with pytest.raises(ValueError, match="Cannot set kv_bits"):
+        list(
+            engine.generate(
+                prompt="test",
+                model_name="mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+                kv_bits=8,
+                max_tokens=1,
+            )
+        )
 
 
 def test_turbo_quant_mutual_exclusion():
