@@ -1,5 +1,5 @@
 # Beads Configuration File
-issue-prefix: "Sylveste"
+issue-prefix: "sylveste"
 
 # Per-project Dolt server (isolated from other projects)
 dolt.shared-server: false
