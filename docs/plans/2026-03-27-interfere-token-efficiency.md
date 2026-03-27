@@ -38,20 +38,34 @@ Plan review surfaced 12 issues across 4 agents. Critical fixes:
 
 ## Task Breakdown
 
-### Task 1: Update routing.yaml Model Tiers
-**Files:** `os/Clavain/config/routing.yaml`
-**Effort:** Small (config only)
+### Task 0: Wire PriorityRequestQueue into interfere server
+**Files:** `interverse/interfere/server/main.py`, `interverse/interfere/server/queue.py`
+**Effort:** Small (integration of existing code)
+**Blocking:** Must complete before Tasks 3, 5, 6.
 
-Upgrade local model tiers so Haiku-tier tasks use 35B MoE (not 9B):
+`PriorityRequestQueue` is fully implemented in `queue.py` but `main.py` bypasses it — calls `worker.generate()` directly. Concurrent HTTP requests interleave token streams via the shared `resp_queue` (no `request_id` filtering in `MetalWorker._recv`).
 
+Fix: Wire queue into `_chat_completions` handler so requests serialize through the worker. Add a `threading.Lock` in `MetalWorker` as a belt-and-suspenders guard. This prevents the bridge + Clavain B5 enforce mode from corrupting each other's outputs.
+
+### Task 1: Update routing.yaml Model Tiers + lib-routing.sh
+**Files:** `os/Clavain/config/routing.yaml`, `os/Clavain/scripts/lib-routing.sh`
+**Effort:** Small (config + shell function update)
+
+**Atomic update — all three changes in one commit:**
+
+1. Add `local:qwen3.5-122b-a10b-4bit` to `tier_mappings` (tier 3)
+2. Update `complexity_routing`:
 ```yaml
 complexity_routing:
   C1: "local:qwen3.5-35b-a3b-4bit"         # was 9B; MoE 3B active, 88 tok/s
   C2: "local:qwen3.5-35b-a3b-4bit"         # same; zero marginal cost
   C3: "local:qwen3.5-122b-a10b-4bit"       # 10B active, 50 tok/s; Clavain only (not playtest)
 ```
+3. Add cases for new model IDs in `_routing_model_tier()` in `lib-routing.sh`:
+   - `local:qwen3.5-35b-a3b-4bit` → tier 2
+   - `local:qwen3.5-122b-a10b-4bit` → tier 3
 
-Keep the 9B in tier_mappings as draft model for speculative decoding.
+Without step 3, safety floors for fd-safety/fd-correctness are silently disabled for the new models.
 
 **Note:** The 122B (65GB) is for Clavain routing only. The playtest bridge uses 35B exclusively to avoid memory contention with the game.
 
