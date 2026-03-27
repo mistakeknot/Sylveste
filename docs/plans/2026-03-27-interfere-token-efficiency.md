@@ -136,17 +136,18 @@ Current checkpoint: {campaign.current_checkpoint}
 
 This is the highest-leverage optimization for sustained playtest sessions.
 
-### Task 4: Campaign Adapter
-**Files:** `interverse/interfere/scripts/campaign-adapter.py` (new)
-**Effort:** Small
+### Task 4: Campaign Loading (folded into bridge)
+**Files:** Part of `scripts/playtest-bridge.py` (no separate file)
+**Effort:** Included in Task 3
 
-Reads Shadow Work campaign YAML files and translates them into:
-- Initial game setup (restart, step to starting tick)
-- Assertion checks at campaign checkpoints
-- Domain context extraction (objective, win condition) for bridge system prompt
-- Pass/fail summary
+Campaign loading is part of the bridge's `--campaign` flag handler, not a separate script. It:
+- Reads Shadow Work campaign YAML from `--campaigns-dir` (configurable, default: `../shadow-work/tools/sw-agent/campaigns/`)
+- Extracts domain context (objective, win condition) for system prompt
+- Sets up initial game state (restart, step to starting tick)
+- Runs assertion checks at campaign checkpoints (pauses game before reading state to avoid TOCTOU)
+- Outputs pass/fail summary
 
-This reuses the existing campaign format from `shadow-work/tools/sw-agent/campaigns/`.
+No hardcoded cross-repo paths — the campaigns directory is always a CLI argument.
 
 ### Task 5: Shadow Sprint Baseline
 **Files:** No new files — operational
