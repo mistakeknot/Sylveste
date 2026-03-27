@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-csq
+bead: Sylveste-csq
 stage: design
 requirements:
   - F1: Maturation Ladder (6 Levels)
@@ -11,7 +11,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-csq
+**Bead:** Sylveste-csq
 **Goal:** Add a 4th skill to interhelm that guides agents from skeleton diagnostic server to production-grade operator toolkit via a 6-level maturation ladder and conformance audit mode.
 
 **Architecture:** Single SKILL.md file containing structured guidance (no runtime code). Two modes: maturation (step-by-step guide through 6 levels) and audit (evaluate existing server against the ladder). Shadow Work's sw-agent (1,525 lines, 6 files) is the reference implementation — patterns are distilled as guidance, not copy-paste templates.
@@ -424,7 +424,7 @@ Expected: `OK: name=diagnostic-maturation, description length=...`
   expect: contains "OK"
 </verify>
 
-Note: All verify blocks assume cwd is the monorepo root (`/home/mk/projects/Demarch`).
+Note: All verify blocks assume cwd is the monorepo root (`/home/mk/projects/Sylveste`).
 
 ---
 

@@ -175,7 +175,7 @@ Example: 1 - (0.30 × 0.33 × 0.784) = 92.2% (not 70 + 67 + 21.6 = 158.6%)
 | Dropped agent unique rate | > 5% | Shadow run tracking | Re-add agent |
 | Same-pool optimization cap | > 90% | Budget tracking | Don't stack more optimizations |
 
-## Recommendations for Demarch
+## Recommendations for Sylveste
 
 1. **Embed before compress** — intercache (iv-p4qq) should store original embeddings, not compressed ones
 2. **Compression = one-shot only** — never compress content that will be retrieved or cached

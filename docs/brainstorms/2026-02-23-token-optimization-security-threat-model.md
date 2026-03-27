@@ -117,7 +117,7 @@ This document maps each optimization technique to its security threats, assesses
 
 **Layer:** 1 (Prompt Architecture)
 **Technique:** Nested AGENTS.md files from repo root to CWD merge additively, with closer files overriding. Used by Codex CLI and Claude Code.
-**Production use:** Every Demarch subproject has its own CLAUDE.md and AGENTS.md.
+**Production use:** Every Sylveste subproject has its own CLAUDE.md and AGENTS.md.
 
 **Threats:**
 

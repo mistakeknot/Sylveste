@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-Demarch tracks costs via interstat. Build economic model justifying disposition path choice using actual token and time data.
+Sylveste tracks costs via interstat. Build economic model justifying disposition path choice using actual token and time data.
 
 ## Review Approach
 

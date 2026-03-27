@@ -1,6 +1,6 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-ome7
+bead: Sylveste-ome7
 stage: discover
 ---
 # intermix: Cross-Repo Matrix Evaluation Harness
@@ -115,7 +115,7 @@ Each campaign is a segment in the JSONL. `report_matrix` can compare segments �
 
 ## Prior Art Considered
 
-- **interlab** (Demarch) — inspire architecture, not extend. Different problem shape.
+- **interlab** (Sylveste) — inspire architecture, not extend. Different problem shape.
 - **SWE-bench** — gold standard for agent eval, but heavyweight (Docker, full repo history, Python-only initially). intermix is lighter: YAML manifest, subprocess spawn, any language.
 - **FeatureBench** — execution-based eval with test-driven tasks. Closest to our approach.
 - **HAL Harness** — three-axis eval (model x benchmark x scaffold). intermix is two-axis (repo x task) but could grow.
@@ -218,7 +218,7 @@ These are designed during `init_matrix` by the skill scanning each repo and sele
 3. For each cluster with ≥2 cells:
    - `bd create --title="[intermix] <pattern>" --type=bug --priority=<from severity>`
    - Description includes: affected cells, common LLM analysis themes, example outputs
-   - Link as child of the parent epic (e.g., Demarch-ome7)
+   - Link as child of the parent epic (e.g., Sylveste-ome7)
 4. Report includes: `"● 3 beads created from 4 failure patterns"`
 
 ### Regression Detection (repeat campaigns)

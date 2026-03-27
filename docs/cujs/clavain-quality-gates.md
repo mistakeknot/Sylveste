@@ -3,7 +3,7 @@ artifact_type: cuj
 journey: clavain-quality-gates
 actor: regular user (developer shipping code through review)
 criticality: p1
-bead: Demarch-2c7
+bead: Sylveste-2c7
 ---
 
 # Clavain Quality Gates

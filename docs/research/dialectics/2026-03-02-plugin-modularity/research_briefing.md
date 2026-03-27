@@ -191,7 +191,7 @@ The research suggests the correct distinction is not "how many plugins exist" bu
 
 ### Unanswered Questions
 
-1. What is Demarch's actual token cost per plugin load? (interstat should have this data)
+1. What is Sylveste's actual token cost per plugin load? (interstat should have this data)
 2. Does the monorepo working directory mask friction that agents in other contexts would experience?
 3. Are the routing/glue plugins (interlock, interpath, intermap) genuinely independent concerns, or are they configurations of a single "agent coordination" capability?
 4. What is the Uber DOMA equivalent for a 49-plugin AI ecosystem? Would consolidating into ~10 domains work?

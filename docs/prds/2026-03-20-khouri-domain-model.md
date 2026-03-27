@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-xk68
+bead: Sylveste-xk68
 stage: design
 ---
 
@@ -46,10 +46,10 @@ A single `models.py` with Pydantic v2 models that thread CLA layer identity thro
 
 ## Non-goals
 
-- Pipeline orchestration (separate bead: Demarch-hmo7)
-- LLM integration or API calls (Stage 1 bead: Demarch-gbm7)
+- Pipeline orchestration (separate bead: Sylveste-hmo7)
+- LLM integration or API calls (Stage 1 bead: Sylveste-gbm7)
 - Persistence/database layer
-- CLI commands (separate bead: Demarch-n497)
+- CLI commands (separate bead: Sylveste-n497)
 
 ## Dependencies
 

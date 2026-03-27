@@ -10,7 +10,7 @@
       "Evaluate the upstream velocity risk: is pi_agent_rust actively maintained, and does the roadmap account for cherry-picking relevant upstream fixes versus accumulating drift?",
       "Review whether the 'rebrand and stabilize' milestone realistically surfaces fork complexity, or whether it defers hard coupling issues to v0.2 when OODARC modification actually begins",
       "Check whether the MIT license and fork permissions are confirmed, and whether vendored dependencies (224 extensions) have compatible licenses for redistribution under Skaffen branding",
-      "Assess whether the stated performance numbers (sub-100ms startup, 12x memory reduction) are measured from pi_agent_rust itself or are projections — and whether they hold under Demarch's actual session workload"
+      "Assess whether the stated performance numbers (sub-100ms startup, 12x memory reduction) are measured from pi_agent_rust itself or are projections — and whether they hold under Sylveste's actual session workload"
     ],
     "success_hints": [
       "Fork viability is confirmed when v0.1 acceptance criteria include a structural review of agent.rs coupling, not just a rename-and-CI-green bar",
@@ -73,7 +73,7 @@
   },
   {
     "name": "fd-pillar-integration",
-    "focus": "Reviews the integration design between Skaffen and the five existing Demarch pillars for interface completeness, dependency ordering, and graceful degradation",
+    "focus": "Reviews the integration design between Skaffen and the five existing Sylveste pillars for interface completeness, dependency ordering, and graceful degradation",
     "persona": "A distributed systems architect who has worked on multi-component platform integrations where different teams own different layers. Focuses on interface contracts, versioning assumptions, and what happens when one component is unavailable.",
     "decision_lens": "Prioritizes findings where an integration assumes a stable interface that is explicitly noted as 'still evolving' or 'not yet started'. A v0.3 dependency on an unstable Intercore schema is a blocking risk, not a background concern.",
     "review_areas": [

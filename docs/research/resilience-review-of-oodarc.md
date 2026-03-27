@@ -2,14 +2,14 @@
 
 **Reviewer:** Flux-drive Adaptive Capacity Reviewer
 **Date:** 2026-02-28
-**Document reviewed:** `/home/mk/projects/Demarch/docs/brainstorms/2026-02-28-oodarc-loops-brainstorm.md`
+**Document reviewed:** `/home/mk/projects/Sylveste/docs/brainstorms/2026-02-28-oodarc-loops-brainstorm.md`
 **Grounding:** PHILOSOPHY.md (evidence-driven, defense in depth, earned authority), AGENTS.md (progressive trust, escalation contracts)
 
 ---
 
 ## Executive Summary
 
-The OODARC brainstorm names a critical loop structure that Demarch already executes informally. The design is philosophically sound but has **three critical resilience blindspots**: the shared observation layer is an undefended single point of failure, failure propagation paths between loops are unmapped, and Reflect's dual-mode structure doesn't guarantee that inline reflections actually improve decision quality before re-entering the cycle. These gaps are not architectural errors — they're design decisions that should be explicit rather than emergent.
+The OODARC brainstorm names a critical loop structure that Sylveste already executes informally. The design is philosophically sound but has **three critical resilience blindspots**: the shared observation layer is an undefended single point of failure, failure propagation paths between loops are unmapped, and Reflect's dual-mode structure doesn't guarantee that inline reflections actually improve decision quality before re-entering the cycle. These gaps are not architectural errors — they're design decisions that should be explicit rather than emergent.
 
 **Severity:** P2 (Missed Lens) for all findings except #3, which is P1 (Blind Spot).
 
@@ -435,7 +435,7 @@ This approach combines the benefits: ship value now (A) without foreclosing bett
 
 ---
 
-## Connections to Demarch Philosophy
+## Connections to Sylveste Philosophy
 
 **Finding 3** (Reflect without verification) directly violates PHILOSOPHY.md's core principle: "Evidence earns authority. Each level requires proof from the previous level." The fix requires implementing a two-stage lesson-verification process.
 

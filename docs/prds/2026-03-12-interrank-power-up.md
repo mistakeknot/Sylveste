@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-fqb
+bead: Sylveste-fqb
 stage: design
 ---
 

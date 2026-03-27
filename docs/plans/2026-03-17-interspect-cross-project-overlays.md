@@ -3,7 +3,7 @@ artifact_type: plan
 bead: iv-5ztam
 stage: design
 requirements:
-  - F1: Cross-project evidence aggregation (Demarch-qyff)
+  - F1: Cross-project evidence aggregation (Sylveste-qyff)
   - F2: Prompt tuning overlay creation (iv-t1m4)
   - F3: Overlay injection in SessionStart
 ---

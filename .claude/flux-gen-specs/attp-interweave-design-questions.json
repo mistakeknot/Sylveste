@@ -8,12 +8,12 @@
       "Verify that the token schema has a top-level `version` field with a well-defined semver or monotonic versioning strategy and that unknown fields are handled explicitly (reject vs ignore-and-forward)",
       "Check that all fields have unambiguous types — no union types that collapse at serialization boundaries, no fields that are optional in some versions but required in others without a discriminator",
       "Confirm that sensitivity metadata (which subtrees are excluded) is represented in the token itself, not just in the Merkle proof, so tokens are self-describing without requiring the proof",
-      "Audit field naming for consistency with attp's framework-agnostic positioning — no Demarch-specific field names should appear in the base token spec; interweave extensions must be namespaced",
+      "Audit field naming for consistency with attp's framework-agnostic positioning — no Sylveste-specific field names should appear in the base token spec; interweave extensions must be namespaced",
       "Evaluate whether the schema supports hybrid payloads (inline context vs reference by hash) without ambiguity — the token must be parseable without fetching external content",
       "Assess whether the schema encodes enough provenance (origin agent, timestamp, chain of custody) to support audit trails and conflict attribution downstream"
     ],
     "success_hints": [
-      "A schema reviewer from a non-Demarch framework can implement a compliant attp token producer/consumer using only the spec, without reading interweave source",
+      "A schema reviewer from a non-Sylveste framework can implement a compliant attp token producer/consumer using only the spec, without reading interweave source",
       "Adding a new field in a future version does not require a flag day across all agents — old consumers degrade gracefully",
       "Sensitivity exclusion metadata in the token is sufficient to reconstruct which paths were withheld, even without the Merkle proof"
     ],
@@ -40,7 +40,7 @@
     "success_hints": [
       "A new attp MCP server implementation can be written against the tool surface spec without reading the reference implementation",
       "An agent that calls attp_push on a peer running an older attp version receives a structured error that tells it exactly which capability is missing",
-      "No MCP tool name or parameter field contains a Tailscale, Demarch, or interweave identifier"
+      "No MCP tool name or parameter field contains a Tailscale, Sylveste, or interweave identifier"
     ],
     "task_context": "attp is a standalone, framework-agnostic protocol for structured bidirectional context transfer between AI coding agents on separate machines, using crypto-enforced sensitivity boundaries via Merkle tree exclusion proofs and Tailscale MCP relay for transport.",
     "anti_overlap": [
@@ -103,17 +103,17 @@
     "name": "fd-conflict-resolution-boundary",
     "focus": "Where attp's responsibility for conflict detection ends and interlock/interweave's responsibility begins",
     "persona": "A protocol boundary designer who specializes in defining clean separation of concerns between layers in multi-layer distributed systems. Evaluates designs for whether handoffs carry enough information for the receiving layer to act correctly.",
-    "decision_lens": "Prioritizes findings where attp retains too much conflict resolution logic (coupling to Demarch) or too little (insufficient information for interweave to resolve correctly). Clean boundary definition is the primary criterion.",
+    "decision_lens": "Prioritizes findings where attp retains too much conflict resolution logic (coupling to Sylveste) or too little (insufficient information for interweave to resolve correctly). Clean boundary definition is the primary criterion.",
     "review_areas": [
       "Define exactly what attp is responsible for detecting: file-level conflicts, token-level conflicts, or semantic conflicts — verify the design stays within that boundary",
       "Check that conflict reports include enough for interlock/interweave to resolve without querying attp again — conflicting token hashes, last-common-ancestor reference, which agents produced each version",
       "Evaluate whether conflict surface is event/callback or blocking — blocking would stall all transfers during resolution",
       "Assess the case where attp receives a valid token that conflicts with local state the peer doesn't know about — must surface ambiguity, not silently accept or reject",
-      "Check that the delegation interface to interweave is a stable contract, not direct function calls — so attp works with non-Demarch conflict resolvers",
+      "Check that the delegation interface to interweave is a stable contract, not direct function calls — so attp works with non-Sylveste conflict resolvers",
       "Verify distinction between structural conflicts (same file edited) and sensitivity conflicts (path exclusion disagreement)"
     ],
     "success_hints": [
-      "A non-Demarch framework can implement a conflict resolver that consumes attp's conflict events without reading interweave source",
+      "A non-Sylveste framework can implement a conflict resolver that consumes attp's conflict events without reading interweave source",
       "attp never makes resolution decisions — always surfaces, delegates, and waits",
       "The conflict event payload is sufficient for interlock to reconstruct the causal graph without additional queries"
     ],

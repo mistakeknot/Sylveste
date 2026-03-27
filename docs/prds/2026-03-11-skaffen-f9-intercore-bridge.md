@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-j2f
+bead: Sylveste-j2f
 stage: design
 ---
 
@@ -76,7 +76,7 @@ Fix the Intercore bridge, make `ic` a mandatory dependency, record all routing d
 
 ## Non-goals
 
-- **Interspect calibration pipeline** — consuming evidence to propose overrides is Demarch-g3a
+- **Interspect calibration pipeline** — consuming evidence to propose overrides is Sylveste-g3a
 - **Override v2 phases array format** — we consume whatever `ic route model` returns; format definition lives in Intercore
 - **Automatic override proposal** — requires the calibration pipeline
 - **Per-tool evidence** — tool-level signals (which tools failed, which succeeded) are future work

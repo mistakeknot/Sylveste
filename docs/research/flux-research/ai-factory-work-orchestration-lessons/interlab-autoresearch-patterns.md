@@ -1,14 +1,14 @@
 # Patterns from Autonomous Research Systems for AI Factory Orchestration
 
-Research into two autonomous experiment-loop systems — Demarch's interlab and karpathy/autoresearch — to extract patterns applicable to AI factory work orchestration (the intent directive model, rework taxonomy, CUJ health thresholds, parallel agent dispatch).
+Research into two autonomous experiment-loop systems — Sylveste's interlab and karpathy/autoresearch — to extract patterns applicable to AI factory work orchestration (the intent directive model, rework taxonomy, CUJ health thresholds, parallel agent dispatch).
 
 ## System Summaries
 
-### Demarch interlab
+### Sylveste interlab
 
 interlab is an MCP plugin providing 7 tools (3 single-campaign + 4 multi-campaign orchestration) that implement an autonomous edit-benchmark-keep/discard loop. An LLM agent drives the intelligence; the plugin provides "dumb tools + smart guards" — circuit breakers, path-scoped git safety, metric parsing. State is reconstructed from append-only JSONL on every tool call (crash recovery for free). Multi-campaign orchestration uses beads (the project's work-tracking system) as the coordination layer: parent bead = broad goal, child beads = individual campaigns, dependency edges = execution ordering.
 
-Key files: `/home/mk/projects/Demarch/interverse/interlab/AGENTS.md`, `skills/autoresearch/SKILL.md`, `skills/autoresearch-multi/SKILL.md`, `internal/experiment/state.go`, `internal/orchestration/plan.go`.
+Key files: `/home/mk/projects/Sylveste/interverse/interlab/AGENTS.md`, `skills/autoresearch/SKILL.md`, `skills/autoresearch-multi/SKILL.md`, `internal/experiment/state.go`, `internal/orchestration/plan.go`.
 
 ### karpathy/autoresearch
 

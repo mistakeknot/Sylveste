@@ -1,6 +1,6 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-4b7
+bead: Sylveste-4b7
 stage: discover
 ---
 
@@ -17,7 +17,7 @@ Three deliverables:
 
 ## Why This Approach
 
-The ReservoirReadout skeleton exists (`server/experiments/reservoir_routing.py`) with a simple 2-layer bottleneck MLP. The architecture decisions from Demarch-f0k (frozen layer-24, 262K params) are locked. What remains is empirical: which hyperparameter combination yields the best routing accuracy with minimal inference overhead.
+The ReservoirReadout skeleton exists (`server/experiments/reservoir_routing.py`) with a simple 2-layer bottleneck MLP. The architecture decisions from Sylveste-f0k (frozen layer-24, 262K params) are locked. What remains is empirical: which hyperparameter combination yields the best routing accuracy with minimal inference overhead.
 
 Autoresearch is the right tool because:
 - Mutation space is discrete and enumerated (tap layer x hidden dim x bottleneck x activation x classes = 270 combinations)

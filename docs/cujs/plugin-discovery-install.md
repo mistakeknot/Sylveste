@@ -3,14 +3,14 @@ artifact_type: cuj
 journey: plugin-discovery-install
 actor: new user (developer discovering and installing Interverse plugins)
 criticality: p2
-bead: Demarch-2c7
+bead: Sylveste-2c7
 ---
 
 # Plugin Discovery and Installation
 
 ## Why This Journey Matters
 
-The Interverse is Demarch's plugin ecosystem — 50+ plugins that extend the platform with review agents, coordination tools, knowledge systems, analytics, and more. But an ecosystem is only as good as its discovery experience. A developer who can't find the right plugin, or who installs one and can't figure out how to use it, gets no value from the entire ecosystem.
+The Interverse is Sylveste's plugin ecosystem — 50+ plugins that extend the platform with review agents, coordination tools, knowledge systems, analytics, and more. But an ecosystem is only as good as its discovery experience. A developer who can't find the right plugin, or who installs one and can't figure out how to use it, gets no value from the entire ecosystem.
 
 The plugin lifecycle — discover, install, configure, use — must be seamless enough that installing a new capability feels like flipping a switch, not reading a manual. Each plugin is independently installable, has its own CLAUDE.md with instructions, and registers its commands/skills/hooks automatically.
 

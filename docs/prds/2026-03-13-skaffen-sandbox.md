@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-6i0.10
+bead: Sylveste-6i0.10
 stage: design
 ---
 

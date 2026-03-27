@@ -1,12 +1,12 @@
 ---
 artifact_type: plan
-bead: Demarch-z5qg
+bead: Sylveste-z5qg
 stage: completed
 ---
 # Plan: Interflux Pipeline Optimization
 
 **PRD:** docs/prds/2026-03-23-interflux-pipeline-optimization.md
-**Bead:** Demarch-z5qg
+**Bead:** Sylveste-z5qg
 **Scope:** 16 features across 6 groups (all findings from 5-agent review)
 **Build sequence:** Group A (scoring) → Group B (slicing) → Group C (latency) → Group D (budget) → Group E (dropout) → Group F (supporting)
 **All files are in:** `interverse/interflux/` (interflux has its own git repo)
@@ -15,7 +15,7 @@ stage: completed
 
 All scoring changes are in `skills/flux-drive/SKILL.md` lines 273-390 and `docs/spec/core/scoring.md`.
 
-### Task A1: Widen fd-correctness pre-filter (F1, Demarch-6vkx)
+### Task A1: Widen fd-correctness pre-filter (F1, Sylveste-6vkx)
 
 **File:** `skills/flux-drive/SKILL.md` line 279
 **Change:** Add keywords to the data filter:
@@ -25,7 +25,7 @@ After:  "databases, migrations, data models, concurrency, async patterns, state 
 ```
 Also add domain-aware bypass: "If detected domain has >=3 injection criteria for fd-correctness, always pass this filter."
 
-### Task A2: Make domain boost binary (F2, Demarch-z5qg.1)
+### Task A2: Make domain boost binary (F2, Sylveste-z5qg.1)
 
 **File:** `skills/flux-drive/SKILL.md` lines 336-339
 **Change:** Replace the 3-tier boost with binary:
@@ -41,7 +41,7 @@ After:
 ```
 **Also update:** `docs/spec/core/scoring.md` lines 49-58 to match.
 
-### Task A3: Remove generated_slots from ceiling (F3, Demarch-z5qg.4)
+### Task A3: Remove generated_slots from ceiling (F3, Sylveste-z5qg.4)
 
 **File:** `skills/flux-drive/SKILL.md` lines 368-373
 **Change:**
@@ -50,7 +50,7 @@ After:
 3. Lower `hard_maximum` from 12 to 10
 4. Update examples to reflect new ceilings (repo+2domains = 4+3+2 = 9 max instead of 11)
 
-### Task A4: Fix selection threshold (F4, Demarch-z5qg.5)
+### Task A4: Fix selection threshold (F4, Sylveste-z5qg.5)
 
 **File:** `skills/flux-drive/SKILL.md` lines 345-351
 **Change:** Selection rules become:
@@ -64,7 +64,7 @@ After:
 ```
 Add note: "Inclusion is determined by base_score. Bonuses influence Stage 1 vs Stage 2 placement and tie-breaking only."
 
-### Task A5: Add survival-rate tracking (F5, Demarch-z5qg.2)
+### Task A5: Add survival-rate tracking (F5, Sylveste-z5qg.2)
 
 **File:** `skills/flux-drive/phases/synthesize.md` (cost report section)
 **Change:** In the cost/findings table template, add columns:
@@ -81,7 +81,7 @@ If survival rate < 20%: append "Consider raising selection threshold for this pr
 
 All slicing changes are in `skills/flux-drive/phases/slicing.md`.
 
-### Task B1: Replace zero-priority-skip with fallback (F6, Demarch-gunp)
+### Task B1: Replace zero-priority-skip with fallback (F6, Sylveste-gunp)
 
 **File:** `skills/flux-drive/phases/slicing.md` line 199
 **Change:** Replace:
@@ -92,7 +92,7 @@ After:  "7. **Zero priority fallback** — If an agent has zero priority section
 ```
 Apply same change to Method 2 (no equivalent rule currently — add it).
 
-### Task B2: Expand fd-safety patterns (F7, Demarch-z5qg.6)
+### Task B2: Expand fd-safety patterns (F7, Sylveste-z5qg.6)
 
 **File:** `skills/flux-drive/phases/slicing.md` lines 24-34
 **Change:** Add to fd-safety priority file patterns:
@@ -104,7 +104,7 @@ Apply same change to Method 2 (no equivalent rule currently — add it).
 - `**/.npmrc`, `**/.pypirc`, `**/pip.conf`
 ```
 
-### Task B3: Expand heading keywords (F8, Demarch-z5qg.7)
+### Task B3: Expand heading keywords (F8, Sylveste-z5qg.7)
 
 **File:** `skills/flux-drive/phases/slicing.md` lines 219-227
 **Change:** Expand the heading keywords table:
@@ -115,7 +115,7 @@ Apply same change to Method 2 (no equivalent rule currently — add it).
 | fd-user-product | user, UX, flow, onboarding, CLI, interface, experience, accessibility, error handling, design, workflow, navigation, feedback, notification, settings |
 ```
 
-### Task B4: Extend body sampling (F9, Demarch-z5qg.8)
+### Task B4: Extend body sampling (F9, Sylveste-z5qg.8)
 
 **File:** `skills/flux-drive/phases/slicing.md` line 215
 **Change:**
@@ -126,7 +126,7 @@ After:  "The section body contains any of the agent's keywords (sampled — firs
 
 ## Group C: Latency Changes (F10-F11)
 
-### Task C1: Incremental Stage 2 dispatch (F10, Demarch-z5qg.10)
+### Task C1: Incremental Stage 2 dispatch (F10, Sylveste-z5qg.10)
 
 **File:** `skills/flux-drive/phases/launch.md` lines 348-360, 488-540
 **Change:** After Step 2.2a (Stage 1 dispatch), modify the completion monitoring to support incremental expansion:
@@ -150,7 +150,7 @@ As each Stage 1 agent completes (.md file appears):
 Speculative launches do NOT count against the slot ceiling — they are bonus agents justified by Stage 1 evidence.
 ```
 
-### Task C2: Reduce polling to 5s (F11, Demarch-z5qg.11)
+### Task C2: Reduce polling to 5s (F11, Sylveste-z5qg.11)
 
 **File:** `skills/flux-drive/phases/shared-contracts.md` line 107
 **Change:**
@@ -161,7 +161,7 @@ After:  "Check `{OUTPUT_DIR}/` for `.md` files every 5 seconds (ls on <15 files 
 
 ## Group D: Budget Fixes (F12-F13)
 
-### Task D1: Fix token data recording (F12, Demarch-ozox)
+### Task D1: Fix token data recording (F12, Sylveste-ozox)
 
 **File:** `skills/flux-drive/phases/synthesize.md` (Step 3.4b cost report)
 **Change:** After synthesis completes and all agent outputs are collected, add a token recording step:
@@ -189,7 +189,7 @@ done
 
 Note: This is an approximation (chars/4). More accurate token counting requires session JSONL parsing, which is a future improvement. The approximation is sufficient to unblock calibration and identify which defaults in budget.yaml are significantly wrong.
 
-### Task D2: Fix namespace mismatch (F13, Demarch-8v79)
+### Task D2: Fix namespace mismatch (F13, Sylveste-8v79)
 
 **File:** `scripts/estimate-costs.sh` lines 85-101
 **Change:** Normalize agent names in the SQL query by stripping the `interflux:` prefix:
@@ -213,7 +213,7 @@ After:  "$script_dir/../../../os/Clavain/scripts/lib-fleet.sh"
 
 ## Group E: Dropout/Expansion (F14-F15)
 
-### Task E1: Fix dropout spec drift (F14, Demarch-z5qg.12)
+### Task E1: Fix dropout spec drift (F14, Sylveste-z5qg.12)
 
 **Files:**
 - `docs/spec/core/staging.md` line 182: change "Default 0.7" → "Default 0.6"
@@ -221,7 +221,7 @@ After:  "$script_dir/../../../os/Clavain/scripts/lib-fleet.sh"
 - `AGENTS.md` lines 210, 297: change "0.7" → "0.6"
 - `config/flux-drive/budget.yaml` line 44-47: add comment "Recall validation pending — needs token data (F12) to measure finding recall at different thresholds"
 
-### Task E2: Add Project Agent adjacency (F15, Demarch-z5qg.13)
+### Task E2: Add Project Agent adjacency (F15, Sylveste-z5qg.13)
 
 **File:** `skills/flux-drive/phases/launch.md` lines 495-503 (adjacency map)
 **Change:** After the hardcoded adjacency map, add a dynamic resolution rule:
@@ -240,7 +240,7 @@ Also document in the expansion scoring section that Project Agents without adjac
 
 ## Group F: Supporting (F16)
 
-### Task F1: Add document abstract for 200-499 line docs (F16, Demarch-z5qg.9)
+### Task F1: Add document abstract for 200-499 line docs (F16, Sylveste-z5qg.9)
 
 **File:** `skills/flux-drive/phases/slicing.md` lines 259-265
 **Change:** Replace:

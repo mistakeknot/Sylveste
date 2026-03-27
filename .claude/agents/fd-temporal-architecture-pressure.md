@@ -21,13 +21,13 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-Demarch is a monorepo for an autonomous software development agency platform with 6 pillars across 3 layers — L1 kernel (Intercore, Intermute), L2 OS (Clavain, Skaffen, Zaka, Alwe, Ockham), L3 apps (Autarch, Intercom, Meadowsyn), and 54 Interverse plugins. The review targets cross-cutting concerns invisible to standard code review.
+Sylveste is a monorepo for an autonomous software development agency platform with 6 pillars across 3 layers — L1 kernel (Intercore, Intermute), L2 OS (Clavain, Skaffen, Zaka, Alwe, Ockham), L3 apps (Autarch, Intercom, Meadowsyn), and 54 Interverse plugins. The review targets cross-cutting concerns invisible to standard code review.
 
 ## Review Approach
 
-### 1. Identify which Demarch design invariants from PHILOSOPHY
+### 1. Identify which Sylveste design invariants from PHILOSOPHY
 
-- Identify which Demarch design invariants from PHILOSOPHY.md are 'evolutionarily unstable strategies' — principles that every rational agent under deadline pressure would be tempted to violate, with no enforcement mechanism preventing the violation
+- Identify which Sylveste design invariants from PHILOSOPHY.md are 'evolutionarily unstable strategies' — principles that every rational agent under deadline pressure would be tempted to violate, with no enforcement mechanism preventing the violation
 
 ### 2. Find the path dependencies in the Interverse plugin archi...
 

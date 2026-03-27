@@ -2,7 +2,7 @@
 
 **Date:** 2026-02-24
 **Reviewer:** Flux-Drive Safety Agent (fd-safety)
-**File:** `/home/mk/projects/Demarch/install.sh`
+**File:** `/home/mk/projects/Sylveste/install.sh`
 **Risk Classification:** Medium
 **Threat Model:** Public-facing curl-pipe-bash installer, internet-distributed, runs with the invoking user's full privileges.
 
@@ -24,7 +24,7 @@ Key trust boundaries:
 
 **Severity:** Critical
 **Exploitability:** High when the script is saved and re-invoked; Medium in the common curl-pipe-bash pattern
-**File:** `/home/mk/projects/Demarch/install.sh`, line 87
+**File:** `/home/mk/projects/Sylveste/install.sh`, line 87
 
 ### Code
 
@@ -90,7 +90,7 @@ This is safe because `"$@"` in `run()` expands to the individual arguments, not 
 
 **Severity:** High (deployment safety)
 **Exploitability:** Medium (silent failure leaves the user with a broken installation)
-**File:** `/home/mk/projects/Demarch/install.sh`, lines 142, 149, 157
+**File:** `/home/mk/projects/Sylveste/install.sh`, lines 142, 149, 157
 
 ### Code
 
@@ -118,17 +118,17 @@ Capture exit codes explicitly and provide actionable error output:
 
 ```bash
 # Marketplace add — capture stderr for error reporting
-if ! claude plugins marketplace add mistakeknot/interagency-marketplace 2>/tmp/demarch-install-err.txt; then
+if ! claude plugins marketplace add mistakeknot/interagency-marketplace 2>/tmp/sylveste-install-err.txt; then
     warn "Marketplace add returned non-zero. Continuing (may already exist)."
-    debug "$(cat /tmp/demarch-install-err.txt)"
+    debug "$(cat /tmp/sylveste-install-err.txt)"
 fi
 ```
 
 For `claude plugins install`, the existing directory check on line 174 is the right shape but should also capture and surface the error:
 
 ```bash
-if ! claude plugins install clavain@interagency-marketplace 2>/tmp/demarch-install-err.txt; then
-    fail "Plugin install failed: $(cat /tmp/demarch-install-err.txt)"
+if ! claude plugins install clavain@interagency-marketplace 2>/tmp/sylveste-install-err.txt; then
+    fail "Plugin install failed: $(cat /tmp/sylveste-install-err.txt)"
     exit 1
 fi
 ```
@@ -141,19 +141,19 @@ The "already added" / "already installed" idempotency case should be handled by 
 
 **Severity:** Medium
 **Exploitability:** Medium (requires MitM or GitHub compromise)
-**File:** `/home/mk/projects/Demarch/install.sh` (installation documentation)
+**File:** `/home/mk/projects/Sylveste/install.sh` (installation documentation)
 
 ### Analysis
 
 The documented installation method is:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mistakeknot/Demarch/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/mistakeknot/Sylveste/main/install.sh | bash
 ```
 
 This is the standard curl-pipe-bash pattern. While `-fsSL` handles HTTPS, there is no checksum or signature verification. If the script content changes (GitHub compromise, DNS spoofing, MitM on a misconfigured client), the user executes arbitrary code with their user privileges.
 
-This is a well-understood limitation of the curl-pipe-bash deployment model. For Demarch's current threat model (developer tool, primarily developer machines, not a production service installer), this risk is within acceptable bounds given that GitHub HTTPS transport provides meaningful protection. However, it should be documented.
+This is a well-understood limitation of the curl-pipe-bash deployment model. For Sylveste's current threat model (developer tool, primarily developer machines, not a production service installer), this risk is within acceptable bounds given that GitHub HTTPS transport provides meaningful protection. However, it should be documented.
 
 ### Mitigation (proportional to threat model)
 
@@ -161,18 +161,18 @@ At minimum, document a checksum verification step in the README for users who wa
 
 ```bash
 # Verify before running (optional but recommended)
-curl -fsSL https://raw.githubusercontent.com/mistakeknot/Demarch/main/install.sh -o /tmp/demarch-install.sh
-sha256sum /tmp/demarch-install.sh  # Compare against published hash at docs/install-checksums.txt
-bash /tmp/demarch-install.sh
+curl -fsSL https://raw.githubusercontent.com/mistakeknot/Sylveste/main/install.sh -o /tmp/sylveste-install.sh
+sha256sum /tmp/sylveste-install.sh  # Compare against published hash at docs/install-checksums.txt
+bash /tmp/sylveste-install.sh
 ```
 
 For a stronger posture, publish per-release checksums in `docs/install-checksums.txt` and pin the install URL to a specific commit SHA rather than `main`:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mistakeknot/Demarch/<COMMIT_SHA>/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/mistakeknot/Sylveste/<COMMIT_SHA>/install.sh | bash
 ```
 
-This is a residual risk acceptable at Medium for a developer tool. Flag for reassessment if Demarch ever targets enterprise or production deployment contexts.
+This is a residual risk acceptable at Medium for a developer tool. Flag for reassessment if Sylveste ever targets enterprise or production deployment contexts.
 
 ---
 
@@ -180,7 +180,7 @@ This is a residual risk acceptable at Medium for a developer tool. Flag for reas
 
 **Severity:** Low
 **Exploitability:** Low (theoretical only in the curl-pipe-bash context)
-**File:** `/home/mk/projects/Demarch/install.sh`, lines 41-55
+**File:** `/home/mk/projects/Sylveste/install.sh`, lines 41-55
 
 ### Code
 
@@ -214,10 +214,10 @@ Embed the usage string as a heredoc constant rather than reading from `$0`, so i
 ```bash
 show_help() {
     cat <<'EOF'
-install.sh — Curl-fetchable installer for Demarch (Clavain + Interverse)
+install.sh — Curl-fetchable installer for Sylveste (Clavain + Interverse)
 
 Usage:
-  curl -fsSL https://raw.githubusercontent.com/mistakeknot/Demarch/main/install.sh | bash
+  curl -fsSL https://raw.githubusercontent.com/mistakeknot/Sylveste/main/install.sh | bash
   bash install.sh [--help] [--dry-run] [--verbose]
 
 Flags:
@@ -234,7 +234,7 @@ EOF
 
 **Severity:** Low
 **Exploitability:** Very low (only on misconfigured systems without `$HOME`)
-**File:** `/home/mk/projects/Demarch/install.sh`, line 38
+**File:** `/home/mk/projects/Sylveste/install.sh`, line 38
 
 ### Code
 
@@ -265,7 +265,7 @@ CACHE_DIR="${HOME}/.claude/plugins/cache"
 ## Finding 6 — LOW: `debug` Logging Outputs to Stdout via `printf`
 
 **Severity:** Low (operational)
-**File:** `/home/mk/projects/Demarch/install.sh`, lines 63-66
+**File:** `/home/mk/projects/Sylveste/install.sh`, lines 63-66
 
 ### Code
 

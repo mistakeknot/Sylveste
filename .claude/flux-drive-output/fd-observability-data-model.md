@@ -7,7 +7,7 @@
 
 ---
 
-## 1. Per-Agent Experiment Format: Designing Demarch's Equivalent
+## 1. Per-Agent Experiment Format: Designing Sylveste's Equivalent
 
 ### Hyperspace Pattern
 
@@ -21,7 +21,7 @@ projects/<project>/agents/<peerId>/
 
 Each `run-NNN.json` is a self-contained record with `result.valLoss`, `hypothesis`, `runNumber`, `gpu`, `timestamp`. The `best.json` is the current winner. The `build-leaderboard.js` script (139 lines, zero external deps) scans all agent branches, reads `best.json` from each, sorts by project-specific metric extractor, and emits markdown.
 
-### What Demarch Already Has
+### What Sylveste Already Has
 
 Interlab's JSONL (`interverse/interlab/internal/experiment/state.go`) stores a **Config header** followed by **Result entries** in a single append-only file:
 
@@ -38,16 +38,16 @@ The interstat pipeline (`interverse/interstat/scripts/cost-query.sh`) produces J
 
 Interlab's JSONL is **campaign-scoped** (one file per optimization run), not **work-item-scoped**. There is no equivalent of Hyperspace's `run-NNN.json` as a standalone, self-describing record of a single unit of agent work. Beads (`issues.jsonl`) track work items but contain no execution telemetry (tokens, duration, metrics). Interstat has execution telemetry but is session-scoped, not bead-scoped (the `bead_id` column exists but is sparsely populated).
 
-### Recommendation: P1 — Demarch Experiment Record Schema
+### Recommendation: P1 — Sylveste Experiment Record Schema
 
-Define a unified "work record" format that bridges beads (what was done) with interstat (what it cost) and interlab (what it measured). This is the Demarch equivalent of `run-NNN.json`.
+Define a unified "work record" format that bridges beads (what was done) with interstat (what it cost) and interlab (what it measured). This is the Sylveste equivalent of `run-NNN.json`.
 
 **Proposed schema** (`work-record.json`):
 
 ```json
 {
   "version": 1,
-  "bead_id": "Demarch-05kd",
+  "bead_id": "Sylveste-05kd",
   "session_id": "2f47757d-c465-4865-af26-0a9911d43f5e",
   "agent": "claude-opus-4-6",
   "timestamp": "2026-03-14T04:18:27Z",
@@ -85,7 +85,7 @@ Define a unified "work record" format that bridges beads (what was done) with in
 
   "context": {
     "sprint_id": "sprint-2026w11",
-    "parent_bead": "Demarch-85k",
+    "parent_bead": "Sylveste-85k",
     "discovered_from": null,
     "complexity": 2,
     "priority": 2,
@@ -110,9 +110,9 @@ Define a unified "work record" format that bridges beads (what was done) with in
 
 Every hour, a node publishes `snapshots/latest.json` -- the full CRDT leaderboard state. The README says: *"Point any LLM at that URL and ask it to analyze. No narrative, no spin."* This is 47 lines of JSON (summary, per-domain leaderboards, experiment counts, timestamp, disclaimer).
 
-### What Demarch Already Has
+### What Sylveste Already Has
 
-Beads backup (`/home/mk/projects/Demarch/.beads/backup/`) produces JSONL exports of issues (952 records, 1.1MB), events (2007 records, 512KB), dependencies (514 records), and labels (302 records). The `backup_state.json` records the last Dolt commit hash, event ID, timestamp, and counts.
+Beads backup (`/home/mk/projects/Sylveste/.beads/backup/`) produces JSONL exports of issues (952 records, 1.1MB), events (2007 records, 512KB), dependencies (514 records), and labels (302 records). The `backup_state.json` records the last Dolt commit hash, event ID, timestamp, and counts.
 
 Interstat's `cost-query.sh baseline` produces a structured JSON snapshot:
 ```json
@@ -125,7 +125,7 @@ Interstat's `cost-query.sh baseline` produces a structured JSON snapshot:
 }
 ```
 
-Intercom's `DemarchAdapter` (`apps/Intercom/rust/intercom-core/src/demarch.rs`) supports read operations: `RunStatus`, `SprintPhase`, `SearchBeads`, `NextWork`, `RunEvents`, `RunTokens`, `DispatchList`. These are already structured queries that return JSON.
+Intercom's `SylvesteAdapter` (`apps/Intercom/rust/intercom-core/src/sylveste.rs`) supports read operations: `RunStatus`, `SprintPhase`, `SearchBeads`, `NextWork`, `RunEvents`, `RunTokens`, `DispatchList`. These are already structured queries that return JSON.
 
 ### Assessment
 
@@ -159,15 +159,15 @@ The beads JSONL backup is **close to a snapshot but not quite**. It is a full du
   },
 
   "active_agents": [
-    { "session_id": "2f47757d", "bead_id": "Demarch-05kd", "claimed_at": "2026-03-14T04:24:19Z", "title": "Snapshot validation CI" }
+    { "session_id": "2f47757d", "bead_id": "Sylveste-05kd", "claimed_at": "2026-03-14T04:24:19Z", "title": "Snapshot validation CI" }
   ],
 
   "blockers": [
-    { "bead_id": "Demarch-0ox", "title": "Discovery evaluation dashboard", "blocked_by": "Demarch-xyz" }
+    { "bead_id": "Sylveste-0ox", "title": "Discovery evaluation dashboard", "blocked_by": "Sylveste-xyz" }
   ],
 
   "top_cost_beads_7d": [
-    { "bead_id": "Demarch-0pj", "title": "F4: Model routing", "cost_usd": 4.20, "tokens": 180000 }
+    { "bead_id": "Sylveste-0pj", "title": "F4: Model routing", "cost_usd": 4.20, "tokens": 180000 }
   ],
 
   "experiment_campaigns": {
@@ -204,13 +204,13 @@ Key design decisions: metric extractors are configured per-project as `{ field, 
 
 ### What Intercom Could Use
 
-Intercom's `demarch-query.sh` (`apps/Intercom/container/shared/demarch-query.sh`) already supports `search_beads`, `run_status`, `sprint_phase`, `run_events`, and `next_work` queries. The vision doc (`apps/Intercom/docs/intercom-vision.md`) explicitly calls out "sprint retro that writes itself" as a goal for Horizon 1.
+Intercom's `sylveste-query.sh` (`apps/Intercom/container/shared/sylveste-query.sh`) already supports `search_beads`, `run_status`, `sprint_phase`, `run_events`, and `next_work` queries. The vision doc (`apps/Intercom/docs/intercom-vision.md`) explicitly calls out "sprint retro that writes itself" as a goal for Horizon 1.
 
 Intercom's Rust EventConsumer (`apps/Intercom/rust/intercomd/src/events.rs`) already polls kernel events and sends Telegram notifications. Adding a periodic summary message would fit naturally in the same pattern.
 
 ### Recommendation: P1 — Beads Report Generator (NOT a Leaderboard)
 
-**Verdict: Do NOT implement a leaderboard generator for Intercom.** Hyperspace's leaderboard works because it tracks a single metric per domain across competing agents. Demarch's agents do heterogeneous work (features, bugs, refactors, research) that cannot be meaningfully ranked on a single axis.
+**Verdict: Do NOT implement a leaderboard generator for Intercom.** Hyperspace's leaderboard works because it tracks a single metric per domain across competing agents. Sylveste's agents do heterogeneous work (features, bugs, refactors, research) that cannot be meaningfully ranked on a single axis.
 
 Instead, implement a **periodic summary generator** that produces a sprint retrospective from beads data:
 
@@ -232,7 +232,7 @@ Instead, implement a **periodic summary generator** that produces a sprint retro
 - Audit shadow bet resolution timeline ($0.90, 15m)
 
 ### Cost Outliers (>2x avg)
-- Demarch-0pj: F4 Model routing — $4.20 (3.6x avg)
+- Sylveste-0pj: F4 Model routing — $4.20 (3.6x avg)
 
 ### Experiments
 - interlab-reconstruct-speed: -96% (22x faster)
@@ -286,9 +286,9 @@ The key insight from Hyperspace is that the README itself is the dashboard. For 
 
 Hyperspace explicitly designs for LLM consumption. The snapshot includes a `disclaimer` field. The README instructs: *"Point any LLM at that URL and ask it to analyze."* The data is raw and uninterpreted.
 
-### Demarch's Current Approach
+### Sylveste's Current Approach
 
-Demarch's observability is tool-specific and fragmented:
+Sylveste's observability is tool-specific and fragmented:
 
 | Data Source | Format | Query Interface | LLM-Friendly? |
 |-------------|--------|-----------------|----------------|
@@ -296,18 +296,18 @@ Demarch's observability is tool-specific and fragmented:
 | Interstat (`metrics.db`) | SQLite | `cost-query.sh` (10 modes, JSON out) | Yes -- each mode outputs focused JSON |
 | Interlab (`interlab.jsonl`) | JSONL, per-campaign | `ReconstructState()`, `status_campaigns` | Compact, LLM-friendly |
 | Cass | SQLite | `cass search --robot`, `cass timeline --json` | Yes -- `--robot` mode designed for machine parsing |
-| Intercom events | Postgres | `DemarchAdapter::ReadOperation` | Via IPC only, not file-based |
+| Intercom events | Postgres | `SylvesteAdapter::ReadOperation` | Via IPC only, not file-based |
 | Mycroft decisions | SQLite | `mycroft status` | CLI output, not JSON |
 
 ### Assessment
 
-Demarch **already produces LLM-friendly JSON** from interstat and cass. The gap is consolidation -- there is no single file a user can point to and say "analyze my dev agency." The beads backup is too large (1.1MB raw JSONL). The interstat output is too narrow (only tokens/cost).
+Sylveste **already produces LLM-friendly JSON** from interstat and cass. The gap is consolidation -- there is no single file a user can point to and say "analyze my dev agency." The beads backup is too large (1.1MB raw JSONL). The interstat output is too narrow (only tokens/cost).
 
 ### Recommendation: P0 — Consolidated Snapshot as the Single LLM Entry Point
 
 The `snapshot.json` from recommendation #2 IS this entry point. The additional design requirement: **it must fit in a single LLM context window without truncation.** Target: <10KB.
 
-The Hyperspace `latest.json` works because it is a summary, not a dump. Demarch's equivalent must similarly summarize:
+The Hyperspace `latest.json` works because it is a summary, not a dump. Sylveste's equivalent must similarly summarize:
 - 952 beads -> 5 status counts + top-5 active + top-5 blockers
 - 200+ sessions -> 3 velocity metrics
 - Hundreds of interstat rows -> 1 north-star cost metric + 3 model-level breakdowns
@@ -332,17 +332,17 @@ A composer script joining these five outputs produces the snapshot. Estimated: 4
 
 Each agent gets its own git branch: `agents/<peerId>/<project>`. Never merged to main. Creates browsable history per agent, with experiment files as commits.
 
-### What Demarch Already Has
+### What Sylveste Already Has
 
 Interlab already creates experiment branches (`interlab/<name>`) as a documented exception to trunk-based development (per `interverse/interlab/CLAUDE.md`). Clavain worktrees provide per-agent filesystem isolation. Beads tracks `created_by` (session ID prefix) and `assignee` per issue, plus `claimed_by` via `bd set-state`.
 
 ### Recommendation: P3 — Do NOT Adopt Per-Agent Branches
 
-**Verdict: This pattern does not fit Demarch's architecture.** Here is why:
+**Verdict: This pattern does not fit Sylveste's architecture.** Here is why:
 
-1. **Demarch uses trunk-based development.** Per-agent branches contradict this fundamental decision. Interlab's exception is narrow (experiment isolation only) and already causes friction.
+1. **Sylveste uses trunk-based development.** Per-agent branches contradict this fundamental decision. Interlab's exception is narrow (experiment isolation only) and already causes friction.
 
-2. **Agents modify the same files.** Hyperspace agents work on independent experiment configs. Demarch agents work on shared codebases where branch isolation would create merge conflicts.
+2. **Agents modify the same files.** Hyperspace agents work on independent experiment configs. Sylveste agents work on shared codebases where branch isolation would create merge conflicts.
 
 3. **The browsable history need is already met.** `cass context <path> --json` shows which sessions touched a file. `bd list --assignee=<session_prefix> --json` shows what each agent worked on. `git log --author=<email>` provides per-agent commit history on trunk.
 
@@ -365,6 +365,6 @@ The one valuable sub-pattern: **agent identity in commit metadata.** Interlab al
 
 ## Key Finding
 
-Demarch's observability infrastructure is **more capable than it appears** -- interstat, cass, interlab, and beads all produce structured JSON. The missing piece is not data collection but **data consolidation.** A single snapshot composer script (40-50 lines) that joins existing tool outputs would deliver 80% of the Hyperspace observability UX with near-zero new infrastructure.
+Sylveste's observability infrastructure is **more capable than it appears** -- interstat, cass, interlab, and beads all produce structured JSON. The missing piece is not data collection but **data consolidation.** A single snapshot composer script (40-50 lines) that joins existing tool outputs would deliver 80% of the Hyperspace observability UX with near-zero new infrastructure.
 
-The Hyperspace insight worth internalizing: **structured data + LLM analysis beats hand-built dashboards.** Demarch should resist building Bigend dashboard widgets for sprint velocity, cost trends, and agent activity. Instead, generate `snapshot.json` and let LLMs (including Intercom's agents) interpret it on demand.
+The Hyperspace insight worth internalizing: **structured data + LLM analysis beats hand-built dashboards.** Sylveste should resist building Bigend dashboard widgets for sprint velocity, cost trends, and agent activity. Instead, generate `snapshot.json` and let LLMs (including Intercom's agents) interpret it on demand.

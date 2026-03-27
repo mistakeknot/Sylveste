@@ -1,6 +1,6 @@
 # Documentation Structure Standard
 
-How project documentation is organized, layered, and loaded across the Demarch ecosystem. This is the standard that interscribe enforces.
+How project documentation is organized, layered, and loaded across the Sylveste ecosystem. This is the standard that interscribe enforces.
 
 ## The Boundary Rule
 
@@ -79,7 +79,7 @@ Three root documents, each with a distinct purpose:
 
 ```
 MISSION.md                  — why the project exists (rarely changes)
-  ├→ docs/demarch-vision.md — where it's going (existing vision doc, v3.4)
+  ├→ docs/sylveste-vision.md — where it's going (existing vision doc, v3.4)
   └→ PHILOSOPHY.md          — how we build (design bets, principles)
        └→ derived: PRDs, Roadmap, CUJs, AGENTS.md conventions
 ```

@@ -1,6 +1,6 @@
 # User/Product Review: Disagreement Pipeline PRD
 
-**Document reviewed:** `/home/mk/projects/Demarch/docs/prds/2026-02-28-disagreement-pipeline.md`
+**Document reviewed:** `/home/mk/projects/Sylveste/docs/prds/2026-02-28-disagreement-pipeline.md`
 **Bead:** iv-5muhg
 **Reviewer role:** UX, product, and flow analyst
 **Date:** 2026-02-28
@@ -211,14 +211,14 @@ The PRD should add one explicit success criterion at the end: "After 5 impact-ch
 
 ## Files Referenced
 
-- `/home/mk/projects/Demarch/docs/prds/2026-02-28-disagreement-pipeline.md` — the PRD under review
-- `/home/mk/projects/Demarch/docs/brainstorms/2026-02-28-disagreement-pipeline-brainstorm.md` — upstream brainstorm; key decisions documented here
-- `/home/mk/projects/Demarch/PHILOSOPHY.md` — defines the T/T+1/T+2 learning loop this pipeline implements
-- `/home/mk/projects/Demarch/os/clavain/commands/resolve.md` — the integration point for F3; Step 5 trust feedback shows the emit pattern
-- `/home/mk/projects/Demarch/interverse/interspect/hooks/lib-interspect.sh` — F4 implementation target; `_interspect_consume_kernel_events()` at line 2013 shows the cursor consumer pattern
-- `/home/mk/projects/Demarch/interverse/interspect/hooks/lib-interspect.sh` — `_interspect_insert_evidence()` at line 7+ is the F4 sink
-- `/home/mk/projects/Demarch/core/intercore/contracts/events/event.json` — schema contract that must be updated for F1/F2 payload field
-- `/home/mk/projects/Demarch/core/intercore/cmd/ic/events.go` — confirms current `ic events` subcommands are `tail` and `cursor` only — F1 adds `emit`
-- `/home/mk/projects/Demarch/core/intercore/docs/event-reactor-pattern.md` — documents cursor at-least-once delivery; underpins the idempotency requirement in S2
-- `/home/mk/projects/Demarch/interverse/interflux/docs/spec/core/synthesis.md` — Rule 4/5 and `severity_conflict` schema (lines 80-88, 253)
-- `/home/mk/projects/Demarch/core/intercore/docs/research/fd-measurement-validity-review-interspect.md` — F-1 finding is the prior art for M2's dismissal_reason recommendation
+- `/home/mk/projects/Sylveste/docs/prds/2026-02-28-disagreement-pipeline.md` — the PRD under review
+- `/home/mk/projects/Sylveste/docs/brainstorms/2026-02-28-disagreement-pipeline-brainstorm.md` — upstream brainstorm; key decisions documented here
+- `/home/mk/projects/Sylveste/PHILOSOPHY.md` — defines the T/T+1/T+2 learning loop this pipeline implements
+- `/home/mk/projects/Sylveste/os/clavain/commands/resolve.md` — the integration point for F3; Step 5 trust feedback shows the emit pattern
+- `/home/mk/projects/Sylveste/interverse/interspect/hooks/lib-interspect.sh` — F4 implementation target; `_interspect_consume_kernel_events()` at line 2013 shows the cursor consumer pattern
+- `/home/mk/projects/Sylveste/interverse/interspect/hooks/lib-interspect.sh` — `_interspect_insert_evidence()` at line 7+ is the F4 sink
+- `/home/mk/projects/Sylveste/core/intercore/contracts/events/event.json` — schema contract that must be updated for F1/F2 payload field
+- `/home/mk/projects/Sylveste/core/intercore/cmd/ic/events.go` — confirms current `ic events` subcommands are `tail` and `cursor` only — F1 adds `emit`
+- `/home/mk/projects/Sylveste/core/intercore/docs/event-reactor-pattern.md` — documents cursor at-least-once delivery; underpins the idempotency requirement in S2
+- `/home/mk/projects/Sylveste/interverse/interflux/docs/spec/core/synthesis.md` — Rule 4/5 and `severity_conflict` schema (lines 80-88, 253)
+- `/home/mk/projects/Sylveste/core/intercore/docs/research/fd-measurement-validity-review-interspect.md` — F-1 finding is the prior art for M2's dismissal_reason recommendation

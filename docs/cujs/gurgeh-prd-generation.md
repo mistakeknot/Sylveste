@@ -3,7 +3,7 @@ artifact_type: cuj
 journey: gurgeh-prd-generation
 actor: regular user (developer or product manager defining features)
 criticality: p2
-bead: Demarch-2c7
+bead: Sylveste-2c7
 ---
 
 # Gurgeh PRD Generation and Validation

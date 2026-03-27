@@ -39,7 +39,7 @@ attp is a standalone, framework-agnostic protocol for structured bidirectional c
 
 ### 4. Audit field naming for consistency with attp's framework
 
-- Audit field naming for consistency with attp's framework-agnostic positioning — no Demarch-specific field names should appear in the base token spec; interweave extensions must be namespaced
+- Audit field naming for consistency with attp's framework-agnostic positioning — no Sylveste-specific field names should appear in the base token spec; interweave extensions must be namespaced
 
 ### 5. Evaluate whether the schema supports hybrid payloads (inl...
 
@@ -63,7 +63,7 @@ A good review from this agent:
 - Provides a concrete failure scenario for each P0/P1 finding — what breaks, under what conditions, and who is affected
 - Recommends the smallest viable fix, not an architecture overhaul — one diff hunk, not a rewrite
 - Frames uncertain findings as questions: "Does this handle X?" not "This doesn't handle X"
-- A schema reviewer from a non-Demarch framework can implement a compliant attp token producer/consumer using only the spec, without reading interweave source
+- A schema reviewer from a non-Sylveste framework can implement a compliant attp token producer/consumer using only the spec, without reading interweave source
 - Adding a new field in a future version does not require a flag day across all agents — old consumers degrade gracefully
 - Sensitivity exclusion metadata in the token is sufficient to reconstruct which paths were withheld, even without the Merkle proof
 

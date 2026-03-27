@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-lta9
+bead: Sylveste-lta9
 stage: plan
 source: docs/prds/2026-03-19-sprint-v2-lifecycle-redesign.md
 ---

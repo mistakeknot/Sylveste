@@ -1,6 +1,6 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-4wm
+bead: Sylveste-4wm
 stage: discover
 ---
 
@@ -116,7 +116,7 @@ No LLM call needed, always available, ~100-200 tokens. The agent gets enough to 
   "source": "agent",
   "session_id": "abc123",
   "task": {
-    "bead_id": "Demarch-4wm",
+    "bead_id": "Sylveste-4wm",
     "summary": "Designing conversation resumption mechanism"
   },
   "decisions": [
@@ -141,7 +141,7 @@ No LLM call needed, always available, ~100-200 tokens. The agent gets enough to 
 
 You are resuming a conversation. Here is context from your previous session:
 
-**Task:** [Demarch-4wm] Designing conversation resumption mechanism
+**Task:** [Sylveste-4wm] Designing conversation resumption mechanism
 **Decisions made:**
 - Using system prompt prepend for context injection
 - Structured handoff note format, not prose

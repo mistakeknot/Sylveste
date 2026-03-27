@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-jpum
+bead: Sylveste-jpum
 prd: docs/prds/2026-03-21-meadowsyn-experiments.md
 stage: plan-reviewed
 review_findings: .claude/flux-drive-output/fd-{experiment-feasibility,dependency-ordering,tech-stack-viability,scope-containment,acceptance-criteria-quality,composition-architecture}.md
@@ -53,7 +53,7 @@ Document in README: `./serve.sh` then open `http://localhost:3000/experiments/<n
 
 ### Batch 0: Shared Contracts (~30 min)
 
-**F0: Shared Contracts** (no bead — part of Demarch-jpum)
+**F0: Shared Contracts** (no bead — part of Sylveste-jpum)
 
 Location: `apps/Meadowsyn/shared/`
 
@@ -117,7 +117,7 @@ Implementation:
 
 ### Batch 1: Foundation (~1 hour, parallel after F0)
 
-**F1: Mock Data Generator** (Demarch-ef08)
+**F1: Mock Data Generator** (Sylveste-ef08)
 
 Location: `apps/Meadowsyn/experiments/mock-data/`
 
@@ -130,7 +130,7 @@ Implementation:
 6. Validates output against `shared/schema/factory-status.schema.json`
 7. ES module export: `import { generateSnapshot, createStream } from './index.js'`
 
-**F8: Static JSON Data Pipe** (Demarch-lavt)
+**F8: Static JSON Data Pipe** (Sylveste-lavt)
 
 Location: `apps/Meadowsyn/experiments/data-static/`
 
@@ -139,7 +139,7 @@ Implementation:
 2. Test harness (`index.html`): raw JSON display + stale indicator + snapshot counter
 3. Imports `DataPipe` + `FetchTransport` from `../../shared/data-pipe.js`
 
-**F9: SSE Data Pipe** (Demarch-p83z) — **parallel with F8, not sequential**
+**F9: SSE Data Pipe** (Sylveste-p83z) — **parallel with F8, not sequential**
 
 Location: `apps/Meadowsyn/experiments/data-sse/`
 
@@ -156,7 +156,7 @@ Implementation:
 
 All six run in parallel. Each has **dual entry points**: `index.html` (standalone) + `plugin.js` (exports F0 plugin interface). Import shared constants and DataPipe from `../../shared/`.
 
-**F2: Split-Flap Board** (Demarch-r24y)
+**F2: Split-Flap Board** (Sylveste-r24y)
 
 Location: `apps/Meadowsyn/experiments/split-flap/`
 
@@ -172,7 +172,7 @@ Implementation:
 7. **Minimal header**: title + timestamp only (live metrics belong in F10 shell header)
 8. Auto-refresh every 5s via DataPipe
 
-**F3: Hydra Ambient Field** (Demarch-agi0)
+**F3: Hydra Ambient Field** (Sylveste-agi0)
 
 Location: `apps/Meadowsyn/experiments/hydra-ambient/`
 
@@ -188,7 +188,7 @@ Implementation:
 6. **Target: 30fps floor** (not 60fps — integrated GPUs can't sustain 60fps WebGL at 1080p). Auto-reduce resolution if frame time > 33ms.
 7. Overlay: semi-transparent key metrics text
 
-**F4: Cytoscape Agent Graph** (Demarch-cjgj)
+**F4: Cytoscape Agent Graph** (Sylveste-cjgj)
 
 Location: `apps/Meadowsyn/experiments/cytoscape-graph/`
 
@@ -207,7 +207,7 @@ Implementation:
 6. **In-place attribute updates only** (removed animated layout transitions — graph diffing + force layout is a known hard problem, per scope review)
 7. Dark background, labels on hover
 
-**F5: Raster Heatmap** (Demarch-wwo9)
+**F5: Raster Heatmap** (Sylveste-wwo9)
 
 Location: `apps/Meadowsyn/experiments/raster-heatmap/`
 
@@ -220,7 +220,7 @@ Implementation:
 6. Hover tooltip: `mousemove` -> pixel-to-cell via `Math.floor(x/cellW)` with DPI scaling (`devicePixelRatio`)
 7. History accumulated from DataPipe ring buffer (`getHistory()`)
 
-**F6: Loopy Signal Propagation** (Demarch-no1e)
+**F6: Loopy Signal Propagation** (Sylveste-no1e)
 
 Location: `apps/Meadowsyn/experiments/loopy-signals/`
 
@@ -234,7 +234,7 @@ Implementation:
 7. **Perturbation mode deferred to F6b** (removed — doubles interaction scope, per scope review)
 8. Data-driven: node counts from factory-status
 
-**F7: Process Replay** (Demarch-xhxp)
+**F7: Process Replay** (Sylveste-xhxp)
 
 Location: `apps/Meadowsyn/experiments/process-replay/`
 
@@ -248,7 +248,7 @@ Implementation (trimmed — was 3 experiments in one):
 
 ### Batch 3: Composition (after F0 + any 2 visuals + 1 data pipe)
 
-**F10: Composition Shell** (Demarch-tr69)
+**F10: Composition Shell** (Sylveste-tr69)
 
 Location: `apps/Meadowsyn/experiments/shell/`
 

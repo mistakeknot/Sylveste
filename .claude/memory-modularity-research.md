@@ -42,7 +42,7 @@ OpenAI never published technical reasons for plugin deprecation. Writer/Cloudfla
 1. **AI cost model**: N modular tools vs 1 consolidated — measure token overhead, reasoning degradation
 2. **ChatGPT postmortem**: Search OpenAI GitHub, Discord, eng-blog for technical analysis
 3. **LLM framework choices**: LangChain, AutoGen, CrewAI modularity decisions
-4. **Demarch/Interverse metrics**: Real context pollution data from interstat
+4. **Sylveste/Interverse metrics**: Real context pollution data from interstat
 
 ### Should Fill
 - Supply chain risk comparison across Terraform, Go, Python plugin ecosystems
@@ -84,4 +84,4 @@ OpenAI never published technical reasons for plugin deprecation. Writer/Cloudfla
 2. All general software sources need careful extrapolation (domain transfer bias is real)
 3. The biggest missing piece is a quantified cost model for context window overhead
 4. ChatGPT plugin deprecation is a major signal but unexplained — find technical postmortem
-5. Don't make a recommendation without internal Demarch/Interverse metrics
+5. Don't make a recommendation without internal Sylveste/Interverse metrics

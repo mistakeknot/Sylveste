@@ -1,7 +1,7 @@
-# Brainstorm: Closing Final 2 Competitive Gaps (Demarch-6i0)
+# Brainstorm: Closing Final 2 Competitive Gaps (Sylveste-6i0)
 
 **Date:** 2026-03-17
-**Bead:** Demarch-6i0 (epic: Bridge competitive landscape gaps in Skaffen TUI)
+**Bead:** Sylveste-6i0 (epic: Bridge competitive landscape gaps in Skaffen TUI)
 **Status:** 21/23 children complete (91%). Remaining: split panes (6i0.15), VS Code extension (6i0.16)
 
 ## Current Architecture Context
@@ -19,7 +19,7 @@ Key enablers already in place:
 - Responsive resize via `tea.WindowSizeMsg` updates all components
 - Keybindings system supports custom user bindings from JSON config
 
-## Feature 1: Split Panes / Sidebar (Demarch-6i0.15)
+## Feature 1: Split Panes / Sidebar (Sylveste-6i0.15)
 
 ### What Competitors Do
 - **OpenCode:** Toggleable sidebar showing file changes and diffs
@@ -104,7 +104,7 @@ Rationale:
    - Add `ActionSidebar = "sidebar"` with default `ctrl+b`
    - Add `ActionSidebarNext = "sidebar_next"` with default `tab` (when sidebar focused)
 
-## Feature 2: VS Code Extension (Demarch-6i0.16)
+## Feature 2: VS Code Extension (Sylveste-6i0.16)
 
 ### What Competitors Do
 - **Claude Code:** VS Code extension with sidebar panel, inline diffs, terminal integration

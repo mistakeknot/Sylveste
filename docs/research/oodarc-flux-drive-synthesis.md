@@ -10,7 +10,7 @@
 
 ## Executive Summary
 
-The OODARC (Observe → Orient → Decide → Act → Reflect) framework names something real in Demarch's architecture and is philosophically grounded in PHILOSOPHY.md's evidence-driven flywheel. The brainstorm demonstrates strong architectural thinking and correctly identifies the Reflect phase as the missing explicit layer.
+The OODARC (Observe → Orient → Decide → Act → Reflect) framework names something real in Sylveste's architecture and is philosophically grounded in PHILOSOPHY.md's evidence-driven flywheel. The brainstorm demonstrates strong architectural thinking and correctly identifies the Reflect phase as the missing explicit layer.
 
 **Verdict:** The design is architecturally defensible and philosophically correct, but has **five critical blind spots** that must be resolved before implementation can begin. The primary recommendation is **Approach A (bottom-up)**, starting immediately with the Shared Observation Layer, but with mandatory design amendments to address resilience, temporal reasoning, and sensemaking concerns identified across reviews.
 
@@ -179,7 +179,7 @@ The brainstorm describes Orient producing "structured situation assessments" wit
 **Location:** "Finding 2: Shared Observation Layer Could Be Itself a Single-Model Blind Spot"
 **Severity:** P2
 
-The observation layer aggregates **internal** Demarch state only: phase_log, dispatch_states, event bus, interspect DB, budget tracker. It includes no:
+The observation layer aggregates **internal** Sylveste state only: phase_log, dispatch_states, event bus, interspect DB, budget tracker. It includes no:
 
 - External signal (test results from external CI? API uptime? User feedback?)
 - Divergence detection (actual outcomes ≠ model predictions?)
@@ -498,7 +498,7 @@ The document describes system at steady-state, not temporal trajectory:
 
 ### Decision Quality Review Unique Insights
 
-1. **Anchoring on Boyd's OODA:** Document strongly anchors on military model. Real problem is "structured orientation + learning signals," not OODA extension. Should reframe to Demarch's philosophy (evidence → authority).
+1. **Anchoring on Boyd's OODA:** Document strongly anchors on military model. Real problem is "structured orientation + learning signals," not OODA extension. Should reframe to Sylveste's philosophy (evidence → authority).
 
 2. **Reflect phase conflation (distinct from convergent finding):** The two learning modes (within-cycle React vs cross-cycle Reflect) should be distinct primitives with different signatures and storage.
 

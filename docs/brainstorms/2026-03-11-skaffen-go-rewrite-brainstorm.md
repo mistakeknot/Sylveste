@@ -19,7 +19,7 @@ supersedes: docs/brainstorms/2026-03-10-skaffen-sovereign-agent-brainstorm.md
 
 1. **Zero license contamination.** pi-mono is clean MIT (copyright Mario Zechner). No rider. No vendored deps with riders. No ambiguity about Claude Code developing on rider-encumbered code.
 
-2. **Go is already Demarch's systems language.** 14+ Go modules across the stack:
+2. **Go is already Sylveste's systems language.** 14+ Go modules across the stack:
    - L1: intercore, intermute, interband, interbench
    - L2: clavain-cli
    - L3: autarch
@@ -39,12 +39,12 @@ supersedes: docs/brainstorms/2026-03-10-skaffen-sovereign-agent-brainstorm.md
 
 pi-mono is TypeScript, and TypeScript has the richest agent ecosystem. But:
 
-- **Demarch has zero TypeScript infrastructure.** No TS modules, no TS build pipeline, no TS testing conventions. Adding a TS pillar would be a foreign body.
+- **Sylveste has zero TypeScript infrastructure.** No TS modules, no TS build pipeline, no TS testing conventions. Adding a TS pillar would be a foreign body.
 - **node_modules on ethics-gradient.** With 30GB RAM and bidirectional mutagen sync, a node_modules directory is a liability.
-- **Deployment friction.** Every other Demarch binary is `go build` → scp → run. A Node.js agent would need npm install, node runtime, potentially pkg/nexe bundling.
+- **Deployment friction.** Every other Sylveste binary is `go build` → scp → run. A Node.js agent would need npm install, node runtime, potentially pkg/nexe bundling.
 - **Go already has the intercore/intermute integration points.** Skaffen calling intercore is Go→Go, not TS→Go subprocess.
 
-TypeScript is the right choice for the ecosystem. Go is the right choice for Demarch.
+TypeScript is the right choice for the ecosystem. Go is the right choice for Sylveste.
 
 ## What Changes from the Original Brainstorm
 
@@ -89,12 +89,12 @@ The original brainstorm (2026-03-10) made 14 architectural decisions (D1-D14). M
 
 | Feature | Roadmap ref | Go advantage |
 |---------|------------|-------------|
-| **Intercore native bridge** | Demarch-j2f (v0.3) | Was "CLI bridge, evolve to native." Now native from v0.1 — Go imports intercore client directly. Saves an entire version of bridge scaffolding. |
+| **Intercore native bridge** | Sylveste-j2f (v0.3) | Was "CLI bridge, evolve to native." Now native from v0.1 — Go imports intercore client directly. Saves an entire version of bridge scaffolding. |
 | **Multi-agent orchestration** | Q1 in original brainstorm | Goroutines make spawning sub-Skaffens trivial. `go func() { runSkaffen(subTask) }()` with channel-based result collection. No RPC overhead for in-process sub-agents. |
 | **Interverse plugin fan-out** | D14, F6: Marketplace | Start N MCP servers as goroutines, fan-out tool calls, merge results. The interflux 17-reviewer pattern becomes `for _, agent := range agents { go dispatch(agent, ctx) }`. |
-| **Self-building loop** | Demarch-22q (v0.4) | Go builds in 1-5s. Skaffen modifying its own source and `go build`ing to verify takes seconds, not minutes. The self-building feedback loop is 10x tighter. |
+| **Self-building loop** | Sylveste-22q (v0.4) | Go builds in 1-5s. Skaffen modifying its own source and `go build`ing to verify takes seconds, not minutes. The self-building feedback loop is 10x tighter. |
 | **Idle-time micro-task dispatch** | iv-2n0ew | Goroutine pool with budget-gated dispatch. A goroutine blocks on a channel until budget is available. Natural Go pattern. |
-| **Conversation resumption** | Demarch-4wm brainstorm | Go's stdlib `encoding/json` + `os.Signal` handling make PreCompact hooks and crash recovery straightforward. No async runtime complexity. |
+| **Conversation resumption** | Sylveste-4wm brainstorm | Go's stdlib `encoding/json` + `os.Signal` handling make PreCompact hooks and crash recovery straightforward. No async runtime complexity. |
 
 ### Speculative features that Go uniquely enables
 
@@ -153,7 +153,7 @@ skaffen (Go module)
 │   │   ├── client.go      # MCP stdio client protocol
 │   │   ├── discovery.go   # Plugin discovery from plugin.json
 │   │   └── dispatch.go    # Tool dispatch to MCP servers
-│   └── bridge/            # Demarch integrations
+│   └── bridge/            # Sylveste integrations
 │       ├── intercore.go   # Native intercore client (events, runs, state)
 │       ├── interspect.go  # Evidence emission to interspect
 │       └── beads.go       # Bead state reads (for sprint context)
@@ -223,12 +223,12 @@ What to ignore from pi-mono:
 
 | Bead | Status | Action |
 |------|--------|--------|
-| Demarch-rp5 (v0.1 fork) | CLOSED | Already done. The Rust fork served its purpose as exploration. |
-| Demarch-92j (v0.2 OODARC) | OPEN | **Redefine.** Same goal (OODARC loop), different implementation. Now v0.1 in Go, not v0.2 in Rust. |
-| Demarch-j2f (v0.3 Intercore bridge) | OPEN | **Accelerated.** Native Go integration from v0.1, not v0.3. Scope narrows to evidence pipeline testing. |
-| Demarch-22q (v0.4 self-building) | OPEN | Unchanged. Same goal, same criteria, faster path. |
-| Demarch-6qb (epic) | OPEN | Update description to reflect Go rewrite. |
-| Demarch-6qb.1-7 (research children) | OPEN | Unchanged. Research topics are language-agnostic. |
+| Sylveste-rp5 (v0.1 fork) | CLOSED | Already done. The Rust fork served its purpose as exploration. |
+| Sylveste-92j (v0.2 OODARC) | OPEN | **Redefine.** Same goal (OODARC loop), different implementation. Now v0.1 in Go, not v0.2 in Rust. |
+| Sylveste-j2f (v0.3 Intercore bridge) | OPEN | **Accelerated.** Native Go integration from v0.1, not v0.3. Scope narrows to evidence pipeline testing. |
+| Sylveste-22q (v0.4 self-building) | OPEN | Unchanged. Same goal, same criteria, faster path. |
+| Sylveste-6qb (epic) | OPEN | Update description to reflect Go rewrite. |
+| Sylveste-6qb.1-7 (research children) | OPEN | Unchanged. Research topics are language-agnostic. |
 
 ## Risk Assessment
 
@@ -269,4 +269,4 @@ With Go's iteration speed and the architecture already fully designed (14 decisi
 
 Intercore exports a Go client package. Skaffen could import it directly (`github.com/mistakeknot/intercore/pkg/client`). But this creates a compile-time dependency on intercore's module graph. Alternative: thin HTTP/CLI bridge that's compatible but decoupled.
 
-**Lean:** Import directly. Intercore is a Demarch module — the coupling is intentional, not accidental.
+**Lean:** Import directly. Intercore is a Sylveste module — the coupling is intentional, not accidental.

@@ -15,7 +15,7 @@ Every authority decision resolves: **can agent A perform action X in domain D?**
 
 ### Model Comparison for Agent x Domain x Action
 
-| Model | Strengths for Demarch | Weaknesses | Verdict |
+| Model | Strengths for Sylveste | Weaknesses | Verdict |
 |-------|----------------------|------------|---------|
 | **RBAC** (role-based) | Simple. Fleet registry already has `roles` and `category` fields. Maps cleanly to T0-T3 tiers. | Roles are coarse — "reviewer" doesn't distinguish "can review intercore" from "can review interflux." Per-domain granularity requires role explosion (agent x domain = hundreds of roles). | Necessary but insufficient alone. |
 | **ABAC** (attribute-based) | Dynamic. Can evaluate `agent.success_rate_in_domain >= 0.85 AND domain.blast_radius <= "moderate"`. Composes naturally with Interspect evidence. | Requires policy engine at runtime. Every authority check becomes a policy evaluation, not a table lookup. Adds latency and debugging complexity. | Overkill for Phase 4. Reserve for Phase 5+ when confidence scoring adds dynamic attributes. |
@@ -215,7 +215,7 @@ Each higher class subsumes the lower. An agent with `commit` authority implicitl
 
 ### What CODEOWNERS Gets Right
 
-GitHub CODEOWNERS maps file paths to required reviewers. The Demarch authority model is structurally identical but substitutes:
+GitHub CODEOWNERS maps file paths to required reviewers. The Sylveste authority model is structurally identical but substitutes:
 - **Reviewers** → **agents with authority**
 - **Required approval** → **action class ceiling**
 - **Code review** → **any action (propose/execute/commit/deploy/spend)**
@@ -412,7 +412,7 @@ subagent_effective(action, domain) = min(
 )
 ```
 
-**Rule 2: Delegation is Scoped to Bead.** Authority delegation is not a general capability transfer — it's scoped to the bead being worked. When clavain-sprint delegates to fd-architecture for bead Demarch-xyz, the delegation only applies to that bead's domains.
+**Rule 2: Delegation is Scoped to Bead.** Authority delegation is not a general capability transfer — it's scoped to the bead being worked. When clavain-sprint delegates to fd-architecture for bead Sylveste-xyz, the delegation only applies to that bead's domains.
 
 **Rule 3: Delegation Requires Explicit Token.** The delegating agent creates a delegation record:
 
@@ -445,12 +445,12 @@ IF delegation_depth(agent_id, bead_id) > MAX_DELEGATION_DEPTH:
 
 ```
 1. clavain-sprint (T3, commit authority for os/Clavain/**)
-   claims bead Demarch-abc (touches os/Clavain/hooks/lib-sprint.sh)
+   claims bead Sylveste-abc (touches os/Clavain/hooks/lib-sprint.sh)
 
 2. clavain-sprint spawns fd-correctness as Task subagent for review
    → creates delegation:
      parent=clavain-sprint, child=fd-correctness,
-     bead=Demarch-abc, action_ceiling=propose,  # review = propose, not commit
+     bead=Sylveste-abc, action_ceiling=propose,  # review = propose, not commit
      domain_patterns=["os/Clavain/hooks/**"]     # narrower than parent's grant
 
 3. fd-correctness resolves authority:

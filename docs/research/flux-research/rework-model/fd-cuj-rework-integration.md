@@ -80,7 +80,7 @@ Every gate evaluation — pass, marginal, or fail — produces a structured evid
 
 ```yaml
 gate_evaluation:
-  bead_id: "Demarch-XXXX"
+  bead_id: "Sylveste-XXXX"
   gate_id: "cuj:build-completes:coverage-threshold"
   signal_tier: "threshold"           # deterministic|threshold|trend|heuristic|judgment
   outcome: "marginal"                # pass|marginal|fail
@@ -195,7 +195,7 @@ The ledger tracks:
 ```yaml
 accumulation_entry:
   finding_id: "uuid"
-  bead_id: "Demarch-XXXX"
+  bead_id: "Sylveste-XXXX"
   gate_id: "cuj:build-completes:coverage-threshold"
   signal_tier: "threshold"
   marginal_sub_state: "usable"

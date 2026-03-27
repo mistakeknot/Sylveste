@@ -1,6 +1,6 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-csq
+bead: Sylveste-csq
 stage: discover
 ---
 # Diagnostic Maturation Skill — Brainstorm

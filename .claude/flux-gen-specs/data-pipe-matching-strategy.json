@@ -6,7 +6,7 @@
     "decision_lens": "Prioritizes join correctness and failure modes over elegance. A join that silently drops 20% of sessions is worse than no join at all.",
     "review_areas": [
       "Verify whether clavain-cli WIP output already exposes any field (pid, window title, start timestamp) that could serve as a foreign key back to the Notion roster",
-      "Check whether the Demarch- prefix on bead IDs is a stable convention or could vary by project, and whether that prefix alone is sufficient to infer project context",
+      "Check whether the Sylveste- prefix on bead IDs is a stable convention or could vary by project, and whether that prefix alone is sufficient to infer project context",
       "Evaluate tmux session name patterns (e.g., warp-demarch-claude) for parseable structure: can project and agent-type be reliably extracted with a regex, or are names ad-hoc?",
       "Assess whether a mapping table approach is operationally viable: who writes to it, what is the write latency, and what happens when clavain-cli restarts?",
       "Check if hex session IDs appear anywhere in tmux environment variables (CLAUDE_SESSION_ID, etc.) that would make tmux a reliable bridge",
@@ -21,7 +21,7 @@
       "fd-source-emission-design covers changes to factory-status.go to emit new fields",
       "fd-staleness-and-refresh covers data freshness and polling cadence mismatches"
     ],
-    "task_context": "Two data sources must be combined for a visualization pipeline: a Notion-sourced IdeaGUI roster (85 agent sessions with project/terminal/agent-type/sync-mode) and clavain-cli live ops (fleet counts, queue by priority, WIP agent-to-bead mappings). The core challenge is that bead IDs encode the DB prefix (Demarch-), not the sub-project, and tmux session names are human-readable but not linked to hex session IDs in WIP output."
+    "task_context": "Two data sources must be combined for a visualization pipeline: a Notion-sourced IdeaGUI roster (85 agent sessions with project/terminal/agent-type/sync-mode) and clavain-cli live ops (fleet counts, queue by priority, WIP agent-to-bead mappings). The core challenge is that bead IDs encode the DB prefix (Sylveste-), not the sub-project, and tmux session names are human-readable but not linked to hex session IDs in WIP output."
   },
   {
     "name": "fd-source-emission-design",
@@ -30,7 +30,7 @@
     "decision_lens": "Prefers solutions that push join logic as close to the authoritative data source as possible, and flags any design that forces consumers to re-derive information the producer already knows.",
     "review_areas": [
       "Determine what project-context information clavain-cli already holds internally when it constructs WIP agent-to-bead mappings, and whether emitting it is trivial or requires new lookups",
-      "Evaluate whether the bead ID prefix (e.g., Demarch-) is sufficient for project disambiguation in the current deployment, or whether multi-tenant scenarios require a richer field",
+      "Evaluate whether the bead ID prefix (e.g., Sylveste-) is sufficient for project disambiguation in the current deployment, or whether multi-tenant scenarios require a richer field",
       "Assess the output format: if factory-status.go emits a project field, specify whether it belongs on the bead entry, the agent entry, or a top-level context block",
       "Check for versioning risk: adding fields to factory-status JSON output is a breaking change for any existing consumers — enumerate known consumers and their tolerance for schema evolution",
       "Verify whether the sub-project granularity (meadowsyn vs. demarch root) is knowable at factory-status emit time, or whether it requires a separate registry lookup",
@@ -45,7 +45,7 @@
       "fd-viz-layer-contracts covers how the 6 experiments consume the emitted fields",
       "fd-parallel-layers-tradeoffs covers the no-join alternative where sources remain separate"
     ],
-    "task_context": "Two data sources must be combined for a visualization pipeline: a Notion-sourced IdeaGUI roster (85 agent sessions with project/terminal/agent-type/sync-mode) and clavain-cli live ops (fleet counts, queue by priority, WIP agent-to-bead mappings). The core challenge is that bead IDs encode the DB prefix (Demarch-), not the sub-project, and tmux session names are human-readable but not linked to hex session IDs in WIP output."
+    "task_context": "Two data sources must be combined for a visualization pipeline: a Notion-sourced IdeaGUI roster (85 agent sessions with project/terminal/agent-type/sync-mode) and clavain-cli live ops (fleet counts, queue by priority, WIP agent-to-bead mappings). The core challenge is that bead IDs encode the DB prefix (Sylveste-), not the sub-project, and tmux session names are human-readable but not linked to hex session IDs in WIP output."
   },
   {
     "name": "fd-parallel-layers-tradeoffs",
@@ -69,7 +69,7 @@
       "fd-source-emission-design covers changes to factory-status.go as one join strategy",
       "fd-viz-layer-contracts covers the API contract between the data pipe and the visualization layer"
     ],
-    "task_context": "Two data sources must be combined for a visualization pipeline: a Notion-sourced IdeaGUI roster (85 agent sessions with project/terminal/agent-type/sync-mode) and clavain-cli live ops (fleet counts, queue by priority, WIP agent-to-bead mappings). The core challenge is that bead IDs encode the DB prefix (Demarch-), not the sub-project, and tmux session names are human-readable but not linked to hex session IDs in WIP output."
+    "task_context": "Two data sources must be combined for a visualization pipeline: a Notion-sourced IdeaGUI roster (85 agent sessions with project/terminal/agent-type/sync-mode) and clavain-cli live ops (fleet counts, queue by priority, WIP agent-to-bead mappings). The core challenge is that bead IDs encode the DB prefix (Sylveste-), not the sub-project, and tmux session names are human-readable but not linked to hex session IDs in WIP output."
   },
   {
     "name": "fd-staleness-and-refresh",
@@ -93,7 +93,7 @@
       "fd-viz-layer-contracts covers how experiments handle missing or null fields, not the timing of when those nulls appear",
       "fd-parallel-layers-tradeoffs covers the architectural choice of joining versus not joining"
     ],
-    "task_context": "Two data sources must be combined for a visualization pipeline: a Notion-sourced IdeaGUI roster (85 agent sessions with project/terminal/agent-type/sync-mode) and clavain-cli live ops (fleet counts, queue by priority, WIP agent-to-bead mappings). The core challenge is that bead IDs encode the DB prefix (Demarch-), not the sub-project, and tmux session names are human-readable but not linked to hex session IDs in WIP output."
+    "task_context": "Two data sources must be combined for a visualization pipeline: a Notion-sourced IdeaGUI roster (85 agent sessions with project/terminal/agent-type/sync-mode) and clavain-cli live ops (fleet counts, queue by priority, WIP agent-to-bead mappings). The core challenge is that bead IDs encode the DB prefix (Sylveste-), not the sub-project, and tmux session names are human-readable but not linked to hex session IDs in WIP output."
   },
   {
     "name": "fd-viz-layer-contracts",
@@ -117,6 +117,6 @@
       "fd-source-emission-design covers upstream changes to factory-status.go",
       "fd-staleness-and-refresh covers temporal correctness of the pipe, not schema correctness"
     ],
-    "task_context": "Two data sources must be combined for a visualization pipeline: a Notion-sourced IdeaGUI roster (85 agent sessions with project/terminal/agent-type/sync-mode) and clavain-cli live ops (fleet counts, queue by priority, WIP agent-to-bead mappings). The core challenge is that bead IDs encode the DB prefix (Demarch-), not the sub-project, and tmux session names are human-readable but not linked to hex session IDs in WIP output."
+    "task_context": "Two data sources must be combined for a visualization pipeline: a Notion-sourced IdeaGUI roster (85 agent sessions with project/terminal/agent-type/sync-mode) and clavain-cli live ops (fleet counts, queue by priority, WIP agent-to-bead mappings). The core challenge is that bead IDs encode the DB prefix (Sylveste-), not the sub-project, and tmux session names are human-readable but not linked to hex session IDs in WIP output."
   }
 ]

@@ -1,11 +1,11 @@
 ---
 artifact_type: plan
-bead: Demarch-uboy.6
+bead: Sylveste-uboy.6
 stage: planned
 ---
 # Plan: Validate Incremental Expansion (Step 2.2a.6)
 
-**Bead:** Demarch-uboy.6
+**Bead:** Sylveste-uboy.6
 **Goal:** Confirm that flux-drive's speculative Stage 2 launch logic (Step 2.2a.6 in launch.md) works during a real review run.
 
 ## Acceptance Criteria (from bead)

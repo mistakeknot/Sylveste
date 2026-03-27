@@ -1,16 +1,16 @@
 # Brainstorm: flux-drive LLM Domain Detection + flux-gen Dispatch
 
-**Bead:** Demarch-b5md
+**Bead:** Sylveste-b5md
 **Date:** 2026-03-18
 
 ## Problem
 
-flux-drive's heuristic domain detection (`detect-domains.py`) scores 0 for Demarch — a monorepo with 50+ subprojects. Scores for closest domains:
+flux-drive's heuristic domain detection (`detect-domains.py`) scores 0 for Sylveste — a monorepo with 50+ subprojects. Scores for closest domains:
 - `claude-code-plugin`: 0.152 (needs 0.35)
 - `tui-app`: 0.208 (needs 0.30)
 - `library-sdk`: 0.124 (needs 0.30)
 
-Root cause: heuristic looks for root-level build files, but Demarch has `go.mod`, `.claude-plugin/plugin.json`, `cmd/` scattered across subproject dirs. The detector was designed for single-project repos.
+Root cause: heuristic looks for root-level build files, but Sylveste has `go.mod`, `.claude-plugin/plugin.json`, `cmd/` scattered across subproject dirs. The detector was designed for single-project repos.
 
 Result: flux-drive Step 1.0.4 always falls through to "core agents only." User compensates by manually running `/flux-gen` before every `/flux-drive`. Cass confirms this is the consistent pattern.
 

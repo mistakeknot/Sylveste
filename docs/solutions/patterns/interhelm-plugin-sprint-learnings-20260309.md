@@ -1,6 +1,6 @@
 ---
 artifact_type: reflection
-bead: Demarch-ekh
+bead: Sylveste-ekh
 stage: reflect
 category: patterns
 date: 2026-03-09

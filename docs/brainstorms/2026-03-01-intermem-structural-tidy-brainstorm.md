@@ -14,7 +14,7 @@ A new `tidy` capability for intermem that performs structural housekeeping on me
 
 ## Why This Matters
 
-MEMORY.md is loaded into every conversation context. At 200+ lines, truncation kicks in and facts at the bottom are lost. At 98 lines (f3ar project), the file is mostly architecture docs that should be a topic file. The Demarch MEMORY.md (64 lines) is well-structured because it was manually curated — but manual curation doesn't scale across dozens of projects.
+MEMORY.md is loaded into every conversation context. At 200+ lines, truncation kicks in and facts at the bottom are lost. At 98 lines (f3ar project), the file is mostly architecture docs that should be a topic file. The Sylveste MEMORY.md (64 lines) is well-structured because it was manually curated — but manual curation doesn't scale across dozens of projects.
 
 Current intermem handles *entry promotion* (memory → AGENTS.md/CLAUDE.md) but not *source file organization*. The tidy feature sits before the promotion pipeline: reorganize the source first, so the promotion pipeline works from cleaner input.
 
@@ -35,7 +35,7 @@ Current intermem handles *entry promotion* (memory → AGENTS.md/CLAUDE.md) but 
 
 **Existing MEMORY.md sizes:**
 - f3ar: 98 lines (no topic files — all inline architecture docs)
-- Demarch: 64 lines (4 topic files, well-structured)
+- Sylveste: 64 lines (4 topic files, well-structured)
 
 ## Design Decisions
 

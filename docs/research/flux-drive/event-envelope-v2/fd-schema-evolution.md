@@ -2,7 +2,7 @@
 artifact_type: flux-drive-review
 agent: fd-schema-evolution
 plan: docs/plans/2026-03-26-event-envelope-v2.md
-bead: Demarch-og7m.2.1
+bead: Sylveste-og7m.2.1
 status: complete
 findings: 7
 ---

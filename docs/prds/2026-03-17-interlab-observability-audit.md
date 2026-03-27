@@ -1,13 +1,13 @@
 ---
 artifact_type: prd
-bead: Demarch-dxzr
+bead: Sylveste-dxzr
 stage: design
 ---
 # PRD: Interlab Observability Audit — Universal METRIC Coverage
 
 ## Problem
 
-93% of Demarch's 197 components are invisible to interlab's optimization loop. Only interlab itself emits `METRIC name=value` lines. Components with existing Go benchmarks (masaq, intermap), eval suites (tldr-swinton), and scoring systems (Clavain satisfaction) cannot be optimized because they lack the thin METRIC wrapper interlab requires.
+93% of Sylveste's 197 components are invisible to interlab's optimization loop. Only interlab itself emits `METRIC name=value` lines. Components with existing Go benchmarks (masaq, intermap), eval suites (tldr-swinton), and scoring systems (Clavain satisfaction) cannot be optimized because they lack the thin METRIC wrapper interlab requires.
 
 ## Solution
 

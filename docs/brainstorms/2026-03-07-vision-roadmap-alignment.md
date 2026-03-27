@@ -2,16 +2,16 @@
 
 **Bead:** iv-ey5wb (P0, decision)
 **Date:** 2026-03-07
-**Sources:** `docs/demarch-vision.md` (v3.2), `docs/demarch-roadmap.md`, `PHILOSOPHY.md`, `bd stats`, `bd list --priority=0`
+**Sources:** `docs/sylveste-vision.md` (v3.2), `docs/sylveste-roadmap.md`, `PHILOSOPHY.md`, `bd stats`, `bd list --priority=0`
 
 ---
 
 ## Context
 
-Demarch has three strategic documents that should form a coherent stack:
+Sylveste has three strategic documents that should form a coherent stack:
 - **PHILOSOPHY.md** — why these tradeoffs
-- **demarch-vision.md** — what we're building and where we are
-- **demarch-roadmap.md** — what's next, in priority order
+- **sylveste-vision.md** — what we're building and where we are
+- **sylveste-roadmap.md** — what's next, in priority order
 
 The bead description identified 7 gaps. This brainstorm validates each against current source data, assesses severity, and proposes fixes.
 
@@ -72,9 +72,9 @@ Many of these are "early" status modules where a roadmap would be premature. But
 **Fix direction:** Create an interspect roadmap (it already has `docs/interspect-vision.md`; extract roadmap items from vision + existing beads). For the other 25, triage: which are active enough to warrant a roadmap? The rest can stay without one.
 
 ### Gap 7: Status count inconsistency
-**Claim:** demarch-roadmap.md says 719 open / 78 blocked, roadmap.json says 95 open / 0 blocked, bd stats says 699 open / 66 blocked.
+**Claim:** sylveste-roadmap.md says 719 open / 78 blocked, roadmap.json says 95 open / 0 blocked, bd stats says 699 open / 66 blocked.
 **Verdict: PARTIALLY CONFIRMED.** Current state:
-- `demarch-roadmap.md` header says: "Open beads: 698 (per bd stats, 2026-03-06) | Blocked: 68"
+- `sylveste-roadmap.md` header says: "Open beads: 698 (per bd stats, 2026-03-06) | Blocked: 68"
 - Live `bd stats` (2026-03-07): 701 open, 68 blocked, 2565 closed
 - roadmap.json: not verified (JSON parse failed)
 

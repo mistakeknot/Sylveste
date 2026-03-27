@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "interfere"
 version = "0.1.0"
-description = "Local MLX-LM inference server for Demarch"
+description = "Local MLX-LM inference server for Sylveste"
 requires-python = ">=3.12"
 dependencies = [
     "mlx>=0.22.0",

@@ -2,7 +2,7 @@
 
 # Voice Profile: Docs (Project Documentation)
 
-Context: Vision docs, brainstorms, PRDs, and project documentation within the Demarch ecosystem. These are persistent artifacts read by both humans and agents across sessions. Corpus: base profile (Substack post), adapted for structural documentation conventions.
+Context: Vision docs, brainstorms, PRDs, and project documentation within the Sylveste ecosystem. These are persistent artifacts read by both humans and agents across sessions. Corpus: base profile (Substack post), adapted for structural documentation conventions.
 
 ## Overview
 
@@ -20,7 +20,7 @@ The base voice carries over intact — frame-then-populate, semicolons doing rea
 
 **Section flow** still leans on connective prose between structural elements rather than headers alone. A table or list is introduced with a sentence that frames what it contains and why; it does not appear without context.
 
-**Do this:** Frame a table with "Skaffen shares L1 infrastructure with Clavain and the rest of Demarch:" then the table.
+**Do this:** Frame a table with "Skaffen shares L1 infrastructure with Clavain and the rest of Sylveste:" then the table.
 **Not this:** `## Companion Ecosystem` followed immediately by a table with no introductory sentence.
 
 **Do this:** "The ceiling has five faces:" followed by a numbered list with bold lead-ins and prose.

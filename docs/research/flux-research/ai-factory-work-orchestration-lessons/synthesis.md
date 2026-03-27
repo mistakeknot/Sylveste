@@ -4,7 +4,7 @@
 **Question:** What lessons from work orchestration in diverse domains apply to building an AI agent software factory where workers are cloneable, cost-per-task is measurable, and humans progressively withdraw to pure oversight?
 
 **Agents:** 10 research threads (5 focused domains + 5 discovery)
-**Sources:** 82 external (docs, research, tools), 40+ internal (Demarch codebase)
+**Sources:** 82 external (docs, research, tools), 40+ internal (Sylveste codebase)
 **Confidence:** High (6/10 agents converge on core patterns)
 
 ---
@@ -19,7 +19,7 @@ Work orchestration for AI agent factories is **fundamentally a governance proble
 4. **Film Production** — resource-constrained scheduling, version control, quality pipeline stages
 5. **Finance/Supply Chain** — cost-aware forecasting, distribution-shaped estimates, regime detection
 
-**Demarch's current state** implements beads + routing + phase gates + basic cost tracking. This is a solid foundation, but **three critical gaps** prevent full autonomy:
+**Sylveste's current state** implements beads + routing + phase gates + basic cost tracking. This is a solid foundation, but **three critical gaps** prevent full autonomy:
 
 1. **No graduated autonomy tiers** — authority is binary, not earned. Mycroft (v0.1, planned) should address this.
 2. **No cost-per-task routing** — dispatch ignores budget and agent cost profiles. Routing needs budget awareness.
@@ -41,10 +41,10 @@ Work orchestration for AI agent factories is **fundamentally a governance proble
 
 **Why this matters:**
 - You cannot know the true task shape until someone understands the codebase
-- Demarch's `/clavain:sprint` → `/clavain:work` pipeline encodes this implicitly
+- Sylveste's `/clavain:sprint` → `/clavain:work` pipeline encodes this implicitly
 - Best teams allocate 10-15% capacity for replanning/rework, but no tooling supports "checkpoint replanning" at 25% and 50% of time budget
 
-**Demarch gap:** Brainstorm produces a spec; strategy proposes children; but once a bead is claimed, there's no mechanism for the executing agent to propose a revised child decomposition. Agents should be able to say "I discovered this needs 3 subtasks, not 1" and have the system adjust.
+**Sylveste gap:** Brainstorm produces a spec; strategy proposes children; but once a bead is claimed, there's no mechanism for the executing agent to propose a revised child decomposition. Agents should be able to say "I discovered this needs 3 subtasks, not 1" and have the system adjust.
 
 **Actionable:** Add a `bd refine <parent_id>` command that allows agents mid-execution to propose child beads without requiring manual processing. Auto-merge if complexity increased <20%.
 
@@ -70,7 +70,7 @@ Work orchestration for AI agent factories is **fundamentally a governance proble
 - Each tier should be domain-scoped: an agent may be Deploy-level for tests, Propose-level for payment code
 - Authority should be losable: one incident reverts an agent to a lower tier for that domain
 
-**Demarch gap:** Beads have no authority metadata. There's no mechanism to say "this agent can auto-commit docs, but only propose for payment code." Interspect has "exclude agent X from domain Y" but not positive authority grants. Mycroft (planned) will add graduated tiers T0-T3, but this must be domain-scoped.
+**Sylveste gap:** Beads have no authority metadata. There's no mechanism to say "this agent can auto-commit docs, but only propose for payment code." Interspect has "exclude agent X from domain Y" but not positive authority grants. Mycroft (planned) will add graduated tiers T0-T3, but this must be domain-scoped.
 
 **Actionable:** Implement domain-scoped authority in Intercore. Store in `agent_authority` table: (agent_id, domain/module_glob, tier, earned_at, evidence_ids). Route and gate checks consult this table.
 
@@ -90,7 +90,7 @@ Work orchestration for AI agent factories is **fundamentally a governance proble
 - You should route tasks based on cost profile (send cheap tasks to cheap model, expensive tasks to expensive model)
 - You should gate based on cost: skip plan-review if cost is low, always require approval if cost is high
 
-**Demarch gap:** Demarch tracks cost via interstat (tokens spent per session) and has a cost baseline ($2.93/landable change). But:
+**Sylveste gap:** Sylveste tracks cost via interstat (tokens spent per session) and has a cost baseline ($2.93/landable change). But:
 
 - Routing ignores cost profiles (no distinction between Claude Opus and Haiku dispatch)
 - Gating doesn't check "is this task within budget?" before approving
@@ -136,7 +136,7 @@ Escalation: If analysis finds architectural blocker, escalate by hour 1
 - Agents can make intermediate decisions without round-tripping
 - Failure modes are clearer (agent chose wrong approach vs. followed bad steps)
 
-**Demarch gap:** Brainstorm and strategy docs are narrative (human-readable). Beads lack structured intent fields. When an agent claims a bead, it reads a markdown spec, not structured goal/constraints/success JSON.
+**Sylveste gap:** Brainstorm and strategy docs are narrative (human-readable). Beads lack structured intent fields. When an agent claims a bead, it reads a markdown spec, not structured goal/constraints/success JSON.
 
 **Actionable:** Add optional `goal`, `constraints`, `success_criteria`, `escalation_triggers` fields to beads. Migrate existing PRD/plan docs to populate these. Routing prefers intent-based beads for delegation.
 
@@ -149,7 +149,7 @@ Escalation: If analysis finds architectural blocker, escalate by hour 1
 
 **Finding:** Software assumes "code reviewed, tests pass, deployed" is binary done-ness. AI agents need graduated gates with clear pass/fail criteria.
 
-**Demarch's Phase Gates (current):**
+**Sylveste's Phase Gates (current):**
 ```
 plan-reviewed gate:
   - 2/3 review agents must pass
@@ -184,7 +184,7 @@ Acceptance gate (human, optional):
 - Low (<0.7): human review required
 - Unknown: quarantine (don't merge, hold for inspection)
 
-**Demarch gap:** Demarch has phase gates but they're all qualitative (human review). No deterministic gates. No LLM judge. No confidence scoring on outputs. No quarantine for uncertain work.
+**Sylveste gap:** Sylveste has phase gates but they're all qualitative (human review). No deterministic gates. No LLM judge. No confidence scoring on outputs. No quarantine for uncertain work.
 
 **Actionable:**
 1. Add deterministic gates: compile, test, lint, type-check (git hook)
@@ -213,12 +213,12 @@ Acceptance gate (human, optional):
 - Aviation CRM trust calibration (fd-human-withdrawal)
 - Military mission command (best-practices-researcher)
 - Knight-Columbia autonomy framework (fd-human-withdrawal)
-- Demarch's nascent Mycroft tier system (repo-research-analyst)
+- Sylveste's nascent Mycroft tier system (repo-research-analyst)
 
 **Effort:** High (requires Interspect Phase 2 evidence loop + Mycroft core)
 **Benefit:** Unlocks async operation; reduces principal oversight time by ~80% once baseline trust is established
 
-**Current State in Demarch:** Planned in Mycroft v0.1; not yet implemented
+**Current State in Sylveste:** Planned in Mycroft v0.1; not yet implemented
 
 ---
 
@@ -235,7 +235,7 @@ Acceptance gate (human, optional):
 - Dashboard L1: show spend rate vs. budget as primary metric (before agent count, completion %)
 
 **Evidence:**
-- Demarch cost baseline: $2.93/landable change, 785 sessions (repo-research-analyst)
+- Sylveste cost baseline: $2.93/landable change, 785 sessions (repo-research-analyst)
 - OEE cost analysis (fd-velocity-forecasting): execution efficiency is the binding constraint
 - Finance dashboards (fd-dashboard-oversight): budget vs. actual, burn rate trend
 - Manufacturing cost accounting (best-practices-researcher)
@@ -243,7 +243,7 @@ Acceptance gate (human, optional):
 **Effort:** Medium (fleet-registry already has data; routing adds cost lookup; dashboard refactor)
 **Benefit:** 15-25% cost reduction by shifting expensive tasks to cheaper models; better budget predictability
 
-**Current State in Demarch:** Baseline tracked, but routing/gating don't use cost
+**Current State in Sylveste:** Baseline tracked, but routing/gating don't use cost
 
 ---
 
@@ -263,12 +263,12 @@ Acceptance gate (human, optional):
 - VFX production pipeline stages (fd-work-decomposition, fd-dashboard-oversight)
 - Manufacturing First Pass Yield (fd-work-decomposition)
 - Hospital WHO checklist mandatory pause points (fd-human-withdrawal)
-- Demarch phase gates (repo-research-analyst, learnings-researcher)
+- Sylveste phase gates (repo-research-analyst, learnings-researcher)
 
 **Effort:** Medium (deterministic gates via git hook; LLM judge via Anthropic API; confidence scoring logic)
 **Benefit:** 50%+ reduction in human review time; faster feedback loop; better signal on which tasks are risky
 
-**Current State in Demarch:** Beads have phase gates (human review only); no deterministic gates; no confidence scoring
+**Current State in Sylveste:** Beads have phase gates (human review only); no deterministic gates; no confidence scoring
 
 ---
 
@@ -287,13 +287,13 @@ Acceptance gate (human, optional):
 **Evidence:**
 - Manufacturing two-level planning: ERP vs. MES (best-practices-researcher)
 - Hospital OR re-planning (best-practices-researcher, fd-scheduling-allocation)
-- Demarch sprint → brainstorm → strategy → plan pipeline (learnings-researcher)
+- Sylveste sprint → brainstorm → strategy → plan pipeline (learnings-researcher)
 - Temporal continue-as-new pattern (framework-docs-researcher)
 
 **Effort:** Low (new command + bead schema update + routing hook)
 **Benefit:** 20% reduction in rework; better cost predictability; agents can self-parallelize
 
-**Current State in Demarch:** Strategy produces breakdown; plan details it; but claims don't refine
+**Current State in Sylveste:** Strategy produces breakdown; plan details it; but claims don't refine
 
 ---
 
@@ -301,7 +301,7 @@ Acceptance gate (human, optional):
 
 **What:** "Skip plan-review if cost < $5 AND task is in safe domain." Not "plan-review required for all."
 
-**Why:** Demarch's phase gates are mandatory for all work (good: safety floor). But low-risk work (typo fix, comment addition) pays the same overhead as high-risk work (API change). Graduated progression saves tokens and speed.
+**Why:** Sylveste's phase gates are mandatory for all work (good: safety floor). But low-risk work (typo fix, comment addition) pays the same overhead as high-risk work (API change). Graduated progression saves tokens and speed.
 
 **Implementation:**
 - Gates have skip conditions: `skip_if: cost < $5 AND domain in (docs, tests) AND agent_tier >= Deploy`
@@ -318,13 +318,13 @@ Acceptance gate (human, optional):
 **Effort:** Medium (gate rules as DSL in Intercore; blast-radius classification in beads)
 **Benefit:** 10-20% speedup on low-risk work; humans focus on high-leverage decisions
 
-**Current State in Demarch:** All phase gates mandatory; no skip conditions
+**Current State in Sylveste:** All phase gates mandatory; no skip conditions
 
 ---
 
-## Part 3: Where Demarch Is Strong vs. Missing
+## Part 3: Where Sylveste Is Strong vs. Missing
 
-### Demarch Has ✓
+### Sylveste Has ✓
 
 | Capability | Implementation | Maturity |
 |-----------|-----------------|----------|
@@ -335,7 +335,7 @@ Acceptance gate (human, optional):
 | Domain-aware dispatch | flux-drive domain detection | ✓ Basic |
 | Evidence collection | Interspect events + hooks | ✓ Emerging |
 
-### Demarch Is Missing ✗
+### Sylveste Is Missing ✗
 
 | Capability | Why Important | Status |
 |-----------|---------------|--------|
@@ -360,7 +360,7 @@ Acceptance gate (human, optional):
 
 **Resolution:** Implement mandatory re-engagement artifacts (SBAR format, decision replay, change-of-plan events). Out-of-the-loop is acceptable only if the loop can be re-joined in <5 minutes.
 
-**Demarch action:** Add ICS Form 201-equivalent (context snapshot on-demand). Implement decision replay: "show me the decisions agent X made in the last 30 minutes with alternatives considered."
+**Sylveste action:** Add ICS Form 201-equivalent (context snapshot on-demand). Implement decision replay: "show me the decisions agent X made in the last 30 minutes with alternatives considered."
 
 ### Tension 2: Cost Optimization vs. Quality
 
@@ -368,7 +368,7 @@ Acceptance gate (human, optional):
 
 **Resolution:** Use OEE decomposition: track (availability, efficiency, land_rate) separately. If cheap model has 60% land rate but expensive model has 90%, net cost-per-successful-change favors expensive model.
 
-**Demarch action:** Add land_rate (tasks landed / tasks attempted) to fleet-registry. Routing considers OEE, not just token cost.
+**Sylveste action:** Add land_rate (tasks landed / tasks attempted) to fleet-registry. Routing considers OEE, not just token cost.
 
 ### Tension 3: Parallelism vs. Coordination
 
@@ -376,15 +376,15 @@ Acceptance gate (human, optional):
 
 **Resolution:** Apply Theory of Constraints (DBR): identify the bottleneck (usually human review), buffer upstream (queue-ready work), rope downstream (limit work-in-progress to match review throughput).
 
-**Demarch action:** Track per-stage WIP (agents-working, review-queue, CI-running, deployed). Alert when any stage hits cap. Rope controls agent dispatch rate.
+**Sylveste action:** Track per-stage WIP (agents-working, review-queue, CI-running, deployed). Alert when any stage hits cap. Rope controls agent dispatch rate.
 
 ### Tension 4: Upfront Planning vs. Discovered Replanning
 
 **Conflict:** Planning costs tokens; replanning costs tokens. Do one or the other, not both.
 
-**Resolution:** Allocate % of budget to each. Demarch allocates 20% to brainstorm + strategy + plan (upfront); reserve 10% for replanning (discovered).
+**Resolution:** Allocate % of budget to each. Sylveste allocates 20% to brainstorm + strategy + plan (upfront); reserve 10% for replanning (discovered).
 
-**Demarch action:** Monitor actual replan frequency. If > 20% of tasks require mid-execution breakdown, increase upfront planning budget.
+**Sylveste action:** Monitor actual replan frequency. If > 20% of tasks require mid-execution breakdown, increase upfront planning budget.
 
 ---
 
@@ -464,7 +464,7 @@ Acceptance gate (human, optional):
 | **Airflow/Dagster** | DAG scheduling, asset lineage | framework-docs-researcher |
 | **CrewAI/LangGraph** | Multi-agent delegation patterns | framework-docs-researcher |
 
-### Internal (Demarch)
+### Internal (Sylveste)
 
 | Artifact | Coverage | Agent(s) |
 |----------|----------|----------|
@@ -478,9 +478,9 @@ Acceptance gate (human, optional):
 
 ## Glossary
 
-- **Beads:** Demarch's work-tracking unit (like Jira issue, but durable)
+- **Beads:** Sylveste's work-tracking unit (like Jira issue, but durable)
 - **Phase gates:** Mandatory progression checks (brainstorm → strategy → plan → work)
-- **Interspect:** Demarch's evidence collection & verdict system
+- **Interspect:** Sylveste's evidence collection & verdict system
 - **Mycroft:** Planned fleet orchestrator (handles 20+ agents with graduated tiers)
 - **OEE:** Overall Equipment Effectiveness (availability × efficiency × quality)
 - **DBR:** Drum-Buffer-Rope constraint management (manufacturing)
@@ -500,7 +500,7 @@ The research converges on a clear architectural pattern for AI factory orchestra
 4. **Separate intent from implementation.** Tell agents what to achieve, not how. This enables adaptation and parallelization.
 5. **Implement multi-stage quality gates:** deterministic (tests pass) → stochastic (semantic correctness) → human (irreversible decisions).
 
-Demarch has the foundation (beads, routing, phase gates, cost tracking). The gaps are not architectural, but graduated-trust infrastructure. Mycroft, Interspect Phase 2, and cost-aware routing will unlock the transition from "augmented human engineers" to "autonomous software factory with human oversight."
+Sylveste has the foundation (beads, routing, phase gates, cost tracking). The gaps are not architectural, but graduated-trust infrastructure. Mycroft, Interspect Phase 2, and cost-aware routing will unlock the transition from "augmented human engineers" to "autonomous software factory with human oversight."
 
 **Estimated Impact of Roadmap:** Current bottleneck is human review bandwidth. With graduated autonomy + deterministic gates + confidence scoring, human review per output drops from 15-30 minutes to 1-2 minutes (for exceptions only). This enables scaling from 3-5 parallel agents to 20+ without increasing human burden.
 

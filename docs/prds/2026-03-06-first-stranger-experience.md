@@ -12,7 +12,7 @@ stage: design
 
 ## Problem
 
-No external user has ever successfully set up Demarch. The installation infrastructure exists and is more complete than expected (install.sh has PATH validation, progress output, prerequisite checks), but a stranger hitting any deviation from the happy path has no recovery guidance. The README lists no prerequisites. The doctor command doesn't check soft dependencies (Python, yq, Node.js) or validate config files. There is no first-run verification on session-start.
+No external user has ever successfully set up Sylveste. The installation infrastructure exists and is more complete than expected (install.sh has PATH validation, progress output, prerequisite checks), but a stranger hitting any deviation from the happy path has no recovery guidance. The README lists no prerequisites. The doctor command doesn't check soft dependencies (Python, yq, Node.js) or validate config files. There is no first-run verification on session-start.
 
 ## Scope
 

@@ -1,7 +1,7 @@
 # Interdoc Analysis: Intercom AGENTS.md Rewrite
 
 **Date**: 2026-02-25
-**Target**: `/home/mk/projects/Demarch/apps/intercom/AGENTS.md`
+**Target**: `/home/mk/projects/Sylveste/apps/intercom/AGENTS.md`
 **Current size**: 300 lines
 **Target size**: 250-300 lines
 
@@ -17,7 +17,7 @@ The Rust workspace at `rust/` contains 3 crates totaling ~9,337 LOC with 129 tes
 
 1. **`intercomd`** (daemon) — Axum-based HTTP server with:
    - Telegram bridge (`/v1/telegram/{ingress,send,edit}`)
-   - Demarch kernel adapter (`/v1/demarch/{read,write}`)
+   - Sylveste kernel adapter (`/v1/sylveste/{read,write}`)
    - Slash command handler (`/v1/commands`)
    - Full Postgres persistence layer (`/v1/db/*` — 24 DB routes)
    - IPC watcher (filesystem-based, polls `data/ipc/`)
@@ -27,7 +27,7 @@ The Rust workspace at `rust/` contains 3 crates totaling ~9,337 LOC with 129 tes
    - Group registry sync (fetches from Node host callback)
    - CLI subcommands: `serve`, `print-config`, `inspect-legacy`, `migrate-legacy`, `verify-migration`
 
-2. **`intercom-core`** (shared types) — Config, IPC types, container protocol, persistence layer (Postgres via tokio-postgres), Demarch adapter, runtime profiles
+2. **`intercom-core`** (shared types) — Config, IPC types, container protocol, persistence layer (Postgres via tokio-postgres), Sylveste adapter, runtime profiles
 
 3. **`intercom-compat`** (migration) — SQLite inspection, SQLite-to-Postgres migration with checkpoint/dry-run/verification
 
@@ -35,7 +35,7 @@ The Rust workspace at `rust/` contains 3 crates totaling ~9,337 LOC with 129 tes
 
 The migration uses a clear strangler-fig pattern:
 
-1. **IPC Delegation**: `IpcDelegate` trait in `intercomd/src/ipc.rs` — `HttpDelegate` forwards messages/tasks to Node host's callback server at `http://127.0.0.1:7341`. Demarch queries are handled natively in Rust.
+1. **IPC Delegation**: `IpcDelegate` trait in `intercomd/src/ipc.rs` — `HttpDelegate` forwards messages/tasks to Node host's callback server at `http://127.0.0.1:7341`. Sylveste queries are handled natively in Rust.
 
 2. **Node Callback Server**: `src/host-callback.ts` — lightweight HTTP server with endpoints:
    - `POST /v1/ipc/send-message` — send via Grammy/Baileys
@@ -60,7 +60,7 @@ The migration uses a clear strangler-fig pattern:
 9. **`summarizer.ts`** — conversation summary caching via GPT-5.3 Codex (undocumented)
 10. **`host-callback.ts`** — Node callback server for strangler-fig (undocumented)
 11. **`intercomd-client.ts`** — Node client for intercomd bridge (undocumented)
-12. **`query-handlers.ts`** — Demarch query handlers on Node side (undocumented)
+12. **`query-handlers.ts`** — Sylveste query handlers on Node side (undocumented)
 13. **`intercomd.service`** — systemd service for Rust daemon (undocumented)
 
 ### Accurate Content to Preserve
@@ -80,7 +80,7 @@ The migration uses a clear strangler-fig pattern:
 |------|---------|
 | `src/host-callback.ts` | HTTP callback server for intercomd delegation |
 | `src/intercomd-client.ts` | Client for intercomd bridge endpoints |
-| `src/query-handlers.ts` | Demarch CLI query handlers (Node side) |
+| `src/query-handlers.ts` | Sylveste CLI query handlers (Node side) |
 | `src/stream-accumulator.ts` | Real-time Telegram message editing |
 | `src/summarizer.ts` | Conversation summary caching |
 | `config/intercomd.service` | systemd unit for Rust daemon |

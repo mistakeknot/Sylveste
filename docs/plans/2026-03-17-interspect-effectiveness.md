@@ -3,9 +3,9 @@ artifact_type: plan
 bead: iv-5ztam
 stage: design
 requirements:
-  - F1: Effectiveness report function (Demarch-l6td)
-  - F2: /interspect:effectiveness command (Demarch-w6tl)
-  - F3: Effectiveness summary in status (Demarch-5pal)
+  - F1: Effectiveness report function (Sylveste-l6td)
+  - F2: /interspect:effectiveness command (Sylveste-w6tl)
+  - F3: Effectiveness summary in status (Sylveste-5pal)
 ---
 # Interspect Effectiveness Dashboard — Implementation Plan
 

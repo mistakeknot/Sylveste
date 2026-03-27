@@ -16,7 +16,7 @@ A distributed systems engineer who has built LLM serving infrastructure at scale
 Contention for unified memory is the dominant failure mode; findings that expose cache eviction races or head-of-line blocking between models rank highest. Correctness of routing decisions (which model handles which task class) is evaluated against latency SLOs for interactive tool calls.
 
 ## Task Context
-The target platform is Apple Silicon M5 Max 128GB with a unified memory architecture. The system serves an autonomous software development agency (Demarch/Clavain) where coding task quality and low-latency tool-call response are primary concerns.
+The target platform is Apple Silicon M5 Max 128GB with a unified memory architecture. The system serves an autonomous software development agency (Sylveste/Clavain) where coding task quality and low-latency tool-call response are primary concerns.
 
 ## Review Areas
 - Audit KV cache allocation strategy — check whether models share a unified KV cache pool or maintain isolated caches that waste the 128GB budget

@@ -10,7 +10,7 @@ B2 complexity routing infrastructure is built and running in shadow mode, but we
 
 ## Goal
 
-Run controlled experiments across 7 Demarch repos to validate or reject heterogeneous routing. Produce a routing recommendation matrix backed by real data.
+Run controlled experiments across 7 Sylveste repos to validate or reject heterogeneous routing. Produce a routing recommendation matrix backed by real data.
 
 ## Core Capabilities
 

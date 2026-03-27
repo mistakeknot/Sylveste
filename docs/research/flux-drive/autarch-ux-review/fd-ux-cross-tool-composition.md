@@ -17,9 +17,9 @@ Autarch's 5-tab TUI (Bigend, Gurgeh, Coldwine, Sprint, Pollard) has a well-desig
 
 **Priority:** P1 (high)
 **Files:**
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/gurgeh.go:435-448` (emission)
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/unified_app.go:508-516` (routing)
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/coldwine.go:90-101` (reception)
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/gurgeh.go:435-448` (emission)
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/unified_app.go:508-516` (routing)
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/coldwine.go:90-101` (reception)
 
 **Description:**
 Gurgeh's "Generate Epics" command (palette action at line 435) emits `SpecHandoffMsg` with the spec ID and title. `UnifiedApp.Update()` correctly catches this at line 508, calls `SetHandoffSpec()` on `ColdwineView`, and switches to the Coldwine tab. However, `SetHandoffSpec()` only does two things: (1) attempts to select the first epic matching the spec ID (which will match nothing if no epics exist yet, since this is supposed to trigger generation), and (2) adds a system chat message saying "generate or review epics for this spec."
@@ -36,8 +36,8 @@ The name "Generate Epics" implies automation, but the user arrives at Coldwine w
 
 **Priority:** P2 (medium)
 **Files:**
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/unified_app.go:560-564` (default message routing)
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/unified_app.go:305-320` (dispatch fan-out)
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/unified_app.go:560-564` (default message routing)
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/unified_app.go:305-320` (dispatch fan-out)
 
 **Description:**
 The default message routing at line 560-564 sends non-key messages only to `a.currentView`:
@@ -68,8 +68,8 @@ Only `dispatchBatchMsg` (lines 305-320) fans out to all views. This means:
 
 **Priority:** P2 (medium)
 **Files:**
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/pollard.go:514-541` (Link Insight command)
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/pollard.go:135-141` (insightLinkedMsg handler)
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/pollard.go:514-541` (Link Insight command)
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/pollard.go:135-141` (insightLinkedMsg handler)
 
 **Description:**
 The "Link Insight" palette command (line 514) links an insight to the first validated spec by calling `client.LinkInsight()`. On success, it displays a chat message: "Linked insight X to spec Y". However:
@@ -89,8 +89,8 @@ The "Link Insight" palette command (line 514) links an insight to the first vali
 
 **Priority:** P2 (medium)
 **Files:**
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/signals_overlay.go:114-143` (key handling)
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/signals_overlay.go:244-287` (signal rendering)
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/signals_overlay.go:114-143` (key handling)
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/signals_overlay.go:244-287` (signal rendering)
 
 **Description:**
 The signals overlay displays signals from all three emitters (Gurgeh: `assumption_decayed`, `hypothesis_stale`, `spec_health_low`; Coldwine: `execution_drift`; Pollard: `competitor_shipped`, `research_invalidation`). Each signal carries `SpecID` and `Source` fields. However:
@@ -109,7 +109,7 @@ The signals overlay displays signals from all three emitters (Gurgeh: `assumptio
 
 **Priority:** P3 (low)
 **Files:**
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/pollard.go:500`
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/pollard.go:500`
 
 **Description:**
 The "Run Research" palette command hardcodes three hunters:
@@ -130,8 +130,8 @@ The system has 12+ hunters (documented in FLOWS.md section 4: GitHub Scout, Hack
 
 **Priority:** P3 (low)
 **Files:**
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/bigend.go:272-281` (View rendering)
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/bigend.go:284-338` (renderDashboard)
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/bigend.go:272-281` (View rendering)
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/bigend.go:284-338` (renderDashboard)
 
 **Description:**
 FLOWS.md section 12 documents that signals flow to a "Bigend Signal Panel." The signal system exists and is wired to the signals overlay (accessible via `/signals` or ctrl+p). However, BigendView's `renderDashboard()` contains only two panes: "Ready Tasks" and "Sessions" (with dispatches). There is no signal panel, signal count, or signal indicator in the Bigend dashboard itself.
@@ -148,8 +148,8 @@ The documented flow shows Bigend as the aggregation layer that surfaces signals 
 
 **Priority:** P3 (low)
 **Files:**
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/coldwine.go:823-908` (Commands)
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/pollard.go:489-543` (Commands)
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/coldwine.go:823-908` (Commands)
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/pollard.go:489-543` (Commands)
 
 **Description:**
 FLOWS.md documents a bidirectional flow where Pollard insights link to specs/epics, and Coldwine's `execution_drift` signals trigger research. In practice:
@@ -168,10 +168,10 @@ FLOWS.md documents a bidirectional flow where Pollard insights link to specs/epi
 
 **Priority:** P2 (medium)
 **Files:**
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/unified_app.go:82` (tab list)
-- `/home/mk/projects/Demarch/apps/autarch/cmd/autarch/main.go:256-270` (dashboard factory)
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/run_dashboard.go:22-45` (RunDashboardView)
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/coldwine.go:19-44` (ColdwineView)
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/unified_app.go:82` (tab list)
+- `/home/mk/projects/Sylveste/apps/autarch/cmd/autarch/main.go:256-270` (dashboard factory)
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/run_dashboard.go:22-45` (RunDashboardView)
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/coldwine.go:19-44` (ColdwineView)
 
 **Description:**
 The tab bar contains 5 tabs: `["Bigend", "Gurgeh", "Coldwine", "Sprint", "Pollard"]`. Both Coldwine and Sprint deal with task orchestration and Intercore sprint state. The dashboard factory creates them as separate views at indices 2 and 3. Both views:

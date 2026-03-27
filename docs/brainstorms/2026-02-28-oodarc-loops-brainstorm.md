@@ -6,15 +6,15 @@
 
 ## What We're Building
 
-An explicit OODARC (Observe → Orient → Decide → Act → Reflect) framework for Demarch that operates at four nested timescales: per-turn, per-sprint, multi-agent, and cross-session. Extends Boyd's OODA loop with a fifth phase (Reflect) to formalize the learning/compounding step that Demarch's philosophy already demands.
+An explicit OODARC (Observe → Orient → Decide → Act → Reflect) framework for Sylveste that operates at four nested timescales: per-turn, per-sprint, multi-agent, and cross-session. Extends Boyd's OODA loop with a fifth phase (Reflect) to formalize the learning/compounding step that Sylveste's philosophy already demands.
 
 ### Why OODARC, Not OODA
 
 Boyd's OODA assumes Orient implicitly incorporates learning from past cycles. For AI agents, this is too important to leave implicit:
 
 - **Agents don't have intuition.** Human operators implicitly learn from each OODA cycle — their Orient phase naturally improves. LLM agents start from scratch each session unless learning is explicitly captured.
-- **Compounding is Demarch's flywheel.** PHILOSOPHY.md defines the cycle: authority → actions → evidence → authority. The Reflect phase IS the evidence-to-authority conversion.
-- **Demarch already has Reflect.** The sprint lifecycle includes a mandatory `reflect` phase. Signal scoring triggers `/compound`. Interspect accumulates evidence. OODARC names what exists.
+- **Compounding is Sylveste's flywheel.** PHILOSOPHY.md defines the cycle: authority → actions → evidence → authority. The Reflect phase IS the evidence-to-authority conversion.
+- **Sylveste already has Reflect.** The sprint lifecycle includes a mandatory `reflect` phase. Signal scoring triggers `/compound`. Interspect accumulates evidence. OODARC names what exists.
 
 ### The Fifth Phase: Reflect
 

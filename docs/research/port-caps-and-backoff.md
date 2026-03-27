@@ -9,13 +9,13 @@ Ported two files from `research/ntm/internal/scheduler/` into `core/intercore/in
 
 ## Source Files
 
-- NTM original: `/home/mk/projects/Demarch/research/ntm/internal/scheduler/caps.go` (725 lines)
-- NTM original: `/home/mk/projects/Demarch/research/ntm/internal/scheduler/backoff.go` (548 lines)
+- NTM original: `/home/mk/projects/Sylveste/research/ntm/internal/scheduler/caps.go` (725 lines)
+- NTM original: `/home/mk/projects/Sylveste/research/ntm/internal/scheduler/backoff.go` (548 lines)
 
 ## Target Files
 
-- `/home/mk/projects/Demarch/core/intercore/internal/scheduler/caps.go`
-- `/home/mk/projects/Demarch/core/intercore/internal/scheduler/backoff.go`
+- `/home/mk/projects/Sylveste/core/intercore/internal/scheduler/caps.go`
+- `/home/mk/projects/Sylveste/core/intercore/internal/scheduler/backoff.go`
 
 ## Changes Applied to caps.go
 

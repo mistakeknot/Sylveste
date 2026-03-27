@@ -42,7 +42,7 @@ F1 (iv-296) ──→ F2 (iv-g36hy) ──→ F3+F4 (iv-c2r) ──→ F5 (iv-3o
 Create a GitHub Actions workflow that:
 1. Checks out CXDB source from `github.com/strongdm/cxdb`
 2. Cross-compiles `cxdb-server` Rust binary for 4 targets: linux-x86_64, linux-aarch64, darwin-x86_64, darwin-aarch64
-3. Publishes binaries as a Demarch GitHub release (tagged `cxdb-v<version>`)
+3. Publishes binaries as a Sylveste GitHub release (tagged `cxdb-v<version>`)
 4. Uses `cross` for Rust cross-compilation (standard Rust cross-compilation toolchain)
 
 **Acceptance:** `gh release view cxdb-v0.1.0` shows 4 binaries.
@@ -82,7 +82,7 @@ Follow existing patterns from `exec.go`: `runCXDB(args...)` subprocess helper, f
 
 Add CXDB binary download to `clavain setup`:
 1. Detect platform (`uname -s`/`uname -m` → target triple)
-2. Download correct binary from Demarch GitHub release
+2. Download correct binary from Sylveste GitHub release
 3. Install to `.clavain/cxdb/cxdb-server`, `chmod +x`
 4. Verify binary runs (`--version`)
 

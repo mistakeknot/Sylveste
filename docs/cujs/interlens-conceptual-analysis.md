@@ -3,7 +3,7 @@ artifact_type: cuj
 journey: interlens-conceptual-analysis
 actor: regular user (developer or thinker applying conceptual frameworks)
 criticality: p3
-bead: Demarch-2c7
+bead: Sylveste-2c7
 ---
 
 # Interlens Conceptual Analysis

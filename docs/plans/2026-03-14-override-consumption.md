@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-g4ja
+bead: Sylveste-g4ja
 stage: design
 requirements:
   - "Gap 1: Override consumption in lib-routing.sh"
@@ -9,7 +9,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-g4ja
+**Bead:** Sylveste-g4ja
 **Goal:** Make lib-routing.sh read `.claude/routing-overrides.json` so interspect overrides actually affect routing.
 
 **Architecture:** Add `_routing_read_override()` function to lib-routing.sh, called between B1 (per-agent override) and B1b (calibration). Pattern follows existing `_routing_read_calibration()`.

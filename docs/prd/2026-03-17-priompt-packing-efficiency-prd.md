@@ -1,6 +1,6 @@
 # PRD: Priompt Packing Efficiency Campaign
 
-**Bead:** Demarch-1x9l.1
+**Bead:** Sylveste-1x9l.1
 **Type:** Autoresearch campaign
 **Priority:** P2
 **Owner:** mk

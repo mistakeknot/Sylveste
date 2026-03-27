@@ -1,10 +1,10 @@
-# Demarch Architecture
+# Sylveste Architecture
 
 > **Version:** 1.2 | **Last updated:** 2026-02-22
 
 ## Five Pillars
 
-Demarch is built from five pillars — major components that together form the platform:
+Sylveste is built from five pillars — major components that together form the platform:
 
 | Pillar | Role |
 |--------|------|
@@ -14,7 +14,7 @@ Demarch is built from five pillars — major components that together form the p
 | **Autarch** | Application layer — TUI surfaces for kernel state |
 | **Interspect** | Adaptive profiler — the learning loop |
 
-Pillars describe *what* makes up Demarch. The three-layer model below describes *how* they relate.
+Pillars describe *what* makes up Sylveste. The three-layer model below describes *how* they relate.
 
 ## The Three-Layer Model
 
@@ -134,5 +134,5 @@ The kernel (L1) walks the phase chain, evaluates gates, and records events. The 
 - [Intercore Vision](core/intercore/docs/product/intercore-vision.md) — kernel design and roadmap
 - [Clavain Vision](os/Clavain/docs/clavain-vision.md) — OS layer design and workflow
 - [Autarch Vision](apps/Autarch/docs/autarch-vision.md) — apps layer and TUI strategy
-- [Demarch Vision](demarch-vision.md) — project overview and adoption ladder
+- [Sylveste Vision](sylveste-vision.md) — project overview and adoption ladder
 - [Compatibility Contract](core/intercore/COMPATIBILITY.md) — stability guarantees for external consumers

@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-6i0.19
+bead: Sylveste-6i0.19
 stage: design
 requirements:
   - F1: Skill Loader Package
@@ -16,7 +16,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-6i0.19
+**Bead:** Sylveste-6i0.19
 **Goal:** Add SKILL.md discovery, parsing, and invocation to Skaffen so users can extend agent behavior with reusable instructional documents.
 
 **Architecture:** New `internal/skill/` package handles discovery, parsing, injection, triggers, and pinning. Skills are SKILL.md files with YAML frontmatter discovered from a 4-tier directory hierarchy. Activated skills inject their body as user-role messages into the agent loop, keeping the system prompt stable for Anthropic prompt caching. The TUI wires skill invocation into the existing command dispatch pipeline.
@@ -63,25 +63,25 @@ requirements:
 
 **Step 1: Add gopkg.in/yaml.v3 to go.mod**
 
-Run: `cd /home/mk/projects/Demarch/os/Skaffen && go get gopkg.in/yaml.v3`
+Run: `cd /home/mk/projects/Sylveste/os/Skaffen && go get gopkg.in/yaml.v3`
 
 **Step 2: Verify the dependency resolves**
 
-Run: `cd /home/mk/projects/Demarch/os/Skaffen && go mod tidy`
+Run: `cd /home/mk/projects/Sylveste/os/Skaffen && go mod tidy`
 Expected: exit 0, `gopkg.in/yaml.v3` appears in go.mod
 
 **Step 3: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/os/Skaffen
+cd /home/mk/projects/Sylveste/os/Skaffen
 git add go.mod go.sum
 git commit -m "deps: add gopkg.in/yaml.v3 for SKILL.md frontmatter parsing"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && grep 'yaml.v3' go.mod`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && grep 'yaml.v3' go.mod`
   expect: contains "gopkg.in/yaml.v3"
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go build ./...`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go build ./...`
   expect: exit 0
 </verify>
 
@@ -187,7 +187,7 @@ func TestSkillDirs_Precedence(t *testing.T) {
 
 **Step 2: Run test to verify it fails**
 
-Run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./internal/config/ -run TestSkillDirs -v`
+Run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./internal/config/ -run TestSkillDirs -v`
 Expected: FAIL — `cfg.SkillDirs undefined`
 
 **Step 3: Implement SkillDirs**
@@ -245,19 +245,19 @@ func (c *Config) SkillDirs() []string {
 
 **Step 4: Run test to verify it passes**
 
-Run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./internal/config/ -run TestSkillDirs -v`
+Run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./internal/config/ -run TestSkillDirs -v`
 Expected: PASS
 
 **Step 5: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/os/Skaffen
+cd /home/mk/projects/Sylveste/os/Skaffen
 git add internal/config/config.go internal/config/config_test.go
 git commit -m "feat(config): add SkillDirs() for 4-tier skill discovery paths"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./internal/config/ -v`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./internal/config/ -v`
   expect: exit 0
 </verify>
 
@@ -496,7 +496,7 @@ func TestLoadBody_LazyLoad(t *testing.T) {
 
 **Step 2: Run test to verify it fails**
 
-Run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./internal/skill/ -v`
+Run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./internal/skill/ -v`
 Expected: FAIL — package not found
 
 **Step 3: Implement the skill loader**
@@ -695,21 +695,21 @@ func LoadAll(dirs ...string) map[string]Def {
 
 **Step 4: Run test to verify it passes**
 
-Run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./internal/skill/ -v`
+Run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./internal/skill/ -v`
 Expected: PASS
 
 **Step 5: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/os/Skaffen
+cd /home/mk/projects/Sylveste/os/Skaffen
 git add internal/skill/skill.go internal/skill/skill_test.go
 git commit -m "feat(skill): add SKILL.md loader with frontmatter parsing and lazy body loading"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./internal/skill/ -v`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./internal/skill/ -v`
   expect: exit 0
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go vet ./internal/skill/`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go vet ./internal/skill/`
   expect: exit 0
 </verify>
 
@@ -786,7 +786,7 @@ func TestFormatInjection_EmptyBody(t *testing.T) {
 
 **Step 2: Run tests to verify they fail**
 
-Run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./internal/skill/ -run TestFormatInjection -v`
+Run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./internal/skill/ -run TestFormatInjection -v`
 Expected: FAIL — `FormatInjection` undefined
 
 **Step 3: Implement the injector**
@@ -836,19 +836,19 @@ func FormatInjectionSafe(d *Def, args string) (string, error) {
 
 **Step 4: Add `strings` import to test file if not already present, then run tests**
 
-Run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./internal/skill/ -run TestFormatInjection -v`
+Run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./internal/skill/ -run TestFormatInjection -v`
 Expected: PASS
 
 **Step 5: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/os/Skaffen
+cd /home/mk/projects/Sylveste/os/Skaffen
 git add internal/skill/inject.go internal/skill/skill_test.go
 git commit -m "feat(skill): add injection formatter with size limit enforcement"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./internal/skill/ -v`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./internal/skill/ -v`
   expect: exit 0
 </verify>
 
@@ -971,7 +971,7 @@ func TestMatchTriggers_NoTriggers(t *testing.T) {
 
 **Step 2: Run tests to verify they fail**
 
-Run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./internal/skill/ -run TestMatchTriggers -v`
+Run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./internal/skill/ -run TestMatchTriggers -v`
 Expected: FAIL — `MatchTriggers` undefined
 
 **Step 3: Implement trigger matching**
@@ -1007,19 +1007,19 @@ func MatchTriggers(skills map[string]Def, message string) []Def {
 
 **Step 4: Run tests to verify they pass**
 
-Run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./internal/skill/ -run TestMatchTriggers -v`
+Run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./internal/skill/ -run TestMatchTriggers -v`
 Expected: PASS
 
 **Step 5: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/os/Skaffen
+cd /home/mk/projects/Sylveste/os/Skaffen
 git add internal/skill/trigger.go internal/skill/skill_test.go
 git commit -m "feat(skill): add implicit trigger matching with case-insensitive substring"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./internal/skill/ -v`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./internal/skill/ -v`
   expect: exit 0
 </verify>
 
@@ -1108,7 +1108,7 @@ func TestPinner_MultiplePins(t *testing.T) {
 
 **Step 2: Run tests to verify they fail**
 
-Run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./internal/skill/ -run TestPinner -v`
+Run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./internal/skill/ -run TestPinner -v`
 Expected: FAIL — `NewPinner` undefined
 
 **Step 3: Implement pinning**
@@ -1170,19 +1170,19 @@ func (p *Pinner) IsPinned(name string) bool {
 
 **Step 4: Run tests to verify they pass**
 
-Run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./internal/skill/ -run TestPinner -v`
+Run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./internal/skill/ -run TestPinner -v`
 Expected: PASS
 
 **Step 5: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/os/Skaffen
+cd /home/mk/projects/Sylveste/os/Skaffen
 git add internal/skill/pin.go internal/skill/skill_test.go
 git commit -m "feat(skill): add session-scoped skill pinning"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./internal/skill/ -v`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./internal/skill/ -v`
   expect: exit 0
 </verify>
 
@@ -1244,21 +1244,21 @@ In the `tui.Run(tui.Config{...})` call, add the Skills field:
 
 **Step 3: Verify everything compiles**
 
-Run: `cd /home/mk/projects/Demarch/os/Skaffen && go build ./...`
+Run: `cd /home/mk/projects/Sylveste/os/Skaffen && go build ./...`
 Expected: exit 0
 
 **Step 4: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/os/Skaffen
+cd /home/mk/projects/Sylveste/os/Skaffen
 git add cmd/skaffen/main.go internal/tui/app.go
 git commit -m "feat: wire skill loading into main.go and TUI config"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go build ./...`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go build ./...`
   expect: exit 0
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go vet ./...`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go vet ./...`
   expect: exit 0
 </verify>
 
@@ -1435,21 +1435,21 @@ func (m *appModel) buildSkillPrompt(userPrompt string) string {
 
 **Step 4: Verify everything compiles**
 
-Run: `cd /home/mk/projects/Demarch/os/Skaffen && go build ./...`
+Run: `cd /home/mk/projects/Sylveste/os/Skaffen && go build ./...`
 Expected: exit 0
 
 **Step 5: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/os/Skaffen
+cd /home/mk/projects/Sylveste/os/Skaffen
 git add internal/tui/commands.go internal/tui/app.go
 git commit -m "feat(tui): wire skill slash command invocation with --pin support"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go build ./...`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go build ./...`
   expect: exit 0
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go vet ./...`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go vet ./...`
   expect: exit 0
 </verify>
 
@@ -1611,19 +1611,19 @@ Add `"sort"` to imports if not already present. Add `"github.com/mistakeknot/Ska
 
 **Step 4: Verify everything compiles**
 
-Run: `cd /home/mk/projects/Demarch/os/Skaffen && go build ./...`
+Run: `cd /home/mk/projects/Sylveste/os/Skaffen && go build ./...`
 Expected: exit 0
 
 **Step 5: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/os/Skaffen
+cd /home/mk/projects/Sylveste/os/Skaffen
 git add internal/tui/commands.go
 git commit -m "feat(tui): add /skills management command (list, info, pin, unpin, pinned)"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go build ./...`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go build ./...`
   expect: exit 0
 </verify>
 
@@ -1730,21 +1730,21 @@ pm.completer = newCmdCompleter(pm.customCmds, pm.skills)
 
 **Step 4: Verify everything compiles**
 
-Run: `cd /home/mk/projects/Demarch/os/Skaffen && go build ./...`
+Run: `cd /home/mk/projects/Sylveste/os/Skaffen && go build ./...`
 Expected: exit 0
 
 **Step 5: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/os/Skaffen
+cd /home/mk/projects/Sylveste/os/Skaffen
 git add internal/tui/commands.go internal/tui/cmdcomplete.go internal/tui/prompt.go internal/tui/app.go
 git commit -m "feat(tui): add skills to /help output and tab completion"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go build ./...`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go build ./...`
   expect: exit 0
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go vet ./...`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go vet ./...`
   expect: exit 0
 </verify>
 
@@ -1783,19 +1783,19 @@ In `os/Skaffen/internal/tui/app.go`, in the `submitMsg` handler, add trigger mat
 
 **Step 2: Verify everything compiles**
 
-Run: `cd /home/mk/projects/Demarch/os/Skaffen && go build ./...`
+Run: `cd /home/mk/projects/Sylveste/os/Skaffen && go build ./...`
 Expected: exit 0
 
 **Step 3: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/os/Skaffen
+cd /home/mk/projects/Sylveste/os/Skaffen
 git add internal/tui/app.go
 git commit -m "feat(tui): add implicit trigger matching on user messages"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go build ./...`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go build ./...`
   expect: exit 0
 </verify>
 
@@ -1808,24 +1808,24 @@ git commit -m "feat(tui): add implicit trigger matching on user messages"
 
 **Step 1: Run full test suite**
 
-Run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./... -count=1`
+Run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./... -count=1`
 Expected: All PASS
 
 **Step 2: Run vet**
 
-Run: `cd /home/mk/projects/Demarch/os/Skaffen && go vet ./...`
+Run: `cd /home/mk/projects/Sylveste/os/Skaffen && go vet ./...`
 Expected: exit 0
 
 **Step 3: Build binary**
 
-Run: `cd /home/mk/projects/Demarch/os/Skaffen && go build ./cmd/skaffen`
+Run: `cd /home/mk/projects/Sylveste/os/Skaffen && go build ./cmd/skaffen`
 Expected: exit 0, binary produced
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./... -count=1`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./... -count=1`
   expect: exit 0
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go vet ./...`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go vet ./...`
   expect: exit 0
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go build ./cmd/skaffen`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go build ./cmd/skaffen`
   expect: exit 0
 </verify>

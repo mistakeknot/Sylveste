@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-ef08
+bead: Sylveste-ef08
 stage: design
 ---
 
@@ -8,7 +8,7 @@ stage: design
 
 ## Problem
 
-Meadowsyn's six visual experiments (F2-F7) need factory data. Two real sources are available — ideagui.json (85 agent sessions from Notion) and clavain-cli factory-status (live fleet/queue/WIP) — but they use incompatible identifiers. Bead IDs encode the beads DB prefix (Demarch-), not the sub-project. WIP hex agent IDs (CLAUDE_SESSION_ID) have no mapping to roster session names. A naive global merge produces silent data loss.
+Meadowsyn's six visual experiments (F2-F7) need factory data. Two real sources are available — ideagui.json (85 agent sessions from Notion) and clavain-cli factory-status (live fleet/queue/WIP) — but they use incompatible identifiers. Bead IDs encode the beads DB prefix (Sylveste-), not the sub-project. WIP hex agent IDs (CLAUDE_SESSION_ID) have no mapping to roster session names. A naive global merge produces silent data loss.
 
 ## Solution
 
@@ -21,7 +21,7 @@ Export two independent data readers. Experiments declare which sources they need
 **Acceptance criteria:**
 - [ ] `wipEntry` has `Project string \`json:"project"\`` field
 - [ ] Project derived from `strings.ToLower(strings.SplitN(b.ID, "-", 2)[0])`
-- [ ] `clavain-cli factory-status --json` WIP entries include `"project": "demarch"`
+- [ ] `clavain-cli factory-status --json` WIP entries include `"project": "sylveste"`
 - [ ] Existing consumers unaffected (additive JSON field)
 
 ### F1a: IdeaGUI Reader
@@ -62,7 +62,7 @@ Export two independent data readers. Experiments declare which sources they need
 ## Non-goals
 
 - **Per-agent matching** — no FK between WIP hex IDs and roster sessions. Phase 2 (SessionStart hook).
-- **Sub-project granularity** — bead prefix maps to DB, not component. `Demarch-ef08` maps to `demarch`, not `meadowsyn`.
+- **Sub-project granularity** — bead prefix maps to DB, not component. `Sylveste-ef08` maps to `sylveste`, not `meadowsyn`.
 - **History/ring buffer** — F8 (DataPipe) owns snapshot history.
 - **Webhook updates** — Phase 2 concern.
 

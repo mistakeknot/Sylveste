@@ -1,6 +1,6 @@
 # interfere — Development Guide
 
-Local MLX-LM inference server for Apple Silicon. Interverse companion plugin for Demarch/Clavain.
+Local MLX-LM inference server for Apple Silicon. Interverse companion plugin for Sylveste/Clavain.
 
 ## Architecture
 

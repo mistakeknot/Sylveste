@@ -23,7 +23,7 @@ Philosophy observer plugin. Scans decision artifacts (brainstorms, PRDs, flux-dr
 Review [`PHILOSOPHY.md`](../../PHILOSOPHY.md) during intake, brainstorming, planning, execution, review, and handoff.
 
 For brainstorming/planning outputs, add:
-- **Alignment:** one sentence on how the proposal supports Demarch's philosophy.
+- **Alignment:** one sentence on how the proposal supports Sylveste's philosophy.
 - **Conflict/Risk:** one sentence on any tension with philosophy (or 'none').
 
 ## Architecture

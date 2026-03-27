@@ -7,7 +7,7 @@
 
 ## Problem Statement
 
-Interbase is the shared integration SDK for Demarch's plugin ecosystem. Today it exists as:
+Interbase is the shared integration SDK for Sylveste's plugin ecosystem. Today it exists as:
 - A **154-line Bash library** (`lib/interbase.sh`) with a 30-line stub shipped per plugin
 - **Go packages** (`toolerror` + `mcputil`) for MCP server error contracts and middleware
 - **No Python bindings** at all

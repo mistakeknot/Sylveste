@@ -1,13 +1,13 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-6qb
+bead: Sylveste-6qb
 stage: brainstorm
 ---
 # Brainstorm: Skaffen v0.1 Completion
 
 ## Context
 
-Skaffen v0.1 (Go sovereign agent runtime) is 90%+ complete. 14 packages, 333+ tests, all 8 features (F1-F8) substantially implemented. This brainstorm scopes the remaining work to close the Demarch-6qb epic.
+Skaffen v0.1 (Go sovereign agent runtime) is 90%+ complete. 14 packages, 333+ tests, all 8 features (F1-F8) substantially implemented. This brainstorm scopes the remaining work to close the Sylveste-6qb epic.
 
 ## What's Complete
 
@@ -63,4 +63,4 @@ These items are marked deferred in the PRD and do NOT block v0.1:
 2. All 333+ tests still pass
 3. `skaffen` binary builds cleanly
 4. Update PRD to mark @-file mentions complete
-5. Close Demarch-6qb, unblock Demarch-mvy (Intercom Go rewrite)
+5. Close Sylveste-6qb, unblock Sylveste-mvy (Intercom Go rewrite)

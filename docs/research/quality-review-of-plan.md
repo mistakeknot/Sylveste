@@ -1,14 +1,14 @@
 # Quality Review: 2026-02-26-intent-submission-mechanism.md
 
-> Full verdict: `/home/mk/projects/Demarch/.clavain/verdicts/fd-quality-intent-plan.md`
+> Full verdict: `/home/mk/projects/Sylveste/.clavain/verdicts/fd-quality-intent-plan.md`
 
 Reviewed against:
-- `/home/mk/projects/Demarch/docs/plans/2026-02-26-intent-submission-mechanism.md`
-- `/home/mk/projects/Demarch/apps/autarch/pkg/intercore/client.go`
-- `/home/mk/projects/Demarch/apps/autarch/pkg/intercore/run.go`
-- `/home/mk/projects/Demarch/apps/autarch/pkg/intercore/operations.go`
-- `/home/mk/projects/Demarch/apps/autarch/pkg/intercore/client_test.go`
-- `/home/mk/projects/Demarch/apps/autarch/pkg/intercore/types.go`
+- `/home/mk/projects/Sylveste/docs/plans/2026-02-26-intent-submission-mechanism.md`
+- `/home/mk/projects/Sylveste/apps/autarch/pkg/intercore/client.go`
+- `/home/mk/projects/Sylveste/apps/autarch/pkg/intercore/run.go`
+- `/home/mk/projects/Sylveste/apps/autarch/pkg/intercore/operations.go`
+- `/home/mk/projects/Sylveste/apps/autarch/pkg/intercore/client_test.go`
+- `/home/mk/projects/Sylveste/apps/autarch/pkg/intercore/types.go`
 
 ---
 
@@ -152,11 +152,11 @@ The architectural intent is sound. Routing policy-governing writes through the O
 > This file is a brief summary. Full review: `.claude/reviews/iv-xlpg-plan-quality.md`
 
 Reviewed against:
-- `/home/mk/projects/Demarch/docs/plans/2026-02-23-pollard-hunter-resilience.md`
-- `/home/mk/projects/Demarch/apps/autarch/internal/pollard/hunters/hunter.go`
-- `/home/mk/projects/Demarch/apps/autarch/internal/pollard/cli/scan.go`
-- `/home/mk/projects/Demarch/apps/autarch/internal/pollard/api/scanner.go`
-- `/home/mk/projects/Demarch/apps/autarch/internal/pollard/watch/watcher.go`
+- `/home/mk/projects/Sylveste/docs/plans/2026-02-23-pollard-hunter-resilience.md`
+- `/home/mk/projects/Sylveste/apps/autarch/internal/pollard/hunters/hunter.go`
+- `/home/mk/projects/Sylveste/apps/autarch/internal/pollard/cli/scan.go`
+- `/home/mk/projects/Sylveste/apps/autarch/internal/pollard/api/scanner.go`
+- `/home/mk/projects/Sylveste/apps/autarch/internal/pollard/watch/watcher.go`
 
 ---
 
@@ -196,10 +196,10 @@ Fix: add `if ctx.Err() != nil { return nil, ctx.Err() }` at the top of the retry
 # Quality Review: 2026-02-22-agent-capability-discovery.md
 
 Reviewed against:
-- `/root/projects/Demarch/docs/plans/2026-02-22-agent-capability-discovery.md`
-- `/root/projects/Demarch/core/intermute/internal/http/handlers_agents.go`
-- `/root/projects/Demarch/core/intermute/internal/http/handlers_agents_test.go`
-- `/root/projects/Demarch/interverse/interlock/scripts/interlock-register.sh`
+- `/root/projects/Sylveste/docs/plans/2026-02-22-agent-capability-discovery.md`
+- `/root/projects/Sylveste/core/intermute/internal/http/handlers_agents.go`
+- `/root/projects/Sylveste/core/intermute/internal/http/handlers_agents_test.go`
+- `/root/projects/Sylveste/interverse/interlock/scripts/interlock-register.sh`
 
 ---
 
@@ -408,7 +408,7 @@ json.NewDecoder(resp.Body).Decode(&result)
 json.NewDecoder(resp2.Body).Decode(&result2)
 ```
 
-Every other test in `/root/projects/Demarch/core/intermute/internal/http/handlers_agents_test.go` checks the decode error with `if err := ...; err != nil { t.Fatalf(...) }`. The integration test should match this convention. A decode failure with no check causes the subsequent length assertion to fail with a misleading "expected 1, got 0" rather than "decode failed: unexpected EOF".
+Every other test in `/root/projects/Sylveste/core/intermute/internal/http/handlers_agents_test.go` checks the decode error with `if err := ...; err != nil { t.Fatalf(...) }`. The integration test should match this convention. A decode failure with no check causes the subsequent length assertion to fail with a misleading "expected 1, got 0" rather than "decode failed: unexpected EOF".
 
 ---
 

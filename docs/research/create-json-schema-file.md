@@ -6,7 +6,7 @@ Create the file `os/clavain/config/routing-overrides.schema.json` containing a J
 
 ## File Created
 
-**Path:** `/home/mk/projects/Demarch/os/clavain/config/routing-overrides.schema.json`
+**Path:** `/home/mk/projects/Sylveste/os/clavain/config/routing-overrides.schema.json`
 
 ## Schema Structure
 

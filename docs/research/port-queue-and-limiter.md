@@ -2,14 +2,14 @@
 
 ## Source Files
 
-- **NTM queue.go**: `/home/mk/projects/Demarch/research/ntm/internal/scheduler/queue.go` (519 lines)
-- **NTM limiter.go**: `/home/mk/projects/Demarch/research/ntm/internal/scheduler/limiter.go` (~300 lines)
-- **NTM job.go**: `/home/mk/projects/Demarch/research/ntm/internal/scheduler/job.go` (defines SpawnJob, JobType, JobPriority, JobStatus)
+- **NTM queue.go**: `/home/mk/projects/Sylveste/research/ntm/internal/scheduler/queue.go` (519 lines)
+- **NTM limiter.go**: `/home/mk/projects/Sylveste/research/ntm/internal/scheduler/limiter.go` (~300 lines)
+- **NTM job.go**: `/home/mk/projects/Sylveste/research/ntm/internal/scheduler/job.go` (defines SpawnJob, JobType, JobPriority, JobStatus)
 
 ## Target Files
 
-- `/home/mk/projects/Demarch/core/intercore/internal/scheduler/queue.go`
-- `/home/mk/projects/Demarch/core/intercore/internal/scheduler/limiter.go`
+- `/home/mk/projects/Sylveste/core/intercore/internal/scheduler/queue.go`
+- `/home/mk/projects/Sylveste/core/intercore/internal/scheduler/limiter.go`
 
 ## Key Adaptations
 

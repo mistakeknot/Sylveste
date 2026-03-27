@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-xe0
+bead: Sylveste-xe0
 stage: design
 prd: docs/prds/2026-03-11-skaffen-go-rewrite.md
 requirements:
@@ -14,7 +14,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-xe0
+**Bead:** Sylveste-xe0
 **Goal:** The main agent loop that wires F1 (provider) and F2 (tools) into the OODARC execution cycle. This is the brain of Skaffen — everything before was infrastructure.
 
 **Architecture:** `internal/agent/` package. The `Agent` struct holds interface deps (Provider, Registry, Router, Session, Emitter) and runs the OODARC loop. Each OODARC step is a private method. Phase transitions are an explicit FSM. Dependencies F4/F5/F6 don't exist yet, so Router/Session/Emitter are minimal interfaces defined here with no-op defaults — the real implementations come in later features.

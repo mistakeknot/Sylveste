@@ -1,8 +1,8 @@
-# Demarch v1.0 Stability Contract
+# Sylveste v1.0 Stability Contract
 
 **Status:** Draft
 **Date:** 2026-03-21
-**Bead:** Demarch-enxv.1
+**Bead:** Sylveste-enxv.1
 **Grounded in:** 6-agent cross-domain research (versioning philosophy, maturity models, OSS readiness signals, cybernetics/VSM, agent ecosystem readiness, game design readiness)
 
 ---
@@ -43,7 +43,7 @@ What may change:
 - Default prompts and system messages
 - Cost and token consumption (efficiency improvements)
 
-**Mechanism:** Behavioral changelog with `[behavior]` tag. GODEBUG-style pinning: projects declare `demarch-compat: 1.2` to freeze behavioral defaults to a specific version's values.
+**Mechanism:** Behavioral changelog with `[behavior]` tag. GODEBUG-style pinning: projects declare `sylveste-compat: 1.2` to freeze behavioral defaults to a specific version's values.
 
 **Enforcement:** Interspect overlay logs, canary windows before defaults change, compatibility version pinning.
 
@@ -132,7 +132,7 @@ v1.0 declares what it is designed for. Expanding the ODD is a separate axis from
 | All existential failure modes mechanically prevented | Partially (gates exist, enforcement incomplete) |
 
 **Exit criteria:**
-- pass@k metrics published for Demarch codebase
+- pass@k metrics published for Sylveste codebase
 - Semantic cascade detection rate >70%
 - Model upgrade detection latency <1 sprint
 - 100 consecutive sprints without existential failures
@@ -220,7 +220,7 @@ The single diagnostic test that validates v1.0 readiness across all six research
 
 ### Behavioral (routing, gates, review criteria)
 - `[behavior]` tag in release notes
-- GODEBUG-style pinning: `demarch-compat: <version>` in project config
+- GODEBUG-style pinning: `sylveste-compat: <version>` in project config
 - Changes justified by evidence (outcome data), not opinion
 
 ### Model-driven (new models, model deprecations)

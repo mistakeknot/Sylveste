@@ -64,7 +64,7 @@ A good review from this agent:
 - Recommends the smallest viable fix, not an architecture overhaul — one diff hunk, not a rewrite
 - Frames uncertain findings as questions: "Does this handle X?" not "This doesn't handle X"
 - Identifies a concrete UI pattern for live + history coexistence with best-in-class implementation
-- Finds process mining tools with embeddable JS components that could ingest Demarch event logs
+- Finds process mining tools with embeddable JS components that could ingest Sylveste event logs
 - Surfaces Starcraft 2 replay branch and compare technique and assesses web feasibility
 
 ## Decision Lens

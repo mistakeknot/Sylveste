@@ -60,13 +60,13 @@ stage: design
 
 **Step 1: Initialize Astro project**
 ```bash
-cd /home/mk/projects/Demarch/apps
+cd /home/mk/projects/Sylveste/apps
 pnpm create astro@latest interblog -- --template minimal --typescript strict --install --no-git
 ```
 
 **Step 2: Add dependencies**
 ```bash
-cd /home/mk/projects/Demarch/apps/interblog
+cd /home/mk/projects/Sylveste/apps/interblog
 pnpm add @astrojs/mdx @astrojs/rss @astrojs/sitemap @astrojs/tailwind tailwindcss
 ```
 
@@ -94,7 +94,7 @@ export default defineConfig({
 {
   "name": "interblog",
   "version": "0.1.0",
-  "description": "Auto-generating engineering blog — surfaces themes from Demarch ecosystem, generates drafts, bridges to Texturaize for editorial review.",
+  "description": "Auto-generating engineering blog — surfaces themes from Sylveste ecosystem, generates drafts, bridges to Texturaize for editorial review.",
   "author": { "name": "mistakeknot" },
   "license": "MIT",
   "keywords": ["blog", "editorial", "content", "engineering", "systems-thinking"],
@@ -145,7 +145,7 @@ git commit -m "feat(interblog): scaffold Astro project + plugin registration"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/apps/interblog && pnpm build`
+- run: `cd /home/mk/projects/Sylveste/apps/interblog && pnpm build`
   expect: exit 0
 - run: `cat apps/interblog/.claude-plugin/plugin.json | python3 -c "import json,sys; json.load(sys.stdin); print('valid')" `
   expect: contains "valid"
@@ -203,7 +203,7 @@ This is a test post to validate the content collection schema.
 
 **Step 3: Verify schema validates**
 ```bash
-cd /home/mk/projects/Demarch/apps/interblog && pnpm build
+cd /home/mk/projects/Sylveste/apps/interblog && pnpm build
 ```
 
 **Step 4: Commit**
@@ -213,7 +213,7 @@ git commit -m "feat(interblog): content collection schema with post frontmatter"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/apps/interblog && pnpm build`
+- run: `cd /home/mk/projects/Sylveste/apps/interblog && pnpm build`
   expect: exit 0
 </verify>
 
@@ -473,7 +473,7 @@ git commit -m "feat(interblog): post layout with Gwern sidenotes + Flux minimali
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/apps/interblog && pnpm build`
+- run: `cd /home/mk/projects/Sylveste/apps/interblog && pnpm build`
   expect: exit 0
 </verify>
 
@@ -581,7 +581,7 @@ git commit -m "feat(interblog): index page with post listing and PostCard compon
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/apps/interblog && pnpm build`
+- run: `cd /home/mk/projects/Sylveste/apps/interblog && pnpm build`
   expect: exit 0
 </verify>
 
@@ -626,7 +626,7 @@ git commit -m "feat(interblog): RSS feed endpoint"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/apps/interblog && pnpm build`
+- run: `cd /home/mk/projects/Sylveste/apps/interblog && pnpm build`
   expect: exit 0
 </verify>
 
@@ -644,12 +644,12 @@ git commit -m "feat(interblog): RSS feed endpoint"
 <!-- apps/interblog/skills/scan/SKILL.md -->
 ---
 name: scan
-description: Surface publishable engineering themes from Demarch ecosystem — CASS sessions, beads, brainstorms, PHILOSOPHY.md, git activity. Produces ranked story candidates.
+description: Surface publishable engineering themes from Sylveste ecosystem — CASS sessions, beads, brainstorms, PHILOSOPHY.md, git activity. Produces ranked story candidates.
 ---
 
 # interblog: Theme Surfacing
 
-You are scanning the Demarch ecosystem for publishable engineering stories.
+You are scanning the Sylveste ecosystem for publishable engineering stories.
 
 ## Step 1: Gather Signals
 
@@ -730,7 +730,7 @@ After mk selects, save selection to `content/themes.yaml` (append, don't overwri
 <!-- apps/interblog/commands/scan.md -->
 ---
 name: scan
-description: Surface publishable engineering themes from Demarch ecosystem activity.
+description: Surface publishable engineering themes from Sylveste ecosystem activity.
 ---
 
 Invoke the `interblog:scan` skill.
@@ -743,7 +743,7 @@ git commit -m "feat(interblog): scan skill — theme surfacing from ecosystem si
 ```
 
 <verify>
-- run: `test -f /home/mk/projects/Demarch/apps/interblog/skills/scan/SKILL.md`
+- run: `test -f /home/mk/projects/Sylveste/apps/interblog/skills/scan/SKILL.md`
   expect: exit 0
 </verify>
 
@@ -819,7 +819,7 @@ structure:
     key_point: "..."
 sidenotes:
   - ref: "factory"
-    text: "By 'factory' we mean the Demarch autonomous dev agency — 32 agents operating concurrently."
+    text: "By 'factory' we mean the Sylveste autonomous dev agency — 32 agents operating concurrently."
 sources:
   - type: brainstorm
     path: "..."
@@ -846,7 +846,7 @@ git commit -m "feat(interblog): pitch skill — curation dialogue for post brief
 ```
 
 <verify>
-- run: `test -f /home/mk/projects/Demarch/apps/interblog/skills/pitch/SKILL.md`
+- run: `test -f /home/mk/projects/Sylveste/apps/interblog/skills/pitch/SKILL.md`
   expect: exit 0
 </verify>
 
@@ -964,7 +964,7 @@ git commit -m "feat(interblog): draft skill — post generation with voice profi
 ```
 
 <verify>
-- run: `test -f /home/mk/projects/Demarch/apps/interblog/skills/draft/SKILL.md`
+- run: `test -f /home/mk/projects/Sylveste/apps/interblog/skills/draft/SKILL.md`
   expect: exit 0
 </verify>
 
@@ -1214,7 +1214,7 @@ git commit -m "feat(interblog): webhook receiver — accepts edited content from
 ```
 
 <verify>
-- run: `test -f /home/mk/projects/Demarch/apps/interblog/src/pages/api/webhook/texturaize.ts`
+- run: `test -f /home/mk/projects/Sylveste/apps/interblog/src/pages/api/webhook/texturaize.ts`
   expect: exit 0
 </verify>
 
@@ -1335,7 +1335,7 @@ git commit -m "feat(interblog): publish command + editorial dashboard page"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/apps/interblog && pnpm build`
+- run: `cd /home/mk/projects/Sylveste/apps/interblog && pnpm build`
   expect: exit 0
 </verify>
 
@@ -1359,7 +1359,7 @@ git commit -m "feat(interblog): publish command + editorial dashboard page"
 
 **Step 2: Deploy to Vercel**
 ```bash
-cd /home/mk/projects/Demarch/apps/interblog
+cd /home/mk/projects/Sylveste/apps/interblog
 npx vercel --prod
 ```
 
@@ -1385,7 +1385,7 @@ git commit -m "feat(interblog): Vercel deployment config"
 ```
 
 <verify>
-- run: `test -f /home/mk/projects/Demarch/apps/interblog/vercel.json`
+- run: `test -f /home/mk/projects/Sylveste/apps/interblog/vercel.json`
   expect: exit 0
 </verify>
 
@@ -1399,7 +1399,7 @@ git commit -m "feat(interblog): Vercel deployment config"
 **Step 1: Initialize interfluence for interblog**
 
 ```bash
-cd /home/mk/projects/Demarch/apps/interblog
+cd /home/mk/projects/Sylveste/apps/interblog
 mkdir -p .interfluence
 ```
 
@@ -1454,7 +1454,7 @@ git commit -m "feat(interblog): interfluence voice profile config for systems-th
 ```
 
 <verify>
-- run: `test -f /home/mk/projects/Demarch/apps/interblog/.interfluence/config.yaml`
+- run: `test -f /home/mk/projects/Sylveste/apps/interblog/.interfluence/config.yaml`
   expect: exit 0
 </verify>
 

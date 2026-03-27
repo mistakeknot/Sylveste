@@ -121,6 +121,6 @@ Files: `core/intermute/internal/core/models.go`, `core/intermute/internal/storag
 
 - [ ] Update `core/intermute/AGENTS.md` with contact policy section
 - [ ] Update `interverse/interlock/AGENTS.md` with new tools
-- [ ] Commit in intermute, interlock, Demarch root
+- [ ] Commit in intermute, interlock, Sylveste root
 - [ ] Close iv-t4pia
 - [ ] Push

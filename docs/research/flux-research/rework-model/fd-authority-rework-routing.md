@@ -2,14 +2,14 @@
 
 **Date:** 2026-03-19
 **Agent:** fd-authority-rework-routing (quality systems researcher, disposition governance)
-**Context:** Rework model research — mapping Demarch's 5-tier domain-scoped authority to MRB-style disposition decisions
+**Context:** Rework model research — mapping Sylveste's 5-tier domain-scoped authority to MRB-style disposition decisions
 **Inputs:** authority-tiers/synthesis.md, authority-tiers/fd-authority-schema-design.md, MRB/AS9100 literature, MIL-HDBK-61A deviation frameworks
 
 ---
 
 ## 1. Problem Statement
 
-When an agent's work output is nonconforming (tests fail, review rejected, lint violations, blast-radius exceeded), something must decide: scrap it, rework it, use it as-is, or authorize a deviation from the spec. In manufacturing, this is the Material Review Board (MRB) problem. In Demarch's AI factory, the question is: **which authority tier can authorize which disposition type, and when must the decision escalate?**
+When an agent's work output is nonconforming (tests fail, review rejected, lint violations, blast-radius exceeded), something must decide: scrap it, rework it, use it as-is, or authorize a deviation from the spec. In manufacturing, this is the Material Review Board (MRB) problem. In Sylveste's AI factory, the question is: **which authority tier can authorize which disposition type, and when must the decision escalate?**
 
 The existing authority model defines five action classes (Propose, Execute, Commit, Deploy, Spend) scoped to domains via `authority_grants`. This document extends that model to cover disposition decisions — the governance of *what happens to failed work*.
 
@@ -51,7 +51,7 @@ Using the existing 5-tier action classes (Propose/Execute/Commit/Deploy/Spend) a
 
 This mapping draws directly from established frameworks:
 
-**AS9100 8.7.1** requires that disposition authority be documented, competence-based, and that Design/Engineering authorize use-as-is or repair dispositions. In Demarch terms: only agents with Commit-level domain authority (earned through evidence of successful work in that domain) can accept nonconforming output.
+**AS9100 8.7.1** requires that disposition authority be documented, competence-based, and that Design/Engineering authorize use-as-is or repair dispositions. In Sylveste terms: only agents with Commit-level domain authority (earned through evidence of successful work in that domain) can accept nonconforming output.
 
 **MIL-HDBK-61A** defines three deviation severity levels — Minor (local MRB), Major (government CCB), Critical (commanding officer only). This maps directly to the three deviation tiers above: minor (domain-local T2), major (cross-domain T3), critical (human principal only, no agent delegation).
 

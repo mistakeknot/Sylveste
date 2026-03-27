@@ -140,7 +140,7 @@
     ],
     "success_hints": [
       "Identifies a concrete UI pattern for live + history coexistence with best-in-class implementation",
-      "Finds process mining tools with embeddable JS components that could ingest Demarch event logs",
+      "Finds process mining tools with embeddable JS components that could ingest Sylveste event logs",
       "Surfaces Starcraft 2 replay branch and compare technique and assesses web feasibility"
     ],
     "task_context": "Meadowsyn is a public-facing web visualization frontend for an AI agent factory — autonomous software development with dozens of simultaneous agents.",

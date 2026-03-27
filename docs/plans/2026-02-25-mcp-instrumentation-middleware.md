@@ -73,6 +73,6 @@ type Metrics struct {
 - [ ] Run `go test ./...` in interbase
 - [ ] Run `go test ./...` in interlock
 - [ ] Commit in interbase, interlock
-- [ ] Commit docs in Demarch root
+- [ ] Commit docs in Sylveste root
 - [ ] Close iv-wnurj
 - [ ] Push

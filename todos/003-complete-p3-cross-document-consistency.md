@@ -37,7 +37,7 @@ Interwatch evaluates each watchable in isolation. When the vision says "P0: iv-w
 - [x] Implementation of chosen approach
 - [x] Detects P0 list mismatch between vision and roadmap
 - [x] Detects count claim mismatches across related docs
-- [x] Test coverage for cross-doc scenarios (smoke tested against Demarch)
+- [x] Test coverage for cross-doc scenarios (smoke tested against Sylveste)
 
 ## Work Log
 

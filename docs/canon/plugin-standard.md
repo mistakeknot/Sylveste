@@ -188,7 +188,7 @@ Target: 30-60 lines. Hard cap: 80 lines. If it's longer, project knowledge has l
 # <plugin-name> Philosophy
 
 ## Purpose
-<One paragraph: what, role in Demarch, component counts.>
+<One paragraph: what, role in Sylveste, component counts.>
 
 ## North Star
 <One sentence: the single optimizable metric.>

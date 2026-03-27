@@ -1,4 +1,4 @@
-# Demarch — Vision
+# Sylveste — Vision
 
 **Version:** 3.4
 **Date:** 2026-03-13
@@ -8,11 +8,11 @@
 
 ## The Pitch
 
-Demarch is an open-source autonomous software development agency platform that pushes the frontier on three axes simultaneously: state-of-the-art autonomy, uncompromising quality, and relentless token efficiency.
+Sylveste is an open-source autonomous software development agency platform that pushes the frontier on three axes simultaneously: state-of-the-art autonomy, uncompromising quality, and relentless token efficiency.
 
 Most agent systems pick two. Full autonomy with quality? Expensive — you throw tokens at everything and hope the review fleet catches the mess. Autonomy with efficiency? Fast and cheap, but the output is slop. Quality with efficiency? Sure — just keep a human in the loop for every decision, defeating the point.
 
-Demarch refuses to choose. It orchestrates the full development lifecycle from problem discovery through shipped code, selecting the right model for each task with the discipline, durability, and accountability that shipping real software demands. And it gets cheaper and better every time it runs, because it learns from what happened last time.
+Sylveste refuses to choose. It orchestrates the full development lifecycle from problem discovery through shipped code, selecting the right model for each task with the discipline, durability, and accountability that shipping real software demands. And it gets cheaper and better every time it runs, because it learns from what happened last time.
 
 Not a coding assistant. Not an AI gateway. Not a framework for calling LLMs. A platform for autonomous software development agencies that build software with discipline, at a cost that keeps declining.
 
@@ -22,7 +22,7 @@ The whole thing is open source.
 
 LLM-based agents have a fundamental problem: nothing survives. Context windows compress. Sessions end. Networks drop. Processes crash. An agent that ran for an hour, produced three artifacts, dispatched two sub-agents, and advanced through four workflow phases leaves behind... a chat transcript. The state, the decisions, the evidence, the coordination signals: gone. Not a prompting problem. An infrastructure problem. And most agent systems today handle it with temp files, environment variables, in-memory state, and hope.
 
-Demarch handles it with a durable kernel (SQLite-backed Go CLI), an opinionated OS that encodes development discipline, a profiler that learns from outcomes, and a constellation of companion drivers. But the infrastructure is not the aspiration.
+Sylveste handles it with a durable kernel (SQLite-backed Go CLI), an opinionated OS that encodes development discipline, a profiler that learns from outcomes, and a constellation of companion drivers. But the infrastructure is not the aspiration.
 
 The bet: if you build the right infrastructure beneath agents, they become capable of the full development lifecycle. Not just code generation, but discovery, design, review, testing, shipping, and compounding what was learned. And if you build a learning loop on top of that infrastructure, one that measures outcomes per dollar and feeds that signal back into model routing, agent selection, and gate calibration, you get a system where autonomy, quality, and efficiency aren't tradeoffs. They're a flywheel. More autonomy produces more outcome data. More outcome data improves routing and review. Better routing cuts cost. Lower cost enables more autonomy. The system that runs the most sprints learns the fastest.
 
@@ -66,15 +66,15 @@ The survival properties are the point. Each layer can be replaced, rewritten, or
 
 **The OS (Clavain + Skaffen)** provides policy. Clavain is the reference agency: which phases make up a development sprint, what conditions must be met at each gate, which model to route each agent to, when to advance automatically. It orchestrates the full lifecycle from problem discovery through shipped code, opinionated about what "good" looks like at every phase, those opinions encoded in gates, review agents, and quality disciplines. Today it ships as a Claude Code plugin; the architecture is designed so the opinions survive even if the host platform doesn't. Skaffen is the sovereign agent runtime: a standalone Go binary with its own OODARC agent loop, multi-provider support, and TUI via masaq. Clavain and Skaffen are L2 peers — different runtimes sharing the same kernel.
 
-**The profiler (Interspect)** provides learning. It reads kernel event surfaces, correlates dispatch outcomes with both human signals (review dismissals, gate overrides, manual corrections) and automated signals (CI results, revert frequency, finding density), and proposes changes to OS configuration. The signal mix shifts as autonomy increases: human-heavy at L0-L2, automated-heavy at L3-L4. Static orchestration is table stakes; a system that improves its own agents through evidence rather than intuition is what makes Demarch different. Today, Interspect modifies only the OS layer through safe, reversible overlays. The kernel boundary is a trust threshold that softens as evidence accumulates (see PHILOSOPHY.md § Earned Authority), but the current operating level restricts Interspect to OS-level changes. Current-state caveat: the generic `ic events tail` stream is not yet the full measurement read model, and session->bead->run attribution is still being hardened. See [docs/research/interspect-event-validity-and-outcome-attribution.md](./research/interspect-event-validity-and-outcome-attribution.md). (Full signal taxonomy in the [Interspect vision](./interspect-vision.md).)
+**The profiler (Interspect)** provides learning. It reads kernel event surfaces, correlates dispatch outcomes with both human signals (review dismissals, gate overrides, manual corrections) and automated signals (CI results, revert frequency, finding density), and proposes changes to OS configuration. The signal mix shifts as autonomy increases: human-heavy at L0-L2, automated-heavy at L3-L4. Static orchestration is table stakes; a system that improves its own agents through evidence rather than intuition is what makes Sylveste different. Today, Interspect modifies only the OS layer through safe, reversible overlays. The kernel boundary is a trust threshold that softens as evidence accumulates (see PHILOSOPHY.md § Earned Authority), but the current operating level restricts Interspect to OS-level changes. Current-state caveat: the generic `ic events tail` stream is not yet the full measurement read model, and session->bead->run attribution is still being hardened. See [docs/research/interspect-event-validity-and-outcome-attribution.md](./research/interspect-event-validity-and-outcome-attribution.md). (Full signal taxonomy in the [Interspect vision](./interspect-vision.md).)
 
-**The drivers (companion plugins)** provide capabilities. Multi-agent review (interflux), file coordination (interlock), ambient research (interject), token-efficient code context (tldr-swinton), agent visibility (intermux), multi-agent synthesis (intersynth), shared embedding infrastructure (intersearch), cross-session semantic caching (intercache), agent trust scoring (intertrust), knowledge compounding (interknow), and three dozen more. Each wraps one capability and integrates with kernel primitives when present. Every driver is independently installable, usable in vanilla Claude Code without Clavain, Intercore, or any other Demarch module. Without the kernel, drivers use local or ephemeral state; with it, they get durability, coordination, and event history. The full stack provides enhanced integration, but each driver is valuable on its own.
+**The drivers (companion plugins)** provide capabilities. Multi-agent review (interflux), file coordination (interlock), ambient research (interject), token-efficient code context (tldr-swinton), agent visibility (intermux), multi-agent synthesis (intersynth), shared embedding infrastructure (intersearch), cross-session semantic caching (intercache), agent trust scoring (intertrust), knowledge compounding (interknow), and three dozen more. Each wraps one capability and integrates with kernel primitives when present. Every driver is independently installable, usable in vanilla Claude Code without Clavain, Intercore, or any other Sylveste module. Without the kernel, drivers use local or ephemeral state; with it, they get durability, coordination, and event history. The full stack provides enhanced integration, but each driver is valuable on its own.
 
 **The apps (Autarch, Intercom)** provide surfaces. Autarch delivers interactive TUI experiences: Bigend (monitoring), Gurgeh (PRD generation), Coldwine (task orchestration), Pollard (research intelligence). Intercom provides a multi-runtime AI assistant bridging Claude, Gemini, and Codex with gate approvals and sprint notifications over messaging. The apps are a convenience layer; everything they do can be done via CLI.
 
 ## The Frontier
 
-Demarch advances three axes simultaneously. Every roadmap decision, every new module, every architectural choice is filtered through this lens: does it improve at least two axes without materially weakening the third?
+Sylveste advances three axes simultaneously. Every roadmap decision, every new module, every architectural choice is filtered through this lens: does it improve at least two axes without materially weakening the third?
 
 **Autonomy.** How much of the development lifecycle runs without human intervention. Not autonomy for its own sake, but autonomy that frees the human to operate at the strategic level where their judgment matters most. Measured by sprint completion rate, gate pass rate on first attempt, intervention frequency at each autonomy level.
 
@@ -108,7 +108,7 @@ The naming convention reflects this: each companion occupies the space *between*
 
 ### 4. Independently valuable
 
-Any capability driver works standalone. Install interflux for multi-agent review, tldr-swinton for code context, or interlock for file coordination. No Clavain, no Intercore, no rest of the stack required. Drivers degrade gracefully: they use ephemeral state alone, durable state with the kernel. The full Demarch stack adds adaptive improvement (profiler) and opinionated workflow (OS), but these are enhancements, not prerequisites.
+Any capability driver works standalone. Install interflux for multi-agent review, tldr-swinton for code context, or interlock for file coordination. No Clavain, no Intercore, no rest of the stack required. Drivers degrade gracefully: they use ephemeral state alone, durable state with the kernel. The full Sylveste stack adds adaptive improvement (profiler) and opinionated workflow (OS), but these are enhancements, not prerequisites.
 
 The constraint also prevents consolidation creep. The temptation to fold a driver into its nearest layer (interphase into Intercore, intersynth into interflux) is always wrong if it would break standalone installation.
 
@@ -130,7 +130,7 @@ Every capability must survive contact with its own development process. Clavain 
 
 ## The Development Lifecycle
 
-Demarch covers the full product development lifecycle through five macro-stages. Each macro-stage is a sub-agency, a team of models and agents selected for the work at hand.
+Sylveste covers the full product development lifecycle through five macro-stages. Each macro-stage is a sub-agency, a team of models and agents selected for the work at hand.
 
 ### Discover
 
@@ -144,7 +144,7 @@ The feedback loop is the interesting part: human promotions and dismissals shift
 
 Strategy, specification, planning, and plan review. The agency designs the solution and validates it through multi-perspective review before any code is written.
 
-Most agent tools fall down here: they treat product work as prompt fluff and skip straight to code. Demarch makes brainstorm and strategy first-class phases with real artifacts, real gates, and real review. The plan review uses flux-drive with formalized cognitive lenses (security, resilience, architecture, user experience) to combat AI consensus bias.
+Most agent tools fall down here: they treat product work as prompt fluff and skip straight to code. Sylveste makes brainstorm and strategy first-class phases with real artifacts, real gates, and real review. The plan review uses flux-drive with formalized cognitive lenses (security, resilience, architecture, user experience) to combat AI consensus bias.
 
 ### Build
 
@@ -223,7 +223,7 @@ The cost-per-landable-change baseline was established on 2026-02-28 (iv-b46xi, c
 
 ## Audience
 
-Demarch is an open-source platform for anyone building autonomous software development agencies. Intercore is the kernel. Clavain is the reference agency. The personal rig is the highest-fidelity eval: built by using it to build itself.
+Sylveste is an open-source platform for anyone building autonomous software development agencies. Intercore is the kernel. Clavain is the reference agency. The personal rig is the highest-fidelity eval: built by using it to build itself.
 
 Three concentric circles, in priority order:
 
@@ -278,7 +278,7 @@ Track A (Kernel)      Track B (Routing)     Track C (Agency)
                                           (self-building)
 ```
 
-B3 (adaptive routing via Interspect outcome data) is the primary strategic frontier. See [demarch-roadmap.md](./demarch-roadmap.md) for the full prioritized inventory.
+B3 (adaptive routing via Interspect outcome data) is the primary strategic frontier. See [sylveste-roadmap.md](./sylveste-roadmap.md) for the full prioritized inventory.
 
 ## What This Is Not
 
@@ -286,14 +286,14 @@ B3 (adaptive routing via Interspect outcome data) is the primary strategic front
 - **Not a coding assistant.** It doesn't help you write code; it *builds software*. The coding is one phase of five.
 - **Not a no-code tool.** It's for people who build software with agents. Full stop.
 - **Not uncontrollably self-modifying.** Interspect modifies OS-level configuration through safe, reversible overlays. It cannot modify the kernel today — but the kernel boundary is a trust threshold, not a permanent architectural invariant. It softens as trust is earned, through gated evidence-based processes, not direct modification. (See PHILOSOPHY.md § Earned Authority.)
-- **Not just an agency.** Demarch is the platform; Clavain is the reference agency built on it. The kernel and drivers are infrastructure anyone can use to build their own agency.
+- **Not just an agency.** Sylveste is the platform; Clavain is the reference agency built on it. The kernel and drivers are infrastructure anyone can use to build their own agency.
 
 ## Origins
 
-Demarch (from Alastair Reynolds' Democratic Anarchists, reflecting the continuous polling and consensus-driven architecture of the system). Clavain is a protagonist from the same series. The inter-\* naming convention describes what each component does: the space *between* things. Interverse is the universe that contains them all.
+Sylveste (from Alastair Reynolds' Democratic Anarchists, reflecting the continuous polling and consensus-driven architecture of the system). Clavain is a protagonist from the same series. The inter-\* naming convention describes what each component does: the space *between* things. Interverse is the universe that contains them all.
 
 The project began by merging [superpowers](https://github.com/obra/superpowers), [superpowers-lab](https://github.com/obra/superpowers-lab), [superpowers-developing-for-claude-code](https://github.com/obra/superpowers-developing-for-claude-code), and [compound-engineering](https://github.com/EveryInc/compound-engineering-plugin). It has since grown into an autonomous software development agency platform with five pillars. Current module count: `find apps os core interverse sdk -maxdepth 2 -name .git -printf '%h\n' 2>/dev/null | wc -l`.
 
 ---
 
-*Module inventory, model routing stages, and adoption ladder: [demarch-reference.md](./demarch-reference.md). Layer-specific vision docs: [Intercore](../core/intercore/docs/intercore-roadmap.md) (kernel), [Clavain](../os/Clavain/docs/clavain-vision.md) (OS), [Skaffen](../os/Skaffen/PHILOSOPHY.md) (sovereign runtime), [Autarch](../apps/Autarch/docs/autarch-vision.md) (apps), [Interspect](./interspect-vision.md) (profiler, [roadmap](./interspect-roadmap.md)).*
+*Module inventory, model routing stages, and adoption ladder: [sylveste-reference.md](./sylveste-reference.md). Layer-specific vision docs: [Intercore](../core/intercore/docs/intercore-roadmap.md) (kernel), [Clavain](../os/Clavain/docs/clavain-vision.md) (OS), [Skaffen](../os/Skaffen/PHILOSOPHY.md) (sovereign runtime), [Autarch](../apps/Autarch/docs/autarch-vision.md) (apps), [Interspect](./interspect-vision.md) (profiler, [roadmap](./interspect-roadmap.md)).*

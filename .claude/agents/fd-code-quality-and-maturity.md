@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-The research agent produces assess-*.md documents following the pattern in docs/research/assess-beads-viewer-repos.md, outputting structured verdicts (adopt/port-partially/inspire-only/skip) with per-component analysis and integration opportunities mapped to Demarch modules (Clavain, Autarch, Intercore, Interverse, interbase).
+The research agent produces assess-*.md documents following the pattern in docs/research/assess-beads-viewer-repos.md, outputting structured verdicts (adopt/port-partially/inspire-only/skip) with per-component analysis and integration opportunities mapped to Sylveste modules (Clavain, Autarch, Intercore, Interverse, interbase).
 
 ## Review Approach
 
@@ -43,7 +43,7 @@ The research agent produces assess-*.md documents following the pattern in docs/
 
 ### 5. Dependency footprint
 
-- Check dependency footprint and licensing: transitive deps count, known CVEs, license compatibility with Demarch (MIT/Apache preferred), any GPL contagion
+- Check dependency footprint and licensing: transitive deps count, known CVEs, license compatibility with Sylveste (MIT/Apache preferred), any GPL contagion
 
 ### 6. Look for architecture docs
 
@@ -51,7 +51,7 @@ The research agent produces assess-*.md documents following the pattern in docs/
 
 ## What NOT to Flag
 
-- fd-demarch-module-fit covers how the repo's features map to specific Demarch modules and pillars — this agent does not evaluate module fit
+- fd-sylveste-module-fit covers how the repo's features map to specific Sylveste modules and pillars — this agent does not evaluate module fit
 - fd-integration-feasibility covers porting effort, API surface, and dependency compatibility at the implementation level — this agent focuses on quality signals, not integration mechanics
 - fd-security-and-safety-posture covers hook safety, destructive command risks, and agent trust boundaries — this agent focuses on code quality and maintenance, not security semantics
 - Only flag the above if they are deeply entangled with your specialist focus and another agent would miss the nuance
@@ -68,7 +68,7 @@ A good review from this agent:
 
 ## Decision Lens
 
-A repo is worth integrating only if its quality trajectory is upward and its test coverage addresses the failure modes that would matter in Demarch's production context. Red flags (no tests, single-maintainer bus factor, no semver, stale CI) must be surfaced even when the idea is good.
+A repo is worth integrating only if its quality trajectory is upward and its test coverage addresses the failure modes that would matter in Sylveste's production context. Red flags (no tests, single-maintainer bus factor, no semver, stale CI) must be surfaced even when the idea is good.
 
 ## Prioritization
 

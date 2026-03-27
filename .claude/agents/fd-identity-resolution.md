@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-Two data sources must be combined for a visualization pipeline: a Notion-sourced IdeaGUI roster (85 agent sessions with project/terminal/agent-type/sync-mode) and clavain-cli live ops (fleet counts, queue by priority, WIP agent-to-bead mappings). The core challenge is that bead IDs encode the DB prefix (Demarch-), not the sub-project, and tmux session names are human-readable but not linked to hex session IDs in WIP output.
+Two data sources must be combined for a visualization pipeline: a Notion-sourced IdeaGUI roster (85 agent sessions with project/terminal/agent-type/sync-mode) and clavain-cli live ops (fleet counts, queue by priority, WIP agent-to-bead mappings). The core challenge is that bead IDs encode the DB prefix (Sylveste-), not the sub-project, and tmux session names are human-readable but not linked to hex session IDs in WIP output.
 
 ## Review Approach
 
@@ -29,13 +29,13 @@ Two data sources must be combined for a visualization pipeline: a Notion-sourced
 
 - Verify whether clavain-cli WIP output already exposes any field (pid, window title, start timestamp) that could serve as a foreign key back to the Notion roster
 
-### 2. Whether the Demarch
+### 2. Whether the Sylveste
 
-- Check whether the Demarch- prefix on bead IDs is a stable convention or could vary by project, and whether that prefix alone is sufficient to infer project context
+- Check whether the Sylveste- prefix on bead IDs is a stable convention or could vary by project, and whether that prefix alone is sufficient to infer project context
 
 ### 3. Evaluate tmux session name patterns (e
 
-- Evaluate tmux session name patterns (e.g., warp-demarch-claude) for parseable structure: can project and agent-type be reliably extracted with a regex, or are names ad-hoc?
+- Evaluate tmux session name patterns (e.g., warp-sylveste-claude) for parseable structure: can project and agent-type be reliably extracted with a regex, or are names ad-hoc?
 
 ### 4. Assess whether a mapping table approach is operationally ...
 

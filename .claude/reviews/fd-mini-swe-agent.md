@@ -37,7 +37,7 @@ The factory raises `ValueError` for unknown types (`mini_swe_runner.py:136-137`)
 **[P2] `batch_runner.py` has a parallel and richer version of the same pattern.**
 `_process_single_prompt()` at `batch_runner.py:253-298` builds environment overrides through `register_task_env_overrides()` (a task-ID-keyed dict in `terminal_tool.py`). This is the production path; `create_environment()` in `mini_swe_runner.py` is a simpler standalone version. The two patterns are not unified. Autarch should pick one.
 
-### Adaptation opportunities for Demarch
+### Adaptation opportunities for Sylveste
 
 The backend contract is: `execute(command, timeout) -> {"output": str, "returncode": int}` plus one of `{cleanup, stop}` for teardown. This is the minimal interface Autarch needs if it wants to add its own execution backends. A `Protocol` with `execute()` and `teardown()` is the right shape.
 
@@ -78,7 +78,7 @@ The check at `mini_swe_runner.py:514` fires after the terminal command runs and 
 **[P2] `AgentResult.finished_naturally` is the clean analogue.**
 `agent_loop.py:69-70` marks `finished_naturally=True` only when the model produces a turn with no tool_calls. This boolean is available to `compute_reward()` and is more semantically precise than the sentinel. Downstream reward functions in `hermes_swe_env.py` and `terminalbench2_env.py` do not use it (they run explicit test verification instead), but it is available.
 
-### Adaptation opportunities for Demarch
+### Adaptation opportunities for Sylveste
 
 For Autarch's batch evaluation pipeline, `finished_naturally` from `AgentResult` is the right completion signal — it does not require cooperation from the model. The stdout sentinel is useful only if running a model that does not natively support tool_calls cessation (e.g., a fine-tuned model that was trained to echo a signal). Autarch should standardize on `finished_naturally` and treat `MINI_SWE_AGENT_FINAL_OUTPUT` as a legacy fallback.
 
@@ -126,7 +126,7 @@ The conversion function regenerates the system message inline (`mini_swe_runner.
 **[P2] Two independent conversion functions exist in parallel.**
 `batch_runner.py:343-347` calls `agent._convert_to_trajectory_format()` from `run_agent.py` (AIAgent class), while `mini_swe_runner.py` has its own `_convert_to_hermes_format()`. Whether they produce identical output for the same input is not validated anywhere in the codebase.
 
-### Adaptation opportunities for Demarch
+### Adaptation opportunities for Sylveste
 
 The lossless-ness problem on multi-tool turns is the most important finding for Autarch. Any trajectory compression or replay pipeline that consumes ShareGPT format must handle this. The safest approach: store the original OpenAI-format messages alongside the ShareGPT conversion, use OpenAI format as the source of truth, and treat ShareGPT as a display/training format only.
 
@@ -167,7 +167,7 @@ with open(output_file, 'w', encoding='utf-8') as f:
 **[P2] Statistics schema normalization is tied to `TOOL_TO_TOOLSET_MAP`.**
 `batch_runner.py:53`, `batch_runner.py:59-86` normalize tool stats to include all tools from the master map, ensuring consistent HuggingFace Arrow schema. Adding a new tool to `model_tools.py` silently changes the schema of output JSONL files, which can break downstream dataset loading if not handled.
 
-### Adaptation opportunities for Demarch
+### Adaptation opportunities for Sylveste
 
 For Autarch's batch assessment pipeline, the `BatchRunner` design is the production pattern to adopt: per-task JSONL append with `flush()`, checkpoint file tracking completed indices, multiprocessing at the batch level. The `MiniSWERunner.run_batch()` is a simpler reference only. The immediate-flush pattern is the key durability primitive — Autarch's runner should adopt this unconditionally.
 
@@ -194,7 +194,7 @@ Atropos runs everything under a single asyncio event loop. `SwerexModalEnvironme
 **[P2] `_patches_applied` is a module-level boolean, not thread-safe.**
 `patches.py:35, 174-188` use `global _patches_applied` with a simple check-and-set. In a multithreaded environment where `apply_patches()` could be called simultaneously from multiple threads, there is a race where both threads see `_patches_applied = False` and both apply the patches. In practice this is harmless (both patches are identical), but it is not safe by construction.
 
-### Adaptation opportunities for Demarch
+### Adaptation opportunities for Sylveste
 
 The `_AsyncWorker` pattern (background thread with dedicated event loop, `run_coroutine_threadsafe` for bridging) is the right primitive for any Autarch component that needs to call async backends from synchronous tool dispatch code. The pattern is clean enough to extract as a standalone utility class, applicable to any Autarch execution module that bridges sync plugin APIs with an async agent loop.
 
@@ -219,7 +219,7 @@ The `_AsyncWorker` pattern (background thread with dedicated event loop, `run_co
 `hermes_swe_env.py:62-229` implements all five abstract methods in approximately 170 lines (excluding config). It is the recommended starting point for a new training environment. The key pattern: `compute_reward()` receives a `ToolContext` scoped to the rollout's `task_id` and can call any tool against the model's sandbox. The sandbox state (files, processes) from the agent's tool calls is preserved until `ctx.cleanup()` runs in the base class `finally` block.
 
 **[P2] `TerminalTestEnv` is the integration smoke test — it has no external dependencies.**
-`terminal_test_env.py:58-82` defines three training tasks inline (no HuggingFace dataset). This makes it the fastest way to validate that the full stack (agent loop to tool execution to reward computation to Atropos pipeline) is wired correctly. A Demarch equivalent would be valuable as a smoke test for Autarch's harness.
+`terminal_test_env.py:58-82` defines three training tasks inline (no HuggingFace dataset). This makes it the fastest way to validate that the full stack (agent loop to tool execution to reward computation to Atropos pipeline) is wired correctly. A Sylveste equivalent would be valuable as a smoke test for Autarch's harness.
 
 ---
 

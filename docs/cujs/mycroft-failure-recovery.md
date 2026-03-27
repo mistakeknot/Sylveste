@@ -3,7 +3,7 @@ artifact_type: cuj
 journey: mycroft-failure-recovery
 actor: regular user (developer managing fleet under stress)
 criticality: p2
-bead: Demarch-2c7
+bead: Sylveste-2c7
 ---
 
 # Mycroft Failure Recovery and Intervention

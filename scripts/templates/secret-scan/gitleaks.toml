@@ -1,5 +1,5 @@
-# demarch-managed: secret-scan-baseline v1
-title = "Demarch Secret Scanning Baseline"
+# sylveste-managed: secret-scan-baseline v1
+title = "Sylveste Secret Scanning Baseline"
 
 [extend]
 useDefault = true

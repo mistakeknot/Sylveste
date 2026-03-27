@@ -2,12 +2,12 @@
 
 ## The System
 
-Demarch is a monorepo for an autonomous software development agency platform. The **Interverse** is its plugin ecosystem — currently 49 plugins across 5 pillars and 3 layers.
+Sylveste is a monorepo for an autonomous software development agency platform. The **Interverse** is its plugin ecosystem — currently 49 plugins across 5 pillars and 3 layers.
 
 Architecture:
 - Each plugin is its own git repo (separate origin, separate version)
 - Each has: `.claude-plugin/plugin.json`, skills/, optional MCP servers, CLAUDE.md, AGENTS.md
-- The monorepo root (`Demarch/`) contains all pillars: `interverse/` (plugins), `os/clavain/` (orchestrator), `core/` (kernel), `apps/` (applications), `sdk/` (shared)
+- The monorepo root (`Sylveste/`) contains all pillars: `interverse/` (plugins), `os/clavain/` (orchestrator), `core/` (kernel), `apps/` (applications), `sdk/` (shared)
 - `interverse/` is gitignored in the monorepo — each plugin is independently version-controlled
 - The developer always works from the monorepo root, so co-location is the lived experience even though repos are physically separate
 

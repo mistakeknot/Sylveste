@@ -10,7 +10,7 @@
 1. [OpenCode](#opencode)
 2. [Amp (Sourcegraph)](#amp-sourcegraph)
 3. [Community Comparisons](#community-comparisons)
-4. [Key Takeaways for Skaffen/Demarch](#key-takeaways)
+4. [Key Takeaways for Skaffen/Sylveste](#key-takeaways)
 
 ---
 
@@ -415,7 +415,7 @@ Quote from developer: "I pay for Claude Code MAX. Amp is better at coding. It un
 
 ## Key Takeaways
 
-### Features Worth Studying for Skaffen/Demarch
+### Features Worth Studying for Skaffen/Sylveste
 
 **From OpenCode:**
 - **LSP integration feeding diagnostics to AI** — unique differentiator, reduces hallucinated type errors. The 30+ server auto-discovery is impressive

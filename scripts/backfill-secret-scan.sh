@@ -16,7 +16,7 @@ Usage: backfill-secret-scan.sh [options]
 Options:
   --since "<expr>"      git log --since expression (default: "180 days ago")
   --full-history        scan full git history (overrides --since)
-  --repo <path>         target a specific repo path relative to Demarch root
+  --repo <path>         target a specific repo path relative to Sylveste root
   --fail-on-findings    return non-zero if any findings are detected
   -h, --help            show this help
 EOF
@@ -138,7 +138,7 @@ total_findings=0
 for repo_in in "${TARGET_REPOS[@]}"; do
   repo_rel="$(normalize_repo_path "$repo_in")"
   if [[ -z "$repo_rel" ]]; then
-    echo "ERROR: repo path outside Demarch root: $repo_in" >&2
+    echo "ERROR: repo path outside Sylveste root: $repo_in" >&2
     error_count=$((error_count + 1))
     SUMMARY_ROWS+=("| \`$repo_in\` | error | 0 | path outside root |")
     continue

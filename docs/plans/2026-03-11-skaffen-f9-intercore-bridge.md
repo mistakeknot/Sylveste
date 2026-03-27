@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-j2f
+bead: Sylveste-j2f
 stage: design
 requirements:
   - F1: Mandatory ic startup check
@@ -14,7 +14,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-j2f
+**Bead:** Sylveste-j2f
 **Goal:** Connect Skaffen to Intercore — fix evidence bridge, record routing decisions, consume overrides.
 
 **Architecture:** The existing `evidence/emitter.go` gets its 3 bridge bugs fixed. The router gains an override query step (cached per-session) and a decision recording method. `main.go` adds an ic startup check. No new packages — changes touch emitter, router, agent loop, and main.
@@ -236,9 +236,9 @@ git commit -m "feat(router): add ICClient wrapper for ic CLI routing operations"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./internal/router/ -run TestICClient -v`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./internal/router/ -run TestICClient -v`
   expect: exit 0
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go vet ./internal/router/`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go vet ./internal/router/`
   expect: exit 0
 </verify>
 
@@ -299,7 +299,7 @@ git commit -m "feat(main): add mandatory ic startup check (F1)"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go build ./cmd/skaffen/`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go build ./cmd/skaffen/`
   expect: exit 0
 </verify>
 
@@ -434,9 +434,9 @@ git commit -m "fix(evidence): correct Intercore bridge — interspect source, --
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./internal/evidence/ -v`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./internal/evidence/ -v`
   expect: exit 0
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go vet ./internal/evidence/`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go vet ./internal/evidence/`
   expect: exit 0
 </verify>
 
@@ -610,7 +610,7 @@ git commit -m "feat(router): consume Intercore overrides — env > override > co
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./internal/router/ -v`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./internal/router/ -v`
   expect: exit 0
 </verify>
 
@@ -707,7 +707,7 @@ git commit -m "feat(router): record every routing decision via ic route record (
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./internal/router/ -v -race`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./internal/router/ -v -race`
   expect: exit 0
 </verify>
 
@@ -822,7 +822,7 @@ git commit -m "feat(evidence): add Model and ModelReason to evidence (F5)"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./... -race`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./... -race`
   expect: exit 0
 </verify>
 
@@ -869,9 +869,9 @@ git commit -m "feat(main): wire ICClient into router for override consumption an
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go build ./cmd/skaffen/`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go build ./cmd/skaffen/`
   expect: exit 0
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./... -race`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./... -race`
   expect: exit 0
 </verify>
 
@@ -926,8 +926,8 @@ git commit -m "test(router): add integration tests for NewWithIC and nil IC fall
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./... -race -count=1`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./... -race -count=1`
   expect: exit 0
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go vet ./...`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go vet ./...`
   expect: exit 0
 </verify>

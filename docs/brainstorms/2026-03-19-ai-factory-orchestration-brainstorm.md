@@ -12,7 +12,7 @@ stage: discover
 
 ## What We're Building
 
-A phased evolution of Demarch's work orchestration from "human dispatches agents to prioritized backlog" to "agents self-serve from a CUJ-driven backlog with earned autonomy and machine-verifiable quality gates."
+A phased evolution of Sylveste's work orchestration from "human dispatches agents to prioritized backlog" to "agents self-serve from a CUJ-driven backlog with earned autonomy and machine-verifiable quality gates."
 
 The core thesis: **AI factory orchestration is a governance problem, not a PM problem.** The question isn't "how do we track work?" (beads solves this) but "how do we delegate authority so agents can act without human dispatch while maintaining quality and cost control?"
 

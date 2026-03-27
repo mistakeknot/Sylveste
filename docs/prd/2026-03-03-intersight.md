@@ -6,7 +6,7 @@
 
 ## Problem
 
-There is no reusable tool in the Demarch ecosystem (or broadly available as a Claude Code plugin) for systematically extracting design systems from live websites. Agents and developers repeatedly do manual, inconsistent design analysis when studying reference sites for inspiration.
+There is no reusable tool in the Sylveste ecosystem (or broadly available as a Claude Code plugin) for systematically extracting design systems from live websites. Agents and developers repeatedly do manual, inconsistent design analysis when studying reference sites for inspiration.
 
 ## Solution
 

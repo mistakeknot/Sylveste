@@ -1,6 +1,6 @@
 # interhelm
 
-Agent-as-operator runtime diagnostics for the [Interverse](https://github.com/mistakeknot/Demarch) plugin ecosystem.
+Agent-as-operator runtime diagnostics for the [Interverse](https://github.com/mistakeknot/Sylveste) plugin ecosystem.
 
 ## What
 

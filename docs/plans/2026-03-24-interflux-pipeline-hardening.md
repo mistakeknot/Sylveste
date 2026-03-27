@@ -1,15 +1,15 @@
 ---
 artifact_type: plan
-bead: Demarch-uboy
+bead: Sylveste-uboy
 stage: planned
 ---
 # Plan: Interflux Pipeline Hardening
 
-**Bead:** Demarch-uboy
+**Bead:** Sylveste-uboy
 **Scope:** 3 actionable tasks (uboy.1, uboy.5, uboy.6), 3 deferred (uboy.2-4)
 **All files are in:** `interverse/interflux/` (own git repo)
 
-## Task 1: Sync SKILL-compact.md (Demarch-uboy.1, P1)
+## Task 1: Sync SKILL-compact.md (Sylveste-uboy.1, P1)
 
 **File:** `skills/flux-drive/SKILL-compact.md`
 
@@ -53,7 +53,7 @@ After:
 ### 1f: Fix polling reference
 The compact file doesn't explicitly mention polling interval, but launch.md does. No change needed in compact — it references `phases/launch.md` for details.
 
-## Task 2: Fix scoring-examples.md (Demarch-uboy.5, P2)
+## Task 2: Fix scoring-examples.md (Sylveste-uboy.5, P2)
 
 **File:** `skills/flux-drive/references/scoring-examples.md`
 
@@ -80,7 +80,7 @@ All `+1 (N items)` entries become `+2 (has criteria)`. This changes totals:
 - fd-safety: +1→+2, total 3→4
 - Stage assignment changes with 5 slots.
 
-## Task 3: Validate incremental expansion (Demarch-uboy.6, P2)
+## Task 3: Validate incremental expansion (Sylveste-uboy.6, P2)
 
 Not a file edit — run `/interflux:flux-drive` on a real 400+ line doc and verify Step 2.2a.6 fires. Defer to a separate session (requires interactive flux-drive run).
 

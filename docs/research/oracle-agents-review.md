@@ -8,7 +8,7 @@ Below is a substantive review of **AGENTS.md** against the canonical terminology
 
 **Problematic text**
 
-> “Each subproject keeps its own docs at `Demarch/<layer>/<subproject>/docs/` (e.g., `interverse/interlock/docs/`, `core/intercore/docs/`).”
+> “Each subproject keeps its own docs at `Sylveste/<layer>/<subproject>/docs/` (e.g., `interverse/interlock/docs/`, `core/intercore/docs/`).”
 
 **Why it’s inconsistent**
 
@@ -20,10 +20,10 @@ Replace `<layer>` with something that matches reality and avoids collision with 
 
 * Option 1 (most explicit):
 
-  * “`Demarch/<pillar-root>/<subproject>/docs/` (e.g., `interverse/interlock/docs/`, `core/intercore/docs/`).”
+  * “`Sylveste/<pillar-root>/<subproject>/docs/` (e.g., `interverse/interlock/docs/`, `core/intercore/docs/`).”
 * Option 2 (spell out the roots):
 
-  * “`Demarch/{core|os|interverse|apps|sdk}/<subproject>/docs/` …”
+  * “`Sylveste/{core|os|interverse|apps|sdk}/<subproject>/docs/` …”
 
 If you want to connect it back to the actual layer model, add a short mapping note:
 
@@ -251,7 +251,7 @@ Rename the column header to “Module” (or “Repo”), and optionally add pil
 
 Later (Development Workflow):
 
-> “The root `Demarch/` directory also has a `.git` for the monorepo skeleton…”
+> “The root `Sylveste/` directory also has a `.git` for the monorepo skeleton…”
 
 **Why it’s stale/inconsistent**
 
@@ -261,7 +261,7 @@ Later (Development Workflow):
 **Suggested fix**
 Make the repo model explicit:
 
-* “Demarch is a **workspace-style monorepo**: a root skeleton repo plus **nested independent repos (often via git submodules)**. Git operations apply to the nearest repo; check `git rev-parse --show-toplevel`.”
+* “Sylveste is a **workspace-style monorepo**: a root skeleton repo plus **nested independent repos (often via git submodules)**. Git operations apply to the nearest repo; check `git rev-parse --show-toplevel`.”
 
 If it’s *not* submodules, say what it is (and how to clone it) — see Actionability.
 
@@ -349,8 +349,8 @@ This is not style—without this, the instructions are operationally wrong for a
 
 Examples:
 
-> `cd /root/projects/Demarch/...`
-> `bash /root/projects/Demarch/interverse/interchart/scripts/...`
+> `cd /root/projects/Sylveste/...`
+> `bash /root/projects/Sylveste/interverse/interchart/scripts/...`
 
 **Suggested fix**
 Prefer repo-relative commands:
@@ -360,7 +360,7 @@ Prefer repo-relative commands:
 
 If you want to keep server paths (useful internally), show both once:
 
-* “On the shared server the repo lives at `/root/projects/Demarch`, but all commands below assume you’re at repo root.”
+* “On the shared server the repo lives at `/root/projects/Sylveste`, but all commands below assume you’re at repo root.”
 
 ---
 
@@ -439,7 +439,7 @@ This materially improves actionability.
 1. **Replace `infra/marketplace` → `core/marketplace`** (hard correctness bug).
 2. Fix terminology collisions:
 
-   * change `Demarch/<layer>/...` docs convention
+   * change `Sylveste/<layer>/...` docs convention
    * change `clavain (OS pillar)` wording
 3. Clarify repo model (“nested repos/submodules + root skeleton repo”) and add bootstrap instructions.
 4. Rework Module Relationships to show **dependencies**, not a faux directory tree.

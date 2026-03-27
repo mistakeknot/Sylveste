@@ -61,11 +61,11 @@ The Zettelkasten lens is directly relevant here. In a Zettelkasten, every note i
 
 Are beads like Zettelkasten notes (permanent, accumulable, always findable) or like Slack messages (transient, contextual, disposable)?
 
-The answer is clearly the former: beads have IDs (`Demarch-jpum`), dependency chains, priorities, and long lifetimes. They are the atomic unit of work. But the brainstorm treats them as secondary to agents — beads are "rounded rects sized by priority" attached to agent nodes. In the bead-view (Tab 4), they become primary, but that's one of four views.
+The answer is clearly the former: beads have IDs (`Sylveste-jpum`), dependency chains, priorities, and long lifetimes. They are the atomic unit of work. But the brainstorm treats them as secondary to agents — beads are "rounded rects sized by priority" attached to agent nodes. In the bead-view (Tab 4), they become primary, but that's one of four views.
 
 The current hydra-graph prototype makes this worse: beads are small rounded rectangles with dimmer glow (`targetIntensity * 0.5`) and smaller radius (`GLOW_RADIUS * 0.6`). They are visually subordinate to agents in every way.
 
-**The problem:** If beads don't have persistent visual identity (stable position, recognizable appearance, always present), the viewer can't build a cumulative understanding of work state. Every visit is a fresh scan for "where is Demarch-jpum now?" instead of "ah, Demarch-jpum moved from Grey Area to Sleeper Service — that handoff happened."
+**The problem:** If beads don't have persistent visual identity (stable position, recognizable appearance, always present), the viewer can't build a cumulative understanding of work state. Every visit is a fresh scan for "where is Sylveste-jpum now?" instead of "ah, Sylveste-jpum moved from Grey Area to Sleeper Service — that handoff happened."
 
 **Recommendation:** Beads should have **spatially stable positions** in at least one view mode (bead-view). Their position in bead-view should be determined by dependency ordering and priority, not by physics — so that returning viewers find them in the same place. In other views, beads can be decorations on agents, but the viewer should be able to mentally map between "bead as decoration on an agent" and "bead as persistent entity in the dependency graph."
 

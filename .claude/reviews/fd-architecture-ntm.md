@@ -2,14 +2,14 @@
 
 **Reviewer:** Flux-drive Architecture & Design Reviewer
 **Date:** 2026-02-22
-**Target:** `/home/mk/projects/Demarch/research/ntm` (Go CLI/TUI, 1,442 files, ~256k LOC)
-**Purpose:** Competitive analysis for Demarch/Autarch. Identify patterns worth adopting,
+**Target:** `/home/mk/projects/Sylveste/research/ntm` (Go CLI/TUI, 1,442 files, ~256k LOC)
+**Purpose:** Competitive analysis for Sylveste/Autarch. Identify patterns worth adopting,
 patterns to avoid, and structural observations relevant to building similar Go/Bubble Tea
 multi-agent TUI tooling.
 
 > This review operates in codebase-aware mode for ntm (using its AGENTS.md), and in
-> codebase-aware mode for Demarch (using the Demarch CLAUDE.md). Recommendations are
-> grounded in Demarch's 3-layer (L1/L2/L3) and 5-pillar (Intercore, Clavain, Interverse,
+> codebase-aware mode for Sylveste (using the Sylveste CLAUDE.md). Recommendations are
+> grounded in Sylveste's 3-layer (L1/L2/L3) and 5-pillar (Intercore, Clavain, Interverse,
 > Autarch, Interspect) architecture.
 
 ---
@@ -210,7 +210,7 @@ step but makes the taxonomy hard to extend without recompile. The `ModeTier` (co
 advanced vs. experimental) system is solid for controlling surface area.
 
 **Partially worth adopting.** The concept of named reasoning modes that get assigned to
-agent panes is directly applicable to Demarch's interflux multi-review engine. The
+agent panes is directly applicable to Sylveste's interflux multi-review engine. The
 synthesis strategy pattern (select a strategy, let the Synthesizer compose outputs
 according to that strategy's template key) maps well onto intersynth.
 
@@ -222,7 +222,7 @@ prompts, and a flow state machine (initial stage, transitions). User and project
 overrides layer over builtins.
 
 This is a pragmatic extensibility mechanism that does not require recompilation. It maps
-directly onto what Demarch's intercraft module describes as "agent-native architecture
+directly onto what Sylveste's intercraft module describes as "agent-native architecture
 patterns." The key insight is that workflows are data, not code — the loader resolves
 them at runtime with a clear precedence chain (project > user > builtin).
 
@@ -394,7 +394,7 @@ early constrains the delivery surfaces to stay consistent across CLI, TUI, MCP, 
 
 ---
 
-## 8. Ranked Adoption Recommendations for Demarch/Autarch
+## 8. Ranked Adoption Recommendations for Sylveste/Autarch
 
 ### Must Adopt (High Structural Value)
 
@@ -441,7 +441,7 @@ early constrains the delivery surfaces to stay consistent across CLI, TUI, MCP, 
 
 10. **Reasoning mode taxonomy** — Named modes assigned to agent panes, with tier
     (core/advanced/experimental) controlling surface area. The 80-mode set is ntm-specific
-    but the pattern applies to Demarch's interflux review lenses and intersynth strategies.
+    but the pattern applies to Sylveste's interflux review lenses and intersynth strategies.
     *ntm reference: `internal/ensemble/modes.go`, `internal/ensemble/strategy.go`.*
 
 ### Do Not Adopt (Anti-Patterns to Explicitly Avoid)
@@ -460,21 +460,21 @@ early constrains the delivery surfaces to stay consistent across CLI, TUI, MCP, 
 
 The following ntm files are worth studying directly when implementing the adopted patterns:
 
-- `/home/mk/projects/Demarch/research/ntm/internal/kernel/types.go` — Command registry type
-- `/home/mk/projects/Demarch/research/ntm/internal/kernel/registry.go` — Registry implementation
-- `/home/mk/projects/Demarch/research/ntm/internal/swarm/types.go` — SwarmPlan, SessionSpec, PaneSpec
-- `/home/mk/projects/Demarch/research/ntm/internal/swarm/orchestrator.go` — Plan execution
-- `/home/mk/projects/Demarch/research/ntm/internal/swarm/auto_respawner.go` — Crash recovery
-- `/home/mk/projects/Demarch/research/ntm/internal/swarm/account_rotator.go` — Account rotation
-- `/home/mk/projects/Demarch/research/ntm/internal/tui/dashboard/panels/panel.go` — Panel interface
-- `/home/mk/projects/Demarch/research/ntm/internal/tui/layout/layout.go` — Width tier system
-- `/home/mk/projects/Demarch/research/ntm/internal/tui/theme/theme.go` — Theme struct
-- `/home/mk/projects/Demarch/research/ntm/internal/tui/theme/semantic.go` — Semantic roles
-- `/home/mk/projects/Demarch/research/ntm/internal/workflow/loader.go` — Precedence loading
-- `/home/mk/projects/Demarch/research/ntm/internal/workflow/template.go` — WorkflowTemplate type
-- `/home/mk/projects/Demarch/research/ntm/internal/tools/registry.go` — Tool adapter registry
-- `/home/mk/projects/Demarch/research/ntm/internal/handoff/types.go` — Handoff format
-- `/home/mk/projects/Demarch/research/ntm/internal/checkpoint/types.go` — Checkpoint format
-- `/home/mk/projects/Demarch/research/ntm/internal/events/bus.go` — EventBus pub/sub
-- `/home/mk/projects/Demarch/research/ntm/docs/ORCHESTRATION_FEATURES.md` — Design intent
-- `/home/mk/projects/Demarch/research/ntm/docs/robot-api-design.md` — API design principles
+- `/home/mk/projects/Sylveste/research/ntm/internal/kernel/types.go` — Command registry type
+- `/home/mk/projects/Sylveste/research/ntm/internal/kernel/registry.go` — Registry implementation
+- `/home/mk/projects/Sylveste/research/ntm/internal/swarm/types.go` — SwarmPlan, SessionSpec, PaneSpec
+- `/home/mk/projects/Sylveste/research/ntm/internal/swarm/orchestrator.go` — Plan execution
+- `/home/mk/projects/Sylveste/research/ntm/internal/swarm/auto_respawner.go` — Crash recovery
+- `/home/mk/projects/Sylveste/research/ntm/internal/swarm/account_rotator.go` — Account rotation
+- `/home/mk/projects/Sylveste/research/ntm/internal/tui/dashboard/panels/panel.go` — Panel interface
+- `/home/mk/projects/Sylveste/research/ntm/internal/tui/layout/layout.go` — Width tier system
+- `/home/mk/projects/Sylveste/research/ntm/internal/tui/theme/theme.go` — Theme struct
+- `/home/mk/projects/Sylveste/research/ntm/internal/tui/theme/semantic.go` — Semantic roles
+- `/home/mk/projects/Sylveste/research/ntm/internal/workflow/loader.go` — Precedence loading
+- `/home/mk/projects/Sylveste/research/ntm/internal/workflow/template.go` — WorkflowTemplate type
+- `/home/mk/projects/Sylveste/research/ntm/internal/tools/registry.go` — Tool adapter registry
+- `/home/mk/projects/Sylveste/research/ntm/internal/handoff/types.go` — Handoff format
+- `/home/mk/projects/Sylveste/research/ntm/internal/checkpoint/types.go` — Checkpoint format
+- `/home/mk/projects/Sylveste/research/ntm/internal/events/bus.go` — EventBus pub/sub
+- `/home/mk/projects/Sylveste/research/ntm/docs/ORCHESTRATION_FEATURES.md` — Design intent
+- `/home/mk/projects/Sylveste/research/ntm/docs/robot-api-design.md` — API design principles

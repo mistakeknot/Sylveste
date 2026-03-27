@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-92j
+bead: Sylveste-92j
 stage: design
 supersedes: docs/prds/2026-03-10-skaffen-v01-fork.md
 flux_drive_review: 2026-03-11
@@ -13,7 +13,7 @@ The Rust fork of pi_agent_rust carries an OpenAI/Anthropic license rider on all 
 
 ## Solution
 
-Clean-room Go implementation of Skaffen, studying pi-mono's (TypeScript, clean MIT, 22K stars) architecture for proven patterns. Go is already Demarch's systems language (14+ modules: intercore, intermute, autarch, intermap, etc.), compiles in 1-5 seconds, produces single binaries, and shares the L1 kernel's language for future native integration.
+Clean-room Go implementation of Skaffen, studying pi-mono's (TypeScript, clean MIT, 22K stars) architecture for proven patterns. Go is already Sylveste's systems language (14+ modules: intercore, intermute, autarch, intermap, etc.), compiles in 1-5 seconds, produces single binaries, and shares the L1 kernel's language for future native integration.
 
 ## Features
 

@@ -1,13 +1,13 @@
 # PRD: Monorepo Consolidation Batch 1 — Dedup, Security, Phase Contract
 
 **Date:** 2026-03-22
-**Epic:** Demarch-og7m
+**Epic:** Sylveste-og7m
 **Beads:** .10 (P0), .11, .13, .14, .15, .16, .25 (all P1)
 **Brainstorm:** `docs/brainstorms/2026-03-22-monorepo-consolidation-kernel-expansion-brainstorm.md`
 
 ## Problem
 
-Multi-agent analysis identified 29 systemic issues across the Demarch monorepo. Three cross-cutting patterns need immediate attention:
+Multi-agent analysis identified 29 systemic issues across the Sylveste monorepo. Three cross-cutting patterns need immediate attention:
 
 1. **Active drift** — Skaffen copy-forks of Alwe/Zaka are diverging (P0). Bug fixes won't propagate.
 2. **Security gaps** — Agent impersonation via unauthenticated X-Agent-ID and bead content poisoning via unauthenticated `bd set-state` are exploitable now on localhost.
@@ -17,7 +17,7 @@ These block further autonomous operation: a poisoned bead state can hijack a spr
 
 ## Scope
 
-7 child beads from Demarch-og7m. Execution order follows dependency graph:
+7 child beads from Sylveste-og7m. Execution order follows dependency graph:
 
 ```
 .10 (Skaffen dedup) ← standalone, can start immediately

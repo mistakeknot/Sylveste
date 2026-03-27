@@ -1,9 +1,9 @@
 # Correctness Review: Interserve Orchestration Modes
 
 **Reviewed files:**
-- `/home/mk/projects/Demarch/docs/plans/2026-02-25-interserve-orchestration-modes.md`
-- `/home/mk/projects/Demarch/docs/plans/2026-02-25-interserve-orchestration-modes.exec.yaml`
-- `/home/mk/projects/Demarch/os/clavain/scripts/dispatch.sh` (existing runtime; examined for interface contract)
+- `/home/mk/projects/Sylveste/docs/plans/2026-02-25-interserve-orchestration-modes.md`
+- `/home/mk/projects/Sylveste/docs/plans/2026-02-25-interserve-orchestration-modes.exec.yaml`
+- `/home/mk/projects/Sylveste/os/clavain/scripts/dispatch.sh` (existing runtime; examined for interface contract)
 
 **Reviewer:** Julik (fd-correctness)
 **Date:** 2026-02-25

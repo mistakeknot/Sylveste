@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-ome7
+bead: Sylveste-ome7
 stage: design
 requirements:
   - "F1: Parallel tmux executor for intermix run_cell"
@@ -14,7 +14,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-ome7
+**Bead:** Sylveste-ome7
 **Goal:** Build parallel stress test infrastructure in intermix, wire intermux supervision, and run a 9-cell campaign against chi/zod/click.
 
 **Architecture:** Modify intermix's executor to launch Skaffen in named tmux sessions for parallel execution. Per-cell JSONL isolation eliminates write races. intermux monitors session health via its existing watcher. Failures auto-create debug beads, and report_matrix clusters them into pattern beads.
@@ -29,7 +29,7 @@ requirements:
 - 9 Skaffen instances run simultaneously in separate tmux sessions
 - intermux `list_agents` shows all 9 stress test sessions
 - Each cell produces its own JSONL result file
-- Failed cells automatically have beads created under Demarch-ome7
+- Failed cells automatically have beads created under Sylveste-ome7
 - `report_matrix` produces a heatmap showing pass/fail per repo×task
 - Skaffen evidence files are preserved in the campaign results directory
 
@@ -49,7 +49,7 @@ requirements:
 
 ### Task 1: Per-Cell JSONL and Run File Isolation
 
-**Beads:** Demarch-sna1 (F1)
+**Beads:** Sylveste-sna1 (F1)
 **Files:**
 - Modify: `interverse/intermix/internal/eval/state.go`
 - Modify: `interverse/intermix/internal/eval/tools.go`
@@ -216,7 +216,7 @@ git commit -m "feat(intermix): add per-cell JSONL paths and parallel state recon
 
 ### Task 2: Tmux-Based Skaffen Spawner
 
-**Beads:** Demarch-sna1 (F1)
+**Beads:** Sylveste-sna1 (F1)
 **Files:**
 - Modify: `interverse/intermix/internal/eval/runner.go`
 - Test: `interverse/intermix/internal/eval/runner_test.go`
@@ -389,7 +389,7 @@ git commit -m "feat(intermix): tmux-based Skaffen spawner with intermux-compatib
 
 ### Task 3: Parallel Batch Runner
 
-**Beads:** Demarch-sna1 (F1), Demarch-3795 (F2)
+**Beads:** Sylveste-sna1 (F1), Sylveste-3795 (F2)
 **Files:**
 - Create: `interverse/intermix/internal/eval/parallel.go`
 - Create: `interverse/intermix/internal/eval/parallel_test.go`
@@ -700,7 +700,7 @@ git commit -m "feat(intermix): parallel batch runner with tmux sessions and per-
 
 ### Task 4: Evidence Harvesting
 
-**Beads:** Demarch-yvdy (F4)
+**Beads:** Sylveste-yvdy (F4)
 **Files:**
 - Create: `interverse/intermix/internal/eval/evidence.go`
 - Create: `interverse/intermix/internal/eval/evidence_test.go`
@@ -849,7 +849,7 @@ git commit -m "feat(intermix): evidence harvesting from Skaffen sessions to camp
 
 ### Task 5: Debug Bead Creation
 
-**Beads:** Demarch-utpb (F3)
+**Beads:** Sylveste-utpb (F3)
 **Files:**
 - Create: `interverse/intermix/internal/eval/bead.go`
 - Create: `interverse/intermix/internal/eval/bead_test.go`
@@ -1000,7 +1000,7 @@ func CreateDebugBead(cr CellResult, parentBeadID, evidenceExcerpt, paneCapture s
 		return ""
 	}
 
-	// Parse bead ID from output: "✓ Created issue: Demarch-xxxx — ..."
+	// Parse bead ID from output: "✓ Created issue: Sylveste-xxxx — ..."
 	beadID := parseBeadIDFromOutput(string(out))
 	if beadID == "" {
 		return ""
@@ -1074,7 +1074,7 @@ func severityToPriority(severity string) string {
 }
 
 func parseBeadIDFromOutput(output string) string {
-	// Output format: "✓ Created issue: Demarch-xxxx — ..."
+	// Output format: "✓ Created issue: Sylveste-xxxx — ..."
 	const marker = "Created issue: "
 	idx := strings.Index(output, marker)
 	if idx < 0 {
@@ -1111,7 +1111,7 @@ git commit -m "feat(intermix): auto-create debug beads on failure with pattern c
 
 ### Task 6: Report Matrix with Heatmap and Pattern Beads
 
-**Beads:** Demarch-7xak (F5)
+**Beads:** Sylveste-7xak (F5)
 **Files:**
 - Modify: `interverse/intermix/internal/eval/report.go`
 - Modify: `interverse/intermix/internal/eval/report_test.go`
@@ -1312,7 +1312,7 @@ git commit -m "feat(intermix): ASCII heatmap and per-cell-dir report generation"
 
 ### Task 7: MCP Tools for Batch Operations
 
-**Beads:** Demarch-sna1 (F1), Demarch-3795 (F2)
+**Beads:** Sylveste-sna1 (F1), Sylveste-3795 (F2)
 **Files:**
 - Modify: `interverse/intermix/internal/eval/tools.go`
 - Modify: `interverse/intermix/internal/eval/tools_test.go`
@@ -1648,7 +1648,7 @@ git commit -m "feat(intermix): run_batch and poll_batch MCP tools for parallel s
 
 ### Task 8: Build and Verify intermix Binary
 
-**Beads:** Demarch-sna1 (F1)
+**Beads:** Sylveste-sna1 (F1)
 **Files:**
 - Modify: `interverse/intermix/cmd/intermix-mcp/main.go` (no changes needed if RegisterAll already covers new tools)
 
@@ -1685,7 +1685,7 @@ git commit -m "build(intermix): rebuild binary with parallel stress test tools"
 
 ### Task 9: Run the 9-Cell Campaign
 
-**Beads:** Demarch-vmen (F6)
+**Beads:** Sylveste-vmen (F6)
 **Files:**
 - No new files — uses the built intermix tools
 
@@ -1707,14 +1707,14 @@ cd /tmp/intermix-campaign-$(date +%Y%m%d)
 
 Use intermix MCP `init_matrix` tool with the skaffen-stress.yaml manifest, filtered to our 3 repos:
 - Manifest: `interverse/intermix/examples/skaffen-stress.yaml`
-- Bead: `Demarch-ome7`
+- Bead: `Sylveste-ome7`
 
 **Step 4: Launch all 9 cells**
 
 Use intermix MCP `run_batch` tool:
 - repos: `["chi", "zod", "click"]`
 - tasks: `["add-test", "refactor-extract", "add-feature"]`
-- bead_id: `Demarch-ome7`
+- bead_id: `Sylveste-ome7`
 
 **Step 5: Monitor via intermux**
 
@@ -1726,7 +1726,7 @@ While cells run, periodically check:
 **Step 6: Collect results**
 
 Use intermix MCP `poll_batch` tool:
-- bead_id: `Demarch-ome7`
+- bead_id: `Sylveste-ome7`
 - timeout: `600s`
 
 This waits for all sessions, classifies results, creates debug beads, and generates the report.
@@ -1749,6 +1749,6 @@ git commit -m "data: first 9-cell stress test campaign results"
 ```
 
 <verify>
-- run: `bd children Demarch-ome7 2>/dev/null | jq 'length'`
+- run: `bd children Sylveste-ome7 2>/dev/null | jq 'length'`
   expect: contains "6"
 </verify>

@@ -21,13 +21,13 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-37 sessions and 112 commits over 3 days of Claude Code usage in the Demarch monorepo produced analytics-driven suggestions across 4 categories: instruction additions, features to try, usage pattern changes, and ambitious future workflows. The evaluation must determine which suggestions are worth acting on.
+37 sessions and 112 commits over 3 days of Claude Code usage in the Sylveste monorepo produced analytics-driven suggestions across 4 categories: instruction additions, features to try, usage pattern changes, and ambitious future workflows. The evaluation must determine which suggestions are worth acting on.
 
 ## Review Approach
 
 ### 1. Cross
 
-- Cross-reference each proposed CLAUDE.md addition against the existing 5-layer instruction hierarchy: ~/.claude/CLAUDE.md, ~/projects/CLAUDE.md, Demarch/CLAUDE.md, os/clavain/CLAUDE.md, and module-level CLAUDE.md files
+- Cross-reference each proposed CLAUDE.md addition against the existing 5-layer instruction hierarchy: ~/.claude/CLAUDE.md, ~/projects/CLAUDE.md, Sylveste/CLAUDE.md, os/clavain/CLAUDE.md, and module-level CLAUDE.md files
 
 ### 2. Detect redundancy: identify suggested additions that rest...
 
@@ -64,7 +64,7 @@ A good review from this agent:
 - Recommends the smallest viable fix, not an architecture overhaul — one diff hunk, not a rewrite
 - Frames uncertain findings as questions: "Does this handle X?" not "This doesn't handle X"
 - Every proposed addition should be placeable at exactly one layer with a clear reason why it doesn't belong higher or lower in the hierarchy
-- After all additions are applied, the Demarch CLAUDE.md should remain under the established line budget and free of internal contradictions
+- After all additions are applied, the Sylveste CLAUDE.md should remain under the established line budget and free of internal contradictions
 
 ## Decision Lens
 

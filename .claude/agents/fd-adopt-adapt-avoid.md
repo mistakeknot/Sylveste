@@ -15,24 +15,24 @@ A technology adoption specialist who synthesizes technical assessments into acti
 Read all project documentation before reviewing:
 1. `CLAUDE.md` and `AGENTS.md` in the project root
 2. `docs/research/imbue-darwinian-evolver-arc-agi-2-review-2026-02-27.md` — the primary research synthesis
-3. `PHILOSOPHY.md` — Demarch's design principles (receipts, earned authority, composition)
+3. `PHILOSOPHY.md` — Sylveste's design principles (receipts, earned authority, composition)
 
 Ground every finding in the project's actual patterns and conventions.
 Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-This review batch evaluates whether Imbue's Darwinian Evolver evolutionary optimization patterns should be adopted into Demarch's autonomous software agency platform. The primary review target is the research synthesis document and four child beads covering model routing, learning logs, verification filters, and agent strategy evolution.
+This review batch evaluates whether Imbue's Darwinian Evolver evolutionary optimization patterns should be adopted into Sylveste's autonomous software agency platform. The primary review target is the research synthesis document and four child beads covering model routing, learning logs, verification filters, and agent strategy evolution.
 
 ## Review Approach
 
 ### 1. Organism/Evaluator/Mutator abstraction classification
 
-- Classify the Organism/Evaluator/Mutator abstraction for each of the four bead scopes (Clavain routing, learning log compounding, Interflux verification, Autarch agent strategies): is the three-component interface a useful design pattern worth adopting even without full evolutionary dynamics, or does Demarch already have equivalent separation?
+- Classify the Organism/Evaluator/Mutator abstraction for each of the four bead scopes (Clavain routing, learning log compounding, Interflux verification, Autarch agent strategies): is the three-component interface a useful design pattern worth adopting even without full evolutionary dynamics, or does Sylveste already have equivalent separation?
 
 ### 2. Sigmoid selection classification
 
-- Classify sigmoid-weighted parent selection with novelty bonus: for which Demarch module (if any) does fitness-weighted selection over a maintained population represent a real improvement over current static configuration, given that A/B testing is the simpler alternative?
+- Classify sigmoid-weighted parent selection with novelty bonus: for which Sylveste module (if any) does fitness-weighted selection over a maintained population represent a real improvement over current static configuration, given that A/B testing is the simpler alternative?
 
 ### 3. Learning log classification
 
@@ -44,11 +44,11 @@ This review batch evaluates whether Imbue's Darwinian Evolver evolutionary optim
 
 ### 5. Implementation priority ordering
 
-- Produce an implementation priority ordering across all adopted/adapted patterns, considering: (a) integration complexity (infrastructure-invasive vs. additive), (b) expected impact on Demarch's primary metric (cost-per-landable-change), and (c) reversibility if the pattern underperforms
+- Produce an implementation priority ordering across all adopted/adapted patterns, considering: (a) integration complexity (infrastructure-invasive vs. additive), (b) expected impact on Sylveste's primary metric (cost-per-landable-change), and (c) reversibility if the pattern underperforms
 
 ### 6. Inspire-only vs avoid distinction
 
-- Identify which Imbue patterns are 'inspire-only' because the concept is valid but the population framing is wrong for Demarch's workload, vs. 'avoid' because the pattern conflicts with Demarch's design principles (e.g., single enforcement point per concern, phase-gate lifecycle)
+- Identify which Imbue patterns are 'inspire-only' because the concept is valid but the population framing is wrong for Sylveste's workload, vs. 'avoid' because the pattern conflicts with Sylveste's design principles (e.g., single enforcement point per concern, phase-gate lifecycle)
 
 ## What NOT to Flag
 

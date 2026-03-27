@@ -9,7 +9,7 @@ Shared middleware for mcp-go that wraps MCP tool handlers with centralized cross
 
 ## Why This Approach
 
-Each Demarch MCP server (interlock 12 tools, intermap 9, interserve 3, intermux 7) implements ad-hoc error handling. Interlock just adopted ToolError via manual `toToolError()` calls in every handler. This middleware centralizes that pattern.
+Each Sylveste MCP server (interlock 12 tools, intermap 9, interserve 3, intermux 7) implements ad-hoc error handling. Interlock just adopted ToolError via manual `toToolError()` calls in every handler. This middleware centralizes that pattern.
 
 ## Key Discovery
 
@@ -19,7 +19,7 @@ type ToolHandlerMiddleware func(ToolHandlerFunc) ToolHandlerFunc
 func WithToolHandlerMiddleware(middleware ToolHandlerMiddleware) ServerOption
 ```
 
-No Demarch server uses it yet. This is the natural integration point.
+No Sylveste server uses it yet. This is the natural integration point.
 
 ## Key Decisions
 

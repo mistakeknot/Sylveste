@@ -17,7 +17,7 @@ Total: 16 independent review perspectives producing ~100 findings, distilled int
 
 ## Why This Approach
 
-The sprint flow is Demarch's core loop — PHILOSOPHY.md says "if this journey is slow, brittle, or opaque, the platform fails regardless of how elegant its architecture is." Rather than adding incremental fixes, this brainstorm synthesizes cross-domain analysis to identify structural improvements that compound.
+The sprint flow is Sylveste's core loop — PHILOSOPHY.md says "if this journey is slow, brittle, or opaque, the platform fails regardless of how elegant its architecture is." Rather than adding incremental fixes, this brainstorm synthesizes cross-domain analysis to identify structural improvements that compound.
 
 ## Key Decisions
 

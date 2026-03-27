@@ -125,7 +125,7 @@ What are you searching for?
 
 ### 7. exa-mcp-server (web search)
 
-**When:** You need general web search results. External tool, not owned by Demarch.
+**When:** You need general web search results. External tool, not owned by Sylveste.
 
 - Accessed via interflux's MCP server configuration
 - Requires `EXA_API_KEY` environment variable

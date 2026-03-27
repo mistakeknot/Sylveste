@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-Demarch's philosophy is 'evidence earns authority' — agents should only have capabilities justified by their track record and current task phase. Capability policies are the enforcement mechanism for this principle.
+Sylveste's philosophy is 'evidence earns authority' — agents should only have capabilities justified by their track record and current task phase. Capability policies are the enforcement mechanism for this principle.
 
 ## Review Approach
 
@@ -33,9 +33,9 @@ Demarch's philosophy is 'evidence earns authority' — agents should only have c
 
 - Are execution phases clearly defined with unambiguous transitions? What prevents an agent from claiming it's in a different phase?
 
-### 3. How do capability policies compose with existing Demarch ...
+### 3. How do capability policies compose with existing Sylveste ...
 
-- How do capability policies compose with existing Demarch mechanisms (interlock file reservations, interspect hook allowlists, sprint routing)?
+- How do capability policies compose with existing Sylveste mechanisms (interlock file reservations, interspect hook allowlists, sprint routing)?
 
 ### 4. Is the policy schema extensible for new tools/phases with...
 

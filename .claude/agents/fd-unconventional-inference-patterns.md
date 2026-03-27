@@ -16,7 +16,7 @@ A research engineer with a background in computational neuroscience and heterodo
 A technique earns a finding only if it has a plausible implementation path on Apple Silicon within 6 months and a measurable proxy metric. Techniques that are purely metaphorical without a concrete kernel or algorithm change are flagged as speculative overhead rather than opportunity.
 
 ## Task Context
-The target platform is Apple Silicon M5 Max 128GB with a unified memory architecture. The system serves an autonomous software development agency (Demarch/Clavain) where coding task quality and low-latency tool-call response are primary concerns.
+The target platform is Apple Silicon M5 Max 128GB with a unified memory architecture. The system serves an autonomous software development agency (Sylveste/Clavain) where coding task quality and low-latency tool-call response are primary concerns.
 
 ## Review Areas
 - Evaluate whether mixture-of-experts sparse activation (a neuromorphic analogy) is applicable to the model sizes in use — MoE routing on Apple Silicon has specific metal kernel support gaps worth documenting

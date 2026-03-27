@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-The research agent produces assess-*.md documents following the pattern in docs/research/assess-beads-viewer-repos.md, outputting structured verdicts (adopt/port-partially/inspire-only/skip) with per-component analysis and integration opportunities mapped to Demarch modules (Clavain, Autarch, Intercore, Interverse, interbase).
+The research agent produces assess-*.md documents following the pattern in docs/research/assess-beads-viewer-repos.md, outputting structured verdicts (adopt/port-partially/inspire-only/skip) with per-component analysis and integration opportunities mapped to Sylveste modules (Clavain, Autarch, Intercore, Interverse, interbase).
 
 ## Review Approach
 
@@ -37,13 +37,13 @@ The research agent produces assess-*.md documents following the pattern in docs/
 
 - Estimate porting effort in session-hours: single-session port (under 4h) vs sprint-level effort (multiple sessions)
 
-### 4. For language boundary issues: if Demarch's target module ...
+### 4. For language boundary issues: if Sylveste's target module ...
 
-- Check for language boundary issues: if Demarch's target module is Go and the external repo is Python (or vice versa), document the FFI or rewrite cost
+- Check for language boundary issues: if Sylveste's target module is Go and the external repo is Python (or vice versa), document the FFI or rewrite cost
 
 ### 5. Identify dependency conflicts: does adopting this introdu...
 
-- Identify dependency conflicts: does adopting this introduce a version conflict with Demarch's existing go.mod, pyproject.toml, or interbase dependencies
+- Identify dependency conflicts: does adopting this introduce a version conflict with Sylveste's existing go.mod, pyproject.toml, or interbase dependencies
 
 ### 6. Determine whether a robot/API mode exists that allows use...
 
@@ -52,7 +52,7 @@ The research agent produces assess-*.md documents following the pattern in docs/
 ## What NOT to Flag
 
 - fd-code-quality-and-maturity covers quality signals and test coverage — this agent focuses on porting mechanics, not quality assessment
-- fd-demarch-module-fit covers which Demarch modules are the integration targets — this agent focuses on how hard the integration will be, not where it goes
+- fd-sylveste-module-fit covers which Sylveste modules are the integration targets — this agent focuses on how hard the integration will be, not where it goes
 - fd-security-and-safety-posture covers hook safety and destructive command risks — this agent focuses on build and API compatibility, not security
 - Only flag the above if they are deeply entangled with your specialist focus and another agent would miss the nuance
 

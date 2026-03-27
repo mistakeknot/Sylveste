@@ -86,7 +86,7 @@ In `main()`, change `runTUI(agg)` to `runTUI(agg, logHandler)`.
 
 **Step 5: Run existing tests to verify no regression**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go build ./cmd/bigend/`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go build ./cmd/bigend/`
 Expected: builds without errors
 
 **Step 6: Commit**
@@ -176,7 +176,7 @@ Check that `pkgtui "github.com/mistakeknot/autarch/pkg/tui"` is already imported
 
 **Step 5: Build check**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go build ./cmd/autarch/`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go build ./cmd/autarch/`
 Expected: builds without errors
 
 **Step 6: Commit**
@@ -321,7 +321,7 @@ shared.HelpBindingFromKey(keys.ToggleLogs),
 
 **Step 9: Build and test**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go build ./cmd/bigend/`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go build ./cmd/bigend/`
 Expected: builds without errors
 
 **Step 10: Commit**
@@ -391,7 +391,7 @@ This works because `logPane` is a pointer field — the copied Model still point
 
 **Step 3: Build check**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go build ./cmd/bigend/`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go build ./cmd/bigend/`
 Expected: builds without errors
 
 **Step 4: Commit**
@@ -508,7 +508,7 @@ func TestRestoreTerminalOnPanic_ResetsTerminalAndExits(t *testing.T) {
 
 **Step 3: Run tests**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go test ./pkg/tui/ -run TestRestoreTerminal -v -race`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go test ./pkg/tui/ -run TestRestoreTerminal -v -race`
 Expected: PASS (both no-panic and subprocess tests)
 
 **Step 4: Add defer to standalone Bigend runTUI**
@@ -537,12 +537,12 @@ defer pkgtui.RestoreTerminalOnPanic()
 
 **Step 7: Build all entry points**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go build ./cmd/bigend/ && go build ./cmd/autarch/`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go build ./cmd/bigend/ && go build ./cmd/autarch/`
 Expected: both build without errors
 
 **Step 8: Run full test suite**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go test ./pkg/tui/... ./internal/tui/... -race -count=1`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go test ./pkg/tui/... ./internal/tui/... -race -count=1`
 Expected: all pass
 
 **Step 9: Commit**
@@ -564,19 +564,19 @@ shows cursor) on panic so the terminal is usable after a crash."
 
 **Step 1: Build all binaries**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go build ./cmd/...`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go build ./cmd/...`
 Expected: all build without errors
 
 **Step 2: Run full test suite with race detector**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go test ./... -race -count=1 -timeout=120s`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go test ./... -race -count=1 -timeout=120s`
 Expected: all pass
 
 **Step 3: Verify LogHandler integration manually**
 
 The `--tui` flag activates the log handler. Verify the binary runs:
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && timeout 3 go run ./cmd/bigend/ --tui 2>&1 || true`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && timeout 3 go run ./cmd/bigend/ --tui 2>&1 || true`
 Expected: TUI starts (may error on missing config, but should not panic)
 
 **Step 4: Commit if any fixups needed**

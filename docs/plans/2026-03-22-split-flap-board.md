@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-r24y
+bead: Sylveste-r24y
 brainstorm: docs/brainstorms/2026-03-22-split-flap-board-brainstorm.md
 stage: planned
 ---

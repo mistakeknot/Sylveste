@@ -10,8 +10,8 @@
 2. Clone your fork:
 
 ```bash
-git clone https://github.com/<your-username>/Demarch.git
-cd Demarch
+git clone https://github.com/<your-username>/Sylveste.git
+cd Sylveste
 ```
 
 Each subproject (`os/clavain`, `interverse/interflux`, `core/intermute`, etc.) keeps its own `.git` and GitHub repo. If you're contributing to a subproject, fork and clone that repo directly.
@@ -121,7 +121,7 @@ your-plugin/
 ### Naming conventions
 
 - All module names are **lowercase**: `interflux`, `intermute`, `interkasten`
-- Exceptions: **Clavain** (proper noun), **Skaffen** (proper noun), **Demarch** (project name), **Interverse** (ecosystem name), **Autarch** (proper noun), **Interspect** (proper noun)
+- Exceptions: **Clavain** (proper noun), **Skaffen** (proper noun), **Sylveste** (project name), **Interverse** (ecosystem name), **Autarch** (proper noun), **Interspect** (proper noun)
 - GitHub repos match: `github.com/mistakeknot/interflux`
 
 ## Key files
@@ -136,7 +136,7 @@ your-plugin/
 
 ## Setting up a new subproject
 
-If you're creating a new module or subproject within Demarch, run:
+If you're creating a new module or subproject within Sylveste, run:
 
 ```
 /clavain:project-onboard

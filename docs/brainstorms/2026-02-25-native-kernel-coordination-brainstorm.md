@@ -19,7 +19,7 @@ After this work, Intercore becomes the single coordination authority. Intermute 
 
 ### Problem
 
-Multi-agent coordination in Demarch has 3 known TOCTOU bugs and 8 documented architectural seams:
+Multi-agent coordination in Sylveste has 3 known TOCTOU bugs and 8 documented architectural seams:
 
 1. **Reserve() transaction isolation** — Intermute's `Reserve()` uses default `BeginTx` (not `BEGIN IMMEDIATE`). Under concurrent HTTP requests without `MaxOpenConns(1)`, two agents can both pass the conflict check and both insert.
 2. **Advisory dispatch limits** — `global_max_dispatches` checked without a lock; concurrent spawns exceed limits.
@@ -38,7 +38,7 @@ Multi-agent coordination in Demarch has 3 known TOCTOU bugs and 8 documented arc
 
 ### Why NOT a new daemon or gRPC
 
-- Same-machine guarantee (all Demarch agents run on one host) means shared SQLite is lowest-latency.
+- Same-machine guarantee (all Sylveste agents run on one host) means shared SQLite is lowest-latency.
 - No new process to manage, no new protocol to maintain.
 - SQLite WAL mode handles concurrent readers + single writer efficiently.
 

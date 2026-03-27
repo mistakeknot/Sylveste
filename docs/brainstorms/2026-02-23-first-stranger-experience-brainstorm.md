@@ -6,7 +6,7 @@
 
 ## What We're Building
 
-A complete onboarding experience so that a developer who has never seen Demarch can go from zero to running `/clavain:route` and getting work — in under 5 minutes.
+A complete onboarding experience so that a developer who has never seen Sylveste can go from zero to running `/clavain:route` and getting work — in under 5 minutes.
 
 Three deliverables:
 1. **Root README.md** — user-facing landing page (replaces current developer-facing structure doc)
@@ -19,7 +19,7 @@ Three deliverables:
 
 1. **Claude Code power user** — already has Claude Code, wants Clavain. Quick Start path (~2 min).
 2. **AI-curious developer** — used Copilot/Cursor, not Claude Code. Full Setup guide needed.
-3. **Open-source contributor** — wants to build/modify Demarch itself. Dev Setup with Go, tests, all pillars.
+3. **Open-source contributor** — wants to build/modify Sylveste itself. Dev Setup with Go, tests, all pillars.
 
 Progressive disclosure: README leads with Quick Start, links to deeper guides.
 
@@ -46,10 +46,10 @@ The stranger runs `/clavain:route` with no arguments. Discovery finds beads or o
 ### Distribution: GitHub Raw
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mistakeknot/Demarch/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/mistakeknot/Sylveste/main/install.sh | bash
 ```
 
-Zero infrastructure. Updates on push to main. Short URL (get.demarch.dev) can be added later.
+Zero infrastructure. Updates on push to main. Short URL (get.sylveste.dev) can be added later.
 
 ## Key Decisions
 
@@ -67,7 +67,7 @@ Zero infrastructure. Updates on push to main. Short URL (get.demarch.dev) can be
 
 1. **Should install.sh also init beads?** Beads is project-scoped (`bd init` in a repo). The install script runs outside any specific project. Maybe: init beads only if CWD is a git repo, skip otherwise with a hint.
 
-2. **GitHub repo visibility** — Demarch repo is currently private(?). First-stranger experience requires the repo (or at least install.sh and marketplace) to be public. Needs owner decision on what to open-source.
+2. **GitHub repo visibility** — Sylveste repo is currently private(?). First-stranger experience requires the repo (or at least install.sh and marketplace) to be public. Needs owner decision on what to open-source.
 
 3. **Claude Code marketplace access** — does `claude plugins marketplace add` work for any user, or does the marketplace need to be public/approved? Need to verify.
 
@@ -85,7 +85,7 @@ Zero infrastructure. Updates on push to main. Short URL (get.demarch.dev) can be
 
 **Out of scope (future work):**
 - ic binary distribution (separate bead)
-- Custom domain (get.demarch.dev)
+- Custom domain (get.sylveste.dev)
 - Video walkthrough
 - Autarch TUI onboarding
 - Automated CI for install script testing

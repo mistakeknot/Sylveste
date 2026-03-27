@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-4wm
+bead: Sylveste-4wm
 stage: design
 requirements:
   - F1: Handoff note writer (PreCompact hook in agent-runner)
@@ -12,7 +12,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-4wm
+**Bead:** Sylveste-4wm
 **Goal:** Enable intercom container agents to resume conversations with structured context after session resets.
 
 **Architecture:** The agent writes a `handoff.json` file during PreCompact (context overflow). On next session startup, agent-runner reads the handoff note and prepends it to the system prompt. If no handoff exists (crash), context is reconstructed from ambient state (beads, git, conversation archives). The Rust host also gets an optional `previousContext` field for future host-side reconstruction.
@@ -122,11 +122,11 @@ git commit -m "feat(intercom): add previousContext field to ContainerInput proto
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/apps/intercom && npm run rust:build:release 2>&1 | tail -3`
+- run: `cd /home/mk/projects/Sylveste/apps/intercom && npm run rust:build:release 2>&1 | tail -3`
   expect: exit 0
-- run: `grep -c 'previousContext' /home/mk/projects/Demarch/apps/intercom/container/shared/protocol.ts`
+- run: `grep -c 'previousContext' /home/mk/projects/Sylveste/apps/intercom/container/shared/protocol.ts`
   expect: contains "1"
-- run: `grep -c 'previous_context' /home/mk/projects/Demarch/apps/intercom/rust/intercom-core/src/container.rs`
+- run: `grep -c 'previous_context' /home/mk/projects/Sylveste/apps/intercom/rust/intercom-core/src/container.rs`
   expect: contains "2"
 </verify>
 
@@ -292,7 +292,7 @@ describe('handoff', () => {
         created_at: '2026-03-10T14:30:00Z',
         source: 'agent',
         session_id: 'abc',
-        task: { bead_id: 'Demarch-4wm', summary: 'Building resumption' },
+        task: { bead_id: 'Sylveste-4wm', summary: 'Building resumption' },
         decisions: ['Use system prompt prepend'],
         pending: ['Implement F2'],
         gotchas: ['Avoid full replay'],
@@ -506,7 +506,7 @@ git commit -m "feat(intercom): add handoff note schema, writer, reader, and reco
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/apps/intercom/container/agent-runner && npx vitest run src/handoff.test.ts 2>&1 | tail -5`
+- run: `cd /home/mk/projects/Sylveste/apps/intercom/container/agent-runner && npx vitest run src/handoff.test.ts 2>&1 | tail -5`
   expect: exit 0
 </verify>
 
@@ -579,9 +579,9 @@ git commit -m "feat(intercom): write handoff note in PreCompact hook"
 ```
 
 <verify>
-- run: `grep -c 'writeHandoffNote' /home/mk/projects/Demarch/apps/intercom/container/agent-runner/src/index.ts`
+- run: `grep -c 'writeHandoffNote' /home/mk/projects/Sylveste/apps/intercom/container/agent-runner/src/index.ts`
   expect: contains "1"
-- run: `grep -c 'import.*handoff' /home/mk/projects/Demarch/apps/intercom/container/agent-runner/src/index.ts`
+- run: `grep -c 'import.*handoff' /home/mk/projects/Sylveste/apps/intercom/container/agent-runner/src/index.ts`
   expect: contains "1"
 </verify>
 
@@ -679,11 +679,11 @@ git commit -m "feat(intercom): read handoff note on startup, inject into system 
 ```
 
 <verify>
-- run: `grep -c 'readHandoffNote' /home/mk/projects/Demarch/apps/intercom/container/agent-runner/src/index.ts`
+- run: `grep -c 'readHandoffNote' /home/mk/projects/Sylveste/apps/intercom/container/agent-runner/src/index.ts`
   expect: contains "1"
-- run: `grep -c 'reconstructAmbientContext' /home/mk/projects/Demarch/apps/intercom/container/agent-runner/src/index.ts`
+- run: `grep -c 'reconstructAmbientContext' /home/mk/projects/Sylveste/apps/intercom/container/agent-runner/src/index.ts`
   expect: contains "1"
-- run: `grep -c 'resumeContext' /home/mk/projects/Demarch/apps/intercom/container/agent-runner/src/index.ts`
+- run: `grep -c 'resumeContext' /home/mk/projects/Sylveste/apps/intercom/container/agent-runner/src/index.ts`
   expect: contains "4"
 </verify>
 
@@ -724,8 +724,8 @@ Expected: Container image builds successfully with the new handoff.ts module.
 Only commit if fixes were required. Otherwise, all code is already committed from previous tasks.
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/apps/intercom && npm run rust:build:release 2>&1 | tail -3`
+- run: `cd /home/mk/projects/Sylveste/apps/intercom && npm run rust:build:release 2>&1 | tail -3`
   expect: exit 0
-- run: `cd /home/mk/projects/Demarch/apps/intercom && npm run rust:test 2>&1 | tail -3`
+- run: `cd /home/mk/projects/Sylveste/apps/intercom && npm run rust:test 2>&1 | tail -3`
   expect: exit 0
 </verify>

@@ -1,6 +1,6 @@
 # Dicklesworthstone Repo Triage (2026-02-27)
 
-Evaluated all 170 repositories cloned under `research/` for Demarch integration/inspiration relevance.
+Evaluated all 170 repositories cloned under `research/` for Sylveste integration/inspiration relevance.
 
 ## Tier Summary
 

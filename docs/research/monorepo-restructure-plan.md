@@ -1,6 +1,6 @@
-# Demarch Ecosystem Reorganization Plan
+# Sylveste Ecosystem Reorganization Plan
 
-**Objective:** Rename the overarching project to **Demarch** (a nod to Alastair Reynolds' Democratic Anarchists, reflecting the continuous polling and consensus-driven architecture of the multi-agent system) while preserving **Interverse** as the specific name for the ecosystem of `inter-*` companion plugins. Restructure the monorepo to explicitly reflect the 3-Layer Architecture defined in the vision documents.
+**Objective:** Rename the overarching project to **Sylveste** (a nod to Alastair Reynolds' Democratic Anarchists, reflecting the continuous polling and consensus-driven architecture of the multi-agent system) while preserving **Interverse** as the specific name for the ecosystem of `inter-*` companion plugins. Restructure the monorepo to explicitly reflect the 3-Layer Architecture defined in the vision documents.
 
 ## Key Architectural Facts
 
@@ -47,7 +47,7 @@ External symlinks:
 
 **Target Structure:**
 ```text
-Demarch/                       ← renamed root repo
+Sylveste/                       ← renamed root repo
 ├── apps/                      # Layer 3: Swappable TUI interfaces
 │   └── autarch/
 ├── os/                        # Layer 2: Workflow & Policy
@@ -153,7 +153,7 @@ sdk/*
 ```
 
 **2.2 Update `CLAUDE.md`:**
-Change the structure listing from `os/clavain/`, `plugins/`, `services/`, `infra/` to `os/clavain/`, `interverse/`, `core/`, `apps/autarch/`. Update the naming to clarify Demarch vs Interverse.
+Change the structure listing from `os/clavain/`, `plugins/`, `services/`, `infra/` to `os/clavain/`, `interverse/`, `core/`, `apps/autarch/`. Update the naming to clarify Sylveste vs Interverse.
 
 **2.3 Update `AGENTS.md`:**
 The module table (lines 33-64) references all old paths. Update every row:
@@ -186,16 +186,16 @@ Also update the docs convention note and roadmap script reference.
 
 **2.5 Update docs:**
 
-`docs/interverse-vision.md` — rename to `docs/demarch-vision.md`. Update content to clarify Demarch as the project name, Interverse as the plugin ecosystem.
+`docs/interverse-vision.md` — rename to `docs/sylveste-vision.md`. Update content to clarify Sylveste as the project name, Interverse as the plugin ecosystem.
 
-`docs/diagrams/ecosystem.html` — update `repoUrl` from `Interverse` to `Demarch`.
+`docs/diagrams/ecosystem.html` — update `repoUrl` from `Interverse` to `Sylveste`.
 
 `docs/architecture.md`, `docs/interverse-roadmap.md` — update any structural references.
 
 184 docs files reference old paths — most are in `docs/research/` and `docs/solutions/` which are historical records. **Do NOT mass-replace** in research docs (they describe the state at the time of writing). Only update living docs:
 - `docs/guides/*.md`
 - `docs/architecture.md`
-- `docs/interverse-roadmap.md` (rename to `docs/demarch-roadmap.md`)
+- `docs/interverse-roadmap.md` (rename to `docs/sylveste-roadmap.md`)
 - Root `README.md`
 
 ### Phase 3: Fix External Symlinks
@@ -204,18 +204,18 @@ Update compatibility symlinks in `/root/projects/`:
 
 ```bash
 # Fix Autarch
-ln -sfn /root/projects/Demarch/apps/autarch /root/projects/Autarch
+ln -sfn /root/projects/Sylveste/apps/autarch /root/projects/Autarch
 
 # Fix interlock
-ln -sfn /root/projects/Demarch/interverse/interlock /root/projects/interlock
+ln -sfn /root/projects/Sylveste/interverse/interlock /root/projects/interlock
 
 # Fix Linsenkasten (if the plugin still exists after rename to interlens)
-ln -sfn /root/projects/Demarch/interverse/linsenkasten /root/projects/Linsenkasten
+ln -sfn /root/projects/Sylveste/interverse/linsenkasten /root/projects/Linsenkasten
 ```
 
 Also create a backward-compat symlink for the old monorepo path:
 ```bash
-ln -sfn /root/projects/Demarch /root/projects/Interverse
+ln -sfn /root/projects/Sylveste /root/projects/Interverse
 ```
 
 ### Phase 4: Plugin Infrastructure Updates
@@ -241,34 +241,34 @@ Claude Code plugins reference paths internally. Check and update:
 ### Phase 5: Branding Updates
 
 **5.1 Rename identity in root docs:**
-- Project name: **Demarch** (the overall system)
+- Project name: **Sylveste** (the overall system)
 - **Interverse**: the ecosystem of `inter-*` plugins in `/interverse`
 - **Clavain**: the autonomous agency at `os/clavain/` (proper noun, capitalized)
 - **Autarch**: the TUI layer at `apps/autarch/`
 
 **5.2 Update naming in `CLAUDE.md` header:**
 ```markdown
-# Demarch
+# Sylveste
 
-Monorepo for the Demarch open-source autonomous software development agency platform.
+Monorepo for the Sylveste open-source autonomous software development agency platform.
 Interverse (`/interverse`) is the ecosystem of 33+ Claude Code companion plugins.
 ```
 
-**5.3 Update `docs/interverse-vision.md`** → `docs/demarch-vision.md`:
-- Introduce the Demarch name and philosophy
+**5.3 Update `docs/interverse-vision.md`** → `docs/sylveste-vision.md`:
+- Introduce the Sylveste name and philosophy
 - Redefine Interverse as the plugin ecosystem layer
 
 **5.4 Review TUI strings in Autarch:**
-- Grep `apps/autarch/` for "Interverse" references that should become "Demarch"
+- Grep `apps/autarch/` for "Interverse" references that should become "Sylveste"
 
 ### Phase 6: Repository Rename (Manual, Last)
 
 **Do this last**, after everything works internally. GitHub creates a redirect from the old URL automatically.
 
-1. **Rename on GitHub:** `mistakeknot/Interverse` → `mistakeknot/Demarch`
+1. **Rename on GitHub:** `mistakeknot/Interverse` → `mistakeknot/Sylveste`
 2. **Update root repo remote:**
    ```bash
-   git remote set-url origin https://github.com/mistakeknot/Demarch.git
+   git remote set-url origin https://github.com/mistakeknot/Sylveste.git
    ```
 3. **Subproject repos are unaffected** — they have their own GitHub repos (e.g., `mistakeknot/intermute`, `mistakeknot/interflux`) and don't reference the monorepo URL.
 
@@ -282,7 +282,7 @@ Interverse (`/interverse`) is the ecosystem of 33+ Claude Code companion plugins
 6. **Go builds:** `cd core/intermute && go build ./...` — verify build still works.
 7. **Commit:** Stage root repo changes and commit:
    ```
-   refactor: restructure monorepo to 3-layer Demarch architecture
+   refactor: restructure monorepo to 3-layer Sylveste architecture
 
    apps/   — Layer 3 (Autarch TUI)
    os/     — Layer 2 (Clavain agency)

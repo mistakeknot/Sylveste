@@ -8,7 +8,7 @@
 - `docs/prds/2026-02-17-heterogeneous-collaboration-routing.md` (Internal, High Authority)
 
 ## Key Answer
-The new routing architecture in Demarch transitions from simple homogeneous dispatch to a two-pronged system: a highly performant **Static Routing Table** driven by `config/routing.yaml` for deterministic agent and phase resolution, and an experimental **Heterogeneous Collaboration Routing** system that dynamically routes tasks to role-aware multi-agent topologies based on cost and quality tradeoffs.
+The new routing architecture in Sylveste transitions from simple homogeneous dispatch to a two-pronged system: a highly performant **Static Routing Table** driven by `config/routing.yaml` for deterministic agent and phase resolution, and an experimental **Heterogeneous Collaboration Routing** system that dynamically routes tasks to role-aware multi-agent topologies based on cost and quality tradeoffs.
 
 ## Findings
 

@@ -8,7 +8,7 @@
 
 ## Summary
 
-7 inconsistencies found: 2 high (contradictory terminology), 3 medium (phase sequence drift), 2 low (actor/prerequisites gaps). The bead reference (`Demarch-9ha`) is valid. Cross-document links resolve correctly. The most damaging inconsistencies are in severity terminology and phase naming, where two documents describing the same system use different vocabularies.
+7 inconsistencies found: 2 high (contradictory terminology), 3 medium (phase sequence drift), 2 low (actor/prerequisites gaps). The bead reference (`Sylveste-9ha`) is valid. Cross-document links resolve correctly. The most damaging inconsistencies are in severity terminology and phase naming, where two documents describing the same system use different vocabularies.
 
 ---
 
@@ -107,7 +107,7 @@ In the canonical sprint lifecycle, "review" is not a named phase -- it happens w
 ### 6. [LOW] Actor gap: first-install "stranger" prerequisites vs code-review "regular user"
 
 **first-install.md line 4:**
-> actor: stranger (new platform user, no prior Demarch exposure)
+> actor: stranger (new platform user, no prior Sylveste exposure)
 
 **first-install.md line 53:**
 > Prerequisite sprawl. Claude Code is the baseline requirement, but Go (for beads/intercore), and optional tools (Codex CLI, Node for some plugins) add up.
@@ -149,7 +149,7 @@ The README.md table (line 41) describes code-review.md as covering "Quality-gate
 
 ## Verified (No Issues)
 
-- **Bead reference:** All three documents reference `bead: Demarch-9ha`. Confirmed via `bd show Demarch-9ha` -- it exists as an OPEN epic titled "CUJ program: maintain and expand Critical User Journey documents."
+- **Bead reference:** All three documents reference `bead: Sylveste-9ha`. Confirmed via `bd show Sylveste-9ha` -- it exists as an OPEN epic titled "CUJ program: maintain and expand Critical User Journey documents."
 - **Cross-document links:** first-install.md links to `running-a-sprint.md` (line 29). running-a-sprint.md links to `first-install.md` (line 17) and `code-review.md` (lines 29, 35). code-review.md links to `running-a-sprint.md` (line 21). All links use relative paths and resolve correctly.
 - **"Review fleet" terminology:** Used consistently across running-a-sprint.md and code-review.md to mean the set of specialized review agents dispatched during code review. No conflicting definition found.
 - **"Triage layer" terminology:** Used only in code-review.md (line 25). Not contradicted elsewhere.

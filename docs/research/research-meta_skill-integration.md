@@ -3,7 +3,7 @@
 **Date:** 2026-02-28
 **Bead ID:** iv-7d0ax
 **Source:** https://github.com/Dicklesworthstone/meta_skill
-**Task:** Evaluate integration/inspiration value for Demarch (os/clavain, interverse/interdoc, sdk/interbase)
+**Task:** Evaluate integration/inspiration value for Sylveste (os/clavain, interverse/interdoc, sdk/interbase)
 
 ---
 
@@ -134,7 +134,7 @@ interwatch uses fixed signal weights defined in `watchables.yaml`. The bandit pa
 
 ### D. Inspire: ANSI-safe MCP output pattern
 
-The state-machine ANSI stripper + post-serialization JSON validator is production-grade. Any Demarch MCP server that might receive rich terminal output (tldr-swinton, intermap) should adopt this pattern to prevent ANSI bleeding into JSON-RPC responses.
+The state-machine ANSI stripper + post-serialization JSON validator is production-grade. Any Sylveste MCP server that might receive rich terminal output (tldr-swinton, intermap) should adopt this pattern to prevent ANSI bleeding into JSON-RPC responses.
 
 **Effort:** low — port the sanitizer as a library function
 
@@ -146,27 +146,27 @@ Instead of binary "inject full SKILL.md or SKILL-compact.md", offer graduated le
 
 ### F. Skip: Uncertainty queue from CASS mining
 
-The uncertainty queue pattern (sub-threshold patterns deferred to future mining) is elegant but requires a CASS-like session store that Demarch doesn't have. The compound docs system (`/compound`) is the closest analog but stores solutions, not raw session transcripts.
+The uncertainty queue pattern (sub-threshold patterns deferred to future mining) is elegant but requires a CASS-like session store that Sylveste doesn't have. The compound docs system (`/compound`) is the closest analog but stores solutions, not raw session transcripts.
 
 ---
 
 ## Skip Opportunities
 
-- **Full `ms` deployment as a tool.** The binary is heavyweight (vendored OpenSSL, Tantivy, ratatui) and solves a problem Clavain doesn't yet have (managing thousands of skills). Demarch has ~50 skills across all plugins — well within the "just use files" regime.
+- **Full `ms` deployment as a tool.** The binary is heavyweight (vendored OpenSSL, Tantivy, ratatui) and solves a problem Clavain doesn't yet have (managing thousands of skills). Sylveste has ~50 skills across all plugins — well within the "just use files" regime.
 
-- **SQLite + Git dual persistence.** Over-engineered for Demarch's scale. Git-only persistence is sufficient for dozens of skills.
+- **SQLite + Git dual persistence.** Over-engineered for Sylveste's scale. Git-only persistence is sufficient for dozens of skills.
 
-- **ACIP security model.** Demarch has its own trust boundary model (documented in the security threat model brainstorm). Adopting ACIP's taxonomy would create a competing model.
+- **ACIP security model.** Sylveste has its own trust boundary model (documented in the security threat model brainstorm). Adopting ACIP's taxonomy would create a competing model.
 
 - **Skill inheritance/composition.** Clavain skills are self-contained markdown files that work well without inheritance. Adding `extends`/`includes` semantics would add complexity without clear benefit at current scale.
 
-- **Bundler / sync.** Demarch uses the plugin marketplace (interagency-marketplace) for skill distribution. A separate `.msb` bundle format would fragment the distribution story.
+- **Bundler / sync.** Sylveste uses the plugin marketplace (interagency-marketplace) for skill distribution. A separate `.msb` bundle format would fragment the distribution story.
 
 ---
 
 ## Verdict: inspire-only
 
-**Rationale:** meta_skill is an impressive system — arguably the most sophisticated skill management platform in the open-source Claude Code ecosystem. Its patterns (hash embeddings, bandit weighting, pack contracts, progressive disclosure, ANSI-safe MCP output) are genuinely novel and well-implemented. However, it solves a scale problem Demarch doesn't have yet (managing hundreds-to-thousands of skills) and its architecture is fundamentally different from Clavain's (queryable database vs. file-based plugin convention).
+**Rationale:** meta_skill is an impressive system — arguably the most sophisticated skill management platform in the open-source Claude Code ecosystem. Its patterns (hash embeddings, bandit weighting, pack contracts, progressive disclosure, ANSI-safe MCP output) are genuinely novel and well-implemented. However, it solves a scale problem Sylveste doesn't have yet (managing hundreds-to-thousands of skills) and its architecture is fundamentally different from Clavain's (queryable database vs. file-based plugin convention).
 
 The right approach is to extract patterns as they become needed:
 - **Now:** ANSI-safe MCP output (low effort, high value for any MCP server)
@@ -180,6 +180,6 @@ Per MEMORY.md guidance: inspiration and pattern extraction, not replication of a
 
 ## Follow-Up Beads
 
-1. **Port ANSI-safe MCP output sanitizer to Demarch MCP servers** — prevent ANSI bleeding in tldr-swinton, intermap JSON-RPC responses (P3, effort: low)
+1. **Port ANSI-safe MCP output sanitizer to Sylveste MCP servers** — prevent ANSI bleeding in tldr-swinton, intermap JSON-RPC responses (P3, effort: low)
 2. **Add hash embedding backend to intersearch** — FNV-1a 384d deterministic embeddings as zero-dependency alternative to Ollama (P3, effort: medium)
 3. **Investigate progressive disclosure levels for Clavain skill injection** — graduated token budgets instead of binary full/compact (P4, effort: medium)

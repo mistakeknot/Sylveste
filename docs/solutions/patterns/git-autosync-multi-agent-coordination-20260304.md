@@ -115,4 +115,4 @@ MAX_RETRIES=2
 - `~/.claude/hooks/git-autosync.sh` — PostToolUse hook (canonical: `dotfiles/common/.claude/hooks/`)
 - `~/.claude/hooks/git-autosync-pull.sh` — SessionStart hook
 - `agents/session-protocol.md` § "Git Autosync" — agent-facing documentation
-- `Demarch/.git-autosync` — first opt-in repo
+- `Sylveste/.git-autosync` — first opt-in repo

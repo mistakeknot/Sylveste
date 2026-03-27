@@ -2,7 +2,7 @@
 
 **Reviewer role:** Flux-drive User and Product Reviewer
 **Date:** 2026-02-25
-**Sources read:** CLAUDE.md, AGENTS.md, autarch-vision.md, demarch-vision.md, FLOWS.md, unified_app.go, onboarding.go, views/gurgeh.go, views/gurgeh_onboarding.go, views/sprint_view.go, views/bigend.go, views/coldwine.go, views/pollard.go, docs/WORKFLOWS.md, gurgeh feedback, coldwine feedback
+**Sources read:** CLAUDE.md, AGENTS.md, autarch-vision.md, sylveste-vision.md, FLOWS.md, unified_app.go, onboarding.go, views/gurgeh.go, views/gurgeh_onboarding.go, views/sprint_view.go, views/bigend.go, views/coldwine.go, views/pollard.go, docs/WORKFLOWS.md, gurgeh feedback, coldwine feedback
 
 ---
 
@@ -56,7 +56,7 @@ If no coding agent is detected, `generateEpicsWithAgent` returns an `AgentNotFou
 
 This is the most actionable error gap identified. The fix is to display the `AgentNotFoundMsg.Instructions` in the chat panel just as other errors are shown.
 
-Code reference: `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/gurgeh_onboarding.go`, line 187:
+Code reference: `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/gurgeh_onboarding.go`, line 187:
 ```go
 case tui.AgentNotFoundMsg:
     return v, nil
@@ -85,7 +85,7 @@ This bug affects the epic and task generation completion path. When epic generat
 
 ### The mental model gap
 
-Autarch presents four tool tabs at the top: Bigend, Gurgeh, Coldwine, Sprint, Pollard. Five tabs. The CLAUDE.md lists five tools (Bigend, Gurgeh, Coldwine, Sprint, Pollard) but the autarch-vision.md and the Demarch documentation describe four tools. Sprint is a fifth tab that sits alongside Gurgeh, and Gurgeh contains the sprint wizard in onboarding mode. These are related but not the same: Gurgeh is the spec browser after a sprint completes; Sprint is the dashboard for ongoing Intercore sprints.
+Autarch presents four tool tabs at the top: Bigend, Gurgeh, Coldwine, Sprint, Pollard. Five tabs. The CLAUDE.md lists five tools (Bigend, Gurgeh, Coldwine, Sprint, Pollard) but the autarch-vision.md and the Sylveste documentation describe four tools. Sprint is a fifth tab that sits alongside Gurgeh, and Gurgeh contains the sprint wizard in onboarding mode. These are related but not the same: Gurgeh is the spec browser after a sprint completes; Sprint is the dashboard for ongoing Intercore sprints.
 
 This naming doubles the cognitive load of the tab bar. A new user looking at "Gurgeh" and "Sprint" cannot deduce from the names which one to use to start a new PRD spec. The onboarding flow (which starts in Gurgeh) is the correct entry point, but the tab bar places Sprint between Coldwine and Pollard, visually suggesting it is a peer of them rather than a phase of Gurgeh's work.
 
@@ -109,7 +109,7 @@ Pollard's insights can be linked to specs via `InsightLink`. The code to link an
 
 ### The cost-per-landable-change axis
 
-The Demarch north star is cost per landable change: tokens per impact, not raw spend. There is nothing in any of the four tool views that displays this metric, approximates it, or even mentions tokens. The Bigend view shows sessions and dispatches. The Sprint tab shows run phase and status. No view shows:
+The Sylveste north star is cost per landable change: tokens per impact, not raw spend. There is nothing in any of the four tool views that displays this metric, approximates it, or even mentions tokens. The Bigend view shows sessions and dispatches. The Sprint tab shows run phase and status. No view shows:
 
 - Token cost of the current sprint (even approximately)
 - Cost breakdown by phase or dispatch
@@ -274,7 +274,7 @@ The Gurgeh→Coldwine handoff gap could be resolved with a single workflow docum
 
 ### P0: Blocking user success
 
-1. **AgentNotFoundMsg is silently dropped during epic generation** — `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/gurgeh_onboarding.go` line 187. User who lacks a coding agent sees no error and no recovery path.
+1. **AgentNotFoundMsg is silently dropped during epic generation** — `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/gurgeh_onboarding.go` line 187. User who lacks a coding agent sees no error and no recovery path.
 
 2. **No entry point from Bigend to the onboarding flow** — the default tab shows empty state with no visible path to starting. New users cannot discover the spec sprint without reading docs.
 

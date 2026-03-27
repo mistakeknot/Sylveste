@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-g3a
+bead: Sylveste-g3a
 stage: design
 requirements:
   - F1: Fix verdict recording discovery path
@@ -11,7 +11,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-g3a
+**Bead:** Sylveste-g3a
 **Goal:** Make quality-gates agent verdicts flow into interspect's calibration pipeline so future sprints automatically adjust agent model tiers.
 
 **Architecture:** The existing pipeline (`_interspect_record_verdict` → `_interspect_compute_agent_scores` → `_interspect_write_routing_calibration`) is complete but never fires because quality-gates Step 5a relies on agent compliance with SKILL.md text. Fix: add a verdict sweep to the SessionStart hook that catches unrecorded `.clavain/verdicts/*.json` files, then upgrade the calibration schema to v2 with source weighting.
@@ -288,7 +288,7 @@ Expected: exit 0
 **Step 1: Run the verdict sweep manually to backfill existing data**
 
 ```bash
-cd /home/mk/projects/Demarch
+cd /home/mk/projects/Sylveste
 source interverse/interspect/hooks/lib-interspect.sh
 _interspect_ensure_db
 _interspect_sweep_verdicts ".clavain/verdicts" "backfill-$(date +%s)"

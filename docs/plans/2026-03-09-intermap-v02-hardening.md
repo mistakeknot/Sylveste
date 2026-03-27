@@ -146,13 +146,13 @@ func TestGitHeadSHA_InvalidDir(t *testing.T) {
 
 **Step 4: Run tests**
 
-Run: `cd /home/mk/projects/Demarch/interverse/intermap && go test ./internal/tools/ -v -run TestGitHead`
+Run: `cd /home/mk/projects/Sylveste/interverse/intermap && go test ./internal/tools/ -v -run TestGitHead`
 Expected: PASS
 
 **Step 5: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap
+cd /home/mk/projects/Sylveste/interverse/intermap
 git add internal/tools/tools.go internal/tools/tools_test.go
 git commit -m "feat(intermap): add Go-level cache for detect_patterns
 
@@ -161,9 +161,9 @@ Uses git HEAD SHA as mtime proxy for cache invalidation.
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/interverse/intermap && go build ./...`
+- run: `cd /home/mk/projects/Sylveste/interverse/intermap && go build ./...`
   expect: exit 0
-- run: `cd /home/mk/projects/Demarch/interverse/intermap && go test ./internal/tools/ -v -run TestGitHead`
+- run: `cd /home/mk/projects/Sylveste/interverse/intermap && go test ./internal/tools/ -v -run TestGitHead`
   expect: exit 0
 </verify>
 
@@ -225,13 +225,13 @@ mcp.WithBoolean("refresh",
 
 **Step 3: Run tests**
 
-Run: `cd /home/mk/projects/Demarch/interverse/intermap && go build ./...`
+Run: `cd /home/mk/projects/Sylveste/interverse/intermap && go build ./...`
 Expected: PASS (compilation)
 
 **Step 4: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap
+cd /home/mk/projects/Sylveste/interverse/intermap
 git add internal/tools/tools.go
 git commit -m "feat(intermap): add Go-level cache for cross_project_deps
 
@@ -239,9 +239,9 @@ Same pattern as detect_patterns: git HEAD SHA, 5min TTL, refresh param."
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/interverse/intermap && go build ./...`
+- run: `cd /home/mk/projects/Sylveste/interverse/intermap && go build ./...`
   expect: exit 0
-- run: `cd /home/mk/projects/Demarch/interverse/intermap && go test ./internal/... -v`
+- run: `cd /home/mk/projects/Sylveste/interverse/intermap && go test ./internal/... -v`
   expect: exit 0
 </verify>
 
@@ -399,13 +399,13 @@ def test_sidecar_structured_error_unknown_command(sidecar):
 
 **Step 4: Run tests**
 
-Run: `cd /home/mk/projects/Demarch/interverse/intermap && PYTHONPATH=python python3 -m pytest python/tests/test_sidecar.py -v`
+Run: `cd /home/mk/projects/Sylveste/interverse/intermap && PYTHONPATH=python python3 -m pytest python/tests/test_sidecar.py -v`
 Expected: PASS
 
 **Step 5: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap
+cd /home/mk/projects/Sylveste/interverse/intermap
 git add python/intermap/errors.py python/intermap/__main__.py python/tests/test_sidecar.py
 git commit -m "feat(intermap): structured error types from Python sidecar
 
@@ -414,9 +414,9 @@ Codes: file_not_found, parse_error, timeout, internal_error."
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/interverse/intermap && PYTHONPATH=python python3 -m pytest python/tests/test_sidecar.py -v`
+- run: `cd /home/mk/projects/Sylveste/interverse/intermap && PYTHONPATH=python python3 -m pytest python/tests/test_sidecar.py -v`
   expect: exit 0
-- run: `cd /home/mk/projects/Demarch/interverse/intermap && PYTHONPATH=python python3 -c "from intermap.errors import IntermapError, ParseError; e = ParseError('bad syntax'); print(e.to_dict())"`
+- run: `cd /home/mk/projects/Sylveste/interverse/intermap && PYTHONPATH=python python3 -c "from intermap.errors import IntermapError, ParseError; e = ParseError('bad syntax'); print(e.to_dict())"`
   expect: contains "parse_error"
 </verify>
 
@@ -550,13 +550,13 @@ func TestNonRecoverableError(t *testing.T) {
 
 **Step 5: Run tests**
 
-Run: `cd /home/mk/projects/Demarch/interverse/intermap && go test ./internal/python/ -v -run TestRecoverable`
+Run: `cd /home/mk/projects/Sylveste/interverse/intermap && go test ./internal/python/ -v -run TestRecoverable`
 Expected: PASS
 
 **Step 6: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap
+cd /home/mk/projects/Sylveste/interverse/intermap
 git add internal/python/bridge.go internal/python/bridge_test.go
 git commit -m "feat(intermap): Go bridge parses structured Python errors
 
@@ -565,9 +565,9 @@ without triggering sidecar restart. Fatal errors still trigger crash recovery."
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/interverse/intermap && go build ./...`
+- run: `cd /home/mk/projects/Sylveste/interverse/intermap && go build ./...`
   expect: exit 0
-- run: `cd /home/mk/projects/Demarch/interverse/intermap && go test ./internal/python/ -v -run TestRecoverable`
+- run: `cd /home/mk/projects/Sylveste/interverse/intermap && go test ./internal/python/ -v -run TestRecoverable`
   expect: exit 0
 </verify>
 
@@ -630,7 +630,7 @@ def test_symbol_annotation_body_only_edit_with_line_shift(tmp_path):
 
 **Step 2: Run test to verify it fails**
 
-Run: `cd /home/mk/projects/Demarch/interverse/intermap && PYTHONPATH=python python3 -m pytest python/tests/test_live_changes.py::test_symbol_annotation_body_only_edit_with_line_shift -v`
+Run: `cd /home/mk/projects/Sylveste/interverse/intermap && PYTHONPATH=python python3 -m pytest python/tests/test_live_changes.py::test_symbol_annotation_body_only_edit_with_line_shift -v`
 Expected: This may PASS because the working-tree range for `alpha` (lines 1-4) overlaps the hunk new-side range (lines 2-4). If it passes, we still need the fix for correctness in edge cases. Proceed regardless.
 
 **Step 3: Implement the union approach**
@@ -710,18 +710,18 @@ def _hunks_to_old_line_ranges(hunks: list[dict]) -> list[tuple[int, int]]:
 
 **Step 5: Run all live_changes tests**
 
-Run: `cd /home/mk/projects/Demarch/interverse/intermap && PYTHONPATH=python python3 -m pytest python/tests/test_live_changes.py -v`
+Run: `cd /home/mk/projects/Sylveste/interverse/intermap && PYTHONPATH=python python3 -m pytest python/tests/test_live_changes.py -v`
 Expected: ALL PASS (including the new test)
 
 **Step 6: Run perf tests to verify no regression**
 
-Run: `cd /home/mk/projects/Demarch/interverse/intermap && PYTHONPATH=python python3 -m pytest python/tests/test_live_changes_perf.py -v`
+Run: `cd /home/mk/projects/Sylveste/interverse/intermap && PYTHONPATH=python python3 -m pytest python/tests/test_live_changes_perf.py -v`
 Expected: ALL PASS
 
 **Step 7: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap
+cd /home/mk/projects/Sylveste/interverse/intermap
 git add python/intermap/live_changes.py python/tests/test_live_changes.py
 git commit -m "fix(intermap): body-range detection unions baseline + working tree symbols
 
@@ -732,9 +732,9 @@ where line shifts cause ranges to drift."
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/interverse/intermap && PYTHONPATH=python python3 -m pytest python/tests/test_live_changes.py -v`
+- run: `cd /home/mk/projects/Sylveste/interverse/intermap && PYTHONPATH=python python3 -m pytest python/tests/test_live_changes.py -v`
   expect: exit 0
-- run: `cd /home/mk/projects/Demarch/interverse/intermap && PYTHONPATH=python python3 -m pytest python/tests/test_live_changes_perf.py -v`
+- run: `cd /home/mk/projects/Sylveste/interverse/intermap && PYTHONPATH=python python3 -m pytest python/tests/test_live_changes_perf.py -v`
   expect: exit 0
 </verify>
 
@@ -836,13 +836,13 @@ Add `"context"` and `pybridge "github.com/mistakeknot/intermap/internal/python"`
 
 **Step 2: Run benchmarks**
 
-Run: `cd /home/mk/projects/Demarch/interverse/intermap && go test ./internal/tools/ -bench=BenchmarkDetectPatterns_Warm -benchtime=3x -run=^$ -v`
+Run: `cd /home/mk/projects/Sylveste/interverse/intermap && go test ./internal/tools/ -bench=BenchmarkDetectPatterns_Warm -benchtime=3x -run=^$ -v`
 Expected: PASS (warm should be sub-millisecond)
 
 **Step 3: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap
+cd /home/mk/projects/Sylveste/interverse/intermap
 git add internal/tools/tools_test.go
 git commit -m "test(intermap): add Go benchmarks for detect_patterns and cross_project_deps
 
@@ -851,7 +851,7 @@ Run with: go test ./internal/tools/ -bench=. -benchtime=3x -run=^$"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/interverse/intermap && go test ./internal/tools/ -bench=BenchmarkDetectPatterns_Warm -benchtime=3x -run=^$ -v`
+- run: `cd /home/mk/projects/Sylveste/interverse/intermap && go test ./internal/tools/ -bench=BenchmarkDetectPatterns_Warm -benchtime=3x -run=^$ -v`
   expect: exit 0
 </verify>
 
@@ -910,13 +910,13 @@ def test_live_changes_cold_vs_warm(perf_project):
 
 **Step 2: Run perf tests**
 
-Run: `cd /home/mk/projects/Demarch/interverse/intermap && PYTHONPATH=python python3 -m pytest python/tests/test_live_changes_perf.py -v -k perf`
+Run: `cd /home/mk/projects/Sylveste/interverse/intermap && PYTHONPATH=python python3 -m pytest python/tests/test_live_changes_perf.py -v -k perf`
 Expected: PASS
 
 **Step 3: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap
+cd /home/mk/projects/Sylveste/interverse/intermap
 git add python/tests/test_live_changes_perf.py
 git commit -m "test(intermap): add Python performance baselines for change_impact and live_changes
 
@@ -925,7 +925,7 @@ Run with: pytest python/tests/test_live_changes_perf.py -v -k perf"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/interverse/intermap && PYTHONPATH=python python3 -m pytest python/tests/test_live_changes_perf.py -v`
+- run: `cd /home/mk/projects/Sylveste/interverse/intermap && PYTHONPATH=python python3 -m pytest python/tests/test_live_changes_perf.py -v`
   expect: exit 0
 </verify>
 
@@ -940,12 +940,12 @@ Run with: pytest python/tests/test_live_changes_perf.py -v -k perf"
 
 Run Go tests:
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap && go test ./... -v
+cd /home/mk/projects/Sylveste/interverse/intermap && go test ./... -v
 ```
 
 Run Python tests:
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap && PYTHONPATH=python python3 -m pytest python/tests/ -v
+cd /home/mk/projects/Sylveste/interverse/intermap && PYTHONPATH=python python3 -m pytest python/tests/ -v
 ```
 
 Expected: ALL PASS
@@ -953,7 +953,7 @@ Expected: ALL PASS
 **Step 2: Integration test — build and run MCP**
 
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap
+cd /home/mk/projects/Sylveste/interverse/intermap
 go build -o bin/intermap-mcp ./cmd/intermap-mcp/
 echo '{"jsonrpc":"2.0","method":"tools/list","id":1}' | PYTHONPATH=python CLAUDE_PLUGIN_ROOT=. ./bin/intermap-mcp 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); tools=[t['name'] for t in d['result']['tools']]; print(f'{len(tools)} tools:', ', '.join(sorted(tools)))"
 ```
@@ -981,7 +981,7 @@ In `interverse/intermap/docs/intermap-roadmap.md`, mark the v0.2 items as comple
 **Step 4: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap
+cd /home/mk/projects/Sylveste/interverse/intermap
 git add docs/intermap-roadmap.md
 git commit -m "docs(intermap): mark v0.2 hardening items as complete
 
@@ -989,8 +989,8 @@ Go caching, structured errors, body-range fix, performance baselines."
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/interverse/intermap && go test ./... -count=1`
+- run: `cd /home/mk/projects/Sylveste/interverse/intermap && go test ./... -count=1`
   expect: exit 0
-- run: `cd /home/mk/projects/Demarch/interverse/intermap && PYTHONPATH=python python3 -m pytest python/tests/ -v`
+- run: `cd /home/mk/projects/Sylveste/interverse/intermap && PYTHONPATH=python python3 -m pytest python/tests/ -v`
   expect: exit 0
 </verify>

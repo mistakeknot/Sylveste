@@ -17,7 +17,7 @@
       "Quantized model throughput matches or exceeds published MLX benchmark numbers for the same model class",
       "No CPU-side dequantization visible in a time profiler trace"
     ],
-    "task_context": "The target platform is Apple Silicon M5 Max 128GB with a unified memory architecture. The system serves an autonomous software development agency (Demarch/Clavain) where coding task quality and low-latency tool-call response are primary concerns.",
+    "task_context": "The target platform is Apple Silicon M5 Max 128GB with a unified memory architecture. The system serves an autonomous software development agency (Sylveste/Clavain) where coding task quality and low-latency tool-call response are primary concerns.",
     "anti_overlap": [
       "fd-speculative-decode-pipeline covers draft model selection and speculative decoding correctness",
       "fd-multi-model-orchestration covers how multiple models are scheduled and routed across the system",
@@ -42,7 +42,7 @@
       "Draft model memory footprint stays under 8GB to preserve budget for the target model and KV cache",
       "Acceptance rate on code completion tasks measured above 65% in A/B testing"
     ],
-    "task_context": "The target platform is Apple Silicon M5 Max 128GB with a unified memory architecture. The system serves an autonomous software development agency (Demarch/Clavain) where coding task quality and low-latency tool-call response are primary concerns.",
+    "task_context": "The target platform is Apple Silicon M5 Max 128GB with a unified memory architecture. The system serves an autonomous software development agency (Sylveste/Clavain) where coding task quality and low-latency tool-call response are primary concerns.",
     "anti_overlap": [
       "fd-mlx-kernel-efficiency covers the low-level MLX kernel and memory architecture concerns",
       "fd-multi-model-orchestration covers how draft and target models are scheduled among multiple concurrent models",
@@ -67,7 +67,7 @@
       "KV cache hit rate above 40% for sessions with repeated context (common in Clavain agent loops)",
       "No model reload storms observed in load testing with 4 concurrent agent sessions"
     ],
-    "task_context": "The target platform is Apple Silicon M5 Max 128GB with a unified memory architecture. The system serves an autonomous software development agency (Demarch/Clavain) where coding task quality and low-latency tool-call response are primary concerns.",
+    "task_context": "The target platform is Apple Silicon M5 Max 128GB with a unified memory architecture. The system serves an autonomous software development agency (Sylveste/Clavain) where coding task quality and low-latency tool-call response are primary concerns.",
     "anti_overlap": [
       "fd-mlx-kernel-efficiency covers the per-model kernel and memory bandwidth optimization",
       "fd-speculative-decode-pipeline covers draft/target model pairing and acceptance rate",
@@ -92,7 +92,7 @@
       "Privacy-sensitive routing is enforced with a deny-list that cannot be overridden by a quality-based upgrade decision",
       "Cost per accepted PR or merged diff is tracked as the primary business metric, not raw tokens/dollar"
     ],
-    "task_context": "The target platform is Apple Silicon M5 Max 128GB with a unified memory architecture. The system serves an autonomous software development agency (Demarch/Clavain) where coding task quality and low-latency tool-call response are primary concerns.",
+    "task_context": "The target platform is Apple Silicon M5 Max 128GB with a unified memory architecture. The system serves an autonomous software development agency (Sylveste/Clavain) where coding task quality and low-latency tool-call response are primary concerns.",
     "anti_overlap": [
       "fd-mlx-kernel-efficiency covers hardware-level efficiency of local inference",
       "fd-multi-model-orchestration covers how models are scheduled once a routing decision is made",
@@ -117,7 +117,7 @@
       "Early exit or sparse activation yields measurable latency reduction without quality regression on a coding task suite",
       "Structured output / grammar-constrained decoding is applied to all code-generation endpoints and its impact on linter-pass rate is measured"
     ],
-    "task_context": "The target platform is Apple Silicon M5 Max 128GB with a unified memory architecture. The system serves an autonomous software development agency (Demarch/Clavain) where coding task quality and low-latency tool-call response are primary concerns.",
+    "task_context": "The target platform is Apple Silicon M5 Max 128GB with a unified memory architecture. The system serves an autonomous software development agency (Sylveste/Clavain) where coding task quality and low-latency tool-call response are primary concerns.",
     "anti_overlap": [
       "fd-mlx-kernel-efficiency covers standard MLX kernel tuning and ANE utilization",
       "fd-speculative-decode-pipeline covers standard speculative decoding — this agent focuses on variants and alternatives",

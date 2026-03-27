@@ -7,7 +7,7 @@ stage: discover
 # Brainstorm: Web Search & Fetch v2 Improvements
 
 **Date:** 2026-03-12
-**Parent:** Demarch-6i0.20 (shipped v1)
+**Parent:** Sylveste-6i0.20 (shipped v1)
 
 ## What We're Building
 

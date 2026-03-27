@@ -4,7 +4,7 @@
 
 ## Problem
 
-Multi-agent coordination in Demarch is fragmented across three layers (Intercore filesystem locks, Intermute HTTP reservations, Interlock MCP tools) with 3 known TOCTOU bugs, incomplete crash recovery, and no coordination path for non-Clavain agents. The primary correctness risk — Intermute's `Reserve()` using default transaction isolation without `MaxOpenConns(1)` — means two agents can simultaneously pass the conflict check and both acquire the same file.
+Multi-agent coordination in Sylveste is fragmented across three layers (Intercore filesystem locks, Intermute HTTP reservations, Interlock MCP tools) with 3 known TOCTOU bugs, incomplete crash recovery, and no coordination path for non-Clavain agents. The primary correctness risk — Intermute's `Reserve()` using default transaction isolation without `MaxOpenConns(1)` — means two agents can simultaneously pass the conflict check and both acquire the same file.
 
 ## Solution
 

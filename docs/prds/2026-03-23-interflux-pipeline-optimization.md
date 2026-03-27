@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-z5qg
+bead: Sylveste-z5qg
 stage: design
 ---
 # PRD: Interflux Pipeline Optimization
@@ -17,7 +17,7 @@ The flux-drive multi-agent review pipeline has scoring, slicing, latency, and bu
 
 ### F1: Widen fd-correctness pre-filter keywords
 **What:** The data filter skips fd-correctness unless the document mentions databases/migrations/concurrency/async — too narrow.
-**Bead:** Demarch-6vkx
+**Bead:** Sylveste-6vkx
 **Files:** `skills/flux-drive/SKILL.md` (pre-filter section)
 **Acceptance criteria:**
 - [ ] Pre-filter passes fd-correctness on additional keywords: `state`, `validation`, `invariant`, `algorithm`, `contract`, `schema`, `query`, `SQL`
@@ -25,7 +25,7 @@ The flux-drive multi-agent review pipeline has scoring, slicing, latency, and bu
 
 ### F2: Make domain boost binary or add relevance annotation
 **What:** All domain profiles have exactly 5 bullets per agent section, so the +1 tier (1-2 bullets) never triggers — boost is effectively binary +0/+2.
-**Bead:** Demarch-z5qg.1
+**Bead:** Sylveste-z5qg.1
 **Files:** `skills/flux-drive/SKILL.md` (scoring section), `docs/spec/core/scoring.md`
 **Acceptance criteria:**
 - [ ] Domain boost simplified to binary: +0 (no section in domain profile) / +2 (section exists)
@@ -34,7 +34,7 @@ The flux-drive multi-agent review pipeline has scoring, slicing, latency, and bu
 
 ### F3: Remove generated_slots from ceiling formula
 **What:** `generated_slots: +2` expands the total agent pool to 11/12 instead of making generated agents compete on score within existing slots.
-**Bead:** Demarch-z5qg.4
+**Bead:** Sylveste-z5qg.4
 **Files:** `skills/flux-drive/SKILL.md` (dynamic slot allocation section)
 **Acceptance criteria:**
 - [ ] `generated_slots` removed from ceiling formula
@@ -43,7 +43,7 @@ The flux-drive multi-agent review pipeline has scoring, slicing, latency, and bu
 
 ### F4: Fix selection threshold for mature projects
 **What:** Score>=2 provides zero discrimination after bonus inflation (+2 domain + +1 project = every agent exceeds 2).
-**Bead:** Demarch-z5qg.5
+**Bead:** Sylveste-z5qg.5
 **Files:** `skills/flux-drive/SKILL.md` (selection rules section)
 **Acceptance criteria:**
 - [ ] Selection threshold applied to `base_score` only (not inflated final_score) — bonuses influence ranking but not inclusion
@@ -51,7 +51,7 @@ The flux-drive multi-agent review pipeline has scoring, slicing, latency, and bu
 
 ### F5: Add base_score=1 survival-rate tracking
 **What:** No feedback loop tracks whether tangential agents (~40K tokens each) find anything useful.
-**Bead:** Demarch-z5qg.2
+**Bead:** Sylveste-z5qg.2
 **Files:** `skills/flux-drive/phases/synthesize.md` (cost report section)
 **Acceptance criteria:**
 - [ ] Synthesis report includes per-agent `base_score` and `finding_count` in cost table
@@ -60,7 +60,7 @@ The flux-drive multi-agent review pipeline has scoring, slicing, latency, and bu
 
 ### F6: Replace zero-priority-skip with full-document fallback
 **What:** Agents with zero priority sections after slicing are silently dropped despite user confirmation — contract violation.
-**Bead:** Demarch-gunp
+**Bead:** Sylveste-gunp
 **Files:** `skills/flux-drive/phases/slicing.md`
 **Acceptance criteria:**
 - [ ] Zero-priority agents receive full document instead of being dropped
@@ -69,14 +69,14 @@ The flux-drive multi-agent review pipeline has scoring, slicing, latency, and bu
 
 ### F7: Expand fd-safety priority file patterns
 **What:** Missing common auth/credential file paths in slicing patterns.
-**Bead:** Demarch-z5qg.6
+**Bead:** Sylveste-z5qg.6
 **Files:** `skills/flux-drive/phases/slicing.md` (fd-safety patterns)
 **Acceptance criteria:**
 - [ ] Added patterns: `**/oauth/**`, `**/sso/**`, `**/saml/**`, `**/oidc/**`, `**/keys/**`, `**/pki/**`, `**/signing*`, `**/webhook*`, `**/token*`, `**/.npmrc`, `**/.pypirc`, `**/pip.conf`
 
 ### F8: Expand Method 2 heading keywords
 **What:** Heading keywords for document slicing miss critical terms across all agents.
-**Bead:** Demarch-z5qg.7
+**Bead:** Sylveste-z5qg.7
 **Files:** `skills/flux-drive/phases/slicing.md` (Method 2 keyword table)
 **Acceptance criteria:**
 - [ ] fd-safety: add `encryption`, `compliance`, `audit`, `vulnerability`, `threat`, `access control`, `privacy`
@@ -86,7 +86,7 @@ The flux-drive multi-agent review pipeline has scoring, slicing, latency, and bu
 
 ### F9: Extend body keyword sampling to include tail
 **What:** Body sampling only checks first 50 lines, missing conclusions and summaries in long sections.
-**Bead:** Demarch-z5qg.8
+**Bead:** Sylveste-z5qg.8
 **Files:** `skills/flux-drive/phases/slicing.md` (Method 2 body sampling)
 **Acceptance criteria:**
 - [ ] Body sampling changed from "first 50 lines" to "first 50 + last 20 lines"
@@ -94,7 +94,7 @@ The flux-drive multi-agent review pipeline has scoring, slicing, latency, and bu
 
 ### F10: Implement incremental Stage 2 dispatch
 **What:** Stage 2 agents wait 3-6 minutes for all Stage 1 agents to complete before expansion scoring begins.
-**Bead:** Demarch-z5qg.10
+**Bead:** Sylveste-z5qg.10
 **Files:** `skills/flux-drive/phases/launch.md` (Steps 2.2, 2.2b, 2.2c)
 **Acceptance criteria:**
 - [ ] As each Stage 1 agent completes, compute its contribution to expansion scores
@@ -104,7 +104,7 @@ The flux-drive multi-agent review pipeline has scoring, slicing, latency, and bu
 
 ### F11: Reduce polling interval from 30s to 5s
 **What:** Up to 30 seconds of dead time between agent completion and orchestrator noticing, accumulating 1-2.5 minutes across a review.
-**Bead:** Demarch-z5qg.11
+**Bead:** Sylveste-z5qg.11
 **Files:** `skills/flux-drive/phases/shared-contracts.md` (monitoring contract)
 **Acceptance criteria:**
 - [ ] Polling interval changed from 30s to 5s
@@ -112,7 +112,7 @@ The flux-drive multi-agent review pipeline has scoring, slicing, latency, and bu
 
 ### F12: Fix token data recording
 **What:** All 106 agent runs in interstat have NULL token columns — budget estimation is permanently stuck on cold-start defaults.
-**Bead:** Demarch-ozox
+**Bead:** Sylveste-ozox
 **Files:** `scripts/estimate-costs.sh`, interstat hook or SessionEnd processing
 **Acceptance criteria:**
 - [ ] Token data populated for flux-drive agent runs after each review
@@ -121,7 +121,7 @@ The flux-drive multi-agent review pipeline has scoring, slicing, latency, and bu
 
 ### F13: Fix agent name namespace mismatch
 **What:** estimate-costs.sh looks up `fd-architecture` but interstat stores `interflux:fd-architecture` — lookups always miss.
-**Bead:** Demarch-8v79
+**Bead:** Sylveste-8v79
 **Files:** `scripts/estimate-costs.sh` (classify_agent function, query)
 **Acceptance criteria:**
 - [ ] Query normalizes agent names: `REPLACE(agent_name, 'interflux:', '')` in SQL
@@ -130,7 +130,7 @@ The flux-drive multi-agent review pipeline has scoring, slicing, latency, and bu
 
 ### F14: Validate dropout threshold and fix spec drift
 **What:** Threshold lowered 0.7→0.6 without recall-loss measurement; staging.md still says 0.7.
-**Bead:** Demarch-z5qg.12
+**Bead:** Sylveste-z5qg.12
 **Files:** `docs/spec/core/staging.md`, `AGENTS.md`, `config/flux-drive/budget.yaml`
 **Acceptance criteria:**
 - [ ] staging.md updated to say 0.6 (matching budget.yaml and launch.md)
@@ -140,7 +140,7 @@ The flux-drive multi-agent review pipeline has scoring, slicing, latency, and bu
 
 ### F15: Add Project Agent adjacency resolution
 **What:** Project/flux-gen agents are absent from the adjacency map — invisible to both dropout and expansion scoring.
-**Bead:** Demarch-z5qg.13
+**Bead:** Sylveste-z5qg.13
 **Files:** `skills/flux-drive/phases/launch.md` (adjacency map, redundancy scoring, expansion scoring)
 **Acceptance criteria:**
 - [ ] Domain-mode agents: derive adjacency from `domain:` frontmatter field, mapping to closest plugin agent(s)
@@ -150,7 +150,7 @@ The flux-drive multi-agent review pipeline has scoring, slicing, latency, and bu
 
 ### F16: Add document abstract for 200-499 line docs
 **What:** Documents 200-499 lines get slicing but no Pyramid Summary — agents have no document-level orientation.
-**Bead:** Demarch-z5qg.9
+**Bead:** Sylveste-z5qg.9
 **Files:** `skills/flux-drive/phases/slicing.md` (document size thresholds)
 **Acceptance criteria:**
 - [ ] For 200-499 line documents, generate 2-3 sentence document abstract

@@ -166,12 +166,12 @@ if [[ -z "$IC_SRC" ]]; then
     IC_TMPDIR=$(mktemp -d)
     trap 'rm -rf "$IC_TMPDIR"' EXIT
     log "    Cloning intercore source..."
-    if run git clone --depth=1 --filter=blob:none --sparse https://github.com/mistakeknot/Demarch.git "$IC_TMPDIR/Demarch" 2>/dev/null; then
-        if ! (cd "$IC_TMPDIR/Demarch" && git sparse-checkout set core/intercore); then
+    if run git clone --depth=1 --filter=blob:none --sparse https://github.com/mistakeknot/Sylveste.git "$IC_TMPDIR/Sylveste" 2>/dev/null; then
+        if ! (cd "$IC_TMPDIR/Sylveste" && git sparse-checkout set core/intercore); then
             warn "Sparse checkout failed. Run '/clavain:setup' after cloning the repo to build ic."
             IC_SRC=""
         else
-            IC_SRC="$IC_TMPDIR/Demarch/core/intercore"
+            IC_SRC="$IC_TMPDIR/Sylveste/core/intercore"
         fi
     else
         warn "Could not clone intercore source. Run '/clavain:setup' after cloning the repo to build ic."
@@ -295,16 +295,16 @@ If Go is not found: warn "Go >= 1.22 is required to build ic. Install from https
 
 2. Find the intercore source. Check these paths in order:
 ```bash
-# If in the Demarch monorepo
+# If in the Sylveste monorepo
 ls core/intercore/cmd/ic/main.go 2>/dev/null
-# If in a subproject with Demarch parent
+# If in a subproject with Sylveste parent
 ls ../core/intercore/cmd/ic/main.go 2>/dev/null
 ls ../../core/intercore/cmd/ic/main.go 2>/dev/null
 # Standard clone location
-ls ~/projects/Demarch/core/intercore/cmd/ic/main.go 2>/dev/null
+ls ~/projects/Sylveste/core/intercore/cmd/ic/main.go 2>/dev/null
 ```
 
-If source not found: warn "intercore source not found. Clone https://github.com/mistakeknot/Demarch and re-run setup." and skip this step.
+If source not found: warn "intercore source not found. Clone https://github.com/mistakeknot/Sylveste and re-run setup." and skip this step.
 
 3. Build and install:
 ```bash

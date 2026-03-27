@@ -1,12 +1,12 @@
 # Research: Generate Refreshed Roadmap Doc
 
 **Date:** 2026-02-27
-**Task:** Refresh `docs/demarch-roadmap.md` from canonical `docs/roadmap.json` and live bead data.
+**Task:** Refresh `docs/sylveste-roadmap.md` from canonical `docs/roadmap.json` and live bead data.
 
 ## Input Sources
 
 1. **`docs/roadmap.json`** -- freshly generated, 53 modules, 94 module-level open beads, structured roadmap items in now/next/later phases
-2. **`docs/demarch-roadmap.md`** -- existing human-facing roadmap, last updated 2026-02-27 (previous pass), 51 modules listed, 384 open beads count (stale)
+2. **`docs/sylveste-roadmap.md`** -- existing human-facing roadmap, last updated 2026-02-27 (previous pass), 51 modules listed, 384 open beads count (stale)
 3. **`bd list --status=open --limit 0`** -- 458 open beads (bd stats), 6 in-progress, 46 blocked, 1,822 closed
 4. **`bd stats`** -- total 2,301 issues across entire project
 
@@ -61,4 +61,4 @@
 
 ## Output
 
-Written to: `docs/demarch-roadmap.md`
+Written to: `docs/sylveste-roadmap.md`

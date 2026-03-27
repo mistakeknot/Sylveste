@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-Demarch is an autonomous software development agency platform at v0.6.228. The question is what v1.0.0 should mean and commit to, given the platform's outputs depend on evolving AI models.
+Sylveste is an autonomous software development agency platform at v0.6.228. The question is what v1.0.0 should mean and commit to, given the platform's outputs depend on evolving AI models.
 
 ## Review Approach
 

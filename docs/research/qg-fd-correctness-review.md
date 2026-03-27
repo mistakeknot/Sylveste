@@ -29,7 +29,7 @@ skills/flux-drive/SKILL.md (modified), skills/flux-drive/SKILL-compact.md (modif
 
 ### F1 — MEDIUM: `_parse_frontmatter` finds `---` inside YAML body, not closing fence
 
-**File:** `/home/mk/projects/Demarch/interverse/interflux/scripts/generate-agents.py`, line 350
+**File:** `/home/mk/projects/Sylveste/interverse/interflux/scripts/generate-agents.py`, line 350
 
 ```python
 end = text.find("---", 3)
@@ -61,7 +61,7 @@ end = m.start() + 3 if m else -1
 
 ### F2 — MEDIUM: `_atomic_write` double-close on `os.write` failure corrupts fd state
 
-**File:** `/home/mk/projects/Demarch/interverse/interflux/scripts/generate-agents.py`, lines 369-384
+**File:** `/home/mk/projects/Sylveste/interverse/interflux/scripts/generate-agents.py`, lines 369-384
 
 ```python
 fd, tmp_path = tempfile.mkstemp(dir=str(path.parent), suffix=".tmp")
@@ -122,7 +122,7 @@ probability of triggering this in production is low — but the latent hazard is
 
 ### F3 — LOW-MEDIUM: `Key review areas` regex does not handle multi-line bullet items
 
-**File:** `/home/mk/projects/Demarch/interverse/interflux/scripts/generate-agents.py`, lines 138-147
+**File:** `/home/mk/projects/Sylveste/interverse/interflux/scripts/generate-agents.py`, lines 138-147
 
 ```python
 review_match = re.search(
@@ -137,7 +137,7 @@ continuation line (indented with spaces, as Markdown allows) will be silently tr
 only the first line is captured.
 
 Examining the actual domain profiles in
-`/home/mk/projects/Demarch/interverse/interflux/config/flux-drive/domains/` shows that
+`/home/mk/projects/Sylveste/interverse/interflux/config/flux-drive/domains/` shows that
 all existing bullets are single-line, so this is not currently broken. The risk is a
 profile author writing a multi-line bullet without knowing it will be silently dropped,
 producing an agent with incomplete review criteria. Since generation claims to be
@@ -154,7 +154,7 @@ r"^Key review areas:\s*\n((?:- .+(?:\n  .+)*\n?)+)"
 
 ### F4 — LOW: `parse_agent_specs` walk loop discards the final odd block when agent count is even
 
-**File:** `/home/mk/projects/Demarch/interverse/interflux/scripts/generate-agents.py`, lines 106-110
+**File:** `/home/mk/projects/Sylveste/interverse/interflux/scripts/generate-agents.py`, lines 106-110
 
 ```python
 i = 1
@@ -191,7 +191,7 @@ Severity: low (malformed profile edge case, not a parsing regression in well-for
 
 ### F5 — LOW: Frontmatter `---` prefix check uses `str.startswith` but does not verify it ends at a newline
 
-**File:** `/home/mk/projects/Demarch/interverse/interflux/scripts/generate-agents.py`, line 347
+**File:** `/home/mk/projects/Sylveste/interverse/interflux/scripts/generate-agents.py`, line 347
 
 ```python
 if not text.startswith("---"):
@@ -209,7 +209,7 @@ Fix: check for `text.startswith("---\n")`.
 
 ### F6 — LOW: `render_agent` timestamp is not deterministic despite the docstring claiming it is
 
-**File:** `/home/mk/projects/Demarch/interverse/interflux/scripts/generate-agents.py`, lines 231, 252-256
+**File:** `/home/mk/projects/Sylveste/interverse/interflux/scripts/generate-agents.py`, lines 231, 252-256
 
 ```python
 now_utc = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+00:00")
@@ -235,7 +235,7 @@ or qualifying the "deterministic" claim in the SKILL.md notes.
 
 ### F7 — LOW: JSON report `generated` list includes dry-run entries, exit code is 0 even when no_domains
 
-**File:** `/home/mk/projects/Demarch/interverse/interflux/scripts/generate-agents.py`, lines 533-538
+**File:** `/home/mk/projects/Sylveste/interverse/interflux/scripts/generate-agents.py`, lines 533-538
 
 ```python
 if report["status"] == "no_domains":
@@ -283,7 +283,7 @@ cause the LLM to misinterpret the output and produce incorrect log messages.
 ### F8 — LOW: `_atomic_write` does not guard against `path.parent` being on a different
 filesystem from the tempfile directory
 
-**File:** `/home/mk/projects/Demarch/interverse/interflux/scripts/generate-agents.py`, line 369
+**File:** `/home/mk/projects/Sylveste/interverse/interflux/scripts/generate-agents.py`, line 369
 
 ```python
 fd, tmp_path = tempfile.mkstemp(dir=str(path.parent), suffix=".tmp")

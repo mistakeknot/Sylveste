@@ -1,6 +1,6 @@
 # CUJ (Critical User Journey) Standard
 
-The format and lifecycle for CUJ documents across the Demarch ecosystem. CUJs describe end-to-end user experiences that the product must support well.
+The format and lifecycle for CUJ documents across the Sylveste ecosystem. CUJs describe end-to-end user experiences that the product must support well.
 
 ## What a CUJ Is
 

@@ -6,7 +6,7 @@
 
 ## Problem
 
-Demarch's plugin ecosystem spans three languages (Bash, Go, Python) but the shared SDK only covers Bash fully and Go partially. Go MCP servers reinvent capability detection and config loading. Python has no SDK at all. There is no formal contract ensuring consistent behavior across implementations.
+Sylveste's plugin ecosystem spans three languages (Bash, Go, Python) but the shared SDK only covers Bash fully and Go partially. Go MCP servers reinvent capability detection and config loading. Python has no SDK at all. There is no formal contract ensuring consistent behavior across implementations.
 
 ## Solution
 
@@ -71,7 +71,7 @@ Formalize interbase as a spec-driven multi-language SDK where Bash, Go, and Pyth
 **What:** Add `plugin_cache_path` and `ecosystem_root` functions to the existing Bash SDK, replacing hardcoded paths in consumers.
 **Acceptance criteria:**
 - [ ] `ib_plugin_cache_path PLUGIN` returns the cache path for a given plugin name
-- [ ] `ib_ecosystem_root` returns the Demarch monorepo root or empty if not in ecosystem
+- [ ] `ib_ecosystem_root` returns the Sylveste monorepo root or empty if not in ecosystem
 - [ ] Existing Bash SDK functions unchanged (backward compatible)
 - [ ] Stub updated to include no-op versions of new functions
 - [ ] Existing 4 adopters continue to work without changes

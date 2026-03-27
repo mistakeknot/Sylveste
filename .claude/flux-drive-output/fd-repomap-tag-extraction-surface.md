@@ -306,7 +306,7 @@ For non-Go languages when intermap is unavailable, fall back to ctags-style rege
 
 ### Recommendation for repo-map
 
-Start with the 3 high-confidence languages (Python, Go, TypeScript). These cover the vast majority of Demarch's own codebase. Add Rust and Java as secondary. Do not rely on the other languages for edge quality; use their import data only for file-level dependency hints.
+Start with the 3 high-confidence languages (Python, Go, TypeScript). These cover the vast majority of Sylveste's own codebase. Add Rust and Java as secondary. Do not rely on the other languages for edge quality; use their import data only for file-level dependency hints.
 
 ---
 

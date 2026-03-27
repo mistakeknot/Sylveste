@@ -64,7 +64,7 @@ Do NOT change `Success()`. The existing `len(r.Errors) == 0` check is the correc
 
 **Step 4: Build and verify**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go build ./internal/pollard/...`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go build ./internal/pollard/...`
 Expected: builds without errors (existing callers don't set Status, so it defaults to 0 = HunterStatusOK, which is backward compatible)
 
 **Step 5: Commit**
@@ -285,10 +285,10 @@ func TestIsTransient(t *testing.T) {
 
 **Step 3: Run tests**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go test ./internal/pollard/hunters/ -run TestHuntWithRetry -v -race`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go test ./internal/pollard/hunters/ -run TestHuntWithRetry -v -race`
 Expected: all pass
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go test ./internal/pollard/hunters/ -run TestIsTransient -v -race`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go test ./internal/pollard/hunters/ -run TestIsTransient -v -race`
 Expected: all pass
 
 **Step 4: Commit**
@@ -364,7 +364,7 @@ var failedHunters []hunterSummary
 
 **Step 4: Build check**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go build ./cmd/pollard/`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go build ./cmd/pollard/`
 Expected: builds without errors
 
 **Step 5: Commit**
@@ -432,7 +432,7 @@ This ensures `Scanner.Scan()` always returns per-hunter results even for failure
 
 **Step 3: Build check**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go build ./internal/pollard/...`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go build ./internal/pollard/...`
 Expected: builds without errors
 
 **Step 4: Commit**
@@ -488,12 +488,12 @@ if result == nil {
 
 **Step 2: Build check**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go build ./internal/pollard/...`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go build ./internal/pollard/...`
 Expected: builds without errors
 
 **Step 3: Run existing watch tests**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go test ./internal/pollard/watch/ -v -race`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go test ./internal/pollard/watch/ -v -race`
 Expected: pass (existing tests should still work)
 
 **Step 4: Commit**
@@ -515,12 +515,12 @@ the watcher continues with partial results."
 
 **Step 1: Build all pollard binaries**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go build ./cmd/pollard/`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go build ./cmd/pollard/`
 Expected: builds without errors
 
 **Step 2: Run full pollard test suite**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go test ./internal/pollard/... -race -count=1 -timeout=60s`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go test ./internal/pollard/... -race -count=1 -timeout=60s`
 Expected: all pass
 
 **Step 3: Commit if fixups needed**

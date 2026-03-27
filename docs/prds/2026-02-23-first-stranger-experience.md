@@ -3,7 +3,7 @@
 
 ## Problem
 
-No outside user has ever installed or run Demarch. There is no README explaining what it is, no install script, and no validated path from zero to working system. The project cannot grow beyond its author.
+No outside user has ever installed or run Sylveste. There is no README explaining what it is, no install script, and no validated path from zero to working system. The project cannot grow beyond its author.
 
 ## Solution
 
@@ -16,7 +16,7 @@ Three-tier onboarding (Quick Start / Full Setup / Contributing) with a curl-fetc
 **What:** Replace the current developer-facing monorepo structure README with a user-facing landing page.
 
 **Acceptance criteria:**
-- [ ] README.md leads with a one-line description of what Demarch is
+- [ ] README.md leads with a one-line description of what Sylveste is
 - [ ] Quick Start section with curl install command (< 5 lines to working system)
 - [ ] "What You Get" section listing key capabilities (Clavain, plugins, multi-agent review, sprint management)
 - [ ] Links to three tier guides (power user, full setup, contributing)
@@ -28,7 +28,7 @@ Three-tier onboarding (Quick Start / Full Setup / Contributing) with a curl-fetc
 **What:** Curl-fetchable bash script that installs Clavain + Interverse plugin ecosystem.
 
 **Acceptance criteria:**
-- [ ] Hosted at repo root, fetchable via `curl -fsSL https://raw.githubusercontent.com/mistakeknot/Demarch/main/install.sh | bash`
+- [ ] Hosted at repo root, fetchable via `curl -fsSL https://raw.githubusercontent.com/mistakeknot/Sylveste/main/install.sh | bash`
 - [ ] Checks prerequisites: `claude` CLI, `jq`, `git` — clear error messages if missing
 - [ ] Checks for `bd` (beads CLI) — warns if missing with install hint, does not block
 - [ ] Adds interagency-marketplace via `claude plugins marketplace add`
@@ -68,7 +68,7 @@ Three-tier onboarding (Quick Start / Full Setup / Contributing) with a curl-fetc
 ## Non-goals
 
 - **ic binary distribution** — Intercore binary packaging is a separate concern (future bead)
-- **Custom domain** — get.demarch.dev URL shortening is nice-to-have, not blocking
+- **Custom domain** — get.sylveste.dev URL shortening is nice-to-have, not blocking
 - **Video walkthrough** — text-first, video later
 - **Autarch TUI onboarding** — separate UX concern
 - **CI for install script** — future P0 (iv-be0ik covers CI broadly)
@@ -76,7 +76,7 @@ Three-tier onboarding (Quick Start / Full Setup / Contributing) with a curl-fetc
 
 ## Dependencies
 
-- Demarch repo must be publicly accessible (or at minimum install.sh + marketplace repo)
+- Sylveste repo must be publicly accessible (or at minimum install.sh + marketplace repo)
 - Claude Code marketplace `add` command must work for external users
 - `bd` (beads CLI) distribution needs a documented install path
 

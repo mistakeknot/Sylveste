@@ -25,7 +25,7 @@ Deep research into six domains of temporal visualization, assessed for applicabi
 - **Source**: https://github.com/nicoespeon/gitgraph.js | npm `@gitgraph/js`, `@gitgraph/react`
 - **Technique**: Programmatic JavaScript library to draw git-style DAG (directed acyclic graph) diagrams. Defines `commit()`, `branch()`, `merge()` operations that render as colored swim-lane lines with commit nodes. Supports commit messages in tooltips, branch styling, fast-forward merge options, and click callbacks on commits.
 - **Architecture**: Modular -- `@gitgraph/core` contains the rendering-agnostic logic; rendering libraries wrap it for vanilla JS, React, or SVG/canvas targets. Custom DOM diff minimizes redraws.
-- **Meadowsyn mapping**: Directly applicable for rendering agent work lineage as a git-style graph. Each agent's work stream becomes a branch; merge events represent integration points. The React wrapper (`@gitgraph/react`) fits Meadowsyn's likely React/Next.js stack. The programmatic API means data can be driven from Demarch's event log rather than a real git repo.
+- **Meadowsyn mapping**: Directly applicable for rendering agent work lineage as a git-style graph. Each agent's work stream becomes a branch; merge events represent integration points. The React wrapper (`@gitgraph/react`) fits Meadowsyn's likely React/Next.js stack. The programmatic API means data can be driven from Sylveste's event log rather than a real git repo.
 - **Limitation**: The original project is archived. The core library is stable but unmaintained. Consider forking or using the rendering-agnostic core with a custom renderer.
 
 ### GitHub Network Graph
@@ -75,7 +75,7 @@ Deep research into six domains of temporal visualization, assessed for applicabi
 
 - **Source**: https://openbb.co/ | open-source financial analysis platform
 - **Technique**: Open-source Bloomberg alternative with custom dashboard widgets, chart generation from raw data, modular API-first architecture. Combines real-time data fetching with interactive visualization.
-- **Meadowsyn mapping**: OpenBB's dashboard-building approach (drag-and-drop widget placement, flexible data source integration) is a design reference for Meadowsyn's customizable factory views. The "Open Data Platform" concept (connect once, use everywhere) parallels Meadowsyn consuming Demarch's event streams.
+- **Meadowsyn mapping**: OpenBB's dashboard-building approach (drag-and-drop widget placement, flexible data source integration) is a design reference for Meadowsyn's customizable factory views. The "Open Data Platform" concept (connect once, use everywhere) parallels Meadowsyn consuming Sylveste's event streams.
 
 ### Sparklines and Small Multiples (Tufte)
 
@@ -106,7 +106,7 @@ Deep research into six domains of temporal visualization, assessed for applicabi
 - **Source**: https://github.com/phuongdnguyen/temporal-workflow-replay-debugger | https://docs.temporal.io/web-ui
 - **Technique**: Reconstructs workflow execution from event history. VS Code extension: enter Workflow ID, set breakpoints on code or history events, step through execution. Web UI provides Timeline View (flow of events in time), Compact View (linear progression of event groups), and detailed event inspection.
 - **Interaction model**: The Timeline View shows event groups laid out temporally, with visual indicators for activity scheduling, execution, and completion. Clicking into events shows full payloads. The Compact View provides a left-to-right progression useful for quick scanning.
-- **Meadowsyn mapping**: Temporal's workflow model closely mirrors Demarch's bead lifecycle (created -> claimed -> in_progress -> completed). The Timeline View's event-group rendering is directly applicable to visualizing bead state transitions. The "replay debugger" concept supports Meadowsyn's post-hoc analysis: replay what happened in a failed bead to understand why.
+- **Meadowsyn mapping**: Temporal's workflow model closely mirrors Sylveste's bead lifecycle (created -> claimed -> in_progress -> completed). The Timeline View's event-group rendering is directly applicable to visualizing bead state transitions. The "replay debugger" concept supports Meadowsyn's post-hoc analysis: replay what happened in a failed bead to understand why.
 
 ### EventStoreDB Admin UI / Kurrent Navigator
 
@@ -190,7 +190,7 @@ Deep research into six domains of temporal visualization, assessed for applicabi
 - **Source**: https://github.com/GraylinKim/sc2reader | Liquipedia StarCraft II | https://github.com/Blizzard/s2protocol
 - **Technique**: Replay files store initial game context + chronological event list. The game engine replays events deterministically to reconstruct state at any point. Users can speed up/slow down playback and rewind (jump backward), but cannot jump forward (must replay sequentially). sc2reader (Python) extracts events: unit commands, camera movements, selections, hotkeys, unit creation/death times.
 - **Key constraint**: Rewinding was "especially hard to code" (Blizzard) because the engine is a forward-only state machine. Jumping backward requires replaying from the beginning or from a cached snapshot.
-- **Meadowsyn mapping**: The "initial state + event stream = deterministic replay" model is exactly how Demarch's event log works. The forward-only constraint with snapshot-based rewind is the practical architecture for Meadowsyn's scrubber: periodically snapshot factory state, replay events forward from the nearest snapshot. The sc2reader library demonstrates how to extract structured events from replay files for analysis, analogous to parsing Demarch's event log.
+- **Meadowsyn mapping**: The "initial state + event stream = deterministic replay" model is exactly how Sylveste's event log works. The forward-only constraint with snapshot-based rewind is the practical architecture for Meadowsyn's scrubber: periodically snapshot factory state, replay events forward from the nearest snapshot. The sc2reader library demonstrates how to extract structured events from replay files for analysis, analogous to parsing Sylveste's event log.
 
 ### Overwatch Replay Technology (GDC 2017)
 
@@ -234,7 +234,7 @@ Deep research into six domains of temporal visualization, assessed for applicabi
 
 - **Source**: https://www.pm4js.org/ | npm `pm4js`
 - **Technique**: Full process mining library in JavaScript. Parses CSV/XES event logs in the browser. Implements Inductive Miner algorithm for process discovery. Visualizes Petri nets using Viz.js (Graphviz compiled to JS). Runs in modern browsers and Node.js.
-- **Meadowsyn mapping**: THE KEY FINDING. PM4JS can ingest Demarch's event log (CSV or JXES format), discover the actual process model (how beads flow through states, which paths agents take), and render it as an interactive Petri net -- all in the browser, no backend required. This enables Meadowsyn to show "here's the actual process the factory follows" derived from data rather than prescribed.
+- **Meadowsyn mapping**: THE KEY FINDING. PM4JS can ingest Sylveste's event log (CSV or JXES format), discover the actual process model (how beads flow through states, which paths agents take), and render it as an interactive Petri net -- all in the browser, no backend required. This enables Meadowsyn to show "here's the actual process the factory follows" derived from data rather than prescribed.
 
 ### PM4Py (Python)
 
@@ -261,7 +261,7 @@ Deep research into six domains of temporal visualization, assessed for applicabi
 - **Source**: https://developer.celonis.com/process-intelligence-apis/ | Embedding: iframe component in Views
 - **Technique**: REST API that programmatically exports process intelligence (KPIs, context, recommended actions) to third-party platforms. iframe embedding of Celonis Views into external applications. Extended at Celonis:Next 2025 for AI agent integration (Copilot Studio, Bedrock, Agentforce).
 - **Object-Centric Process Mining (OCPM)**: Analyzes how multiple business objects (orders, invoices, deliveries) interact over time -- not just single-case process flows.
-- **Meadowsyn mapping**: OCPM is the right formalism for Demarch's factory. Beads, agents, repos, and PRs are interacting objects, not independent cases. Celonis's API-first approach (generate API endpoint from selected KPIs) is a design reference for Meadowsyn's data layer. However, Celonis is proprietary and enterprise-priced; the open-source stack (PM4JS + PM4Py + processanimateR) provides equivalent functionality for Meadowsyn's needs.
+- **Meadowsyn mapping**: OCPM is the right formalism for Sylveste's factory. Beads, agents, repos, and PRs are interacting objects, not independent cases. Celonis's API-first approach (generate API endpoint from selected KPIs) is a design reference for Meadowsyn's data layer. However, Celonis is proprietary and enterprise-priced; the open-source stack (PM4JS + PM4Py + processanimateR) provides equivalent functionality for Meadowsyn's needs.
 
 ### Smyrida
 
@@ -285,7 +285,7 @@ Deep research into six domains of temporal visualization, assessed for applicabi
 
 - **Source**: IEEE XES Standard | https://www.tf-pm.org/resources/xes-standard | JXES: https://blog.rwth-aachen.de/pads/2020/11/13/jxes-json-support-for-xes-event-logs/
 - **Technique**: XES is the IEEE standard for event log interchange (XML-based). JXES provides JSON support for web-friendly transport. Standard extensions define attributes for concept names, timestamps, lifecycle transitions, and organizational info.
-- **Meadowsyn mapping**: Demarch's event log should export to JXES format to plug into the entire process mining ecosystem. The lifecycle extension (start/complete transitions) maps to bead state changes. The organizational extension (resource, role, group) maps to agent identity and agent fleet structure. JXES over WebSocket enables real-time process mining.
+- **Meadowsyn mapping**: Sylveste's event log should export to JXES format to plug into the entire process mining ecosystem. The lifecycle extension (start/complete transitions) maps to bead state changes. The organizational extension (resource, role, group) maps to agent identity and agent fleet structure. JXES over WebSocket enables real-time process mining.
 
 ---
 
@@ -318,7 +318,7 @@ Deep research into six domains of temporal visualization, assessed for applicabi
 
 ### Data Format Recommendation
 
-Export Demarch's event log in JXES (JSON XES) format to enable plug-and-play integration with the process mining ecosystem (PM4JS, PM4Py, Apromore, Smyrida). Each bead lifecycle maps to a trace; each state transition maps to an event with timestamp, lifecycle transition, and organizational attributes.
+Export Sylveste's event log in JXES (JSON XES) format to enable plug-and-play integration with the process mining ecosystem (PM4JS, PM4Py, Apromore, Smyrida). Each bead lifecycle maps to a trace; each state transition maps to an event with timestamp, lifecycle transition, and organizational attributes.
 
 ### Performance Targets
 

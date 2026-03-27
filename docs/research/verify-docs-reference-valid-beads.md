@@ -4,7 +4,7 @@
 
 ## Summary
 
-Scanned all markdown files in `docs/brainstorms/`, `docs/plans/`, `docs/roadmaps/`, `docs/guides/`, `docs/research/`, `docs/solutions/`, `docs/prds/`, and `docs/demarch-roadmap.md`, plus `docs/roadmap.json`, for bead ID references (pattern `iv-XXXXX` or `iv-XXXXX.N`).
+Scanned all markdown files in `docs/brainstorms/`, `docs/plans/`, `docs/roadmaps/`, `docs/guides/`, `docs/research/`, `docs/solutions/`, `docs/prds/`, and `docs/sylveste-roadmap.md`, plus `docs/roadmap.json`, for bead ID references (pattern `iv-XXXXX` or `iv-XXXXX.N`).
 
 | Metric | Count |
 |--------|-------|

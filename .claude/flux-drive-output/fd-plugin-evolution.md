@@ -1,7 +1,7 @@
 # fd-plugin-evolution: Plugin Evolution Patterns from Hyperspace Skills & Tools
 
 > Reviewer: fd-plugin-evolution (plugin ecosystem architect)
-> Sources: `research/agi-hyperspace/ANALYSIS.md`, `research/agi-hyperspace/projects/skills-and-tools/README.md`, Demarch codebase exploration
+> Sources: `research/agi-hyperspace/ANALYSIS.md`, `research/agi-hyperspace/projects/skills-and-tools/README.md`, Sylveste codebase exploration
 > Date: 2026-03-14
 
 ---
@@ -53,9 +53,9 @@ Where:
 ```
 
 **Key differences from Hyperspace:**
-- **Three-factor** instead of two: correctness, utility, AND author trust. Hyperspace doesn't need trust because all agents are equal peers. In Demarch, agent trust matters because some agents produce better code than others.
+- **Three-factor** instead of two: correctness, utility, AND author trust. Hyperspace doesn't need trust because all agents are equal peers. In Sylveste, agent trust matters because some agents produce better code than others.
 - **Audit-augmented correctness**: Structural tests catch manifest/build issues but not skill quality. The interskill audit checklist (frontmatter, invocation control, content quality, anti-patterns) catches the class of problems where a plugin "works" but produces unreliable agent behavior.
-- **Multi-signal utility**: Hyperspace uses a single adoption count. Demarch can distinguish session invocations (intensity), unique sessions (breadth), and cross-project usage (generalizability).
+- **Multi-signal utility**: Hyperspace uses a single adoption count. Sylveste can distinguish session invocations (intensity), unique sessions (breadth), and cross-project usage (generalizability).
 
 **Priority: P1** -- Define the formula and wire data sources before building the evolution loop. Without measurement, the loop has no fitness signal.
 
@@ -151,9 +151,9 @@ GossipSub broadcasts skill discoveries in ~1 second. When one agent invents a us
 
 ### Why Gossip Doesn't Apply
 
-Demarch is single-machine, single-operator (`PHILOSOPHY.md`: "Demarch is centralized-but-local"). There's no peer network. The 57 Interverse plugins are all installed from a single marketplace (`core/marketplace/.claude-plugin/marketplace.json`), not discovered via gossip.
+Sylveste is single-machine, single-operator (`PHILOSOPHY.md`: "Sylveste is centralized-but-local"). There's no peer network. The 57 Interverse plugins are all installed from a single marketplace (`core/marketplace/.claude-plugin/marketplace.json`), not discovered via gossip.
 
-### What Demarch Has Instead
+### What Sylveste Has Instead
 
 Three existing mechanisms serve the discovery function:
 
@@ -205,7 +205,7 @@ WASM sandboxing is **not applicable** to Claude Code plugins. The execution mode
 | Trust model | Untrusted peer code | Trusted operator code |
 | Portability | Architecture-independent | Shell scripts + compiled binaries |
 
-The right analogy for Demarch is not WASM sandboxing but **capability-based access control** -- the Gridfire vision described in `PHILOSOPHY.md`: "unforgeable tokens with effects allowlists and resource bounds." Until Gridfire ships, the practical mitigation is the publish gate (interpub) plus structural tests.
+The right analogy for Sylveste is not WASM sandboxing but **capability-based access control** -- the Gridfire vision described in `PHILOSOPHY.md`: "unforgeable tokens with effects allowlists and resource bounds." Until Gridfire ships, the practical mitigation is the publish gate (interpub) plus structural tests.
 
 **Priority: P3** -- WASM is architecturally irrelevant. Gridfire is the long-term answer; interpub gates are the present-tense answer.
 
@@ -295,21 +295,21 @@ This data feeds the intertrust scoring system -- agents that produce quality imp
 
 | File | Relevance |
 |------|-----------|
-| `/home/mk/projects/Demarch/interverse/interlab/internal/experiment/state.go` | Campaign state model, circuit breaker, JSONL persistence |
-| `/home/mk/projects/Demarch/interverse/interlab/internal/orchestration/plan.go` | Multi-campaign planning, file conflict detection |
-| `/home/mk/projects/Demarch/interverse/interlab/skills/autoresearch/SKILL.md` | Single-campaign experiment loop protocol |
-| `/home/mk/projects/Demarch/interverse/interlab/skills/autoresearch-multi/SKILL.md` | Multi-campaign orchestration protocol |
-| `/home/mk/projects/Demarch/interverse/interlab/docs/interlab-vision.md` | Interlab roadmap -- agent self-improvement is v0.5-0.6 target |
-| `/home/mk/projects/Demarch/interverse/interskill/skills/audit/SKILL.md` | 19-point skill quality audit checklist |
-| `/home/mk/projects/Demarch/interverse/intertrust/CLAUDE.md` | Agent trust scoring (severity-weighted, time-decayed) |
-| `/home/mk/projects/Demarch/interverse/intercheck/CLAUDE.md` | PostToolUse syntax and format checks |
-| `/home/mk/projects/Demarch/interverse/interpub/CLAUDE.md` | Publish pipeline (`ic publish`) |
-| `/home/mk/projects/Demarch/agents/plugin-publishing.md` | Publish gate, version bumping, ecosystem diagram |
-| `/home/mk/projects/Demarch/interverse/interlab/tests/structural/test_structure.py` | Example structural test suite (13 tests) |
-| `/home/mk/projects/Demarch/interverse/intercheck/tests/structural/test_structure.py` | Example structural test suite (6 tests) |
-| `/home/mk/projects/Demarch/PHILOSOPHY.md` | Trust ladder, Goodhart resistance, Gridfire vision, anti-gaming |
-| `/home/mk/projects/Demarch/CLAUDE.md` | Trust boundary security section |
-| `/home/mk/projects/Demarch/interverse/interlock/.claude-plugin/plugin.json` | Example plugin manifest (MCP server, skills, commands) |
+| `/home/mk/projects/Sylveste/interverse/interlab/internal/experiment/state.go` | Campaign state model, circuit breaker, JSONL persistence |
+| `/home/mk/projects/Sylveste/interverse/interlab/internal/orchestration/plan.go` | Multi-campaign planning, file conflict detection |
+| `/home/mk/projects/Sylveste/interverse/interlab/skills/autoresearch/SKILL.md` | Single-campaign experiment loop protocol |
+| `/home/mk/projects/Sylveste/interverse/interlab/skills/autoresearch-multi/SKILL.md` | Multi-campaign orchestration protocol |
+| `/home/mk/projects/Sylveste/interverse/interlab/docs/interlab-vision.md` | Interlab roadmap -- agent self-improvement is v0.5-0.6 target |
+| `/home/mk/projects/Sylveste/interverse/interskill/skills/audit/SKILL.md` | 19-point skill quality audit checklist |
+| `/home/mk/projects/Sylveste/interverse/intertrust/CLAUDE.md` | Agent trust scoring (severity-weighted, time-decayed) |
+| `/home/mk/projects/Sylveste/interverse/intercheck/CLAUDE.md` | PostToolUse syntax and format checks |
+| `/home/mk/projects/Sylveste/interverse/interpub/CLAUDE.md` | Publish pipeline (`ic publish`) |
+| `/home/mk/projects/Sylveste/agents/plugin-publishing.md` | Publish gate, version bumping, ecosystem diagram |
+| `/home/mk/projects/Sylveste/interverse/interlab/tests/structural/test_structure.py` | Example structural test suite (13 tests) |
+| `/home/mk/projects/Sylveste/interverse/intercheck/tests/structural/test_structure.py` | Example structural test suite (6 tests) |
+| `/home/mk/projects/Sylveste/PHILOSOPHY.md` | Trust ladder, Goodhart resistance, Gridfire vision, anti-gaming |
+| `/home/mk/projects/Sylveste/CLAUDE.md` | Trust boundary security section |
+| `/home/mk/projects/Sylveste/interverse/interlock/.claude-plugin/plugin.json` | Example plugin manifest (MCP server, skills, commands) |
 
 ---
 

@@ -1,7 +1,7 @@
 # PRD: Skaffen Quality Signals (Compound → Orient Feedback Loop)
 
-**Bead:** Demarch-khlh
-**Parent:** Demarch-3j0i (Hyperspace AGI adoption)
+**Bead:** Sylveste-khlh
+**Parent:** Sylveste-3j0i (Hyperspace AGI adoption)
 **Priority:** P0
 **Date:** 2026-03-14
 

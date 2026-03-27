@@ -12,7 +12,7 @@ review_date: 2026-03-21
 
 ## Summary
 
-interlore proposes a philosophy observer plugin to detect emerging patterns and drift in decision-making. The PRD is **well-aligned with Demarch's core principles** and the design decomposition is sound. However, there are **4 significant decision blindspots** that need exploration before committing to the "propose, never auto-apply" model and the 3+ artifact threshold for "established" patterns.
+interlore proposes a philosophy observer plugin to detect emerging patterns and drift in decision-making. The PRD is **well-aligned with Sylveste's core principles** and the design decomposition is sound. However, there are **4 significant decision blindspots** that need exploration before committing to the "propose, never auto-apply" model and the 3+ artifact threshold for "established" patterns.
 
 ---
 

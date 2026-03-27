@@ -2,7 +2,7 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Goal:** Create a Clavain skill that makes any project fully operational in the Demarch ecosystem with one command.
+**Goal:** Create a Clavain skill that makes any project fully operational in the Sylveste ecosystem with one command.
 
 **Architecture:** A SKILL.md orchestration prompt (~200 lines) with template files in subdirectories. The skill is a sequencer: it introspects the repo, asks minimal questions, then delegates to existing tools (bd init, /clavain:init, /interpath:*) while generating the artifacts they can't (CLAUDE.md, AGENTS.md, PHILOSOPHY.md, docs/ tree, observability config).
 
@@ -33,7 +33,7 @@ Write the orchestration prompt. Structure:
 ```markdown
 ---
 name: project-onboard
-description: Use when onboarding a new or existing project into the Demarch ecosystem — introspects infrastructure, conducts guided interview, scaffolds docs and automation, seeds content via interpath
+description: Use when onboarding a new or existing project into the Sylveste ecosystem — introspects infrastructure, conducts guided interview, scaffolds docs and automation, seeds content via interpath
 ---
 
 # Project Onboard
@@ -41,7 +41,7 @@ description: Use when onboarding a new or existing project into the Demarch ecos
 ## Overview
 
 One-command project setup. Introspects any repo, asks minimal questions with smart defaults,
-then orchestrates full Demarch-level automation: beads tracking, doc scaffolding, observability,
+then orchestrates full Sylveste-level automation: beads tracking, doc scaffolding, observability,
 and content seeding.
 
 Safe to re-run — all operations are idempotent (skip what already exists).
@@ -149,7 +149,7 @@ Key sections (following doc-structure.md boundary rule — operations only):
 - Project name + one-liner
 - Structure (detected from filesystem)
 - Git Workflow (trunk-based default)
-- Working Style (Demarch conventions)
+- Working Style (Sylveste conventions)
 - See AGENTS.md For (pointer to comprehensive guide)
 
 Target: 30-60 lines. CLAUDE.md is loaded every session — keep it lean.
@@ -174,7 +174,7 @@ Seed with interview Q4 (key goals) as design principles.
 ### 3f: Generate CONVENTIONS.md
 
 Only if CONVENTIONS.md doesn't exist. Use the template from `templates/CONVENTIONS.md.tmpl`.
-Standard canonical doc paths following Demarch pattern.
+Standard canonical doc paths following Sylveste pattern.
 
 ### 3g: Create docs/ tree
 

@@ -59,7 +59,7 @@
       "Identify terminology drift across documents: terms like 'review fleet,' 'quality gates,' 'triage layer,' 'synthesis agent,' and 'flux-drive' must be used consistently or explicitly scoped",
       "Check that the sprint phase sequence described in running-a-sprint.md (brainstorm → strategy → plan → execute → ship → reflect) matches every phase reference in first-install.md and code-review.md",
       "Verify that actor definitions are consistent: 'regular user' in running-a-sprint and code-review should have the same prerequisites as what a 'stranger' becomes after completing first-install",
-      "Check that the frontmatter `bead` field is consistent — all three CUJs reference `Demarch-9ha`, which should be verified as a real parent bead and not a copy-paste artifact",
+      "Check that the frontmatter `bead` field is consistent — all three CUJs reference `Sylveste-9ha`, which should be verified as a real parent bead and not a copy-paste artifact",
       "Identify places where the same feature is described with different entry points (e.g., review is entered via `/clavain:quality-gates` in one place and `/interflux:flux-drive` in another — are these the same flow or alternatives?)"
     ],
     "success_hints": [

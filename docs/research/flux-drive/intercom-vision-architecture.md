@@ -2,9 +2,9 @@
 
 **Date:** 2026-02-22
 **Reviewer:** Flux-drive Architecture & Design Reviewer
-**Document reviewed:** `/home/mk/projects/Demarch/apps/intercom/docs/intercom-vision.md` v0.1
-**Context docs:** `docs/demarch-vision.md` v3.0, `apps/autarch/docs/autarch-vision.md` v1.1
-**Codebase:** `/home/mk/projects/Demarch/apps/intercom/` (NanoClaw, current state)
+**Document reviewed:** `/home/mk/projects/Sylveste/apps/intercom/docs/intercom-vision.md` v0.1
+**Context docs:** `docs/sylveste-vision.md` v3.0, `apps/autarch/docs/autarch-vision.md` v1.1
+**Codebase:** `/home/mk/projects/Sylveste/apps/intercom/` (NanoClaw, current state)
 
 ---
 
@@ -22,9 +22,9 @@ The vision identifies this as Open Question 1 and lists four options without eva
 
 **Option A: Mount the `ic` binary read-only into the container**
 
-This is the lowest-friction path for H1 read-only queries and the one implied by the vision's tool descriptions (`demarch_run_status → ic run current/status --json`). The coupling profile is direct: the container binary-depends on a specific version of `ic`, its CLI interface, its output format, and its JSON schema. Any breaking change to `ic run current --json` fields silently breaks the Demarch toolkit.
+This is the lowest-friction path for H1 read-only queries and the one implied by the vision's tool descriptions (`sylveste_run_status → ic run current/status --json`). The coupling profile is direct: the container binary-depends on a specific version of `ic`, its CLI interface, its output format, and its JSON schema. Any breaking change to `ic run current --json` fields silently breaks the Sylveste toolkit.
 
-The deeper problem is that the `ic` binary is a local SQLite client. Mounting it into a container does not give it access to the database unless the database path is also mounted. The vision does not address which database the tool queries. For a "main group" container that has the project root mounted at `/workspace/project`, the database is accessible. For any other group, it is not. This creates a topology gap that is invisible in the option description but would surface immediately in H1 implementation: the Demarch toolkit only works for main-group conversations.
+The deeper problem is that the `ic` binary is a local SQLite client. Mounting it into a container does not give it access to the database unless the database path is also mounted. The vision does not address which database the tool queries. For a "main group" container that has the project root mounted at `/workspace/project`, the database is accessible. For any other group, it is not. This creates a topology gap that is invisible in the option description but would surface immediately in H1 implementation: the Sylveste toolkit only works for main-group conversations.
 
 Blast radius: low for H1 if topology gap is accepted; medium if database access needs to expand to non-main groups (requires a mount strategy that affects every group's security model).
 
@@ -32,7 +32,7 @@ Blast radius: low for H1 if topology gap is accepted; medium if database access 
 
 The vision already uses filesystem-based IPC for agent-to-host communication (`container/shared/ipc-tools.ts`). Extending this to agency queries is architecturally consistent — the container writes an intent file, the host process executes the `ic` command and writes the result back. This keeps all `ic` execution on the host, where the database is available, and keeps the container's execution surface narrow.
 
-The cost is latency (two filesystem round-trips per query) and serialization design (request/response correlation over files is more complex than the current fire-and-forget IPC). However, this option has the strongest coupling properties: the container never depends on `ic` directly, the host is the sole `ic` executor, and adding H2 write operations (demarch_create_issue, demarch_approve_gate) follows the same pattern with no new security surface.
+The cost is latency (two filesystem round-trips per query) and serialization design (request/response correlation over files is more complex than the current fire-and-forget IPC). However, this option has the strongest coupling properties: the container never depends on `ic` directly, the host is the sole `ic` executor, and adding H2 write operations (sylveste_create_issue, sylveste_approve_gate) follows the same pattern with no new security surface.
 
 This is the structurally preferred option. The vision already endorses it for H2 write operations ("The container agent doesn't call `ic` directly — instead, it writes an IPC intent file, and the host process validates and executes it. This preserves the security boundary."). Option B simply applies this same discipline to H1 read operations, making the H1/H2 surface uniform rather than split.
 
@@ -42,15 +42,15 @@ This introduces a persistent server process — either embedded in the host or a
 
 The practical overhead of HTTP for local IPC is not justified by the read-only use case. HTTP would be appropriate if Intercom were exposing queries to external consumers. For container-to-host communication where filesystem IPC already exists and works, adding HTTP is accidental complexity.
 
-Option C should be rejected for H1. It belongs in a different category: if Demarch ever exposes an HTTP API to external consumers (not in scope for any horizon in this vision), that is a separate module concern, not Intercom's.
+Option C should be rejected for H1. It belongs in a different category: if Sylveste ever exposes an HTTP API to external consumers (not in scope for any horizon in this vision), that is a separate module concern, not Intercom's.
 
 **Option D: Pre-populated state snapshot**
 
-This is the only option that avoids all runtime coupling. Before spawning a container, the host queries kernel state, serializes it to a JSON snapshot, and mounts it read-only into the container. The Demarch toolkit reads from this file, not from `ic`.
+This is the only option that avoids all runtime coupling. Before spawning a container, the host queries kernel state, serializes it to a JSON snapshot, and mounts it read-only into the container. The Sylveste toolkit reads from this file, not from `ic`.
 
 The fatal flaw is staleness. A container that runs for 30 minutes (the configured idle timeout) with a state snapshot from spawn time will serve increasingly stale answers. A user asking "what's the current sprint phase?" at minute 28 gets data from minute 0. For static artifacts (spec documents, verdict files, research), staleness is acceptable. For live run state (phases, dispatches, events), it is not.
 
-Option D is viable as a complement to Option B (pre-populate read-heavy static data at spawn, use IPC for live queries) but not as a standalone solution for the full Demarch toolkit.
+Option D is viable as a complement to Option B (pre-populate read-heavy static data at spawn, use IPC for live queries) but not as a standalone solution for the full Sylveste toolkit.
 
 **Recommendation:** Use Option B for all live kernel queries (run status, sprint phase, dispatch state, events). Use Option D as a performance optimization for static artifacts that do not change during a container's lifetime (spec artifacts, research findings, Interflux verdict files). Option A should be rejected — it creates a database topology gap and binary coupling. Option C should be rejected — it adds an HTTP server where filesystem IPC already exists.
 
@@ -68,7 +68,7 @@ The vision should be updated to make this explicit: Option B for H1 reads is not
 
 The integration map lists 19 integration points across 16 modules. Several of these have coupling risks worth flagging:
 
-**Clavain "Write" (H2): Intent submission: start sprint, advance phase.** The vision correctly identifies that Intercom should not call kernel primitives directly for policy-governing operations and should instead route through Clavain. The current write-path contract in the Autarch vision describes four intent types (start-run, advance-run, override-gate, submit-artifact). Intercom's H2 intent submission should reuse these same intent types rather than defining its own. If Intercom defines `demarch_start_run` as an IPC intent that the host maps to `ic run create` directly (bypassing Clavain), it violates the write-path contract that Autarch apps are being migrated toward. The vision should be explicit: Intercom's H2 write path goes through Clavain's CLI, not directly to `ic`.
+**Clavain "Write" (H2): Intent submission: start sprint, advance phase.** The vision correctly identifies that Intercom should not call kernel primitives directly for policy-governing operations and should instead route through Clavain. The current write-path contract in the Autarch vision describes four intent types (start-run, advance-run, override-gate, submit-artifact). Intercom's H2 intent submission should reuse these same intent types rather than defining its own. If Intercom defines `sylveste_start_run` as an IPC intent that the host maps to `ic run create` directly (bypassing Clavain), it violates the write-path contract that Autarch apps are being migrated toward. The vision should be explicit: Intercom's H2 write path goes through Clavain's CLI, not directly to `ic`.
 
 **Beads "Write" (H2): bd create, bd close from chat-initiated work.** Beads sit outside the kernel write-path contract described in the Autarch vision (the four Autarch intents do not include bead operations). The vision does not clarify whether bead writes from Intercom route through Clavain (as `bd` calls on the host after IPC) or through some future Interbus intent. This is a coupling question that should be resolved in H2 planning: does every write that Intercom initiates go through Clavain's policy layer, or are some writes considered "safe enough" to execute directly?
 
@@ -96,9 +96,9 @@ Consider: the H2 event bridge ("Poll ic events tail --consumer=intercom") is a d
 
 The rule the vision should encode: all kernel reads (ic run, ic dispatch, ic events) are permitted at the host level without routing through Clavain. All kernel writes that have policy implications (run creation, phase advancement, gate override, artifact registration) route through Clavain. Bead operations are explicitly categorized (are they policy-governing or not?). This rule, stated once in the vision, prevents H2 implementation from making inconsistent choices tool by tool.
 
-### Naming: Demarch Toolkit
+### Naming: Sylveste Toolkit
 
-The vision proposes a "Demarch toolkit" as the set of agent tools that bridge to kernel state. This name has a coupling risk: if the toolkit is scoped to the Demarch platform rather than to the Intercom host's integration surface, it implies external consumers might use it. In practice, the toolkit is Intercom-specific (it routes through Intercom's IPC bridge, not through any public interface). Naming it the "Intercom toolkit" or "agency toolkit" avoids implying external reusability that is not planned. This is a minor naming point but it reflects the vision's correct "translate, don't duplicate" principle: the toolkit translates for Intercom's conversational context, not for general programmatic access.
+The vision proposes a "Sylveste toolkit" as the set of agent tools that bridge to kernel state. This name has a coupling risk: if the toolkit is scoped to the Sylveste platform rather than to the Intercom host's integration surface, it implies external consumers might use it. In practice, the toolkit is Intercom-specific (it routes through Intercom's IPC bridge, not through any public interface). Naming it the "Intercom toolkit" or "agency toolkit" avoids implying external reusability that is not planned. This is a minor naming point but it reflects the vision's correct "translate, don't duplicate" principle: the toolkit translates for Intercom's conversational context, not for general programmatic access.
 
 ---
 
@@ -108,7 +108,7 @@ The vision proposes a "Demarch toolkit" as the set of agent tools that bridge to
 
 The H1 implementation is appropriately scoped. Seven tool types covering the most common queries, all implemented as thin CLI wrappers. No new persistence, no new protocol, no new infrastructure beyond the IPC extension. The vision does not over-specify H1 — it names capabilities without prematurely locking in implementation patterns. This is correct for a brainstorm-grade document.
 
-The one YAGNI risk in H1 is the "research on demand" capability (`demarch_research → Pollard query or future Interbus discovery.query intent`). This conflates two different integration surfaces (Pollard's current API versus a future Interbus intent that does not exist). For H1 implementation, this should be scoped to whichever surface actually exists: either Pollard's current output format or the kernel's discovery index, not both and not a future one. The vision's hedging here ("or future Interbus") creates implementation ambiguity that will cause unnecessary design discussion when H1 is planned.
+The one YAGNI risk in H1 is the "research on demand" capability (`sylveste_research → Pollard query or future Interbus discovery.query intent`). This conflates two different integration surfaces (Pollard's current API versus a future Interbus intent that does not exist). For H1 implementation, this should be scoped to whichever surface actually exists: either Pollard's current output format or the kernel's discovery index, not both and not a future one. The vision's hedging here ("or future Interbus") creates implementation ambiguity that will cause unnecessary design discussion when H1 is planned.
 
 ### H3 Capabilities Are Too Early to Specify
 
@@ -165,7 +165,7 @@ This is more useful than "Layer 2.5" because it gives the team a concrete decisi
 
 H1 is read-only, container-scoped, and does not require new persistence, new event subscriptions, or new protocol surfaces at the host level. The only extension needed is IPC query/response correlation (if Option B is chosen). The boundary is clean.
 
-One naming clarification: the vision says the H1 toolkit "works in all three runtimes (Claude, Gemini, Codex) because they're implemented in the shared container code." This is correct for the Gemini and Codex runtimes, which use the shared `executor.ts` tool execution layer. For the Claude runtime (Claude Agent SDK), tool implementation is different — Claude uses MCP tools, not the shared tool executor. The H1 toolkit description should clarify whether the Demarch toolkit tools are implemented in `container/shared/` (covering Gemini and Codex) or also in the Claude runtime's MCP tool layer. If only shared code, the Claude runtime needs additional work.
+One naming clarification: the vision says the H1 toolkit "works in all three runtimes (Claude, Gemini, Codex) because they're implemented in the shared container code." This is correct for the Gemini and Codex runtimes, which use the shared `executor.ts` tool execution layer. For the Claude runtime (Claude Agent SDK), tool implementation is different — Claude uses MCP tools, not the shared tool executor. The H1 toolkit description should clarify whether the Sylveste toolkit tools are implemented in `container/shared/` (covering Gemini and Codex) or also in the Claude runtime's MCP tool layer. If only shared code, the Claude runtime needs additional work.
 
 ### H2 Boundaries: One Structural Risk
 
@@ -191,15 +191,15 @@ The vision lists six open questions. One above (Q2: event delivery latency) has 
 
 **Q5: Interbus vs. direct integration for H2.** Resolution: proceed with direct `ic` calls for H2 and retrofit to Interbus if/when it exists. The write-path contract (Clavain as the policy gate for mutations) must be maintained regardless of whether Interbus exists. The retrofit cost is adding an Interbus client at the host level and replacing direct `ic` calls with bus intents — this is a host-level change that does not affect the container toolkit.
 
-**Q6: Token attribution.** This is a real architectural question without an obvious answer. The correct framing is: Intercom conversations and kernel runs are different cost units and should not be conflated. An Intercom agent that queries kernel state is spending tokens that belong to the Intercom conversation, not to the kernel run being queried. If the user asks "what is the sprint status?" and the agent calls `demarch_run_status`, the tokens spent answering that question are Intercom's cost, not Intercore's. The kernel run's token budget should only be debited when Intercom directly contributes work to a run (e.g., submitting a human approval that advances a phase). This distinction should be stated in the H2 budget alerts section, because the alerts themselves will need to know which budget they are reporting on.
+**Q6: Token attribution.** This is a real architectural question without an obvious answer. The correct framing is: Intercom conversations and kernel runs are different cost units and should not be conflated. An Intercom agent that queries kernel state is spending tokens that belong to the Intercom conversation, not to the kernel run being queried. If the user asks "what is the sprint status?" and the agent calls `sylveste_run_status`, the tokens spent answering that question are Intercom's cost, not Intercore's. The kernel run's token budget should only be debited when Intercom directly contributes work to a run (e.g., submitting a human approval that advances a phase). This distinction should be stated in the H2 budget alerts section, because the alerts themselves will need to know which budget they are reporting on.
 
 ---
 
 ## Must-Fix Before H1 Implementation
 
-1. **Resolve Q1 (container kernel access) as Option B + Option D.** Do not begin H1 implementation until the IPC query/response correlation mechanism is designed. If Option A is chosen instead, document the database topology gap explicitly and accept that Demarch toolkit tools only work in main-group conversations.
+1. **Resolve Q1 (container kernel access) as Option B + Option D.** Do not begin H1 implementation until the IPC query/response correlation mechanism is designed. If Option A is chosen instead, document the database topology gap explicitly and accept that Sylveste toolkit tools only work in main-group conversations.
 
-2. **State whether the H1 Demarch toolkit covers the Claude runtime.** The Claude runtime uses MCP tools, not the shared executor. If H1 toolkit tools are implemented only in `container/shared/`, they do not work in Claude runtime containers. This is either a scope limitation that should be stated, or an additional implementation surface that should be planned.
+2. **State whether the H1 Sylveste toolkit covers the Claude runtime.** The Claude runtime uses MCP tools, not the shared executor. If H1 toolkit tools are implemented only in `container/shared/`, they do not work in Claude runtime containers. This is either a scope limitation that should be stated, or an additional implementation surface that should be planned.
 
 3. **Define the write-path rule for H2 explicitly.** "All policy-governing mutations route through Clavain; direct `ic` reads are permitted" should be stated as a rule in the vision, not implied. Bead operations should be explicitly categorized.
 
@@ -215,4 +215,4 @@ The vision lists six open questions. One above (Q2: event delivery latency) has 
 
 ---
 
-*Reviewed against: `CLAUDE.md` (Demarch monorepo), `docs/demarch-vision.md` v3.0, `apps/autarch/docs/autarch-vision.md` v1.1, `apps/intercom/CLAUDE.md`, `apps/intercom/AGENTS.md`, `apps/intercom/docs/intercom-vision.md` v0.1, `apps/intercom/src/` source layout, `apps/intercom/container/shared/` source layout.*
+*Reviewed against: `CLAUDE.md` (Sylveste monorepo), `docs/sylveste-vision.md` v3.0, `apps/autarch/docs/autarch-vision.md` v1.1, `apps/intercom/CLAUDE.md`, `apps/intercom/AGENTS.md`, `apps/intercom/docs/intercom-vision.md` v0.1, `apps/intercom/src/` source layout, `apps/intercom/container/shared/` source layout.*

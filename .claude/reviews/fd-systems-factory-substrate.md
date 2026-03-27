@@ -71,7 +71,7 @@ The PRD creates a direct reinforcing loop that accelerates Goodhart pressure:
 
 This is not a theoretical risk — it is a structural property of the design. The scenario bank grows from sprint failures (F5), and those same scenarios gate future sprints (F4). Agents that run repeatedly across the scenario bank will, over time, develop implicit representations of what satisfies it. The scenarios are not a static holdout; they are a co-evolving target.
 
-The brainstorm notes "self-building validation: Demarch's own scenarios become the holdout set for its own development" as a feature. From a systems perspective, this is precisely the condition that produces Goodhart collapse: the evaluator is derived from the thing being evaluated.
+The brainstorm notes "self-building validation: Sylveste's own scenarios become the holdout set for its own development" as a feature. From a systems perspective, this is precisely the condition that produces Goodhart collapse: the evaluator is derived from the thing being evaluated.
 
 There is no mention of scenario rotation, scenario retirement, injection of adversarial or out-of-distribution scenarios, or any mechanism for detecting when the scenario bank has drifted toward measuring agent behavior rather than correctness.
 

@@ -162,7 +162,7 @@ The base profile and deltas are saved via the interfluence `profile_save` tool a
 
 ### Files Written
 
-- `/home/mk/projects/Demarch/interverse/interfluence/.interfluence/voice-profile.md` (base profile)
-- `/home/mk/projects/Demarch/interverse/interfluence/.interfluence/voices/blog.md` (blog delta)
-- `/home/mk/projects/Demarch/interverse/interfluence/.interfluence/voices/forum.md` (forum delta)
-- `/home/mk/projects/Demarch/interverse/interfluence/.interfluence/voices/policy.md` (policy delta)
+- `/home/mk/projects/Sylveste/interverse/interfluence/.interfluence/voice-profile.md` (base profile)
+- `/home/mk/projects/Sylveste/interverse/interfluence/.interfluence/voices/blog.md` (blog delta)
+- `/home/mk/projects/Sylveste/interverse/interfluence/.interfluence/voices/forum.md` (forum delta)
+- `/home/mk/projects/Sylveste/interverse/interfluence/.interfluence/voices/policy.md` (policy delta)

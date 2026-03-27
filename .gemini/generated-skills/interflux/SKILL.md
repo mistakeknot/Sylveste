@@ -349,7 +349,7 @@ interflux supports standalone (marketplace) and integrated (Interverse ecosystem
 ### Structural Tests (pytest)
 
 ```bash
-cd /home/mk/projects/Demarch/interverse/interflux && uv run pytest tests/ -q
+cd /home/mk/projects/Sylveste/interverse/interflux && uv run pytest tests/ -q
 ```
 
 Key test suites in `tests/structural/`:
@@ -424,7 +424,7 @@ Review [`PHILOSOPHY.md`](../../PHILOSOPHY.md) during:
 - Handoff/retrospective
 
 For brainstorming/planning outputs, add two short lines:
-- **Alignment:** one sentence on how the proposal supports the module's purpose within Demarch's philosophy.
+- **Alignment:** one sentence on how the proposal supports the module's purpose within Sylveste's philosophy.
 - **Conflict/Risk:** one sentence on any tension with philosophy (or 'none').
 
 If a high-value change conflicts with philosophy, either:

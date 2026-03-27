@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-0pvp
+bead: Sylveste-0pvp
 stage: design
 ---
 
@@ -8,7 +8,7 @@ stage: design
 
 ## Problem
 
-Hot-path Go functions across all 5 pillars have unnecessary allocations, redundant per-turn computation, and O(n*m) algorithms where O(n) suffices. Baselines from Demarch-2s7p show classifyComplexity at 55 allocs/call, TopologicalSort at 168 allocs, DiffSpecs at 240 allocs. Per-turn functions like classifyFailure and estimateMessageTokens lack baselines entirely.
+Hot-path Go functions across all 5 pillars have unnecessary allocations, redundant per-turn computation, and O(n*m) algorithms where O(n) suffices. Baselines from Sylveste-2s7p show classifyComplexity at 55 allocs/call, TopologicalSort at 168 allocs, DiffSpecs at 240 allocs. Per-turn functions like classifyFailure and estimateMessageTokens lack baselines entirely.
 
 ## Solution
 
@@ -19,7 +19,7 @@ Systematically benchmark, optimize, and regression-gate every performance-critic
 ### Wave 1: Per-Turn Hot Paths (Highest Daily Impact)
 
 #### F1: Optimize classifyFailure — Skaffen agentloop
-**Bead:** Demarch-0pvp.11
+**Bead:** Sylveste-0pvp.11
 **What:** Eliminate redundant ToLower + O(m*n) substring search on every agent turn.
 **Acceptance criteria:**
 - [ ] Benchmark established for 1K, 10K, 100K char inputs
@@ -29,7 +29,7 @@ Systematically benchmark, optimize, and regression-gate every performance-critic
 - [ ] Zero allocation regression in interlab harness
 
 #### F2: Optimize estimateMessageTokens — Skaffen agentloop
-**Bead:** Demarch-0pvp.12
+**Bead:** Sylveste-0pvp.12
 **What:** Cache token counts for unchanged messages instead of re-counting all 50-500+ messages every turn.
 **Acceptance criteria:**
 - [ ] Benchmark established for 20, 50, 100, 500 message contexts
@@ -38,7 +38,7 @@ Systematically benchmark, optimize, and regression-gate every performance-critic
 - [ ] Interlab harness shows >80% reduction for steady-state turns
 
 #### F3: Optimize trust.Evaluator.Evaluate — Skaffen trust
-**Bead:** Demarch-0pvp.16
+**Bead:** Sylveste-0pvp.16
 **What:** Replace linear glob scan with pre-compiled pattern matching for per-tool-call trust evaluation.
 **Acceptance criteria:**
 - [ ] Benchmark established for 5, 50, 500 learned overrides
@@ -47,7 +47,7 @@ Systematically benchmark, optimize, and regression-gate every performance-critic
 - [ ] ns/op reduced by >70% at 50+ overrides
 
 #### F4: Optimize classifyComplexity — Clavain CLI
-**Bead:** Demarch-0pvp.1
+**Bead:** Sylveste-0pvp.1
 **What:** Eliminate regex allocations and per-word ToLower in complexity heuristic.
 **Acceptance criteria:**
 - [ ] Baseline: 24us, 2.5KB, 55 allocs (established)
@@ -56,7 +56,7 @@ Systematically benchmark, optimize, and regression-gate every performance-critic
 - [ ] Input lowercased once before keyword matching
 
 #### F5: Optimize extractFileActivity — Skaffen agentloop
-**Bead:** Demarch-0pvp.13
+**Bead:** Sylveste-0pvp.13
 **What:** Pre-filter tool calls by name before JSON unmarshal.
 **Acceptance criteria:**
 - [ ] Benchmark established for 10, 50, 100 tool calls (5% file ops)
@@ -66,7 +66,7 @@ Systematically benchmark, optimize, and regression-gate every performance-critic
 ### Wave 2: Per-Session Paths
 
 #### F6: Optimize Graph.Rank (PageRank) — Skaffen repomap
-**Bead:** Demarch-0pvp.14
+**Bead:** Sylveste-0pvp.14
 **What:** Pool rank arrays, add early convergence termination, pre-sort node lists.
 **Acceptance criteria:**
 - [ ] Benchmark established for 100, 500, 1000 nodes with varying edge density
@@ -75,7 +75,7 @@ Systematically benchmark, optimize, and regression-gate every performance-critic
 - [ ] >30% improvement on 500-node graph
 
 #### F7: Optimize ScoreMessages + TopK — Skaffen session
-**Bead:** Demarch-0pvp.15
+**Bead:** Sylveste-0pvp.15
 **What:** Replace full sort with min-heap for top-K selection during compaction.
 **Acceptance criteria:**
 - [ ] Benchmark established for 50, 200, 1000 messages
@@ -83,7 +83,7 @@ Systematically benchmark, optimize, and regression-gate every performance-critic
 - [ ] >40% improvement when K << N (e.g., K=50, N=500)
 
 #### F8: Optimize composePlan — Clavain CLI
-**Bead:** Demarch-0pvp.5
+**Bead:** Sylveste-0pvp.5
 **What:** Pre-index fleet by role and capability to avoid repeated map iteration.
 **Acceptance criteria:**
 - [ ] Baseline: 81us, 44KB, 90 allocs at 30 agents (established)
@@ -92,7 +92,7 @@ Systematically benchmark, optimize, and regression-gate every performance-critic
 - [ ] matchRole uses index instead of linear scan
 
 #### F9: Optimize parseFrontmatter — Skaffen skill
-**Bead:** Demarch-0pvp.4
+**Bead:** Sylveste-0pvp.4
 **What:** Cache parsed frontmatter by file mtime or replace yaml.Unmarshal with targeted scanner.
 **Acceptance criteria:**
 - [ ] Baseline: 20us, 11KB, 127 allocs (established)
@@ -103,7 +103,7 @@ Systematically benchmark, optimize, and regression-gate every performance-critic
 ### Wave 3: Algorithmic Improvements
 
 #### F10: Reduce scoring Assign allocations — Intercore
-**Bead:** Demarch-0pvp.2
+**Bead:** Sylveste-0pvp.2
 **What:** Pre-allocate pair slices or use sync.Pool for scoreAllPairs.
 **Acceptance criteria:**
 - [ ] Baseline: 95us, 83KB, 33 allocs at 20x8 (established)
@@ -111,7 +111,7 @@ Systematically benchmark, optimize, and regression-gate every performance-critic
 - [ ] selectAssignments uses partial sort where applicable
 
 #### F11: Optimize TopologicalSort — Intercore portfolio
-**Bead:** Demarch-0pvp.3
+**Bead:** Sylveste-0pvp.3
 **What:** Replace per-iteration sort.Strings with heap-based ready queue.
 **Acceptance criteria:**
 - [ ] Baseline: 23us, 14KB, 168 allocs at 50 nodes (established)
@@ -119,7 +119,7 @@ Systematically benchmark, optimize, and regression-gate every performance-critic
 - [ ] Deterministic output preserved
 
 #### F12: Optimize DiffSpecs — Autarch gurgeh
-**Bead:** Demarch-0pvp.6
+**Bead:** Sylveste-0pvp.6
 **What:** Map-based set diff replaces O(n*m) linear comparison.
 **Acceptance criteria:**
 - [ ] Baseline: 43us, 20KB, 240 allocs at 50 reqs (established)
@@ -127,7 +127,7 @@ Systematically benchmark, optimize, and regression-gate every performance-critic
 - [ ] diffAcceptanceCriteria and diffCUJs also use map-based approach
 
 #### F13: Benchmark ReconcileProject — Autarch events
-**Bead:** Demarch-0pvp.19
+**Bead:** Sylveste-0pvp.19
 **What:** Cache SHA256 hashes, skip unchanged files by mtime.
 **Acceptance criteria:**
 - [ ] Benchmark established for 10, 100, 500 spec files
@@ -135,7 +135,7 @@ Systematically benchmark, optimize, and regression-gate every performance-critic
 - [ ] Hash cache persists across reconciliation cycles
 
 #### F14: Benchmark Hub.Broadcast + snapshot — Intermute ws
-**Bead:** Demarch-0pvp.18
+**Bead:** Sylveste-0pvp.18
 **What:** Pool connection snapshots, batch writes.
 **Acceptance criteria:**
 - [ ] Benchmark established for 10, 100, 1000 connections
@@ -145,14 +145,14 @@ Systematically benchmark, optimize, and regression-gate every performance-critic
 ### Wave 4: Low Priority
 
 #### F15: Optimize PatternsOverlap — Intermute glob
-**Bead:** Demarch-0pvp.7
+**Bead:** Sylveste-0pvp.7
 **What:** Pre-normalize patterns at registration time.
 **Acceptance criteria:**
 - [ ] Baseline: 2.6us, 3KB, 13 allocs (established)
 - [ ] Target: <1.5us, <1KB, <5 allocs (pre-normalized)
 
 #### F16: Cache convertToolDefs — Skaffen agentloop
-**Bead:** Demarch-0pvp.17
+**Bead:** Sylveste-0pvp.17
 **What:** Cache tool definition list, invalidate only on registry change.
 **Acceptance criteria:**
 - [ ] Benchmark established for 50, 100, 200 tools
@@ -160,7 +160,7 @@ Systematically benchmark, optimize, and regression-gate every performance-critic
 - [ ] Invalidation triggered correctly on tool add/remove
 
 #### F17: Benchmark AtomicWriteFile — Autarch file
-**Bead:** Demarch-0pvp.20
+**Bead:** Sylveste-0pvp.20
 **What:** Profile syscall overhead at various file sizes.
 **Acceptance criteria:**
 - [ ] Benchmark established for 1K, 10K, 100K, 1M files
@@ -177,7 +177,7 @@ Systematically benchmark, optimize, and regression-gate every performance-critic
 ## Dependencies
 
 - Interlab harness infrastructure (go-bench-harness.sh) — already exists
-- Per-pillar interlab.sh scripts — already created in Demarch-2s7p
+- Per-pillar interlab.sh scripts — already created in Sylveste-2s7p
 - Go 1.22+ for Intercore/Clavain, Go 1.24 for Skaffen/Autarch/Intermute
 
 ## Open Questions

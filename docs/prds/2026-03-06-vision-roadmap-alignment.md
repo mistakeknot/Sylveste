@@ -6,7 +6,7 @@ stage: design
 # PRD: Vision/Philosophy/Roadmap Alignment
 
 ## Problem
-Demarch's three top-level docs (PHILOSOPHY.md, demarch-vision.md, demarch-roadmap.md) have drifted apart. Factual claims in the vision are stale, the roadmap is an inventory of 230+ items rather than a strategic program, and status counts are inconsistent across surfaces.
+Sylveste's three top-level docs (PHILOSOPHY.md, sylveste-vision.md, sylveste-roadmap.md) have drifted apart. Factual claims in the vision are stale, the roadmap is an inventory of 230+ items rather than a strategic program, and status counts are inconsistent across surfaces.
 
 ## Solution
 Surgically compress and align the three docs: update the vision with current facts, compress the roadmap to 5-10 true frontier items with a generated inventory appendix, clarify the autonomy boundary, and make status counts self-documenting.
@@ -21,7 +21,7 @@ Surgically compress and align the three docs: update the vision with current fac
 - [ ] Module ecosystem table remains as reference (no changes)
 
 ### F2: Vision Factual Update
-**What:** Update the "Where We Are" section of demarch-vision.md with current facts.
+**What:** Update the "Where We Are" section of sylveste-vision.md with current facts.
 **Acceptance criteria:**
 - [ ] North-star metric section reflects that baseline was measured (2026-02-28)
 - [ ] P0 priorities list reflects current bead states (iv-r6mf closed, iv-30zy3 closed)

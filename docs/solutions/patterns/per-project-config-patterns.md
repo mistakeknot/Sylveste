@@ -1,6 +1,6 @@
 ---
 artifact_type: reflection
-bead: Demarch-6i0.11
+bead: Sylveste-6i0.11
 stage: reflect
 category: patterns
 title: Per-project config — deep-copy merge and project root detection
@@ -8,7 +8,7 @@ title: Per-project config — deep-copy merge and project root detection
 
 # Per-Project Config Patterns
 
-Sprint: Demarch-6i0.11 (Per-project config directory `.skaffen/`)
+Sprint: Sylveste-6i0.11 (Per-project config directory `.skaffen/`)
 Complexity: Estimated 2 (simple), actual 2 — plan review was the valuable step, not execution.
 
 ## What Was Built

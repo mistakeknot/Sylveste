@@ -1,6 +1,6 @@
 # Plan: clavain-cli sprint-init
 
-**Bead:** Demarch-czxk
+**Bead:** Sylveste-czxk
 **PRD:** docs/prds/2026-03-18-sprint-init-cli.md
 **Date:** 2026-03-18
 
@@ -30,7 +30,7 @@ All queries run in parallel (goroutines + WaitGroup, same pattern as `cmdSprintR
 
 Output format (TTY, truecolor):
 ```
-── Sprint: Demarch-czxk ─────────────────────────
+── Sprint: Sylveste-czxk ─────────────────────────
  Title:      clavain-cli sprint-init: consolidated...
  Complexity: 3/5 (moderate)
  Phase:      planned → execute
@@ -40,7 +40,7 @@ Output format (TTY, truecolor):
 
 NO_COLOR / non-TTY output (plain text, same structure, no ANSI):
 ```
--- Sprint: Demarch-czxk ---------------------
+-- Sprint: Sylveste-czxk ---------------------
  Title:      clavain-cli sprint-init...
  Complexity: 3/5 (moderate)
  Phase:      planned
@@ -101,7 +101,7 @@ Read the complexity value from the output to decide routing:
 cd os/Clavain/cmd/clavain-cli && go build -o ~/.local/bin/clavain-cli .
 ```
 
-Verify: `clavain-cli sprint-init Demarch-czxk`
+Verify: `clavain-cli sprint-init Sylveste-czxk`
 
 ## Build Sequence
 

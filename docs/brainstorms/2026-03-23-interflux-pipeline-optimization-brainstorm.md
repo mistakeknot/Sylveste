@@ -1,6 +1,6 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-z5qg
+bead: Sylveste-z5qg
 stage: discover
 ---
 
@@ -12,7 +12,7 @@ Improvements to the flux-drive multi-agent review pipeline across 4 axes: triage
 
 ## Why This Matters
 
-The flux-drive pipeline is the core review/research engine for all Demarch sprints. Every sprint runs it at least twice (plan review + quality gates). Inefficiencies compound across every sprint:
+The flux-drive pipeline is the core review/research engine for all Sylveste sprints. Every sprint runs it at least twice (plan review + quality gates). Inefficiencies compound across every sprint:
 - **Token waste:** Bonus inflation means nearly every agent scores above threshold — the scoring system doesn't discriminate in mature projects
 - **Latency:** 4-8.5 minutes of avoidable wall-clock time per review (Stage 1→2 barrier + polling)
 - **Blind budgeting:** Token data is never recorded, so all cost decisions are based on hardcoded guesses

@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-Hyperspace AGI is a P2P autonomous AI research network using GossipSub, Loro CRDTs, and GitHub as a 3-layer coordination stack. Demarch is a single-operator multi-agent platform where Clavain orchestrates agents via interlock (file-based reservations) and beads (Dolt-backed issue tracking). The analysis must identify adoptable coordination patterns for a local, single-machine context.
+Hyperspace AGI is a P2P autonomous AI research network using GossipSub, Loro CRDTs, and GitHub as a 3-layer coordination stack. Sylveste is a single-operator multi-agent platform where Clavain orchestrates agents via interlock (file-based reservations) and beads (Dolt-backed issue tracking). The analysis must identify adoptable coordination patterns for a local, single-machine context.
 
 ## Review Approach
 
@@ -47,7 +47,7 @@ Hyperspace AGI is a P2P autonomous AI research network using GossipSub, Loro CRD
 
 ### 6. Evaluate whether autonomous plugin evolution introduces a...
 
-- Evaluate whether autonomous plugin evolution introduces adversarial surface area (a generated plugin could exfiltrate data or manipulate other agents) and what guardrails Demarch's security model requires before enabling it
+- Evaluate whether autonomous plugin evolution introduces adversarial surface area (a generated plugin could exfiltrate data or manipulate other agents) and what guardrails Sylveste's security model requires before enabling it
 
 ## What NOT to Flag
 

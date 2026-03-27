@@ -1,4 +1,4 @@
-# OSS 1.0 Readiness Signals: What v1.0.0 Should Mean for Demarch
+# OSS 1.0 Readiness Signals: What v1.0.0 Should Mean for Sylveste
 
 Research into the empirical signals that major open-source projects actually used when declaring 1.0, and what those patterns imply for an autonomous software development agency platform currently at v0.6.228.
 
@@ -84,7 +84,7 @@ Go 1.0 was described as "Go as it is used today, not a major redesign." The trig
 
 Go's 1.0 was a **promise about the future**, not a declaration about the present. The language was deliberately described as sufficient, not complete. The extraordinary strength of the compatibility promise ("a time scale of years") forced the team to develop sophisticated mechanisms (GODEBUG, build tags, editions-like `go` directives) to evolve without breaking. The lesson: the stronger your stability promise, the more engineering you must invest in evolution mechanisms.
 
-The Go team's explicit statement that "boring is stable" and "boring means being able to focus on your work, not on what's different about Go" is directly relevant to Demarch's positioning.
+The Go team's explicit statement that "boring is stable" and "boring means being able to focus on your work, not on what's different about Go" is directly relevant to Sylveste's positioning.
 
 **Sources**: [Go version 1 is released](https://go.dev/blog/go1), [Go 1 and the Future of Go Programs](https://go.dev/doc/go1compat), [Backward Compatibility, Go 1.21, and Go 2](https://go.dev/blog/compat)
 
@@ -119,7 +119,7 @@ At 1.0, many APIs were still alpha or beta. The 1.0 declaration meant: the *core
 
 Kubernetes 1.0 was the most *aggressive* declaration in this study. The project was barely one year old. Many APIs were still beta. The declaration was as much about **institutional commitment** (CNCF formation, multi-vendor governance) and **heritage credibility** (Borg) as it was about technical completeness. The API graduation model allowed the project to declare stability for core primitives while keeping everything else explicitly provisional.
 
-This is the closest analog to Demarch's situation: a platform where the *core orchestration primitives* may be stable while many subsystems are still maturing.
+This is the closest analog to Sylveste's situation: a platform where the *core orchestration primitives* may be stable while many subsystems are still maturing.
 
 **Sources**: [Kubernetes V1 Released (Google Cloud Blog)](https://cloudplatform.googleblog.com/2015/07/Kubernetes-V1-Released.html), [Kubernetes 1.0 Launch Event at OSCON](https://kubernetes.io/blog/2015/07/kubernetes-10-launch-party-at-oscon/), [Kubernetes Deprecation Policy](https://kubernetes.io/docs/reference/using-api/deprecation-policy/), [Borg: The Predecessor to Kubernetes](https://kubernetes.io/blog/2015/04/borg-predecessor-to-kubernetes/)
 
@@ -177,7 +177,7 @@ Mitchell Hashimoto (CTO) said v1.0 "mainly offers enterprises a bit of security,
 
 Terraform's 1.0 is the **most conservative** declaration in this study. The project waited until the surface area was thoroughly explored, the protocol boundaries were hardened, and the team could enumerate exactly what was and wasn't covered. The deliberate choice to ship zero new features in 1.0 compared to 0.15.5 is the clearest expression of "1.0 is a promise, not a milestone."
 
-The provider/module exclusion is directly relevant to Demarch: Terraform drew a sharp line between the *core engine* (covered by compatibility promises) and the *plugin ecosystem* (explicitly excluded).
+The provider/module exclusion is directly relevant to Sylveste: Terraform drew a sharp line between the *core engine* (covered by compatibility promises) and the *plugin ecosystem* (explicitly excluded).
 
 **Sources**: [Announcing HashiCorp Terraform 1.0 General Availability](https://www.hashicorp.com/en/blog/announcing-hashicorp-terraform-1-0-general-availability), [Terraform v1.x Compatibility Promises](https://developer.hashicorp.com/terraform/language/v1-compatibility-promises), [Terraform 1.0 Release Adds Stability Guarantees (InfoQ)](https://www.infoq.com/news/2021/06/terraform-1-0/), [Terraform 1.0 Finally Lands (DevClass)](https://devclass.com/2021/06/08/internet-down-infrastructure-as-code-up-terraform-1-0-finally-lands/)
 
@@ -269,15 +269,15 @@ The pattern: **1.0 is not a cliff.** If upgrading from the last 0.x to 1.0 requi
 
 For Go, Rust, Kubernetes, and Terraform, "production deployment" means: the software runs unchanged in a production environment, processing real workloads, and the output is deterministic enough that users can verify correctness. A Kubernetes cluster either schedules pods or it doesn't. A Terraform plan either applies correctly or it doesn't.
 
-For an agentic platform like Demarch, the output is *stochastic*. The same sprint configuration with the same codebase and the same agent can produce different code, different review findings, different routing decisions. "Production deployment" for an agentic platform means something closer to: *the platform's orchestration, gating, and evidence-collection mechanisms behave predictably even though the agent outputs they orchestrate are inherently variable.*
+For an agentic platform like Sylveste, the output is *stochastic*. The same sprint configuration with the same codebase and the same agent can produce different code, different review findings, different routing decisions. "Production deployment" for an agentic platform means something closer to: *the platform's orchestration, gating, and evidence-collection mechanisms behave predictably even though the agent outputs they orchestrate are inherently variable.*
 
-This means production evidence for Demarch must focus on the **infrastructure layer** (do sprints complete? do gates fire? do receipts persist? does routing converge?), not on **output quality** (does the agent write good code?). Output quality is a property of the models and prompts, which change independently of the platform version.
+This means production evidence for Sylveste must focus on the **infrastructure layer** (do sprints complete? do gates fire? do receipts persist? does routing converge?), not on **output quality** (does the agent write good code?). Output quality is a property of the models and prompts, which change independently of the platform version.
 
-The implication: Demarch's production evidence should demonstrate that the OODARC loop (observe, orient, decide, act, reflect, compound) completes reliably and that evidence accumulates correctly -- not that every sprint produces perfect code. The analog to "Kubernetes schedules pods correctly" is "Demarch runs sprints to completion, fires gates at the right moments, persists evidence, and feeds calibration data back into routing."
+The implication: Sylveste's production evidence should demonstrate that the OODARC loop (observe, orient, decide, act, reflect, compound) completes reliably and that evidence accumulates correctly -- not that every sprint produces perfect code. The analog to "Kubernetes schedules pods correctly" is "Sylveste runs sprints to completion, fires gates at the right moments, persists evidence, and feeds calibration data back into routing."
 
 ---
 
-## 7. Readiness Signal Checklist for Demarch v1.0.0
+## 7. Readiness Signal Checklist for Sylveste v1.0.0
 
 Derived from the empirical patterns above, contextualized for an autonomous software development agency platform.
 
@@ -287,7 +287,7 @@ Derived from the empirical patterns above, contextualized for an autonomous soft
 
 - [ ] **Exclusion boundary is enumerated.** A published document specifies what is and is not covered by the stability promise. Candidates for exclusion: individual Interverse plugins (like Terraform excluding providers), model-specific prompt templates, experimental phase gates, natural language output formats, internal calibration data schemas, and anything behind a feature flag. The exclusion list must be precise enough that a user can determine whether a given behavior is covered. *Analog: Terraform v1.x Compatibility Promises, Go 1 Compatibility.*
 
-- [ ] **The core loop completes reliably under independent observation.** At least one user/team outside the core maintainers has run Demarch in a production or production-like context and reported that: sprints complete, phase gates fire, evidence is persisted, and routing decisions are traceable. The evidence must be named and specific, not hypothetical. *Analog: Kubernetes's six named production customers, Go's internal Google use.*
+- [ ] **The core loop completes reliably under independent observation.** At least one user/team outside the core maintainers has run Sylveste in a production or production-like context and reported that: sprints complete, phase gates fire, evidence is persisted, and routing decisions are traceable. The evidence must be named and specific, not hypothetical. *Analog: Kubernetes's six named production customers, Go's internal Google use.*
 
 - [ ] **Institutional commitment to the promise exists.** The stability promise is backed by a maintenance commitment (minimum duration), a governance structure that can make binding decisions about breaking changes, and a documented process for handling security fixes and regressions. *Analog: Terraform's 18-month maintenance window, Kubernetes's CNCF, Rust's foundation.*
 
@@ -297,17 +297,17 @@ Derived from the empirical patterns above, contextualized for an autonomous soft
 
 - [ ] **API graduation model is defined.** Subsystems (skills, agents, review dimensions, phase gates) have explicit maturity levels (experimental / beta / stable) with documented graduation criteria and deprecation timelines. *Analog: Kubernetes alpha/beta/stable API graduation.*
 
-- [ ] **Calibration data schema is versioned.** The closed-loop calibration data (routing overrides, phase cost estimates, agent accuracy scores) has a versioned schema with documented migration paths. This is unique to Demarch -- no comparable concern exists in the reference projects -- but it is the most likely source of silent breakage in an agentic platform.
+- [ ] **Calibration data schema is versioned.** The closed-loop calibration data (routing overrides, phase cost estimates, agent accuracy scores) has a versioned schema with documented migration paths. This is unique to Sylveste -- no comparable concern exists in the reference projects -- but it is the most likely source of silent breakage in an agentic platform.
 
-- [ ] **Self-hosting evidence exists.** Demarch has been used to develop Demarch itself for a sustained period (months, not days), and the evidence (beads, sprint receipts, cost data) demonstrates that the platform's own feedback loop works. This is the strongest form of production evidence for a self-building system. *Analog: Go compiler written in Go, Rust compiler written in Rust.*
+- [ ] **Self-hosting evidence exists.** Sylveste has been used to develop Sylveste itself for a sustained period (months, not days), and the evidence (beads, sprint receipts, cost data) demonstrates that the platform's own feedback loop works. This is the strongest form of production evidence for a self-building system. *Analog: Go compiler written in Go, Rust compiler written in Rust.*
 
 ### Anti-Patterns to Avoid
 
 - **Do not wait for feature completeness.** Rust had no async/await at 1.0. Kubernetes had alpha APIs everywhere. Terraform excluded most CLI commands. Waiting for every skill, agent, and plugin to be "done" is the Nix pathology.
 
-- **Do not make the promise too broad.** Terraform explicitly excluded providers. Go excluded performance, unsafe, and syscall. If Demarch tries to stabilize the Interverse plugin ecosystem as part of 1.0, the promise becomes unmaintainable. The L1 kernel (Intercore + Intermute) and L2 OS (Clavain + Skaffen) are the stability surface; L3 apps and Interverse plugins are explicitly excluded.
+- **Do not make the promise too broad.** Terraform explicitly excluded providers. Go excluded performance, unsafe, and syscall. If Sylveste tries to stabilize the Interverse plugin ecosystem as part of 1.0, the promise becomes unmaintainable. The L1 kernel (Intercore + Intermute) and L2 OS (Clavain + Skaffen) are the stability surface; L3 apps and Interverse plugins are explicitly excluded.
 
-- **Do not delay past de facto stability.** If users are running Demarch in production and treating the current behavior as stable, the formal declaration is already overdue. The Nix case shows that the cost of delay compounds: each month of unlabeled stability makes future changes harder and governance decisions more fraught.
+- **Do not delay past de facto stability.** If users are running Sylveste in production and treating the current behavior as stable, the formal declaration is already overdue. The Nix case shows that the cost of delay compounds: each month of unlabeled stability makes future changes harder and governance decisions more fraught.
 
 - **Do not conflate 1.0 with "done."** The PHILOSOPHY.md already states: "There is no 'done.' The flywheel doesn't converge -- it compounds." This is the right framing. 1.0 means: the stability mechanism works, the exclusion boundary is drawn, and the promise is backed by institutional commitment. It does not mean the feature set is complete.
 

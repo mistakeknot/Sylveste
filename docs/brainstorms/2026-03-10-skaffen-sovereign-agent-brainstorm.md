@@ -5,7 +5,7 @@ status: superseded
 superseded_by: docs/brainstorms/2026-03-11-skaffen-go-rewrite-brainstorm.md
 ---
 
-# Skaffen — Demarch's Sovereign Agent Runtime
+# Skaffen — Sylveste's Sovereign Agent Runtime
 
 **Date:** 2026-03-10
 **Status:** Brainstorming
@@ -16,7 +16,7 @@ Clavain is a rig — it enhances Claude Code, Codex, and Gemini with discipline 
 
 1. **The agent loop is opaque.** Claude Code decides when to call tools, how to compact, when to steer. Clavain hooks *around* decisions but can't change *how* the loop works.
 2. **Phase gates are bolted on.** Sprint phases (brainstorm → plan → build → review → ship) are enforced via skill injection and hook checks, not native loop structure.
-3. **Mid-session model routing is host-dependent.** Demarch's routing philosophy (cheapest model that clears the bar) requires switching models mid-conversation. Host agents don't support this.
+3. **Mid-session model routing is host-dependent.** Sylveste's routing philosophy (cheapest model that clears the bar) requires switching models mid-conversation. Host agents don't support this.
 4. **Evidence collection is aftermarket.** Interspect scrapes evidence from hooks and logs. With our own loop, evidence emission is a first-class primitive.
 5. **Steering is approximated.** Pi-mono's `steer()` (interrupt mid-tool) and `followUp()` (queue for after) are programmatic. Clavain can only approximate through hook injection.
 6. **Extensions are config, not code.** Interverse plugins are config+hooks+skills. A sovereign agent could offer full programmatic control over tool execution, compaction, and context transformation.
@@ -25,7 +25,7 @@ The ceiling is real and blocking today. The answer isn't replacing Clavain — i
 
 ## What Skaffen Is
 
-**Skaffen** is Demarch's sovereign agent runtime — a standalone coding agent binary where OODARC, evidence pipelines, phase gates, and model routing are architectural primitives, not bolt-ons.
+**Skaffen** is Sylveste's sovereign agent runtime — a standalone coding agent binary where OODARC, evidence pipelines, phase gates, and model routing are architectural primitives, not bolt-ons.
 
 Named after Skaffen-Amtiskaw — the Culture drone that operates with full autonomy within its authority scope. Exactly the earned-authority model from PHILOSOPHY.md.
 
@@ -43,7 +43,7 @@ Named after Skaffen-Amtiskaw — the Culture drone that operates with full auton
 
 - **Not replacing Clavain.** Clavain's 53-plugin ecosystem and host-agent integrations remain production-proven.
 - **Not rebuilding the LLM abstraction.** Fork pi_agent_rust's provider layer (Anthropic, OpenAI, Gemini, Azure — covers 95%+ of use).
-- **Not a general-purpose agent framework.** Skaffen is opinionated for software development, aligned with Demarch's OODARC philosophy.
+- **Not a general-purpose agent framework.** Skaffen is opinionated for software development, aligned with Sylveste's OODARC philosophy.
 
 ## Fork Base: pi_agent_rust
 
@@ -61,7 +61,7 @@ Fork [Dicklesworthstone/pi_agent_rust](https://github.com/Dicklesworthstone/pi_a
 | Unsafe code | N/A | `#![forbid(unsafe_code)]` | Rust |
 | Concurrency | Promise chains | Structured concurrency, cancellation | Rust |
 | Provider count | 23+ | ~10 (Anthropic, OpenAI, Gemini, Azure) | TS has more, Rust has enough |
-| Language fit | Only TS in Demarch | Joins Go (clavain-cli) + Rust (cass) | Rust |
+| Language fit | Only TS in Sylveste | Joins Go (clavain-cli) + Rust (cass) | Rust |
 | Feature parity | Mature (v0.57, 14K stars) | v0.1.8, author-claimed parity (unaudited; Skaffen validates via v0.1 AC) | Trade-off |
 
 ### What We Keep from the Fork
@@ -213,7 +213,7 @@ fn tools_for_phase(phase: Phase) -> Vec<&dyn Tool> {
 
 **Question:** Hard gate (tool unavailable) or soft gate (tool available but system prompt discourages)?
 
-**Decision: Hard gate (runtime-enforced).** Structural enforcement is the Demarch way (PHILOSOPHY.md: "structural, not moral"). If the model can't call `write` during review, it won't accidentally modify code when it should be reading. Note: this is runtime enforcement via exclusive tool lists, not compile-time type-system enforcement. Ship phase uses `git_bash` (allowlisted git subcommands) instead of unrestricted `bash`.
+**Decision: Hard gate (runtime-enforced).** Structural enforcement is the Sylveste way (PHILOSOPHY.md: "structural, not moral"). If the model can't call `write` during review, it won't accidentally modify code when it should be reading. Note: this is runtime enforcement via exclusive tool lists, not compile-time type-system enforcement. Ship phase uses `git_bash` (allowlisted git subcommands) instead of unrestricted `bash`.
 
 ### D6: Model routing at the loop level
 
@@ -412,7 +412,7 @@ This gives 34 Interverse plugins tools immediately, plus full MCP ecosystem acce
 - **ABC (Agent Behavioral Contracts):** Formal contracts with pre/post conditions on the OODARC loop. Drift detection across extended sessions.
 - **L4 Probabilistic:** LLM-as-judge evals. Nightly, not CI. Grade outputs not paths.
 
-**V0.3+ — Self-testing:** Skaffen tests itself by building itself (PHILOSOPHY.md: "Demarch builds itself with its own tools").
+**V0.3+ — Self-testing:** Skaffen tests itself by building itself (PHILOSOPHY.md: "Sylveste builds itself with its own tools").
 
 **Research bead:** SHIELDA (ICLR 2026) — cross-phase root cause tracing. Tool failure ← reasoning error linkage.
 
@@ -443,14 +443,14 @@ Pi_agent_rust is a single-agent system. Should Skaffen's loop support spawning s
 
 ### Q2: What's the deployment model?
 
-- **Developer machine:** Interactive mode, replaces/complements Claude Code for Demarch development.
+- **Developer machine:** Interactive mode, replaces/complements Claude Code for Sylveste development.
 - **CI/CD:** RPC/print mode in GitHub Actions, running Skaffen headlessly.
 - **Server:** Long-running Skaffen instances managed by Autarch.
 - **All three?** The pi_agent_rust fork already supports all modes.
 
 ### Q3: How does the self-building loop work?
 
-Demarch builds itself with its own tools (PHILOSOPHY.md). Skaffen should be the first consumer of its own runtime — building Skaffen features using Skaffen.
+Sylveste builds itself with its own tools (PHILOSOPHY.md). Skaffen should be the first consumer of its own runtime — building Skaffen features using Skaffen.
 
 - At what point is Skaffen capable enough to build itself?
 - What's the bootstrap sequence? (Clavain-rigged Claude Code builds Skaffen v0.1-v0.3, then Skaffen builds v0.4+ — superseded by PRD/Roadmap which set the handoff at v0.4)
@@ -460,7 +460,7 @@ Demarch builds itself with its own tools (PHILOSOPHY.md). Skaffen should be the 
 Pi_agent_rust has 224 vendored extensions. Should Skaffen maintain compatibility with the pi extension ecosystem?
 
 - **Yes:** Larger tool surface. Community extensions work out of the box.
-- **No:** Demarch has its own extension ecosystem (Interverse). Maintaining pi compat is overhead.
+- **No:** Sylveste has its own extension ecosystem (Interverse). Maintaining pi compat is overhead.
 - **Best-effort:** Keep the QuickJS extension runtime, don't break existing extensions, but don't gate on pi compat.
 
 ### Q5: What's the FrankenTUI migration trigger?
@@ -476,18 +476,18 @@ When does the TUI migration from charmed_rust to FrankenTUI become worth the cos
 - `research-pi-agent-rust-repo.md` (2026-02-19) — Deep architectural analysis, 10 Autarch-applicable patterns
 - `research-pi-mono-repo.md` (2026-02-19) — TypeScript version analysis, TUI patterns, extension system
 - `assess-dicklesworthstone-batch-2.md` (2026-03-01) — CASS (adopt), CASR (adopt-tentative), beads_rust (port-partially)
-- `dicklesworthstone-repo-triage-2026-02-27.md` — Full repo survey with Demarch module mappings
+- `dicklesworthstone-repo-triage-2026-02-27.md` — Full repo survey with Sylveste module mappings
 
 ## Success Criteria
 
 1. **Skaffen v0.1:** Hard fork built. ClaudeCodeProvider as default inference backend. Native MCP client loading Interverse plugins. Phase-aware tool gating (D5). Priority-based prompt rendering (D9). Hybrid compaction with beads persistence (D8). Block pyramid tests (L1+L2) passing. Can run a simple "read file, edit file, run tests" workflow with phase transitions.
 2. **Skaffen v0.2:** OODARC loop native with git-context tools (commit/retrieve/anchor/fold). Evidence emission to Interspect. Model routing from routing overrides (D6). Agent definitions from Interverse dispatched. proptest-stateful for loop invariants. ABC behavioral contracts for drift detection.
 3. **Skaffen v0.3:** Self-building (Skaffen develops Skaffen). Shared discipline docs consumed by both runtimes (D4+D14). Learned context allocation via ACON pattern (D10). Self-testing capability.
-4. **Skaffen v1.0:** Production parity with Clavain-rigged Claude Code for Demarch development. Measurable improvement in autonomy level (PHILOSOPHY.md trust ladder). Direct API backend with full model routing. Prompt priority calibration from outcomes.
+4. **Skaffen v1.0:** Production parity with Clavain-rigged Claude Code for Sylveste development. Measurable improvement in autonomy level (PHILOSOPHY.md trust ladder). Direct API backend with full model routing. Prompt priority calibration from outcomes.
 
 ## Research Beads (to create when beads server is healthy)
 
-The following research beads should be created as children of the Skaffen epic (Demarch-6qb):
+The following research beads should be created as children of the Skaffen epic (Sylveste-6qb):
 
 1. **SPEAR prompt algebra** — CIDR 2026 paper. Typed prompt fragments with algebraic composition (compose, refine, specialize). Natural Rust type-system fit. Long-term evolution path for D9. Source: arxiv.org/abs/2508.05012
 2. **Entropy-aware context compression (SimpleMem)** — Jan 2026. 30x token reduction via entropy-scored filtering + recursive consolidation + adaptive query-aware retrieval. Source: huggingface.co/papers/2601.02553

@@ -1,9 +1,9 @@
 # PRD: Skaffen Web Search Built-in Tool
 
-**Bead:** Demarch-6i0.20
+**Bead:** Sylveste-6i0.20
 **Date:** 2026-03-12
 **Status:** prd
-**Parent:** Demarch-6i0 (Bridge competitive landscape gaps)
+**Parent:** Sylveste-6i0 (Bridge competitive landscape gaps)
 
 ## Problem Statement
 

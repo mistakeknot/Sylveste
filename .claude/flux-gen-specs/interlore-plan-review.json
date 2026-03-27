@@ -40,7 +40,7 @@
     "success_hints": [
       "/interlore:scan produces proposals.yaml matching schema with no null/missing fields",
       "Running scan twice produces idempotent results with merged not duplicated evidence",
-      "The 'integration over reimplementation' pattern is detectable from real Demarch artifacts"
+      "The 'integration over reimplementation' pattern is detectable from real Sylveste artifacts"
     ],
     "task_context": "The observe skill implements a multi-phase scan pipeline: artifact discovery, PHILOSOPHY.md baseline, content-based extraction, classification, deduplication, and structured YAML output. Also handles Review and Status modes via routing.",
     "anti_overlap": [
@@ -58,7 +58,7 @@
       "Task 1 Step 4 adds MISSION.md to plugin-standard.md boilerplate — but plugins don't have their own MISSION.md; the ../../MISSION.md reference would be broken for plugins not in the monorepo",
       "Verify block doesn't check PHILOSOPHY.md was actually trimmed — risking duplication between MISSION.md and PHILOSOPHY.md",
       "Task 1 Step 3 replaces lines 76-87 of doc-structure.md — verify these are correct line numbers in current file",
-      "VISION.md hierarchy diagram references 'existing: docs/demarch-vision.md' but no aliasing step exists — is this a dangling reference?",
+      "VISION.md hierarchy diagram references 'existing: docs/sylveste-vision.md' but no aliasing step exists — is this a dangling reference?",
       "Plugin-standard.md referencing MISSION.md while no plugin has one makes every plugin technically non-conformant to updated standard",
       "interlore's own AGENTS.md references MISSION.md directly — verify this follows the new boilerplate or old"
     ],
@@ -102,11 +102,11 @@
   {
     "name": "fd-exec-yaml-orchestration",
     "focus": "Reviews .exec.yaml manifest for dependency correctness, wave sequencing, and executability as an orchestrated delegation spec",
-    "persona": "An orchestration systems engineer who has executed multiple .exec.yaml plans in Demarch. Focuses on dependency graph correctness and verify block sufficiency.",
+    "persona": "An orchestration systems engineer who has executed multiple .exec.yaml plans in Sylveste. Focuses on dependency graph correctness and verify block sufficiency.",
     "decision_lens": "Wrong dependency edges causing premature task execution are P0. Bead ID mismatches are P1. Verify blocks that check surface but miss depth are P2.",
     "review_areas": [
       "task-5 depends on [task-1, task-3, task-4] but not task-2 — task-5's verify checks plugin.json created by task-2; missing dependency",
-      "Bead Demarch-7a8c assigned to both Task 3 and Task 5 — intentional or copy-paste error?",
+      "Bead Sylveste-7a8c assigned to both Task 3 and Task 5 — intentional or copy-paste error?",
       "Task 1 verify 'grep -c MISSION' exits 0 but doesn't confirm actual hierarchy content is correct",
       "timeout_per_task: 300 (5 min) — is Task 2's 15-file scaffold completable in 5 minutes?",
       "task-2 files field is '[interverse/interlore/]' (directory) — does orchestrator use this for write permissions?",

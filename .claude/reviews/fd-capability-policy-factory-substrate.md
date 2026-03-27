@@ -131,10 +131,10 @@
 
 **Priority:** P1 — Partial misalignment
 
-**Finding:** PHILOSOPHY.md states: "Demarch enforces structural constraints (bounded blast radius, auditable decisions, revocable authority) through architecture, not ethical reasoning." The PRD's capability policy is enforced by prompting (cooperative compliance) rather than architecture (runtime interception). This is acknowledged in the brainstorm ("not filesystem permissions — agents can read anything") but not reconciled with the philosophy.
+**Finding:** PHILOSOPHY.md states: "Sylveste enforces structural constraints (bounded blast radius, auditable decisions, revocable authority) through architecture, not ethical reasoning." The PRD's capability policy is enforced by prompting (cooperative compliance) rather than architecture (runtime interception). This is acknowledged in the brainstorm ("not filesystem permissions — agents can read anything") but not reconciled with the philosophy.
 
 **Evidence:**
-- PHILOSOPHY.md, Earned Authority section: "Structural, not moral. Demarch enforces structural constraints... through architecture, not ethical reasoning."
+- PHILOSOPHY.md, Earned Authority section: "Structural, not moral. Sylveste enforces structural constraints... through architecture, not ethical reasoning."
 - PHILOSOPHY.md, Security section: "The end state is capability-based, deny-by-default (Gridfire: unforgeable tokens with effects allowlists and resource bounds). Today it's pragmatic layered defense."
 - PRD F6: enforcement is via `policy-check` command — cooperative, not structural.
 

@@ -90,4 +90,4 @@ All agents completed; no errors.
 
 ## Key Files
 
-Full analysis: `/home/mk/projects/Demarch/docs/research/synthesize-review-findings.md`
+Full analysis: `/home/mk/projects/Sylveste/docs/research/synthesize-review-findings.md`

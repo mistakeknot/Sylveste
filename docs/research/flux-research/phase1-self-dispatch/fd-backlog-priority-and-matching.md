@@ -14,19 +14,19 @@
 
 Auction algorithms like CBBA (Consensus-Based Bundle Algorithm, MIT ACL) have agents build ordered bundles of tasks they bid on, then resolve conflicts via consensus rounds. The key property is **provably conflict-free convergence** -- but it requires inter-agent communication (bid broadcasts, consensus phases). Recent work (Frontiers in Physics, 2025) extends this to cost-effectiveness maximization with capability-fitness modeling.
 
-**Fit for Demarch:** Poor. CBBA requires O(agents * tasks) message passing per round. Our agents run in isolated tmux panes with no shared message bus. The `bd update --claim` atomic operation already provides conflict resolution at the claim point -- we don't need pre-claim consensus.
+**Fit for Sylveste:** Poor. CBBA requires O(agents * tasks) message passing per round. Our agents run in isolated tmux panes with no shared message bus. The `bd update --claim` atomic operation already provides conflict resolution at the claim point -- we don't need pre-claim consensus.
 
 ### 1.2 Role-Based (Static Assignment)
 
 Each agent is assigned a lane/domain (e.g., "infra agent handles lane:infra beads"). Simple, zero coordination. Used in traditional Kanban team structures.
 
-**Fit for Demarch:** Partial. We already have `DISCOVERY_LANE` filtering (`lane:infra`, `lane:plugins`, etc.) which implements this. But static assignment underutilizes agents when lanes have uneven load -- an infra agent sits idle while 10 plugin beads queue up.
+**Fit for Sylveste:** Partial. We already have `DISCOVERY_LANE` filtering (`lane:infra`, `lane:plugins`, etc.) which implements this. But static assignment underutilizes agents when lanes have uneven load -- an infra agent sits idle while 10 plugin beads queue up.
 
 ### 1.3 Capability-Matching (Scheduler-Style)
 
 The Kubernetes/Nomad approach: each task declares requirements, each node/agent declares capabilities, a scoring function matches them. No inter-agent communication needed -- each agent independently evaluates and self-selects.
 
-**Fit for Demarch:** Best fit. Agents independently run `discovery_scan_beads()`, apply local scoring, and claim. The atomic `bd update --claim` handles conflicts at the point of commitment. This is already what lib-discovery.sh does -- the question is how to improve the scoring function.
+**Fit for Sylveste:** Best fit. Agents independently run `discovery_scan_beads()`, apply local scoring, and claim. The atomic `bd update --claim` handles conflicts at the point of commitment. This is already what lib-discovery.sh does -- the question is how to improve the scoring function.
 
 ### 1.4 Recommendation
 

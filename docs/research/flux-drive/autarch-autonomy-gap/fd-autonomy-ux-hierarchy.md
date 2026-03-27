@@ -209,7 +209,7 @@ Without these, the PRD (step 1) will be designed against an idealized data model
 
 ## Summary
 
-The gap analysis correctly identifies the tension between Autarch's operator-centric UX and Demarch's executive-centric vision. The seven gaps are real and well-observed. However, the proposed resolution -- a three-mode hierarchy (Executive/Supervisor/Operator) -- remains at the label level. The document does not specify:
+The gap analysis correctly identifies the tension between Autarch's operator-centric UX and Sylveste's executive-centric vision. The seven gaps are real and well-observed. However, the proposed resolution -- a three-mode hierarchy (Executive/Supervisor/Operator) -- remains at the label level. The document does not specify:
 
 1. **Who controls mode selection** (user choice vs system inference vs hybrid)
 2. **What data model changes are prerequisite** (attention classification, escalation events, portfolio aggregation)

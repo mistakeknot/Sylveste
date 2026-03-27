@@ -1,6 +1,6 @@
 # Development Workflow
 
-Each subproject under `apps/`, `os/`, `core/`, `interverse/`, and `sdk/` is an independent git repo with its own `.git`. The root `Demarch/` directory also has a `.git` for the monorepo skeleton (`scripts/`, `docs/`, `.beads/`, `CLAUDE.md`, `AGENTS.md`). **Git commands operate on whichever `.git` is nearest** — always verify with `git rev-parse --show-toplevel` if unsure which repo you're in. To work on a specific module:
+Each subproject under `apps/`, `os/`, `core/`, `interverse/`, and `sdk/` is an independent git repo with its own `.git`. The root `Sylveste/` directory also has a `.git` for the monorepo skeleton (`scripts/`, `docs/`, `.beads/`, `CLAUDE.md`, `AGENTS.md`). **Git commands operate on whichever `.git` is nearest** — always verify with `git rev-parse --show-toplevel` if unsure which repo you're in. To work on a specific module:
 
 ```bash
 cd interverse/interflux  # from repo root
@@ -11,7 +11,7 @@ cd interverse/interflux  # from repo root
 
 **Plugins (hooks/skills/commands only):**
 ```bash
-claude --plugin-dir ~/projects/Demarch/interverse/<name>
+claude --plugin-dir ~/projects/Sylveste/interverse/<name>
 # Structural tests (if present):
 cd interverse/<name> && uv run pytest tests/structural/ -v
 ```

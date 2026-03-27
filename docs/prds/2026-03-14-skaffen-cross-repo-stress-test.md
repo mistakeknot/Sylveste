@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-ome7
+bead: Sylveste-ome7
 stage: design
 ---
 
@@ -45,7 +45,7 @@ Build a parallel stress test pipeline using intermix (execution) + intermux (sup
 **Acceptance criteria:**
 - [ ] `classify_result` calls `bd create` for non-success outcomes (timeout, crash, context_limit, tool_failure, no_progress, setup_failure)
 - [ ] Debug bead includes: cell ID, repo name, task ID, failure taxonomy, Skaffen evidence excerpt (last 20 lines), tmux pane capture (last 50 lines)
-- [ ] Debug bead is linked as child of Demarch-ome7 via `bd dep add`
+- [ ] Debug bead is linked as child of Sylveste-ome7 via `bd dep add`
 - [ ] Partial success creates a bead with `partial` label (not skipped)
 - [ ] Success cells do NOT create beads (only failures)
 

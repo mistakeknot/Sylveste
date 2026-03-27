@@ -16,7 +16,7 @@ ship code changes with minimal manual intervention while maintaining confidence 
 autonomous agents are not regressing correctness. They interact through Claude Code slash
 commands, the `clavain-cli` binary, and YAML files in `.clavain/`.
 
-Secondary user: the Demarch platform itself — agents that self-build Demarch using Clavain
+Secondary user: the Sylveste platform itself — agents that self-build Sylveste using Clavain
 tools. The PRD explicitly calls out "self-building validation" as a target outcome.
 
 ---

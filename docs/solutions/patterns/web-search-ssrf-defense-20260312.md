@@ -1,7 +1,7 @@
 ---
 category: pattern
 tags: [skaffen, security, ssrf, web-tools]
-bead: Demarch-6i0.20
+bead: Sylveste-6i0.20
 date: 2026-03-12
 ---
 

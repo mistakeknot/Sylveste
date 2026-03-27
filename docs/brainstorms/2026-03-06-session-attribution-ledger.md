@@ -8,7 +8,7 @@ status: draft
 # Durable Session Attribution Ledger
 
 **Bead:** iv-30zy3
-**Question:** How should Demarch replace temp-file session attribution with a durable kernel-backed ledger?
+**Question:** How should Sylveste replace temp-file session attribution with a durable kernel-backed ledger?
 
 ## Problem Statement
 
@@ -20,7 +20,7 @@ Session-to-bead-to-run attribution currently flows through temp files:
 | `/tmp/interstat-bead-{session_id}` | Session→Bead mapping | Invisible drift when bead changes |
 | `/tmp/interstat-phase-{bead_id}` | Bead→Phase mapping | Stale after crashes |
 
-This was flagged as F2 [P0] in iv-544dn: "Session, bead, and phase attribution still depend on temp files." The Demarch vision says "if it matters, it's in the database." These joins matter for:
+This was flagged as F2 [P0] in iv-544dn: "Session, bead, and phase attribution still depend on temp files." The Sylveste vision says "if it matters, it's in the database." These joins matter for:
 
 - North-star metric (cost per landable change) — needs session→bead→tokens
 - Routing eval (iv-godia) — needs session→run→dispatch→outcome
@@ -206,6 +206,6 @@ Interstat's `agent_runs` table in its own SQLite DB currently uses temp files fo
 
 2. **Should `session_attributions` be an event table or a mutable current-state table?** Recommendation: append-only events — cheaper writes, full history, matches the kernel's event-sourced pattern.
 
-3. **How to handle sessions that span multiple projects?** One `sessions` row per (session_id, project_dir) pair. A session working in both Demarch and Clavain gets two rows.
+3. **How to handle sessions that span multiple projects?** One `sessions` row per (session_id, project_dir) pair. A session working in both Sylveste and Clavain gets two rows.
 
 4. **What metadata to capture?** Minimum: agent_type, model. Nice to have: plugin versions, host identity, Claude session ID format. Start minimal, add columns via future migrations.

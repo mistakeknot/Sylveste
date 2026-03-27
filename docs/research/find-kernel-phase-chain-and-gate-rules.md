@@ -3,17 +3,17 @@
 **Date:** 2026-02-22  
 **Status:** Complete  
 **Source Files:**
-- `/home/mk/projects/Demarch/core/intercore/internal/phase/phase.go` (phase constants, DefaultPhaseChain, phase validation)
-- `/home/mk/projects/Demarch/core/intercore/internal/phase/gate.go` (gate rules, gate checks, evidence)
-- `/home/mk/projects/Demarch/core/intercore/cmd/ic/run.go` (CLI phase handling)
-- `/home/mk/projects/Demarch/os/clavain/hooks/lib-sprint.sh` (OS→kernel integration)
-- `/home/mk/projects/Demarch/os/clavain/config/agency-spec.yaml` (spec-level gates)
+- `/home/mk/projects/Sylveste/core/intercore/internal/phase/phase.go` (phase constants, DefaultPhaseChain, phase validation)
+- `/home/mk/projects/Sylveste/core/intercore/internal/phase/gate.go` (gate rules, gate checks, evidence)
+- `/home/mk/projects/Sylveste/core/intercore/cmd/ic/run.go` (CLI phase handling)
+- `/home/mk/projects/Sylveste/os/clavain/hooks/lib-sprint.sh` (OS→kernel integration)
+- `/home/mk/projects/Sylveste/os/clavain/config/agency-spec.yaml` (spec-level gates)
 
 ---
 
 ## 1. DefaultPhaseChain — The Kernel's 9-Phase Lifecycle
 
-**Location:** `/home/mk/projects/Demarch/core/intercore/internal/phase/phase.go:67`
+**Location:** `/home/mk/projects/Sylveste/core/intercore/internal/phase/phase.go:67`
 
 ### Phase Constants (defined at phase.go:10)
 ```go
@@ -53,7 +53,7 @@ var DefaultPhaseChain = []string{
 
 ## 2. Gate Rules — Which Transitions Require Checks
 
-**Location:** `/home/mk/projects/Demarch/core/intercore/internal/phase/gate.go:95-119`
+**Location:** `/home/mk/projects/Sylveste/core/intercore/internal/phase/gate.go:95-119`
 
 ### Gate Check Types (gate.go:13)
 ```go
@@ -185,7 +185,7 @@ case CheckVerdictExists:
 
 ## 3. How the OS Passes Phase Chain to Kernel
 
-**Location:** `/home/mk/projects/Demarch/os/clavain/hooks/lib-sprint.sh:134-145`
+**Location:** `/home/mk/projects/Sylveste/os/clavain/hooks/lib-sprint.sh:134-145`
 
 ### Sprint Create → IC Run Create Call
 ```bash
@@ -300,7 +300,7 @@ The kernel's `ParsePhaseChain()` function (phase.go:79-102) accepts **any** phas
 
 ## 5. Phase Validation Rules
 
-**Location:** `/home/mk/projects/Demarch/core/intercore/internal/phase/phase.go:79-102`
+**Location:** `/home/mk/projects/Sylveste/core/intercore/internal/phase/phase.go:79-102`
 
 ```go
 // ParsePhaseChain parses and validates a JSON phase chain.
@@ -341,7 +341,7 @@ func ParsePhaseChain(jsonStr string) ([]string, error) {
 
 ## 6. GateRulesInfo() — Display Function
 
-**Location:** `/home/mk/projects/Demarch/core/intercore/internal/phase/gate.go:400-443`
+**Location:** `/home/mk/projects/Sylveste/core/intercore/internal/phase/gate.go:400-443`
 
 This function returns gate rules in order for display (e.g., `ic gate rules`):
 
@@ -398,7 +398,7 @@ func GateRulesInfo() []struct {
 
 ## 7. Gate Evaluation Logic
 
-**Location:** `/home/mk/projects/Demarch/core/intercore/internal/phase/gate.go:121-365`
+**Location:** `/home/mk/projects/Sylveste/core/intercore/internal/phase/gate.go:121-365`
 
 ### Public Entry Point (gate.go:365-397)
 ```go
@@ -482,13 +482,13 @@ The `evaluateGate()` function:
 
 ## 10. References
 
-- **Kernel Phase Constants:** `/home/mk/projects/Demarch/core/intercore/internal/phase/phase.go` lines 10-19
-- **DefaultPhaseChain:** `/home/mk/projects/Demarch/core/intercore/internal/phase/phase.go` line 67
-- **Gate Rules Map:** `/home/mk/projects/Demarch/core/intercore/internal/phase/gate.go` lines 95-119
-- **Gate Check Constants:** `/home/mk/projects/Demarch/core/intercore/internal/phase/gate.go` lines 13-19
-- **Gate Evaluation:** `/home/mk/projects/Demarch/core/intercore/internal/phase/gate.go` lines 121-365
-- **OS Phase Chain:** `/home/mk/projects/Demarch/os/clavain/hooks/lib-sprint.sh` line 134
-- **intercore_run_create Wrapper:** `/home/mk/projects/Demarch/os/clavain/hooks/lib-intercore.sh` lines 236-245
-- **IC CLI --phases parsing:** `/home/mk/projects/Demarch/core/intercore/cmd/ic/run.go` lines 96-97
-- **Phase Chain Parsing:** `/home/mk/projects/Demarch/core/intercore/internal/phase/phase.go` lines 79-102
+- **Kernel Phase Constants:** `/home/mk/projects/Sylveste/core/intercore/internal/phase/phase.go` lines 10-19
+- **DefaultPhaseChain:** `/home/mk/projects/Sylveste/core/intercore/internal/phase/phase.go` line 67
+- **Gate Rules Map:** `/home/mk/projects/Sylveste/core/intercore/internal/phase/gate.go` lines 95-119
+- **Gate Check Constants:** `/home/mk/projects/Sylveste/core/intercore/internal/phase/gate.go` lines 13-19
+- **Gate Evaluation:** `/home/mk/projects/Sylveste/core/intercore/internal/phase/gate.go` lines 121-365
+- **OS Phase Chain:** `/home/mk/projects/Sylveste/os/clavain/hooks/lib-sprint.sh` line 134
+- **intercore_run_create Wrapper:** `/home/mk/projects/Sylveste/os/clavain/hooks/lib-intercore.sh` lines 236-245
+- **IC CLI --phases parsing:** `/home/mk/projects/Sylveste/core/intercore/cmd/ic/run.go` lines 96-97
+- **Phase Chain Parsing:** `/home/mk/projects/Sylveste/core/intercore/internal/phase/phase.go` lines 79-102
 

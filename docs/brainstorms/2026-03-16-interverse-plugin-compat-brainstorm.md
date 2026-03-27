@@ -1,13 +1,13 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-6qb.7
+bead: Sylveste-6qb.7
 stage: discover
 ---
 
 # Interverse Plugin Compatibility Layer for Skaffen
 
 **Date:** 2026-03-16
-**Bead:** Demarch-6qb.7
+**Bead:** Sylveste-6qb.7
 **Phase:** brainstorm (as of 2026-03-16T06:29:56Z)
 
 ## What We're Building

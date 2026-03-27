@@ -1,4 +1,4 @@
-# Assessment: mcp_agent_mail Repos for Demarch Integration
+# Assessment: mcp_agent_mail Repos for Sylveste Integration
 
 **Date:** 2026-02-28
 **Assessor:** Claude Sonnet 4.6
@@ -6,7 +6,7 @@
 - `research/mcp_agent_mail/` (iv-gqqvm, score 98) — Python implementation
 - `research/mcp_agent_mail_rust/` (iv-xvo5h, score 96) — Rust rewrite
 
-**Demarch context for comparison:**
+**Sylveste context for comparison:**
 - `core/intermute/` — Go coordination service (HTTP + WebSocket), SQLite-backed, agent heartbeats, message routing, file reservations
 - `interverse/interlock/` — Claude Code MCP plugin (Go binary, mark3labs/mcp-go), 11 tools, negotiated file release, git pre-commit enforcement
 - `apps/intercom/` — Personal AI assistant with container isolation
@@ -52,13 +52,13 @@ Maturity signals:
 - `docs/GUIDE_TO_OPTIMAL_MCP_SERVER_DESIGN.md` — research-backed design guide citing MCP ecosystem literature
 - `AGENT_FRIENDLINESS_REPORT.md` — self-audit of agent ergonomics
 
-**Relevance to Demarch:** Directly overlaps with intermute (coordination backend) and interlock (MCP reservation tools), but adds threaded messaging, LLM summarization, git-backed audit trails, and a richer tool vocabulary that Demarch's stack currently lacks.
+**Relevance to Sylveste:** Directly overlaps with intermute (coordination backend) and interlock (MCP reservation tools), but adds threaded messaging, LLM summarization, git-backed audit trails, and a richer tool vocabulary that Sylveste's stack currently lacks.
 
 **Integration opportunities:**
 - **Advisory file reservation glob semantics** — the pathspec/wildmatch matching logic (`pathspec` library, `GitWildMatchPattern`) is more correct than interlock's current fnmatch. The Rust version implements symmetric fnmatch with archive reading and rename handling. Worth porting to interlock's Go backend.
 - **Commit queue / write-behind batching** — the `_CommitQueue` pattern in `storage.py` (lines ~63-120) batches concurrent git writes to reduce index.lock contention. Intermute does individual git ops; this pattern would harden it under load.
 - **Pre-commit chain runner** — the hook installer creates a composable `hooks.d/<hook>/*` chain-runner that respects `core.hooksPath` and existing hook frameworks. Interlock's pre-commit hook currently overwrites. This chain-runner pattern would make interlock non-destructive on repos that already use Husky or lefthook.
-- **Build slots** — `acquire_build_slot` / `release_build_slot` tools for coordinating long-running build/watch processes. Demarch has no equivalent; this would prevent two agents from running `go build` or `npm dev` simultaneously.
+- **Build slots** — `acquire_build_slot` / `release_build_slot` tools for coordinating long-running build/watch processes. Sylveste has no equivalent; this would prevent two agents from running `go build` or `npm dev` simultaneously.
 - **Product bus** — cross-repo coordination via `ensure_product` + `products_link`. Frontend and backend agents in separate repos sharing one message bus. Intermute is single-project scoped; this pattern would let intercom and autarch agents coordinate across repo boundaries.
 - **Macro tools pattern** — `macro_start_session`, `macro_prepare_thread`, `macro_file_reservation_cycle`, `macro_contact_handshake`. These compress multi-step flows into single MCP calls. Interlock could expose similar macros to reduce token overhead at session start.
 - **Token-efficient robot CLI output** — the `toon` format (token-efficient compact encoding) delivered as a JSON envelope inside MCP responses. Worth adding to interlock's tools so agents can request compact responses when context budget is tight.
@@ -75,7 +75,7 @@ Maturity signals:
 
 **Verdict:** inspire-only
 
-**Rationale:** The Python codebase directly overlaps with intermute + interlock, but Demarch's coordination layer is already built in Go; adopting Python would fragment the stack, and the Rust rewrite (iv-xvo5h) supersedes the Python version for any deeper integration work.
+**Rationale:** The Python codebase directly overlaps with intermute + interlock, but Sylveste's coordination layer is already built in Go; adopting Python would fragment the stack, and the Rust rewrite (iv-xvo5h) supersedes the Python version for any deeper integration work.
 
 ---
 
@@ -108,7 +108,7 @@ Architecture highlights:
 - **WASM crate** — browser-side TUI frontend via `mcp-agent-mail-wasm`
 - **Robot mode** — 16 structured subcommands with toon/json/md output formats; designed for agent consumption in automated loops
 
-**Relevance to Demarch:** The Rust codebase architecture — particularly its lock ordering system, WBQ storage layer, and dual-mode binary pattern — directly mirrors the design problems Demarch faces as intermute scales to support larger agent fleets and the Interverse plugin layer grows more complex.
+**Relevance to Sylveste:** The Rust codebase architecture — particularly its lock ordering system, WBQ storage layer, and dual-mode binary pattern — directly mirrors the design problems Sylveste faces as intermute scales to support larger agent fleets and the Interverse plugin layer grows more complex.
 
 **Integration opportunities:**
 - **`OrderedMutex` / `OrderedRwLock` lock hierarchy pattern** — the deadlock prevention system in `mcp-agent-mail-core/src/lock_order.rs` assigns integer ranks to all locks and enforces acquisition order at runtime in debug builds. Intermute's current Go code uses sync.Mutex without ordering guarantees. Port this pattern to intermute's Go lock management.
@@ -121,8 +121,8 @@ Architecture highlights:
 - **Dual-mode binary separation** — the hard enforcement that MCP server calls rejected from CLI mode and vice versa (exit code 2, deterministic stderr message). Interlock mixes operator commands and agent tools in the same surface; this separation would make the tool contract cleaner.
 
 **Inspiration opportunities:**
-- **Structured async without Tokio** — the entire async stack uses `asupersync` with `Cx`-threaded structured concurrency, cancel-correct channels, and deterministic testing with virtual time. Demarch's Go services use goroutines + channels, which is analogous, but the virtual time / deterministic testing aspect of asupersync is worth studying for intermute's test harness.
-- **Conformance-driven development** — the Python implementation is the reference; the Rust port runs conformance tests on every CI run comparing output against captured Python fixtures. This approach would work well for Demarch's Go reimplementation of intermute features: capture HTTP response fixtures from the current implementation, run conformance against any future rewrite.
+- **Structured async without Tokio** — the entire async stack uses `asupersync` with `Cx`-threaded structured concurrency, cancel-correct channels, and deterministic testing with virtual time. Sylveste's Go services use goroutines + channels, which is analogous, but the virtual time / deterministic testing aspect of asupersync is worth studying for intermute's test harness.
+- **Conformance-driven development** — the Python implementation is the reference; the Rust port runs conformance tests on every CI run comparing output against captured Python fixtures. This approach would work well for Sylveste's Go reimplementation of intermute features: capture HTTP response fixtures from the current implementation, run conformance against any future rewrite.
 - **15-screen TUI as first-class operational interface** — frankentui's approach (semantic color tokens, no hardcoded ANSI, rounded borders, command palette, toast notifications, accessibility high-contrast mode) is the design language Autarch's agent monitoring UI should aspire to. The screen inventory (dashboard, messages, threads, agents, search, reservations, metrics, health, timeline, projects, contacts, explorer, analytics, attachments, archive browser) maps almost perfectly to what Autarch would need for fleet oversight.
 - **`toon` output format as a first-class concern** — treating token-efficient compact encoding as an equal output format alongside json and md, with per-tool format parameters and environment variable defaults. Interlock currently returns verbose JSON everywhere; adding a toon/compact option would materially reduce agent context consumption.
 - **Stale agent force-release with inactivity heuristics** — `force_release_file_reservation` uses inactivity detection (last heartbeat, last commit) to determine if a reservation holder is dead before releasing. Interlock's current logic relies solely on TTL; adding inactivity heuristics would make reservation cleanup more responsive.
@@ -131,13 +131,13 @@ Architecture highlights:
 
 **Verdict:** inspire-only
 
-**Rationale:** The Rust codebase is production-quality and architecturally sophisticated, but Demarch's coordination layer (intermute) is already in Go and interlock is Go/bash — adopting a new Rust async runtime with custom crates (`asupersync`, `frankentui`, `fastmcp_rust`) would create a foreign dependency island; the right approach is to port specific patterns (lock ordering, WBQ, chain-runner hooks, reservation overlap detection) back into Go.
+**Rationale:** The Rust codebase is production-quality and architecturally sophisticated, but Sylveste's coordination layer (intermute) is already in Go and interlock is Go/bash — adopting a new Rust async runtime with custom crates (`asupersync`, `frankentui`, `fastmcp_rust`) would create a foreign dependency island; the right approach is to port specific patterns (lock ordering, WBQ, chain-runner hooks, reservation overlap detection) back into Go.
 
 ---
 
 ## Comparative Summary
 
-| Dimension | mcp_agent_mail (Python) | mcp_agent_mail_rust (Rust) | Demarch (current) |
+| Dimension | mcp_agent_mail (Python) | mcp_agent_mail_rust (Rust) | Sylveste (current) |
 |-----------|------------------------|----------------------------|--------------------|
 | Transport | HTTP (FastMCP, Streamable) | stdio + HTTP | HTTP + WebSocket (intermute) |
 | Storage | SQLite + git archive | SQLite + git archive | SQLite only (no git archive) |
@@ -154,7 +154,7 @@ Architecture highlights:
 
 ## Prioritized Adoption Recommendations
 
-In priority order, these are the specific patterns most worth porting to Demarch:
+In priority order, these are the specific patterns most worth porting to Sylveste:
 
 1. **Lock ordering system with runtime enforcement** (from Rust) — prevents deadlock as intermute scales; 2-3 days Go implementation effort
 2. **Write-behind commit queue / batching** (from either) — eliminates git index.lock storms under concurrent agents; the Python `_CommitQueue` is the more portable reference
@@ -167,7 +167,7 @@ In priority order, these are the specific patterns most worth porting to Demarch
 
 ## Notes on What Not to Adopt
 
-- **The Python server itself** — Demarch is Go/Rust; adding a Python FastMCP server dependency would fragment the stack. The patterns are valuable; the runtime is not.
-- **The Rust async runtime** (`asupersync`) — this is a custom runtime replacing Tokio, with custom channel types and virtual time. It's impressive engineering for this project's internal needs, but adopting it in Demarch would require building expertise in a non-standard runtime with limited community support.
+- **The Python server itself** — Sylveste is Go/Rust; adding a Python FastMCP server dependency would fragment the stack. The patterns are valuable; the runtime is not.
+- **The Rust async runtime** (`asupersync`) — this is a custom runtime replacing Tokio, with custom channel types and virtual time. It's impressive engineering for this project's internal needs, but adopting it in Sylveste would require building expertise in a non-standard runtime with limited community support.
 - **frankentui** — while the TUI design philosophy is inspiring, frankentui appears to be a custom framework tightly coupled to this project's Rust ecosystem. Autarch's TUI work should reference the design language (screen inventory, semantic color tokens, command palette patterns) rather than the library itself.
-- **The full 34-tool surface** — Demarch's interlock works well with 11 tools. Adding 23 more tools would expand the context surface and potentially confuse agents about which tools to use. Selective addition is better than wholesale adoption.
+- **The full 34-tool surface** — Sylveste's interlock works well with 11 tools. Adding 23 more tools would expand the context surface and potentially confuse agents about which tools to use. Selective addition is better than wholesale adoption.

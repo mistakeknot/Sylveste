@@ -13,12 +13,12 @@ verdict: conditional-approve
 ## Scope
 
 Reviewed against:
-- `/home/mk/projects/Demarch/os/Skaffen/internal/tool/` — all existing tool files
-- `/home/mk/projects/Demarch/os/Skaffen/internal/git/git.go`
-- `/home/mk/projects/Demarch/os/Skaffen/internal/evidence/emitter.go`
-- `/home/mk/projects/Demarch/os/Skaffen/internal/mutations/store.go`
-- `/home/mk/projects/Demarch/os/Skaffen/internal/tui/status.go` and `app.go`
-- `/home/mk/projects/Demarch/os/Skaffen/AGENTS.md` and `CLAUDE.md`
+- `/home/mk/projects/Sylveste/os/Skaffen/internal/tool/` — all existing tool files
+- `/home/mk/projects/Sylveste/os/Skaffen/internal/git/git.go`
+- `/home/mk/projects/Sylveste/os/Skaffen/internal/evidence/emitter.go`
+- `/home/mk/projects/Sylveste/os/Skaffen/internal/mutations/store.go`
+- `/home/mk/projects/Sylveste/os/Skaffen/internal/tui/status.go` and `app.go`
+- `/home/mk/projects/Sylveste/os/Skaffen/AGENTS.md` and `CLAUDE.md`
 
 Languages in scope: Go only. TypeScript, Python, Shell checks not applied.
 

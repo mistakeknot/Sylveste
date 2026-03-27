@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-6qb
+bead: Sylveste-6qb
 stage: planned
 ---
 # Plan: @-file mentions with fuzzy search in input composer

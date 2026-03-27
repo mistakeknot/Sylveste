@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-Two data sources must be combined for a visualization pipeline: a Notion-sourced IdeaGUI roster (85 agent sessions with project/terminal/agent-type/sync-mode) and clavain-cli live ops (fleet counts, queue by priority, WIP agent-to-bead mappings). The core challenge is that bead IDs encode the DB prefix (Demarch-), not the sub-project, and tmux session names are human-readable but not linked to hex session IDs in WIP output.
+Two data sources must be combined for a visualization pipeline: a Notion-sourced IdeaGUI roster (85 agent sessions with project/terminal/agent-type/sync-mode) and clavain-cli live ops (fleet counts, queue by priority, WIP agent-to-bead mappings). The core challenge is that bead IDs encode the DB prefix (Sylveste-), not the sub-project, and tmux session names are human-readable but not linked to hex session IDs in WIP output.
 
 ## Review Approach
 
@@ -31,7 +31,7 @@ Two data sources must be combined for a visualization pipeline: a Notion-sourced
 
 ### 2. Evaluate whether the bead ID prefix (e
 
-- Evaluate whether the bead ID prefix (e.g., Demarch-) is sufficient for project disambiguation in the current deployment, or whether multi-tenant scenarios require a richer field
+- Evaluate whether the bead ID prefix (e.g., Sylveste-) is sufficient for project disambiguation in the current deployment, or whether multi-tenant scenarios require a richer field
 
 ### 3. Assess the output format: if factory
 
@@ -43,7 +43,7 @@ Two data sources must be combined for a visualization pipeline: a Notion-sourced
 
 ### 5. Whether the sub
 
-- Verify whether the sub-project granularity (meadowsyn vs. demarch root) is knowable at factory-status emit time, or whether it requires a separate registry lookup
+- Verify whether the sub-project granularity (meadowsyn vs. sylveste root) is knowable at factory-status emit time, or whether it requires a separate registry lookup
 
 ### 6. Review whether factory
 

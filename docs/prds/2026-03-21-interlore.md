@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-bncp
+bead: Sylveste-bncp
 stage: design
 ---
 
@@ -22,7 +22,7 @@ Close the loop with two pieces delivered in this epic: (1) a doc hierarchy with 
 
 **Semantic boundaries:**
 - MISSION.md: why the project exists (rarely changes). Extracted from PHILOSOPHY.md's opening — the three principles and core bet stay in PHILOSOPHY.md, but the "why" sentence moves to MISSION.
-- VISION.md: where the project is going. The existing `docs/demarch-vision.md` (v3.4) is the canonical vision doc — F1 references it in the hierarchy, does not create a duplicate.
+- VISION.md: where the project is going. The existing `docs/sylveste-vision.md` (v3.4) is the canonical vision doc — F1 references it in the hierarchy, does not create a duplicate.
 - PHILOSOPHY.md: how we build (design bets, tradeoffs, principles). Unchanged except removing the mission-level "why" sentence that moves to MISSION.md.
 - Conflict resolution: MISSION.md takes precedence when VISION and PHILOSOPHY conflict.
 
@@ -38,7 +38,7 @@ Close the loop with two pieces delivered in this epic: (1) a doc hierarchy with 
 - [ ] doc-structure.md no longer claims "auto-loaded by interdoc" for PHILOSOPHY.md placement
 - [ ] docs/canon/plugin-standard.md AGENTS.md boilerplate updated to reference MISSION.md alongside PHILOSOPHY.md
 - [ ] PHILOSOPHY.md opening section trimmed: mission-level "why" extracted to MISSION.md, principles and core bet remain
-- [ ] Existing `docs/demarch-vision.md` acknowledged as canonical vision doc in hierarchy (no duplicate created)
+- [ ] Existing `docs/sylveste-vision.md` acknowledged as canonical vision doc in hierarchy (no duplicate created)
 - [ ] interdoc AGENTS.md relative path to PHILOSOPHY.md still resolves correctly
 
 ### F2: interlore Plugin Scaffold
@@ -109,10 +109,10 @@ proposals:
     chosen_pole: "integration"
     evidence:
       - path: "docs/brainstorms/2026-03-08-cass-brainstorm.md"
-        bead: "Demarch-abc1"
+        bead: "Sylveste-abc1"
         excerpt: "Chose to integrate CASS rather than build session search"
       - path: "docs/prds/2026-03-05-data-driven-plugin-boundaries.md"
-        bead: "Demarch-def2"
+        bead: "Sylveste-def2"
         excerpt: "Adopt existing boundary detection over custom implementation"
     unique_decisions: 4
     time_span: { earliest: "2026-02-28", latest: "2026-03-15" }

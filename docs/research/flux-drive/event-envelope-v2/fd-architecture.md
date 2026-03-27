@@ -6,8 +6,8 @@ findings: 5
 
 # EventEnvelope v2 — Architecture Review
 
-**Plan:** `/home/mk/projects/Demarch/docs/plans/2026-03-26-event-envelope-v2.md`
-**Bead:** Demarch-og7m.2.1
+**Plan:** `/home/mk/projects/Sylveste/docs/plans/2026-03-26-event-envelope-v2.md`
+**Bead:** Sylveste-og7m.2.1
 **Reviewer:** flux-drive
 
 ---
@@ -16,7 +16,7 @@ findings: 5
 
 **Severity:** P1
 
-The v1-to-v2 mapping in `ParseEnvelopeV2JSON` projects only four fields onto `EventEnvelopeV2` (TraceID, SpanID, ParentSpanID, CallerIdentity). The existing `EventEnvelope` in `/home/mk/projects/Demarch/core/intercore/internal/event/envelope.go` carries seven additional fields that are live in production data:
+The v1-to-v2 mapping in `ParseEnvelopeV2JSON` projects only four fields onto `EventEnvelopeV2` (TraceID, SpanID, ParentSpanID, CallerIdentity). The existing `EventEnvelope` in `/home/mk/projects/Sylveste/core/intercore/internal/event/envelope.go` carries seven additional fields that are live in production data:
 
 - `PolicyVersion` — written by all three default envelope constructors (`dispatch-lifecycle/v2`, `phase-machine/v1`, `coordination/v1`)
 - `CapabilityScope` — written for every run-scoped and dispatch-scoped event
@@ -35,7 +35,7 @@ Concretely, `RequestedSandbox` and `EffectiveSandbox` are already modeled in `Di
 
 **Severity:** P2
 
-`/home/mk/projects/Demarch/core/intercore/internal/phase/event_envelope.go` contains `phaseEventEnvelope`, a private struct that duplicates all fields of `EventEnvelope` except `RequestedSandbox` and `EffectiveSandbox`. It is serialized independently and stored in `phase_events.envelope_json`. The v2 plan does not mention this type.
+`/home/mk/projects/Sylveste/core/intercore/internal/phase/event_envelope.go` contains `phaseEventEnvelope`, a private struct that duplicates all fields of `EventEnvelope` except `RequestedSandbox` and `EffectiveSandbox`. It is serialized independently and stored in `phase_events.envelope_json`. The v2 plan does not mention this type.
 
 After og7m.2.1 lands, the codebase will have three separate envelope representations in the `internal/event/` package boundary:
 

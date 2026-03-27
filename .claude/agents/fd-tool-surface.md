@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-mcp_agent_mail exposes 40+ MCP tools for messaging, identity, and coordination. Demarch has multiple MCP servers (Interlock, Intermap, Intermux, tldr-swinton) each with their own tool surface conventions. The goal is to identify API design patterns that should be standardized across Demarch's MCP tool ecosystem.
+mcp_agent_mail exposes 40+ MCP tools for messaging, identity, and coordination. Sylveste has multiple MCP servers (Interlock, Intermap, Intermux, tldr-swinton) each with their own tool surface conventions. The goal is to identify API design patterns that should be standardized across Sylveste's MCP tool ecosystem.
 
 ## Review Approach
 
@@ -63,8 +63,8 @@ A good review from this agent:
 - Provides a concrete failure scenario for each P0/P1 finding — what breaks, under what conditions, and who is affected
 - Recommends the smallest viable fix, not an architecture overhaul — one diff hunk, not a rewrite
 - Frames uncertain findings as questions: "Does this handle X?" not "This doesn't handle X"
-- Produce a concrete naming convention recommendation for Demarch's MCP tools based on what mcp_agent_mail does well or poorly
-- Identify whether mcp_agent_mail uses a schema registry or inline definitions — the answer determines whether Demarch's tool surfaces should adopt a shared schema library
+- Produce a concrete naming convention recommendation for Sylveste's MCP tools based on what mcp_agent_mail does well or poorly
+- Identify whether mcp_agent_mail uses a schema registry or inline definitions — the answer determines whether Sylveste's tool surfaces should adopt a shared schema library
 - Determine if the macro_ tool pattern is a good abstraction boundary or a leaky shortcut that should instead be a skill/workflow layer
 
 ## Decision Lens

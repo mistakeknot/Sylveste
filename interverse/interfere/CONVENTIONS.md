@@ -26,7 +26,7 @@
 
 ## Git
 - Trunk-based: commit to main
-- Files are gitignored at Demarch root (`interverse/`), use `git add -f` or own repo
+- Files are gitignored at Sylveste root (`interverse/`), use `git add -f` or own repo
 - Commit message format: `feat(interfere): description` or `fix(interfere): description`
 
 ## Testing

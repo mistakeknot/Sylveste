@@ -34,7 +34,7 @@ Flux-drive plan review (4 agents: correctness, integration, architecture, safety
   3. Fall back to CWD **only if** `.clavain/interspect/` already exists there (existence guard)
   4. Return 1 if no valid root found (callers already handle failure)
 - [x] Add diagnostic log to `_interspect_db_path()`: log which fallback branch was taken when `INTERSPECT_DEBUG=1`
-- [ ] Test: dispatch an Agent subagent from Demarch root, verify `agent_dispatch` event appears in `.clavain/interspect/interspect.db`
+- [ ] Test: dispatch an Agent subagent from Sylveste root, verify `agent_dispatch` event appears in `.clavain/interspect/interspect.db`
 
 ### Part 2: Wire verdict outcomes into evidence (F2)
 

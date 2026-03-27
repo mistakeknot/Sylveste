@@ -17,7 +17,7 @@
       "Observable signals are weaker than measurable — the CUJ should explain what instrument produces the observation.",
       "Absence signals ('zero conflicts', 'no duplicates') need a description of the mechanism that produces the absence, not just the desired state."
     ],
-    "task_context": "These are product specification CUJs for the Demarch autonomous development platform. They describe target user experiences across quality gates, multi-agent coordination, parallel dispatch, and Skaffen agent runtime. Review is for specification quality, not implementation.",
+    "task_context": "These are product specification CUJs for the Sylveste autonomous development platform. They describe target user experiences across quality gates, multi-agent coordination, parallel dispatch, and Skaffen agent runtime. Review is for specification quality, not implementation.",
     "anti_overlap": [
       "fd-cross-cuj-coherence covers whether the same concept is described consistently across CUJs — this agent focuses only on signal quality within each CUJ.",
       "fd-friction-completeness covers whether friction points are realistic and complete — this agent focuses only on the success signal table.",
@@ -42,7 +42,7 @@
       "Vocabulary coined in one CUJ (OODARC, phase gating, bead claim) must be used with the same meaning when it appears in another.",
       "Dependency arrows must be consistent: if CUJ A says X depends on Y, CUJ B must not implicitly describe Y as optional or absent."
     ],
-    "task_context": "These are product specification CUJs for the Demarch autonomous development platform. They describe target user experiences across quality gates, multi-agent coordination, parallel dispatch, and Skaffen agent runtime. Review is for specification quality, not implementation.",
+    "task_context": "These are product specification CUJs for the Sylveste autonomous development platform. They describe target user experiences across quality gates, multi-agent coordination, parallel dispatch, and Skaffen agent runtime. Review is for specification quality, not implementation.",
     "anti_overlap": [
       "fd-success-signal-integrity focuses only on the quality of success signal tables within each CUJ — this agent focuses on cross-document consistency.",
       "fd-friction-completeness checks whether friction points are complete and realistic within each CUJ — this agent looks at whether friction acknowledged in one CUJ is silently assumed absent in another.",
@@ -67,7 +67,7 @@
       "Journey narratives should acknowledge at least one intermediate failure state rather than describing only the ideal sequence.",
       "Friction points should be ranked or triaged — not all friction is equal."
     ],
-    "task_context": "These are product specification CUJs for the Demarch autonomous development platform. They describe target user experiences across quality gates, multi-agent coordination, parallel dispatch, and Skaffen agent runtime. Review is for specification quality, not implementation.",
+    "task_context": "These are product specification CUJs for the Sylveste autonomous development platform. They describe target user experiences across quality gates, multi-agent coordination, parallel dispatch, and Skaffen agent runtime. Review is for specification quality, not implementation.",
     "anti_overlap": [
       "fd-cross-cuj-coherence checks whether friction acknowledged in one CUJ conflicts with assumptions in another.",
       "fd-success-signal-integrity checks whether success signals are testable.",
@@ -92,7 +92,7 @@
       "Phase boundary softening must be specified precisely: which tools, which rate limits, which file globs.",
       "Trust inheritance for non-primary agents must be explicitly specified."
     ],
-    "task_context": "These are product specification CUJs for the Demarch autonomous development platform. They describe target user experiences across quality gates, multi-agent coordination, parallel dispatch, and Skaffen agent runtime. Review is for specification quality, not implementation.",
+    "task_context": "These are product specification CUJs for the Sylveste autonomous development platform. They describe target user experiences across quality gates, multi-agent coordination, parallel dispatch, and Skaffen agent runtime. Review is for specification quality, not implementation.",
     "anti_overlap": [
       "fd-success-signal-integrity checks whether the auto-approve signal is testable.",
       "fd-cross-cuj-coherence checks whether trust vocabulary is consistent across CUJs.",
@@ -117,7 +117,7 @@
       "Every implicit prerequisite should surface in the journey before it is relied upon.",
       "The actor's information at each step should be traceable."
     ],
-    "task_context": "These are product specification CUJs for the Demarch autonomous development platform. They describe target user experiences across quality gates, multi-agent coordination, parallel dispatch, and Skaffen agent runtime. Review is for specification quality, not implementation.",
+    "task_context": "These are product specification CUJs for the Sylveste autonomous development platform. They describe target user experiences across quality gates, multi-agent coordination, parallel dispatch, and Skaffen agent runtime. Review is for specification quality, not implementation.",
     "anti_overlap": [
       "fd-friction-completeness checks whether friction points are complete.",
       "fd-cross-cuj-coherence checks for consistency across CUJs.",

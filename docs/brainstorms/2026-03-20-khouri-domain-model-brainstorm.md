@@ -1,6 +1,6 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-xk68
+bead: Sylveste-xk68
 stage: discover
 ---
 
@@ -14,7 +14,7 @@ Pydantic models for Khouri's CLA inverse scenario planning pipeline. Every model
 
 ## Why This Approach
 
-The parent epic (Demarch-31g4) defines a 10-stage hybrid pipeline. The domain model is P0 because every stage depends on these types. Threading CLA layer through the entire model graph enables:
+The parent epic (Sylveste-31g4) defines a 10-stage hybrid pipeline. The domain model is P0 because every stage depends on these types. Threading CLA layer through the entire model graph enables:
 - Layer-specific gap classification (Stage 6)
 - Layer-ordered backlog synthesis (Stage 7)
 - Cross-layer causal edges in the graph (Stage 1)

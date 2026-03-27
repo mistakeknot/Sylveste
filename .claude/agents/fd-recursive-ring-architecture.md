@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-The document is a strategic architecture analysis evaluating how Autarch's four TUI apps (Bigend, Gurgeh, Coldwine, Pollard) must evolve to support increasing agent autonomy in Demarch. The analysis proposes a three-mode hierarchy (Executive/Supervisor/Operator) and a recursive ring model for autonomous agencies, grounded in seven identified gaps between current and target state.
+The document is a strategic architecture analysis evaluating how Autarch's four TUI apps (Bigend, Gurgeh, Coldwine, Pollard) must evolve to support increasing agent autonomy in Sylveste. The analysis proposes a three-mode hierarchy (Executive/Supervisor/Operator) and a recursive ring model for autonomous agencies, grounded in seven identified gaps between current and target state.
 
 ## Review Approach
 

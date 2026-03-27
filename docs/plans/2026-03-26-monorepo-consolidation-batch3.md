@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-og7m
+bead: Sylveste-og7m
 stage: design
 requirements:
   - F1: Reservation resource limits (.12)
@@ -11,7 +11,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-og7m
+**Bead:** Sylveste-og7m
 **Goal:** Harden multi-agent coordination for 5+ concurrent agents — reservation limits, evidence write durability, and code ownership governance.
 
 **Architecture:** F1 is Go in L1 intermute, F2 is bash in Interverse interspect, F3 is a GitHub config file. All independent — no cross-task dependencies.
@@ -123,7 +123,7 @@ Reserve() now checks active reservation count per agent before insert,
 caps TTL to 24 hours, and opportunistically sweeps expired reservations
 in the same transaction.
 
-Fixes Demarch-og7m.12"
+Fixes Sylveste-og7m.12"
 ```
 
 <verify>
@@ -224,7 +224,7 @@ Sets PRAGMA busy_timeout=5000 and introduces _interspect_sqlite_write()
 with 3x retry (1s/2s/4s backoff) for INSERT/UPDATE operations. Failed
 writes after retry log to stderr instead of being silently swallowed.
 
-Fixes Demarch-og7m.27"
+Fixes Sylveste-og7m.27"
 ```
 
 <verify>
@@ -242,7 +242,7 @@ Fixes Demarch-og7m.27"
 **Step 1: Create CODEOWNERS file**
 
 ```
-# Demarch monorepo — code ownership for review routing
+# Sylveste monorepo — code ownership for review routing
 # See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 
 # Default: all paths require owner review
@@ -289,7 +289,7 @@ git commit -m "chore: add CODEOWNERS for review routing at 3+ contributors
 Maps all pillars and key Interverse plugins to @mistakeknot.
 Wildcard fallback ensures no path is unowned.
 
-Fixes Demarch-og7m.26"
+Fixes Sylveste-og7m.26"
 ```
 
 <verify>

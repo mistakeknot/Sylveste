@@ -1,6 +1,6 @@
 # Architecture Review: Interspect Pattern Detection + Propose Flow
 
-**Plan:** `/home/mk/projects/Demarch/docs/plans/2026-02-23-interspect-pattern-detection-propose-flow.md`
+**Plan:** `/home/mk/projects/Sylveste/docs/plans/2026-02-23-interspect-pattern-detection-propose-flow.md`
 **Reviewed:** 2026-02-23
 **Scope:** 4 new functions in `os/clavain/hooks/lib-interspect.sh` — `_interspect_get_routing_eligible`, `_interspect_get_overlay_eligible`, `_interspect_apply_propose`, `_interspect_is_cross_cutting`
 
@@ -204,5 +204,5 @@ The 16 new tests cover the primary positive and negative paths adequately. Two g
 
 ## Files Touched
 
-- `/home/mk/projects/Demarch/os/clavain/hooks/lib-interspect.sh` — all 4 functions inserted here
-- `/home/mk/projects/Demarch/os/clavain/tests/shell/test_interspect_routing.bats` — 16 new tests added here
+- `/home/mk/projects/Sylveste/os/clavain/hooks/lib-interspect.sh` — all 4 functions inserted here
+- `/home/mk/projects/Sylveste/os/clavain/tests/shell/test_interspect_routing.bats` — 16 new tests added here

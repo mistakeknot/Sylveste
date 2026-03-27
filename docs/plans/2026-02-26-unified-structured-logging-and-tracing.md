@@ -136,7 +136,7 @@ func TestNewHandler_LevelFiltering(t *testing.T) {
 
 **Step 2: Run test to verify it fails**
 
-Run: `cd /home/mk/projects/Demarch/core/intercore && go test -race ./internal/observability/`
+Run: `cd /home/mk/projects/Sylveste/core/intercore && go test -race ./internal/observability/`
 Expected: FAIL — package does not exist
 
 **Step 3: Write the implementation**
@@ -231,7 +231,7 @@ func NewHandler(w io.Writer, level slog.Level) slog.Handler {
 
 **Step 4: Run test to verify it passes**
 
-Run: `cd /home/mk/projects/Demarch/core/intercore && go test -race ./internal/observability/`
+Run: `cd /home/mk/projects/Sylveste/core/intercore && go test -race ./internal/observability/`
 Expected: PASS (all 6 tests)
 
 **Step 5: Commit**
@@ -287,12 +287,12 @@ Add the import: `"github.com/mistakeknot/intercore/internal/observability"`
 
 **Step 2: Build to verify compilation**
 
-Run: `cd /home/mk/projects/Demarch/core/intercore && go build ./cmd/ic/`
+Run: `cd /home/mk/projects/Sylveste/core/intercore && go build ./cmd/ic/`
 Expected: Compiles without error
 
 **Step 3: Run existing tests to verify no regression**
 
-Run: `cd /home/mk/projects/Demarch/core/intercore && go test -race ./cmd/ic/ ./internal/...`
+Run: `cd /home/mk/projects/Sylveste/core/intercore && go test -race ./cmd/ic/ ./internal/...`
 Expected: All pass
 
 **Step 4: Commit**
@@ -453,7 +453,7 @@ Also update `cmd/ic/portfolio.go` lines 228-238 to use `slog.Info`/`slog.Error`.
 
 **Step 7: Build and test**
 
-Run: `cd /home/mk/projects/Demarch/core/intercore && go build ./cmd/ic/ && go test -race ./internal/event/ ./internal/portfolio/ ./internal/sentinel/ ./cmd/ic/`
+Run: `cd /home/mk/projects/Sylveste/core/intercore && go build ./cmd/ic/ && go test -race ./internal/event/ ./internal/portfolio/ ./internal/sentinel/ ./cmd/ic/`
 Expected: All pass
 
 **Step 8: Commit**
@@ -509,7 +509,7 @@ Files to migrate (descending by call count):
 
 **Step 2: Build and test after each batch of 3-4 files**
 
-Run: `cd /home/mk/projects/Demarch/core/intercore && go build ./cmd/ic/ && go test -race ./...`
+Run: `cd /home/mk/projects/Sylveste/core/intercore && go build ./cmd/ic/ && go test -race ./...`
 
 **Step 3: Commit per batch**
 
@@ -570,7 +570,7 @@ func TestMigrator_V22Upgrade(t *testing.T) {
 
 **Step 3: Run migration test**
 
-Run: `cd /home/mk/projects/Demarch/core/intercore && go test -race -v ./internal/db/ -run TestMigrator`
+Run: `cd /home/mk/projects/Sylveste/core/intercore && go test -race -v ./internal/db/ -run TestMigrator`
 Expected: All pass including new v23 test
 
 **Step 4: Update audit.go Entry struct**
@@ -608,7 +608,7 @@ if entry.TraceID == "" {
 
 **Step 8: Test**
 
-Run: `cd /home/mk/projects/Demarch/core/intercore && go test -race ./internal/audit/ ./internal/db/`
+Run: `cd /home/mk/projects/Sylveste/core/intercore && go test -race ./internal/audit/ ./internal/db/`
 Expected: All pass
 
 **Step 9: Commit**
@@ -687,7 +687,7 @@ func defaultPhaseEnvelopeJSON(runID, eventType, fromPhase, toPhase string) *stri
 
 **Step 4: Test**
 
-Run: `cd /home/mk/projects/Demarch/core/intercore && go test -race ./internal/event/ ./internal/phase/`
+Run: `cd /home/mk/projects/Sylveste/core/intercore && go test -race ./internal/event/ ./internal/phase/`
 Expected: All pass
 
 **Step 5: Commit**
@@ -812,7 +812,7 @@ source "${BASH_SOURCE[0]%/*}/lib-log.sh" 2>/dev/null || true
 **Step 3: Test manually**
 
 ```bash
-cd /home/mk/projects/Demarch/os/clavain/hooks
+cd /home/mk/projects/Sylveste/os/clavain/hooks
 source lib-log.sh
 log_info "test message" key=value
 # Expected on stderr: {"level":"info","msg":"test message","ts":"2026-02-26T...","component":"bash","key":"value"}
@@ -935,7 +935,7 @@ Create `docs/guide-plugin-logging.md` documenting:
 **Step 2: Write Python JSON formatter**
 
 ```python
-# interlogger.py — Structured JSON logging for Demarch Python plugins
+# interlogger.py — Structured JSON logging for Sylveste Python plugins
 import json
 import logging
 import os
@@ -1032,7 +1032,7 @@ Since Task 5 added `TestMigrator_V22Upgrade`, this is automatically covered. No 
 **Step 2: Run full test suite**
 
 ```bash
-cd /home/mk/projects/Demarch/core/intercore
+cd /home/mk/projects/Sylveste/core/intercore
 go build ./...
 go vet ./...
 go test -race ./...
@@ -1043,7 +1043,7 @@ Expected: All pass including new observability, audit, migration tests.
 **Step 3: Verify contracts are up to date**
 
 ```bash
-cd /home/mk/projects/Demarch/core/intercore
+cd /home/mk/projects/Sylveste/core/intercore
 go generate ./contracts/...
 git diff --exit-code contracts/
 ```

@@ -136,7 +136,7 @@ Source: [PySheaf docs](https://github.com/kb1dds/pysheaf/blob/master/docs/intro.
 
 ### Meadowsyn Mapping
 
-This is the most directly relevant paradigm to Demarch's existing sheaf formalism.
+This is the most directly relevant paradigm to Sylveste's existing sheaf formalism.
 
 - **Agent graph as cellular sheaf**: Vertices = agents, edges = communication channels. Vertex stalks = agent state spaces (current task, confidence, resource usage). Edge stalks = shared understanding spaces. Restriction maps encode how each agent's state is communicated/projected to neighbors.
 - **Consistency radius as health metric**: Compute `ConsistencyRadius` over the agent sheaf at each time step. Visualize as a color gradient over the agent graph -- green = consistent, red = disagreeing. This directly shows where agents have divergent understanding of shared state.

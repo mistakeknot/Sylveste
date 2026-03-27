@@ -1,8 +1,8 @@
 # Correctness Review: `_interspect_approve_override` / `_interspect_approve_override_locked`
 
 **Reviewed files:**
-- `/home/mk/projects/Demarch/os/clavain/hooks/lib-interspect.sh` lines 1158-1397
-- `/home/mk/projects/Demarch/os/clavain/commands/interspect-approve.md`
+- `/home/mk/projects/Sylveste/os/clavain/hooks/lib-interspect.sh` lines 1158-1397
+- `/home/mk/projects/Sylveste/os/clavain/commands/interspect-approve.md`
 
 **Compared against:**
 - `_interspect_apply_override_locked` (lines 858-1014)
@@ -265,7 +265,7 @@ This is not a new failure mode introduced by the approve function — it is the 
 
 ### F9 (INFORMATIONAL) — Command File Uses `find` to Locate `lib-interspect.sh`
 
-**Location:** `/home/mk/projects/Demarch/os/clavain/commands/interspect-approve.md`, lines 16-17
+**Location:** `/home/mk/projects/Sylveste/os/clavain/commands/interspect-approve.md`, lines 16-17
 
 **Code:**
 ```bash

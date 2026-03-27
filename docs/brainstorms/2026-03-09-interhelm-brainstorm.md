@@ -1,12 +1,12 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-ekh
+bead: Sylveste-ekh
 stage: discover
 ---
 
 # Interhelm: Agent-as-Operator Runtime Diagnostics
 
-**Bead:** Demarch-ekh
+**Bead:** Sylveste-ekh
 **GitHub Issue:** #7
 
 ## What We're Building

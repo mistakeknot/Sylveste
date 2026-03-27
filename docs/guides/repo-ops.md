@@ -1,10 +1,10 @@
 # Repo operations
 
-Operational patterns for working with the Demarch monorepo's nested-git architecture.
+Operational patterns for working with the Sylveste monorepo's nested-git architecture.
 
 ## Nested git repos
 
-Each subproject (`os/clavain/`, `core/intercore/`, `interverse/interflux/`, etc.) has its own `.git` directory and its own GitHub repo under `mistakeknot/`. The root `Demarch/` also has a `.git` for the monorepo skeleton (scripts, docs, beads, CLAUDE.md).
+Each subproject (`os/clavain/`, `core/intercore/`, `interverse/interflux/`, etc.) has its own `.git` directory and its own GitHub repo under `mistakeknot/`. The root `Sylveste/` also has a `.git` for the monorepo skeleton (scripts, docs, beads, CLAUDE.md).
 
 The root `.gitignore` excludes all subproject directories:
 
@@ -16,11 +16,11 @@ interverse/
 sdk/*
 ```
 
-This means subproject files are NOT pushed to the Demarch GitHub repo. Only the skeleton is.
+This means subproject files are NOT pushed to the Sylveste GitHub repo. Only the skeleton is.
 
 ## Links in root-tracked files must be absolute GitHub URLs
 
-Because subproject directories are gitignored, relative links like `[Clavain](os/clavain/)` will 404 on GitHub. Any markdown file tracked by the root Demarch repo (README.md, docs/*.md) must use absolute GitHub URLs for subproject references:
+Because subproject directories are gitignored, relative links like `[Clavain](os/clavain/)` will 404 on GitHub. Any markdown file tracked by the root Sylveste repo (README.md, docs/*.md) must use absolute GitHub URLs for subproject references:
 
 ```markdown
 # Wrong (404 on GitHub)
@@ -32,7 +32,7 @@ Because subproject directories are gitignored, relative links like `[Clavain](os
 [Intercore](https://github.com/mistakeknot/intercore)
 ```
 
-Links to files within the Demarch skeleton are fine as relative paths (e.g., `docs/guide-power-user.md`), since those files are tracked.
+Links to files within the Sylveste skeleton are fine as relative paths (e.g., `docs/guide-power-user.md`), since those files are tracked.
 
 ## Finding GitHub repo URLs
 
@@ -59,11 +59,11 @@ Common repos:
 git rev-parse --show-toplevel
 ```
 
-This is critical before any git operation. If you're at `interverse/interflux/` and run `git push`, it pushes the interflux repo, not Demarch.
+This is critical before any git operation. If you're at `interverse/interflux/` and run `git push`, it pushes the interflux repo, not Sylveste.
 
 ## Committing to multiple repos
 
-When changes span the Demarch skeleton and a subproject, you need separate commits:
+When changes span the Sylveste skeleton and a subproject, you need separate commits:
 
 ```bash
 # Commit subproject changes first
@@ -72,9 +72,9 @@ git -C os/clavain commit -m "fix: update plugin manifest"
 git -C os/clavain push
 
 # Then commit skeleton changes
-git -C /home/mk/projects/Demarch add README.md
-git -C /home/mk/projects/Demarch commit -m "docs: update README links"
-git -C /home/mk/projects/Demarch push
+git -C /home/mk/projects/Sylveste add README.md
+git -C /home/mk/projects/Sylveste commit -m "docs: update README links"
+git -C /home/mk/projects/Sylveste push
 ```
 
 ## Common mistakes

@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-fqb
+bead: Sylveste-fqb
 stage: design
 requirements:
   - F1: recommend_model tool — task-to-model recommendation
@@ -12,7 +12,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-fqb
+**Bead:** Sylveste-fqb
 **Goal:** Add task-to-model recommendation and cost-efficiency ranking to interrank's MCP server.
 
 **Architecture:** Three changes to interrank: (1) new `recommend_model` tool in `src/recommend.ts` + `src/index.ts` that chains benchmark scoring into weighted model ranking, (2) new `cost_leaderboard` tool in `src/index.ts` that computes efficiency ratios, (3) response-shape enrichment in `list_benchmarks` and `recommend_benchmarks` to surface null metadata fields as `"unknown"`. All changes use existing snapshot data — no external dependencies.

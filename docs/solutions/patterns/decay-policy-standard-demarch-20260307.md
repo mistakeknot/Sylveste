@@ -1,8 +1,8 @@
 ---
-title: "Standardized decay policy across Demarch memory systems"
+title: "Standardized decay policy across Sylveste memory systems"
 date: 2026-03-07
 problem_type: documentation_gap
-module: demarch
+module: sylveste
 component: architecture
 severity: medium
 resolution_type: pattern
@@ -24,7 +24,7 @@ framework_version: "1.0"
 
 # Standardized Decay Policy
 
-All Demarch memory systems follow intermem's decay model as the standard pattern, adapted to each system's data characteristics.
+All Sylveste memory systems follow intermem's decay model as the standard pattern, adapted to each system's data characteristics.
 
 ## The Standard: Intermem's Model
 

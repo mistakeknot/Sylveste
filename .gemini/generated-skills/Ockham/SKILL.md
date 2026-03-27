@@ -11,7 +11,7 @@ You have activated the Ockham capability.
 
 ## Architecture
 
-Ockham is the factory governor — the Cyberstride in Demarch's Cybersyn-inspired architecture. It sits between the principal's strategic intent (expressed through Meadowsyn or CLI) and the factory's execution (Clavain self-dispatch, Zaka agent steering, Alwe observation).
+Ockham is the factory governor — the Cyberstride in Sylveste's Cybersyn-inspired architecture. It sits between the principal's strategic intent (expressed through Meadowsyn or CLI) and the factory's execution (Clavain self-dispatch, Zaka agent steering, Alwe observation).
 
 ```
 Principal

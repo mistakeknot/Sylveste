@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-o5u
+bead: Sylveste-o5u
 stage: design
 ---
 # PRD: Skaffen F7 — MCP Stdio Client for Interverse Plugins
@@ -80,7 +80,7 @@ Config-driven MCP stdio client that discovers plugins from `plugins.toml`, spawn
 
 ## Dependencies
 
-- **F2 Tool Registry (Demarch-hop, done):** Runtime `Register()` extension point. Needs minor extension to accept phase list.
+- **F2 Tool Registry (Sylveste-hop, done):** Runtime `Register()` extension point. Needs minor extension to accept phase list.
 - **Official MCP Go SDK:** `github.com/modelcontextprotocol/go-sdk` — new dependency for Skaffen's go.mod.
 - **Interverse plugin.json schema:** `mcpServers` field structure (documented in `docs/canon/plugin-standard.md`).
 - **BurntSushi/toml or pelletier/go-toml:** For plugins.toml parsing. No TOML dependency in Skaffen yet.

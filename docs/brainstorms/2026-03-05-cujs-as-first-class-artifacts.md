@@ -4,11 +4,11 @@ bead: none
 stage: discover
 ---
 
-# CUJs as First-Class Artifacts in Demarch
+# CUJs as First-Class Artifacts in Sylveste
 
 ## What We're Building
 
-Critical User Journeys (CUJs) as a new first-class artifact type in Demarch, sitting alongside PRDs, roadmaps, vision docs, and changelogs. CUJs serve three roles simultaneously:
+Critical User Journeys (CUJs) as a new first-class artifact type in Sylveste, sitting alongside PRDs, roadmaps, vision docs, and changelogs. CUJs serve three roles simultaneously:
 
 1. **Planning artifact** -- documents user journeys to inform what gets built and prioritized (humans consume)
 2. **Agent guardrails** -- defines expected end-to-end flows that agents should preserve during development
@@ -39,7 +39,7 @@ Agents need to know which assertions they can auto-check vs. which need human ju
 
 ### Follows existing artifact conventions
 
-CUJs integrate into the existing Demarch artifact lifecycle:
+CUJs integrate into the existing Sylveste artifact lifecycle:
 
 - **Frontmatter**: `artifact_type: cuj` with journey name, actor, criticality, bead link
 - **Location**: `docs/cujs/` (dedicated directory, like `docs/prds/`, `docs/brainstorms/`)

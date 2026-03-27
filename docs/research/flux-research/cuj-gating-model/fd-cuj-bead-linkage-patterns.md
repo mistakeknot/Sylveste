@@ -193,7 +193,7 @@ The bead's changed code must appear in the backward dependence slice of the CUJ 
 
 ---
 
-## Implications for Demarch's Gate Model
+## Implications for Sylveste's Gate Model
 
 ### Gate registration at bead creation time
 

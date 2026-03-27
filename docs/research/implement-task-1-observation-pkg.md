@@ -6,8 +6,8 @@ Created `core/intercore/internal/observation/observation.go` and `observation_te
 
 ## Files Created
 
-- `/home/mk/projects/Demarch/core/intercore/internal/observation/observation.go` — types, interfaces, Collector, Collect()
-- `/home/mk/projects/Demarch/core/intercore/internal/observation/observation_test.go` — unit test
+- `/home/mk/projects/Sylveste/core/intercore/internal/observation/observation.go` — types, interfaces, Collector, Collect()
+- `/home/mk/projects/Sylveste/core/intercore/internal/observation/observation_test.go` — unit test
 
 ## Design Decisions
 

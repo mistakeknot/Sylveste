@@ -11,7 +11,7 @@ You have activated the interlab capability.
 
 ## Overview
 
-Autonomous experiment loop for Demarch — an Interverse MCP plugin providing 7 MCP tools: 3 single-campaign tools (`init_experiment`, `run_experiment`, `log_experiment`) and 4 multi-campaign orchestration tools (`plan_campaigns`, `dispatch_campaigns`, `status_campaigns`, `synthesize_campaigns`). JSONL persistence, git branch isolation, circuit breaker guards, beads-backed coordination, and ic events bridge.
+Autonomous experiment loop for Sylveste — an Interverse MCP plugin providing 7 MCP tools: 3 single-campaign tools (`init_experiment`, `run_experiment`, `log_experiment`) and 4 multi-campaign orchestration tools (`plan_campaigns`, `dispatch_campaigns`, `status_campaigns`, `synthesize_campaigns`). JSONL persistence, git branch isolation, circuit breaker guards, beads-backed coordination, and ic events bridge.
 
 ## Agent Quickstart
 

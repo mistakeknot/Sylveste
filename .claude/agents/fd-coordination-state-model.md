@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-Hyperspace AGI is a P2P autonomous AI research network using GossipSub, Loro CRDTs, and GitHub as a 3-layer coordination stack. Demarch is a single-operator multi-agent platform where Clavain orchestrates agents via interlock (file-based reservations) and beads (Dolt-backed issue tracking). The analysis must identify adoptable coordination patterns for a local, single-machine context.
+Hyperspace AGI is a P2P autonomous AI research network using GossipSub, Loro CRDTs, and GitHub as a 3-layer coordination stack. Sylveste is a single-operator multi-agent platform where Clavain orchestrates agents via interlock (file-based reservations) and beads (Dolt-backed issue tracking). The analysis must identify adoptable coordination patterns for a local, single-machine context.
 
 ## Review Approach
 
@@ -31,7 +31,7 @@ Hyperspace AGI is a P2P autonomous AI research network using GossipSub, Loro CRD
 
 ### 2. Evaluate the 3
 
-- Evaluate the 3-layer stack (GossipSub→CRDT→GitHub) and identify which layers apply to single-operator local Demarch vs. which require multi-party trust that Demarch doesn't need
+- Evaluate the 3-layer stack (GossipSub→CRDT→GitHub) and identify which layers apply to single-operator local Sylveste vs. which require multi-party trust that Sylveste doesn't need
 
 ### 3. Whether beads issue state (claim/close/unclaim) is semant...
 
@@ -39,7 +39,7 @@ Hyperspace AGI is a P2P autonomous AI research network using GossipSub, Loro CRD
 
 ### 4. Analyze the 'no cold start' property of Loro (new nodes r...
 
-- Analyze the 'no cold start' property of Loro (new nodes read full state on connect) and contrast with Demarch's current sprint-find-active and claim recovery patterns
+- Analyze the 'no cold start' property of Loro (new nodes read full state on connect) and contrast with Sylveste's current sprint-find-active and claim recovery patterns
 
 ### 5. Identify which Hyperspace coordination guarantees (commit
 
@@ -69,7 +69,7 @@ A good review from this agent:
 
 ## Decision Lens
 
-Prioritize changes that eliminate the zombie-process and race-condition failure modes already documented in Demarch's memory. Deprioritize solutions that require network infrastructure Demarch doesn't have (P2P multi-machine).
+Prioritize changes that eliminate the zombie-process and race-condition failure modes already documented in Sylveste's memory. Deprioritize solutions that require network infrastructure Sylveste doesn't have (P2P multi-machine).
 
 ## Prioritization
 

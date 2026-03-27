@@ -3,7 +3,7 @@ artifact_type: cuj
 journey: skaffen-tool-trust
 actor: regular user (developer calibrating agent tool permissions)
 criticality: p2
-bead: Demarch-2c7
+bead: Sylveste-2c7
 ---
 
 # Skaffen Tool Trust and Approval
@@ -37,7 +37,7 @@ Phase gating adds a structural layer on top of trust. The relationship between p
 - **At default trust (L0-L1):** Strict phase gates. During Orient, only read tools are available — even with full trust, Skaffen can't write files while orienting. During Act, the full tool set is available, gated by the trust evaluator. During Reflect, only read tools are available.
 - **At earned trust (L2+):** Softened phase gates. Reflect allows `edit` (always prompted, rate-limited to 3 calls per phase) for fixing typos found during review. Compound allows `edit`/`write` for manifest files (CHANGELOG, VERSION, `*.md`) but blocks code file edits.
 
-This progression matches Demarch's "evidence earns authority" principle — strict gates are the default, softening is earned through demonstrated safety.
+This progression matches Sylveste's "evidence earns authority" principle — strict gates are the default, softening is earned through demonstrated safety.
 
 ## Success Signals
 

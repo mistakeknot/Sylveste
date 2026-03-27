@@ -1,6 +1,6 @@
 # Brainstorm: clavain-cli sprint-init — Consolidated Sprint Bootstrap
 
-**Bead:** Demarch-czxk
+**Bead:** Sylveste-czxk
 **Date:** 2026-03-18
 
 ## Problem
@@ -48,7 +48,7 @@ Follows the existing pattern: clavain-cli already has `sprint-find-active`, `spr
 ## Output Design
 
 ```
-── Sprint: Demarch-czxk ─────────────────────────
+── Sprint: Sylveste-czxk ─────────────────────────
  Complexity: 3/5 (moderate)
  Phase:      planned → execute
  Budget:     42k / 120k (35%)

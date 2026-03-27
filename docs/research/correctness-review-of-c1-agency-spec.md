@@ -3,9 +3,9 @@
 **Reviewer:** Julik (Flux-drive Correctness Agent)
 **Date:** 2026-02-22
 **Files reviewed:**
-- `/home/mk/projects/Demarch/os/clavain/hooks/lib-spec.sh`
-- `/home/mk/projects/Demarch/os/clavain/hooks/lib-sprint.sh`
-- `/home/mk/projects/Demarch/os/clavain/scripts/agency-spec-helper.py`
+- `/home/mk/projects/Sylveste/os/clavain/hooks/lib-spec.sh`
+- `/home/mk/projects/Sylveste/os/clavain/hooks/lib-sprint.sh`
+- `/home/mk/projects/Sylveste/os/clavain/scripts/agency-spec-helper.py`
 
 **Reference:** Plan `os/clavain/docs/plans/2026-02-22-c1-agency-specs.md`, default spec `os/clavain/config/agency-spec.yaml`
 

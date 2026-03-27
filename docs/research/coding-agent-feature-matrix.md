@@ -19,7 +19,7 @@
 
 | Property | Skaffen | Claude Code | Codex CLI | Gemini CLI | OpenCode | Amp |
 |----------|---------|-------------|-----------|------------|----------|-----|
-| **Developer** | Demarch | Anthropic | OpenAI | Google | Anomaly | Sourcegraph |
+| **Developer** | Sylveste | Anthropic | OpenAI | Google | Anomaly | Sourcegraph |
 | **Language** | Go | TypeScript | Rust | TypeScript | TS/Zig (OpenTUI) | TypeScript |
 | **TUI Framework** | Bubble Tea | Ink (React) | Ratatui | Ink | OpenTUI (SolidJS) | Custom TUI |
 | **License** | Proprietary | Proprietary | Apache 2.0 | Apache 2.0 | Open source | Closed source |
@@ -313,7 +313,7 @@
 |---------|-------|-------------|
 | **OODARC phase workflow** | Skaffen | 5-phase FSM (brainstorm→plan→build→review→ship) with per-phase tool gating and model routing |
 | **Particle logo animation** | Skaffen | 48-particle HSV→brand-color swarm on startup |
-| **Game of Life easter egg** | Skaffen | *planned* — true-color background layer (Demarch-oyi) |
+| **Game of Life easter egg** | Skaffen | *planned* — true-color background layer (Sylveste-oyi) |
 | **Evidence pipeline** | Skaffen | JSONL event emission bridging to Interspect |
 | **Budget degradation** | Skaffen | Configurable model downgrade when approaching cost/context thresholds |
 | **46 slash commands** | Claude Code | Most extensive built-in command set + 5 bundled skills |

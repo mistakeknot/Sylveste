@@ -1,12 +1,12 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-ome7
+bead: Sylveste-ome7
 stage: discover
 ---
 
 # Skaffen Cross-Repo Stress Testing
 
-**Bead:** Demarch-ome7
+**Bead:** Sylveste-ome7
 
 ## What We're Building
 
@@ -42,7 +42,7 @@ Launch all 9 cells as parallel tmux sessions (`intermix-<cell_id>`). intermux mo
 
 Two-tier bead creation:
 
-1. **Per-cell debug beads** — each classified failure automatically creates a child bead under Demarch-ome7 with: cell ID, repo, task, failure taxonomy, Skaffen evidence excerpt, tmux pane capture
+1. **Per-cell debug beads** — each classified failure automatically creates a child bead under Sylveste-ome7 with: cell ID, repo, task, failure taxonomy, Skaffen evidence excerpt, tmux pane capture
 2. **Pattern beads** — `report_matrix` clusters failures by taxonomy (e.g., "all Go refactor-extract tasks timeout") and creates pattern beads that reparent the individual cell beads
 
 ### Evidence Flow: Dual Path

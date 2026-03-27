@@ -21,13 +21,13 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-Demarch is an autonomous software development agency platform at v0.6.228. The question is what v1.0.0 should mean and commit to, given the platform's outputs depend on evolving AI models.
+Sylveste is an autonomous software development agency platform at v0.6.228. The question is what v1.0.0 should mean and commit to, given the platform's outputs depend on evolving AI models.
 
 ## Review Approach
 
 ### 1. Apply Beer's Viable System Model: map the five VSM system...
 
-- Apply Beer's Viable System Model: map the five VSM systems onto Demarch's components and identify which are present, missing, or underdeveloped
+- Apply Beer's Viable System Model: map the five VSM systems onto Sylveste's components and identify which are present, missing, or underdeveloped
 
 ### 2. Analyze the autopoiesis threshold: at what point does an ...
 
@@ -41,9 +41,9 @@ Demarch is an autonomous software development agency platform at v0.6.228. The q
 
 - Analyze stigmergy maturity in ant colonies: qualitative phase transitions as colony size grows — identify analogous phase transitions in multi-agent dev platforms
 
-### 5. Apply Ashby's Law of Requisite Variety: does Demarch's ag...
+### 5. Apply Ashby's Law of Requisite Variety: does Sylveste's ag...
 
-- Apply Ashby's Law of Requisite Variety: does Demarch's agent repertoire have sufficient variety for its target problem space?
+- Apply Ashby's Law of Requisite Variety: does Sylveste's agent repertoire have sufficient variety for its target problem space?
 
 ### 6. Synthesize: which framework yields the most operationally...
 

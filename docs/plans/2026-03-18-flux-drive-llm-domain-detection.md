@@ -1,6 +1,6 @@
 # Plan: flux-drive LLM Domain Detection + flux-gen Dispatch
 
-**Bead:** Demarch-b5md
+**Bead:** Sylveste-b5md
 **Date:** 2026-03-18
 
 ## Tasks

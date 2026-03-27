@@ -17,7 +17,7 @@
 
 **System exposure:** Intercom faces the public internet via Telegram Bot API and WhatsApp Web. The host process runs on a server with access to the full project root. Containers run with bind-mounted filesystem segments.
 
-**Untrusted inputs:** Every inbound messaging platform message is untrusted. Message senders (Telegram user IDs, WhatsApp JIDs) are not authenticated against any internal identity store — the platform tells you who sent it, but that platform identity has no verified mapping to a Demarch role.
+**Untrusted inputs:** Every inbound messaging platform message is untrusted. Message senders (Telegram user IDs, WhatsApp JIDs) are not authenticated against any internal identity store — the platform tells you who sent it, but that platform identity has no verified mapping to a Sylveste role.
 
 **Current trust model (from `SECURITY.md`):**
 
@@ -52,7 +52,7 @@
 
 **Risk: High**
 
-The vision proposes mounting the `ic` binary and kernel DB read-only into containers. The current security model lists the Intercore DB as a possible source for `demarch_run_status` and `demarch_sprint_phase`.
+The vision proposes mounting the `ic` binary and kernel DB read-only into containers. The current security model lists the Intercore DB as a possible source for `sylveste_run_status` and `sylveste_sprint_phase`.
 
 **What a container agent can do with direct DB read access:**
 
@@ -66,7 +66,7 @@ The Intercore SQLite DB contains, at minimum: run state, phase history, artifact
 
 3. **Token budget extraction.** Token budget figures help an attacker understand how long a run has left and whether approval gates are approaching.
 
-4. **The `ic` binary itself is a risk.** If the `ic` binary is mounted with execute permission (even read-only mounts allow execution of an already-executable binary in Docker), the agent gains the full read capability of every `ic` subcommand — including subcommands that are more sensitive than what the vision's seven `demarch_*` tools intend to expose. The container can run `ic run list`, `ic dispatch list`, `ic run events --json`, and `ic portfolio relay` with no additional authorization check.
+4. **The `ic` binary itself is a risk.** If the `ic` binary is mounted with execute permission (even read-only mounts allow execution of an already-executable binary in Docker), the agent gains the full read capability of every `ic` subcommand — including subcommands that are more sensitive than what the vision's seven `sylveste_*` tools intend to expose. The container can run `ic run list`, `ic dispatch list`, `ic run events --json`, and `ic portfolio relay` with no additional authorization check.
 
 **Mitigation required before implementing Option A:**
 
@@ -84,7 +84,7 @@ The IPC bridge pattern already exists for messaging and task scheduling. The exi
 
 **What changes under H1 Option B:**
 
-New IPC command types would be added — `demarch_run_status`, `demarch_search_beads`, etc. The host process receives these, executes `ic` or `bd` CLI commands, and writes results back to the container's IPC namespace.
+New IPC command types would be added — `sylveste_run_status`, `sylveste_search_beads`, etc. The host process receives these, executes `ic` or `bd` CLI commands, and writes results back to the container's IPC namespace.
 
 **Trust boundary implications:**
 
@@ -103,7 +103,7 @@ The host process would now execute `ic` and `bd` as the host user on behalf of a
 
 - Before adding H1 IPC commands, define the authorization policy: which groups can query which runs? Implement this in the host-side handler, not in the container.
 - Add an explicit invariant test: assert that no container's IPC namespace includes a parent directory that is shared with another container.
-- Log every `demarch_*` IPC command with the sourceGroup and the query parameters — these become the audit trail for who asked about what.
+- Log every `sylveste_*` IPC command with the sourceGroup and the query parameters — these become the audit trail for who asked about what.
 
 ---
 
@@ -193,7 +193,7 @@ The current design relies on the IPC authorization model to distinguish legitima
 A concrete attack chain:
 
 1. A malicious or confused message triggers prompt injection in a non-main group's container.
-2. The injected prompt instructs the agent to write a `demarch_approve_gate` IPC intent file.
+2. The injected prompt instructs the agent to write a `sylveste_approve_gate` IPC intent file.
 3. The host, seeing a valid intent from a registered non-main group, executes `ic gate override`.
 4. A gate that was blocking a destructive phase advance (e.g., deploy, schema migration) is bypassed.
 
@@ -203,19 +203,19 @@ The current SECURITY.md acknowledges non-main groups as untrusted, but the exist
 
 | H2 Operation | Blast Radius if Abused |
 |---|---|
-| `demarch_create_issue` (bd create) | Low — creates a bead, reversible |
-| `demarch_start_run` (ic run create) | Medium — starts a sprint run, consumes tokens, may trigger agent dispatch |
-| `demarch_approve_gate` (ic gate override) | High — bypasses a human-approval checkpoint, potentially irreversible phase advance |
-| `demarch_advance_phase` (OS intent advance-run) | High — same as above |
-| `demarch_register_finding` (ic discovery submit) | Medium — pollutes the discovery corpus |
+| `sylveste_create_issue` (bd create) | Low — creates a bead, reversible |
+| `sylveste_start_run` (ic run create) | Medium — starts a sprint run, consumes tokens, may trigger agent dispatch |
+| `sylveste_approve_gate` (ic gate override) | High — bypasses a human-approval checkpoint, potentially irreversible phase advance |
+| `sylveste_advance_phase` (OS intent advance-run) | High — same as above |
+| `sylveste_register_finding` (ic discovery submit) | Medium — pollutes the discovery corpus |
 
 **What authentication and authorization is required:**
 
 At minimum, before H2 is implemented:
 
-1. **Explicit human confirmation for gate approvals.** The gate approval flow must not be end-to-end automated. When a container writes a `demarch_approve_gate` intent, the host must not execute it immediately. It must send a confirmation message back to the user ("Are you sure you want to approve gate X for run Y? Reply YES to confirm.") and only execute after receiving an explicit affirmative reply that is not itself LLM-generated.
+1. **Explicit human confirmation for gate approvals.** The gate approval flow must not be end-to-end automated. When a container writes a `sylveste_approve_gate` intent, the host must not execute it immediately. It must send a confirmation message back to the user ("Are you sure you want to approve gate X for run Y? Reply YES to confirm.") and only execute after receiving an explicit affirmative reply that is not itself LLM-generated.
 
-2. **Main-group-only for destructive operations.** `demarch_approve_gate` and `demarch_advance_phase` must be restricted to the main group (the self-chat that SECURITY.md treats as trusted). Non-main groups (Engineering, Product, Stakeholders from H3) must never be able to trigger gate approvals regardless of their H3 role.
+2. **Main-group-only for destructive operations.** `sylveste_approve_gate` and `sylveste_advance_phase` must be restricted to the main group (the self-chat that SECURITY.md treats as trusted). Non-main groups (Engineering, Product, Stakeholders from H3) must never be able to trigger gate approvals regardless of their H3 role.
 
 3. **Run-scoped authorization.** "Start a run" must be gated on which project the run is for. A non-main group should not be able to start a run on a project they have no registered context for.
 
@@ -244,7 +244,7 @@ Group identity in the current system derives from the messaging platform (Telegr
 
 2. **Cross-channel group impersonation.** In H3, a Telegram group maps to a role. A Telegram user ID that has access to an Engineering group is implicitly granted Engineering-level permissions. Telegram group membership is managed on Telegram's servers — anyone added to that Telegram group by any current member gains Engineering-level kernel access. This is a significant operational security gap: the access control boundary is Telegram group membership, which is not under the operator's direct control.
 
-3. **Message crafting for privilege escalation.** Can a Stakeholder-group user craft a message that triggers Engineering-level operations? In the H2 IPC model, the container executes with the group's identity. If the LLM in a Stakeholder container is manipulated (prompt injection) into writing a `demarch_approve_gate` intent, and the host does not enforce role-based command restrictions per group, the gate approval executes.
+3. **Message crafting for privilege escalation.** Can a Stakeholder-group user craft a message that triggers Engineering-level operations? In the H2 IPC model, the container executes with the group's identity. If the LLM in a Stakeholder container is manipulated (prompt injection) into writing a `sylveste_approve_gate` intent, and the host does not enforce role-based command restrictions per group, the gate approval executes.
 
    The host-side IPC handler must enforce: "this group's role permits these commands and no others." It cannot rely on the LLM not generating privileged intents.
 
@@ -255,7 +255,7 @@ Group identity in the current system derives from the messaging platform (Telegr
 - Store the role assignment in the host process (not in any container-accessible path).
 - Pass the effective role as a signed, tamper-resistant claim to the container's IPC namespace — or preferably, enforce role-based command filtering entirely on the host side without trusting any role claim written by the container.
 - Add a warning to the operator documentation: Telegram/WhatsApp group membership is the de facto access control boundary. Group membership changes must be treated as permission changes.
-- Restrict `demarch_approve_gate` and `demarch_advance_phase` to main-group regardless of H3 role. Gate approvals from a messaging group introduce unacceptable social-engineering risk even if the role check passes.
+- Restrict `sylveste_approve_gate` and `sylveste_advance_phase` to main-group regardless of H3 role. Gate approvals from a messaging group introduce unacceptable social-engineering risk even if the role check passes.
 
 ---
 
@@ -269,7 +269,7 @@ The current system's central invariant, stated explicitly in the vision's Design
 
 The vision immediately proceeds to design H2 in a way that breaks this invariant. Under the H2 IPC intent model:
 
-- The container writes an IPC intent file containing a kernel action (e.g., `demarch_approve_gate`).
+- The container writes an IPC intent file containing a kernel action (e.g., `sylveste_approve_gate`).
 - The host process reads this file and executes `ic gate override`.
 - The LLM-generated content (the intent file) directly caused a kernel mutation.
 
@@ -369,7 +369,7 @@ Rollback of H3 requires removing role assignments from the DB and reverting grou
 ## Go/No-Go Assessment
 
 **H1 (read-only):**
-- Option B (IPC bridge): Go with mitigations — add run-scoped authorization to host handler before shipping. Log all demarch_* queries.
+- Option B (IPC bridge): Go with mitigations — add run-scoped authorization to host handler before shipping. Log all sylveste_* queries.
 - Option D (snapshots): Conditional go — require staleness timestamps and scope to authorized runs only.
 - Option A (ic binary + DB): No-go until DB proxy with per-query authorization is designed and implemented.
 - Option C (HTTP API): No-go until bind address, per-invocation token, and group-scoped endpoint authorization are specified.

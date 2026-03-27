@@ -8,7 +8,7 @@ Create 9 child beads for the philosophy alignment epic, one per plugin in the In
 
 ## Results
 
-All 9 beads created successfully from `/home/mk/projects/Demarch`.
+All 9 beads created successfully from `/home/mk/projects/Sylveste`.
 
 | # | Plugin | Bead ID | Priority | Focus Area |
 |---|--------|---------|----------|------------|

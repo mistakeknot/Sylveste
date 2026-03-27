@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-xk68
+bead: Sylveste-xk68
 stage: planned
 ---
 
@@ -11,7 +11,7 @@ stage: planned
 
 ## Assessment
 
-- Leaf bead under Demarch-31g4 (Khouri epic), P0 blocker for all pipeline stages
+- Leaf bead under Sylveste-31g4 (Khouri epic), P0 blocker for all pipeline stages
 - Clean Python scaffold exists: pydantic, networkx already in deps, mypy strict, ruff lint
 - No existing models.py — greenfield within established project structure
 - Risk: low — pure types, no IO, no external deps beyond what's installed

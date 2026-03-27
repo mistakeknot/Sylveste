@@ -1193,7 +1193,7 @@ Run: `cd core/intercore && go build -o ic ./cmd/ic/ && cp ic ~/.local/bin/ic`
 
 ```bash
 # Set env for config discovery
-export CLAVAIN_SOURCE_DIR=/home/mk/projects/Demarch/os/clavain
+export CLAVAIN_SOURCE_DIR=/home/mk/projects/Sylveste/os/clavain
 
 ic route model --phase=brainstorm
 # Expected: opus
@@ -1214,7 +1214,7 @@ ic route table
 **Step 4: Test lib-routing.sh fast path**
 
 ```bash
-source /home/mk/projects/Demarch/os/clavain/scripts/lib-routing.sh
+source /home/mk/projects/Sylveste/os/clavain/scripts/lib-routing.sh
 routing_resolve_model --phase brainstorm
 # Expected: opus (from ic route)
 ```

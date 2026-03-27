@@ -9,11 +9,11 @@
 
 ## Primary User and Their Job
 
-The primary user of OODARC is **the agent developer** — the person building, debugging, and tuning Demarch's autonomous agents. They need to understand why an agent did what it did, predict what it will do next, and improve its decision quality over time without reading LLM reasoning traces.
+The primary user of OODARC is **the agent developer** — the person building, debugging, and tuning Sylveste's autonomous agents. They need to understand why an agent did what it did, predict what it will do next, and improve its decision quality over time without reading LLM reasoning traces.
 
 The secondary user is **the platform itself** — Clavain agents executing sprints. OODARC, if realized, would change how agents structure their own reasoning loop. They are a user in the sense that the framework becomes the cognitive scaffolding they operate within.
 
-End users of Demarch (future external users of the agency platform) are third. They have zero visibility into OODARC internals and would only feel its effects through sprint quality, reliability, and cost.
+End users of Sylveste (future external users of the agency platform) are third. They have zero visibility into OODARC internals and would only feel its effects through sprint quality, reliability, and cost.
 
 This distinction matters for prioritization. If the primary user is the agent developer, the highest-value deliverable is observability and debuggability, not a complete formal loop hierarchy. The agent-as-user angle demands latency-free execution, which sets different constraints than developer-facing tooling.
 

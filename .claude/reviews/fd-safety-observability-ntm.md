@@ -1,6 +1,6 @@
-# NTM Safety & Observability Patterns - Analysis for Demarch
+# NTM Safety & Observability Patterns - Analysis for Sylveste
 
-**Source:** `/home/mk/projects/Demarch/research/ntm/internal/`
+**Source:** `/home/mk/projects/Sylveste/research/ntm/internal/`
 **Date:** 2026-02-22
 **Scope:** Safety, observability, cost tracking, audit, privacy, context management, resilience
 
@@ -8,9 +8,9 @@
 
 ## Executive Summary
 
-NTM (by Dicklesworthstone) implements a comprehensive safety and observability stack for multi-agent orchestration across Claude, Codex, and Gemini agents running in tmux sessions. The codebase contains ~15 distinct subsystems totaling roughly 8,000+ lines of production Go code (excluding tests). The patterns are mature, well-tested, and directly applicable to Demarch's Intercore/Interverse architecture.
+NTM (by Dicklesworthstone) implements a comprehensive safety and observability stack for multi-agent orchestration across Claude, Codex, and Gemini agents running in tmux sessions. The codebase contains ~15 distinct subsystems totaling roughly 8,000+ lines of production Go code (excluding tests). The patterns are mature, well-tested, and directly applicable to Sylveste's Intercore/Interverse architecture.
 
-**Key finding:** NTM's strongest patterns are its tamper-evident audit trail, multi-strategy context estimation, proactive handoff generation, and the 6-invariant enforcement framework. These should be Demarch's top adoption priorities.
+**Key finding:** NTM's strongest patterns are its tamper-evident audit trail, multi-strategy context estimation, proactive handoff generation, and the 6-invariant enforcement framework. These should be Sylveste's top adoption priorities.
 
 ---
 
@@ -43,7 +43,7 @@ type RequestParams struct {
 }
 ```
 
-### Relevance to Demarch
+### Relevance to Sylveste
 
 **High priority.** Interlock already handles file reservations; adding an approval engine for force-release and destructive operations would close a safety gap. The SLB pattern is directly applicable to multi-agent scenarios where one agent should not approve its own escalation.
 
@@ -98,9 +98,9 @@ type AuditEntry struct {
 }
 ```
 
-### Relevance to Demarch
+### Relevance to Sylveste
 
-**Highest priority.** This is the most mature subsystem in NTM and fills gaps across multiple Demarch pillars:
+**Highest priority.** This is the most mature subsystem in NTM and fills gaps across multiple Sylveste pillars:
 
 - **Intercore:** Session-level audit logging with hash chains
 - **Interlock:** File reservation/release audit trail
@@ -135,7 +135,7 @@ type AuditEntry struct {
 - **Overhead Multiplier:** `EstimateWithOverhead()` accounts for hidden system prompts and tool definitions (1.2x-2.0x)
 - **Context Limits Map:** Model-to-context-limit mapping for all major providers
 
-### Relevance to Demarch
+### Relevance to Sylveste
 
 **High priority.** Interstat already targets token efficiency benchmarking; NTM's cost tracker provides the data collection layer.
 
@@ -168,12 +168,12 @@ type AuditEntry struct {
 - **Prometheus Exposition:** Full Prometheus text format export with `ntm_` prefix, proper `# HELP`/`# TYPE` annotations, and label sanitization
 - **SQLite Persistence:** Persists counters, latencies, blocked commands, and file conflicts to database tables
 
-### Relevance to Demarch
+### Relevance to Sylveste
 
 **Medium-high priority.** The Tier-0 targets pattern is particularly valuable -- defining non-negotiable performance/safety targets that get automatically tracked and compared.
 
 **Adoption recommendation:**
-- Define Demarch-specific Tier-0 targets for Intercore
+- Define Sylveste-specific Tier-0 targets for Intercore
 - The Prometheus export pattern is directly usable for monitoring
 - Snapshot comparison enables CI/CD regression detection
 
@@ -195,7 +195,7 @@ type AuditEntry struct {
 - **Memory-Bounded:** Hard cap at 10,000 spans
 - **Dual Output:** JSON and human-readable text formats
 
-### Relevance to Demarch
+### Relevance to Sylveste
 
 **Medium priority.** Useful for Intercore kernel performance tracking and Clavain pipeline profiling. The recommendations engine is a nice touch -- it turns raw profiling data into actionable suggestions.
 
@@ -213,9 +213,9 @@ type AuditEntry struct {
 - **Health Signals:** `IsHealthy()` (any quota < 90%), `HighestUsage()`, `IsStale()` methods on QuotaInfo
 - **Provider-Specific Parsers:** Regex-based extraction of session usage, weekly usage, period/rolling usage, sonnet-specific usage, reset times, rate limit indicators
 
-### Relevance to Demarch
+### Relevance to Sylveste
 
-**Medium priority.** The PTY-based quota fetching is clever but fragile (depends on CLI output format stability). For Demarch, consider API-based quota checking where available, with PTY as fallback.
+**Medium priority.** The PTY-based quota fetching is clever but fragile (depends on CLI output format stability). For Sylveste, consider API-based quota checking where available, with PTY as fallback.
 
 **Adoption recommendation:**
 - The `QuotaInfo` abstraction is worth adopting in Intercore
@@ -262,7 +262,7 @@ type AuditEntry struct {
 | 40 | GENERIC_API_KEY | `api_key=...` |
 | 30 | GENERIC_SECRET | `secret=...`, `token=...` |
 
-### Relevance to Demarch
+### Relevance to Sylveste
 
 **Highest priority.** The redaction engine should be a core shared library.
 
@@ -337,9 +337,9 @@ Full rotation lifecycle tracking with:
 - Statistics aggregation (success rate, by agent type, by method, compaction effectiveness)
 - Pruning by count and time
 
-### Relevance to Demarch
+### Relevance to Sylveste
 
-**Highest priority.** This is the most sophisticated subsystem and directly maps to Demarch's needs:
+**Highest priority.** This is the most sophisticated subsystem and directly maps to Sylveste's needs:
 
 **Adoption recommendation:**
 - **Intercore:** Adopt the multi-strategy context estimation for all agent types
@@ -363,7 +363,7 @@ Full rotation lifecycle tracking with:
 - **Activity Levels:** Active (< 30s since change), Idle (prompt visible), Stale (> 5m no change)
 - **Aggregate Summary:** Session-level rollup with worst-status propagation
 
-### Relevance to Demarch
+### Relevance to Sylveste
 
 **High priority.** Intermux already provides agent visibility; NTM's health checking provides the signal quality that Intermux needs.
 
@@ -398,15 +398,15 @@ The `Checker` verifies all invariants at runtime via `ntm doctor`:
 - Checks for state.db and events.jsonl
 - Reports pass/warning/error per invariant with detailed findings
 
-### Relevance to Demarch
+### Relevance to Sylveste
 
 **Highest priority.** This is the most important pattern to adopt.
 
 **Adoption recommendation:**
-- Define Demarch-specific invariants (the NTM 6 are a strong starting point)
+- Define Sylveste-specific invariants (the NTM 6 are a strong starting point)
 - Implement a checker in Intercheck that runs as a hook/skill
 - Enforce invariants in CI/CD (fail builds that violate invariants)
-- Add Demarch-specific invariants:
+- Add Sylveste-specific invariants:
   - **Plugin Isolation:** Plugins cannot modify each other's state
   - **Audit Completeness:** Every MCP call is logged
   - **Secret Hygiene:** No secrets in CLAUDE.md, settings, or logs
@@ -441,7 +441,7 @@ The `Checker` verifies all invariants at runtime via `ntm doctor`:
 
 This prevents the most dangerous failure mode: injecting spawn commands as literal keystrokes into a running agent.
 
-### Relevance to Demarch
+### Relevance to Sylveste
 
 **High priority.** Intercore needs this level of resilience sophistication.
 
@@ -457,7 +457,7 @@ This prevents the most dangerous failure mode: injecting spawn commands as liter
 
 ### Tier 1 -- Implement First (Foundational Safety)
 
-| Pattern | NTM Source | Demarch Target | Effort |
+| Pattern | NTM Source | Sylveste Target | Effort |
 |---------|-----------|----------------|--------|
 | **Invariant Framework** | `internal/invariants/` | Intercheck | Medium |
 | **Redaction Engine** | `internal/redaction/` | `core/` shared lib | Medium |
@@ -466,7 +466,7 @@ This prevents the most dangerous failure mode: injecting spawn commands as liter
 
 ### Tier 2 -- Implement Next (Operational Observability)
 
-| Pattern | NTM Source | Demarch Target | Effort |
+| Pattern | NTM Source | Sylveste Target | Effort |
 |---------|-----------|----------------|--------|
 | **Context Estimation** | `internal/context/monitor.go` | Intercore + Intermux | High |
 | **Predictive Exhaustion** | `internal/context/predictor.go` | Clavain | Medium |
@@ -475,7 +475,7 @@ This prevents the most dangerous failure mode: injecting spawn commands as liter
 
 ### Tier 3 -- Implement Later (Advanced Capabilities)
 
-| Pattern | NTM Source | Demarch Target | Effort |
+| Pattern | NTM Source | Sylveste Target | Effort |
 |---------|-----------|----------------|--------|
 | **Proactive Handoff** | `internal/context/handoff_trigger.go` | Clavain | High |
 | **Resilience Monitor** | `internal/resilience/` | Intercore | High |
@@ -508,7 +508,7 @@ This prevents the most dangerous failure mode: injecting spawn commands as liter
 
 ## 14. Anti-Patterns to Avoid
 
-1. **Hardcoded Pricing Tables:** NTM embeds model pricing in Go source. Demarch should externalize this to a YAML/JSON config that can be updated without recompilation.
+1. **Hardcoded Pricing Tables:** NTM embeds model pricing in Go source. Sylveste should externalize this to a YAML/JSON config that can be updated without recompilation.
 
 2. **PTY-Based Quota Fetching:** Clever but fragile. Prefer API-based approaches where available.
 
@@ -518,9 +518,9 @@ This prevents the most dangerous failure mode: injecting spawn commands as liter
 
 ---
 
-## 15. Immediate Action Items for Demarch
+## 15. Immediate Action Items for Sylveste
 
-1. **Define Demarch's invariants** -- Start with NTM's 6, add plugin isolation, MCP audit completeness, and secret hygiene.
+1. **Define Sylveste's invariants** -- Start with NTM's 6, add plugin isolation, MCP audit completeness, and secret hygiene.
 
 2. **Port the redaction engine** -- This is the highest-impact, lowest-effort adoption. Every component that logs, transmits, or persists text should run through redaction first.
 

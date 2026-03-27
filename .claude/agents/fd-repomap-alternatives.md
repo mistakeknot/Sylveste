@@ -43,7 +43,7 @@ Skaffen is a pure-Go (CGO_ENABLED=0) sovereign agent runtime that needs a conver
 
 ### 5. Evaluate the CASS session intelligence backend (already a...
 
-- Evaluate the CASS session intelligence backend (already assessed as 'adopt' in Demarch) as a source of file relevance signal: cass context <path> returns sessions that touched a file — assess whether cross-session file access patterns are a useful PageRank seed or prior
+- Evaluate the CASS session intelligence backend (already assessed as 'adopt' in Sylveste) as a source of file relevance signal: cass context <path> returns sessions that touched a file — assess whether cross-session file access patterns are a useful PageRank seed or prior
 
 ### 6. Assess the 'no graph at all' baseline: a BM25 or TF
 

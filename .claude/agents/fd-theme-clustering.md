@@ -35,7 +35,7 @@ Chris Barber's 50 agent UI ideas are being analyzed for actionability across Ska
 
 ### 3. Cross
 
-- Cross-reference each cluster against which Demarch layer(s) it primarily touches: L2 (Skaffen), shared rendering (Masaq), L3 product (Autarch), or multi-layer
+- Cross-reference each cluster against which Sylveste layer(s) it primarily touches: L2 (Skaffen), shared rendering (Masaq), L3 product (Autarch), or multi-layer
 
 ### 4. Identify the 'quick win' cluster: ideas that are thematic...
 
@@ -70,7 +70,7 @@ A good review from this agent:
 
 ## Decision Lens
 
-Favor clusters that appear in multiple ideas (high density = strong user signal), that address terminal-native workflows (not mobile/hardware), and that cut across multiple Demarch layers (meaning one cluster effort yields gains in Skaffen, Masaq, and Autarch simultaneously).
+Favor clusters that appear in multiple ideas (high density = strong user signal), that address terminal-native workflows (not mobile/hardware), and that cut across multiple Sylveste layers (meaning one cluster effort yields gains in Skaffen, Masaq, and Autarch simultaneously).
 
 ## Prioritization
 

@@ -19,7 +19,7 @@ Autarch and Intercom submit policy-governing mutations to Clavain (L2 OS), which
 ### L3: Intercom (Telegram/web agent)
 - **Three intent pathways:**
   1. **File-based IPC** from containers via `/workspace/ipc/queries/` — polling-based, no typed schema.
-  2. **DemarchAdapter** wrapping `clavain-cli` for read/write operations — shell exec, string parsing.
+  2. **SylvesteAdapter** wrapping `clavain-cli` for read/write operations — shell exec, string parsing.
   3. **Telegram callback** flow for approvals — inline keyboard → handler → shell exec.
 - **Issues:** Query handler has agency logic that belongs in OS (deciding what to execute). No typed intent protocol — everything is string commands. Group management split between Node SQLite and Rust Postgres.
 
@@ -180,7 +180,7 @@ OS executes the held intent
 4. **Incremental** — one intent type at a time, starting with sprint.advance.
 
 ### Phase 4: Intercom Migration
-1. Replace DemarchAdapter shell-exec with intent submissions.
+1. Replace SylvesteAdapter shell-exec with intent submissions.
 2. Move query-handler agency logic into Clavain (OS decides what to execute, not the app).
 3. Telegram callbacks submit approval intents instead of direct shell commands.
 4. **Biggest lift** — Intercom has the most scattered intent paths.

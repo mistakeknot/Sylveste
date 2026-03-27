@@ -1,4 +1,4 @@
-# README Voice/Style Audit — Demarch Monorepo
+# README Voice/Style Audit — Sylveste Monorepo
 
 **Date:** 2026-02-24  
 **Scope:** All README.md files in interverse/, apps/, core/, and sdk/ directories  
@@ -6,7 +6,7 @@
 
 ## Voice Rule Reminders
 
-Per Demarch CLAUDE.md:
+Per Sylveste CLAUDE.md:
 - **No first person at all:** No "I", "we", "my", "our", "me"
 - **Subject is always tool/feature/concept, never author/team**
 - **Rephrase "we support X" as "PluginName supports X"**
@@ -17,7 +17,7 @@ Per Demarch CLAUDE.md:
 
 ## Violations by File
 
-### 1. `/home/mk/projects/Demarch/apps/intercom/README.md` (NanoClaw)
+### 1. `/home/mk/projects/Sylveste/apps/intercom/README.md` (NanoClaw)
 
 **Line 18: "Why I Built This"**
 ```markdown
@@ -178,7 +178,7 @@ users, open a PR to modify the setup SKILL.md.
 
 ---
 
-### 2. `/home/mk/projects/Demarch/interverse/interfluence/README.md`
+### 2. `/home/mk/projects/Sylveste/interverse/interfluence/README.md`
 
 **Line 7: "sound like *me*"**
 ```markdown
@@ -238,7 +238,7 @@ system-wide.
 
 ---
 
-### 3. `/home/mk/projects/Demarch/interverse/interlearn/README.md`
+### 3. `/home/mk/projects/Sylveste/interverse/interlearn/README.md`
 
 **Line 3: "we solved this before"**
 ```markdown

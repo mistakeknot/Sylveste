@@ -55,7 +55,7 @@ The `findInterverseRoot` helper looks for the old `/root/projects/Interverse/` p
 // internal/registry/registry_test.go — replace findInterverseRoot
 func findInterverseRoot(t *testing.T) string {
 	t.Helper()
-	// Walk up from test dir to find Demarch monorepo root
+	// Walk up from test dir to find Sylveste monorepo root
 	dir, err := os.Getwd()
 	if err != nil {
 		t.Skipf("cannot get working directory: %v", err)
@@ -66,7 +66,7 @@ func findInterverseRoot(t *testing.T) string {
 		}
 		dir = filepath.Dir(dir)
 	}
-	t.Skip("not running inside Demarch monorepo")
+	t.Skip("not running inside Sylveste monorepo")
 	return ""
 }
 ```
@@ -111,7 +111,7 @@ Run: `cd interverse/intermap && go build -o bin/intermap-mcp ./cmd/intermap-mcp/
 **Step 2: Test project_registry**
 
 ```bash
-echo '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"project_registry","arguments":{"root":"/home/mk/projects/Demarch"}},"id":1}' | \
+echo '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"project_registry","arguments":{"root":"/home/mk/projects/Sylveste"}},"id":1}' | \
   PYTHONPATH=python CLAUDE_PLUGIN_ROOT=. ./bin/intermap-mcp
 ```
 
@@ -120,7 +120,7 @@ Document: How many projects found? Correct languages? Missing projects? Response
 **Step 3: Test resolve_project**
 
 ```bash
-echo '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"resolve_project","arguments":{"path":"/home/mk/projects/Demarch/core/intermute/internal/http/handlers.go"}},"id":2}' | \
+echo '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"resolve_project","arguments":{"path":"/home/mk/projects/Sylveste/core/intermute/internal/http/handlers.go"}},"id":2}' | \
   PYTHONPATH=python CLAUDE_PLUGIN_ROOT=. ./bin/intermap-mcp
 ```
 
@@ -129,7 +129,7 @@ Document: Correct project resolution? Edge cases (root files, nested dirs)?
 **Step 4: Test code_structure**
 
 ```bash
-echo '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"code_structure","arguments":{"project":"/home/mk/projects/Demarch/core/intermute","language":"go"}},"id":3}' | \
+echo '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"code_structure","arguments":{"project":"/home/mk/projects/Sylveste/core/intermute","language":"go"}},"id":3}' | \
   PYTHONPATH=python CLAUDE_PLUGIN_ROOT=. ./bin/intermap-mcp
 ```
 
@@ -138,7 +138,7 @@ Document: Correct function/class extraction? Missing symbols? Go vs Python accur
 **Step 5: Test impact_analysis**
 
 ```bash
-echo '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"impact_analysis","arguments":{"project":"/home/mk/projects/Demarch/core/intermute","target":"HandleAgentRegister","language":"go"}},"id":4}' | \
+echo '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"impact_analysis","arguments":{"project":"/home/mk/projects/Sylveste/core/intermute","target":"HandleAgentRegister","language":"go"}},"id":4}' | \
   PYTHONPATH=python CLAUDE_PLUGIN_ROOT=. ./bin/intermap-mcp
 ```
 
@@ -147,7 +147,7 @@ Document: Correct caller chains? Depth accuracy? False positives?
 **Step 6: Test change_impact**
 
 ```bash
-echo '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"change_impact","arguments":{"project":"/home/mk/projects/Demarch/core/intermute","use_git":true}},"id":5}' | \
+echo '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"change_impact","arguments":{"project":"/home/mk/projects/Sylveste/core/intermute","use_git":true}},"id":5}' | \
   PYTHONPATH=python CLAUDE_PLUGIN_ROOT=. ./bin/intermap-mcp
 ```
 
@@ -156,7 +156,7 @@ Document: Correct test identification? Does it find real affected tests?
 **Step 7: Test agent_map (with intermute running)**
 
 ```bash
-echo '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"agent_map","arguments":{"root":"/home/mk/projects/Demarch"}},"id":6}' | \
+echo '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"agent_map","arguments":{"root":"/home/mk/projects/Sylveste"}},"id":6}' | \
   INTERMUTE_URL=http://127.0.0.1:7338 PYTHONPATH=python CLAUDE_PLUGIN_ROOT=. ./bin/intermap-mcp
 ```
 
@@ -357,7 +357,7 @@ import os
 import pytest
 from intermap.cross_project import scan_cross_project_deps
 
-DEMARCH_ROOT = os.environ.get("DEMARCH_ROOT", "/home/mk/projects/Demarch")
+DEMARCH_ROOT = os.environ.get("DEMARCH_ROOT", "/home/mk/projects/Sylveste")
 
 def test_go_module_deps():
     """intercore depends on modernc.org/sqlite; intermap depends on mcp-go."""
@@ -595,7 +595,7 @@ import os
 import pytest
 from intermap.patterns import detect_patterns
 
-DEMARCH_ROOT = os.environ.get("DEMARCH_ROOT", "/home/mk/projects/Demarch")
+DEMARCH_ROOT = os.environ.get("DEMARCH_ROOT", "/home/mk/projects/Sylveste")
 
 def test_go_handler_chain():
     """intermute has HTTP handler chains (router → handler functions)."""
@@ -875,7 +875,7 @@ import os
 import pytest
 from intermap.live_changes import get_live_changes
 
-DEMARCH_ROOT = os.environ.get("DEMARCH_ROOT", "/home/mk/projects/Demarch")
+DEMARCH_ROOT = os.environ.get("DEMARCH_ROOT", "/home/mk/projects/Sylveste")
 
 def test_output_structure():
     """Output should have changes list with structural annotations."""
@@ -1119,13 +1119,13 @@ Verify 9 tools listed. Then run each new tool:
 
 ```bash
 # cross_project_deps
-echo '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"cross_project_deps","arguments":{"root":"/home/mk/projects/Demarch"}},"id":2}' | PYTHONPATH=python CLAUDE_PLUGIN_ROOT=. ./bin/intermap-mcp
+echo '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"cross_project_deps","arguments":{"root":"/home/mk/projects/Sylveste"}},"id":2}' | PYTHONPATH=python CLAUDE_PLUGIN_ROOT=. ./bin/intermap-mcp
 
 # detect_patterns
-echo '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"detect_patterns","arguments":{"project":"/home/mk/projects/Demarch/core/intermute"}},"id":3}' | PYTHONPATH=python CLAUDE_PLUGIN_ROOT=. ./bin/intermap-mcp
+echo '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"detect_patterns","arguments":{"project":"/home/mk/projects/Sylveste/core/intermute"}},"id":3}' | PYTHONPATH=python CLAUDE_PLUGIN_ROOT=. ./bin/intermap-mcp
 
 # live_changes
-echo '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"live_changes","arguments":{"project":"/home/mk/projects/Demarch/interverse/intermap","baseline":"HEAD~5"}},"id":4}' | PYTHONPATH=python CLAUDE_PLUGIN_ROOT=. ./bin/intermap-mcp
+echo '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"live_changes","arguments":{"project":"/home/mk/projects/Sylveste/interverse/intermap","baseline":"HEAD~5"}},"id":4}' | PYTHONPATH=python CLAUDE_PLUGIN_ROOT=. ./bin/intermap-mcp
 ```
 
 **Step 5: Commit and close remaining beads**

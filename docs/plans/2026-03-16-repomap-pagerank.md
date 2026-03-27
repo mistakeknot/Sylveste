@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-6i0.17
+bead: Sylveste-6i0.17
 stage: design
 requirements:
   - F1: PriomptSession migration in main.go
@@ -14,7 +14,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-6i0.17
+**Bead:** Sylveste-6i0.17
 **Goal:** Add a conversation-aware, token-budgeted repo map to Skaffen's system prompt using tree-sitter tag extraction and personalized PageRank.
 
 **Architecture:** Hybrid — intermap supplies multi-language tag extraction via a new `reference_edges` MCP tool, Skaffen owns graph/rank/fit/format in pure Go. Five pipeline stages: Parse (intermap or go/ast fallback) → Graph (Go) → Rank (Go, ~80 LOC PageRank) → Fit (Go, binary-search in priompt ContentFunc) → Format (Go, priompt Element). Layered degradation: PageRank → go/ast flat map → empty.
@@ -418,9 +418,9 @@ git commit -m "refactor: extract repomap to internal/repomap/ with TagDef/RefEdg
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./internal/repomap/ -v -count=1`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./internal/repomap/ -v -count=1`
   expect: exit 0
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go build ./cmd/skaffen`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go build ./cmd/skaffen`
   expect: exit 0
 </verify>
 
@@ -661,7 +661,7 @@ git commit -m "feat(repomap): add personalized PageRank (~80 LOC, zero deps)"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./internal/repomap/ -v -count=1`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./internal/repomap/ -v -count=1`
   expect: exit 0
 </verify>
 
@@ -920,9 +920,9 @@ git commit -m "feat(repomap): add priompt Element with PageRank + migrate main.g
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./... -count=1`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./... -count=1`
   expect: exit 0
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go build ./cmd/skaffen`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go build ./cmd/skaffen`
   expect: exit 0
 </verify>
 
@@ -998,7 +998,7 @@ git commit -m "feat: add reference_edges MCP tool for PageRank graph constructio
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/interverse/intermap && go build ./cmd/intermap-mcp/`
+- run: `cd /home/mk/projects/Sylveste/interverse/intermap && go build ./cmd/intermap-mcp/`
   expect: exit 0
 </verify>
 
@@ -1116,7 +1116,7 @@ git commit -m "feat(repomap): add MCP edge fetcher with graceful degradation to 
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./internal/repomap/ -v -count=1`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./internal/repomap/ -v -count=1`
   expect: exit 0
 </verify>
 
@@ -1217,9 +1217,9 @@ git commit -m "feat(repomap): add conversation personalization (chat files ×10,
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./internal/repomap/ -v -count=1`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./internal/repomap/ -v -count=1`
   expect: exit 0
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./... -count=1`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./... -count=1`
   expect: exit 0
 </verify>
 
@@ -1256,10 +1256,10 @@ git commit -m "test(repomap): add integration test for PageRank pipeline"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go test ./... -count=1`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go test ./... -count=1`
   expect: exit 0
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go vet ./...`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go vet ./...`
   expect: exit 0
-- run: `cd /home/mk/projects/Demarch/os/Skaffen && go build ./cmd/skaffen`
+- run: `cd /home/mk/projects/Sylveste/os/Skaffen && go build ./cmd/skaffen`
   expect: exit 0
 </verify>

@@ -18,7 +18,7 @@ Usage: sync-secret-scan-baseline.sh [--apply] [--repo <path>]...
 
 Options:
   --apply         Write changes. Default is dry-run.
-  --repo <path>   Target a specific repo path relative to Demarch root.
+  --repo <path>   Target a specific repo path relative to Sylveste root.
   -h, --help      Show this help.
 EOF
 }
@@ -123,7 +123,7 @@ errors=0
 for repo_in in "${TARGET_REPOS[@]}"; do
   repo_rel="$(normalize_repo_path "$repo_in")"
   if [[ -z "$repo_rel" ]]; then
-    echo "ERROR: repo path outside Demarch root: $repo_in" >&2
+    echo "ERROR: repo path outside Sylveste root: $repo_in" >&2
     errors=$((errors + 1))
     continue
   fi

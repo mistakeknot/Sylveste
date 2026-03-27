@@ -1,6 +1,6 @@
 # Plan: Context Compaction
 
-**Bead:** Demarch-6i0.3
+**Bead:** Sylveste-6i0.3
 **Stage:** executed
 
 ## Overview

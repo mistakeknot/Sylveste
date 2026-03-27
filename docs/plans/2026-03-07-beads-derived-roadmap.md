@@ -16,7 +16,7 @@
    - `title` → title (strip `[module]` prefix)
    - `priority` → phase mapping: 0-1 = now, 2 = next, 3-4 = later
    - `status` → status (map bd statuses to roadmap statuses)
-   - Module → extract from title `[module]` bracket or `mod:` label or "demarch"
+   - Module → extract from title `[module]` bracket or `mod:` label or "sylveste"
    - `dependency_count` → if >0, mark as blocked (actual dep IDs not available from list)
 4. Call `add_item()` for each bead (reuse existing helper)
 
@@ -25,7 +25,7 @@
 **Action:** Add a function that takes a bead title and labels array, returns module name:
 1. Regex match `^\[([^\]]+)\]` from title → extract module name
 2. If no bracket match, check labels for `mod:*` → strip prefix
-3. Fallback: "demarch"
+3. Fallback: "sylveste"
 
 ### Task 3: Delete markdown/JSON item parsers
 **File:** `scripts/sync-roadmap-json.sh`

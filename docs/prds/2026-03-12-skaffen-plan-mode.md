@@ -1,6 +1,6 @@
 # PRD: Skaffen Plan Mode
 
-**Bead:** Demarch-6i0.21
+**Bead:** Sylveste-6i0.21
 **Date:** 2026-03-12
 **Status:** Draft
 **Brainstorm:** [docs/brainstorms/2026-03-12-skaffen-plan-mode.md](../brainstorms/2026-03-12-skaffen-plan-mode.md)

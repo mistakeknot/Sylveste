@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-6i0.2
+bead: Sylveste-6i0.2
 stage: design
 requirements:
   - F1: Hook types & config loader
@@ -12,7 +12,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-6i0.2
+**Bead:** Sylveste-6i0.2
 **Goal:** Add lifecycle hooks (SessionStart, PreToolUse, PostToolUse, Notification) with external command execution, two-level config, and fail-open semantics.
 
 **Architecture:** New `internal/hooks/` package with types, config loader, and executor. Config follows existing `config.Config` path-discovery pattern (`HookPaths()` → `hooks.LoadConfig()` → `hooks.MergeConfig()`). Executor wraps `os/exec` with JSON stdin/stdout, timeout via `context.WithTimeout()`, and fail-open error handling. Integration into `agentloop.Loop` via a `HookRunner` interface, wired through `agent.Agent` from `main.go`.

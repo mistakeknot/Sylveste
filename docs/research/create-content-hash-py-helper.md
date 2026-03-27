@@ -6,8 +6,8 @@ Create a Python script for computing deterministic SHA-256 content hashes from a
 
 ## Files Created
 
-- **Script**: `/home/mk/projects/Demarch/interverse/interflux/scripts/content-hash.py`
-- **Tests**: `/home/mk/projects/Demarch/interverse/interflux/tests/structural/test_content_hash.py`
+- **Script**: `/home/mk/projects/Sylveste/interverse/interflux/scripts/content-hash.py`
+- **Tests**: `/home/mk/projects/Sylveste/interverse/interflux/tests/structural/test_content_hash.py`
 
 ## Design Decisions
 

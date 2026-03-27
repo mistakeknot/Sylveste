@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-Gates in Demarch's intercore kernel are binary existence checks hardcoded in gate.go. The system needs a 4-stage calibration loop following PHILOSOPHY.md patterns.
+Gates in Sylveste's intercore kernel are binary existence checks hardcoded in gate.go. The system needs a 4-stage calibration loop following PHILOSOPHY.md patterns.
 
 ## Review Approach
 

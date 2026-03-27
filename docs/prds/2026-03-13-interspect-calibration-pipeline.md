@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-g3a
+bead: Sylveste-g3a
 stage: design
 ---
 # PRD: Interspect Calibration Pipeline — Evidence → Routing Overrides

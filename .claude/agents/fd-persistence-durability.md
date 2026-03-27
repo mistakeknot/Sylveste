@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-mcp_agent_mail is a Python/FastMCP coordination server using SQLite for runtime state and Git commits for durable audit. Demarch's coordination stack (Intermute, Interlock, Intercore) uses Go with SQLite and file-based approaches but lacks a unified audit trail. The goal is to extract adoptable patterns, not to port the code.
+mcp_agent_mail is a Python/FastMCP coordination server using SQLite for runtime state and Git commits for durable audit. Sylveste's coordination stack (Intermute, Interlock, Intercore) uses Go with SQLite and file-based approaches but lacks a unified audit trail. The goal is to extract adoptable patterns, not to port the code.
 
 ## Review Approach
 
@@ -64,12 +64,12 @@ A good review from this agent:
 - Recommends the smallest viable fix, not an architecture overhaul — one diff hunk, not a rewrite
 - Frames uncertain findings as questions: "Does this handle X?" not "This doesn't handle X"
 - Find at least one durability guarantee in mcp_agent_mail that Intercore's sprint store does not currently provide, with a concrete adopt/skip recommendation
-- Identify whether Git's atomic commit model is exploited for rollback or is purely decorative — this determines whether Demarch should replicate it
+- Identify whether Git's atomic commit model is exploited for rollback or is purely decorative — this determines whether Sylveste should replicate it
 - Determine if the dual-persistence adds measurable latency overhead that would be unacceptable in Intermute's real-time WebSocket path
 
 ## Decision Lens
 
-Prioritizes findings where Demarch's current stack (Intercore's SQLite phase store, Interlock's file-based reservations) could learn concrete durability guarantees or rollback patterns. Elevates any finding where Git-as-audit-log creates unexpected coupling or operational overhead.
+Prioritizes findings where Sylveste's current stack (Intercore's SQLite phase store, Interlock's file-based reservations) could learn concrete durability guarantees or rollback patterns. Elevates any finding where Git-as-audit-log creates unexpected coupling or operational overhead.
 
 ## Prioritization
 

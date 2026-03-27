@@ -44,7 +44,7 @@ GPT-Researcher is cloned into `research/gpt-researcher/` as a reference codebase
 - **Port-partially:** Prompts (`prompts.py` — query expansion, report generation, source curation), individual retriever adapters (~30-80 lines each, no cross-deps), the `json-repair` library usage pattern
 - **Not adopted:** The LangChain stack (too heavy), `unstructured` (overkill), the full `GPTResearcher` class (tightly coupled)
 
-GPT-Researcher is heavily LangChain-coupled, so full adoption doesn't work. We extract the valuable parts (prompts, patterns, small adapters) and reimplement within Demarch's architecture. The clone in `research/` is reference material, not a dependency.
+GPT-Researcher is heavily LangChain-coupled, so full adoption doesn't work. We extract the valuable parts (prompts, patterns, small adapters) and reimplement within Sylveste's architecture. The clone in `research/` is reference material, not a dependency.
 
 ## Key Decisions
 
@@ -135,7 +135,7 @@ interdeep/
     └── structural/               # Plugin standard structural tests
 ```
 
-Note: no `providers/` directory. Search providers live in interject. GPT-Researcher reference lives in `research/gpt-researcher/` at the Demarch monorepo root, not inside the plugin.
+Note: no `providers/` directory. Search providers live in interject. GPT-Researcher reference lives in `research/gpt-researcher/` at the Sylveste monorepo root, not inside the plugin.
 
 ### 5. MCP Tools Exposed
 
@@ -235,4 +235,4 @@ Per PHILOSOPHY.md: *"Instrument first, optimize later."*
 | **Authority is scoped and composed** | interdeep owns only extraction + orchestration. Search = interject. Synthesis = intersynth. Knowledge = interknow. MCP tools are stateless; orchestration intelligence lives in the skill prompt. |
 | **Plugins are dumb and independent** | MCP tools are stateless utilities. The host AI (Claude/Gemini/Codex) provides the reasoning. The skill prompt provides the orchestration. |
 | **External tools: adopt, don't rebuild** | trafilatura and Playwright are pip dependencies. GPT-Researcher is inspire + port-partially. Search providers are composed from interject, not rebuilt. |
-| **Self-building** | interdeep will be used to research improvements to interdeep (and other Demarch modules). Agent friction during research sessions is signal for technical debt. |
+| **Self-building** | interdeep will be used to research improvements to interdeep (and other Sylveste modules). Agent friction during research sessions is signal for technical debt. |

@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-6i0
+bead: Sylveste-6i0
 stage: design
 ---
 # PRD: Close Final Competitive Gaps in Skaffen TUI
@@ -15,7 +15,7 @@ Implement a right-side sidebar panel with session context (files, git, tools, de
 
 ## Features
 
-### F1: Toggleable Sidebar Panel (Demarch-6i0.15)
+### F1: Toggleable Sidebar Panel (Sylveste-6i0.15)
 
 **What:** Right-side panel (30% width) with tabbed content showing session context, toggled via `Ctrl+B`.
 
@@ -33,7 +33,7 @@ Implement a right-side sidebar panel with session context (files, git, tools, de
 - [ ] Sidebar state does not persist across sessions (ephemeral)
 - [ ] `ActionSidebar` keybinding is user-configurable via keybindings.json
 
-### F2: VS Code Extension (Demarch-6i0.16)
+### F2: VS Code Extension (Sylveste-6i0.16)
 
 **What:** VS Code extension that opens Skaffen in the integrated terminal and bridges file context from the active editor.
 

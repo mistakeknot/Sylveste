@@ -10,7 +10,7 @@ stage: discover
 
 ## What We're Building
 
-An Interverse plugin (`interblog`) paired with an Astro static blog site that auto-generates engineering blog posts from the Demarch ecosystem. Published at `blog.generalsystemsventures.com`. Three-party editorial pipeline:
+An Interverse plugin (`interblog`) paired with an Astro static blog site that auto-generates engineering blog posts from the Sylveste ecosystem. Published at `blog.generalsystemsventures.com`. Three-party editorial pipeline:
 
 1. **AI surfaces themes** — scans CASS sessions, beads, brainstorms, PHILOSOPHY.md changes, git activity to identify publishable engineering stories
 2. **mk curates** — discusses surfaced themes with Claude Code, selects and shapes which stories to develop
@@ -40,7 +40,7 @@ Not "what we shipped" but "what we learned about complex systems by building aut
 - **Astro** is the industry standard for content-focused static sites (fast, markdown-native, minimal JS)
 - **Texturaize API bridge** (POST + webhook callback) eliminates copy-paste friction with full round-trip
 - **Layered disclosure** — some posts fully open-source (architecture, philosophy), others abstract sensitive details — editorial judgment per post
-- **Separate GitHub repo** (`github.com/mistakeknot/interblog`), physically in `apps/interblog/` — same pattern as all Demarch subprojects
+- **Separate GitHub repo** (`github.com/mistakeknot/interblog`), physically in `apps/interblog/` — same pattern as all Sylveste subprojects
 
 ## Key Decisions
 
@@ -127,7 +127,7 @@ sources:
   - type: brainstorm
     path: docs/brainstorms/2026-02-15-linsenkasten-flux-agents-brainstorm.md
   - type: bead
-    id: Demarch-xyz
+    id: Sylveste-xyz
 tags: [multi-agent, coordination, systems-thinking, emergence]
 status: draft                 # draft | review | published
 ---

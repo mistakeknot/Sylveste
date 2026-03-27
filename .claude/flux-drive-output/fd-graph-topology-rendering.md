@@ -1,6 +1,6 @@
 # Flux Drive: Graph Topology & Rendering Feasibility
 
-**Context:** Meadowsyn entity model brainstorm (Demarch-jpum). Evaluating Cytoscape.js layout engines and rendering strategies for production scale: 61 agents + 500+ beads + cross-project edges across 42 projects.
+**Context:** Meadowsyn entity model brainstorm (Sylveste-jpum). Evaluating Cytoscape.js layout engines and rendering strategies for production scale: 61 agents + 500+ beads + cross-project edges across 42 projects.
 
 **Prototypes evaluated:**
 - `apps/Meadowsyn/experiments/hydra-graph/index.html` — cose layout, separate glow canvas, iframe-hosted

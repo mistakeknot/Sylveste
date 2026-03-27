@@ -2,7 +2,7 @@
 **Date:** 2026-02-28
 **Reviewer Role:** Flux-drive Sensemaking Agent
 **Review Scope:** Mental models, information quality, temporal reasoning, perceptual biases
-**Document:** `/home/mk/projects/Demarch/docs/brainstorms/2026-02-28-oodarc-loops-brainstorm.md`
+**Document:** `/home/mk/projects/Sylveste/docs/brainstorms/2026-02-28-oodarc-loops-brainstorm.md`
 
 ---
 
@@ -51,12 +51,12 @@ The OODARC loops brainstorm presents a sophisticated framework for nested decisi
 - `interspect DB` (evidence patterns)
 - `budget tracker` (token spend)
 
-All these sources are **internal to Demarch**. The snapshot includes no:
+All these sources are **internal to Sylveste**. The snapshot includes no:
 - External signal (test results from external CI? API uptime? User feedback?)
 - Divergence detection (are actual outcomes matching our model's predictions?)
 - Boundary signals (anything that breaks our assumptions about the environment?)
 
-**Scenario:** Suppose Demarch's internal model assumes "successful test execution = agent did the right thing." The ObservationStore will never see that the test suite is under-specified or that the codebase's external contracts are broken. The agent's Orient phase will read the observation snapshot, find "tests passing," and proceed with high confidence in a wrong model.
+**Scenario:** Suppose Sylveste's internal model assumes "successful test execution = agent did the right thing." The ObservationStore will never see that the test suite is under-specified or that the codebase's external contracts are broken. The agent's Orient phase will read the observation snapshot, find "tests passing," and proceed with high confidence in a wrong model.
 
 **Information Quality Problem:** The observation layer is **informationally self-contained**. All loops read the same snapshot, so they share the same blind spots. A diversified observation system would include external signal sources (external validators, user corrections, production metrics) that **disagree with internal signal**.
 
@@ -155,7 +155,7 @@ Update(ctx context.Context, key string, update ModelUpdate) error
 But what happens when the underlying **category of things** changes? Examples:
 - A test suite becomes unreliable (the category "passing test = good" becomes invalid).
 - An agent's assigned role changes (its operational model shifts).
-- A new pillar is added to Demarch (the coordination model needs new concepts).
+- A new pillar is added to Sylveste (the coordination model needs new concepts).
 
 The document mentions "paradigm shifts" in the perceptual biases context (line 8 in this sensemaking review: "Paradigm Shift") but never addresses how OODARC loops detect or adapt to them. A paradigm shift is invisible to Orient unless **reflection explicitly checks for category errors**.
 
@@ -210,7 +210,7 @@ The brainstorm doesn't forecast the number of loops. It only specifies four now,
 **Narrative Fallacy:** The comparison presents both approaches as "paths to the same destination," implying they're equivalent given different constraints. But Approach A is inherently limited: each new loop costs O(n) effort where n = complexity of that loop's context. Approach B is inherently better at reuse: each new loop costs O(1) interface implementations.
 
 **Recommendation:**
-- Forecast: how many loops does Demarch need by 2026-Q4? If >4, Approach B wins outright despite higher upfront cost.
+- Forecast: how many loops does Sylveste need by 2026-Q4? If >4, Approach B wins outright despite higher upfront cost.
 - If uncertain, propose Approach A + plan for eventual interface extraction (strangler-fig pattern): build contracts, prove them work at two scales, then generalize.
 
 ---
@@ -258,7 +258,7 @@ Before moving forward, the brainstorm should address:
 
 4. **Escalation contracts:** Explicit rules: "Per-turn loop observes signal_score ≥ 4 → escalate to sprint loop. Sprint loop observes phase_stuck for >60s → escalate to multi-agent loop."
 
-5. **Loop count forecast:** How many OODARC loops will Demarch have by end of year? Forecast drives Approach selection.
+5. **Loop count forecast:** How many OODARC loops will Sylveste have by end of year? Forecast drives Approach selection.
 
 6. **Change detection:** In Reflect, how do agents detect that a model category (not just parameters) has shifted?
 
@@ -283,4 +283,4 @@ This sequence preserves low risk (Approach A's strength), maintains optionality 
 
 This brainstorm is **philosophically sound** (extends PHILOSOPHY.md's flywheel) but **operationally under-specified** on the actual mechanisms. The gap isn't between Approach A and B—it's between naming patterns and implementing primitives. The document correctly identifies what's missing (explicit Reflect, Orient schema) but conflates "describing existing patterns with OODARC vocabulary" with "building formal abstractions." They're different paths; choosing requires acknowledging costs, not pretending equivalence.
 
-**Critical unknown:** How many OODARC loops will Demarch need in the end state? Answer drives Approach choice.
+**Critical unknown:** How many OODARC loops will Sylveste need in the end state? Answer drives Approach choice.

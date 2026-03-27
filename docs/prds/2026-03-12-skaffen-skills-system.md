@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-6i0.19
+bead: Sylveste-6i0.19
 stage: design
 ---
 # PRD: Skaffen Skills System (SKILL.md Discovery and Invocation)

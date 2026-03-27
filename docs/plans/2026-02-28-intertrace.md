@@ -1347,7 +1347,7 @@ cd interverse/intertrace && git add -A && git commit -m "chore: marketplace regi
 Invoke the skill manually in a test session or source the libraries directly:
 
 ```bash
-cd /home/mk/projects/Demarch
+cd /home/mk/projects/Sylveste
 source interverse/intertrace/lib/trace-events.sh
 source interverse/intertrace/lib/trace-contracts.sh
 source interverse/intertrace/lib/trace-companion.sh
@@ -1369,7 +1369,7 @@ echo "$changed_files"
 **Step 2: Run event bus tracer**
 
 ```bash
-event_findings=$(_trace_events_scan "/home/mk/projects/Demarch" "$changed_files")
+event_findings=$(_trace_events_scan "/home/mk/projects/Sylveste" "$changed_files")
 echo "$event_findings" | jq '.'
 ```
 
@@ -1378,7 +1378,7 @@ Expected: Should find `disagreement_resolved` event type and check for consumer 
 **Step 3: Run contract verifier**
 
 ```bash
-contract_findings=$(_trace_contracts_scan "/home/mk/projects/Demarch" "$changed_files")
+contract_findings=$(_trace_contracts_scan "/home/mk/projects/Sylveste" "$changed_files")
 echo "$contract_findings" | jq '.[] | select(.unverified_consumers | length > 0)'
 ```
 
@@ -1387,7 +1387,7 @@ Expected: Should find `events tail` contract with Interspect as a declared consu
 **Step 4: Run companion graph verifier**
 
 ```bash
-companion_findings=$(_trace_companion_scan "/home/mk/projects/Demarch")
+companion_findings=$(_trace_companion_scan "/home/mk/projects/Sylveste")
 echo "$companion_findings" | jq '.[] | select(.verified == false)'
 ```
 
@@ -1432,7 +1432,7 @@ cd interverse/intertrace && git push origin main
 **Step 3: Push monorepo changes (canon doc, AGENTS.md pointer)**
 
 ```bash
-cd /home/mk/projects/Demarch && git add docs/canon/mcp-server-criteria.md AGENTS.md && git commit -m "docs: MCP server criteria canon doc + AGENTS.md pointer (iv-4iy6g)" && git push
+cd /home/mk/projects/Sylveste && git add docs/canon/mcp-server-criteria.md AGENTS.md && git commit -m "docs: MCP server criteria canon doc + AGENTS.md pointer (iv-4iy6g)" && git push
 ```
 
 **Step 4: Close beads**

@@ -6,7 +6,7 @@
 
 ## Problem
 
-Demarch MCP servers returned flat error strings: `"check conflicts: intermute 500: internal error"`. Agents had to parse error text with heuristics to decide whether to retry, adjust input, or give up. This was fragile — a rewording broke agent logic.
+Sylveste MCP servers returned flat error strings: `"check conflicts: intermute 500: internal error"`. Agents had to parse error text with heuristics to decide whether to retry, adjust input, or give up. This was fragile — a rewording broke agent logic.
 
 ## Design Rationale
 
@@ -105,7 +105,7 @@ With retry guidance:
 
 ## Agent-Side Parsing
 
-Agents receiving MCP tool errors from Demarch servers should:
+Agents receiving MCP tool errors from Sylveste servers should:
 
 1. **Try JSON parse** on the error text. If it fails, treat as a legacy unstructured error.
 2. **Check `type`** to branch on error class.

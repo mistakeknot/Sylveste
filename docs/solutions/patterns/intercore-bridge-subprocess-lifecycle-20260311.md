@@ -1,6 +1,6 @@
 ---
 artifact_type: reflection
-bead: Demarch-j2f
+bead: Sylveste-j2f
 stage: reflect
 category: pattern
 tags: [subprocess, goroutine, os-exec, fire-and-forget, intercore]

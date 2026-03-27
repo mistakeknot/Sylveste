@@ -6,7 +6,7 @@
 
 ## Problem
 
-Multiple agents working on the same Demarch monorepo routinely collide on work items. Agent A picks up a bead, Agent B picks up the same bead minutes later, both spend tokens independently. There is no collision detection, no visibility into who is working on what, and no automatic cleanup when agents crash.
+Multiple agents working on the same Sylveste monorepo routinely collide on work items. Agent A picks up a bead, Agent B picks up the same bead minutes later, both spend tokens independently. There is no collision detection, no visibility into who is working on what, and no automatic cleanup when agents crash.
 
 **Impact:** Wasted tokens (double-brainstorm, double-planning), confused humans ("who's working on this?"), orphaned in-progress beads that block the ready queue.
 

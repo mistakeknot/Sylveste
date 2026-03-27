@@ -1,7 +1,7 @@
 # Interdoc Analysis: Intercore AGENTS.md Refresh
 
 **Date:** 2026-02-25
-**Target:** `/home/mk/projects/Demarch/core/intercore/AGENTS.md`
+**Target:** `/home/mk/projects/Sylveste/core/intercore/AGENTS.md`
 **Current length:** 595 lines
 **Target length:** 400-500 lines
 

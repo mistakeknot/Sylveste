@@ -8,7 +8,7 @@ status: draft
 # Canonical Landed-Change Entity
 
 **Bead:** iv-fo0rx
-**Question:** What is a "landed change" in Demarch, and how should it be represented as a first-class kernel entity?
+**Question:** What is a "landed change" in Sylveste, and how should it be represented as a first-class kernel entity?
 
 ## Problem Statement
 

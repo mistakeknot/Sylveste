@@ -5,7 +5,7 @@ tags: [documentation, philosophy, vision, roadmap, consistency, governance]
 created: 2026-02-27
 severity: medium
 reuse: high
-modules: [demarch]
+modules: [sylveste]
 lastConfirmed: 2026-03-07
 provenance: independent
 review_count: 0
@@ -87,7 +87,7 @@ Each layer requires a different detection strategy. Don't apply the same templat
 
 ## Metrics
 
-The three-session alignment pass across Demarch touched:
+The three-session alignment pass across Sylveste touched:
 - 16 disagreements found and resolved (6 vision + 5 roadmap + 5 operational)
 - 12 files edited
 - 3 new beads created (disagreement pipeline, Gridfire epic, anti-Goodhart research)
@@ -97,6 +97,6 @@ The three-session alignment pass across Demarch touched:
 ## Cross-References
 
 - PHILOSOPHY.md — the authority doc created in this process
-- docs/demarch-vision.md — aspirational doc aligned in Phase 2
-- docs/demarch-roadmap.md — planning doc aligned in Phase 3
+- docs/sylveste-vision.md — aspirational doc aligned in Phase 2
+- docs/sylveste-roadmap.md — planning doc aligned in Phase 3
 - docs/guides/naming-conventions.md — created as part of the same session

@@ -19,13 +19,13 @@ Wire the container-facing surface (5 write tools + MCP declarations) and close t
 **What:** Expose 5 write operations to container agents across all runtimes (Claude MCP, Gemini, Codex), using the existing `queryKernel()` IPC bridge.
 
 **Acceptance criteria:**
-- [ ] `demarchCreateIssue(title, description?, priority?, type?, labels?)` in `container/shared/demarch-tools.ts`
-- [ ] `demarchUpdateIssue(id, status?, priority?, title?, description?, notes?)` in `container/shared/demarch-tools.ts`
-- [ ] `demarchCloseIssue(id, reason?)` in `container/shared/demarch-tools.ts`
-- [ ] `demarchStartRun(title?, description?)` in `container/shared/demarch-tools.ts`
-- [ ] `demarchApproveGate(gateId, reason?)` in `container/shared/demarch-tools.ts`
+- [ ] `sylvesteCreateIssue(title, description?, priority?, type?, labels?)` in `container/shared/sylveste-tools.ts`
+- [ ] `sylvesteUpdateIssue(id, status?, priority?, title?, description?, notes?)` in `container/shared/sylveste-tools.ts`
+- [ ] `sylvesteCloseIssue(id, reason?)` in `container/shared/sylveste-tools.ts`
+- [ ] `sylvesteStartRun(title?, description?)` in `container/shared/sylveste-tools.ts`
+- [ ] `sylvesteApproveGate(gateId, reason?)` in `container/shared/sylveste-tools.ts`
 - [ ] Corresponding 5 MCP tool declarations in `container/agent-runner/src/ipc-mcp-stdio.ts`
-- [ ] Write intents route through existing IPC bridge → host IPC dispatcher → Rust `/v1/demarch/write`
+- [ ] Write intents route through existing IPC bridge → host IPC dispatcher → Rust `/v1/sylveste/write`
 - [ ] Tiered safety enforced at host level: `CreateIssue`/`CloseIssue`/`UpdateIssue` auto-execute; `StartRun`/`ApproveGate` require human confirmation
 - [ ] All writes restricted to main group by default (existing `require_main_group_for_writes` config)
 - [ ] Tests: at least one integration test per write tool via IPC harness
@@ -36,7 +36,7 @@ Wire the container-facing surface (5 write tools + MCP declarations) and close t
 **Acceptance criteria:**
 - [ ] `gate.pending` events render with Telegram `InlineKeyboardMarkup` (APPROVE / REJECT / DEFER buttons)
 - [ ] Callback query handler in `telegram.rs` parses button data (`approve:{gate_id}`, `reject:{gate_id}`, `defer:{gate_id}`)
-- [ ] Handler routes to `WriteOperation::ApproveGate` via `DemarchAdapter`
+- [ ] Handler routes to `WriteOperation::ApproveGate` via `SylvesteAdapter`
 - [ ] Original message edited with result: "Gate approved by @user" / "Gate rejected by @user"
 - [ ] Action recorded in kernel event log (timestamp, user, decision)
 - [ ] WhatsApp fallback: keyword replies (`APPROVE <gate_id>`, `REJECT <gate_id>`) parsed in Node host
@@ -55,14 +55,14 @@ Wire the container-facing surface (5 write tools + MCP declarations) and close t
 - [ ] Callback handlers in `telegram.rs` for both event types
 - [ ] WhatsApp keyword fallback for both event types
 
-### F4: demarch_research Tool (H1 Completion)
+### F4: sylveste_research Tool (H1 Completion)
 **What:** Add the missing 8th read tool to complete H1 at 100%.
 
 **Acceptance criteria:**
 - [ ] `research` query type handled in `src/query-handlers.ts` — executes `ic discovery search --json <query>`
-- [ ] `ReadOperation::Research` variant added to Rust `demarch.rs` enum
-- [ ] `demarchResearch(ctx, query)` in `container/shared/demarch-tools.ts`
-- [ ] `demarch_research` MCP tool in `container/agent-runner/src/ipc-mcp-stdio.ts`
+- [ ] `ReadOperation::Research` variant added to Rust `sylveste.rs` enum
+- [ ] `sylvesteResearch(ctx, query)` in `container/shared/sylveste-tools.ts`
+- [ ] `sylveste_research` MCP tool in `container/agent-runner/src/ipc-mcp-stdio.ts`
 - [ ] Graceful fallback if `ic discovery` subcommand doesn't exist yet (return "research tool not available")
 
 ## Non-goals

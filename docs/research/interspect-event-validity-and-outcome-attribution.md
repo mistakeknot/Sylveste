@@ -17,7 +17,7 @@ status: draft
 
 3. Outcome attribution above the event layer is still soft. Session to bead and bead to phase are propagated through `/tmp/interstat-bead-{session_id}` and `/tmp/interstat-phase-{bead_id}`. Bead to run is a convention (`runs.scope_id = bead_id` plus `bd state <bead> ic_run_id`). There are now at least three competing denominators for "landed change": raw git commits in a session window, closed beads joined to interstat output, and Galiana's phase-based landed count.
 
-4. This violates a Demarch design invariant. The vision says "if it matters, it's in the database." The current measurement path still relies on temp files, hook-local SQLite, and heuristic JSONL matching in the exact places Interspect needs to trust.
+4. This violates a Sylveste design invariant. The vision says "if it matters, it's in the database." The current measurement path still relies on temp files, hook-local SQLite, and heuristic JSONL matching in the exact places Interspect needs to trust.
 
 5. The research priority is therefore instrumentation integrity before more learning logic: make the event stream complete, make the attribution chain durable, and make the outcome taxonomy canonical.
 
@@ -112,7 +112,7 @@ The baseline note for `iv-b46xi` is explicit about several current limitations:
 
 That is acceptable for a first baseline. It is not strong enough for routing or autonomy decisions.
 
-The important nuance from the kernel schema is that Demarch is not starting from zero here. `dispatches.base_repo_commit` and `merge_intents.result_commit` are already the beginnings of a durable landed-outcome chain; the current metrics paths simply do not consume them.
+The important nuance from the kernel schema is that Sylveste is not starting from zero here. `dispatches.base_repo_commit` and `merge_intents.result_commit` are already the beginnings of a durable landed-outcome chain; the current metrics paths simply do not consume them.
 
 ### 3. Interspect still operates a parallel evidence model
 
@@ -177,7 +177,7 @@ Closely related: even the `review_events` that do appear on the bus are flattene
 - attribution loss when work moves across sessions
 - invisible drift between what the user thinks they are working on and what interstat records
 
-This is exactly the category of state the Demarch vision says must not live in temp files.
+This is exactly the category of state the Sylveste vision says must not live in temp files.
 
 ### F3 [P0]: "Landed change" has multiple conflicting definitions
 
@@ -254,7 +254,7 @@ This increases drift risk:
 
 ## Canonical Validity Contract
 
-Before more autonomy or routing adaptation, Demarch needs a compact contract for what counts as measurement-grade evidence.
+Before more autonomy or routing adaptation, Sylveste needs a compact contract for what counts as measurement-grade evidence.
 
 ### Raw facts
 
@@ -311,7 +311,7 @@ Whichever model wins, the typed review outcome shape should also become a public
 
 ### 2. Replace temp-file attribution with a durable session ledger
 
-Demarch needs a first-class durable record for:
+Sylveste needs a first-class durable record for:
 
 - `session_id`
 - `bead_id`
@@ -359,7 +359,7 @@ That preserves replayability and makes taxonomy changes auditable.
 
 ### 6. Measure coverage, not just outcomes
 
-Every serious metrics system needs a coverage metric. Demarch should explicitly track:
+Every serious metrics system needs a coverage metric. Sylveste should explicitly track:
 
 - sessions with start but no end
 - sessions with no bead attribution

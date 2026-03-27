@@ -1,11 +1,11 @@
 ---
 artifact_type: plan
-bead: Demarch-4nl
+bead: Sylveste-4nl
 stage: design
 ---
 # Autarch Masaq Adoption — Phase 1 Plan
 
-**Bead:** Demarch-4nl
+**Bead:** Sylveste-4nl
 **Phase:** executing (as of 2026-03-16T06:24:20Z)
 **Scope:** Theme bridge + 4 component integrations (tabbar, viewport, spinner, minsize)
 

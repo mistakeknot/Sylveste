@@ -17,7 +17,7 @@ Interspect reads it.
 
 ## What Interspect Is
 
-The cross-cutting profiler for the Demarch stack. It sits alongside the three architectural layers (kernel, OS, apps) and does one thing: turn outcome data into system improvements.
+The cross-cutting profiler for the Sylveste stack. It sits alongside the three architectural layers (kernel, OS, apps) and does one thing: turn outcome data into system improvements.
 
 Concretely: Interspect reads the kernel's event stream, correlates what happened with what should have happened, and proposes changes to OS-level configuration. Model routing adjustments. Agent exclusions. Gate threshold changes. Context overlays that tune agent behavior for specific projects. All proposed as safe, reversible overlays that a human (or, eventually, a shadow evaluation) approves before they take effect.
 
@@ -27,7 +27,7 @@ Interspect never modifies the kernel. It never edits canonical agent prompts. It
 
 Static orchestration is table stakes. Any system can dispatch agents and enforce gates. The system that gets cheaper and better over time is the one worth building.
 
-Demarch advances three axes (autonomy, quality, token efficiency) connected by a flywheel. Interspect is that flywheel. Without it, the three axes are just three independent metrics. With it, they compound:
+Sylveste advances three axes (autonomy, quality, token efficiency) connected by a flywheel. Interspect is that flywheel. Without it, the three axes are just three independent metrics. With it, they compound:
 
 - Model downgrades where Haiku catches the same issues as Opus → **cheaper**
 - Agent retirement where a reviewer consistently produces findings no one acts on → **less noise**

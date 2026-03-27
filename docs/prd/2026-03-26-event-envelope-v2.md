@@ -1,7 +1,7 @@
 ---
-bead: Demarch-og7m.2.1
+bead: Sylveste-og7m.2.1
 type: prd
-parent_epic: Demarch-og7m.2
+parent_epic: Sylveste-og7m.2
 ---
 # PRD: EventEnvelope v2 Schema + JSON Schema Contract
 

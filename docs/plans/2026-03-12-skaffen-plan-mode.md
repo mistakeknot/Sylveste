@@ -1,6 +1,6 @@
 # Plan: Skaffen Plan Mode
 
-**Bead:** Demarch-6i0.21
+**Bead:** Sylveste-6i0.21
 **PRD:** [docs/prds/2026-03-12-skaffen-plan-mode.md](../prds/2026-03-12-skaffen-plan-mode.md)
 **Estimated effort:** 5.5 hours (3 features, 8 tasks)
 **Review:** Reviewed by fd-architecture, fd-correctness, fd-quality (2026-03-12)
@@ -49,7 +49,7 @@ Plan mode is a toggleable restriction that forces the agent to use read-only too
 
 ## Tasks
 
-### F1: Plan mode gates (Demarch-29jt)
+### F1: Plan mode gates (Sylveste-29jt)
 
 #### Task 1.1: tool.Registry plan mode support
 **File:** `internal/tool/registry.go`
@@ -94,7 +94,7 @@ Plan mode is a toggleable restriction that forces the agent to use read-only too
 
 **Verify:** `echo "list files" | go run ./cmd/skaffen --mode print --plan-mode 2>&1 | grep -q "plan mode"`
 
-### F2: TUI toggle (Demarch-c2k)
+### F2: TUI toggle (Sylveste-c2k)
 
 #### Task 2.1: Shift+Tab keybinding and app state
 **File:** `internal/tui/app.go`
@@ -116,7 +116,7 @@ Plan mode is a toggleable restriction that forces the agent to use read-only too
 
 **Verify:** Visual inspection via `go run ./cmd/skaffen --plan-mode`
 
-### F3: System prompt injection (Demarch-nbvj)
+### F3: System prompt injection (Sylveste-nbvj)
 
 #### Task 3.1: PromptHints plan mode field
 **File:** `internal/agentloop/types.go`

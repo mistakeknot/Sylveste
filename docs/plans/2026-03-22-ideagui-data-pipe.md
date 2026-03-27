@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-ef08
+bead: Sylveste-ef08
 stage: design
 requirements:
   - F1-prereq: Enrich factory-status.go
@@ -13,7 +13,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-ef08
+**Bead:** Sylveste-ef08
 **Goal:** Export two independent data readers (roster + factory-status) with an optional project-level join, for Meadowsyn experiments.
 
 **Architecture:** Two independent readers — `readRoster()` (file-based, cached) and `readFactoryStatus()` (clavain-cli, polled). `generateSnapshot()` combines both layers, joining WIP to roster at project level using the `project` field emitted by factory-status.go. No global merge; experiments consume what they need.
@@ -64,7 +64,7 @@ Ensure `strings` is already imported (it is — used at line 226).
 
 **Step 3: Verify**
 Run: `clavain-cli factory-status --json | python3 -c "import json,sys; d=json.load(sys.stdin); [print(f'{w[\"bead_id\"]:20s} project:{w[\"project\"]}') for w in d['wip']]"`
-Expected: Each WIP entry shows `project:demarch`, `project:iv`, etc.
+Expected: Each WIP entry shows `project:sylveste`, `project:iv`, etc.
 
 **Step 4: Commit**
 ```bash

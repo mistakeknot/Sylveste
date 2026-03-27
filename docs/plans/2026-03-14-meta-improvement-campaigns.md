@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-7xm8
+bead: Sylveste-7xm8
 stage: design
 requirements:
   - F1: SQLite mutation store — schema and DB management
@@ -15,7 +15,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-7xm8
+**Bead:** Sylveste-7xm8
 **Goal:** Build a SQLite-backed mutation history store in interlab with provenance tracking, wire it into /autoresearch, and validate with an interflux self-review pilot campaign.
 
 **Architecture:** The mutation store is a new `internal/mutation` Go package in interlab, registering 3 MCP tools via the existing `mark3labs/mcp-go` pattern. SQLite accessed via `modernc.org/sqlite` (CGo-free). The store lives at `~/.local/share/interlab/mutations.db` and auto-initializes on first use. The `/autoresearch` SKILL.md is updated to call mutation tools at campaign start (query prior approaches) and after each experiment (record mutation). The pilot campaign is a campaign directory at `campaigns/interflux-self-review/` with a bash benchmark script that scores agent `.md` files.
@@ -97,7 +97,7 @@ git commit -m "chore: add modernc.org/sqlite dependency for mutation store"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/interverse/interlab && go build ./cmd/interlab-mcp/`
+- run: `cd /home/mk/projects/Sylveste/interverse/interlab && go build ./cmd/interlab-mcp/`
   expect: exit 0
 </verify>
 
@@ -626,7 +626,7 @@ git commit -m "feat: add SQLite mutation store with record, query, genealogy"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/interverse/interlab && go test ./internal/mutation/ -v -count=1`
+- run: `cd /home/mk/projects/Sylveste/interverse/interlab && go test ./internal/mutation/ -v -count=1`
   expect: exit 0
 </verify>
 
@@ -927,9 +927,9 @@ git commit -m "feat: add mutation_record, mutation_query, mutation_genealogy MCP
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/interverse/interlab && go test ./internal/mutation/ -v -count=1`
+- run: `cd /home/mk/projects/Sylveste/interverse/interlab && go test ./internal/mutation/ -v -count=1`
   expect: exit 0
-- run: `cd /home/mk/projects/Demarch/interverse/interlab && go build ./cmd/interlab-mcp/`
+- run: `cd /home/mk/projects/Sylveste/interverse/interlab && go build ./cmd/interlab-mcp/`
   expect: exit 0
 </verify>
 
@@ -1091,7 +1091,7 @@ git commit -m "feat: add agent quality benchmark script (13-point scoring)"
 ```
 
 <verify>
-- run: `bash /home/mk/projects/Demarch/interverse/interlab/scripts/agent-quality-benchmark.sh /home/mk/projects/Demarch/interverse/interflux/agents/review/fd-architecture.md`
+- run: `bash /home/mk/projects/Sylveste/interverse/interlab/scripts/agent-quality-benchmark.sh /home/mk/projects/Sylveste/interverse/interflux/agents/review/fd-architecture.md`
   expect: contains "METRIC agent_quality_score="
 </verify>
 
@@ -1207,7 +1207,7 @@ git commit -m "feat: add interflux-self-review campaign directory and metric doc
 ```
 
 <verify>
-- run: `test -f /home/mk/projects/Demarch/interverse/interlab/campaigns/interflux-self-review/README.md && echo "exists"``
+- run: `test -f /home/mk/projects/Sylveste/interverse/interlab/campaigns/interflux-self-review/README.md && echo "exists"``
   expect: contains "exists"
 </verify>
 
@@ -1278,7 +1278,7 @@ git commit -m "feat: wire mutation store into /autoresearch (query at start, rec
 ```
 
 <verify>
-- run: `grep -c "mutation_record\|mutation_query" /home/mk/projects/Demarch/interverse/interlab/skills/autoresearch/SKILL.md`
+- run: `grep -c "mutation_record\|mutation_query" /home/mk/projects/Sylveste/interverse/interlab/skills/autoresearch/SKILL.md`
   expect: contains "2"
 </verify>
 
@@ -1319,8 +1319,8 @@ git commit -m "chore: bump interlab to v0.4.0 (mutation store)"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/interverse/interlab && go test ./... -count=1`
+- run: `cd /home/mk/projects/Sylveste/interverse/interlab && go test ./... -count=1`
   expect: exit 0
-- run: `cd /home/mk/projects/Demarch/interverse/interlab && go build -o bin/interlab-mcp ./cmd/interlab-mcp/`
+- run: `cd /home/mk/projects/Sylveste/interverse/interlab && go build -o bin/interlab-mcp ./cmd/interlab-mcp/`
   expect: exit 0
 </verify>

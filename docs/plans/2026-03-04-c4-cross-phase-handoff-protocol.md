@@ -130,7 +130,7 @@ contracts:
 **Step 2: Verify YAML syntax**
 
 ```bash
-cd /home/mk/projects/Demarch && python3 -c "import yaml; yaml.safe_load(open('os/clavain/config/handoff-contracts.yaml'))"
+cd /home/mk/projects/Sylveste && python3 -c "import yaml; yaml.safe_load(open('os/clavain/config/handoff-contracts.yaml'))"
 ```
 
 **Step 3: Commit**
@@ -276,7 +276,7 @@ Handoff:
 **Step 4: Run tests**
 
 ```bash
-cd /home/mk/projects/Demarch/os/clavain/cmd/clavain-cli && go test -run TestHandoff -v
+cd /home/mk/projects/Sylveste/os/clavain/cmd/clavain-cli && go test -run TestHandoff -v
 ```
 
 **Step 5: Commit**
@@ -369,7 +369,7 @@ func cmdEnforceGate(args []string) error {
 **Step 3: Run all tests**
 
 ```bash
-cd /home/mk/projects/Demarch/os/clavain/cmd/clavain-cli && go test -v
+cd /home/mk/projects/Sylveste/os/clavain/cmd/clavain-cli && go test -v
 ```
 
 **Step 4: Commit**
@@ -420,7 +420,7 @@ Register in main.go.
 **Step 4: Run tests**
 
 ```bash
-cd /home/mk/projects/Demarch/os/clavain/cmd/clavain-cli && go test -run TestLinkage -v
+cd /home/mk/projects/Sylveste/os/clavain/cmd/clavain-cli && go test -run TestLinkage -v
 ```
 
 **Step 5: Commit**
@@ -505,13 +505,13 @@ feat(clavain): add artifact frontmatter to brainstorm, strategy, plan, and refle
 **Step 1: Verify build succeeds**
 
 ```bash
-cd /home/mk/projects/Demarch && bash os/clavain/scripts/build-clavain-cli.sh
+cd /home/mk/projects/Sylveste && bash os/clavain/scripts/build-clavain-cli.sh
 ```
 
 **Step 2: Run full test suite**
 
 ```bash
-cd /home/mk/projects/Demarch/os/clavain/cmd/clavain-cli && go test -v -count=1
+cd /home/mk/projects/Sylveste/os/clavain/cmd/clavain-cli && go test -v -count=1
 ```
 
 **Step 3: Smoke test validate-handoff CLI**

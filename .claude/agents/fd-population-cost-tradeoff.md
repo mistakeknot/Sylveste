@@ -22,17 +22,17 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-This review batch evaluates whether Imbue's Darwinian Evolver evolutionary optimization patterns should be adopted into Demarch's autonomous software agency platform. The primary review target is the research synthesis document and four child beads covering model routing, learning logs, verification filters, and agent strategy evolution.
+This review batch evaluates whether Imbue's Darwinian Evolver evolutionary optimization patterns should be adopted into Sylveste's autonomous software agency platform. The primary review target is the research synthesis document and four child beads covering model routing, learning logs, verification filters, and agent strategy evolution.
 
 ## Review Approach
 
 ### 1. Cost comparison with ARC baseline
 
-- Compare population-level evolutionary overhead ($2.67-$8.71/task in the ARC context) against Demarch's existing cost-per-review baseline — does Demarch have equivalent tolerance for multi-iteration LLM spend to find improvements?
+- Compare population-level evolutionary overhead ($2.67-$8.71/task in the ARC context) against Sylveste's existing cost-per-review baseline — does Sylveste have equivalent tolerance for multi-iteration LLM spend to find improvements?
 
 ### 2. Mutator success rate analysis
 
-- Evaluate whether Demarch's agent strategy evaluation problem has the same 'low mutator success rate is OK' property that makes evolutionary approaches efficient for ARC — specifically, what is the expected improvement rate per mutation for routing rules or agent prompts?
+- Evaluate whether Sylveste's agent strategy evaluation problem has the same 'low mutator success rate is OK' property that makes evolutionary approaches efficient for ARC — specifically, what is the expected improvement rate per mutation for routing rules or agent prompts?
 
 ### 3. Simpler alternatives comparison
 
@@ -40,19 +40,19 @@ This review batch evaluates whether Imbue's Darwinian Evolver evolutionary optim
 
 ### 4. Soft scoring necessity
 
-- Check whether soft scoring (partial credit, baseline rescaling) is necessary for Demarch's fitness landscape — are Demarch task outcomes binary (shipped/not) or graded, and does this affect whether evolutionary pressure can navigate the space?
+- Check whether soft scoring (partial credit, baseline rescaling) is necessary for Sylveste's fitness landscape — are Sylveste task outcomes binary (shipped/not) or graded, and does this affect whether evolutionary pressure can navigate the space?
 
 ### 5. Multi-LLM evaluation cost projection
 
-- Quantify the population maintenance overhead: Imbue runs organisms in a population with multiple LLM calls per organism per generation (correctness, transfer, simplicity) — what would the analogous multi-LLM evaluation cost for Demarch agent strategy scoring look like?
+- Quantify the population maintenance overhead: Imbue runs organisms in a population with multiple LLM calls per organism per generation (correctness, transfer, simplicity) — what would the analogous multi-LLM evaluation cost for Sylveste agent strategy scoring look like?
 
 ### 6. Beachhead identification
 
-- Evaluate which Demarch module (Clavain routing, Interflux agent strategies, Autarch task allocation) has the highest iteration velocity and therefore best amortizes population overhead — identify the one viable beachhead if population dynamics are selectively adopted
+- Evaluate which Sylveste module (Clavain routing, Interflux agent strategies, Autarch task allocation) has the highest iteration velocity and therefore best amortizes population overhead — identify the one viable beachhead if population dynamics are selectively adopted
 
 ## What NOT to Flag
 
-- fd-evolutionary-infrastructure-fit covers structural compatibility of Demarch's primitives with evolutionary patterns — this agent focuses on economic justification and workload characteristics, not infrastructure mapping
+- fd-evolutionary-infrastructure-fit covers structural compatibility of Sylveste's primitives with evolutionary patterns — this agent focuses on economic justification and workload characteristics, not infrastructure mapping
 - fd-learning-log-vs-interknow covers the specific learning log subsystem cost/benefit — this agent evaluates population-level overhead holistically including selection, mutation, and evaluation cycles
 - fd-adopt-adapt-avoid covers per-pattern classification decisions — this agent provides the economic analysis that informs those decisions
 - Only flag the above if they are deeply entangled with your specialist focus and another agent would miss the nuance
@@ -64,12 +64,12 @@ A good review from this agent:
 - Provides a concrete failure scenario for each P0/P1 finding — what breaks, under what conditions, and who is affected
 - Recommends the smallest viable fix, not an architecture overhaul — one diff hunk, not a rewrite
 - Frames uncertain findings as questions: "Does this handle X?" not "This doesn't handle X"
-- The review produces a rough break-even analysis: at what improvement rate per mutation does evolutionary approach outperform A/B testing, given Demarch's token budget and cadence?
-- The review identifies at least one Demarch workload where population dynamics are clearly over-engineered and at least one where they might be justified
+- The review produces a rough break-even analysis: at what improvement rate per mutation does evolutionary approach outperform A/B testing, given Sylveste's token budget and cadence?
+- The review identifies at least one Sylveste workload where population dynamics are clearly over-engineered and at least one where they might be justified
 
 ## Decision Lens
 
-Prioritize findings where cost projections reveal population dynamics are unjustifiable under realistic Demarch workload conditions. A pattern that triples performance on ARC-AGI-2 is only valuable for Demarch if Demarch has workloads with analogous properties (hard evaluation, low mutator success rate, abundant iteration budget).
+Prioritize findings where cost projections reveal population dynamics are unjustifiable under realistic Sylveste workload conditions. A pattern that triples performance on ARC-AGI-2 is only valuable for Sylveste if Sylveste has workloads with analogous properties (hard evaluation, low mutator success rate, abundant iteration budget).
 
 ## Prioritization
 

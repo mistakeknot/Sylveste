@@ -65,7 +65,7 @@ The original epic description ("Autarch becomes the runtime backend for Clavain'
 
 **Decision:** "No daemon, no server, no background process" is a kernel (Intercore) design property, not a system-wide principle.
 
-**Evidence:** The constraint appears only in the Intercore vision doc and the Demarch vision's kernel paragraph. It is not in PHILOSOPHY.md. The system already runs servers: Dolt (port 3307), intermute (port 7338), intercomd (Rust daemon), Autarch APIs (ports 8090-8092), and every MCP server.
+**Evidence:** The constraint appears only in the Intercore vision doc and the Sylveste vision's kernel paragraph. It is not in PHILOSOPHY.md. The system already runs servers: Dolt (port 3307), intermute (port 7338), intercomd (Rust daemon), Autarch APIs (ports 8090-8092), and every MCP server.
 
 The actual principles are "durable over ephemeral" and "independently valuable" — which constrain *how* servers integrate (must be manageable, must degrade for plugins) but don't prohibit them for infrastructure.
 
@@ -251,7 +251,7 @@ The 9 existing child beads were created assuming Autarch ownership. Re-scope for
 - **L3 autonomy:** System can auto-remediate because it has externalized correctness (scenario bank) and outcome data (CXDB)
 - **Interspect learning:** Satisfaction scores + dispatch outcomes + forked trajectories provide the evidence the profiler needs
 - **Sprint forking:** "What if we used a different plan?" becomes O(1) via CXDB ForkContext
-- **Self-building validation:** Demarch's own scenarios become the holdout set for its own development
+- **Self-building validation:** Sylveste's own scenarios become the holdout set for its own development
 - **Replayability:** Any sprint is reconstructable from its CXDB context — the philosophy's "receipts, not narratives"
 
 ## Open Questions

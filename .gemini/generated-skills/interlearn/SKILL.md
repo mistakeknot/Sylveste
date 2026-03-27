@@ -23,7 +23,7 @@ Review [`PHILOSOPHY.md`](../../PHILOSOPHY.md) during:
 - Handoff/retrospective
 
 For brainstorming/planning outputs, add two short lines:
-- **Alignment:** one sentence on how the proposal supports the module's purpose within Demarch's philosophy.
+- **Alignment:** one sentence on how the proposal supports the module's purpose within Sylveste's philosophy.
 - **Conflict/Risk:** one sentence on any tension with philosophy (or 'none').
 
 If a high-value change conflicts with philosophy, either:
@@ -93,8 +93,8 @@ bash -n scripts/index-solutions.sh
 python3 -c "import json; json.load(open('.claude-plugin/plugin.json'))"
 
 # Check generated outputs
-jq . /home/mk/projects/Demarch/docs/solutions/index.json
-wc -l /home/mk/projects/Demarch/docs/solutions/INDEX.md
+jq . /home/mk/projects/Sylveste/docs/solutions/index.json
+wc -l /home/mk/projects/Sylveste/docs/solutions/INDEX.md
 ```
 
 No pytest suite — interlearn is shell-only. Validation is structural (manifest, syntax, output format).

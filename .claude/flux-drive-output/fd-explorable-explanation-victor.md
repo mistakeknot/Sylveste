@@ -30,7 +30,7 @@ The process-replay experiment is the most mature of the three prototypes for thi
 
 - **Approach B and D** are problematic for time-scrubbing because force-directed layouts are non-deterministic. Scrubbing back and then forward again produces a different spatial arrangement. This violates Victor's principle that **the same input should always produce the same visual output** -- the viewer loses their spatial memory. You would need to snapshot positions at each event and lerp between snapshots, which is expensive at 500+ nodes.
 
-**Design principle:** Store topology snapshots at key events (not every frame). On scrub, interpolate node positions between the two nearest snapshots. Use the process-replay experiment's event sidebar as a companion to the graph view -- the event log grounds the abstract topology changes in concrete actions ("Agent Grey Area claimed Demarch-abc1 at 14:32:07").
+**Design principle:** Store topology snapshots at key events (not every frame). On scrub, interpolate node positions between the two nearest snapshots. Use the process-replay experiment's event sidebar as a companion to the graph view -- the event log grounds the abstract topology changes in concrete actions ("Agent Grey Area claimed Sylveste-abc1 at 14:32:07").
 
 ## 3. Perturbation
 

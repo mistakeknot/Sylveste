@@ -1,6 +1,6 @@
 ---
 artifact_type: reflection
-bead: Demarch-ysxe.3
+bead: Sylveste-ysxe.3
 stage: reflect
 category: patterns
 tags: [hooks, dispatch, architecture, concurrency]

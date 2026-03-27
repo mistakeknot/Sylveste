@@ -3,7 +3,7 @@ artifact_type: cuj
 journey: multi-agent-coordination
 actor: regular user (developer running multiple agents simultaneously)
 criticality: p1
-bead: Demarch-2c7
+bead: Sylveste-2c7
 ---
 
 # Multi-Agent Coordination
@@ -12,7 +12,7 @@ bead: Demarch-2c7
 
 Running multiple AI agents on the same codebase without coordination produces merge conflicts, duplicated work, and race conditions. Two agents editing the same file simultaneously corrupt each other's changes. Two agents claiming the same bead waste tokens on redundant work. An agent that doesn't know what other agents are doing makes decisions in a vacuum.
 
-Multi-agent coordination is the infrastructure that makes fleet development possible. Without it, the developer is limited to one agent at a time — which defeats the purpose of Demarch. With it, five agents can work in parallel on different beads, aware of each other's file reservations, sharing status through the coordination bus, and avoiding conflicts.
+Multi-agent coordination is the infrastructure that makes fleet development possible. Without it, the developer is limited to one agent at a time — which defeats the purpose of Sylveste. With it, five agents can work in parallel on different beads, aware of each other's file reservations, sharing status through the coordination bus, and avoiding conflicts.
 
 This journey spans multiple plugins: **Interlock** (file reservations), **Intermux** (agent visibility), **Intercore** (state + coordination bus), and **Beads** (work tracking). The developer rarely interacts with these directly — they're the plumbing that Clavain and Mycroft use — but when something goes wrong, the developer needs to diagnose and fix it.
 

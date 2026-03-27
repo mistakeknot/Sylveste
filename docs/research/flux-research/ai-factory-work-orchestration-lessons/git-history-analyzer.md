@@ -1,14 +1,14 @@
-# Demarch Work Orchestration Evolution: Git History Analysis
+# Sylveste Work Orchestration Evolution: Git History Analysis
 
 **Date:** 2026-03-19
-**Scope:** Git archaeology of work orchestration patterns across the Demarch monorepo (Jan 2026 – Mar 2026)
+**Scope:** Git archaeology of work orchestration patterns across the Sylveste monorepo (Jan 2026 – Mar 2026)
 **Methodology:** Commit analysis, brainstorm/PRD/plan document review, routing decision evolution, fleet orchestration arc
 
 ---
 
 ## Executive Summary
 
-The Demarch monorepo shows a deliberate evolution from **task-centric dispatch** (beads + Clavain routing) toward **trust-earned autonomy** (Mycroft fleet orchestrator with graduated tiers). The key insight is that work orchestration patterns became progressively more sophisticated not to handle complexity, but to **make AI agent coordination legible and controllable**.
+The Sylveste monorepo shows a deliberate evolution from **task-centric dispatch** (beads + Clavain routing) toward **trust-earned autonomy** (Mycroft fleet orchestrator with graduated tiers). The key insight is that work orchestration patterns became progressively more sophisticated not to handle complexity, but to **make AI agent coordination legible and controllable**.
 
 Three major phases are visible in the git history:
 
@@ -49,7 +49,7 @@ This is the **inflection point**. The policy document formalized the decision:
 
 **Implication:** Beads became the **single source of truth** for work, not a secondary artifact. This matches the memory convention:
 
-> "Beads tracker at `/home/mk/projects/Demarch/.beads/` (prefix `Demarch-`), NOT in subprojects"
+> "Beads tracker at `/home/mk/projects/Sylveste/.beads/` (prefix `Sylveste-`), NOT in subprojects"
 
 ### 1.3 Beads as State Backend (Late Feb 2026)
 
@@ -498,7 +498,7 @@ Mycroft v0.1 assumes single-project coordination. The brainstorm notes:
 
 ### 9.1 Legibility > Optimization
 
-The Demarch orchestration system prioritizes **understandability** over algorithmic sophistication.
+The Sylveste orchestration system prioritizes **understandability** over algorithmic sophistication.
 
 - Routing rules are **declared** (route.md table) not **learned**
 - Override decisions are **reasoned** (evidence-based) not **scored**
@@ -528,7 +528,7 @@ This suggests that **work classification** is the first architectural problem to
 
 ### 9.4 Evidence-Based Trust Scales Better Than Role-Based Trust
 
-Instead of "is this user authorized?" Demarch asks "has this agent proven competence?"
+Instead of "is this user authorized?" Sylveste asks "has this agent proven competence?"
 
 - Interspect tracks agent verdicts
 - Mycroft's tiers are earned through track record
@@ -541,7 +541,7 @@ This **inverts the trust model**: the system grants autonomy based on observed p
 Every orchestration decision is logged:
 ```json
 {
-  "bead": "Demarch-abc123",
+  "bead": "Sylveste-abc123",
   "action": "auto_dispatch",
   "agent": "grey-area",
   "reason": "P3 task within T2 allowlist",
@@ -592,7 +592,7 @@ Interspect tracks agent verdicts but doesn't yet classify **failure modes** (age
 
 ## Conclusion
 
-Demarch's work orchestration evolution shows a **systems thinking approach** to multi-agent coordination:
+Sylveste's work orchestration evolution shows a **systems thinking approach** to multi-agent coordination:
 
 1. **Start with measurement** (interstat, interspect)
 2. **Formalize decisions** (beads state, routing overrides)

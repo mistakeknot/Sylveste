@@ -23,7 +23,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-This review batch evaluates whether Imbue's Darwinian Evolver evolutionary optimization patterns should be adopted into Demarch's autonomous software agency platform. The primary review target is the research synthesis document and four child beads covering model routing, learning logs, verification filters, and agent strategy evolution.
+This review batch evaluates whether Imbue's Darwinian Evolver evolutionary optimization patterns should be adopted into Sylveste's autonomous software agency platform. The primary review target is the research synthesis document and four child beads covering model routing, learning logs, verification filters, and agent strategy evolution.
 
 ## Review Approach
 
@@ -37,7 +37,7 @@ This review batch evaluates whether Imbue's Darwinian Evolver evolutionary optim
 
 ### 3. Retrieval relevance: graph distance vs semantic similarity
 
-- Evaluate whether the ancestor vs. neighborhood-N sharing strategies add value over interknow's semantic search (qmd vsearch) for retrieving relevant past patterns — is graph distance a better relevance signal than semantic similarity for Demarch's actual pattern corpus?
+- Evaluate whether the ancestor vs. neighborhood-N sharing strategies add value over interknow's semantic search (qmd vsearch) for retrieving relevant past patterns — is graph distance a better relevance signal than semantic similarity for Sylveste's actual pattern corpus?
 
 ### 4. Granularity and storage overhead
 
@@ -45,7 +45,7 @@ This review batch evaluates whether Imbue's Darwinian Evolver evolutionary optim
 
 ### 5. Schema compatibility
 
-- Determine whether the learning log's requirement for structured (attempted_change, observed_outcome) schema is compatible with Demarch's current knowledge entry format (markdown with YAML frontmatter), or whether integration requires a schema migration
+- Determine whether the learning log's requirement for structured (attempted_change, observed_outcome) schema is compatible with Sylveste's current knowledge entry format (markdown with YAML frontmatter), or whether integration requires a schema migration
 
 ### 6. Temporal decay compatibility
 

@@ -1,7 +1,7 @@
 # Safety Review: 2026-02-23-interspect-routing-overrides-schema.md
 
 **Reviewer:** fd-safety (Flux-Drive Safety Reviewer)
-**Plan:** `/home/mk/projects/Demarch/docs/plans/2026-02-23-interspect-routing-overrides-schema.md`
+**Plan:** `/home/mk/projects/Sylveste/docs/plans/2026-02-23-interspect-routing-overrides-schema.md`
 **Date:** 2026-02-23
 **Risk Classification:** Medium (new schema enforcement, writer extension, LLM-interpreted routing logic — no direct auth or credential changes, but introduces a git-committed trust artefact that can suppress a security agent)
 

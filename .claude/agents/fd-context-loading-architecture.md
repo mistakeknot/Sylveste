@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-Clavain is the L2 OS layer of the Demarch autonomous software agency stack, with 18 skills, 48 commands, and 10 hooks. The session-start.sh hook (524 lines) assembles a multi-part additionalContext payload injected on every session start.
+Clavain is the L2 OS layer of the Sylveste autonomous software agency stack, with 18 skills, 48 commands, and 10 hooks. The session-start.sh hook (524 lines) assembles a multi-part additionalContext payload injected on every session start.
 
 ## Review Approach
 

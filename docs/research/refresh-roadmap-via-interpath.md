@@ -1,16 +1,16 @@
 # Roadmap Refresh Analysis: interpath:roadmap (2026-02-27)
 
 **Date:** 2026-02-27
-**Task:** Refresh docs/demarch-roadmap.md via interpath:roadmap skill
+**Task:** Refresh docs/sylveste-roadmap.md via interpath:roadmap skill
 **Outcome:** Committed as `43acb11`
 
 ---
 
 ## Execution Summary
 
-The `interpath:roadmap` skill invoked `interpath:artifact-gen` with the roadmap artifact type. The interpath sync-roadmap-json.sh wrapper failed because the Demarch monorepo does not have a `scripts/sync-roadmap-json.sh` at its root (the wrapper expects an Interverse plugin monorepo layout). Discovery proceeded directly from the Demarch `.beads/issues.jsonl` database and the interverse module tree instead.
+The `interpath:roadmap` skill invoked `interpath:artifact-gen` with the roadmap artifact type. The interpath sync-roadmap-json.sh wrapper failed because the Sylveste monorepo does not have a `scripts/sync-roadmap-json.sh` at its root (the wrapper expects an Interverse plugin monorepo layout). Discovery proceeded directly from the Sylveste `.beads/issues.jsonl` database and the interverse module tree instead.
 
-Artifact type auto-detected as **monorepo-roadmap** (Demarch has `.beads/` and `interverse/*/` plugin subdirectories but no root `.claude-plugin/plugin.json`). Output written to `docs/demarch-roadmap.md` per the Demarch naming convention.
+Artifact type auto-detected as **monorepo-roadmap** (Sylveste has `.beads/` and `interverse/*/` plugin subdirectories but no root `.claude-plugin/plugin.json`). Output written to `docs/sylveste-roadmap.md` per the Sylveste naming convention.
 
 Roadmap-bead consistency check: 126 iv-IDs in roadmap, zero errors, all P0-P2 open beads represented.
 
@@ -99,6 +99,6 @@ The open bead count jumped from 212 to 384 primarily due to the 4,336-label back
 
 ## Notes on sync-roadmap-json.sh Failure
 
-The interpath:roadmap skill calls a sync-roadmap-json.sh wrapper to regenerate `docs/roadmap.json` from current repo state. The wrapper at `/home/mk/.claude/plugins/cache/interagency-marketplace/interpath/0.2.3/scripts/sync-roadmap-json.sh` failed with "could not locate scripts/sync-roadmap-json.sh" because it expects to be run from an Interverse plugin monorepo root (which has `plugins/*/` structure), not from the Demarch monorepo root (which has `interverse/*/` structure). The `docs/roadmap.json` was not regenerated in this refresh. This is a known limitation of the interpath wrapper when run from Demarch directly.
+The interpath:roadmap skill calls a sync-roadmap-json.sh wrapper to regenerate `docs/roadmap.json` from current repo state. The wrapper at `/home/mk/.claude/plugins/cache/interagency-marketplace/interpath/0.2.3/scripts/sync-roadmap-json.sh` failed with "could not locate scripts/sync-roadmap-json.sh" because it expects to be run from an Interverse plugin monorepo root (which has `plugins/*/` structure), not from the Sylveste monorepo root (which has `interverse/*/` structure). The `docs/roadmap.json` was not regenerated in this refresh. This is a known limitation of the interpath wrapper when run from Sylveste directly.
 
 The roadmap markdown was generated from live `.beads/issues.jsonl` data, which is the authoritative source. `docs/roadmap.json` remains at its pre-refresh state.

@@ -1,6 +1,6 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-o5u
+bead: Sylveste-o5u
 stage: discover
 ---
 
@@ -8,7 +8,7 @@ stage: discover
 
 **Date:** 2026-03-11
 **Status:** Brainstorming
-**Parent:** Skaffen v0.2 (Demarch-4xp)
+**Parent:** Skaffen v0.2 (Sylveste-4xp)
 
 ## What We're Building
 

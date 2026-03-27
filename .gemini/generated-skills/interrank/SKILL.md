@@ -9,7 +9,7 @@ You have activated the interrank capability.
 ## Base Instructions
 # interrank — Agent Guide
 
-Follow Demarch root `AGENTS.md` for global policy. This file defines local module workflow.
+Follow Sylveste root `AGENTS.md` for global policy. This file defines local module workflow.
 
 ## Scope
 

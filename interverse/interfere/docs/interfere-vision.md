@@ -6,7 +6,7 @@
 
 ## The Big Idea
 
-The M5 Max with 128GB unified memory is the inflection point where local models match cloud quality for 60-70% of coding tasks at zero marginal cost. interfere is the layer that makes this real for Demarch — a custom MLX-LM inference server that owns the full computation pipeline, enabling optimizations impossible in off-the-shelf serving frameworks. It's not just a local Ollama replacement; it's a research-grade inference laboratory where techniques from computational neuroscience, swarm intelligence, and information theory are tested against production workloads and either proven or killed.
+The M5 Max with 128GB unified memory is the inflection point where local models match cloud quality for 60-70% of coding tasks at zero marginal cost. interfere is the layer that makes this real for Sylveste — a custom MLX-LM inference server that owns the full computation pipeline, enabling optimizations impossible in off-the-shelf serving frameworks. It's not just a local Ollama replacement; it's a research-grade inference laboratory where techniques from computational neuroscience, swarm intelligence, and information theory are tested against production workloads and either proven or killed.
 
 ## Design Principles
 

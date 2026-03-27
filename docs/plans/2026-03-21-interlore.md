@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-bncp
+bead: Sylveste-bncp
 stage: design
 requirements:
   - F1: Doc hierarchy restructure
@@ -12,7 +12,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-bncp
+**Bead:** Sylveste-bncp
 **Goal:** Create MISSION.md, restructure doc hierarchy, and build interlore plugin with scan + review capabilities.
 
 **Architecture:** interlore is a standalone Interverse plugin at `interverse/interlore/`. It has one skill (`observe`) that powers the scan engine, and three commands (`scan`, `review`, `status`). State lives in `.interlore/` at project root. Artifact discovery reuses interpath's source catalog patterns. Signal extraction is content-based (tradeoff language), with Alignment/Conflict lines as enrichment.
@@ -51,7 +51,7 @@ requirements:
 
 ### Task 1: Create MISSION.md and update doc hierarchy [F1]
 
-**Bead:** Demarch-wdiw
+**Bead:** Sylveste-wdiw
 **Files:**
 - Create: `MISSION.md`
 - Modify: `docs/canon/doc-structure.md`
@@ -60,7 +60,7 @@ requirements:
 
 **Step 1: Create MISSION.md**
 ```markdown
-# Demarch Mission
+# Sylveste Mission
 
 Build the infrastructure that lets AI agents do real software engineering work autonomously, safely, and at scale. Prove that the bottleneck is plumbing, not intelligence — and that compounding evidence is the path to earned trust.
 ```
@@ -82,7 +82,7 @@ Three root documents, each with a distinct purpose:
 
 ```
 MISSION.md                  — why the project exists (rarely changes)
-  ├→ docs/demarch-vision.md — where it's going (existing vision doc, v3.4)
+  ├→ docs/sylveste-vision.md — where it's going (existing vision doc, v3.4)
   └→ PHILOSOPHY.md          — how we build (design bets, principles)
        └→ derived: PRDs, Roadmap, CUJs, AGENTS.md conventions
 ```
@@ -136,7 +136,7 @@ git commit -m "feat: add MISSION.md, restructure doc hierarchy (MISSION → VISI
 
 ### Task 2: Scaffold interlore plugin [F2]
 
-**Bead:** Demarch-28rf
+**Bead:** Sylveste-28rf
 **Depends:** none (parallel with Task 1)
 **Files:**
 - Create: `interverse/interlore/` (full plugin structure)
@@ -177,7 +177,7 @@ mkdir -p interverse/interlore/docs
 ```markdown
 # interlore
 
-Philosophy observer for the Demarch ecosystem. Detects latent design patterns across brainstorms, PRDs, and flux-drive outputs. Proposes PHILOSOPHY.md updates with evidence links.
+Philosophy observer for the Sylveste ecosystem. Detects latent design patterns across brainstorms, PRDs, and flux-drive outputs. Proposes PHILOSOPHY.md updates with evidence links.
 
 ## Installation
 
@@ -252,7 +252,7 @@ Philosophy observer plugin. Scans decision artifacts (brainstorms, PRDs, flux-dr
 Review [`PHILOSOPHY.md`](../../PHILOSOPHY.md) during intake, brainstorming, planning, execution, review, and handoff.
 
 For brainstorming/planning outputs, add:
-- **Alignment:** one sentence on how the proposal supports Demarch's philosophy.
+- **Alignment:** one sentence on how the proposal supports Sylveste's philosophy.
 - **Conflict/Risk:** one sentence on any tension with philosophy (or 'none').
 
 ## Architecture
@@ -469,7 +469,7 @@ cd interverse/interlore && uv run pytest tests/structural/ -v
 
 ### Task 3: Implement interlore:scan (observe skill) [F3]
 
-**Bead:** Demarch-7a8c
+**Bead:** Sylveste-7a8c
 **Depends:** Task 2
 **Files:**
 - Modify: `interverse/interlore/skills/observe/SKILL.md`
@@ -500,7 +500,7 @@ proposals:
     chosen_pole: "integration"
     evidence:
       - path: "docs/brainstorms/2026-03-08-cass-brainstorm.md"
-        bead: "Demarch-abc1"
+        bead: "Sylveste-abc1"
         excerpt: "Chose to integrate CASS rather than build session search"
     unique_decisions: 4
     time_span:
@@ -560,7 +560,7 @@ Artifact discovery follows interpath's source catalog. interlore scans these glo
 
 Two-pass strategy: frontmatter read (30 lines) + Grep for decision markers + context windows.
 
-Decision marker patterns (ordered by frequency in Demarch corpus):
+Decision marker patterns (ordered by frequency in Sylveste corpus):
 1. `**Decision:**` — most common (~120+ instances)
 2. `## Key Decisions` / `## Design Decisions` — section headers
 3. "chose X over Y", "preferred X to Y", "decided against Y" — tradeoff language
@@ -750,7 +750,7 @@ cd interverse/interlore && git add -A && git commit -m "feat: implement interlor
 
 ### Task 4: Implement interlore:review and interlore:status commands [F4]
 
-**Bead:** Demarch-2jwp
+**Bead:** Sylveste-2jwp
 **Depends:** Task 3
 **Files:**
 - Modify: `interverse/interlore/commands/review.md`
@@ -806,21 +806,21 @@ cd interverse/interlore && git add -A && git commit -m "feat: finalize scan, rev
 
 ### Task 5: Integration test — end-to-end scan on real artifacts [F3, F4]
 
-**Bead:** Demarch-7a8c
+**Bead:** Sylveste-7a8c
 **Depends:** Task 3, Task 4
 **Files:**
 - No new files — validation only
 
 **Step 1: Verify plugin loads**
 ```bash
-cd /home/mk/projects/Demarch && claude --plugin-dir interverse/interlore --print "list your interlore commands" 2>&1 | head -20
+cd /home/mk/projects/Sylveste && claude --plugin-dir interverse/interlore --print "list your interlore commands" 2>&1 | head -20
 ```
 Expected: Shows interlore:scan, interlore:review, interlore:status.
 
 If plugin loading fails, debug by checking plugin.json schema, skill paths, and command paths.
 
 **Step 2: Manual scan test**
-Run `/interlore:scan` against the Demarch monorepo's real artifacts. Verify:
+Run `/interlore:scan` against the Sylveste monorepo's real artifacts. Verify:
 - `.interlore/proposals.yaml` is created
 - Schema matches `references/proposals-schema.md`
 - At least one pattern detected (the "integration over reimplementation" pattern should appear given CASS, interwatch, etc.)

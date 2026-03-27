@@ -1,12 +1,12 @@
-# Demarch — Reference
+# Sylveste — Reference
 
-Companion to [demarch-vision.md](./demarch-vision.md). Module inventory, model routing stages, and adoption ladder.
+Companion to [sylveste-vision.md](./sylveste-vision.md). Module inventory, model routing stages, and adoption ladder.
 
 ---
 
 ## The Six Pillars
 
-Demarch's top-level organizational units. Each pillar has a clear owner and boundary. See [glossary.md](./glossary.md) for how pillars relate to the 3-layer architecture.
+Sylveste's top-level organizational units. Each pillar has a clear owner and boundary. See [glossary.md](./glossary.md) for how pillars relate to the 3-layer architecture.
 
 | Pillar | Role | Layer |
 |--------|------|-------|
@@ -70,7 +70,7 @@ Model routing operates at three stages, each building on the one below:
 
 ## Adoption Ladder
 
-Demarch is adoptable incrementally — one pillar at a time. Each step adds capability on top of the previous:
+Sylveste is adoptable incrementally — one pillar at a time. Each step adds capability on top of the previous:
 
 **Step 1: Interverse (one driver).** Install a single companion plugin (interflux for code review, tldr-swinton for code context). Works in vanilla Claude Code. No other pillars required.
 
@@ -86,7 +86,7 @@ Each step is optional. Step 1 is useful without Step 2. Step 2 is useful without
 
 ## Module Highlights
 
-One-line descriptions of active companion plugins. See the [ecosystem snapshot](demarch-roadmap.md) for the full module table with versions.
+One-line descriptions of active companion plugins. See the [ecosystem snapshot](sylveste-roadmap.md) for the full module table with versions.
 
 | Module | What It Does |
 |--------|-------------|

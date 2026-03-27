@@ -1,6 +1,6 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-ysxe.3
+bead: Sylveste-ysxe.3
 stage: discover
 ---
 

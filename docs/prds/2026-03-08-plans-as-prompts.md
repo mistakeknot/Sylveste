@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-ttf
+bead: Sylveste-ttf
 stage: design
 ---
 # PRD: Plans-as-Prompts — Structured Verification for Clavain Plans

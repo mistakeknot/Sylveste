@@ -97,7 +97,7 @@ How each MRB disposition translates to AI agent output handling:
 
 **Authority:** Requester or automated policy (deviation within defined tolerance band). No rework loop triggered.
 
-**Analog in Skaffen/Demarch:** A `quality: acceptable` verdict with logged deviation. The output ships but the deviation is recorded for trend analysis. If deviations of this type accumulate past a threshold, CAPA triggers.
+**Analog in Skaffen/Sylveste:** A `quality: acceptable` verdict with logged deviation. The output ships but the deviation is recorded for trend analysis. If deviations of this type accumulate past a threshold, CAPA triggers.
 
 #### Rework
 **Manufacturing:** Unit is brought back into full conformance through an approved procedure.
@@ -306,7 +306,7 @@ Manufacturing imposes maximum rework attempts to prevent infinite loops and mate
 - **Rework budget ceiling:** If cumulative rework token cost exceeds 3x the original generation cost, auto-scrap and flag for CAPA.
 - **Rework-on-rework detection:** If a rework attempt introduces new defects not present in the original, escalate severity by one tier.
 
-## 6. Implementation Implications for Demarch/Skaffen
+## 6. Implementation Implications for Sylveste/Skaffen
 
 ### 6.1 Where This Maps in the Architecture
 

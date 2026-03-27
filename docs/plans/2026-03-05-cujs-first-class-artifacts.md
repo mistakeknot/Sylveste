@@ -8,7 +8,7 @@ stage: design
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
 **Bead:** none
-**Goal:** Add CUJ (Critical User Journey) as a new first-class artifact type in Demarch, with generation via interpath, drift detection via interwatch, and auto-discovery.
+**Goal:** Add CUJ (Critical User Journey) as a new first-class artifact type in Sylveste, with generation via interpath, drift detection via interwatch, and auto-discovery.
 
 **Architecture:** CUJs are prose-first markdown files in `docs/cujs/` with typed success signals (measurable/observable/qualitative). interpath gets a new `cuj` phase for generation. interwatch gets a new `cuj` signal template and discovery rules. The existing artifact lifecycle (generate → register → detect drift → refresh) extends naturally to CUJs.
 

@@ -3,7 +3,7 @@ artifact_type: cuj
 journey: mycroft-fleet-dispatch
 actor: regular user (developer running multi-agent fleet)
 criticality: p1
-bead: Demarch-2c7
+bead: Sylveste-2c7
 ---
 
 # Mycroft Fleet Dispatch

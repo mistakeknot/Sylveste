@@ -229,7 +229,7 @@ Current semantic roles and their health-state mapping:
 | In-progress / active | `Primary` (#7aa2f7) | Usable but semantically off |
 | Information overlay | `Info` (#7dcfff) | Good |
 
-The gap: there is no dedicated **`Active`** color for "currently executing" state (idea #2's blinking/pulsing frame for a running agent). Using `Primary` for both "this is Demarch blue" and "this agent is actively running" creates ambiguity. Recommendation:
+The gap: there is no dedicated **`Active`** color for "currently executing" state (idea #2's blinking/pulsing frame for a running agent). Using `Primary` for both "this is Sylveste blue" and "this agent is actively running" creates ambiguity. Recommendation:
 
 ```go
 // Add to SemanticColors:

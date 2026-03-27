@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-c4c
+bead: Sylveste-c4c
 stage: design
 prd: docs/prds/2026-03-11-skaffen-go-rewrite.md
 requirements:
@@ -14,7 +14,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-c4c
+**Bead:** Sylveste-c4c
 **Goal:** Make Skaffen a runnable binary. This wires all the infrastructure (F1 provider, F2 tools, F3 agent loop) into `cmd/skaffen/main.go` with print mode and basic configuration.
 
 **Architecture:** `cmd/skaffen/main.go` uses stdlib `flag` for argument parsing (no external CLI framework). Print mode reads a prompt, creates the provider/registry/agent, calls `agent.Run()`, and prints the result. Signal handling via `os/signal` + context cancellation.

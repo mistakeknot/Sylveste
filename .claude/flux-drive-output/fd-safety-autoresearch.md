@@ -82,7 +82,7 @@ The existing `AutoCommit` carries this same risk for the main working tree. In t
 
 **Mitigations:**
 
-1. Add `.env`, `*.env`, `*.pem`, `*.key`, `*_rsa`, `*.p12` to the Skaffen `.gitignore` at `/home/mk/projects/Demarch/os/Skaffen/.gitignore`. This protects both `AutoCommit` and the new `KeepChanges`.
+1. Add `.env`, `*.env`, `*.pem`, `*.key`, `*_rsa`, `*.p12` to the Skaffen `.gitignore` at `/home/mk/projects/Sylveste/os/Skaffen/.gitignore`. This protects both `AutoCommit` and the new `KeepChanges`.
 2. In `KeepChanges`, after `git add -A` and before `git commit`, run `git diff --cached --name-only` and fail the commit if any staged filename matches a secret-file pattern. Return the list of suspicious files to the agent as an error. This is a belt-and-suspenders check that survives `.gitignore` misconfiguration.
 3. Document explicitly in the `SKILL.md` that benchmark commands must not write credentials to the worktree filesystem.
 

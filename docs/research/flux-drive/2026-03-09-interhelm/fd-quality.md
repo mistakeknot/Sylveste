@@ -2,14 +2,14 @@
 artifact_type: flux-drive-review
 reviewer: fd-quality
 plan: docs/plans/2026-03-09-interhelm.md
-bead: Demarch-ekh
+bead: Sylveste-ekh
 ---
 
 # Quality & Style Review — interhelm Implementation Plan
 
 ## Scope
 
-Plan at `docs/plans/2026-03-09-interhelm.md` — 11 tasks spanning plugin scaffold, docs, 3 skills, 1 agent, 3 hooks, Rust/hyper server templates, CLI client templates, and structural tests. Languages in scope: Bash (hooks, scripts), Rust (templates — reference only, not compiled), Python (structural tests via pytest). The review aligns against the Demarch monorepo conventions documented in `CLAUDE.md` and `AGENTS.md`, plus the prevailing patterns visible in `interverse/intertest/`, `interverse/interlock/`, and `interverse/interflux/`.
+Plan at `docs/plans/2026-03-09-interhelm.md` — 11 tasks spanning plugin scaffold, docs, 3 skills, 1 agent, 3 hooks, Rust/hyper server templates, CLI client templates, and structural tests. Languages in scope: Bash (hooks, scripts), Rust (templates — reference only, not compiled), Python (structural tests via pytest). The review aligns against the Sylveste monorepo conventions documented in `CLAUDE.md` and `AGENTS.md`, plus the prevailing patterns visible in `interverse/intertest/`, `interverse/interlock/`, and `interverse/interflux/`.
 
 ---
 

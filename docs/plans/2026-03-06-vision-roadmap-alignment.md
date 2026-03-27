@@ -5,7 +5,7 @@ stage: executing
 ---
 # Vision/Roadmap Alignment — Implementation Plan
 
-**Goal:** Align Demarch's three top-level docs (PHILOSOPHY.md, demarch-vision.md, demarch-roadmap.md) so they tell a coherent, factually current story.
+**Goal:** Align Sylveste's three top-level docs (PHILOSOPHY.md, sylveste-vision.md, sylveste-roadmap.md) so they tell a coherent, factually current story.
 
 **Architecture:** Pure docs work — no code changes. Edit markdown files only.
 
@@ -16,7 +16,7 @@ stage: executing
 ### Task 1: Update vision "Where We Are" section (F2)
 
 **Files:**
-- Modify: `docs/demarch-vision.md`
+- Modify: `docs/sylveste-vision.md`
 
 **Step 1:** Update the "Where We Are" section:
 - [x] Change "has never measured" the north-star to reference the 2026-02-28 baseline
@@ -35,10 +35,10 @@ stage: executing
 ### Task 2: Clarify autonomy boundary (F3)
 
 **Files:**
-- Modify: `docs/demarch-vision.md` (Design Principles § Gates, and § Autonomy Ladder)
+- Modify: `docs/sylveste-vision.md` (Design Principles § Gates, and § Autonomy Ladder)
 - Modify: `PHILOSOPHY.md` (§ Earned Authority, trust ladder note)
 
-**Step 1:** In demarch-vision.md, find the "never pushes code to a remote repository without human confirmation" statement. Add clarification:
+**Step 1:** In sylveste-vision.md, find the "never pushes code to a remote repository without human confirmation" statement. Add clarification:
 - [x] At L0-L2: per-change human confirmation (current operating level)
 - [x] At L3: human sets shipping policy (which repos, which thresholds)
 - [x] At L4: human approves the policy; agent pushes when policy conditions are met
@@ -51,7 +51,7 @@ stage: executing
 ### Task 3: Compress roadmap "Now" section (F1)
 
 **Files:**
-- Modify: `docs/demarch-roadmap.md`
+- Modify: `docs/sylveste-roadmap.md`
 
 **Step 1:** Read the current "Now" section and identify the true frontier items (items that are actively being worked or that unblock significant downstream work).
 
@@ -73,8 +73,8 @@ stage: executing
 ### Task 4: Fix status counts (F4)
 
 **Files:**
-- Modify: `docs/demarch-roadmap.md` (header)
-- Modify: `docs/demarch-vision.md` (where counts appear)
+- Modify: `docs/sylveste-roadmap.md` (header)
+- Modify: `docs/sylveste-vision.md` (where counts appear)
 
 **Step 1:** Run `bd stats --allow-stale` to get current counts.
 
@@ -89,9 +89,9 @@ stage: executing
 ### Task 5: Add Interspect roadmap coverage (F5)
 
 **Files:**
-- Modify: `docs/demarch-roadmap.md` (ecosystem table, interspect row)
+- Modify: `docs/sylveste-roadmap.md` (ecosystem table, interspect row)
 
-**Step 1:** Check if `docs/interspect-vision.md` exists (it's referenced in demarch-vision.md).
+**Step 1:** Check if `docs/interspect-vision.md` exists (it's referenced in sylveste-vision.md).
 
 **Step 2:** Update the interspect row in the ecosystem table:
 - [x] Change roadmap column from "no" to link to interspect-vision.md (covers planning)
@@ -105,6 +105,6 @@ stage: executing
 
 **Step 2:** Commit all changes:
 ```bash
-git add docs/demarch-vision.md docs/demarch-roadmap.md PHILOSOPHY.md
+git add docs/sylveste-vision.md docs/sylveste-roadmap.md PHILOSOPHY.md
 git commit -m "docs: align vision/philosophy/roadmap (iv-ey5wb)"
 ```

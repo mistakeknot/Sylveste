@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-og7m
+bead: Sylveste-og7m
 stage: design
 requirements:
   - F1: Safety floor clamping (.18)
@@ -14,7 +14,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-og7m
+**Bead:** Sylveste-og7m
 **Goal:** Close 6 P1 architectural gaps left after Batch 1 — safety floor ordering, gate enforcement, phase constants, autonomy downgrade, shadow tracking, and subagent routing.
 
 **Architecture:** Three-layer (L1 Intercore kernel → L2 Clavain/Skaffen OS → L3 apps). Tasks 1-3 are Go changes in L1/L2, Tasks 4-5 are bash in L2/Interverse, Task 6 is Go in L2 Skaffen + L1 kernel extension.
@@ -182,7 +182,7 @@ Expected: exit 0
 
 ```bash
 cd os/Clavain && git add cmd/clavain-cli/compose.go cmd/clavain-cli/compose_test.go
-cd /home/mk/projects/Demarch && git add core/intercore/pkg/phase/phase.go
+cd /home/mk/projects/Sylveste && git add core/intercore/pkg/phase/phase.go
 git commit -m "fix(routing): safety floor clamp post-calibration, not early return
 
 resolveModel() now runs the full resolution chain (calibration → fleet →
@@ -190,7 +190,7 @@ role → fallback) before applying safety floor as a final clamp. This
 matches the bash lib-routing.sh behavior and allows calibration to
 upgrade safety agents to opus when evidence supports it.
 
-Fixes Demarch-og7m.18"
+Fixes Sylveste-og7m.18"
 ```
 
 <verify>
@@ -270,7 +270,7 @@ func evaluateGate(ctx context.Context, run *Run, cfg GateConfig, from, to string
 
 **Step 4: Audit existing callers**
 
-Run: `grep -rn "ic run advance" /home/mk/projects/Demarch --include="*.sh" --include="*.go" --include="*.md" | grep -v -- "--priority" | grep -v "test\|doc\|brainstorm\|plan"`
+Run: `grep -rn "ic run advance" /home/mk/projects/Sylveste --include="*.sh" --include="*.go" --include="*.md" | grep -v -- "--priority" | grep -v "test\|doc\|brainstorm\|plan"`
 Document each caller and its intended tier.
 
 **Step 5: Build and test**
@@ -289,7 +289,7 @@ failure. Previously defaulted to priority=4 (TierNone), which skipped
 all gate evaluation. --priority=4 and --disable-gates still work but
 now emit slog.Warn for audit trail.
 
-Fixes Demarch-og7m.20"
+Fixes Sylveste-og7m.20"
 ```
 
 <verify>
@@ -471,7 +471,7 @@ Expected: PASS — same string values, same behavior
 **Step 7: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch && git add core/intercore/pkg/phase/phase.go
+cd /home/mk/projects/Sylveste && git add core/intercore/pkg/phase/phase.go
 cd os/Clavain && git add cmd/clavain-cli/budget.go cmd/clavain-cli/phase.go cmd/clavain-cli/policy.go cmd/clavain-cli/stats.go cmd/clavain-cli/factory_stream.go
 git commit -m "refactor(phase): replace hardcoded phase strings with constants
 
@@ -482,7 +482,7 @@ for backward compatibility. DB migration deferred to F4b/Batch 3.
 statusStr() renamed to agentStatusStr() to avoid semantic collision
 with phase.Executing.
 
-Fixes Demarch-og7m.22"
+Fixes Sylveste-og7m.22"
 ```
 
 <verify>
@@ -610,7 +610,7 @@ disable-autonomy gains --revert-all --confirm to also revert active
 routing overrides on manual downgrade. System breaker auto-disable
 only stops new proposals — does NOT auto-revert.
 
-Fixes Demarch-og7m.19"
+Fixes Sylveste-og7m.19"
 ```
 
 <verify>
@@ -728,7 +728,7 @@ drift-check) claimed the cycle.
 Opt-out: .claude/clavain.no-shadow-enforce
 Detection extracted into lib-shadow-tracker.sh for reuse by doctor.md.
 
-Fixes Demarch-og7m.24"
+Fixes Sylveste-og7m.24"
 ```
 
 <verify>
@@ -878,7 +878,7 @@ Expected: PASS
 
 ```bash
 cd core/intercore && git add cmd/ic/route.go
-cd /home/mk/projects/Demarch/os/Skaffen && git add internal/subagent/tool.go internal/subagent/runner.go
+cd /home/mk/projects/Sylveste/os/Skaffen && git add internal/subagent/tool.go internal/subagent/runner.go
 git commit -m "feat(routing): wire subagent dispatch through ic route
 
 Extends ic route dispatch with --type/--phase for subagent routing.
@@ -886,7 +886,7 @@ Skaffen's Agent tool now consults ic route dispatch before spawning
 subagents, with 200ms timeout and graceful fallback to LLM's choice.
 Tool result annotates type overrides for parent LLM visibility.
 
-Fixes Demarch-og7m.3"
+Fixes Sylveste-og7m.3"
 ```
 
 <verify>

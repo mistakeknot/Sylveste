@@ -1,7 +1,7 @@
 # Architecture Review: Disagreement → Resolution → Routing Signal Pipeline PRD
 
 **Reviewed:** 2026-02-28
-**PRD:** `/home/mk/projects/Demarch/docs/prds/2026-02-28-disagreement-pipeline.md`
+**PRD:** `/home/mk/projects/Sylveste/docs/prds/2026-02-28-disagreement-pipeline.md`
 **Bead:** iv-5muhg
 **Reviewer role:** Flux-drive Architecture & Design Reviewer
 
@@ -34,7 +34,7 @@ F2 specifies a new `event.Store.EmitExternal()` method. The PRD states: "Existin
 
 This claim requires verification against the actual store code, and verification shows a problem.
 
-`ListAllEvents` in `/home/mk/projects/Demarch/core/intercore/internal/event/store.go` (lines 113-143) unions exactly four tables:
+`ListAllEvents` in `/home/mk/projects/Sylveste/core/intercore/internal/event/store.go` (lines 113-143) unions exactly four tables:
 
 ```go
 // UNION in ListAllEvents:
@@ -66,7 +66,7 @@ The "just rows in the same table" claim in F2 must be replaced with a concrete d
 
 F3: "When resolving a finding that has `severity_conflict` metadata..."
 
-The resolve command sources its data from `.clavain/quality-gates/findings.json`. The interflux synthesis spec (deduplication Rule 4, documented in `docs/research/explore-flux-drive-codebase.md`) says conflicting severity is "recorded in `severity_conflict`." However, the `findings.json` schema documented in `/home/mk/projects/Demarch/interverse/interflux/skills/flux-drive/phases/synthesize.md` (Step 3.4a) specifies these finding fields:
+The resolve command sources its data from `.clavain/quality-gates/findings.json`. The interflux synthesis spec (deduplication Rule 4, documented in `docs/research/explore-flux-drive-codebase.md`) says conflicting severity is "recorded in `severity_conflict`." However, the `findings.json` schema documented in `/home/mk/projects/Sylveste/interverse/interflux/skills/flux-drive/phases/synthesize.md` (Step 3.4a) specifies these finding fields:
 
 ```json
 {

@@ -65,7 +65,7 @@ A good review from this agent:
 - Frames uncertain findings as questions: "Does this handle X?" not "This doesn't handle X"
 - /interlore:scan produces proposals.yaml matching schema with no null/missing fields
 - Running scan twice produces idempotent results with merged not duplicated evidence
-- The 'integration over reimplementation' pattern is detectable from real Demarch artifacts
+- The 'integration over reimplementation' pattern is detectable from real Sylveste artifacts
 
 ## Decision Lens
 

@@ -9,7 +9,7 @@ status: active
 
 ## Problem
 
-Integration gaps between Demarch modules are invisible until someone manually reads PHILOSOPHY.md, greps the codebase, and traces data flows by hand. The iv-5muhg sprint proved this costs real time — 5 gaps across 4 modules, all found only by manual investigation. Shipped features silently fail to reach consumers that should receive their data.
+Integration gaps between Sylveste modules are invisible until someone manually reads PHILOSOPHY.md, greps the codebase, and traces data flows by hand. The iv-5muhg sprint proved this costs real time — 5 gaps across 4 modules, all found only by manual investigation. Shipped features silently fail to reach consumers that should receive their data.
 
 ## Solution
 

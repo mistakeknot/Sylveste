@@ -6,10 +6,10 @@ title: "Autoresearch infrastructure (experiment loop)"
 created: 2026-03-16
 beads:
   - projects-z6k  # Parent epic: autonomous experiment loop for Skaffen [P3, in_progress]
-  - Demarch-jd0   # Experiment tools (init/run/log) in Go [P2]
-  - Demarch-rtt   # /autoresearch skill for Clavain [P2]
-  - Demarch-zbd   # Evidence bridge + interlab mutation emit [P3]
-  - Demarch-e7e   # TUI status bar + experiment overlay [P3]
+  - Sylveste-jd0   # Experiment tools (init/run/log) in Go [P2]
+  - Sylveste-rtt   # /autoresearch skill for Clavain [P2]
+  - Sylveste-zbd   # Evidence bridge + interlab mutation emit [P3]
+  - Sylveste-e7e   # TUI status bar + experiment overlay [P3]
 ---
 
 # Autoresearch Infrastructure

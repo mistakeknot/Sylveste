@@ -1,6 +1,6 @@
 # Skaffen Quality Signals — Brainstorm
 
-**Bead:** Demarch-khlh
+**Bead:** Sylveste-khlh
 **Date:** 2026-03-14
 **Status:** Brainstorm complete
 

@@ -141,7 +141,7 @@ From [fd-rework-cost-accounting](./fd-rework-cost-accounting.md), Section 1:
 
 **COQ categories mapped to tokens:**
 
-| Category | Manufacturing | AI Agent Cost | Demarch Example |
+| Category | Manufacturing | AI Agent Cost | Sylveste Example |
 |---|---|---|---|
 | **Prevention** | Process design, training | Prompt engineering, guardrails, gate design | `lib-routing.sh`, gate configs, skill authoring |
 | **Appraisal** | Inspection, testing | Output validation, test execution | Interspect hooks, tool-selection-events |
@@ -723,5 +723,5 @@ All findings in this synthesis are attributed to the 7 input research documents:
 
 **Confidence: High** — Findings are convergent across independent sources (manufacturing, CI/CD, VFX, autonomous research systems). Model is implementable and validated in multiple industrial contexts.
 
-**Gaps:** Real production data from Demarch deployments will be needed to calibrate thresholds (retry budget, quarantine max-age, accumulation triggers). Phase 3 onward provides instrumentation to gather that data.
+**Gaps:** Real production data from Sylveste deployments will be needed to calibrate thresholds (retry budget, quarantine max-age, accumulation triggers). Phase 3 onward provides instrumentation to gather that data.
 

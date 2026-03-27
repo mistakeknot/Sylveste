@@ -33,7 +33,7 @@ Temporal classifies failures into a strict hierarchy that maps well to the facto
 - `MaximumAttempts`: Hard cap on retries before terminal failure. Factory: 3 (matches mycroft's consecutive-failure demotion trigger).
 - `NonRetryableErrorTypes`: Errors that should never be retried. Factory: `spec_ambiguous`, `dependency_missing`, `environment_broken`.
 
-### Recommendation for Demarch
+### Recommendation for Sylveste
 
 Add a `failure_class` field to bead state (via `bd set-state`) with three values:
 
@@ -51,7 +51,7 @@ The compensation action differs by class:
 | `spec_blocked` | Unclaim bead, set `status=blocked`, add `label:needs-human` | Watchdog sets status; human triages |
 | `env_blocked` | Unclaim bead, set `status=blocked`, add `label:needs-infra` | Watchdog sets status; pause further dispatch until env check passes |
 
-**Concrete integration point:** `clavain-cli bead-release` (in `/home/mk/projects/Demarch/os/Clavain/cmd/clavain-cli/claim.go` line 253) currently just sets `claimed_by=released`. It should accept an optional `--failure-class=<class>` argument that writes the classification to bead state alongside the release.
+**Concrete integration point:** `clavain-cli bead-release` (in `/home/mk/projects/Sylveste/os/Clavain/cmd/clavain-cli/claim.go` line 253) currently just sets `claimed_by=released`. It should accept an optional `--failure-class=<class>` argument that writes the classification to bead state alongside the release.
 
 ---
 
@@ -59,11 +59,11 @@ The compensation action differs by class:
 
 ### Current State
 
-Intermux already has a health monitor (`/home/mk/projects/Demarch/interverse/intermux/internal/health/monitor.go`) that detects stuck agents:
+Intermux already has a health monitor (`/home/mk/projects/Sylveste/interverse/intermux/internal/health/monitor.go`) that detects stuck agents:
 
 - **Check interval:** 30 seconds (`MonitorConfig.Interval`)
 - **Stuck threshold:** 5 minutes (`MonitorConfig.StuckTimeout`)
-- **Status enum:** `active`, `idle`, `stuck`, `crashed`, `unknown` (in `/home/mk/projects/Demarch/interverse/intermux/internal/activity/models.go`)
+- **Status enum:** `active`, `idle`, `stuck`, `crashed`, `unknown` (in `/home/mk/projects/Sylveste/interverse/intermux/internal/activity/models.go`)
 - **Callback:** `OnStatusChange func(session string, old, new AgentStatus)` — fires when status transitions
 
 The monitor detects `active → stuck` but does **not** trigger bead unclaim. The `OnStatusChange` callback exists but is not wired to any bead release logic.
@@ -108,9 +108,9 @@ The following transitions are needed for automatic recovery:
 
 ### Concrete Changes Needed
 
-1. **Wire `OnStatusChange` to bead release** in `/home/mk/projects/Demarch/interverse/intermux/cmd/intermux-mcp/main.go`. When status transitions to `crashed`, call `clavain-cli bead-release <bead_id> --failure-class=retriable`.
+1. **Wire `OnStatusChange` to bead release** in `/home/mk/projects/Sylveste/interverse/intermux/cmd/intermux-mcp/main.go`. When status transitions to `crashed`, call `clavain-cli bead-release <bead_id> --failure-class=retriable`.
 
-2. **Add `abandoned` status** to `/home/mk/projects/Demarch/interverse/intermux/internal/activity/models.go`. Transition: `stuck` for longer than `StaleClaimTTL` (see Section 4) → `abandoned`.
+2. **Add `abandoned` status** to `/home/mk/projects/Sylveste/interverse/intermux/internal/activity/models.go`. Transition: `stuck` for longer than `StaleClaimTTL` (see Section 4) → `abandoned`.
 
 3. **Add bead correlation to health monitor.** The monitor currently tracks tmux sessions, not bead IDs. It needs the mapping: tmux session → bead ID. This mapping already exists via `/tmp/intermux-mapping-*.json` files (noted in intermux CLAUDE.md). The monitor should read these to know which bead to unclaim when an agent fails.
 
@@ -152,7 +152,7 @@ disruption_budget:
 
 ### Implementation Sketch
 
-In the mycroft patrol loop (planned in `/home/mk/projects/Demarch/apps/Autarch/internal/mycroft/`):
+In the mycroft patrol loop (planned in `/home/mk/projects/Sylveste/apps/Autarch/internal/mycroft/`):
 
 ```
 patrol_cycle():
@@ -179,7 +179,7 @@ patrol_cycle():
 
 The heartbeat system is already implemented:
 
-- **`clavain-cli bead-heartbeat <bead_id>`** refreshes `claimed_at` timestamp (`/home/mk/projects/Demarch/os/Clavain/cmd/clavain-cli/claim.go` line 287).
+- **`clavain-cli bead-heartbeat <bead_id>`** refreshes `claimed_at` timestamp (`/home/mk/projects/Sylveste/os/Clavain/cmd/clavain-cli/claim.go` line 287).
 - **Stale threshold:** 2700 seconds (45 minutes), defined as `beadClaimStaleSeconds` (claim.go line 13).
 - **Staleness check:** `isClaimStale()` returns true if `age > 2700s` (claim.go line 22).
 - **Heartbeat piggybacked on:** `sprint-budget-remaining` calls (per MEMORY.md).
@@ -201,7 +201,7 @@ Current values:
 
 **Airflow's approach:** Airflow uses `scheduler_zombie_task_threshold` (default 300s / 5 minutes) with a heartbeat interval of ~30s. The ratio is ~10:1 (threshold = 10x heartbeat interval). This allows for ~10 missed heartbeats before declaring dead — robust against transient pauses.
 
-**Recommended parameters for Demarch:**
+**Recommended parameters for Sylveste:**
 
 | Parameter | Current | Recommended | Rationale |
 |---|---|---|---|
@@ -258,7 +258,7 @@ Toyota's Andon Cord allows any worker to stop the production line when they dete
 
 ### Application to Factory
 
-The mycroft brainstorm (`/home/mk/projects/Demarch/docs/brainstorms/2026-03-12-mycroft-fleet-orchestrator-brainstorm.md` line 75-80) already defines demotion triggers that are effectively andon cord pulls:
+The mycroft brainstorm (`/home/mk/projects/Sylveste/docs/brainstorms/2026-03-12-mycroft-fleet-orchestrator-brainstorm.md` line 75-80) already defines demotion triggers that are effectively andon cord pulls:
 
 - **3 consecutive failures on different beads** → immediate one-tier demotion
 - **>15% failure rate in rolling 24h** → T2 → T1
@@ -267,7 +267,7 @@ The mycroft brainstorm (`/home/mk/projects/Demarch/docs/brainstorms/2026-03-12-m
 
 ### What's Missing: The "Stop and Fix" Protocol
 
-The mycroft CUJ (`/home/mk/projects/Demarch/docs/cujs/mycroft-failure-recovery.md`) describes the developer investigating after demotion, but doesn't define a structured escalation protocol. Here's what the factory needs:
+The mycroft CUJ (`/home/mk/projects/Sylveste/docs/cujs/mycroft-failure-recovery.md`) describes the developer investigating after demotion, but doesn't define a structured escalation protocol. Here's what the factory needs:
 
 **Tier 1 Andon: Auto-retry with backoff (agent pulls cord)**
 
@@ -470,12 +470,12 @@ in_progress + released + failure_class + attempt_count
 
 | File | Relevance |
 |---|---|
-| `/home/mk/projects/Demarch/os/Clavain/cmd/clavain-cli/claim.go` | Heartbeat, claim/release, stale detection (2700s TTL) |
-| `/home/mk/projects/Demarch/interverse/intermux/internal/health/monitor.go` | Health monitor with stuck detection (5min threshold) |
-| `/home/mk/projects/Demarch/interverse/intermux/internal/activity/models.go` | Agent status enum (active/idle/stuck/crashed/unknown) |
-| `/home/mk/projects/Demarch/docs/cujs/mycroft-failure-recovery.md` | Failure recovery CUJ with tier demotion triggers |
-| `/home/mk/projects/Demarch/docs/brainstorms/2026-03-12-mycroft-fleet-orchestrator-brainstorm.md` | Circuit breaker thresholds, reconciliation sweep |
-| `/home/mk/projects/Demarch/.claude/flux-drive-output/fd-coordination-state-model.md` | Bead claim as LWW-Register, Dolt zombie problem chain |
+| `/home/mk/projects/Sylveste/os/Clavain/cmd/clavain-cli/claim.go` | Heartbeat, claim/release, stale detection (2700s TTL) |
+| `/home/mk/projects/Sylveste/interverse/intermux/internal/health/monitor.go` | Health monitor with stuck detection (5min threshold) |
+| `/home/mk/projects/Sylveste/interverse/intermux/internal/activity/models.go` | Agent status enum (active/idle/stuck/crashed/unknown) |
+| `/home/mk/projects/Sylveste/docs/cujs/mycroft-failure-recovery.md` | Failure recovery CUJ with tier demotion triggers |
+| `/home/mk/projects/Sylveste/docs/brainstorms/2026-03-12-mycroft-fleet-orchestrator-brainstorm.md` | Circuit breaker thresholds, reconciliation sweep |
+| `/home/mk/projects/Sylveste/.claude/flux-drive-output/fd-coordination-state-model.md` | Bead claim as LWW-Register, Dolt zombie problem chain |
 
 ## Sources
 

@@ -84,7 +84,7 @@
       "Assess embedding-based file retrieval (e.g. intersearch plugin's embedding_query) as an alternative to PageRank: embed conversation text, retrieve top-K semantically similar files — evaluate precision/recall vs graph rank for typical agentic tasks, latency, and the cold-start problem for new repos",
       "Examine git-signal heuristics as a lightweight alternative or complement: recently modified files, files co-changed with conversation-mentioned files (git log --follow), files with high churn correlated with current task type — evaluate as a PageRank personalization seed or as a standalone fallback",
       "Survey what Cursor, Copilot Workspace, and Continue.dev use for repo-context retrieval beyond Aider's approach — identify whether any open-source implementations exist in Go or with clean FFI boundaries",
-      "Evaluate the CASS session intelligence backend (already assessed as 'adopt' in Demarch) as a source of file relevance signal: cass context <path> returns sessions that touched a file — assess whether cross-session file access patterns are a useful PageRank seed or prior",
+      "Evaluate the CASS session intelligence backend (already assessed as 'adopt' in Sylveste) as a source of file relevance signal: cass context <path> returns sessions that touched a file — assess whether cross-session file access patterns are a useful PageRank seed or prior",
       "Assess the 'no graph at all' baseline: a BM25 or TF-IDF keyword index over symbol names and file paths, queried with conversation text — what is the quality ceiling and implementation cost vs a full PageRank approach for Skaffen's primary use cases"
     ],
     "success_hints": [

@@ -1,6 +1,6 @@
 # Architecture Review: Native Kernel Coordination Plan
 
-**Plan file:** `/home/mk/projects/Demarch/docs/plans/2026-02-25-native-kernel-coordination.md`
+**Plan file:** `/home/mk/projects/Sylveste/docs/plans/2026-02-25-native-kernel-coordination.md`
 **Review date:** 2026-02-25
 **Reviewer:** Flux-drive Architecture & Design Reviewer
 
@@ -36,9 +36,9 @@ This creates a hidden dependency: Intermute's HTTP API now silently fails if `in
 
 ### 1.4 Scope Semantics Mismatch Between Systems
 
-Intermute's `Reservation.Project` is a short human-readable name (e.g., `"Demarch"` derived from `basename` of the git root). Intercore's `coordination_locks.scope` is described in the plan as the project directory path (e.g., `"/home/mk/projects/Demarch"`). The `pre-edit.sh` hook already uses `basename` to derive project name for Intermute. The proposed `ic coordination check --scope="$PROJECT_DIR"` uses the full path.
+Intermute's `Reservation.Project` is a short human-readable name (e.g., `"Sylveste"` derived from `basename` of the git root). Intercore's `coordination_locks.scope` is described in the plan as the project directory path (e.g., `"/home/mk/projects/Sylveste"`). The `pre-edit.sh` hook already uses `basename` to derive project name for Intermute. The proposed `ic coordination check --scope="$PROJECT_DIR"` uses the full path.
 
-This means an Intermute reservation for project `"Demarch"` and an Intercore coordination lock for scope `"/home/mk/projects/Demarch"` refer to the same files but will never match in a cross-system conflict check. The dual-write bridge in Task 7 uses `project` as scope when calling `MirrorReserve`, so Intermute reservations in the bridge will use the short name while native `ic coordination` calls from Clavain hooks will use the full path.
+This means an Intermute reservation for project `"Sylveste"` and an Intercore coordination lock for scope `"/home/mk/projects/Sylveste"` refer to the same files but will never match in a cross-system conflict check. The dual-write bridge in Task 7 uses `project` as scope when calling `MirrorReserve`, so Intermute reservations in the bridge will use the short name while native `ic coordination` calls from Clavain hooks will use the full path.
 
 **Must fix:** Standardize the scope value before Task 7. The simplest option is to always use the canonical absolute path of the project root, derived from `git rev-parse --show-toplevel`. The `interlock-check.sh` already does this for `PROJECT_ROOT`. `DiscoverIntercoreDB` already walks up from `projectDir` to find the DB, so Intercore already treats `projectDir` as the anchor. Normalize all callers to use the absolute path.
 
@@ -92,7 +92,7 @@ The plan acknowledges "add coordination source constant" but does not define a `
 
 ### 2.4 Glob Algorithm Duplication — Necessary but Under-Documented
 
-The plan copies `PatternsOverlap` from `core/intermute/internal/glob/` to `core/intercore/internal/coordination/`. This is the correct choice given the L1↔L1 boundary. The source algorithm at `/home/mk/projects/Demarch/core/intermute/internal/glob/overlap.go` is a complete NFA-based implementation with `ValidateComplexity`, `PatternsOverlap`, `segmentPatternsOverlap`, and the BFS state machine.
+The plan copies `PatternsOverlap` from `core/intermute/internal/glob/` to `core/intercore/internal/coordination/`. This is the correct choice given the L1↔L1 boundary. The source algorithm at `/home/mk/projects/Sylveste/core/intermute/internal/glob/overlap.go` is a complete NFA-based implementation with `ValidateComplexity`, `PatternsOverlap`, `segmentPatternsOverlap`, and the BFS state machine.
 
 The concern is future drift: if the algorithm is patched in one location (e.g., a bug fix for a character class edge case), the other copy will silently diverge. The plan offers no mechanism to detect this.
 
@@ -236,17 +236,17 @@ Remove the `else` fallback branch in `pre-edit.sh`. Emit advisory and exit 0 on 
 
 The findings above reference the following files:
 
-- `/home/mk/projects/Demarch/docs/plans/2026-02-25-native-kernel-coordination.md` — plan under review
-- `/home/mk/projects/Demarch/core/intercore/internal/db/db.go` — migration guard pattern, transaction conventions
-- `/home/mk/projects/Demarch/core/intercore/internal/event/store.go` — event bus UNION ALL structure
-- `/home/mk/projects/Demarch/core/intercore/internal/event/event.go` — source constants
-- `/home/mk/projects/Demarch/core/intercore/internal/lock/lock.go` — existing filesystem lock (sweep PID pattern origin)
-- `/home/mk/projects/Demarch/core/intercore/internal/dispatch/dispatch.go` — `generateID()` canonical form
-- `/home/mk/projects/Demarch/core/intermute/internal/glob/overlap.go` — algorithm to be copied
-- `/home/mk/projects/Demarch/core/intermute/internal/storage/sqlite/sqlite.go` — `Reserve()` implementation, `file_reservations` schema
-- `/home/mk/projects/Demarch/core/intermute/cmd/intermute/main.go` — startup flag surface
-- `/home/mk/projects/Demarch/interverse/interlock/internal/client/client.go` — current HTTP client
-- `/home/mk/projects/Demarch/interverse/interlock/internal/tools/tools.go` — MCP tool registration
-- `/home/mk/projects/Demarch/interverse/interlock/hooks/pre-edit.sh` — hook to be rewritten
-- `/home/mk/projects/Demarch/interverse/interlock/scripts/interlock-check.sh` — current conflict check
-- `/home/mk/projects/Demarch/core/intercore/lib-intercore.sh` — `intercore_lock` functions
+- `/home/mk/projects/Sylveste/docs/plans/2026-02-25-native-kernel-coordination.md` — plan under review
+- `/home/mk/projects/Sylveste/core/intercore/internal/db/db.go` — migration guard pattern, transaction conventions
+- `/home/mk/projects/Sylveste/core/intercore/internal/event/store.go` — event bus UNION ALL structure
+- `/home/mk/projects/Sylveste/core/intercore/internal/event/event.go` — source constants
+- `/home/mk/projects/Sylveste/core/intercore/internal/lock/lock.go` — existing filesystem lock (sweep PID pattern origin)
+- `/home/mk/projects/Sylveste/core/intercore/internal/dispatch/dispatch.go` — `generateID()` canonical form
+- `/home/mk/projects/Sylveste/core/intermute/internal/glob/overlap.go` — algorithm to be copied
+- `/home/mk/projects/Sylveste/core/intermute/internal/storage/sqlite/sqlite.go` — `Reserve()` implementation, `file_reservations` schema
+- `/home/mk/projects/Sylveste/core/intermute/cmd/intermute/main.go` — startup flag surface
+- `/home/mk/projects/Sylveste/interverse/interlock/internal/client/client.go` — current HTTP client
+- `/home/mk/projects/Sylveste/interverse/interlock/internal/tools/tools.go` — MCP tool registration
+- `/home/mk/projects/Sylveste/interverse/interlock/hooks/pre-edit.sh` — hook to be rewritten
+- `/home/mk/projects/Sylveste/interverse/interlock/scripts/interlock-check.sh` — current conflict check
+- `/home/mk/projects/Sylveste/core/intercore/lib-intercore.sh` — `intercore_lock` functions

@@ -2,7 +2,7 @@
 
 **Date:** 2026-02-23  
 **Analyst:** Claude Code (read-only research)  
-**Scope:** Interlearn plugin at `/home/mk/projects/Demarch/interverse/interlearn/`
+**Scope:** Interlearn plugin at `/home/mk/projects/Sylveste/interverse/interlearn/`
 
 ---
 

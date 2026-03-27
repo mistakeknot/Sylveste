@@ -20,7 +20,7 @@
 - **Weaknesses:** File-based storage limits, no distributed scheduling, no multi-runtime containers, modal backend isolation
 
 **Verdict:**
-Intercom's architecture is fundamentally **sound** but **incompletely implemented**. Rather than adopting Hermes wholesale, Demarch should:
+Intercom's architecture is fundamentally **sound** but **incompletely implemented**. Rather than adopting Hermes wholesale, Sylveste should:
 1. **Fix critical scheduler/IPC bugs immediately** (8.5 days, from SYNTHESIS)
 2. **Replace fire-and-forget HTTP with reliable IPC** (Postgres LISTEN/NOTIFY or Unix sockets)
 3. **Keep the dual-process model** — each process handles what it does well
@@ -477,7 +477,7 @@ message_loop polls Postgres for new messages
 **Drawbacks:**
 - **Node still needed:** Still need to maintain Node runtime
 - **Split responsibility:** External channel setup is still Node's problem
-- **Not much gain:** Most Demarch complexity is already in Rust
+- **Not much gain:** Most Sylveste complexity is already in Rust
 
 **Effort:** 3–4 days
 - Day 1: Move `commands.rs` logic (already there)

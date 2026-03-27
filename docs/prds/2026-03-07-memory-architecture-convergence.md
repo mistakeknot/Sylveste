@@ -8,7 +8,7 @@ stage: design
 
 ## Problem
 
-Demarch has 10 memory-shaped systems with overlapping domains, no shared retrieval surface, inconsistent decay policies, and no taxonomy for categorizing what memory is. Agents can't answer "what do we know about X?" without querying 4+ backends separately. Engineering knowledge lives in 3 places (interknow, compound docs, auto-memory) with no dedup.
+Sylveste has 10 memory-shaped systems with overlapping domains, no shared retrieval surface, inconsistent decay policies, and no taxonomy for categorizing what memory is. Agents can't answer "what do we know about X?" without querying 4+ backends separately. Engineering knowledge lives in 3 places (interknow, compound docs, auto-memory) with no dedup.
 
 ## Solution
 

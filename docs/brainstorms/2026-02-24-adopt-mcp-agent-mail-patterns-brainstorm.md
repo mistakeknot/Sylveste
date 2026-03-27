@@ -5,7 +5,7 @@
 
 ## What We're Building
 
-Extracting high-value infrastructure patterns from the 10-agent deep review of mcp_agent_mail and adopting them into Demarch's interbase SDK, intermute, and interlock. The review identified 15 ranked recommendations — this sprint focuses on the P0 subset that unblocks the dependency chain.
+Extracting high-value infrastructure patterns from the 10-agent deep review of mcp_agent_mail and adopting them into Sylveste's interbase SDK, intermute, and interlock. The review identified 15 ranked recommendations — this sprint focuses on the P0 subset that unblocks the dependency chain.
 
 ## Why This Approach
 
@@ -27,7 +27,7 @@ Extracting high-value infrastructure patterns from the 10-agent deep review of m
 
 6. **Contact policies (iv-t4pia):** 4-level model (`open | auto | contacts_only | block_all`) enforced at delivery time on ALL paths (send AND reply). Critical lesson: mcp_agent_mail's `reply_message` bypasses policy for local recipients — we must NOT replicate that bug.
 
-7. **What Demarch already does better:** Keep cursor-based pagination (not timestamp), keep `MaxOpenConns(1)` for writes, keep separate handler/logic/data layers, keep `WHERE phase = ?` optimistic concurrency. Do NOT adopt mcp_agent_mail's 50-connection pool, `func.lower()` on indexed columns, or bare exception handling.
+7. **What Sylveste already does better:** Keep cursor-based pagination (not timestamp), keep `MaxOpenConns(1)` for writes, keep separate handler/logic/data layers, keep `WHERE phase = ?` optimistic concurrency. Do NOT adopt mcp_agent_mail's 50-connection pool, `func.lower()` on indexed columns, or bare exception handling.
 
 ## Open Questions
 

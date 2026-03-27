@@ -8,7 +8,7 @@ stage: design
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
 **Bead:** none (Dolt down — tracked in BLOCKED.md)
-**Goal:** Build `interverse/interfere/`, a custom MLX-LM inference server exposed as a Demarch interverse plugin, integrated into Clavain's routing as Track B5.
+**Goal:** Build `interverse/interfere/`, a custom MLX-LM inference server exposed as a Sylveste interverse plugin, integrated into Clavain's routing as Track B5.
 
 **Architecture:** Python async server (Starlette) spawning a Metal-owning subprocess for MLX inference. OpenAI-compatible `/v1/chat/completions` API with priority queuing. Clavain's `lib-routing.sh` extended with Track B5 for local model resolution. Plugin exposes MCP tools for model management and health. Each esoteric optimization is a toggleable experiment tracked via interlab.
 
@@ -61,7 +61,7 @@ stage: design
 {
   "name": "interfere",
   "version": "0.1.0",
-  "description": "Local MLX-LM inference server for Apple Silicon. Custom serving layer with priority queuing, thermal-aware scheduling, and experiment hooks for Demarch/Clavain.",
+  "description": "Local MLX-LM inference server for Apple Silicon. Custom serving layer with priority queuing, thermal-aware scheduling, and experiment hooks for Sylveste/Clavain.",
   "author": { "name": "mistakeknot" },
   "license": "MIT",
   "keywords": ["inference", "mlx", "apple-silicon", "local-model", "serving"]
@@ -73,7 +73,7 @@ stage: design
 [project]
 name = "interfere"
 version = "0.1.0"
-description = "Local MLX-LM inference server for Demarch"
+description = "Local MLX-LM inference server for Sylveste"
 requires-python = ">=3.12"
 dependencies = [
     "mlx>=0.22.0",

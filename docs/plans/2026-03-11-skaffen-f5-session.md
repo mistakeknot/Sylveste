@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-2ic
+bead: Sylveste-2ic
 stage: design
 prd: docs/prds/2026-03-11-skaffen-go-rewrite.md
 requirements:
@@ -13,7 +13,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-2ic
+**Bead:** Sylveste-2ic
 **Goal:** Implement the `Session` interface from F3's `deps.go` with JSONL-backed persistence. Sessions survive process restarts and context stays bounded via basic truncation.
 
 **Architecture:** `internal/session/` package. A `JSONLSession` struct implements `agent.Session`. Each turn is appended as a JSON line to `~/.skaffen/sessions/<id>.jsonl`. On load, reads all lines back. Truncation keeps system prompt + last N turns.

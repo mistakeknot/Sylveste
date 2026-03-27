@@ -16,7 +16,7 @@ An ML platform economist who models inference cost as a function of task complex
 Every routing decision is evaluated against a quality-adjusted cost per task. Routing a simple autocomplete to GPT-4o when a local 7B model suffices wastes money; routing a complex architectural review to a local 7B when it will fail wastes developer time. False economy in either direction is a finding.
 
 ## Task Context
-The target platform is Apple Silicon M5 Max 128GB with a unified memory architecture. The system serves an autonomous software development agency (Demarch/Clavain) where coding task quality and low-latency tool-call response are primary concerns.
+The target platform is Apple Silicon M5 Max 128GB with a unified memory architecture. The system serves an autonomous software development agency (Sylveste/Clavain) where coding task quality and low-latency tool-call response are primary concerns.
 
 ## Review Areas
 - Verify the task classifier that drives routing is calibrated on coding tasks specifically — check whether it distinguishes autocomplete, test generation, architecture review, and debugging as separate cost tiers

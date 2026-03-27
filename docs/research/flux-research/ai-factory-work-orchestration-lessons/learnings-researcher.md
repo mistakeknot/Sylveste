@@ -1,13 +1,13 @@
-# Demarch Work Orchestration & Agent Coordination Learnings
+# Sylveste Work Orchestration & Agent Coordination Learnings
 
 **Compiled:** 2026-03-19
-**Purpose:** Institutional learnings from Demarch's multi-agent orchestration, sprint workflow, and work coordination systems. Reference for flux-drive and future work orchestration design.
+**Purpose:** Institutional learnings from Sylveste's multi-agent orchestration, sprint workflow, and work coordination systems. Reference for flux-drive and future work orchestration design.
 
 ---
 
 ## Executive Summary
 
-Demarch has developed a mature orchestration architecture across three layers:
+Sylveste has developed a mature orchestration architecture across three layers:
 
 1. **Sprint Kernel** (Intercore) — transactional orchestration, phase gating, event-driven coordination
 2. **Work Routing** (Clavain + Mycroft) — dispatch planning, agent claiming, capability-aware assignment
@@ -616,7 +616,7 @@ Shipping stages 1-2 without 3-4 produces a constant masquerading as intelligence
 
 ## Research Gap Analysis
 
-### Addressed in Demarch
+### Addressed in Sylveste
 
 - ✓ TOCTOU prevention patterns (transactions + CAS)
 - ✓ Multi-agent file coordination (git autosync + reservations)

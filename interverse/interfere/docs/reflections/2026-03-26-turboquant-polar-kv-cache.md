@@ -1,6 +1,6 @@
 ---
 artifact_type: reflection
-bead: Demarch-4dy
+bead: Sylveste-4dy
 stage: reflect
 ---
 
@@ -18,7 +18,7 @@ Implemented a polar coordinate transformation experiment for KV cache quantizati
 
 **QJL requires jl_dim >= 2x head_dim.** At jl_dim=64 with head_dim=128 (the original plan), the 1-bit sketch adds noise instead of correcting it. The test caught this definitively. Autoresearch should explore jl_dim=256+ only.
 
-**Autoresearch-first is the right pattern for quantization experiments.** Whether polar coordinate transformation actually improves quantization quality on real Qwen hidden states is an empirical question that can't be answered by planning. The scaffold (interlab-turboquant-tune.sh) lets the autoresearch campaign (Demarch-m0m) answer it with data.
+**Autoresearch-first is the right pattern for quantization experiments.** Whether polar coordinate transformation actually improves quantization quality on real Qwen hidden states is an empirical question that can't be answered by planning. The scaffold (interlab-turboquant-tune.sh) lets the autoresearch campaign (Sylveste-m0m) answer it with data.
 
 ## What to do differently
 

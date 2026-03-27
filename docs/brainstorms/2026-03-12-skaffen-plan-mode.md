@@ -1,6 +1,6 @@
 # Brainstorm: Skaffen Plan Mode
 
-**Bead:** Demarch-6i0.21
+**Bead:** Sylveste-6i0.21
 **Date:** 2026-03-12
 **Trigger:** Does plan mode make sense given Clavain's `/sprint` workflow already covers planning?
 

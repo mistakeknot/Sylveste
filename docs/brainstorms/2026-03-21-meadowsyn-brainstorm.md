@@ -1,6 +1,6 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-jpum
+bead: Sylveste-jpum
 stage: discover
 ---
 
@@ -8,7 +8,7 @@ stage: discover
 
 ## What We're Building
 
-Meadowsyn is a public-facing web visualization frontend for the Demarch AI factory — an autonomous software development system running dozens of simultaneous agents. Named after Donella Meadows (*Thinking in Systems*) + Cybersyn (Allende-era real-time economic ops room). Domain: meadowsyn.com.
+Meadowsyn is a public-facing web visualization frontend for the Sylveste AI factory — an autonomous software development system running dozens of simultaneous agents. Named after Donella Meadows (*Thinking in Systems*) + Cybersyn (Allende-era real-time economic ops room). Domain: meadowsyn.com.
 
 **The niche:** Every existing tool (Grafana, Temporal, LangSmith, AgentOps) serves developers, operators, or evaluators. None serve a public audience watching an autonomous factory. The closest analog is Flightradar24, not any developer tool.
 

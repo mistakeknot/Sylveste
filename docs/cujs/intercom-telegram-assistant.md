@@ -3,7 +3,7 @@ artifact_type: cuj
 journey: intercom-telegram-assistant
 actor: regular user (developer chatting with AI assistants via Telegram)
 criticality: p2
-bead: Demarch-2c7
+bead: Sylveste-2c7
 ---
 
 # Intercom Telegram Assistant

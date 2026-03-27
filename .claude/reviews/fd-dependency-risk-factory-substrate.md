@@ -75,7 +75,7 @@ This is not "graceful degradation with two code paths." It is write-ahead loggin
 
 The Go SDK adds 3 new dependencies (uuid, msgpack, blake3) per PRD line 107, but there is no plan for what happens when CXDB makes a breaking change to its binary protocol (port 9009) or HTTP API (port 9010).
 
-**Failure scenario:** A `go get -u` or transitive dependency update pulls a CXDB SDK version that speaks protocol v2 against a cached `cxdb-server` binary that speaks protocol v1. Sprint recording silently fails or panics. Diagnosing the version mismatch requires understanding CXDB internals that no Demarch contributor has.
+**Failure scenario:** A `go get -u` or transitive dependency update pulls a CXDB SDK version that speaks protocol v2 against a cached `cxdb-server` binary that speaks protocol v1. Sprint recording silently fails or panics. Diagnosing the version mismatch requires understanding CXDB internals that no Sylveste contributor has.
 
 **Evidence:**
 - PRD F2: "Go SDK (`github.com/strongdm/ai-cxdb/clients/go`) added to clavain-cli `go.mod`" (line 36)
@@ -178,7 +178,7 @@ The broader concern: at 72 commits and 356 stars, CXDB could plausibly be abando
 
 **Priority:** P2
 
-**Finding:** The PRD's F1 acceptance criteria specify a pre-built `cxdb-server` binary but do not mention which platforms must be supported. Demarch developers work on macOS (Apple Silicon and Intel) and Linux (amd64). CI runs on Linux. Agent environments may vary.
+**Finding:** The PRD's F1 acceptance criteria specify a pre-built `cxdb-server` binary but do not mention which platforms must be supported. Sylveste developers work on macOS (Apple Silicon and Intel) and Linux (amd64). CI runs on Linux. Agent environments may vary.
 
 Rust cross-compilation is straightforward for linux targets but macOS requires either native compilation or `cross-rs` with SDK licensing considerations.
 

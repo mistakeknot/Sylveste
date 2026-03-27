@@ -2,7 +2,7 @@
 agent: fd-correctness
 reviewer: Julik (Flux-drive Correctness Reviewer)
 plan: docs/plans/2026-03-26-event-envelope-v2.md
-bead: Demarch-og7m.2.1
+bead: Sylveste-og7m.2.1
 date: 2026-03-26
 status: fail
 findings: 7
@@ -12,7 +12,7 @@ severity_distribution: "P1: 3, P2: 3, P3: 1"
 # Correctness Review — EventEnvelope v2 Schema
 
 **Plan:** `docs/plans/2026-03-26-event-envelope-v2.md`
-**Bead:** Demarch-og7m.2.1
+**Bead:** Sylveste-og7m.2.1
 **Reviewer:** Julik, Flux-drive Correctness Reviewer
 **Date:** 2026-03-26
 

@@ -3,7 +3,7 @@
 **Bead:** iv-9hx1t.1
 **Date:** 2026-02-24
 **Complexity:** 2/5 (simple)
-**Parent Epic:** iv-9hx1t (Go Module Path Alignment — Demarch Reorg)
+**Parent Epic:** iv-9hx1t (Go Module Path Alignment — Sylveste Reorg)
 
 ## Problem
 

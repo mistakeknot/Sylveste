@@ -3,11 +3,11 @@ artifact_type: brainstorm
 bead: none
 stage: discover
 ---
-# Deep cass Integration into Demarch
+# Deep cass Integration into Sylveste
 
 ## What We're Building
 
-A comprehensive integration of [cass](https://github.com/Dicklesworthstone/coding_agent_session_search) (Coding Agent Session Search) across the Demarch ecosystem. cass is a Rust-native CLI tool (already assessed as "adopt" in `docs/research/assess-dicklesworthstone-batch-2.md`) that indexes 10K+ sessions across 15 agent providers with sub-60ms BM25 + semantic hybrid search, plus analytics (tokens, tools, models), timeline, context-by-file, and session export.
+A comprehensive integration of [cass](https://github.com/Dicklesworthstone/coding_agent_session_search) (Coding Agent Session Search) across the Sylveste ecosystem. cass is a Rust-native CLI tool (already assessed as "adopt" in `docs/research/assess-dicklesworthstone-batch-2.md`) that indexes 10K+ sessions across 15 agent providers with sub-60ms BM25 + semantic hybrid search, plus analytics (tokens, tools, models), timeline, context-by-file, and session export.
 
 The integration has three pillars:
 
@@ -22,7 +22,7 @@ The integration has three pillars:
 **Reduce, don't replace.** Interstat has genuine unique value that cass cannot replicate:
 - **Bead correlation** — real-time hooks write bead_id and phase into every agent_run event. cass has no concept of work items.
 - **Failure classification** — categorizes tool selection failures (discovery/sequencing/scale). Domain-specific.
-- **Cost-per-landable-change** — correlates token spend with `ic landed summary` / git commits. Demarch-specific metric.
+- **Cost-per-landable-change** — correlates token spend with `ic landed summary` / git commits. Sylveste-specific metric.
 - **Per-phase budgets** — calibrated token estimates that feed Clavain's sprint budget system.
 - **Real-time event capture** — PostToolUse hooks capture events as they happen; cass only indexes after session ends.
 

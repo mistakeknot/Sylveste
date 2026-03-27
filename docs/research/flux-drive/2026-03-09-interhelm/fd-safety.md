@@ -1,7 +1,7 @@
 # Safety Review — interhelm Implementation Plan
 
 **Document:** `docs/plans/2026-03-09-interhelm.md`
-**Bead:** Demarch-ekh
+**Bead:** Sylveste-ekh
 **Reviewer:** Flux-Drive Safety (fd-safety)
 **Date:** 2026-03-24
 
@@ -58,7 +58,7 @@ if [[ -n "$diag_cli" && -x "$PROJECT_ROOT/$diag_cli" ]]; then
 
 The value of `$diag_cli` comes directly from CLAUDE.md content. There is no character-set validation and no check that the resolved path stays within `$PROJECT_ROOT`. A path like `../../bin/malicious` would be accepted and executed.
 
-**Attack surface:** The Demarch CLAUDE.md security rules explicitly flag submodule and dependency CLAUDE.md files as untrusted. If a project has a symlinked path, a cloned dependency with its own CLAUDE.md, or an attacker-controlled CLAUDE.md (e.g., via a poisoned upstream), the hook will execute an attacker-chosen binary on every Rust source file edit.
+**Attack surface:** The Sylveste CLAUDE.md security rules explicitly flag submodule and dependency CLAUDE.md files as untrusted. If a project has a symlinked path, a cloned dependency with its own CLAUDE.md, or an attacker-controlled CLAUDE.md (e.g., via a poisoned upstream), the hook will execute an attacker-chosen binary on every Rust source file edit.
 
 **Mitigation:**
 1. Validate `$diag_cli` against an allowlist: `[[ "$diag_cli" =~ ^[a-zA-Z0-9_./-]+$ ]]` and reject values containing `..`.

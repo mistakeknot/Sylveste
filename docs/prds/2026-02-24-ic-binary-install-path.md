@@ -4,7 +4,7 @@
 
 ## Problem
 
-Fresh Demarch installs silently run without the Intercore kernel because `lib-intercore.sh` gracefully degrades when `ic` is missing. Every wrapper function returns success, falling back to temp files — losing atomicity, deduplication, and audit trails. Users don't know anything is wrong.
+Fresh Sylveste installs silently run without the Intercore kernel because `lib-intercore.sh` gracefully degrades when `ic` is missing. Every wrapper function returns success, falling back to temp files — losing atomicity, deduplication, and audit trails. Users don't know anything is wrong.
 
 ## Solution
 
@@ -35,7 +35,7 @@ Build the `ic` binary from source during installation (both `install.sh` and `cl
 - [ ] If missing: builds from `core/intercore/` source (requires knowing repo root)
 - [ ] If present: runs `ic health` to verify it works
 - [ ] Reports success/failure clearly to the user
-- [ ] Works when invoked from any project directory (finds Demarch repo root)
+- [ ] Works when invoked from any project directory (finds Sylveste repo root)
 
 ### F3: Harden lib-intercore.sh failure propagation
 

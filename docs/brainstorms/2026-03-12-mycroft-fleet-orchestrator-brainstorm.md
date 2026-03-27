@@ -4,7 +4,7 @@ bead: none
 stage: discover
 ---
 
-# Mycroft — Fleet Orchestrator for Demarch
+# Mycroft — Fleet Orchestrator for Sylveste
 
 **Date:** 2026-03-12
 **Status:** Brainstorming
@@ -159,7 +159,7 @@ Phase 2+: migrate to event-driven via intercore event consumption (Skaffen v0.3 
 
 ### 3. Agent identity via registry-backed detection + Culture ship names
 
-Agents are named after **Culture ships** (Iain M. Banks) — e.g., `grey-area`, `falling-outside`, `mistake-not`. These names go directly in tmux session names (`iterm-Demarch-grey-area-01`) and are the canonical identifiers throughout the system.
+Agents are named after **Culture ships** (Iain M. Banks) — e.g., `grey-area`, `falling-outside`, `mistake-not`. These names go directly in tmux session names (`iterm-Sylveste-grey-area-01`) and are the canonical identifiers throughout the system.
 
 **Identity hierarchy (canonical → ephemeral):**
 1. **Culture ship name** (durable) — `grey-area`, `falling-outside`, `mistake-not`. Canonical identifier across all systems. Used in `dispatch_log.agent`, `bd set-state claimed_by`, fleet-registry.yaml.
@@ -173,7 +173,7 @@ Agents are named after **Culture ships** (Iain M. Banks) — e.g., `grey-area`, 
 
 This eliminates the `claimed_by=unknown` window that exists in the current Clavain claim system.
 
-**Registry-backed detection:** Intermux reads `fleet-registry.yaml` for agent name keywords instead of maintaining a hardcoded list. When intermux sees a tmux session named `iterm-Demarch-grey-area-01`, it matches `grey-area` from the registry.
+**Registry-backed detection:** Intermux reads `fleet-registry.yaml` for agent name keywords instead of maintaining a hardcoded list. When intermux sees a tmux session named `iterm-Sylveste-grey-area-01`, it matches `grey-area` from the registry.
 
 The fleet registry is a YAML file (existing `fleet-registry.yaml`, extended):
 ```yaml
@@ -307,7 +307,7 @@ Mycroft inverts the current pull-based model. Instead of agents discovering thei
    bd set-state iv-abc assigned_by mycroft
    ```
    **Context file path validation:** Context file paths are resolved to absolute and verified to start with the project root. Paths containing `..` after normalization are rejected. Symlinks resolving outside the project root are rejected. This prevents path traversal via corrupted bead state.
-5. Mycroft spawns: `tmux new-session -s iterm-Demarch-grey-area-01` with Clavain rig
+5. Mycroft spawns: `tmux new-session -s iterm-Sylveste-grey-area-01` with Clavain rig
 6. Agent's SessionStart hook chain reads bead state and auto-starts work
 
 **No assignment files.** All dispatch metadata lives in bead state (`bd set-state`), which is durable, queryable, and shared across sessions without filesystem coupling.
@@ -353,13 +353,13 @@ This preserves backward compatibility: without Mycroft, nothing changes. With My
 
 ### Agent name resolution
 
-The fleet name is extracted from the tmux session name. Mycroft uses the same encoding as intermux: `{terminal}-{project}-{agent}-{number}`. The agent name is extracted from position 3 (e.g., `grey-area` from `iterm-Demarch-grey-area-01`).
+The fleet name is extracted from the tmux session name. Mycroft uses the same encoding as intermux: `{terminal}-{project}-{agent}-{number}`. The agent name is extracted from position 3 (e.g., `grey-area` from `iterm-Sylveste-grey-area-01`).
 
 ## Open Questions
 
 1. **Fleet registry format** — RESOLVED. See "Resolved: Fleet Registry" section below.
 
-2. **Multi-project coordination** — RESOLVED. Start single-project (Demarch), design interfaces for multi-project. Must support physical monorepos (Demarch has subprojects in os/, apps/, interverse/, core/). Multi-project adds a `projects` list to config.yaml with per-project `beads_prefix` and `priority_weight`. The FleetView and patrol loop take `project` as a parameter, not a global assumption.
+2. **Multi-project coordination** — RESOLVED. Start single-project (Sylveste), design interfaces for multi-project. Must support physical monorepos (Sylveste has subprojects in os/, apps/, interverse/, core/). Multi-project adds a `projects` list to config.yaml with per-project `beads_prefix` and `priority_weight`. The FleetView and patrol loop take `project` as a parameter, not a global assumption.
 
 3. **Skaffen integration timeline** — RESOLVED. Design the `AgentSpawner` interface in v0.1 to support multiple runtimes (claude-code, skaffen). v0.1 implements `ClaudeCodeSpawner` only (tmux + bead state dispatch + intermux monitoring). v0.2 adds `SkaffenSpawner` (headless mode + evidence pipeline + native Go health) when Skaffen is daily driver. No wasted work — the abstraction is ready from day one.
 
@@ -515,7 +515,7 @@ agent_overrides:
 CREATE TABLE dispatch_log (
   id INTEGER PRIMARY KEY,
   ts INTEGER,
-  project TEXT DEFAULT 'demarch',  -- multi-project ready, hardcoded in v0.1
+  project TEXT DEFAULT 'sylveste',  -- multi-project ready, hardcoded in v0.1
   agent TEXT,                      -- always Culture ship name (canonical identifier)
   bead TEXT,
   action TEXT,     -- shadow_suggest, suggest, auto_dispatch, restart, patch_reassign, escalate, pause, resume, manual_override
@@ -527,7 +527,7 @@ CREATE TABLE dispatch_log (
 
 CREATE TABLE tier_state (
   key TEXT,
-  project TEXT DEFAULT 'demarch',  -- multi-project ready, hardcoded in v0.1
+  project TEXT DEFAULT 'sylveste',  -- multi-project ready, hardcoded in v0.1
   value TEXT,
   PRIMARY KEY (key, project)       -- 'current_tier', 'last_promotion', 'last_demotion'
 );
@@ -535,7 +535,7 @@ CREATE TABLE tier_state (
 CREATE TABLE tier_transitions (
   id INTEGER PRIMARY KEY,
   ts INTEGER,
-  project TEXT DEFAULT 'demarch',
+  project TEXT DEFAULT 'sylveste',
   from_tier INTEGER,
   to_tier INTEGER,
   trigger TEXT,            -- 'manual', 'auto_graduate', 'circuit_breaker', 'budget_overshoot'

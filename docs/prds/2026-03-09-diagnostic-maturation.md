@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-csq
+bead: Sylveste-csq
 stage: design
 ---
 # PRD: Diagnostic Maturation Skill

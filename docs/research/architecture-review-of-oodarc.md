@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-The OODARC brainstorm names something real. Demarch already has the four timescale loops; the document is largely an audit of existing infrastructure reframed through a cybernetic lens, plus a proposal for formalizing what exists. The naming clarity alone is valuable. The two approaches differ primarily in _when_ the abstraction hardens, not in the underlying semantics. The critical architectural question — kernel (L1) vs OS (L2) — has a defensible answer, and the generic Go interface design has one structural flaw that needs addressing before committing to either path.
+The OODARC brainstorm names something real. Sylveste already has the four timescale loops; the document is largely an audit of existing infrastructure reframed through a cybernetic lens, plus a proposal for formalizing what exists. The naming clarity alone is valuable. The two approaches differ primarily in _when_ the abstraction hardens, not in the underlying semantics. The critical architectural question — kernel (L1) vs OS (L2) — has a defensible answer, and the generic Go interface design has one structural flaw that needs addressing before committing to either path.
 
 The bottom line: the Shared Observation Layer (the `ic situation snapshot` proposal) belongs in intercore and should ship first regardless of approach. The generic `OODARCLoop` interface proposed in Approach B should not go in intercore's public package surface — it belongs in an intercore-internal package at most, with instantiation and policy-carrying implementations remaining in clavain. The generic interface as written has a premature extensibility problem that the brainstorm partially acknowledges but understates.
 
@@ -77,7 +77,7 @@ Approach B front-loads coupling into the generic interface definition. The `OODA
 
 The `Cycle` and `RunLoop` methods appear both as methods on the interface, which means any implementor of `OODARCLoop` must also implement the loop runner. This violates the interface segregation principle — consumers that only want to call `Observe` or `Reflect` must accept the full loop implementation contract.
 
-More fundamentally: the brainstorm's Approach B directly extends Gridfire's `Controller<S,M,A>` by adding `R` (Reflect). But the Gridfire brainstorm explicitly classifies the Controller primitive as a future goal (step 5 in the strangler-fig migration path), noting that Demarch is currently at step 3 (Evaluator subsystem). Approach B would jump from step 3 to step 5, bypassing the capability layer (step 4). This is the premature abstraction risk the brainstorm identifies — but it is not just "medium risk," it is specifically misaligned with the Gridfire migration sequence.
+More fundamentally: the brainstorm's Approach B directly extends Gridfire's `Controller<S,M,A>` by adding `R` (Reflect). But the Gridfire brainstorm explicitly classifies the Controller primitive as a future goal (step 5 in the strangler-fig migration path), noting that Sylveste is currently at step 3 (Evaluator subsystem). Approach B would jump from step 3 to step 5, bypassing the capability layer (step 4). This is the premature abstraction risk the brainstorm identifies — but it is not just "medium risk," it is specifically misaligned with the Gridfire migration sequence.
 
 ### Coupling Between Loop Levels
 
@@ -159,7 +159,7 @@ Interspect is described as "cross-cutting (not a layer)" and "currently housed i
 
 ### Gridfire Alignment
 
-The Gridfire brainstorm's strangler-fig migration path positions the Controller primitive at step 5 (future). Demarch is currently at step 3 (evaluator subsystem, partially implemented). The OODARC brainstorm's Approach B jumps to step 5. Approach A advances step 3 (better evaluators, better observation) and stays on the migration path.
+The Gridfire brainstorm's strangler-fig migration path positions the Controller primitive at step 5 (future). Sylveste is currently at step 3 (evaluator subsystem, partially implemented). The OODARC brainstorm's Approach B jumps to step 5. Approach A advances step 3 (better evaluators, better observation) and stays on the migration path.
 
 Approach B is not wrong — it just assumes the Controller primitive design is stable enough to formalize. The Gridfire brainstorm suggests it is not: "D4: Controller primitive beyond reactor — Gap: Reactor spec is strong operationally but lacks general control-loop tooling." Building `OODARCLoop` on top of a controller primitive that is acknowledged to be incomplete creates a layer built on unstable foundations.
 
@@ -225,13 +225,13 @@ The brainstorm's final line suggests `/flux-drive` will synthesize a hybrid. The
 
 The following files are directly relevant to this review:
 
-- `/home/mk/projects/Demarch/core/intercore/internal/phase/machine.go` — phase state machine; the sprint loop's Act mechanism lives here
-- `/home/mk/projects/Demarch/core/intercore/internal/dispatch/dispatch.go` — dispatch lifecycle; per-turn and multi-agent Act mechanisms
-- `/home/mk/projects/Demarch/core/intercore/internal/lifecycle/lifecycle.go` — agent state machine; the closest existing analog to a sensor interface
-- `/home/mk/projects/Demarch/core/intercore/internal/coordination/` — multi-agent lock state; the Multi-Agent Loop's Observe source
-- `/home/mk/projects/Demarch/core/intercore/internal/observability/observability.go` — trace/span infrastructure; relevant to the shared observation layer's instrumentation
-- `/home/mk/projects/Demarch/os/clavain/scripts/lib-routing.sh` — routing tables; the fast-path decision mechanism the OODARC Decide phase would wrap
-- `/home/mk/projects/Demarch/os/clavain/scripts/dispatch.sh` — agent dispatch; the Sprint and Multi-Agent loops' Act mechanism at the OS layer
-- `/home/mk/projects/Demarch/core/intercore/AGENTS.md` (lines 27-29) — kernel/OS separation contract that defines the hard L1/L2 boundary
-- `/home/mk/projects/Demarch/PHILOSOPHY.md` (lines 83-91) — composition over capability; the design principle that constrains the generic interface question
-- `/home/mk/projects/Demarch/docs/brainstorms/2026-02-27-gridfire-brainstorm.md` (lines 124-130) — strangler-fig migration path; Approach B skips step 4
+- `/home/mk/projects/Sylveste/core/intercore/internal/phase/machine.go` — phase state machine; the sprint loop's Act mechanism lives here
+- `/home/mk/projects/Sylveste/core/intercore/internal/dispatch/dispatch.go` — dispatch lifecycle; per-turn and multi-agent Act mechanisms
+- `/home/mk/projects/Sylveste/core/intercore/internal/lifecycle/lifecycle.go` — agent state machine; the closest existing analog to a sensor interface
+- `/home/mk/projects/Sylveste/core/intercore/internal/coordination/` — multi-agent lock state; the Multi-Agent Loop's Observe source
+- `/home/mk/projects/Sylveste/core/intercore/internal/observability/observability.go` — trace/span infrastructure; relevant to the shared observation layer's instrumentation
+- `/home/mk/projects/Sylveste/os/clavain/scripts/lib-routing.sh` — routing tables; the fast-path decision mechanism the OODARC Decide phase would wrap
+- `/home/mk/projects/Sylveste/os/clavain/scripts/dispatch.sh` — agent dispatch; the Sprint and Multi-Agent loops' Act mechanism at the OS layer
+- `/home/mk/projects/Sylveste/core/intercore/AGENTS.md` (lines 27-29) — kernel/OS separation contract that defines the hard L1/L2 boundary
+- `/home/mk/projects/Sylveste/PHILOSOPHY.md` (lines 83-91) — composition over capability; the design principle that constrains the generic interface question
+- `/home/mk/projects/Sylveste/docs/brainstorms/2026-02-27-gridfire-brainstorm.md` (lines 124-130) — strangler-fig migration path; Approach B skips step 4

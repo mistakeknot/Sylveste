@@ -1,16 +1,16 @@
 # Flux Drive Synthesis: Hyperspace AGI Relevance Assessment
 **Date:** 2026-03-14
 **Reviewed by:** 5 specialized agents (coordination-state-model, autonomous-work-loop, observability-data-model, plugin-evolution, capability-routing)
-**Source:** `research/agi-hyperspace/ANALYSIS.md` + Demarch codebase deep dive
+**Source:** `research/agi-hyperspace/ANALYSIS.md` + Sylveste codebase deep dive
 **Verdict:** ADAPT SELECTIVELY — High conceptual alignment, but specific techniques require significant translation
 
 ---
 
 ## Executive Summary
 
-Hyperspace AGI is a **peer-to-peer network of autonomous ML research agents** that continuously run experiments, share discoveries via gossip protocol, and compound results into a public leaderboard. While operating in a fundamentally different environment (decentralized peers, narrow metrics, WASM sandbox) than Demarch (single-machine, multi-dimensional quality, broad autonomy), the core insights about **autonomous learning loops, mutation-based improvement, and compound discovery** are directly applicable.
+Hyperspace AGI is a **peer-to-peer network of autonomous ML research agents** that continuously run experiments, share discoveries via gossip protocol, and compound results into a public leaderboard. While operating in a fundamentally different environment (decentralized peers, narrow metrics, WASM sandbox) than Sylveste (single-machine, multi-dimensional quality, broad autonomy), the core insights about **autonomous learning loops, mutation-based improvement, and compound discovery** are directly applicable.
 
-**Key verdict:** The 3-layer coordination stack (real-time → convergent → durable) is architecturally sound for Demarch. The gap is not in concepts but in implementation details — Demarch can use simpler primitives (SQLite + webhooks vs. CRDTs + GossipSub) while preserving the compound learning pattern.
+**Key verdict:** The 3-layer coordination stack (real-time → convergent → durable) is architecturally sound for Sylveste. The gap is not in concepts but in implementation details — Sylveste can use simpler primitives (SQLite + webhooks vs. CRDTs + GossipSub) while preserving the compound learning pattern.
 
 ### Headline Findings
 
@@ -20,7 +20,7 @@ Hyperspace AGI is a **peer-to-peer network of autonomous ML research agents** th
 | **Convergent state should use SQLite, not CRDTs** — Interlock is already single-writer centralized; Dolt zombies are process management bugs, not state model bugs | P1 | ARCHITECTURE |
 | **Fleet-registry schema invalid** — `orchestrator` category not enumerated; `routing_level` field missing | P0 | BLOCKING |
 | **Plugin quality scoring ready** — Composite formula (correctness × utility × trust) reuses 80% existing infrastructure | P1 | IMPLEMENTABLE |
-| **Multi-dimensional quality is stronger** — Hyperspace's scalar reduction is wrong for code; Demarch should resist it | P2 | PHILOSOPHY |
+| **Multi-dimensional quality is stronger** — Hyperspace's scalar reduction is wrong for code; Sylveste should resist it | P2 | PHILOSOPHY |
 | **Snapshot-mode observability** — Replace complex dashboards with 40-line JSON composer script | P0 | QUICK WIN |
 
 ---
@@ -64,13 +64,13 @@ Hyperspace AGI is a **peer-to-peer network of autonomous ML research agents** th
 **1.5: Enable WebSocket push notifications for reservations**
 - Current: Agents poll for negotiation responses via `time.Sleep(negotiationPollInterval)`
 - Hyperspace equivalent: GossipSub broadcasts results in ~1 second
-- Demarch can do: Expose intermute's `Broadcaster` interface (already exists in sweeper) to interlock clients
+- Sylveste can do: Expose intermute's `Broadcaster` interface (already exists in sweeper) to interlock clients
 - Value: Eliminates polling latency for file release negotiations
 - Location: `core/intermute/internal/ws/gateway.go` (Broadcaster pattern exists, not exposed to clients)
 
 **1.6: Create periodic "coordination snapshot"**
 - Hyperspace analogy: `snapshots/latest.json` published hourly
-- Demarch equivalent: JSON file with active agents, reservations, active sprints
+- Sylveste equivalent: JSON file with active agents, reservations, active sprints
 - Use case: Agents read at session start for context (Observe phase pre-loading)
 - Effort: ~30 lines bash, cron job
 
@@ -104,7 +104,7 @@ The Compound phase (`os/Skaffen/internal/agent/phase.go`) exists in the FSM but 
 
 **What Hyperspace does:** Discovery stage (peer scoring) feeds back into Hypothesis stage (next experiment). The loop is closed.
 
-**What Demarch must do:**
+**What Sylveste must do:**
 1. Compound phase writes **quality signals** to a persistent store (mutations JSONL, auto-memory topic files, or both)
 2. Orient phase reads from that store before planning
 3. The signals must be **multi-dimensional** (tests pass, review score, tokens spent, diff size, regression prevented) — not a single scalar
@@ -212,7 +212,7 @@ Before generating a plan, Orient phase should:
 
 **2.5: Skip JOURNAL.md, keep auto-memory**
 
-Hyperspace agents maintain per-agent journals. Demarch should NOT adopt this because:
+Hyperspace agents maintain per-agent journals. Sylveste should NOT adopt this because:
 - Auto-memory is already per-project, shared across sessions (right model for single-operator context)
 - Topic file pattern provides structure that JOURNAL.md's narrative lacks
 - CASS transcript exports already serve as the investigation narrative
@@ -257,7 +257,7 @@ When multiple Skaffen instances work on related tasks, they should share discove
     "closed_last_7d": 47, "closed_last_24h": 8, "avg_close_time_hours": 3.2, "cost_per_change_usd": 1.17
   },
   "active_agents": [
-    {"session_id": "...", "bead_id": "Demarch-05kd", "claimed_at": "...", "title": "..."}
+    {"session_id": "...", "bead_id": "Sylveste-05kd", "claimed_at": "...", "title": "..."}
   ],
   "blockers": [...],
   "top_cost_beads_7d": [...],
@@ -282,12 +282,12 @@ When multiple Skaffen instances work on related tasks, they should share discove
 
 **3.2: Per-bead work-record JSON schema**
 
-Hyperspace's `run-NNN.json` per experiment. Demarch needs equivalent:
+Hyperspace's `run-NNN.json` per experiment. Sylveste needs equivalent:
 
 ```json
 {
   "version": 1,
-  "bead_id": "Demarch-05kd",
+  "bead_id": "Sylveste-05kd",
   "session_id": "2f47757d-c465-4865-af26-0a9911d43f5e",
   "agent": "claude-opus-4-6",
   "timestamp": "2026-03-14T04:18:27Z",
@@ -319,7 +319,7 @@ Hyperspace's `run-NNN.json` per experiment. Demarch needs equivalent:
 
   "context": {
     "sprint_id": "sprint-2026w11",
-    "parent_bead": "Demarch-85k",
+    "parent_bead": "Sylveste-85k",
     "complexity": 2,
     "priority": 2,
     "issue_type": "task"
@@ -341,7 +341,7 @@ Hyperspace's `run-NNN.json` per experiment. Demarch needs equivalent:
 
 **3.3: Sprint report generator (NOT leaderboard)**
 
-Hyperspace's auto-generated LEADERBOARD doesn't apply — Demarch agents do heterogeneous work that can't be ranked on a single axis.
+Hyperspace's auto-generated LEADERBOARD doesn't apply — Sylveste agents do heterogeneous work that can't be ranked on a single axis.
 
 **Instead:** Generate periodic sprint retrospective:
 ```markdown
@@ -358,7 +358,7 @@ Hyperspace's auto-generated LEADERBOARD doesn't apply — Demarch agents do hete
 - F4: Model routing + budget tracking ($4.20, 3h)
 
 ### Cost Outliers (>2x avg)
-- Demarch-0pj: F4 Model routing — $4.20 (3.6x avg)
+- Sylveste-0pj: F4 Model routing — $4.20 (3.6x avg)
 ```
 
 **Implementation:** 100 lines bash joining:
@@ -565,7 +565,7 @@ This is the "agent identifies friction" step that starts the evolution loop.
 
 ### 5. Capability Routing (from fd-capability-routing)
 
-**Verdict:** DO NOT ADOPT Hyperspace's flat weight model — Demarch's B1-B4 routing is more sophisticated
+**Verdict:** DO NOT ADOPT Hyperspace's flat weight model — Sylveste's B1-B4 routing is more sophisticated
 
 #### P0 Findings (Blocking)
 
@@ -594,8 +594,8 @@ This is the "agent identifies friction" step that starts the evolution loop.
 
 Hyperspace uses flat capability weights (e.g., +10% for inference, +12% for research).
 
-**Why it doesn't work for Demarch:**
-1. **Demarch has a 4-track routing system (B1-B4)** — already more sophisticated than flat weights
+**Why it doesn't work for Sylveste:**
+1. **Sylveste has a 4-track routing system (B1-B4)** — already more sophisticated than flat weights
 2. **Capability declarations belong in a pre-filter, not a scoring signal**
 3. **Evidence scoring should drive agent selection**, not declared capabilities
 4. **Capabilities should enter late in the process** — after evidence phase has narrowed candidates
@@ -664,13 +664,13 @@ Once capabilities are well-defined, use them to pre-filter reviewers for flux-dr
 
 Hyperspace tracks agent uptime for capability scoring (persistent daemons that crash less are preferred).
 
-Demarch agents are session-scoped (created, run task, exit). Uptime is not a meaningful signal. **Skip this.**
+Sylveste agents are session-scoped (created, run task, exit). Uptime is not a meaningful signal. **Skip this.**
 
 **5.6: Hardware adaptation irrelevant**
 
 Hyperspace agents adapt their compute budget to available hardware (browser → laptop → H100).
 
-Demarch abstracts hardware via model tier (Haiku, Sonnet, Opus). The model tier routing already covers this. **Skip this.**
+Sylveste abstracts hardware via model tier (Haiku, Sonnet, Opus). The model tier routing already covers this. **Skip this.**
 
 ---
 
@@ -680,19 +680,19 @@ Demarch abstracts hardware via model tier (Haiku, Sonnet, Opus). The model tier 
 
 Every review agent identified that **Skaffen/Autarch cannot compound learning** because Compound/Reflect phases emit evidence but no future session reads it. This is the #1 architectural gap.
 
-**Why it matters:** Without compound learning, every session is independent. The agent learns nothing from past work. This is the core difference between Hyperspace (which closes the loop) and current Demarch (which doesn't).
+**Why it matters:** Without compound learning, every session is independent. The agent learns nothing from past work. This is the core difference between Hyperspace (which closes the loop) and current Sylveste (which doesn't).
 
 **Solution:** Requires P0 work in Skaffen to wire Compound → persistent store → future Orient/Decide phases.
 
 ---
 
-### Theme 2: Demarch Can Use Simpler Primitives
+### Theme 2: Sylveste Can Use Simpler Primitives
 
-Hyperspace uses CRDTs, GossipSub, and cryptographic proofs because it's **decentralized, multi-party, untrusted**. Demarch is **centralized-but-local, single-operator, trusted**.
+Hyperspace uses CRDTs, GossipSub, and cryptographic proofs because it's **decentralized, multi-party, untrusted**. Sylveste is **centralized-but-local, single-operator, trusted**.
 
 **Implication:** Don't copy Hyperspace's infrastructure wholesale. Adapt the *concepts* while using simpler primitives:
 
-| Hyperspace | Demarch Can Use Instead | Why |
+| Hyperspace | Sylveste Can Use Instead | Why |
 |-----------|------------------------|-----|
 | GossipSub broadcast | Webhook + polling | Single-machine, agents can poll |
 | CRDT leaderboard | SQLite with circuit breaker | Single-writer (intermute) on one machine |
@@ -706,7 +706,7 @@ Hyperspace uses CRDTs, GossipSub, and cryptographic proofs because it's **decent
 
 **Hyperspace's assumption:** Single metric (`val_loss`, NDCG@10, test_pass_rate) enables clean comparison.
 
-**Demarch's reality:** Code quality is multi-dimensional (correctness, readability, performance, security, design consistency). Reducing it to a single score leads to Goodhart's Law violations.
+**Sylveste's reality:** Code quality is multi-dimensional (correctness, readability, performance, security, design consistency). Reducing it to a single score leads to Goodhart's Law violations.
 
 **Recommendation:** Use **Pareto dominance** — approach A is better than B if A is better on ≥1 dimension and not worse on any. This preserves nuance while enabling automated comparison.
 
@@ -714,7 +714,7 @@ Hyperspace uses CRDTs, GossipSub, and cryptographic proofs because it's **decent
 
 ### Theme 4: Observability Is 80% Done
 
-Demarch already produces structured JSON from interstat, cass, interlab, and beads. The gap is not data collection but **consolidation**. A single snapshot composer script (40-50 lines) joining existing outputs delivers 80% of Hyperspace's observability UX.
+Sylveste already produces structured JSON from interstat, cass, interlab, and beads. The gap is not data collection but **consolidation**. A single snapshot composer script (40-50 lines) joining existing outputs delivers 80% of Hyperspace's observability UX.
 
 ---
 
@@ -754,28 +754,28 @@ Demarch already produces structured JSON from interstat, cass, interlab, and bea
 ## Key Codebase Locations
 
 ### Coordination & Orchestration
-- Interlock MCP tools: `/home/mk/projects/Demarch/interverse/interlock/internal/tools/tools.go`
-- Intermute storage: `/home/mk/projects/Demarch/core/intermute/internal/storage/sqlite/`
-- Clavain sprint/claim logic: `/home/mk/projects/Demarch/os/Clavain/cmd/clavain-cli/{claim,sprint}.go`
-- Clavain routing: `/home/mk/projects/Demarch/os/Clavain/scripts/lib-routing.sh`
+- Interlock MCP tools: `/home/mk/projects/Sylveste/interverse/interlock/internal/tools/tools.go`
+- Intermute storage: `/home/mk/projects/Sylveste/core/intermute/internal/storage/sqlite/`
+- Clavain sprint/claim logic: `/home/mk/projects/Sylveste/os/Clavain/cmd/clavain-cli/{claim,sprint}.go`
+- Clavain routing: `/home/mk/projects/Sylveste/os/Clavain/scripts/lib-routing.sh`
 
 ### Work Loop & Compounding
-- Skaffen OODARC FSM: `/home/mk/projects/Demarch/os/Skaffen/internal/agent/phase.go`
-- Skaffen evidence: `/home/mk/projects/Demarch/os/Skaffen/internal/evidence/emitter.go`
-- Interlab state model: `/home/mk/projects/Demarch/interverse/interlab/internal/experiment/state.go`
-- Session prompt: `/home/mk/projects/Demarch/os/Skaffen/internal/session/prompt_session.go`
+- Skaffen OODARC FSM: `/home/mk/projects/Sylveste/os/Skaffen/internal/agent/phase.go`
+- Skaffen evidence: `/home/mk/projects/Sylveste/os/Skaffen/internal/evidence/emitter.go`
+- Interlab state model: `/home/mk/projects/Sylveste/interverse/interlab/internal/experiment/state.go`
+- Session prompt: `/home/mk/projects/Sylveste/os/Skaffen/internal/session/prompt_session.go`
 
 ### Observability
 - Fleet registry: `core/fleet-registry/` (schema location)
-- Beads backup: `/home/mk/projects/Demarch/.beads/backup/`
-- Interstat: `/home/mk/projects/Demarch/interverse/interstat/scripts/cost-query.sh`
+- Beads backup: `/home/mk/projects/Sylveste/.beads/backup/`
+- Interstat: `/home/mk/projects/Sylveste/interverse/interstat/scripts/cost-query.sh`
 - Cass: `~/.local/bin/cass` (v0.2.0+)
 
 ### Plugin Evolution
-- Interlab `/autoresearch`: `/home/mk/projects/Demarch/interverse/interlab/skills/autoresearch/SKILL.md`
-- Interskill audit: `/home/mk/projects/Demarch/interverse/interskill/skills/audit/SKILL.md`
-- Intertrust: `/home/mk/projects/Demarch/interverse/intertrust/`
-- Interpub pipeline: `/home/mk/projects/Demarch/interverse/interpub/`
+- Interlab `/autoresearch`: `/home/mk/projects/Sylveste/interverse/interlab/skills/autoresearch/SKILL.md`
+- Interskill audit: `/home/mk/projects/Sylveste/interverse/interskill/skills/audit/SKILL.md`
+- Intertrust: `/home/mk/projects/Sylveste/interverse/intertrust/`
+- Interpub pipeline: `/home/mk/projects/Sylveste/interverse/interpub/`
 - Structural tests: `tests/structural/test_structure.py` per plugin
 
 ---
@@ -783,25 +783,25 @@ Demarch already produces structured JSON from interstat, cass, interlab, and bea
 ## What NOT to Do
 
 ### Anti-Pattern 1: Copy CRDTs wholesale
-**Why:** Demarch is single-machine, single-operator. Loro CRDTs solve a multi-writer convergence problem that doesn't exist. Use SQLite with circuit breaker + retry (already in intermute). The real problem is Dolt's process management bugs, not the state model.
+**Why:** Sylveste is single-machine, single-operator. Loro CRDTs solve a multi-writer convergence problem that doesn't exist. Use SQLite with circuit breaker + retry (already in intermute). The real problem is Dolt's process management bugs, not the state model.
 
 ### Anti-Pattern 2: Reduce code quality to a single metric
 **Why:** Hyperspace optimizes `val_loss` because ML metrics are naturally scalar. Code quality is multi-dimensional. Trying to optimize a single score (e.g., "code quality index") leads to Goodhart's Law violations. Use Pareto dominance instead.
 
 ### Anti-Pattern 3: Adopt per-agent branches for code
-**Why:** Hyperspace's per-agent branches work because agents write independent config files. Demarch agents modify the same shared codebase. Per-agent branches would bypass interlock's conflict detection. Keep trunk-based development. Use agent-namespaced *directories* for artifacts (already in use).
+**Why:** Hyperspace's per-agent branches work because agents write independent config files. Sylveste agents modify the same shared codebase. Per-agent branches would bypass interlock's conflict detection. Keep trunk-based development. Use agent-namespaced *directories* for artifacts (already in use).
 
 ### Anti-Pattern 4: Auto-publish plugin mutations
 **Why:** This turns a quality improvement tool into an attack surface. The publish step *must* require human approval. Never ship autonomous plugin evolution without a human-in-the-loop gate.
 
 ### Anti-Pattern 5: Build elaborate dashboards
-**Why:** Hyperspace publishes raw JSON snapshots and tells users "point any LLM at it." Demarch should do the same. Generate `snapshot.json` and let LLMs interpret it. Resist building Bigend dashboard widgets for every metric.
+**Why:** Hyperspace publishes raw JSON snapshots and tells users "point any LLM at it." Sylveste should do the same. Generate `snapshot.json` and let LLMs interpret it. Resist building Bigend dashboard widgets for every metric.
 
 ---
 
 ## Philosophical Alignment Summary
 
-**Where Hyperspace and Demarch Agree:**
+**Where Hyperspace and Sylveste Agree:**
 1. Agents as first-class citizens (autonomous, not just tools)
 2. Compound learning (intelligence accumulates across sessions)
 3. Hardware heterogeneity (support diverse tiers/devices)
@@ -809,19 +809,19 @@ Demarch already produces structured JSON from interstat, cass, interlab, and bea
 5. Open research (transparency over secrecy)
 
 **Where They Differ:**
-1. **Centralization** — Hyperspace: fully P2P. Demarch: centralized-but-local.
-2. **Incentives** — Hyperspace: points/tokens. Demarch: task completion + testing.
-3. **Autonomy scope** — Hyperspace: narrow (single metric). Demarch: broad (code understanding + design).
-4. **Mutation target** — Hyperspace: hyperparameters. Demarch: code (much harder search space).
-5. **Verification** — Hyperspace: cryptographic proof. Demarch: tests + human review.
+1. **Centralization** — Hyperspace: fully P2P. Sylveste: centralized-but-local.
+2. **Incentives** — Hyperspace: points/tokens. Sylveste: task completion + testing.
+3. **Autonomy scope** — Hyperspace: narrow (single metric). Sylveste: broad (code understanding + design).
+4. **Mutation target** — Hyperspace: hyperparameters. Sylveste: code (much harder search space).
+5. **Verification** — Hyperspace: cryptographic proof. Sylveste: tests + human review.
 
-**The key adaptation:** Steal the *mechanism* (feedback loop, mutation strategy, convergent state) while respecting Demarch's constraints (single machine, broad autonomy, multi-dimensional quality, human oversight).
+**The key adaptation:** Steal the *mechanism* (feedback loop, mutation strategy, convergent state) while respecting Sylveste's constraints (single machine, broad autonomy, multi-dimensional quality, human oversight).
 
 ---
 
 ## Conclusion
 
-Hyperspace AGI is a **valuable reference architecture** for Demarch's next evolution. The core insight — **close the feedback loop so agents compound learning** — is exactly what Demarch needs. The specific techniques (CRDTs, GossipSub, cryptographic proofs) are overkill for a single-machine context, but simpler primitives (SQLite, webhooks, tests + review) deliver the same compound learning property.
+Hyperspace AGI is a **valuable reference architecture** for Sylveste's next evolution. The core insight — **close the feedback loop so agents compound learning** — is exactly what Sylveste needs. The specific techniques (CRDTs, GossipSub, cryptographic proofs) are overkill for a single-machine context, but simpler primitives (SQLite, webhooks, tests + review) deliver the same compound learning property.
 
 The critical path is clear:
 1. **P0: Close the feedback loop** (Skaffen Compound → persistent store)

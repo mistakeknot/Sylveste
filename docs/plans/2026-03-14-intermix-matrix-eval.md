@@ -1,13 +1,13 @@
 ---
 artifact_type: plan
-bead: Demarch-ome7
+bead: Sylveste-ome7
 stage: design
 ---
 # intermix: Cross-Repo Matrix Evaluation Harness — Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-ome7
+**Bead:** Sylveste-ome7
 **Goal:** Build a Go MCP plugin that runs Skaffen against unfamiliar repos across a (repo, task) matrix, classifies outcomes with hybrid taxonomy, and generates delta reports with automatic bead creation for failure patterns.
 
 **Architecture:** Go MCP server (`interverse/intermix/`) with 4 stateless tools mirroring interlab's pattern — JSONL persistence, stateless state reconstruction, ic events bridge. Companion Clavain skill (`/evaluate`) drives the loop. Sequential cell execution, subprocess Skaffen spawn, test-based validation.
@@ -1994,7 +1994,7 @@ import (
 func TestEmitCellEvent_GracefulDegradation(t *testing.T) {
 	// Should not error even if ic is not installed
 	cr := CellResult{Repo: "chi", Task: "add-test", Outcome: OutcomeSuccess}
-	err := EmitCellEvent(cr, "Demarch-ome7")
+	err := EmitCellEvent(cr, "Sylveste-ome7")
 	if err != nil {
 		t.Errorf("expected graceful degradation, got: %v", err)
 	}

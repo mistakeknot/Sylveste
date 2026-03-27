@@ -447,7 +447,7 @@ Every authority check logs:
 {
   "timestamp": "2026-03-19T14:32:05Z",
   "agent_id": "grey-area",
-  "bead_id": "Demarch-4f2a",
+  "bead_id": "Sylveste-4f2a",
   "domain": "core/intercore",
   "action": "claim",
   "decision": "allow",
@@ -466,7 +466,7 @@ On deny, additional fields:
 ```json
   "deny_reason": "agent grey-area has no authority for security/*",
   "deny_action": "skip",
-  "next_candidate": "Demarch-4f2b"
+  "next_candidate": "Sylveste-4f2b"
 ```
 
 ---
@@ -648,7 +648,7 @@ Step 7: No coverage → deny
 - **Automatic rollback:** Demotion fires faster than promotion (asymmetric thresholds)
 - **Critical metric override:** Certain failures bypass scoring and trigger immediate halt
 
-**Applied to Demarch:** Authority stages (Propose → Execute → Commit → Deploy → Spend) with evidence gates, exponential decay, and critical incident triggers.
+**Applied to Sylveste:** Authority stages (Propose → Execute → Commit → Deploy → Spend) with evidence gates, exponential decay, and critical incident triggers.
 
 ### From Medical Credentialing (OPPE/FPPE)
 
@@ -657,7 +657,7 @@ Step 7: No coverage → deny
 - **Graduated escalation:** Background monitoring → focused review → restriction → revocation
 - **Emergency override (summary suspension):** Immediate removal on imminent safety threat
 
-**Applied to Demarch:** Authority audit table (OPPE-equivalent), demotion triggers (FPPE-equivalent), incident escalation to revocation.
+**Applied to Sylveste:** Authority audit table (OPPE-equivalent), demotion triggers (FPPE-equivalent), incident escalation to revocation.
 
 ### From Military (Pay Grade vs. Specialty)
 
@@ -665,7 +665,7 @@ Step 7: No coverage → deny
 - **Specialty transfer requires requalification:** Moving from Infantry to Logistics requires domain-specific training even at high rank
 - **Skill levels within specialty:** AFSC system has journeyman/craftsman/superintendent levels — progression couples time-in-grade with demonstrated proficiency
 
-**Applied to Demarch:** Fleet tier (pay grade) vs. domain authority (specialty), requalification on domain change, action-class tiers within domain.
+**Applied to Sylveste:** Fleet tier (pay grade) vs. domain authority (specialty), requalification on domain change, action-class tiers within domain.
 
 ---
 
@@ -729,10 +729,10 @@ Step 7: No coverage → deny
 
 ## Appendix: Concrete Example Walkthrough
 
-**Scenario:** Agent `grey-area` (T1 fleet tier, Interflux research agent) claims bead Demarch-4f2a which touches `interverse/interflux/analysis/**` and `docs/investigation/**`.
+**Scenario:** Agent `grey-area` (T1 fleet tier, Interflux research agent) claims bead Sylveste-4f2a which touches `interverse/interflux/analysis/**` and `docs/investigation/**`.
 
 ```
-resolve_authority("grey-area", "Demarch-4f2a", "execute"):
+resolve_authority("grey-area", "Sylveste-4f2a", "execute"):
 
 Step 1: Fleet tier ceiling
   grey-area.mycroft_tier = 1 → can do up to "execute"
@@ -765,7 +765,7 @@ Step 6: Return ALLOW
 Now grey-area claims the bead and works. After completion:
 
 ```
-authority_post_audit("Demarch-4f2a", "grey-area"):
+authority_post_audit("Sylveste-4f2a", "grey-area"):
   actual_paths = ["interverse/interflux/analysis/foo.go", "docs/investigation/report.md"]
   authorized_patterns = ["interverse/interflux/**", "docs/**"]
 
@@ -776,7 +776,7 @@ authority_post_audit("Demarch-4f2a", "grey-area"):
 **Contrast: If bead had touched core/intercore:**
 
 ```
-authority_post_audit("Demarch-4f2a", "grey-area"):
+authority_post_audit("Sylveste-4f2a", "grey-area"):
   actual_paths = ["interverse/interflux/analysis/foo.go",
                   "docs/investigation/report.md",
                   "core/intercore/kernel.go"]  ← out of scope!

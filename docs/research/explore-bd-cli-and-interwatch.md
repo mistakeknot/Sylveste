@@ -296,15 +296,15 @@ Compare git mode bits before/after doc mtime cutoff.
 ## Files Referenced
 
 **Beads CLI:**
-- `/home/mk/.local/bin/bd` — compiled binary (no source in Demarch repo)
+- `/home/mk/.local/bin/bd` — compiled binary (no source in Sylveste repo)
 
 **Interwatch Plugin:**
-- `/home/mk/projects/Demarch/interverse/interwatch/AGENTS.md` — dev guide
-- `/home/mk/projects/Demarch/interverse/interwatch/CLAUDE.md` — quick reference
-- `/home/mk/projects/Demarch/interverse/interwatch/skills/doc-watch/SKILL.md` — orchestrator
-- `/home/mk/projects/Demarch/interverse/interwatch/skills/doc-watch/phases/detect.md` — signal detection
-- `/home/mk/projects/Demarch/interverse/interwatch/skills/doc-watch/phases/assess.md` — confidence scoring
-- `/home/mk/projects/Demarch/interverse/interwatch/skills/doc-watch/references/signals.md` — signal catalog
-- `/home/mk/projects/Demarch/interverse/interwatch/hooks/lib-watch.sh` — bash signal detection library
-- `/home/mk/projects/Demarch/interverse/interwatch/.claude-plugin/plugin.json` — plugin manifest (v0.1.4)
+- `/home/mk/projects/Sylveste/interverse/interwatch/AGENTS.md` — dev guide
+- `/home/mk/projects/Sylveste/interverse/interwatch/CLAUDE.md` — quick reference
+- `/home/mk/projects/Sylveste/interverse/interwatch/skills/doc-watch/SKILL.md` — orchestrator
+- `/home/mk/projects/Sylveste/interverse/interwatch/skills/doc-watch/phases/detect.md` — signal detection
+- `/home/mk/projects/Sylveste/interverse/interwatch/skills/doc-watch/phases/assess.md` — confidence scoring
+- `/home/mk/projects/Sylveste/interverse/interwatch/skills/doc-watch/references/signals.md` — signal catalog
+- `/home/mk/projects/Sylveste/interverse/interwatch/hooks/lib-watch.sh` — bash signal detection library
+- `/home/mk/projects/Sylveste/interverse/interwatch/.claude-plugin/plugin.json` — plugin manifest (v0.1.4)
 

@@ -49,7 +49,7 @@ Research on SWE-bench token consumption confirms: token cost for comparable task
 
 The key insight from Troy Magennis's research: "If the samples were sized with story points, then the output will be in story points. If we use story count, then the output will be a number of stories." For AI factories, the natural unit is **dollars** (or tokens, which map to dollars). The Monte Carlo machinery works identically — the input distribution just changes from "story points completed per sprint" to "dollars per task by category."
 
-**New primitive: Cost-per-landable-change distribution.** This is the AI factory equivalent of velocity. Demarch already tracks this ($2.93/landable change baseline as of 2026-03-18). The primitive is not the mean — it is the full distribution, parameterized by task type, model, and agent configuration.
+**New primitive: Cost-per-landable-change distribution.** This is the AI factory equivalent of velocity. Sylveste already tracks this ($2.93/landable change baseline as of 2026-03-18). The primitive is not the mean — it is the full distribution, parameterized by task type, model, and agent configuration.
 
 ---
 

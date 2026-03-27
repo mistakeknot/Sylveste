@@ -1,4 +1,4 @@
-# Demarch Roadmap
+# Sylveste Roadmap
 
 **Modules:** `find apps os core interverse sdk -maxdepth 2 -name .git -printf '%h\n' 2>/dev/null | wc -l` | **Beads:** `bd stats` | **Last updated:** 2026-03-15
 **Structure:** [`CLAUDE.md`](../CLAUDE.md)
@@ -8,9 +8,9 @@
 
 ## Now — Frontier Priorities
 
-**P1: Skaffen competitive gap closure** (Demarch-6i0, epic, 22 open subtasks). The largest active epic. Closing feature gaps identified in the coding-agent feature matrix — hooks, compaction, skills, subagents, sandbox, image support, web search, plan mode, and more. 1/23 subtasks shipped so far. Brainstorms and plans landed for most critical gaps (hook system, skills system, subagent system, sandbox, image support, web search, plan mode, per-project config).
+**P1: Skaffen competitive gap closure** (Sylveste-6i0, epic, 22 open subtasks). The largest active epic. Closing feature gaps identified in the coding-agent feature matrix — hooks, compaction, skills, subagents, sandbox, image support, web search, plan mode, and more. 1/23 subtasks shipped so far. Brainstorms and plans landed for most critical gaps (hook system, skills system, subagent system, sandbox, image support, web search, plan mode, per-project config).
 
-**P1: SWE-bench pass rate** (Demarch-ynh Phase 1 + Demarch-9lx Phase 2). Two epics targeting +15-20% (quick wins: grep context lines, glob fixes, tail-preserving truncation, py_compile validation, fault hypothesis prompting) and +10-15% (test-driven feedback loop, empty-diff detection, aggregate diff review). pyenv per-cell Python selection (Demarch-sdk0) also open.
+**P1: SWE-bench pass rate** (Sylveste-ynh Phase 1 + Sylveste-9lx Phase 2). Two epics targeting +15-20% (quick wins: grep context lines, glob fixes, tail-preserving truncation, py_compile validation, fault hypothesis prompting) and +10-15% (test-driven feedback loop, empty-diff detection, aggregate diff review). pyenv per-cell Python selection (Sylveste-sdk0) also open.
 
 **P1: Infrastructure + bugs.**
 - **iv-ho3** StrongDM Factory Substrate — validation-first infra for Clavain. In progress. Blocks iv-296 → iv-g36hy → iv-3ov (the measurement chain).
@@ -23,13 +23,13 @@ Note: iv-83du3 (Intercom message delivery reliability) shipped — outbox, LISTE
 **P1: Measurement hardening chain.** The path to making the north-star metric canonical:
 - iv-ho3 (in progress) → iv-296 (CXDB integration) → iv-g36hy (sprint execution recording) → iv-3ov (evidence pipeline wiring)
 
-**P1: Hyperspace AGI adoption** (Demarch-a42, epic). Three themes from Hyperspace research: close Skaffen's feedback loop (quality signals, compound phase), consolidate observability, enable autonomous plugin improvement via interlab mutation campaigns.
+**P1: Hyperspace AGI adoption** (Sylveste-a42, epic). Three themes from Hyperspace research: close Skaffen's feedback loop (quality signals, compound phase), consolidate observability, enable autonomous plugin improvement via interlab mutation campaigns.
 
 **P2: Adaptive routing (the flywheel).**
 - **iv-5ztam** Interspect adaptive routing epic — evidence-driven agent selection. 10+ subtasks including counterfactual shadow evaluation, rate limiter, meta-learning loop.
 - **iv-jgdct** Apply complexity-aware routing across all subagents. B2 infrastructure is fully built but has zero production callers — needs signal collection + injection at dispatch points (flux-drive, quality-gates). Staged rollout plan: shadow first, enforce later.
-- **Demarch-g4ja** Interspect-interrank wiring. Override consumption (Gap 1) shipped — lib-routing.sh now reads `.claude/routing-overrides.json`. Gaps 2-5 (interrank at decision time, calibration validation, routing decision feedback, override TTL) remain open.
-- **Demarch-g3a** Interspect calibration pipeline — fix broken verdict recording in quality-gates, upgrade calibration schema to v2 with source weighting and phase awareness.
+- **Sylveste-g4ja** Interspect-interrank wiring. Override consumption (Gap 1) shipped — lib-routing.sh now reads `.claude/routing-overrides.json`. Gaps 2-5 (interrank at decision time, calibration validation, routing decision feedback, override TTL) remain open.
+- **Sylveste-g3a** Interspect calibration pipeline — fix broken verdict recording in quality-gates, upgrade calibration schema to v2 with source weighting and phase awareness.
 
 **Recently completed (since last update):**
 - **iv-awny7** Intercom Rust/Postgres cutover — ALL 6 SUBTASKS CLOSED. Group registration, scheduled tasks, SQLite removal, command plane unification, Node scaffolding removal, architecture docs. Former P0 epic, done.
@@ -39,8 +39,8 @@ Note: iv-83du3 (Intercom message delivery reliability) shipped — outbox, LISTE
 - **iv-30zy3** Durable session-bead-run attribution ledger in interstat (closed)
 - **iv-544dn** Interspect event validity and outcome attribution research (closed)
 - **iv-ojik9** Apps → OS → Kernel intent contract research (closed)
-- **Demarch-g4ja** Override consumption (Gap 1) — lib-routing.sh reads interspect overrides (closed)
-- **Demarch-pgl** Context monitor hook — inject context % warnings (closed)
+- **Sylveste-g4ja** Override consumption (Gap 1) — lib-routing.sh reads interspect overrides (closed)
+- **Sylveste-pgl** Context monitor hook — inject context % warnings (closed)
 - **iv-83du3** Intercom message delivery reliability — outbox, LISTEN/NOTIFY, UDS IPC, SQLite retirement (closed)
 - **iv-craui** interkasten self-referential FK fix (closed)
 - **iv-q8ge7** BeadID/SessionID validation before subprocess arg passing (closed)
@@ -58,7 +58,7 @@ Note: iv-83du3 (Intercom message delivery reliability) shipped — outbox, LISTE
 
 2. **Adaptive Routing (Track B2→B3)** — Complexity-aware routing activation (B2 infrastructure exists, callers needed), interspect calibration pipeline fixes, evidence-driven agent selection. The learning loop that makes the system cheaper and better over time.
 
-3. **Autonomous Improvement Loop** — interlab mutation store (shipped), meta-improvement campaigns (interflux self-review pilot planned), intermix cross-repo matrix evaluation harness (planned, Demarch-ome7), multi-plugin quality scanning (shipped). The infrastructure for agents improving themselves.
+3. **Autonomous Improvement Loop** — interlab mutation store (shipped), meta-improvement campaigns (interflux self-review pilot planned), intermix cross-repo matrix evaluation harness (planned, Sylveste-ome7), multi-plugin quality scanning (shipped). The infrastructure for agents improving themselves.
 
 4. **Measurement Hardening** — Make the north-star metric canonical. The measurement chain unblocks the evidence pipeline that adaptive routing needs.
 
@@ -74,10 +74,10 @@ Longer-term directions, not yet scoped into specific items. Full inventory: [bac
 - **Continuous dispatch** — Daemon mode for always-on agent orchestration
 - **Workspace isolation** — Git worktree per task for parallel safe execution
 - **Runtime budget enforcement** — Real-time token budget checks mid-execution
-- **Intercom Go rewrite** — Port Rust daemon to Go + Skaffen integration (Demarch-mvy)
+- **Intercom Go rewrite** — Port Rust daemon to Go + Skaffen integration (Sylveste-mvy)
 - **Mycroft fleet orchestrator** — Multi-agent fleet coordination (brainstorm complete)
 - **Evaluation infrastructure** — intermix harness (planned), model-capability sensitivity benchmarks, verifier context patterns
-- **Exploration-exploitation strategy** — Skaffen Orient phase (Demarch-e0t)
+- **Exploration-exploitation strategy** — Skaffen Orient phase (Sylveste-e0t)
 
 ---
 
@@ -169,4 +169,4 @@ scripts/sync-roadmap-json.sh docs/roadmap.json
 
 ---
 
-**Moved to separate files:** Module highlights → [demarch-reference.md](demarch-reference.md). Research agenda, cross-module dependencies, modules without roadmaps → [backlog.md](backlog.md).
+**Moved to separate files:** Module highlights → [sylveste-reference.md](sylveste-reference.md). Research agenda, cross-module dependencies, modules without roadmaps → [backlog.md](backlog.md).

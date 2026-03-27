@@ -17,7 +17,7 @@
       "The extraction query is idempotent — uses a cursor or timestamp window, not a processed flag",
       "False-positive and false-negative signals are cleanly separable before entering the calibration model"
     ],
-    "task_context": "Gates in Demarch's intercore kernel are binary existence checks hardcoded in gate.go. The system needs a 4-stage calibration loop following PHILOSOPHY.md patterns.",
+    "task_context": "Gates in Sylveste's intercore kernel are binary existence checks hardcoded in gate.go. The system needs a 4-stage calibration loop following PHILOSOPHY.md patterns.",
     "anti_overlap": [
       "fd-gate-calibration-algorithm covers the math for aggregating signals into threshold adjustments",
       "fd-gate-transaction-safety covers TOCTOU constraints for applying calibrated values",
@@ -42,7 +42,7 @@
       "Calibrated state format makes the fallback chain explicit: calibrated → previous → hardcoded default",
       "Goodhart resistance is structural: minimum sample threshold and maximum rate-of-change per cycle"
     ],
-    "task_context": "Gates in Demarch's intercore kernel are binary existence checks hardcoded in gate.go. The system needs a 4-stage calibration loop following PHILOSOPHY.md patterns.",
+    "task_context": "Gates in Sylveste's intercore kernel are binary existence checks hardcoded in gate.go. The system needs a 4-stage calibration loop following PHILOSOPHY.md patterns.",
     "anti_overlap": [
       "fd-gate-signal-extraction covers upstream signal collection from phase_events",
       "fd-gate-transaction-safety covers atomic application of calibrated values",
@@ -67,7 +67,7 @@
       "Hard gate demotion requires explicit authority escalation that calibration alone cannot perform",
       "Atomic swap uses tmp-rename pattern from calibration.go with explicit staleness SLA"
     ],
-    "task_context": "Gates in Demarch's intercore kernel are binary existence checks hardcoded in gate.go. The system needs a 4-stage calibration loop following PHILOSOPHY.md patterns.",
+    "task_context": "Gates in Sylveste's intercore kernel are binary existence checks hardcoded in gate.go. The system needs a 4-stage calibration loop following PHILOSOPHY.md patterns.",
     "anti_overlap": [
       "fd-gate-signal-extraction covers upstream signal collection",
       "fd-gate-calibration-algorithm covers the mathematical update rule",
@@ -92,7 +92,7 @@
       "Calibration cannot add/remove checks without human action",
       "Per-check-type dimension is explicitly modeled or explicitly excluded with rationale"
     ],
-    "task_context": "Gates in Demarch's intercore kernel are binary existence checks hardcoded in gate.go. The system needs a 4-stage calibration loop following PHILOSOPHY.md patterns.",
+    "task_context": "Gates in Sylveste's intercore kernel are binary existence checks hardcoded in gate.go. The system needs a 4-stage calibration loop following PHILOSOPHY.md patterns.",
     "anti_overlap": [
       "fd-gate-calibration-algorithm covers the mathematical update rule",
       "fd-gate-signal-extraction covers how overrides are classified as false positives",
@@ -117,7 +117,7 @@
       "Calibration divergence alert fires before threshold hits clamp boundary",
       "At least one structured event per calibration cycle queryable via ic events"
     ],
-    "task_context": "Gates in Demarch's intercore kernel are binary existence checks hardcoded in gate.go. The system needs a 4-stage calibration loop following PHILOSOPHY.md patterns.",
+    "task_context": "Gates in Sylveste's intercore kernel are binary existence checks hardcoded in gate.go. The system needs a 4-stage calibration loop following PHILOSOPHY.md patterns.",
     "anti_overlap": [
       "fd-gate-signal-extraction covers extracting training data",
       "fd-gate-calibration-algorithm covers Goodhart resistance mechanisms",

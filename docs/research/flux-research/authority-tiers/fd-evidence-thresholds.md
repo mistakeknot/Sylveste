@@ -44,7 +44,7 @@ Key parameters that transfer to agent authority:
 
 ### 1.2 LaunchDarkly Guarded Rollouts
 
-LaunchDarkly's guarded rollouts combine percentage ramps with real-time metric monitoring and automatic rollback. The progression model (5% -> 25% -> 50% -> 100%) with metric gates at each stage maps to Demarch's existing Mycroft tiers:
+LaunchDarkly's guarded rollouts combine percentage ramps with real-time metric monitoring and automatic rollback. The progression model (5% -> 25% -> 50% -> 100%) with metric gates at each stage maps to Sylveste's existing Mycroft tiers:
 
 | LaunchDarkly Stage | Mycroft Tier | Authority Level |
 |-------------------|-------------|-----------------|
@@ -72,7 +72,7 @@ The three systems converge on a common pattern:
 
 Evidence for agent authority decisions falls into six classes, ordered by signal strength (strongest first):
 
-| Class | Signal | Weight | Source in Demarch |
+| Class | Signal | Weight | Source in Sylveste |
 |-------|--------|--------|-------------------|
 | **Incident attribution** | Agent action caused revert, breakage, security issue | -4x (critical metric — bypasses scoring) | Interspect `incident` events, git revert correlation |
 | **Human override** | Human rejected agent proposal or reverted agent action | -2x per override | Interspect `finding_discarded`, `dispatch_rejected` events |

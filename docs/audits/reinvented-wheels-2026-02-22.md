@@ -1,6 +1,6 @@
 # Reinvented Wheels Audit — 2026-02-22
 
-Audit of the Demarch monorepo for cases where bespoke code reinvents functionality
+Audit of the Sylveste monorepo for cases where bespoke code reinvents functionality
 available in established, well-maintained open-source tools.
 
 Scope: `os/clavain/` (11,417 lines across 30 scripts) and `interverse/` (33+ plugins).

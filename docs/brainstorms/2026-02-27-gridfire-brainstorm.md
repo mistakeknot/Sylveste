@@ -3,7 +3,7 @@
 > **Name origin:** Gridfire (Iain M. Banks, *Consider Phlebas*) — the Culture's
 > ultimate weapon that tears through the fabric of spacetime. Here: the
 > infrastructure layer that replaces Unix composition for autonomous agents.
-> Sits alongside Demarch/Clavain/Autarch in the Reynolds+Banks naming constellation.
+> Sits alongside Sylveste/Clavain/Autarch in the Reynolds+Banks naming constellation.
 > Previously working-titled "Cybernetic Unix" / "ctlsh" / "ReceiptOS".
 
 **Bead:** iv-o4w8o
@@ -62,9 +62,9 @@ Systems-theory analysis of Unix composition applied to agentic software developm
 | **P6: Capability** | Ambient authority | Unforgeable token with effects_allowlist + resource_bounds + expiry | Compose by intersection; delegation reduces scope |
 | **P7: RunGraph** | Shell scripts | `RunGraph { nodes: Actions/Gates/Controllers, edges: Flows, policy_ref }` | Declarative, replayable orchestration; event-sourced |
 
-## What Demarch Already Has (Mapping)
+## What Sylveste Already Has (Mapping)
 
-| Gridfire Concept | Demarch Implementation | Status |
+| Gridfire Concept | Sylveste Implementation | Status |
 |---------------|----------------------|--------|
 | Receipt / event log | Intercore events table | Implemented (E1-E8) |
 | Gate enforcement | lib-gates.sh + enforce-gate CLI | Implemented |
@@ -175,4 +175,4 @@ Systems-theory analysis of Unix composition applied to agentic software developm
 
 ## Target Domain
 
-Primary: autonomous software development (Demarch core). The analysis was conducted against the actual Demarch architecture and identifies concrete deltas, not abstract theory.
+Primary: autonomous software development (Sylveste core). The analysis was conducted against the actual Sylveste architecture and identifies concrete deltas, not abstract theory.

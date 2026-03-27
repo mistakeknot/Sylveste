@@ -10,7 +10,7 @@ The classical Cost of Quality (COQ) framework divides costs into four categories
 
 ### COQ Categories Mapped to Agent Operations
 
-| Classical Category | Manufacturing Example | Agent Equivalent | Demarch Mechanism |
+| Classical Category | Manufacturing Example | Agent Equivalent | Sylveste Mechanism |
 |---|---|---|---|
 | **Prevention** | Training, process design | Prompt engineering, routing rules, gate design | `lib-routing.sh`, gate configs, SKILL.md |
 | **Appraisal** | Inspection, testing | Output validation, test execution, review agents | Interspect hooks, tool_selection_events |
@@ -33,9 +33,9 @@ C_scrap = C_original + C_fresh_generation
 
 The sunk cost of the original generation is economically irrelevant to the scrap-vs-rework decision — only future costs matter. The decision-relevant cost is purely the fresh generation cost.
 
-**Token cost estimate** (from Demarch interstat baseline):
+**Token cost estimate** (from Sylveste interstat baseline):
 - Average SWE-bench trajectory: 48.4K tokens across 40 steps (OpenReview research)
-- Demarch cost-per-landable-change: $2.93 (785 sessions, 2026-03-18 baseline)
+- Sylveste cost-per-landable-change: $2.93 (785 sessions, 2026-03-18 baseline)
 - At Sonnet pricing ($3/Mtok input, $15/Mtok output): a full-scrap re-generation costs approximately the full bead token budget
 
 **When scrap is economically rational**:
@@ -106,13 +106,13 @@ C_blocked_downstream = Σ(blocked_bead_value × time_blocked)
 | Obsolescence | Style changes, shelf life | **Context staleness** — quarantined output may reference outdated code |
 | Decision overhead | MRB meeting time | **Token cost of re-review** each time someone revisits |
 
-**The dominant quarantine cost in agent systems is blocked downstream work.** When a bead's output is quarantined, any dependent beads cannot proceed. In Demarch's bead graph, this creates a cascade: if bead A's output is quarantined and beads B, C, D depend on A, the effective holding cost is the idle-time cost of B + C + D.
+**The dominant quarantine cost in agent systems is blocked downstream work.** When a bead's output is quarantined, any dependent beads cannot proceed. In Sylveste's bead graph, this creates a cascade: if bead A's output is quarantined and beads B, C, D depend on A, the effective holding cost is the idle-time cost of B + C + D.
 
-**Quarantine cost per hour** (estimated from Demarch baseline):
+**Quarantine cost per hour** (estimated from Sylveste baseline):
 ```
 C_quarantine_per_hour = N_blocked_beads × avg_bead_cost × opportunity_cost_rate
 
-With Demarch's $2.93/landable-change baseline:
+With Sylveste's $2.93/landable-change baseline:
   1 blocked bead × $2.93 × 0.1/hour ≈ $0.29/hour of quarantine
   3 blocked beads × $2.93 × 0.1/hour ≈ $0.88/hour
 ```

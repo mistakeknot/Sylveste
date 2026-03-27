@@ -9,7 +9,7 @@
 
 ## Problem
 
-The root roadmap (`docs/demarch-roadmap.md`) contains 100+ P2 items making it read as a backlog dump rather than a strategic program. The measurement hardening chain (the path to making the north-star metric canonical) is buried in the detailed inventory rather than called out as a strategic priority.
+The root roadmap (`docs/sylveste-roadmap.md`) contains 100+ P2 items making it read as a backlog dump rather than a strategic program. The measurement hardening chain (the path to making the north-star metric canonical) is buried in the detailed inventory rather than called out as a strategic priority.
 
 ## Non-Goals
 
@@ -27,7 +27,7 @@ The root roadmap (`docs/demarch-roadmap.md`) contains 100+ P2 items making it re
 ## Features
 
 ### F1: Roadmap restructure
-**What:** Restructure `docs/demarch-roadmap.md` to separate strategic roadmap from detailed inventory.
+**What:** Restructure `docs/sylveste-roadmap.md` to separate strategic roadmap from detailed inventory.
 - Now section: keep the 8 items as-is (they're well-curated)
 - Next section: collapse 100+ P2 items into 5 strategic themes with 2-3 representative items each
 - Later section: themes only, no individual items
@@ -46,7 +46,7 @@ iv-fo0rx (canonical landed-change entity)
 Frame as: "The path to making the north-star metric ($1.17/landable change) canonical rather than provisional."
 
 ### F3: Autonomy phrasing fix
-**What:** In `docs/demarch-vision.md` line 158, change from absolute "never pushes" to graduated statement that leads into the autonomy ladder.
+**What:** In `docs/sylveste-vision.md` line 158, change from absolute "never pushes" to graduated statement that leads into the autonomy ladder.
 
 ### F4: Scope documentation
 **What:** Add one-line note to roadmap explaining that roadmap.json tracks roadmap-placed items only, while bd stats tracks all beads.

@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-jpum
+bead: Sylveste-jpum
 stage: design
 ---
 

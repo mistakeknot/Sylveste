@@ -1,6 +1,6 @@
-# Demarch Backlog — Detailed Inventory
+# Sylveste Backlog — Detailed Inventory
 
-**Companion to:** [demarch-roadmap.md](demarch-roadmap.md) (strategic roadmap)
+**Companion to:** [sylveste-roadmap.md](sylveste-roadmap.md) (strategic roadmap)
 **Last synced:** 2026-03-13
 
 This file contains the full P2/P3 item inventory. The root roadmap shows strategic themes; this file has every tracked item. Generated from beads state — regenerate with `scripts/sync-roadmap-json.sh`.

@@ -5,7 +5,7 @@
 
 ## Problem Statement
 
-Combined tool surface across loaded Demarch MCP servers exceeds 110 tools. Every agent sees every tool regardless of task scope. Each tool definition consumes ~100-300 tokens of system prompt context, meaning an agent loading 5 MCP servers pays ~15-30k tokens before any work begins. Most tasks only need 10-20 tools.
+Combined tool surface across loaded Sylveste MCP servers exceeds 110 tools. Every agent sees every tool regardless of task scope. Each tool definition consumes ~100-300 tokens of system prompt context, meaning an agent loading 5 MCP servers pays ~15-30k tokens before any work begins. Most tasks only need 10-20 tools.
 
 ## Current State
 

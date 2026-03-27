@@ -1,11 +1,11 @@
 # Replace `hub/clavain` with `os/clavain` — Analysis
 
 **Date:** 2026-02-22
-**Scope:** All files in `/home/mk/projects/Demarch`
+**Scope:** All files in `/home/mk/projects/Sylveste`
 
 ## Summary
 
-Replaced all `hub/clavain` references with `os/clavain` across the Demarch monorepo. This reflects the directory restructuring where Clavain moved from `hub/clavain` to `os/clavain`.
+Replaced all `hub/clavain` references with `os/clavain` across the Sylveste monorepo. This reflects the directory restructuring where Clavain moved from `hub/clavain` to `os/clavain`.
 
 ## Replacement Statistics
 
@@ -17,7 +17,7 @@ Replaced all `hub/clavain` references with `os/clavain` across the Demarch monor
 
 | Repository | Files Changed |
 |---|---|
-| Demarch (root) | 91 files (md/json/log/sh) |
+| Sylveste (root) | 91 files (md/json/log/sh) |
 | os/clavain | 54 files |
 | core/intercore | 53 files |
 | interverse/interflux | 8 files |
@@ -30,7 +30,7 @@ Replaced all `hub/clavain` references with `os/clavain` across the Demarch monor
 | interverse/intersynth | 1 file |
 | interverse/interpath | 1 file |
 
-Note: Files in subprojects appear in both the root Demarch diff and their own subproject git diff.
+Note: Files in subprojects appear in both the root Sylveste diff and their own subproject git diff.
 
 ## Two Patterns Handled
 

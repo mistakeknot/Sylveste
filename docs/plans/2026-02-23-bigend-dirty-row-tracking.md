@@ -151,7 +151,7 @@ func TestHashActivities(t *testing.T) {
 
 **Step 2: Run test to verify it fails**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go test ./internal/bigend/tui/ -run TestSection -v`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go test ./internal/bigend/tui/ -run TestSection -v`
 Expected: FAIL — `hashSessions`, `hashAgents`, `hashStats`, `hashActivities`, `newSectionCache`, `sectionStats` undefined.
 
 **Step 3: Write the implementation**
@@ -376,10 +376,10 @@ func hashActivities(activities []aggregator.Activity, limit int) uint64 {
 
 **Step 4: Run tests to verify they pass**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go test ./internal/bigend/tui/ -run TestSection -v`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go test ./internal/bigend/tui/ -run TestSection -v`
 Expected: All PASS.
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go test ./internal/bigend/tui/ -run TestHash -v`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go test ./internal/bigend/tui/ -run TestHash -v`
 Expected: All PASS.
 
 **Step 5: Commit**
@@ -414,7 +414,7 @@ In the `New()` function, add to the returned struct literal:
 
 **Step 3: Run existing tests to verify no breakage**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go test ./internal/bigend/tui/ -v -count=1`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go test ./internal/bigend/tui/ -v -count=1`
 Expected: All existing tests PASS.
 
 **Step 4: Commit**
@@ -462,7 +462,7 @@ func TestDashboardCacheSkipsReRender(t *testing.T) {
 
 **Step 2: Run test to verify it passes (it should pass now since output is deterministic)**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go test ./internal/bigend/tui/ -run TestDashboardCache -v`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go test ./internal/bigend/tui/ -run TestDashboardCache -v`
 Expected: PASS (this is a sanity test; the real value is confirming cache doesn't break output).
 
 **Step 3: Refactor renderDashboard to use section cache**
@@ -754,7 +754,7 @@ func (m Model) renderActivityFeed(activities []aggregator.Activity) string {
 
 **Step 5: Run all tests**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go test ./internal/bigend/tui/ -v -count=1`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go test ./internal/bigend/tui/ -v -count=1`
 Expected: All PASS — the dashboard output is identical, just produced through cache now.
 
 **Step 6: Commit**
@@ -809,7 +809,7 @@ func TestResizeInvalidatesCache(t *testing.T) {
 
 **Step 2: Run test to verify it fails**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go test ./internal/bigend/tui/ -run TestResizeInvalidates -v`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go test ./internal/bigend/tui/ -run TestResizeInvalidates -v`
 Expected: FAIL — `applyResize` doesn't yet call `invalidateAll()`.
 
 **Step 3: Add cache invalidation to applyResize**
@@ -824,12 +824,12 @@ In `model.go`, at the start of `applyResize()`, add:
 
 **Step 4: Run all tests**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go test ./internal/bigend/tui/ -v -count=1 -race`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go test ./internal/bigend/tui/ -v -count=1 -race`
 Expected: All PASS with no race conditions.
 
 **Step 5: Run full package build**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go build ./cmd/...`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go build ./cmd/...`
 Expected: Builds cleanly.
 
 **Step 6: Commit**

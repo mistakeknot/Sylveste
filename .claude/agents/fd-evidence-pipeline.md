@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-Demarch's philosophy is 'every action produces evidence' and 'evidence earns authority.' The evidence pipeline is the backbone connecting plugin actions to the validation/scoring system via CXDB.
+Sylveste's philosophy is 'every action produces evidence' and 'evidence earns authority.' The evidence pipeline is the backbone connecting plugin actions to the validation/scoring system via CXDB.
 
 ## Review Approach
 

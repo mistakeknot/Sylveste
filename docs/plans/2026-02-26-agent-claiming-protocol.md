@@ -222,7 +222,7 @@ From flux-drive plan review (fd-correctness, fd-architecture, fd-safety):
    ```
 
 2. `chmod +x interverse/interphase/scripts/bd-who`
-3. `ln -sf /home/mk/projects/Demarch/interverse/interphase/scripts/bd-who /home/mk/.local/bin/bd-who`
+3. `ln -sf /home/mk/projects/Sylveste/interverse/interphase/scripts/bd-who /home/mk/.local/bin/bd-who`
 
 **Validation:**
 - `bd-who` runs and shows grouped output

@@ -65,7 +65,7 @@ A good review from this agent:
 - Frames uncertain findings as questions: "Does this handle X?" not "This doesn't handle X"
 - A new attp MCP server implementation can be written against the tool surface spec without reading the reference implementation
 - An agent that calls attp_push on a peer running an older attp version receives a structured error that tells it exactly which capability is missing
-- No MCP tool name or parameter field contains a Tailscale, Demarch, or interweave identifier
+- No MCP tool name or parameter field contains a Tailscale, Sylveste, or interweave identifier
 
 ## Decision Lens
 

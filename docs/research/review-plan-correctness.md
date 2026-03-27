@@ -1,14 +1,14 @@
 # Correctness Review: ic Binary Install Path Plan
 
-**Plan:** `/home/mk/projects/Demarch/docs/plans/2026-02-24-ic-binary-install-path.md`
+**Plan:** `/home/mk/projects/Sylveste/docs/plans/2026-02-24-ic-binary-install-path.md`
 **Reviewer:** Julik (fd-correctness)
 **Date:** 2026-02-24
 **Files inspected:**
-- `/home/mk/projects/Demarch/os/clavain/hooks/lib-intercore.sh`
-- `/home/mk/projects/Demarch/os/clavain/hooks/lib-sprint.sh`
-- `/home/mk/projects/Demarch/os/clavain/scripts/lib-routing.sh`
-- `/home/mk/projects/Demarch/os/clavain/hooks/session-end-handoff.sh`
-- `/home/mk/projects/Demarch/install.sh`
+- `/home/mk/projects/Sylveste/os/clavain/hooks/lib-intercore.sh`
+- `/home/mk/projects/Sylveste/os/clavain/hooks/lib-sprint.sh`
+- `/home/mk/projects/Sylveste/os/clavain/scripts/lib-routing.sh`
+- `/home/mk/projects/Sylveste/os/clavain/hooks/session-end-handoff.sh`
+- `/home/mk/projects/Sylveste/install.sh`
 
 ---
 
@@ -85,7 +85,7 @@ The PCRE `\d+` is equivalent to POSIX `[0-9]+` for version number extraction.
 
 ### F3 — P1: Caller Audit Is Incomplete — `lib-routing.sh:341` Is Not Listed (Task 1)
 
-**Location:** `/home/mk/projects/Demarch/os/clavain/scripts/lib-routing.sh`, line 341
+**Location:** `/home/mk/projects/Sylveste/os/clavain/scripts/lib-routing.sh`, line 341
 
 **Actual code in production:**
 ```bash
@@ -196,9 +196,9 @@ With 5 concurrent hooks on a Stop cycle, the user sees up to 5 identical warning
 
 **Code from plan:**
 ```bash
-if run git clone --depth=1 --filter=blob:none --sparse https://github.com/mistakeknot/Demarch.git "$IC_TMPDIR/Demarch" 2>/dev/null; then
-    (cd "$IC_TMPDIR/Demarch" && git sparse-checkout set core/intercore)
-    IC_SRC="$IC_TMPDIR/Demarch/core/intercore"
+if run git clone --depth=1 --filter=blob:none --sparse https://github.com/mistakeknot/Sylveste.git "$IC_TMPDIR/Sylveste" 2>/dev/null; then
+    (cd "$IC_TMPDIR/Sylveste" && git sparse-checkout set core/intercore)
+    IC_SRC="$IC_TMPDIR/Sylveste/core/intercore"
 else
     warn "Could not clone intercore source. ..."
     IC_SRC=""
@@ -207,12 +207,12 @@ fi
 
 **Failure:** The sparse-checkout runs as a bare statement inside the `then` branch. `install.sh` uses `set -euo pipefail`. A bare subshell `(...)` that exits non-zero (e.g., git version too old for sparse-checkout, network failure mid-clone) causes the parent script to exit immediately under `set -e` — before reaching `IC_SRC=` or the `warn` message. The user sees an abrupt exit with no diagnostic message.
 
-In dry-run mode the behavior is different: `run git clone` is a no-op (returns 0), so the `then` branch is entered. The sparse-checkout subshell then runs against the empty `$IC_TMPDIR/Demarch` directory (no `.git` dir), fails, and the script exits. `IC_SRC` is never set; the dry-run output does not show the expected "would build ic" message.
+In dry-run mode the behavior is different: `run git clone` is a no-op (returns 0), so the `then` branch is entered. The sparse-checkout subshell then runs against the empty `$IC_TMPDIR/Sylveste` directory (no `.git` dir), fails, and the script exits. `IC_SRC` is never set; the dry-run output does not show the expected "would build ic" message.
 
 **Fix:**
 ```bash
-if (cd "$IC_TMPDIR/Demarch" && git sparse-checkout set core/intercore 2>/dev/null); then
-    IC_SRC="$IC_TMPDIR/Demarch/core/intercore"
+if (cd "$IC_TMPDIR/Sylveste" && git sparse-checkout set core/intercore 2>/dev/null); then
+    IC_SRC="$IC_TMPDIR/Sylveste/core/intercore"
 else
     warn "git sparse-checkout failed. Run '/clavain:setup' after cloning the repo."
     IC_SRC=""

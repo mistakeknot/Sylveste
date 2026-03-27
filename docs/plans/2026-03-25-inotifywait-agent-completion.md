@@ -1,11 +1,11 @@
 ---
 artifact_type: plan
-bead: Demarch-uboy.4
+bead: Sylveste-uboy.4
 stage: planned
 ---
 # Plan: Replace polling with inotifywait for agent completion
 
-**Bead:** Demarch-uboy.4
+**Bead:** Sylveste-uboy.4
 **Goal:** Replace 5s sleep-loop polling with inotifywait filesystem events for agent completion detection. Fallback to polling if inotifywait unavailable.
 
 ## Task 1: Create flux-watch.sh helper script

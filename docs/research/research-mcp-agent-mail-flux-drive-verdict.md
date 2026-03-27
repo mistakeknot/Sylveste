@@ -1,7 +1,7 @@
 # Flux-Drive Verdict: mcp_agent_mail Gap Analysis
 
 **Date:** 2026-02-24
-**Document Reviewed:** `/home/mk/projects/Demarch/docs/research/research-mcp-agent-mail-gap-analysis.md`
+**Document Reviewed:** `/home/mk/projects/Sylveste/docs/research/research-mcp-agent-mail-gap-analysis.md`
 **Reviewers:** fd-architecture, fd-systems, fd-user-product, fd-decisions
 **Verdict:** **NEEDS REWORK — Critical issues block adoption**
 
@@ -14,11 +14,11 @@ The gap analysis is strategically well-scoped and operationally thorough in its 
 1. **Adoption 2 (Ack Semantics) is already implemented** in intermute. The document misidentifies what exists.
 2. **"Maybe" on companion server is a dangerous non-decision** that invites architectural drift without a named trigger condition.
 3. **P1/P2/P3 priorities are inverted** — the most concrete need (workflow macros) is rated P2, while speculative future needs (FTS5, contact policy) are rated P1.
-4. **Five P1/P2 items lack problem validation** from production Demarch sprints. All justifications are forward-looking or theoretical.
+4. **Five P1/P2 items lack problem validation** from production Sylveste sprints. All justifications are forward-looking or theoretical.
 5. **Layer boundary violation hidden in the ack proposal** — Intercore (L1) would query intermute (L1) for gate conditions, creating horizontal coupling that contradicts the document's praise for "mechanism vs policy" separation.
 6. **Interspect dependencies are unverified** — the learning loop does not currently read intermute messages, yet FTS5 adoption is justified primarily by future Interspect Phase 2 value.
 
-**Recommendation:** Rework the analysis to start from **observable Demarch coordination failures**, not from mcp_agent_mail's feature set. Resolve the companion server question to a named signpost. Reverse-prioritize to put the only documented need (workflow macros) at P1, and defer speculative items until concrete consumers exist.
+**Recommendation:** Rework the analysis to start from **observable Sylveste coordination failures**, not from mcp_agent_mail's feature set. Resolve the companion server question to a named signpost. Reverse-prioritize to put the only documented need (workflow macros) at P1, and defer speculative items until concrete consumers exist.
 
 ---
 
@@ -30,9 +30,9 @@ The gap analysis is strategically well-scoped and operationally thorough in its 
 
 The gap analysis proposes adding `ack_required` boolean to intermute and a `POST /api/messages/{id}/ack` endpoint as a P1 item. Both already exist:
 
-- `core.Message.AckRequired` at `/home/mk/projects/Demarch/core/intermute/internal/core/models.go:35`
-- `MarkAck()` in storage interface at `/home/mk/projects/Demarch/core/intermute/internal/storage/storage.go:33`
-- `handleMessageAction` dispatches `ack` vs `read` to distinct event types at `/home/mk/projects/Demarch/core/intermute/internal/http/handlers_messages.go`
+- `core.Message.AckRequired` at `/home/mk/projects/Sylveste/core/intermute/internal/core/models.go:35`
+- `MarkAck()` in storage interface at `/home/mk/projects/Sylveste/core/intermute/internal/storage/storage.go:33`
+- `handleMessageAction` dispatches `ack` vs `read` to distinct event types at `/home/mk/projects/Sylveste/core/intermute/internal/http/handlers_messages.go`
 
 **The real gap is narrower:** Intercore's gate system does not currently evaluate `message.acked` as a condition. The wiring is missing, not the schema.
 
@@ -98,7 +98,7 @@ Add to AGENTS.md: "Do not add mcp_agent_mail to Clavain plugin MCP server config
 
 ---
 
-### P1 — No Problem Validation from Production Demarch Sprints (fd-user-product, fd-decisions)
+### P1 — No Problem Validation from Production Sylveste Sprints (fd-user-product, fd-decisions)
 
 **Signal quality:** The five adoptions are justified with theoretical future states, not observed failures.
 
@@ -109,10 +109,10 @@ No evidence that:
 - Any coordination session has failed due to context loss between MCP calls (the macro case is an exception — this is observable)
 
 **What the analysis should include:**
-- A section: "Demarch Coordination Failures Observed" with 2-3 concrete sprint incidents that led to the proposed adoptions
+- A section: "Sylveste Coordination Failures Observed" with 2-3 concrete sprint incidents that led to the proposed adoptions
 - Or: if no incidents exist, that signals P1/P2 urgency may be inflated and should be downgraded to "research only" until real failures occur
 
-**The sunk-cost dimension:** Having read mcp_agent_mail's implementation makes FTS5 triggers and contact policy state machines feel concrete and low-effort. Items requiring original design work (e.g., Interspect-native message indexing) are invisible because they were never surfaced by the reference system. The cherry-picked items may be survivorship-biased — good ideas that survived because they were already implemented elsewhere, not because they are the best solutions for Demarch's actual problems.
+**The sunk-cost dimension:** Having read mcp_agent_mail's implementation makes FTS5 triggers and contact policy state machines feel concrete and low-effort. Items requiring original design work (e.g., Interspect-native message indexing) are invisible because they were never surfaced by the reference system. The cherry-picked items may be survivorship-biased — good ideas that survived because they were already implemented elsewhere, not because they are the best solutions for Sylveste's actual problems.
 
 ---
 
@@ -120,14 +120,14 @@ No evidence that:
 
 **Finding:** FTS5 message search is justified with "high leverage for Interspect Phase 2" and rated P1. Interspect does not currently use this.
 
-**Evidence:** Interspect's evidence collection in `/home/mk/projects/Demarch/os/clavain/hooks/lib-interspect.sh` reads:
+**Evidence:** Interspect's evidence collection in `/home/mk/projects/Sylveste/os/clavain/hooks/lib-interspect.sh` reads:
 - Hook events (overrides, agent errors, session signals)
 - Sprint artifacts and phase state
 - NOT intermute messages
 
 There is no scoped Interspect Phase 2 design that names message mining as a requirement. The claim that "FTS5 is high-impact for Interspect Phase 2" is a forward-inference from an unimplemented feature.
 
-**Also relevant:** FTS5 message mining creates Goodhart's Law risk (fd-systems): Interspect could learn to exclude review agents whose findings are deferred but important, conflating "dismissed" with "irrelevant." This degrades the quality axis that Demarch's frontier depends on.
+**Also relevant:** FTS5 message mining creates Goodhart's Law risk (fd-systems): Interspect could learn to exclude review agents whose findings are deferred but important, conflating "dismissed" with "irrelevant." This degrades the quality axis that Sylveste's frontier depends on.
 
 **Action:** Defer FTS5 to P3. Revisit when:
 - Interspect Phase 2 has a concrete design that specifies message mining requirements
@@ -218,7 +218,7 @@ At L3-L4 autonomy with nested agent spawning, one mid-chain agent failure blocks
 
 ### P2 — Stale Documentation: AGENTS.md Gotcha Entry is Wrong (fd-user-product)
 
-**Location:** `/home/mk/projects/Demarch/core/intermute/AGENTS.md` (line 202, approximately)
+**Location:** `/home/mk/projects/Sylveste/core/intermute/AGENTS.md` (line 202, approximately)
 
 **Current text:** "No ack persistence - Ack/read events logged but no status columns updated"
 
@@ -293,7 +293,7 @@ Message expiry operating on fast TTL (days to weeks) prunes that evidence before
 | Ack semantics already built | P0 | Implementation | Fix document; retarget at gate integration layer; do not add schema |
 | Companion server is unresolved non-decision | P0 | Decision | Convert "maybe" to named signpost; defer to Track C trigger |
 | Priority list inverted | P1 | Prioritization | P1: macros; P2: ack gates, FTS5; P3: contact policy, expiry validation |
-| No production problem validation | P1 | Analysis | Add section "Demarch Coordination Failures Observed" before proposing solutions |
+| No production problem validation | P1 | Analysis | Add section "Sylveste Coordination Failures Observed" before proposing solutions |
 | Interspect dependencies unverified | P1 | Scope | Defer FTS5 to P3 until Interspect Phase 2 is scoped |
 | Layer boundary violation in gate proposal | P1 | Architecture | Intercore-intermute coupling must go through Clavain L2 policy layer |
 | Contact policy scope understated | P2 | Effort estimation | Medium effort, not low; cost of state machine and endpoints well-scoped |
@@ -326,7 +326,7 @@ Message expiry operating on fast TTL (days to weeks) prunes that evidence before
 
 2. **Fix AGENTS.md documentation.** Update ack persistence gotcha; prevent duplicate implementation work.
 
-3. **Validate problem statement.** Add section "Demarch Coordination Failures Observed" to the gap analysis. If no failures exist, defer P1/P2 items to research-only status.
+3. **Validate problem statement.** Add section "Sylveste Coordination Failures Observed" to the gap analysis. If no failures exist, defer P1/P2 items to research-only status.
 
 4. **Reverse-prioritize.** P1: Workflow macros (documented need). P2: Ack gate integration (when gate designed), FTS5 (when Interspect Phase 2 scoped). P3: Contact policy, expiry (when topology changes).
 

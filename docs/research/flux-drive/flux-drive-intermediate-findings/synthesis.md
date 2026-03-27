@@ -231,8 +231,8 @@ After Task 6 adds cleanup to `launch.md`, the compact skill's description become
 ## Files Affected
 
 - **Agent Reports:**
-  - `/home/mk/projects/Demarch/docs/research/flux-drive/flux-drive-intermediate-findings/fd-architecture.md`
-  - `/home/mk/projects/Demarch/docs/research/flux-drive/flux-drive-intermediate-findings/fd-correctness.md`
+  - `/home/mk/projects/Sylveste/docs/research/flux-drive/flux-drive-intermediate-findings/fd-architecture.md`
+  - `/home/mk/projects/Sylveste/docs/research/flux-drive/flux-drive-intermediate-findings/fd-correctness.md`
 
 - **Verdict Files:**
   - `.clavain/verdicts/fd-architecture.json`

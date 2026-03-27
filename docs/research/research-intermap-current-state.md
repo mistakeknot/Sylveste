@@ -1,8 +1,8 @@
 # Intermap Current State Analysis
 
 **Date:** 2026-02-23  
-**Repository:** /home/mk/projects/Demarch  
-**Plugin Location:** /home/mk/projects/Demarch/interverse/intermap  
+**Repository:** /home/mk/projects/Sylveste  
+**Plugin Location:** /home/mk/projects/Sylveste/interverse/intermap  
 **Version:** 0.1.3  
 **Status:** Active, P1 Epic (iv-w7bh)
 

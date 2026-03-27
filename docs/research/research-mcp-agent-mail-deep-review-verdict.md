@@ -1,8 +1,8 @@
 # mcp_agent_mail Deep Review — 10-Agent Synthesis Verdict
 
 **Date:** 2026-02-24
-**Target:** `/home/mk/projects/Demarch/research/mcp_agent_mail/`
-**Goal:** Identify patterns Demarch should adopt, bugs to avoid, and architecture lessons for the Go coordination stack
+**Target:** `/home/mk/projects/Sylveste/research/mcp_agent_mail/`
+**Goal:** Identify patterns Sylveste should adopt, bugs to avoid, and architecture lessons for the Go coordination stack
 
 ---
 
@@ -32,7 +32,7 @@
 
 All 10 agents converge: mcp_agent_mail has **excellent infrastructure patterns** (circuit breaker, structured errors, tool instrumentation, commit queue, contact policies) inside a **structurally flawed container** (11k-line monolith, 122 bare except blocks, sender impersonation, 50-connection SQLite pool). The value is in extracting specific patterns, not using it as a reference architecture.
 
-**Demarch's stack is already stronger** in pagination (cursors vs timestamps), phase atomicity (single transaction vs per-step commits), push notifications (WebSocket vs signal files), and concurrency control (optimistic WHERE vs IntegrityError catch).
+**Sylveste's stack is already stronger** in pagination (cursors vs timestamps), phase atomicity (single transaction vs per-step commits), push notifications (WebSocket vs signal files), and concurrency control (optimistic WHERE vs IntegrityError catch).
 
 ---
 
@@ -48,7 +48,7 @@ All 10 agents converge: mcp_agent_mail has **excellent infrastructure patterns**
 
 **2. `@instrument_tool` Middleware Pattern**
 - **Converging agents:** fd-architecture (2.1), fd-quality (adopt #1), fd-tool-surface (P0-2), fd-performance (Pattern A)
-- **Gap:** Each Demarch MCP server implements ad-hoc error handling, no centralized metrics/timing/capability gating.
+- **Gap:** Each Sylveste MCP server implements ad-hoc error handling, no centralized metrics/timing/capability gating.
 - **Action:** Create shared mcp-go middleware wrapping tool handlers with timing, error counting, structured error wrapping, capability checks, and retry logic.
 - **Reference:** `app.py:378-669` — centralized retry, metrics, capability enforcement, logging, EMFILE handling
 
@@ -59,13 +59,13 @@ All 10 agents converge: mcp_agent_mail has **excellent infrastructure patterns**
 
 **4. Contact Policies (4-Level Per-Agent Access Control)**
 - **Converging agents:** fd-coordination-identity (P0-2), fd-messaging-protocol (P2-5), fd-safety (F2 — bypass to avoid)
-- **Gap:** No access control on Demarch messaging. Any registered agent can send to any other.
+- **Gap:** No access control on Sylveste messaging. Any registered agent can send to any other.
 - **Action:** Add `contact_policy` to Intermute Agent model (`open|auto|contacts_only|block_all`). Enforce at delivery time on ALL paths (send AND reply — mcp_agent_mail's reply_message bypasses this, per fd-safety F2).
-- **Critical lesson:** mcp_agent_mail's `reply_message` does NOT enforce contact policy for local recipients. If Demarch adopts this, enforce uniformly.
+- **Critical lesson:** mcp_agent_mail's `reply_message` does NOT enforce contact policy for local recipients. If Sylveste adopts this, enforce uniformly.
 
 **5. Circuit Breaker on DB Layer**
 - **Converging agents:** fd-persistence-durability (P0-4), fd-architecture (2.4), fd-correctness (CC-05 — fix scope), fd-performance (Pattern A), fd-workflow-macros (P2-3)
-- **Gap:** Demarch SQLite uses `MaxOpenConns(1)` + WAL + 5s busy timeout but no circuit breaker for sustained contention.
+- **Gap:** Sylveste SQLite uses `MaxOpenConns(1)` + WAL + 5s busy timeout but no circuit breaker for sustained contention.
 - **Action:** Port the circuit breaker pattern (5-failure threshold, 30s open, half-open probe, jitter backoff) as a shared Go package.
 - **Critical lesson from fd-correctness CC-05:** Only count retried-and-exhausted *transient* errors. mcp_agent_mail counts ALL OperationalErrors, masking real bugs as "circuit breaker open".
 
@@ -73,7 +73,7 @@ All 10 agents converge: mcp_agent_mail has **excellent infrastructure patterns**
 
 **6. Tool Filtering Profiles for Context Reduction**
 - **Converging agents:** fd-tool-surface (P0-3), fd-architecture (2.2), fd-quality (adopt list)
-- **Gap:** Combined tool surface across Demarch MCP servers exceeds 80 tools. No filtering.
+- **Gap:** Combined tool surface across Sylveste MCP servers exceeds 80 tools. No filtering.
 - **Action:** Named clusters + profile-based tool exposure (`full`/`core`/`minimal`). The 70% context reduction is critical for agent performance.
 
 **7. Stale-Ack TTL Views**
@@ -83,8 +83,8 @@ All 10 agents converge: mcp_agent_mail has **excellent infrastructure patterns**
 
 **8. Document Idempotency Contracts on All MCP Tools**
 - **Source:** fd-tool-surface (P2-2)
-- **Gap:** No Demarch MCP server documents idempotency. Agents retry aggressively without knowing if it's safe.
-- **Action:** Add `Idempotent: yes/no` to every tool description across all Demarch MCP servers.
+- **Gap:** No Sylveste MCP server documents idempotency. Agents retry aggressively without knowing if it's safe.
+- **Action:** Add `Idempotent: yes/no` to every tool description across all Sylveste MCP servers.
 
 **9. Window Identity for Session Persistence**
 - **Source:** fd-coordination-identity (P2-1)
@@ -118,15 +118,15 @@ All 10 agents converge: mcp_agent_mail has **excellent infrastructure patterns**
 
 **15. `hmac.compare_digest` for Constant-Time Token Comparison**
 - **Source:** fd-safety (adopt #1)
-- **Action:** Adopt everywhere Demarch compares secrets. Already correct in mcp_agent_mail's BearerAuthMiddleware.
+- **Action:** Adopt everywhere Sylveste compares secrets. Already correct in mcp_agent_mail's BearerAuthMiddleware.
 
 ---
 
-## What Demarch Already Does Better
+## What Sylveste Already Does Better
 
 Confirmed by both custom and core agent sets:
 
-| Dimension | Demarch | mcp_agent_mail | Confirming Agents |
+| Dimension | Sylveste | mcp_agent_mail | Confirming Agents |
 |-----------|---------|----------------|-------------------|
 | Pagination | Cursor-based (monotonic uint64) | Timestamp-based (`since_ts`) — gap/duplicate risk | fd-messaging-protocol, fd-correctness |
 | Phase transitions | Single atomic SQLite transaction | Per-step individual commits — no rollback | fd-workflow-macros, fd-correctness |
@@ -166,7 +166,7 @@ Confirmed by both custom and core agent sets:
 
 ### P1 Correctness Bugs (fd-correctness)
 
-**CC-01: Dual-Write Crash Window.** SQLite commits before Git write. Process crash after DB commit leaves message in SQLite but not in Git archive. No write-ahead tombstone, no startup recovery scan, no `archive_failed` marker. If Demarch ever does dual-write, implement saga with compensating action.
+**CC-01: Dual-Write Crash Window.** SQLite commits before Git write. Process crash after DB commit leaves message in SQLite but not in Git archive. No write-ahead tombstone, no startup recovery scan, no `archive_failed` marker. If Sylveste ever does dual-write, implement saga with compensating action.
 
 **CC-02: Batch Commit Failure Poisons All Callers.** One bad file in a batched commit causes ALL batched agents to receive the error. Three innocent agents get "permission denied" for a file they never touched. Fix: fall back to sequential on batch failure.
 
@@ -182,7 +182,7 @@ Confirmed by both custom and core agent sets:
 
 ### Quality Critical (fd-quality)
 
-**11,382-line monolith.** All 47 tools defined as nested closures inside `build_mcp_server()`. `send_message` alone is ~997 lines. The closure pattern prevents extraction to separate files. If Demarch ever builds a similar server, establish module boundaries early.
+**11,382-line monolith.** All 47 tools defined as nested closures inside `build_mcp_server()`. `send_message` alone is ~997 lines. The closure pattern prevents extraction to separate files. If Sylveste ever builds a similar server, establish module boundaries early.
 
 **122 bare `except Exception:` blocks.** ~80 are in business logic paths with no logging, not just infrastructure fallbacks. Auto-handshake failures in `send_message` can go completely unrecorded.
 
@@ -217,7 +217,7 @@ Findings independently identified by 3+ agents:
 
 ## Architecture Comparison Matrix (Updated)
 
-| Dimension | mcp_agent_mail | Demarch Stack |
+| Dimension | mcp_agent_mail | Sylveste Stack |
 |-----------|---------------|---------------|
 | Language | Python (FastMCP) | Go (mcp-go, net/http) |
 | Transport | HTTP (poll) + signal files | HTTP + WebSocket (push) |

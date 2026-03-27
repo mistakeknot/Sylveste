@@ -1,16 +1,16 @@
 # Research: Generate Refreshed Vision Doc
 
 **Date:** 2026-02-27
-**Purpose:** Analyze inputs and produce a refreshed `docs/demarch-vision.md`
+**Purpose:** Analyze inputs and produce a refreshed `docs/sylveste-vision.md`
 
 ---
 
 ## Inputs Analyzed
 
-1. **docs/demarch-vision.md** (v3.0, 2026-02-21) — current vision doc
+1. **docs/sylveste-vision.md** (v3.0, 2026-02-21) — current vision doc
 2. **docs/roadmap.json** — 53 modules listed, generated 2026-02-27
 3. **AGENTS.md** — root agent instructions, references "42 companion plugins" in interverse/
-4. **docs/demarch-roadmap.md** — 51 modules (43 versioned), 384 open beads, 1,748 closed, 15 cancelled
+4. **docs/sylveste-roadmap.md** — 51 modules (43 versioned), 384 open beads, 1,748 closed, 15 cancelled
 
 ## Key Factual Discrepancies Found
 
@@ -118,4 +118,4 @@ New additions to the narrative:
 
 ## Output
 
-The refreshed `docs/demarch-vision.md` has been written directly. See the file for the complete updated vision document.
+The refreshed `docs/sylveste-vision.md` has been written directly. See the file for the complete updated vision document.

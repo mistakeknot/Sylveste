@@ -969,8 +969,8 @@ func NewCoordinationBridge(dbPath string) (*CoordinationBridge, error) {
     return &CoordinationBridge{db: db, enabled: true}, nil
 }
 
-// normalizeScope converts Intermute's short project name (e.g., "Demarch") to
-// the canonical absolute path (e.g., "/home/mk/projects/Demarch") that Intercore uses.
+// normalizeScope converts Intermute's short project name (e.g., "Sylveste") to
+// the canonical absolute path (e.g., "/home/mk/projects/Sylveste") that Intercore uses.
 // Uses git rev-parse --show-toplevel if available, otherwise resolves via walk-up.
 // This is CRITICAL for cross-system conflict detection — mismatched scopes = false negatives.
 func normalizeScope(project string) string {

@@ -1,13 +1,13 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-7xs
+bead: Sylveste-7xs
 stage: discover
 ---
 
 # Converge Interknow + Compound Docs
 
 **Date:** 2026-03-07
-**Bead:** Demarch-7xs (P2 feature)
+**Bead:** Sylveste-7xs (P2 feature)
 **Parent:** iv-nnxzo (Memory Architecture Convergence, R3.2)
 
 ## Current State
@@ -105,7 +105,7 @@ review_count: integer              # Number of times surfaced during reviews
 
 ### D4: Unified retrieval absorbs interknow's recall
 
-**Decision:** The future `/recall` command (Demarch-h22) replaces `/interknow:recall`. Until `/recall` exists, `/interknow:recall` is updated to search `docs/solutions/` instead of `config/knowledge/`.
+**Decision:** The future `/recall` command (Sylveste-h22) replaces `/interknow:recall`. Until `/recall` exists, `/interknow:recall` is updated to search `docs/solutions/` instead of `config/knowledge/`.
 
 **Interim step:** Update `/interknow:recall` skill to:
 1. Search `docs/solutions/` (primary)

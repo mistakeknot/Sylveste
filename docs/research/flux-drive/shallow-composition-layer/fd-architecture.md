@@ -1,7 +1,7 @@
 # Architecture Review: Shallow Composition Layer
 # flux-drive — fd-architecture
 
-**Plan:** `/home/mk/projects/Demarch/docs/plans/2026-03-05-shallow-composition-layer.md`
+**Plan:** `/home/mk/projects/Sylveste/docs/plans/2026-03-05-shallow-composition-layer.md`
 **Bead:** iv-3kpfu
 **Reviewer:** Flux-drive Architecture Agent
 **Date:** 2026-03-05

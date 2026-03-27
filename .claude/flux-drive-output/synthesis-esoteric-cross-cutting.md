@@ -2,8 +2,8 @@
 
 **Date:** 2026-03-22
 **Agents:** 7 esoteric reviewers (information theory, Conway's Law, economics, adversarial, physics, ecology, evolutionary)
-**Target:** Full Demarch monorepo architecture
-**Epic:** Demarch-og7m
+**Target:** Full Sylveste monorepo architecture
+**Epic:** Sylveste-og7m
 
 ## Severity Distribution
 

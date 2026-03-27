@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-og7m
+bead: Sylveste-og7m
 stage: plan-reviewed
 batch: 4
 review_status: revised after flux-drive
@@ -94,5 +94,5 @@ Recommended: F1 first (smallest, highest signal), then F2 (references F1's sourc
 - F1 (.17): None
 - F2 (.21): Mild affinity with F1 (references same source constants), but no blocking dependency
 - F3 (.23): None — reads PHILOSOPHY.md domains, no event pipeline dependency
-- F1 blocks: Demarch-og7m.2.2 (unified stream API inherits per-source sub-limits)
-- F2 blocks: Demarch-og7m.2.1 (unified envelope v2 builds on documented current schema)
+- F1 blocks: Sylveste-og7m.2.2 (unified stream API inherits per-source sub-limits)
+- F2 blocks: Sylveste-og7m.2.1 (unified envelope v2 builds on documented current schema)

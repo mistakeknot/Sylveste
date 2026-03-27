@@ -1,6 +1,6 @@
 # PRD: Per-Project Config Directory (.skaffen/)
 
-**Bead:** Demarch-6i0.11
+**Bead:** Sylveste-6i0.11
 **Status:** Draft
 
 ## Problem

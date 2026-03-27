@@ -1,12 +1,12 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-6i0.18
+bead: Sylveste-6i0.18
 stage: discover
 ---
 
 # Subagent System for Skaffen
 
-**Bead:** Demarch-6i0.18
+**Bead:** Sylveste-6i0.18
 
 ## What We're Building
 
@@ -55,7 +55,7 @@ The parent (or an intermediary subagent) curates what context to inject. Bead as
 - **General subagents** (write-capable): use `ic coordination reserve` with glob patterns before writing
 - Leverages Intercore's existing `BEGIN IMMEDIATE` serializable transactions + glob overlap detection
 - Bridges to Intermute for cross-agent visibility
-- No git worktrees — explicit design decision to keep the system simpler and aligned with Demarch's existing coordination patterns
+- No git worktrees — explicit design decision to keep the system simpler and aligned with Sylveste's existing coordination patterns
 
 ### Extensibility: Type registry from day one
 

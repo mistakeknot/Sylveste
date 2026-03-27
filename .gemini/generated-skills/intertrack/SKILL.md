@@ -1,6 +1,6 @@
 ---
 name: intertrack
-description: "Feature-level success metric tracking for Demarch"
+description: "Feature-level success metric tracking for Sylveste"
 ---
 # Gemini Skill: intertrack
 
@@ -11,7 +11,7 @@ You have activated the intertrack capability.
 
 ## Philosophy Alignment
 
-intertrack follows Demarch's "receipts over narratives" principle: metric observations are durable, timestamped records of feature behavior. The plugin measures only — routing decisions and policy changes are downstream concerns for interspect and clavain.
+intertrack follows Sylveste's "receipts over narratives" principle: metric observations are durable, timestamped records of feature behavior. The plugin measures only — routing decisions and policy changes are downstream concerns for interspect and clavain.
 
 ## Architecture
 

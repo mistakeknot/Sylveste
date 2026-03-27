@@ -2,7 +2,7 @@
 
 ## Problem
 
-Setting up a new project (or onboarding an existing one) with Demarch-level automation requires manually running 6+ tools in the right order, creating docs from scratch, and knowing which directories to create. This friction means most projects never get fully operational — they're missing drift detection, seeded roadmaps, or proper CLAUDE.md/AGENTS.md, which degrades every subsequent session.
+Setting up a new project (or onboarding an existing one) with Sylveste-level automation requires manually running 6+ tools in the right order, creating docs from scratch, and knowing which directories to create. This friction means most projects never get fully operational — they're missing drift detection, seeded roadmaps, or proper CLAUDE.md/AGENTS.md, which degrades every subsequent session.
 
 ## Solution
 
@@ -73,7 +73,7 @@ A Clavain skill (`project-onboard`) that introspects any repo, asks minimal ques
 - Plugin installation or MCP server setup (handled by `/clavain:setup`)
 - ic kernel build (handled by `/clavain:setup`)
 - Per-module onboarding for monorepos (root-only for v1; per-module is a future iteration)
-- Custom template system (use Demarch conventions as the single source of truth)
+- Custom template system (use Sylveste conventions as the single source of truth)
 - CI/CD pipeline setup (project-specific, not a Clavain concern)
 
 ## Dependencies
@@ -86,6 +86,6 @@ A Clavain skill (`project-onboard`) that introspects any repo, asks minimal ques
 
 ## Open Questions
 
-1. **CONVENTIONS.md** — should we generate one? Demarch has it for canonical doc paths.
+1. **CONVENTIONS.md** — should we generate one? Sylveste has it for canonical doc paths.
 2. **Git hooks conflict** — if existing hooks (husky, lefthook) are present, how does `bd init` handle it? May need to detect and warn.
-3. **Template versioning** — when Demarch conventions evolve, how do onboarded projects stay current? Tie into interwatch?
+3. **Template versioning** — when Sylveste conventions evolve, how do onboarded projects stay current? Tie into interwatch?

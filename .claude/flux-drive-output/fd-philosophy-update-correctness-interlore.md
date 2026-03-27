@@ -105,7 +105,7 @@ Even the "2+ weeks" time span guard does not help: the brainstorm-to-PRD-to-plan
 - **Too low** for citation-chain artifacts (1 decision easily produces 3+ linked artifacts)
 - **Too high** for genuinely independent but infrequent decisions (a project might make a significant architectural bet only twice across 2 months)
 
-**Recommendation:** Replace artifact count with a bead-aware decision count. Artifacts sharing a bead ID count as one decision. This is cheap to implement (bead IDs are in artifact frontmatter), directly addresses the independence problem, and is consistent with Demarch's own work-tracking architecture.
+**Recommendation:** Replace artifact count with a bead-aware decision count. Artifacts sharing a bead ID count as one decision. This is cheap to implement (bead IDs are in artifact frontmatter), directly addresses the independence problem, and is consistent with Sylveste's own work-tracking architecture.
 
 ---
 
@@ -113,7 +113,7 @@ Even the "2+ weeks" time span guard does not help: the brainstorm-to-PRD-to-plan
 
 **Location:** PRD F3 (absent from acceptance criteria and open questions)
 
-**Issue:** The PRD does not address what happens when the artifact corpus contains conflicting signals. Real examples from the Demarch corpus:
+**Issue:** The PRD does not address what happens when the artifact corpus contains conflicting signals. Real examples from the Sylveste corpus:
 
 - Some artifacts favor flat files for simplicity; others favor SQLite for queryability. Both positions recur.
 - The philosophy says "composition over capability," but the dual-mode plugin brainstorm acknowledges that the three-layer model creates "testing complexity" and "upgrade friction" -- implicit costs of composition.

@@ -3,14 +3,14 @@ synthesis_date: 2026-03-26
 agents_reviewed: 7
 agents_complete: 7
 agents_failed: 0
-context: EventEnvelope v2 schema migration plan (Demarch-og7m.2.1)
+context: EventEnvelope v2 schema migration plan (Sylveste-og7m.2.1)
 verdict: risky
 ---
 
 # Flux-Drive Review Synthesis — EventEnvelope v2
 
 **Plan:** `docs/plans/2026-03-26-event-envelope-v2.md`
-**Bead:** Demarch-og7m.2.1 (schema + helpers, no writers)
+**Bead:** Sylveste-og7m.2.1 (schema + helpers, no writers)
 **Review date:** 2026-03-26
 **Agents:** fd-architecture, fd-correctness, fd-quality, fd-schema-evolution, fd-envelope-semantics, fd-payload-typing, fd-json-schema-gen
 
@@ -410,5 +410,5 @@ The plan has **3 blocking P1 issues** and **5 important P2 issues** that must be
 - **Review date:** 2026-03-26 (parallel agents, 7 domains)
 - **Agents:** fd-architecture, fd-correctness, fd-quality, fd-schema-evolution, fd-envelope-semantics, fd-payload-typing, fd-json-schema-gen
 - **Synthesis:** 2026-03-26
-- **Plan author:** TBD (Demarch-og7m sprint)
+- **Plan author:** TBD (Sylveste-og7m sprint)
 - **Next step:** Author review + revision → re-sync with planmunchers (qa gate)

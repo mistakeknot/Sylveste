@@ -10,7 +10,7 @@
 
 ### 1.1 High-Level Architecture
 
-**File:** `/home/mk/projects/Demarch/interverse/interflux/skills/flux-drive/SKILL.md` (457 lines)
+**File:** `/home/mk/projects/Sylveste/interverse/interflux/skills/flux-drive/SKILL.md` (457 lines)
 
 Flux-drive is a **4-phase, multi-agent review orchestrator** for documents and codebases:
 
@@ -63,7 +63,7 @@ Flux-drive is a **4-phase, multi-agent review orchestrator** for documents and c
 
 ### 2.1 Scoring Algorithm
 
-**Specification File:** `/home/mk/projects/Demarch/interverse/interflux/docs/spec/core/scoring.md`
+**Specification File:** `/home/mk/projects/Sylveste/interverse/interflux/docs/spec/core/scoring.md`
 
 ```
 final_score = (base_score + domain_boost + project_bonus + domain_agent_bonus) * trust_multiplier
@@ -149,7 +149,7 @@ total_ceiling = min(base + scope + domain + generated, 12)
 
 ### 2.5 Budget-Aware Selection (Step 1.2c)
 
-**File:** `/home/mk/projects/Demarch/interverse/interflux/config/flux-drive/budget.yaml`
+**File:** `/home/mk/projects/Sylveste/interverse/interflux/config/flux-drive/budget.yaml`
 
 **Default budgets:**
 - plan: 150K
@@ -179,7 +179,7 @@ total_ceiling = min(base + scope + domain + generated, 12)
 
 ## 3. Agent Dispatch Mechanism (Phase 2: Steps 2.0-2.3)
 
-**File:** `/home/mk/projects/Demarch/interverse/interflux/skills/flux-drive/phases/launch.md`
+**File:** `/home/mk/projects/Sylveste/interverse/interflux/skills/flux-drive/phases/launch.md`
 
 ### 3.1 Pre-Launch Setup (Step 2.0)
 
@@ -275,7 +275,7 @@ if agent has domain criteria: += 1
 
 ## 4. Synthesis & Deduplication (Phase 3)
 
-**File:** `/home/mk/projects/Demarch/interverse/intersynth/agents/synthesize-review.md`
+**File:** `/home/mk/projects/Sylveste/interverse/intersynth/agents/synthesize-review.md`
 
 ### 4.1 Synthesis Subagent Invocation
 
@@ -326,7 +326,7 @@ If `FINDINGS_TIMELINE` file exists:
 
 ## 5. Trust Scoring & Interspect Integration
 
-**File:** `/home/mk/projects/Demarch/interverse/interspect/hooks/lib-trust.sh`
+**File:** `/home/mk/projects/Sylveste/interverse/interspect/hooks/lib-trust.sh`
 
 ### 5.1 Trust Feedback Recording
 
@@ -410,7 +410,7 @@ Trust: fd-safety=0.85, fd-correctness=0.92, fd-game-design=0.15, fd-quality=0.78
 ### Core Skill Files:
 
 ```
-/home/mk/projects/Demarch/interverse/interflux/skills/flux-drive/
+/home/mk/projects/Sylveste/interverse/interflux/skills/flux-drive/
 ├── SKILL.md                    (457 lines — main orchestration)
 ├── SKILL-compact.md            (Condensed reference)
 ├── phases/
@@ -436,7 +436,7 @@ Trust: fd-safety=0.85, fd-correctness=0.92, fd-game-design=0.15, fd-quality=0.78
 ### Synthesis Files:
 
 ```
-/home/mk/projects/Demarch/interverse/intersynth/
+/home/mk/projects/Sylveste/interverse/intersynth/
 ├── agents/
 │   ├── synthesize-review.md    (Synthesis orchestrator)
 │   └── synthesize-research.md
@@ -447,7 +447,7 @@ Trust: fd-safety=0.85, fd-correctness=0.92, fd-game-design=0.15, fd-quality=0.78
 ### Interspect Integration:
 
 ```
-/home/mk/projects/Demarch/interverse/interspect/
+/home/mk/projects/Sylveste/interverse/interspect/
 ├── hooks/
 │   ├── lib-trust.sh            (Trust scoring engine)
 │   ├── lib-interspect.sh       (Core DB & utility)
@@ -477,7 +477,7 @@ Trust: fd-safety=0.85, fd-correctness=0.92, fd-game-design=0.15, fd-quality=0.78
 ### Flux-Gen Specs (Saved Prompts):
 
 ```
-/home/mk/projects/Demarch/.claude/flux-gen-specs/
+/home/mk/projects/Sylveste/.claude/flux-gen-specs/
 ├── mcp-agent-mail-research.json
 ```
 
@@ -631,7 +631,7 @@ fd-quality:      base_score=2, domain_boost=+1, final_score=3, domain_coverage="
 
 ## 10. Exempt Agents (Never Dropout)
 
-Per `/home/mk/projects/Demarch/interverse/interflux/config/flux-drive/budget.yaml`:
+Per `/home/mk/projects/Sylveste/interverse/interflux/config/flux-drive/budget.yaml`:
 
 ```yaml
 exempt_agents:

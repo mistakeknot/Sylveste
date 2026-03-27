@@ -1,6 +1,6 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-1ifn
+bead: Sylveste-1ifn
 stage: discover
 ---
 

@@ -1,8 +1,8 @@
 # F19: Unified Compose — Brainstorm
 
-**Bead:** Demarch-jpum.12
+**Bead:** Sylveste-jpum.12
 **Date:** 2026-03-25
-**Parent:** Demarch-jpum (Meadowsyn)
+**Parent:** Sylveste-jpum (Meadowsyn)
 
 ## Problem
 

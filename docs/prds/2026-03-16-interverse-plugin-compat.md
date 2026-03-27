@@ -1,13 +1,13 @@
 ---
 artifact_type: prd
-bead: Demarch-6qb.7
+bead: Sylveste-6qb.7
 stage: strategize
 ---
 
 # PRD: Interverse Plugin Compatibility Layer for Skaffen
 
 **Date:** 2026-03-16
-**Bead:** Demarch-6qb.7
+**Bead:** Sylveste-6qb.7
 **Priority:** P3 (but highest-impact single feature for Skaffen ecosystem integration)
 
 ## Problem

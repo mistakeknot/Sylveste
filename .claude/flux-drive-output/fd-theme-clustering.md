@@ -171,7 +171,7 @@
 
 ---
 
-## 3. Cross-Reference to Demarch Layers
+## 3. Cross-Reference to Sylveste Layers
 
 | Cluster | Primary Layer | Secondary Layer | Notes |
 |---------|--------------|-----------------|-------|
@@ -250,7 +250,7 @@ Clusters D + E together define a qualitatively different posture: **the agent as
 | 16 | Mobile UI for tap approvals / voice | Mobile-first UX is orthogonal to terminal-first design. Could be an Autarch companion app (Pollard tool?), but it's a separate surface entirely. |
 | 18 | Energy-aware decision routing | Human energy state detection is unimplemented science (requires biometric input). The routing outcome is interesting; the sensing mechanism has no obvious implementation path. |
 | 32 | Coding agent as video game | The "failed deploy = pwned" framing is too gamified to be a shipping feature without major tonal risk. It could inform micro-interactions (F cluster) without literally being realized. |
-| 49/50 | Leaderboards within/across companies | These are B2B social features that require cross-tenant telemetry infrastructure. Out of scope for Demarch's current architecture and potentially privacy-hostile. |
+| 49/50 | Leaderboards within/across companies | These are B2B social features that require cross-tenant telemetry infrastructure. Out of scope for Sylveste's current architecture and potentially privacy-hostile. |
 
 ---
 

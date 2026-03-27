@@ -4,14 +4,14 @@ bead: iv-nnxzo
 stage: discover
 ---
 
-# Memory Architecture Convergence Across Demarch
+# Memory Architecture Convergence Across Sylveste
 
 **Date:** 2026-03-07
 **Bead:** iv-nnxzo (P1 research)
 
 ## The Landscape
 
-Demarch has **10 memory-shaped systems** across 3 layers. Each was built to solve a specific problem. None was designed with the others in mind.
+Sylveste has **10 memory-shaped systems** across 3 layers. Each was built to solve a specific problem. None was designed with the others in mind.
 
 ### System Map
 

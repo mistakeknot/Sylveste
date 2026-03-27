@@ -1,6 +1,6 @@
 # Plan: External Editor Support (Ctrl+G)
 
-**Bead:** Demarch-6i0.6
+**Bead:** Sylveste-6i0.6
 **Stage:** executed
 
 ## Overview

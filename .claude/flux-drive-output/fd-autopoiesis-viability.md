@@ -1,8 +1,8 @@
 # Autopoiesis, Viability, and the v1.0 Threshold
 
-**Research question:** What should v1.0.0 mean for Demarch (currently v0.6.228), analyzed through cybernetic and thermodynamic frameworks?
+**Research question:** What should v1.0.0 mean for Sylveste (currently v0.6.228), analyzed through cybernetic and thermodynamic frameworks?
 
-**Method:** Apply Beer's Viable System Model, Maturana/Varela's autopoiesis, Prigogine's dissipative structures, stigmergic phase transitions, Friston's free energy principle, and Ashby's requisite variety to Demarch's architecture. Identify where analogies hold, where they break, and what operationally useful maturity thresholds emerge.
+**Method:** Apply Beer's Viable System Model, Maturana/Varela's autopoiesis, Prigogine's dissipative structures, stigmergic phase transitions, Friston's free energy principle, and Ashby's requisite variety to Sylveste's architecture. Identify where analogies hold, where they break, and what operationally useful maturity thresholds emerge.
 
 ---
 
@@ -12,22 +12,22 @@ Beer's VSM requires five systems (plus audit) for an organization to be *viable*
 
 ### Current Mapping
 
-| VSM System | Function | Demarch Component | Status |
+| VSM System | Function | Sylveste Component | Status |
 |------------|----------|-------------------|--------|
 | **S1: Operations** | Units that do the work | Clavain agents (6), interflux agents (17), sprint lifecycle, phase gates | **Strong.** 23 agents across review, research, and workflow. Sprint lifecycle is well-defined with phase transitions. |
 | **S2: Coordination** | Anti-oscillation; shared standards that prevent S1 units from interfering | 3-layer routing (Stage/Domain/Concern), interlock broadcast, hooks.json event bus, plugin collision rules, lib-gates.sh | **Moderate.** Routing prevents dispatch collisions. interlock enables cross-session coordination. But S2 is mostly *static* — routing tables rather than dynamic dampening. |
 | **S3: Control** | Resource allocation with authority; balancing local and global | Intercore kernel (`ic run`, `ic dispatch`, `ic gate`, `ic lock`, `ic cost`), budget.yml, token budgets, fleet registry | **Moderate.** Kernel manages runs and gates. Budget enforcement exists but is not yet real-time (runtime budget enforcement is in the "Later" horizon). S3 *directs* but cannot yet *reallocate mid-execution*. |
 | **S3\*: Audit** | Sporadic, unpredictable deep verification | Interspect (evidence collection, canary monitoring, routing overrides), interflux multi-agent review (12 review agents with independent scoring), CXDB turn DAG | **Moderate-Strong.** Interspect's canary monitoring is genuine S3\* behavior: it watches for 20-use windows over 14 days and alerts at a 20% threshold. Multi-model review with independent scoring is a form of audit. But audits are not yet *sporadic* in Beer's sense — they follow fixed patterns rather than randomized schedules. |
-| **S4: Intelligence** | Environmental scanning; future orientation | Alwe (cross-agent observation via CASS), interflux research agents (5), interlab mutation store, interwatch doc-staleness detection | **Weak.** This is the most underdeveloped system. Alwe observes *internal* agent sessions, but Demarch has no systematic mechanism for scanning its *external* competitive environment, detecting shifts in model capabilities, or sensing changes in the problem space it targets. The research agents are user-invoked, not autonomously triggered. interwatch detects internal doc drift, not external environmental change. |
+| **S4: Intelligence** | Environmental scanning; future orientation | Alwe (cross-agent observation via CASS), interflux research agents (5), interlab mutation store, interwatch doc-staleness detection | **Weak.** This is the most underdeveloped system. Alwe observes *internal* agent sessions, but Sylveste has no systematic mechanism for scanning its *external* competitive environment, detecting shifts in model capabilities, or sensing changes in the problem space it targets. The research agents are user-invoked, not autonomously triggered. interwatch detects internal doc drift, not external environmental change. |
 | **S5: Policy** | Identity, values, conflict resolution between S3 and S4 | PHILOSOPHY.md (3 principles, 4 bets), trust ladder (L0-L5), safety floors, CLAUDE.md cascading instruction system | **Present but static.** The philosophy is clearly articulated and enforced through cascading CLAUDE.md files. But S5 is *written policy*, not a *living mediator*. There is no runtime mechanism that detects when S3 (optimize current operations) and S4 (adapt to environment) are in tension and resolves it. PHILOSOPHY.md says "There is no 'done.' The flywheel doesn't converge — it compounds." But the policy system itself doesn't compound — it changes only through manual human edits. |
 
 ### The Missing System: S4 (Intelligence)
 
 Beer's S4 is the system that looks *outward and forward*. It answers: "What is changing in our environment that requires us to change?" In a biological organism, this is the sensory/nervous interface with the environment. In a firm, it is strategy, R&D, market sensing.
 
-Demarch's S4 gap is specific and consequential:
+Sylveste's S4 gap is specific and consequential:
 
-1. **No autonomous environmental scanning.** When a new model is released (say, a Claude 5 with different capability characteristics), Demarch has no mechanism to autonomously detect this, assess implications for routing tables, and propose adaptations. A human must notice, update fleet-registry.yaml, and recalibrate.
+1. **No autonomous environmental scanning.** When a new model is released (say, a Claude 5 with different capability characteristics), Sylveste has no mechanism to autonomously detect this, assess implications for routing tables, and propose adaptations. A human must notice, update fleet-registry.yaml, and recalibrate.
 
 2. **No competitive sensing.** PHILOSOPHY.md names the core bet that "the system that runs the most sprints learns the fastest." But nothing in the architecture systematically observes whether competitors (Devin, Factory, Codegen, Cursor Agent) have leapfrogged on a specific capability, which would alter strategic priorities.
 
@@ -47,26 +47,26 @@ Maturana and Varela's autopoiesis defines a system as self-maintaining when it p
 
 An *allopoietic* system produces something other than itself — a car factory produces cars, not more factories. An *autopoietic* system produces its own components — a cell produces the membranes, enzymes, and organelles that constitute the cell.
 
-**Demarch is currently allopoietic.** It produces shipped code for target projects — other-directed output. The "self-building" principle in PHILOSOPHY.md ("Demarch builds itself with its own tools") gestures toward autopoiesis, but building *with* your own tools is not the same as *producing your own operational components autonomously*.
+**Sylveste is currently allopoietic.** It produces shipped code for target projects — other-directed output. The "self-building" principle in PHILOSOPHY.md ("Sylveste builds itself with its own tools") gestures toward autopoiesis, but building *with* your own tools is not the same as *producing your own operational components autonomously*.
 
 ### The Autopoiesis Threshold
 
-For Demarch to cross the autopoiesis threshold, these conditions must hold simultaneously:
+For Sylveste to cross the autopoiesis threshold, these conditions must hold simultaneously:
 
-| Autopoietic Property | Maturana/Varela Criterion | Demarch Status |
+| Autopoietic Property | Maturana/Varela Criterion | Sylveste Status |
 |----------------------|---------------------------|----------------|
 | **Component production** | The network of processes produces the components that realize the network | Partially. interlab mutation store enables agents to improve agents (review agents improving review agents). But this is *one* process, not a network. Routing tables, phase gates, fleet registries, and plugin manifests are all human-produced. |
-| **Organizational closure** | The system's behavior is determined by its own structure, not its environment | No. Claude Code's plugin loading system, Anthropic's API changes, and model capability shifts all directly determine Demarch's behavior. The system is deeply structurally coupled but not organizationally closed. |
+| **Organizational closure** | The system's behavior is determined by its own structure, not its environment | No. Claude Code's plugin loading system, Anthropic's API changes, and model capability shifts all directly determine Sylveste's behavior. The system is deeply structurally coupled but not organizationally closed. |
 | **Boundary production** | The system produces and maintains its own boundary | Partially. Safety floors (lib-routing.sh), trust ladder levels, and capability policies define the boundary. But the boundary itself is human-configured, not self-produced. |
 | **Structural determinism** | Only the system's internal state determines what environmental perturbations can trigger changes | No. A model API breaking change, a Claude Code plugin format change, or a new model release bypasses internal determination entirely. |
 
 ### Where the Analogy Breaks
 
-The autopoiesis framework reveals a fundamental tension in Demarch's architecture:
+The autopoiesis framework reveals a fundamental tension in Sylveste's architecture:
 
-1. **Demarch cannot produce its own substrate.** A cell produces its own membrane and enzymes. Demarch cannot produce LLMs, cannot produce Claude Code, cannot produce the terminal infrastructure it runs on. It is *constitutively dependent* on externally-produced components. This is not a gap to be closed — it is a structural property of software platforms. No software system is autopoietic in the strict biological sense because software cannot produce its own hardware or runtime environment.
+1. **Sylveste cannot produce its own substrate.** A cell produces its own membrane and enzymes. Sylveste cannot produce LLMs, cannot produce Claude Code, cannot produce the terminal infrastructure it runs on. It is *constitutively dependent* on externally-produced components. This is not a gap to be closed — it is a structural property of software platforms. No software system is autopoietic in the strict biological sense because software cannot produce its own hardware or runtime environment.
 
-2. **Luhmann's escape hatch.** Niklas Luhmann extended autopoiesis to social systems by redefining the "components" — social systems don't produce people, they produce *communications*. The system's elements are not the physical substrate but the operations. Applied to Demarch: the relevant components are not "Go binaries and markdown files" but *decisions* — routing decisions, gate decisions, review verdicts, dispatch choices. By this reading, Demarch approaches autopoiesis when its decision-making processes produce the rules and calibrations that govern future decision-making processes.
+2. **Luhmann's escape hatch.** Niklas Luhmann extended autopoiesis to social systems by redefining the "components" — social systems don't produce people, they produce *communications*. The system's elements are not the physical substrate but the operations. Applied to Sylveste: the relevant components are not "Go binaries and markdown files" but *decisions* — routing decisions, gate decisions, review verdicts, dispatch choices. By this reading, Sylveste approaches autopoiesis when its decision-making processes produce the rules and calibrations that govern future decision-making processes.
 
 3. **The OODARC loop is proto-autopoietic.** The Reflect/Compound phases of OODARC explicitly close the loop: observations feed back to change future behavior. Interspect's evidence-to-routing-override pipeline is a concrete instance. But the loop only operates on *routing* — it does not yet produce new agents, new phase structures, new gate criteria, or new coordination rules. The network of processes is too narrow to constitute organizational closure.
 
@@ -80,14 +80,14 @@ The autopoiesis framework reveals a fundamental tension in Demarch's architectur
 
 A dissipative structure maintains itself far from thermodynamic equilibrium through continuous energy (or information) throughput. Key properties:
 
-- **Requires continuous flow.** Stop the energy input and the structure dissipates. For Demarch: stop the token flow (API calls, model invocations) and the system is inert files on disk.
-- **Nonlinear dynamics.** Dissipative structures emerge only when the system's governing equations are nonlinear. For Demarch: the flywheel (authority -> actions -> evidence -> authority) is explicitly nonlinear — each cycle compounds, not merely accumulates.
+- **Requires continuous flow.** Stop the energy input and the structure dissipates. For Sylveste: stop the token flow (API calls, model invocations) and the system is inert files on disk.
+- **Nonlinear dynamics.** Dissipative structures emerge only when the system's governing equations are nonlinear. For Sylveste: the flywheel (authority -> actions -> evidence -> authority) is explicitly nonlinear — each cycle compounds, not merely accumulates.
 - **Bifurcation points.** As parameters change (increasing throughput, growing agent count), the system hits bifurcation points where the old steady state becomes unstable and a qualitatively new pattern emerges.
-- **Entropy production increases with structure.** More complex dissipative structures dissipate *more* energy, not less. This maps directly to Demarch's cost observation: "Wasted tokens dilute context." Efficient structure doesn't minimize token consumption — it maximizes useful work *per token*.
+- **Entropy production increases with structure.** More complex dissipative structures dissipate *more* energy, not less. This maps directly to Sylveste's cost observation: "Wasted tokens dilute context." Efficient structure doesn't minimize token consumption — it maximizes useful work *per token*.
 
 **The dissipative structure question for v1.0:** Has the system crossed its first bifurcation — from a manually-driven tool to a self-sustaining pattern that would collapse back to manual operation only if the throughput dropped below a critical threshold?
 
-Currently, Demarch is arguably *pre-bifurcation*. The flywheel exists in principle (PHILOSOPHY.md describes it clearly) but the evidence-to-routing-override loop has "zero production callers" for B2 complexity-aware routing. The calibration tables exist but are populated by defaults, not by closed-loop feedback from outcomes. The system is far from equilibrium (it consumes tokens continuously) but has not yet crossed the threshold where its organized structure is self-reinforcing.
+Currently, Sylveste is arguably *pre-bifurcation*. The flywheel exists in principle (PHILOSOPHY.md describes it clearly) but the evidence-to-routing-override loop has "zero production callers" for B2 complexity-aware routing. The calibration tables exist but are populated by defaults, not by closed-loop feedback from outcomes. The system is far from equilibrium (it consumes tokens continuously) but has not yet crossed the threshold where its organized structure is self-reinforcing.
 
 ### Friston's Free Energy Principle
 
@@ -96,16 +96,16 @@ Under Friston's framework, viable agents minimize *variational free energy* — 
 1. **Perceptual inference (update the model):** When outcomes surprise the agent, update internal beliefs.
 2. **Active inference (change the world):** Act to make the world match predictions.
 
-Mapping to Demarch:
+Mapping to Sylveste:
 
-| FEP Mechanism | Demarch Implementation | Maturity |
+| FEP Mechanism | Sylveste Implementation | Maturity |
 |---------------|----------------------|----------|
 | **World model** | Fleet registry, routing tables, complexity classifiers, phase-cost estimates | Exists but largely hardcoded defaults |
 | **Prediction error** | Interspect evidence (verdict accuracy, routing success rates), interstat token actuals vs. estimates | Collection infrastructure exists; closed-loop calibration is partial |
 | **Perceptual inference** | `calibrate-phase-costs`, interspect canary monitoring, interlab mutation quality signals | Individual calibration loops exist; not integrated into a unified prediction-error minimization process |
 | **Active inference** | Routing overrides (change which agent handles which task), gate threshold adjustment | Override *application* works; override *generation* is human-initiated, not autonomously driven by prediction error |
 
-**The FEP insight:** Demarch's architecture already embeds the distinction between "update the model" (perceptual inference via calibration) and "change the world" (active inference via routing overrides). What's missing is the *automatic connection* between prediction error and active response. Currently, surprise (e.g., an agent performing worse than expected) is *recorded* but not *autonomously acted upon*. The interspect pipeline has the plumbing but the pump is manual.
+**The FEP insight:** Sylveste's architecture already embeds the distinction between "update the model" (perceptual inference via calibration) and "change the world" (active inference via routing overrides). What's missing is the *automatic connection* between prediction error and active response. Currently, surprise (e.g., an agent performing worse than expected) is *recorded* but not *autonomously acted upon*. The interspect pipeline has the plumbing but the pump is manual.
 
 **Free energy v1.0 criterion:** The system's prediction error (observed outcomes vs. expected outcomes) autonomously triggers model updates AND active interventions without human initiation — the "surprise minimization" loop runs without a human turning the crank.
 
@@ -117,9 +117,9 @@ Research on Pharaoh's ants (Beekman et al., PNAS 2001) demonstrates a first-orde
 
 ### Analogous Phases in Multi-Agent Development
 
-| Ant Colony Phase | Agent Platform Analogue | Demarch Status |
+| Ant Colony Phase | Agent Platform Analogue | Sylveste Status |
 |------------------|------------------------|----------------|
-| **Phase 0: Solitary foraging** | Single agent, human-directed. No coordination needed because there's only one worker. | Pre-Demarch. A single Claude Code session with no plugins. |
+| **Phase 0: Solitary foraging** | Single agent, human-directed. No coordination needed because there's only one worker. | Pre-Sylveste. A single Claude Code session with no plugins. |
 | **Phase 1: Local pheromone deposits** | Agents leave traces (session logs, beads, events) but don't read each other's traces systematically. Information exists but doesn't coordinate. | **Current state.** Agents produce JSONL sessions, beads track work, intercore records events. But cross-session learning is weak — interlock broadcasts exist but have limited consumers. |
 | **Phase 2: Trail formation** | Agents read and reinforce each other's successful paths. Good solutions attract more agents; bad paths decay. Self-organized division of labor emerges. | **Partially built.** interlab mutation store with delta sharing via interlock is *exactly* this — "parallel sessions discover and build on each other's approaches." But it's limited to /autoresearch campaigns. The sprint lifecycle doesn't yet exhibit trail-based coordination across sessions. |
 | **Phase 3: Adaptive load balancing** | The colony dynamically reallocates foragers between food sources based on trail strength. Trail decay prevents lock-in to depleted sources. | **Not yet reached.** Requires: (a) real-time reallocation of agents between tasks based on signals, (b) decay of stale routing decisions, and (c) autonomous work selection based on environmental signals. This is the Skaffen OODARC vision but not yet operational at fleet scale. |
@@ -128,12 +128,12 @@ Research on Pharaoh's ants (Beekman et al., PNAS 2001) demonstrates a first-orde
 
 The ant colony research identifies the critical variable as colony size relative to search difficulty. Below the threshold, pheromone trails evaporate before reinforcement arrives. Above it, trails self-reinforce.
 
-For Demarch, the analogous variables are:
+For Sylveste, the analogous variables are:
 - **Agent count per active task** — enough agents contributing to a solution space that successful approaches get reinforced before they decay
 - **Signal persistence** — how long evidence and calibration data remain actionable
 - **Feedback latency** — how quickly an outcome (success/failure) propagates to future decisions
 
-The Phase 1 -> Phase 2 transition requires that *successful approaches propagate faster than they decay*. Currently, Demarch's evidence has long persistence (90-day rolling window) but slow propagation (manual interspect override generation). This inversion — high persistence, low propagation — is the equivalent of an ant colony where pheromone doesn't evaporate but ants can't smell it.
+The Phase 1 -> Phase 2 transition requires that *successful approaches propagate faster than they decay*. Currently, Sylveste's evidence has long persistence (90-day rolling window) but slow propagation (manual interspect override generation). This inversion — high persistence, low propagation — is the equivalent of an ant colony where pheromone doesn't evaporate but ants can't smell it.
 
 **Stigmergy v1.0 criterion:** Evidence from completed sprints automatically influences the next sprint's agent selection, phase structure, or approach — without human mediation. The "pheromone" (outcome evidence) is both persistent AND propagated.
 
@@ -155,7 +155,7 @@ The law states: "Only variety can destroy variety." A controller must have at le
 
 Conservative estimate of distinguishable problem states: ~10,000+ (combinatorial explosion across dimensions).
 
-**Controller variety (Demarch's response repertoire):**
+**Controller variety (Sylveste's response repertoire):**
 - 23 agents across review, research, and workflow
 - 17 skills for different development disciplines
 - 49 commands for specific operations
@@ -168,7 +168,7 @@ Conservative estimate of distinguishable response states: ~500-2,000 (products o
 
 ### The Variety Gap
 
-Demarch's controller variety (~2,000) is one order of magnitude below the disturbance variety (~10,000+). Ashby's law predicts this gap will manifest as *unregulated disturbances* — problems the system cannot adequately respond to.
+Sylveste's controller variety (~2,000) is one order of magnitude below the disturbance variety (~10,000+). Ashby's law predicts this gap will manifest as *unregulated disturbances* — problems the system cannot adequately respond to.
 
 Observable symptoms of insufficient variety:
 - **One-size-fits-all phase gates.** The same 7-phase structure applies to a one-line typo fix and a multi-service migration. This is variety compression that loses information.
@@ -181,7 +181,7 @@ Ashby identified two responses to variety gaps:
 1. **Amplify controller variety** — add more distinguishable responses
 2. **Attenuate disturbance variety** — filter or constrain the problem space
 
-Demarch already uses both:
+Sylveste already uses both:
 - **Amplification:** 53 Interverse plugins extend the base variety. The plugin architecture is explicitly a variety amplification mechanism ("Growth is a feature").
 - **Attenuation:** "Software development is the first-class citizen" constrains the problem space. The complexity classifier attenuates by bucketing continuous complexity into discrete levels.
 
@@ -197,27 +197,27 @@ Each framework illuminates something, but each also distorts. The distortions ar
 
 ### Biology vs. Software: The Substrate Problem
 
-Autopoiesis requires that the system produces its own components. Cells produce enzymes; organisms produce cells. Software systems *never* produce their own substrate — they run on externally-produced hardware, operating systems, and runtimes. Demarch depends on Claude Code, Anthropic's API, Go, SQLite, and tmux. None of these are produced by Demarch.
+Autopoiesis requires that the system produces its own components. Cells produce enzymes; organisms produce cells. Software systems *never* produce their own substrate — they run on externally-produced hardware, operating systems, and runtimes. Sylveste depends on Claude Code, Anthropic's API, Go, SQLite, and tmux. None of these are produced by Sylveste.
 
-**What this reveals:** The autopoietic threshold for software must be redefined. A software platform is "autopoietic" not when it produces its hardware (impossible) but when it produces its own *operational logic* — the rules, calibrations, and compositions that determine its behavior. By this criterion, the relevant question is: does Demarch produce its own routing tables, gate thresholds, agent compositions, and coordination rules? Currently: partially (interspect routing overrides), but mostly not.
+**What this reveals:** The autopoietic threshold for software must be redefined. A software platform is "autopoietic" not when it produces its hardware (impossible) but when it produces its own *operational logic* — the rules, calibrations, and compositions that determine its behavior. By this criterion, the relevant question is: does Sylveste produce its own routing tables, gate thresholds, agent compositions, and coordination rules? Currently: partially (interspect routing overrides), but mostly not.
 
 ### Thermodynamics vs. Information: The Entropy Problem
 
 Prigogine's dissipative structures exist because they increase total entropy production while decreasing local entropy. The thermodynamic framing maps awkwardly to information systems because "entropy" in information theory (Shannon entropy) and thermodynamics (Boltzmann entropy) are related but not identical. A software system that "minimizes surprise" (Friston) is not literally minimizing thermodynamic entropy.
 
-**What this reveals:** The useful insight from thermodynamics is not entropy per se but *the requirement for continuous throughput*. Demarch is a dissipative structure in the sense that it requires continuous token flow to maintain its organized state. Turn off the API, and it degrades to inert files. The v1.0 question is whether the organized state has crossed a bifurcation into self-reinforcing complexity — and the honest answer is not yet.
+**What this reveals:** The useful insight from thermodynamics is not entropy per se but *the requirement for continuous throughput*. Sylveste is a dissipative structure in the sense that it requires continuous token flow to maintain its organized state. Turn off the API, and it degrades to inert files. The v1.0 question is whether the organized state has crossed a bifurcation into self-reinforcing complexity — and the honest answer is not yet.
 
 ### Ant Colonies vs. Agent Fleets: The Identity Problem
 
 Ants have no individual identity or strategy. They follow simple rules (deposit pheromone, follow gradients, random walk otherwise). LLM agents are the opposite — they have rich internal representations, can strategize, and maintain session context. Stigmergy works for ants because individual simplicity enables collective complexity. For LLM agents, the individual is already complex, which makes collective coordination *harder*, not easier, because agents can have conflicting internal models.
 
-**What this reveals:** Pure stigmergy (indirect coordination through environment modification) is necessary but not sufficient for Demarch. The system needs *both* stigmergic coordination (beads, events, routing overrides as "pheromones") AND direct mediation (interlock broadcasts, multi-agent review synthesis). Beer's S2 (anti-oscillation coordination) is more relevant than pure stigmergy for the agent-identity problem.
+**What this reveals:** Pure stigmergy (indirect coordination through environment modification) is necessary but not sufficient for Sylveste. The system needs *both* stigmergic coordination (beads, events, routing overrides as "pheromones") AND direct mediation (interlock broadcasts, multi-agent review synthesis). Beer's S2 (anti-oscillation coordination) is more relevant than pure stigmergy for the agent-identity problem.
 
 ### VSM vs. Software: The Recursion Problem
 
-Beer's VSM is fractal — every viable system contains viable sub-systems, and is itself part of a larger viable system. Demarch partially exhibits this recursion (Intercore is a viable sub-system with its own S1-S5; Clavain is another; each plugin could be analyzed as a viable system). But the recursion *stops at the model boundary*. Demarch cannot make the LLM itself more viable — it can only route to different LLMs. This creates a viability dependency that Beer's framework doesn't anticipate: the sub-system's viability depends on an external component that the meta-system cannot regulate.
+Beer's VSM is fractal — every viable system contains viable sub-systems, and is itself part of a larger viable system. Sylveste partially exhibits this recursion (Intercore is a viable sub-system with its own S1-S5; Clavain is another; each plugin could be analyzed as a viable system). But the recursion *stops at the model boundary*. Sylveste cannot make the LLM itself more viable — it can only route to different LLMs. This creates a viability dependency that Beer's framework doesn't anticipate: the sub-system's viability depends on an external component that the meta-system cannot regulate.
 
-**What this reveals:** Demarch's viability has an irreducible external dependency. This is why the "host platform agnostic" strategy in PHILOSOPHY.md is a viability strategy, not just a business strategy — it reduces the single-point-of-failure risk from any one LLM provider.
+**What this reveals:** Sylveste's viability has an irreducible external dependency. This is why the "host platform agnostic" strategy in PHILOSOPHY.md is a viability strategy, not just a business strategy — it reduces the single-point-of-failure risk from any one LLM provider.
 
 ---
 
@@ -239,7 +239,7 @@ Each framework suggests a different threshold:
 These criteria converge on a single observable property: **closed-loop autonomy across multiple operational dimensions.**
 
 The frameworks agree that v1.0 is NOT about:
-- Feature count (Demarch already has 53 plugins, 23 agents, 49 commands)
+- Feature count (Sylveste already has 53 plugins, 23 agents, 49 commands)
 - Code quality (the codebase is well-structured with clear boundaries)
 - Architectural completeness (5 pillars, 3 layers, well-defined interfaces)
 
@@ -250,7 +250,7 @@ The frameworks agree that v1.0 IS about:
 
 ### The Concrete Observable Test
 
-**Demarch v1.0.0 means: if you delete `.clavain/interspect/interspect.db`, the routing-overrides, the calibration history, and the mutation store, the system performs measurably worse on the next 10 sprints — AND it recovers to prior performance within 50 sprints without human intervention.**
+**Sylveste v1.0.0 means: if you delete `.clavain/interspect/interspect.db`, the routing-overrides, the calibration history, and the mutation store, the system performs measurably worse on the next 10 sprints — AND it recovers to prior performance within 50 sprints without human intervention.**
 
 This single test validates:
 1. **VSM completeness** — the evidence/calibration data is operationally load-bearing (it matters), implying all five systems contribute
@@ -264,7 +264,7 @@ This single test validates:
 
 ```
 SETUP:
-  1. Run 100 sprints across diverse projects with full Demarch stack
+  1. Run 100 sprints across diverse projects with full Sylveste stack
   2. Record per-sprint metrics: cost, duration, defect rate, gate pass rate
   3. Snapshot the calibration state (interspect.db, routing-overrides, mutation store)
 

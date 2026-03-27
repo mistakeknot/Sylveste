@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-1ifn
+bead: Sylveste-1ifn
 stage: planned
 ---
 
@@ -15,7 +15,7 @@ Three features across two repos. F1 (agmodb snapshot) must ship first so interra
 ## Task Sequence
 
 ### Task 1: Extend agmodb `getModels()` query with hardware fields
-**Bead:** Demarch-2wwg (F1)
+**Bead:** Sylveste-2wwg (F1)
 **Repo:** `/home/mk/projects/agmodb`
 **Files:**
 - `src/lib/db/queries/models.ts` — add `parametersBillions`, `activeParametersBillions`, `isMoe`, `isOpenWeight` to `ModelWithStats` type and both select queries
@@ -28,7 +28,7 @@ Three features across two repos. F1 (agmodb snapshot) must ship first so interra
 **AC:** `ModelWithStats` includes hardware fields. Queries return the data.
 
 ### Task 2: Extend agmodb snapshot type and export
-**Bead:** Demarch-2wwg (F1)
+**Bead:** Sylveste-2wwg (F1)
 **Repo:** `/home/mk/projects/agmodb`
 **Files:**
 - `src/lib/snapshot/types.ts` — add optional hardware fields to `SnapshotModel`
@@ -57,7 +57,7 @@ Three features across two repos. F1 (agmodb snapshot) must ship first so interra
 **AC:** Snapshot JSON includes hardware fields at version 3. Backward compatible (nullable). Build passes.
 
 ### Task 3: Publish new agmodb snapshot
-**Bead:** Demarch-2wwg (F1)
+**Bead:** Sylveste-2wwg (F1)
 **Repo:** `/home/mk/projects/agmodb`
 
 **Steps:**
@@ -72,8 +72,8 @@ Three features across two repos. F1 (agmodb snapshot) must ship first so interra
 **Gate:** Pause here for user — agmodb changes need DB access (Neon) to export. May need to be done separately.
 
 ### Task 4: Extend interrank `SnapshotModel` type
-**Bead:** Demarch-id2y (F2)
-**Repo:** `/home/mk/projects/Demarch/interverse/interrank`
+**Bead:** Sylveste-id2y (F2)
+**Repo:** `/home/mk/projects/Sylveste/interverse/interrank`
 **Files:**
 - `src/types.ts` — add optional hardware fields
 
@@ -90,8 +90,8 @@ Three features across two repos. F1 (agmodb snapshot) must ship first so interra
 **AC:** Type extended. Build passes. Existing snapshot loading unaffected.
 
 ### Task 5: Add local-calc module to interrank
-**Bead:** Demarch-id2y (F2)
-**Repo:** `/home/mk/projects/Demarch/interverse/interrank`
+**Bead:** Sylveste-id2y (F2)
+**Repo:** `/home/mk/projects/Sylveste/interverse/interrank`
 **Files:**
 - `src/local-calc/gpu-data.ts` — copy from agmodb, export only `GpuSpec`, `GPU_DATABASE`, `getGpuById` (omit `getGpusByCategory` — no caller in interrank)
 - `src/local-calc/vram-calc.ts` — copy from agmodb
@@ -107,8 +107,8 @@ Three features across two repos. F1 (agmodb snapshot) must ship first so interra
 **AC:** `src/local-calc/` exists with GPU database (35 GPUs) and VRAM calc. Barrel exports only used symbols. Build passes.
 
 ### Task 6: Add local-calc unit tests
-**Bead:** Demarch-id2y (F2)
-**Repo:** `/home/mk/projects/Demarch/interverse/interrank`
+**Bead:** Sylveste-id2y (F2)
+**Repo:** `/home/mk/projects/Sylveste/interverse/interrank`
 **Files:**
 - `src/local-calc/vram-calc.test.ts`
 - `src/local-calc/gpu-data.test.ts`
@@ -130,8 +130,8 @@ Three features across two repos. F1 (agmodb snapshot) must ship first so interra
 **AC:** All tests pass. Coverage for VRAM estimation, quantization selection, quality retention, MoE offloading.
 
 ### Task 7: Implement `recommendLocalModels` function
-**Bead:** Demarch-0szu (F3)
-**Repo:** `/home/mk/projects/Demarch/interverse/interrank`
+**Bead:** Sylveste-0szu (F3)
+**Repo:** `/home/mk/projects/Sylveste/interverse/interrank`
 **Files:**
 - `src/recommend.ts` — add `recommendLocalModels()` and types
 
@@ -187,8 +187,8 @@ Three features across two repos. F1 (agmodb snapshot) must ship first so interra
 **AC:** Function filters, quantizes, scores, and ranks. Type coercion for ModelParams is explicit. Empty results include diagnostic. Pure function, no side effects.
 
 ### Task 8: Add `recommendLocalModels` unit tests
-**Bead:** Demarch-0szu (F3)
-**Repo:** `/home/mk/projects/Demarch/interverse/interrank`
+**Bead:** Sylveste-0szu (F3)
+**Repo:** `/home/mk/projects/Sylveste/interverse/interrank`
 **Files:**
 - `src/recommend.test.ts` — add test section
 
@@ -214,8 +214,8 @@ Three features across two repos. F1 (agmodb snapshot) must ship first so interra
 **AC:** All test cases pass. Edge cases covered.
 
 ### Task 9: Register `recommend_local_models` MCP tool
-**Bead:** Demarch-0szu (F3)
-**Repo:** `/home/mk/projects/Demarch/interverse/interrank`
+**Bead:** Sylveste-0szu (F3)
+**Repo:** `/home/mk/projects/Sylveste/interverse/interrank`
 **Files:**
 - `src/index.ts` — add tool registration
 
@@ -250,8 +250,8 @@ Three features across two repos. F1 (agmodb snapshot) must ship first so interra
 **AC:** Tool registered. Schema validates input. Responds with recommendations, diagnostic for old snapshots, or clear error.
 
 ### Task 10: Integration test and final validation
-**Bead:** Demarch-0szu (F3)
-**Repo:** `/home/mk/projects/Demarch/interverse/interrank`
+**Bead:** Sylveste-0szu (F3)
+**Repo:** `/home/mk/projects/Sylveste/interverse/interrank`
 
 **Steps:**
 1. Run full test suite: `pnpm test`

@@ -10,7 +10,7 @@ stage: brainstorm
 
 ## Problem Statement
 
-The bead's analysis identified that Demarch has a strong philosophical core and a real working system, but the top-level documents have drifted apart. The roadmap has 719 open items, the vision references bead priorities that have since changed, and status counts differ across surfaces. This is the kind of silent drift that PHILOSOPHY.md specifically warns about: "Stale documentation is silent technical debt."
+The bead's analysis identified that Sylveste has a strong philosophical core and a real working system, but the top-level documents have drifted apart. The roadmap has 719 open items, the vision references bead priorities that have since changed, and status counts differ across surfaces. This is the kind of silent drift that PHILOSOPHY.md specifically warns about: "Stale documentation is silent technical debt."
 
 ## Current State of the Five Gaps
 

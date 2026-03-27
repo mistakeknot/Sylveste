@@ -3,7 +3,7 @@ artifact_type: cuj
 journey: knowledge-compound
 actor: regular user (developer building institutional knowledge)
 criticality: p2
-bead: Demarch-2c7
+bead: Sylveste-2c7
 ---
 
 # Knowledge Compounding
@@ -12,7 +12,7 @@ bead: Demarch-2c7
 
 Every debugging session, every architectural decision, every "oh, that's how it works" moment creates knowledge that's valuable beyond the current task. Without a compounding system, this knowledge evaporates when the session ends — the next developer (or the same developer next week) rediscovers the same things from scratch.
 
-Knowledge compounding turns ephemeral session insights into durable, searchable institutional knowledge. It spans multiple tools: **Clavain's `/compound` and `/reflect`** (capture), **Interkasten** (knowledge base), **Intersearch** (retrieval), and **CASS** (session intelligence). The compound loop is what makes Demarch smarter over time — not just faster.
+Knowledge compounding turns ephemeral session insights into durable, searchable institutional knowledge. It spans multiple tools: **Clavain's `/compound` and `/reflect`** (capture), **Interkasten** (knowledge base), **Intersearch** (retrieval), and **CASS** (session intelligence). The compound loop is what makes Sylveste smarter over time — not just faster.
 
 ## The Journey
 

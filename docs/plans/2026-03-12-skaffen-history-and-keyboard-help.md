@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-s9jd
+bead: Sylveste-s9jd
 stage: design
 requirements:
   - F1: Prompt history search (Ctrl+R)
@@ -10,7 +10,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-s9jd
+**Bead:** Sylveste-s9jd
 **Goal:** Add readline-style Ctrl+R history search and a ? keyboard shortcuts overlay to Skaffen's TUI.
 
 **Architecture:** History is a flat text file (`~/.skaffen/history`) appended on each submit, loaded into memory at startup. A new `historyModel` Bubble Tea component handles the Ctrl+R overlay with incremental search. Keyboard help is a new `keyHelpModel` overlay toggled by `?` on empty prompt. Both integrate into `promptModel` and `appModel` following the same delegation pattern as the file picker and command completer.

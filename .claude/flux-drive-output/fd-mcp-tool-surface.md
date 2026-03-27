@@ -5,8 +5,8 @@
 
 ## Design Principles
 
-1. **Framework-agnostic names.** No tool name, parameter, or error code contains "Demarch", "interweave", "Tailscale", "intermute", or any framework identifier. The attp MCP server is usable by any coding agent on any platform.
-2. **Follows Demarch toolerror convention** for error shapes (type/message/recoverable/data), but the error type constants are protocol-native, not imported from interbase.
+1. **Framework-agnostic names.** No tool name, parameter, or error code contains "Sylveste", "interweave", "Tailscale", "intermute", or any framework identifier. The attp MCP server is usable by any coding agent on any platform.
+2. **Follows Sylveste toolerror convention** for error shapes (type/message/recoverable/data), but the error type constants are protocol-native, not imported from interbase.
 3. **Idempotency documented per tool.** Every tool states whether repeat calls are safe.
 4. **Atomic tools composable by higher layers.** interweave (or any integration layer) orchestrates these without knowing attp internals.
 
@@ -707,7 +707,7 @@ Establishes a collaboration session with a peer. Sessions scope token exchange, 
 
 ### Error Response Shape
 
-Every error response follows this structure (consistent with Demarch's `toolerror` convention but using attp-native type constants):
+Every error response follows this structure (consistent with Sylveste's `toolerror` convention but using attp-native type constants):
 
 ```json
 {
@@ -812,7 +812,7 @@ When a specific feature is required but the peer does not support it:
 
 ### Naming Compliance
 
-Every tool name, parameter name, and error type was checked against the following exclusion list: `Demarch`, `interweave`, `intercore`, `intermute`, `interlock`, `Tailscale`, `tailnet`, `Clavain`, `Skaffen`, `Autarch`.
+Every tool name, parameter name, and error type was checked against the following exclusion list: `Sylveste`, `interweave`, `intercore`, `intermute`, `interlock`, `Tailscale`, `tailnet`, `Clavain`, `Skaffen`, `Autarch`.
 
 **Result: zero leaks.** The tool surface uses only generic terms:
 - `peer_id` (not `tailnet_host`)

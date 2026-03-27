@@ -1,6 +1,6 @@
 # Systematic Mutation Engine for Autoresearch
 
-**Bead:** Demarch-vd1
+**Bead:** Sylveste-vd1
 **Date:** 2026-03-16
 **Status:** Brainstorm
 
@@ -88,7 +88,7 @@ run_experiment / log_experiment  (mutation_id in ExperimentRecord)
 The full list of experiments is known upfront. The skill can show "12 mutations + 3 ideas remaining" in the TUI. Resume is deterministic — check which mutation IDs are in the JSONL, skip those.
 
 **D2: Mutation identity is content-addressable.**
-`mutation:parameter_sweep:threshold:0.15` — type:param:value. Two campaigns with the same mutation produce the same ID. This enables cross-campaign deduplication (future: Demarch-2ik).
+`mutation:parameter_sweep:threshold:0.15` — type:param:value. Two campaigns with the same mutation produce the same ID. This enables cross-campaign deduplication (future: Sylveste-2ik).
 
 **D3: The agent still makes the code changes.**
 Mutations describe WHAT to change, not HOW. The agent reads the mutation spec and implements it using Edit/Write tools. This preserves the agent's ability to handle complex mutations (e.g., swapping an entire normalization implementation) while giving it precise direction.

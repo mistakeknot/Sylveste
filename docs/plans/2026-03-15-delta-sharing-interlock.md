@@ -1,13 +1,13 @@
 ---
 artifact_type: plan
-bead: Demarch-a4c
+bead: Sylveste-a4c
 stage: design
 ---
 # Delta Sharing via Interlock Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-a4c
+**Bead:** Sylveste-a4c
 **Goal:** When a campaign records a mutation, broadcast it via interlock so parallel sessions can discover and build on each other's approaches.
 
 **Architecture:** Purely skill-level integration — update `/autoresearch` SKILL.md to broadcast mutations after recording them, and query interlock inbox at campaign start alongside `mutation_query`. No new Go code needed. The interlock `broadcast_message` tool already exists with topic-based fan-out to all agents in the project.
@@ -60,7 +60,7 @@ git commit -m "feat: broadcast mutations via interlock after recording"
 ```
 
 <verify>
-- run: `grep -c "broadcast_message" /home/mk/projects/Demarch/interverse/interlab/skills/autoresearch/SKILL.md`
+- run: `grep -c "broadcast_message" /home/mk/projects/Sylveste/interverse/interlab/skills/autoresearch/SKILL.md`
   expect: contains "1"
 </verify>
 
@@ -100,7 +100,7 @@ git commit -m "feat: query interlock for cross-session mutation discoveries at c
 ```
 
 <verify>
-- run: `grep -c "list_topic_messages" /home/mk/projects/Demarch/interverse/interlab/skills/autoresearch/SKILL.md`
+- run: `grep -c "list_topic_messages" /home/mk/projects/Sylveste/interverse/interlab/skills/autoresearch/SKILL.md`
   expect: contains "1"
 </verify>
 
@@ -140,7 +140,7 @@ git commit -m "feat: broadcast aggregate results from multi-campaign synthesis v
 ```
 
 <verify>
-- run: `grep -c "broadcast_message" /home/mk/projects/Demarch/interverse/interlab/skills/autoresearch-multi/SKILL.md`
+- run: `grep -c "broadcast_message" /home/mk/projects/Sylveste/interverse/interlab/skills/autoresearch-multi/SKILL.md`
   expect: contains "1"
 </verify>
 
@@ -164,6 +164,6 @@ git push
 ```
 
 <verify>
-- run: `grep '"version"' /home/mk/projects/Demarch/interverse/interlab/.claude-plugin/plugin.json`
+- run: `grep '"version"' /home/mk/projects/Sylveste/interverse/interlab/.claude-plugin/plugin.json`
   expect: contains "0.4.2"
 </verify>

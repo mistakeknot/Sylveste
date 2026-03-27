@@ -31,7 +31,7 @@ Any project knowledge in CLAUDE.md is a violation. Interscribe detects and moves
 
 ### Architecture
 - **Skill-only plugin** — no compiled MCP server. Analysis done by LLM reading files + shell scripts for metrics.
-- **General-purpose from day 1** — designed for any project's CLAUDE.md/AGENTS.md, not Demarch-specific.
+- **General-purpose from day 1** — designed for any project's CLAUDE.md/AGENTS.md, not Sylveste-specific.
 - **Fully automatic** by default — applies all changes, user reviews via git diff. Trust the tool.
 
 ### Standards Location

@@ -2,7 +2,7 @@
 
 **Agent:** fd-ux-vision-delivery-gap (product manager, vision-against-reality audit)
 **Date:** 2026-02-25
-**Scope:** Autarch TUI codebase vs. autarch-vision.md, demarch-vision.md, FLOWS.md, AGENTS.md
+**Scope:** Autarch TUI codebase vs. autarch-vision.md, sylveste-vision.md, FLOWS.md, AGENTS.md
 **Decision Lens:** Cost per landable change (autonomy, quality, token efficiency). Gaps immediately visible to a user who read the vision first.
 
 ---
@@ -36,13 +36,13 @@ These gaps matter because they affect autonomy (users cannot observe multi-proje
 - The standalone `bigend --tui` mode (`internal/bigend/tui/`) DOES use the aggregator + scanner for multi-project, but the unified TUI (`autarch tui`) does not.
 
 **Files:**
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/bigend.go:61-75` -- constructor takes single client
-- `/home/mk/projects/Demarch/apps/autarch/cmd/autarch/main.go:257-258` -- factory wires single client
-- `/home/mk/projects/Demarch/apps/autarch/internal/bigend/aggregator/aggregator.go:77-80` -- State struct with multi-project support exists but is NOT used by BigendView
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/bigend.go:61-75` -- constructor takes single client
+- `/home/mk/projects/Sylveste/apps/autarch/cmd/autarch/main.go:257-258` -- factory wires single client
+- `/home/mk/projects/Sylveste/apps/autarch/internal/bigend/aggregator/aggregator.go:77-80` -- State struct with multi-project support exists but is NOT used by BigendView
 
 **Impact:** A user reading the vision expects Bigend to answer "what's running across all my projects?" The unified TUI's Bigend answers "what tasks are ready in this one project?" This is the most immediately visible gap because Bigend is the default landing tab.
 
-**Priority:** P0 -- directly undermines the "mission control" claim and the demarch-vision north-star metric ("what does it cost to ship a reviewed, tested change?" requires multi-project visibility).
+**Priority:** P0 -- directly undermines the "mission control" claim and the sylveste-vision north-star metric ("what does it cost to ship a reviewed, tested change?" requires multi-project visibility).
 
 ---
 
@@ -59,9 +59,9 @@ These gaps matter because they affect autonomy (users cannot observe multi-proje
 - The vision explicitly says "Only policy-governing mutations go through the OS" -- all mutations currently bypass the OS.
 
 **Files:**
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/coldwine.go:891` -- `ic.RunCreate(ctx, ".", goal, ...)` direct kernel call
-- `/home/mk/projects/Demarch/apps/autarch/pkg/intercore/operations.go` -- all operations call `ic` directly
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/run_dashboard.go:584` -- help text references `ic run create`
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/coldwine.go:891` -- `ic.RunCreate(ctx, ".", goal, ...)` direct kernel call
+- `/home/mk/projects/Sylveste/apps/autarch/pkg/intercore/operations.go` -- all operations call `ic` directly
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/run_dashboard.go:584` -- help text references `ic run create`
 
 **Impact:** Without OS-mediated intent submission, the kernel has no policy enforcement on writes from the app layer. Model routing, budget limits, complexity-aware dispatch -- none of these can be enforced at the OS layer when apps call the kernel directly. This makes the "apps are swappable" claim false -- a replacement app would need to reimplement the same direct kernel calls, not just render state and submit intents.
 
@@ -81,8 +81,8 @@ These gaps matter because they affect autonomy (users cannot observe multi-proje
 - Not accessible as a tab in the unified TUI -- it's a separate `autarch status` command.
 
 **Files:**
-- `/home/mk/projects/Demarch/apps/autarch/cmd/autarch/status.go:15-57` -- standalone command
-- `/home/mk/projects/Demarch/apps/autarch/internal/status/model.go:20-34` -- three panes, no progress bars or discovery inbox
+- `/home/mk/projects/Sylveste/apps/autarch/cmd/autarch/status.go:15-57` -- standalone command
+- `/home/mk/projects/Sylveste/apps/autarch/internal/status/model.go:20-34` -- three panes, no progress bars or discovery inbox
 
 **Impact:** The vision positions this as "the primary wedge" that validates the full stack. It exists as a basic implementation but lacks the visual polish (progress bars) and the discovery inbox feature entirely. A user who read the vision would find the status tool functional but notably incomplete.
 
@@ -101,9 +101,9 @@ These gaps matter because they affect autonomy (users cannot observe multi-proje
 - CLAUDE.md describes it: "Sprint: Intercore sprint run dashboard -- phase advancement, budget, gates, dispatches" (line 11).
 
 **Files:**
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/unified_app.go:82` -- tab names include "Sprint"
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/run_dashboard.go:22-45` -- RunDashboardView struct
-- `/home/mk/projects/Demarch/apps/autarch/cmd/autarch/main.go:261` -- Sprint wired as 4th view (index 3)
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/unified_app.go:82` -- tab names include "Sprint"
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/run_dashboard.go:22-45` -- RunDashboardView struct
+- `/home/mk/projects/Sylveste/apps/autarch/cmd/autarch/main.go:261` -- Sprint wired as 4th view (index 3)
 
 **Impact:** The Sprint tab overlaps significantly with what the status tool should be (runs, dispatches, events). The vision says four tools; the product ships five. This is not necessarily wrong -- the Sprint tab may be the unified-TUI evolution of the status tool concept -- but the vision document should be updated. A user reading the vision would not expect this tab and wouldn't know its relationship to the status tool.
 
@@ -122,10 +122,10 @@ These gaps matter because they affect autonomy (users cannot observe multi-proje
 - No extraction to Clavain has occurred. The extraction schedule (autarch-vision.md:89-99, Phases 1-3) targets v1.5-v2.
 
 **Files:**
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/sprint_view.go:19` -- SprintView owns Orchestrator
-- `/home/mk/projects/Demarch/apps/autarch/internal/gurgeh/arbiter/` -- full arbiter engine in app layer
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/sprint_view.go:19` -- SprintView owns Orchestrator
+- `/home/mk/projects/Sylveste/apps/autarch/internal/gurgeh/arbiter/` -- full arbiter engine in app layer
 
-**Impact:** The vision explicitly acknowledges this as debt (line 155: "This is an acknowledged architectural debt, not an intentional design choice"). The extraction schedule is clear but not started. Until extraction, Gurgeh is not swappable. This affects the platform play: external developers building on Demarch cannot write a web-based PRD tool without reimplementing the arbiter.
+**Impact:** The vision explicitly acknowledges this as debt (line 155: "This is an acknowledged architectural debt, not an intentional design choice"). The extraction schedule is clear but not started. Until extraction, Gurgeh is not swappable. This affects the platform play: external developers building on Sylveste cannot write a web-based PRD tool without reimplementing the arbiter.
 
 **Priority:** P1 -- acknowledged debt with a clear extraction schedule (v1.5-v2). Not blocking current usage but blocking the platform vision.
 
@@ -142,8 +142,8 @@ These gaps matter because they affect autonomy (users cannot observe multi-proje
 - The fallback mechanism (`client.go:86-95`) activates on ECONNREFUSED and shows an `[offline -- reading local files]` badge in the footer -- but only after the first failed API call, not proactively on startup failure.
 
 **Files:**
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/unified_app.go:555-557` -- silent slog.Error
-- `/home/mk/projects/Demarch/apps/autarch/pkg/autarch/client.go:86-95` -- tryFallback activates lazily
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/unified_app.go:555-557` -- silent slog.Error
+- `/home/mk/projects/Sylveste/apps/autarch/pkg/autarch/client.go:86-95` -- tryFallback activates lazily
 
 **Impact:** A user launching `autarch tui` may not realize Intermute failed to start until they try to create a spec and get ErrFallbackReadOnly. The fallback badge appears after the first failed read, not at startup. The gap between "optional local services" (vision) and "writes unavailable with no upfront notice" (reality) is a first-run friction point.
 
@@ -164,9 +164,9 @@ These gaps matter because they affect autonomy (users cannot observe multi-proje
 - BigendView, ColdwineView, PollardView all use polling (loadSessions, loadEpics, loadInsights) -- no push-based updates.
 
 **Files:**
-- `/home/mk/projects/Demarch/apps/autarch/cmd/autarch/main.go:249-253` -- broker wired
-- `/home/mk/projects/Demarch/apps/autarch/pkg/autarch/websocket.go` -- client exists
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/bigend.go:137-163` -- polling-based data loading
+- `/home/mk/projects/Sylveste/apps/autarch/cmd/autarch/main.go:249-253` -- broker wired
+- `/home/mk/projects/Sylveste/apps/autarch/pkg/autarch/websocket.go` -- client exists
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/bigend.go:137-163` -- polling-based data loading
 
 **Impact:** The vision correctly caveats this as "rendering optimization" and says "if the signal broker is removed entirely, the system works identically -- TUI updates are slightly slower." The polling approach works. However, the event-driven reactivity described in FLOWS.md sections 5 and 11 is not delivered to TUI views.
 
@@ -186,8 +186,8 @@ These gaps matter because they affect autonomy (users cannot observe multi-proje
 - The "resolution" (intent submission) does not exist, so the overlap persists.
 
 **Files:**
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/coldwine.go:886-894` -- RunCreate in Coldwine
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/run_dashboard.go` -- RunCreate in Sprint tab
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/coldwine.go:886-894` -- RunCreate in Coldwine
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/run_dashboard.go` -- RunCreate in Sprint tab
 
 **Impact:** Users have two places to manage sprints (Coldwine tab and Sprint tab) with no clear guidance on which to use. This is a navigation/IA issue that creates confusion about where to look for sprint progress.
 
@@ -206,8 +206,8 @@ These gaps matter because they affect autonomy (users cannot observe multi-proje
 - The arbiter's research bridge (`arbiter.NewResearchBridge`) exists and is wired in SprintView (`sprint_view.go:66-70`), but only for the spec sprint flow -- not for standalone Pollard research.
 
 **Files:**
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/pollard.go:491-513` -- hardcoded hunter list
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/sprint_view.go:66-70` -- research bridge wired for sprint
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/pollard.go:491-513` -- hardcoded hunter list
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/sprint_view.go:66-70` -- research bridge wired for sprint
 
 **Impact:** The Pollard tab is a passive insight viewer. Users cannot trigger targeted scans matching the research plan from the vision. The research integration works within the spec sprint flow (good) but not as a standalone Pollard capability.
 
@@ -227,8 +227,8 @@ These gaps matter because they affect autonomy (users cannot observe multi-proje
 - Footer badge shows `[offline -- reading local files]` when in fallback mode.
 
 **Files:**
-- `/home/mk/projects/Demarch/apps/autarch/pkg/autarch/source.go:5-20` -- DataSource + WritableDataSource
-- `/home/mk/projects/Demarch/apps/autarch/pkg/autarch/client.go:46-95` -- fallback mechanism
+- `/home/mk/projects/Sylveste/apps/autarch/pkg/autarch/source.go:5-20` -- DataSource + WritableDataSource
+- `/home/mk/projects/Sylveste/apps/autarch/pkg/autarch/client.go:46-95` -- fallback mechanism
 
 **Impact:** This is well-executed. The data source abstraction genuinely supports swapping backends. The gap is that swappability refers to the app layer (Autarch itself being replaceable), which requires intent submission (GAP-02) -- but the data source pattern is good infrastructure.
 

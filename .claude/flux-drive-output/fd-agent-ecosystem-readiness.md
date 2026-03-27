@@ -1,14 +1,14 @@
-# What Should v1.0.0 Mean for Demarch?
+# What Should v1.0.0 Mean for Sylveste?
 
 **Date:** 2026-03-21
 **Status:** Research complete
-**Context:** Demarch is at v0.6.228. The platform orchestrates autonomous software development using evolving AI models. This document defines what "production ready" means for an agentic platform whose behavior is inherently model-dependent.
+**Context:** Sylveste is at v0.6.228. The platform orchestrates autonomous software development using evolving AI models. This document defines what "production ready" means for an agentic platform whose behavior is inherently model-dependent.
 
 ---
 
 ## 1. The Three Layers of Stability in an Agentic Platform
 
-Traditional semver assumes deterministic software: given the same inputs, the same version produces the same outputs. Agentic platforms break this assumption because the underlying models change, prompts evolve, and routing decisions adapt based on evidence. Demarch must distinguish three independent stability axes:
+Traditional semver assumes deterministic software: given the same inputs, the same version produces the same outputs. Agentic platforms break this assumption because the underlying models change, prompts evolve, and routing decisions adapt based on evidence. Sylveste must distinguish three independent stability axes:
 
 ### Layer S1: Structural API Stability
 
@@ -16,7 +16,7 @@ What it covers: CLI interfaces (`ic` commands, `bd` commands), plugin manifest s
 
 **This is what semver can promise.** If `ic run create` takes certain arguments and returns a certain shape in v1.0.0, it must not change until v2.0.0. Plugins compiled against v1.0 kernel schemas must load in v1.x. Event consumers must not break when the kernel upgrades within v1.x.
 
-Demarch's current state: The L1 kernel (Intercore) already has a write-path contract ("all durable state flows through L1") and the three-layer model has stable ownership boundaries. The `ic` CLI surface is the natural API boundary.
+Sylveste's current state: The L1 kernel (Intercore) already has a write-path contract ("all durable state flows through L1") and the three-layer model has stable ownership boundaries. The `ic` CLI surface is the natural API boundary.
 
 ### Layer S2: Behavioral Stability Under Fixed Model Version
 
@@ -24,7 +24,7 @@ What it covers: Given the same model (e.g., Claude Opus 4, GPT-5), the same prom
 
 **This is what evaluation can measure but semver cannot promise.** Stochastic outputs mean exact reproducibility is impossible. What v1.0 can promise is bounded variance: pass@k reliability (the system succeeds at least once in k attempts), consistent phase progression (brainstorm produces a plan, plan produces a spec, implementation produces code), and gate calibration (gates catch defects they are configured to catch with measurable precision/recall).
 
-Demarch's current state: PHILOSOPHY.md already defines the closed-loop calibration pattern (defaults -> collect -> calibrate -> fallback) and Interspect's signal taxonomy provides the measurement infrastructure. The gap is empirical evidence that calibration converges, not architecture.
+Sylveste's current state: PHILOSOPHY.md already defines the closed-loop calibration pattern (defaults -> collect -> calibrate -> fallback) and Interspect's signal taxonomy provides the measurement infrastructure. The gap is empirical evidence that calibration converges, not architecture.
 
 ### Layer S3: Behavioral Stability Across Model Upgrades
 
@@ -32,7 +32,7 @@ What it covers: When Anthropic ships Claude Opus 5 or OpenAI ships GPT-6, does t
 
 **This is what v1.0 cannot fully promise and should not pretend to.** Model upgrades are external events that change the platform's behavior in ways no version number can capture. What v1.0 CAN promise is: (a) the system detects behavioral drift via canary windows, (b) quality floors are enforced mechanically rather than assumed, (c) routing adapts based on evidence rather than hardcoded model names, and (d) degradation is bounded (the system fails safely, never silently).
 
-Demarch's current state: Interspect's canary monitoring architecture is designed for exactly this, but the Interspect vision doc (v1.1) describes the system at L0-L2 autonomy. The "detect and adapt" machinery exists architecturally; the question is whether it has been exercised enough to trust.
+Sylveste's current state: Interspect's canary monitoring architecture is designed for exactly this, but the Interspect vision doc (v1.1) describes the system at L0-L2 autonomy. The "detect and adapt" machinery exists architecturally; the question is whether it has been exercised enough to trust.
 
 ### What v1.0.0 Must Promise
 
@@ -54,7 +54,7 @@ Demarch's current state: Interspect's canary monitoring architecture is designed
 
 **What broke:** Every major abstraction was deprecated at least once before v1.0. Chains, AgentExecutor, and the original agent model were all replaced. The community experienced "abstraction whiplash" -- patterns learned in v0.1 were anti-patterns by v0.3.
 
-**Lesson for Demarch:** LangChain reached v1.0 by *removing* abstractions, not adding them. Their v1.0 surface is dramatically smaller than their v0.3 surface. The `create_agent` function + LangGraph replaced an entire taxonomy of chain types. Demarch should resist the temptation to stabilize everything at v1.0 -- stabilize the kernel boundary (S1) and leave the OS layer (Clavain's routing, agents, prompts) explicitly marked as "model-dependent, evolving."
+**Lesson for Sylveste:** LangChain reached v1.0 by *removing* abstractions, not adding them. Their v1.0 surface is dramatically smaller than their v0.3 surface. The `create_agent` function + LangGraph replaced an entire taxonomy of chain types. Sylveste should resist the temptation to stabilize everything at v1.0 -- stabilize the kernel boundary (S1) and leave the OS layer (Clavain's routing, agents, prompts) explicitly marked as "model-dependent, evolving."
 
 ### AutoGen/Microsoft Agent Framework: The Merger (v0.4 -> Microsoft Agent Framework GA, Q1 2026)
 
@@ -64,7 +64,7 @@ Demarch's current state: Interspect's canary monitoring architecture is designed
 
 **What broke:** AutoGen v0.4 was a near-complete rewrite (async messaging, event-driven architecture). Documentation lagged the code. Microsoft then announced the merge into a new framework, making v0.4 itself a transitional state. Users who adopted v0.4 now face a second migration.
 
-**Lesson for Demarch:** Rewriting a framework mid-adoption is catastrophic for trust. AutoGen had 54K GitHub stars and enterprise adoption, yet the v0.4 rewrite + framework merger created two consecutive breaking transitions. Demarch's philosophy of "strangler-fig, never rewrite" (PHILOSOPHY.md) is the correct instinct. If v1.0 means anything, it means "the next breaking change is v2.0, and v2.0 is a strangler-fig migration, not a rewrite."
+**Lesson for Sylveste:** Rewriting a framework mid-adoption is catastrophic for trust. AutoGen had 54K GitHub stars and enterprise adoption, yet the v0.4 rewrite + framework merger created two consecutive breaking transitions. Sylveste's philosophy of "strangler-fig, never rewrite" (PHILOSOPHY.md) is the correct instinct. If v1.0 means anything, it means "the next breaking change is v2.0, and v2.0 is a strangler-fig migration, not a rewrite."
 
 ### CrewAI: The Fast Mover (v0.28+, late 2025)
 
@@ -74,7 +74,7 @@ Demarch's current state: Interspect's canary monitoring architecture is designed
 
 **What broke:** The v0.4 rewrite introduced breaking changes that were still being stabilized months later. CrewAI has chosen speed over stability guarantees.
 
-**Lesson for Demarch:** CrewAI demonstrates that staying at v0.x indefinitely is a valid strategy when the design space is still being explored. But Demarch is at v0.6.228 -- 228 patch versions deep into v0.6. The version number has stopped communicating meaningful information. Either declare what v1.0 means or adopt a date-based versioning scheme that admits the continuous-evolution nature of the platform.
+**Lesson for Sylveste:** CrewAI demonstrates that staying at v0.x indefinitely is a valid strategy when the design space is still being explored. But Sylveste is at v0.6.228 -- 228 patch versions deep into v0.6. The version number has stopped communicating meaningful information. Either declare what v1.0 means or adopt a date-based versioning scheme that admits the continuous-evolution nature of the platform.
 
 ### Claude Agent SDK: Early Days (v0.1.x, Sep 2025 - Jan 2026)
 
@@ -82,7 +82,7 @@ Demarch's current state: Interspect's canary monitoring architecture is designed
 
 **Stability promise:** Implicitly v0.x -- no stability guarantees. Active development.
 
-**Lesson for Demarch:** Even Anthropic's own agent SDK is pre-v1.0. The entire field is pre-v1.0. This means Demarch's v1.0 declaration would be a statement of *infrastructure* maturity, not model maturity -- because no one has solved model-dependent behavioral stability yet.
+**Lesson for Sylveste:** Even Anthropic's own agent SDK is pre-v1.0. The entire field is pre-v1.0. This means Sylveste's v1.0 declaration would be a statement of *infrastructure* maturity, not model maturity -- because no one has solved model-dependent behavioral stability yet.
 
 ### LlamaIndex: The Modularization (v0.9 -> v0.10+)
 
@@ -90,7 +90,7 @@ Demarch's current state: Interspect's canary monitoring architecture is designed
 
 **What broke:** The modularization split every import path. The migration guide was necessary for all users.
 
-**Lesson for Demarch:** LlamaIndex chose to modularize *before* v1.0 rather than after, which was wise -- it's easier to break imports at v0.10 than v1.0. Demarch's existing modular architecture (6 pillars, 57 plugins, separate package boundaries) means this particular breaking change has already been absorbed. The Interverse plugin ecosystem is already "many small packages."
+**Lesson for Sylveste:** LlamaIndex chose to modularize *before* v1.0 rather than after, which was wise -- it's easier to break imports at v0.10 than v1.0. Sylveste's existing modular architecture (6 pillars, 57 plugins, separate package boundaries) means this particular breaking change has already been absorbed. The Interverse plugin ecosystem is already "many small packages."
 
 ### Summary: What the Field Has Learned
 
@@ -109,20 +109,20 @@ Demarch's current state: Interspect's canary monitoring architecture is designed
 
 ### Why Standard Benchmarks Are Insufficient
 
-SWE-bench Verified scores have reached ~75% for frontier models, but this measures single-issue resolution on well-defined open-source bugs. Demarch's value proposition is the full lifecycle: brainstorm -> strategy -> spec -> implement -> review -> ship. No existing benchmark measures this end-to-end pipeline.
+SWE-bench Verified scores have reached ~75% for frontier models, but this measures single-issue resolution on well-defined open-source bugs. Sylveste's value proposition is the full lifecycle: brainstorm -> strategy -> spec -> implement -> review -> ship. No existing benchmark measures this end-to-end pipeline.
 
-Critical gaps between benchmarks and Demarch's production reality:
+Critical gaps between benchmarks and Sylveste's production reality:
 
-- **Multi-phase coherence:** SWE-bench tests patch generation. Demarch tests whether the brainstorm phase produces a strategy that produces a spec that produces an implementation that passes review. Phase-to-phase information loss is invisible in single-step benchmarks.
-- **Self-building validity:** Demarch builds itself. The evaluation is not "does the agent solve GitHub issues" but "does the system produce durable, maintainable, architecturally coherent changes to its own codebase across hundreds of sprints." The evidence is the commit history.
+- **Multi-phase coherence:** SWE-bench tests patch generation. Sylveste tests whether the brainstorm phase produces a strategy that produces a spec that produces an implementation that passes review. Phase-to-phase information loss is invisible in single-step benchmarks.
+- **Self-building validity:** Sylveste builds itself. The evaluation is not "does the agent solve GitHub issues" but "does the system produce durable, maintainable, architecturally coherent changes to its own codebase across hundreds of sprints." The evidence is the commit history.
 - **Recovery, not just success:** Pass@1 is the wrong metric. Pass@k (k>=8) reveals production-critical brittleness. A v1.0 system should publish pass@k metrics for representative task classes, not just headline success rates.
-- **Domain transfer:** SWE-bench uses 12 popular open-source repos. Demarch claims to work on arbitrary software. The gap between benchmark domains and real-world diversity is where production failures hide.
+- **Domain transfer:** SWE-bench uses 12 popular open-source repos. Sylveste claims to work on arbitrary software. The gap between benchmark domains and real-world diversity is where production failures hide.
 
 ### What v1.0 Evaluation Should Look Like
 
-1. **Internal dogfooding metrics:** Demarch builds Demarch. Publish: sprint completion rate, post-merge defect rate, revert frequency, gate false-positive/negative rates, cost per landable change (current baseline: $2.93). These are the most honest metrics because they operate on a real, evolving codebase with real stakes.
+1. **Internal dogfooding metrics:** Sylveste builds Sylveste. Publish: sprint completion rate, post-merge defect rate, revert frequency, gate false-positive/negative rates, cost per landable change (current baseline: $2.93). These are the most honest metrics because they operate on a real, evolving codebase with real stakes.
 
-2. **Stability benchmarks per task class:** Define 3-5 task complexity tiers (from "fix a typo" to "implement a new pillar feature"). For each tier, publish pass@8 reliability on the Demarch codebase itself and at least one external project.
+2. **Stability benchmarks per task class:** Define 3-5 task complexity tiers (from "fix a typo" to "implement a new pillar feature"). For each tier, publish pass@8 reliability on the Sylveste codebase itself and at least one external project.
 
 3. **Model migration test:** When a new model version ships, run the evaluation suite on both old and new model. Publish the delta. This tests S3 (behavioral stability across model upgrades) directly.
 
@@ -132,7 +132,7 @@ Critical gaps between benchmarks and Demarch's production reality:
 
 ## 4. The Self-Evolution Problem
 
-Demarch is designed to evolve its own behavior: Interspect proposes routing changes, gate threshold adjustments, and agent configuration overlays. PHILOSOPHY.md explicitly describes this as the flywheel. This creates a versioning paradox: **if v1.0.0 of the platform modifies its own routing table after observing 100 sprints, is it still v1.0.0?**
+Sylveste is designed to evolve its own behavior: Interspect proposes routing changes, gate threshold adjustments, and agent configuration overlays. PHILOSOPHY.md explicitly describes this as the flywheel. This creates a versioning paradox: **if v1.0.0 of the platform modifies its own routing table after observing 100 sprints, is it still v1.0.0?**
 
 ### The Paradox Resolved: Mechanism vs. State
 
@@ -170,7 +170,7 @@ Each modification must: (a) be proposed as a diff, (b) go through a canary windo
 
 These are existential failures -- any occurrence is a v1.0 blocker:
 
-1. **Unbounded cascading failure.** An agent error in one phase must not propagate into cascading failures across the sprint pipeline. The OWASP Agentic AI Top 10 (ASI08, Dec 2025) identifies cascading failures as structurally different from traditional software: "unlike traditional software failures that remain localized, agentic AI cascades propagate across autonomous agents, amplify through feedback loops, and compound into system-wide catastrophes." Demarch's phase gates are the circuit breakers. At v1.0, it must be mechanically impossible for a phase failure to silently advance the sprint.
+1. **Unbounded cascading failure.** An agent error in one phase must not propagate into cascading failures across the sprint pipeline. The OWASP Agentic AI Top 10 (ASI08, Dec 2025) identifies cascading failures as structurally different from traditional software: "unlike traditional software failures that remain localized, agentic AI cascades propagate across autonomous agents, amplify through feedback loops, and compound into system-wide catastrophes." Sylveste's phase gates are the circuit breakers. At v1.0, it must be mechanically impossible for a phase failure to silently advance the sprint.
 
 2. **Silent quality degradation.** If a model upgrade or routing change degrades output quality, the system must detect it within a bounded number of sprints (not sessions, not days -- sprints, because that's the unit of work). Detection means: an alert fires, a canary window activates, or a human is notified. "Nobody noticed for two weeks" is a v1.0 failure.
 
@@ -186,11 +186,11 @@ This is the failure mode unique to agentic platforms that must be absent at v1.0
 
 **Definition:** A semantic cascade occurs when an agent produces output that is *syntactically valid but semantically wrong*, and downstream agents consume that output as trusted input, amplifying the error through multiple phases. Unlike a crash (which halts the pipeline) or a type error (which fails validation), a semantic cascade passes all structural checks while producing increasingly wrong results.
 
-**Example in Demarch:** The brainstorm agent misunderstands the issue and produces a plausible-but-wrong strategy. The plan agent faithfully implements the wrong strategy. The implementation agent writes code that passes tests (because the tests are also generated from the wrong strategy). The review agents find no issues (because the code matches the spec, which matches the plan, which matches the wrong strategy). The sprint completes "successfully" with wrong code.
+**Example in Sylveste:** The brainstorm agent misunderstands the issue and produces a plausible-but-wrong strategy. The plan agent faithfully implements the wrong strategy. The implementation agent writes code that passes tests (because the tests are also generated from the wrong strategy). The review agents find no issues (because the code matches the spec, which matches the plan, which matches the wrong strategy). The sprint completes "successfully" with wrong code.
 
 **Why it's unique to agentic platforms:** In human development, strategy errors are caught by different humans at different stages (the architect catches what the PM missed, the code reviewer catches what the implementer missed). In an agentic system, if the same model or the same prompt lineage handles multiple phases, there's correlated error -- the same blind spot appears everywhere.
 
-**Demarch's mitigation:** Multi-model review (different models have different blind spots), the disagreement-is-signal principle (PHILOSOPHY.md), human oversight at phase gates (trust ladder L1-L2). At v1.0, the mitigation must be *measured*: what percentage of semantic cascades does the review pipeline catch? This requires adversarial testing (intentionally inject wrong strategies and measure detection rate).
+**Sylveste's mitigation:** Multi-model review (different models have different blind spots), the disagreement-is-signal principle (PHILOSOPHY.md), human oversight at phase gates (trust ladder L1-L2). At v1.0, the mitigation must be *measured*: what percentage of semantic cascades does the review pipeline catch? This requires adversarial testing (intentionally inject wrong strategies and measure detection rate).
 
 ### Recovery Behaviors That Must Be Present
 
@@ -230,7 +230,7 @@ This is the failure mode unique to agentic platforms that must be absent at v1.0
 
 | Level | Description | Evidence Required |
 |-------|-------------|-------------------|
-| **L0: Single project** | Works on Demarch itself | Self-building metrics (current state) |
+| **L0: Single project** | Works on Sylveste itself | Self-building metrics (current state) |
 | **L1: Same-class projects** | Works on Go/Python CLI tools with tests | At least 2 external projects with published metrics |
 | **L2: Cross-domain** | Works on web apps, mobile, infra, data pipelines | 5+ diverse projects with comparable metrics |
 | **L3: Arbitrary software** | Works on any codebase a human developer could work on | Unrealistic for v1.0 |
@@ -239,17 +239,17 @@ This is the failure mode unique to agentic platforms that must be absent at v1.0
 
 v1.0 should demonstrate:
 
-1. **L0 (self-building):** Demarch has been building itself for 228+ patch versions. The evidence exists. Publish the metrics: sprint completion rate, defect rate, cost per change, revert frequency. This is the strongest evidence because it's been running longest.
+1. **L0 (self-building):** Sylveste has been building itself for 228+ patch versions. The evidence exists. Publish the metrics: sprint completion rate, defect rate, cost per change, revert frequency. This is the strongest evidence because it's been running longest.
 
-2. **L1 (same-class):** At least 2 external projects (Go or Python CLI tools with test suites) must run 50+ sprints each with published metrics comparable to Demarch's self-building metrics. "Comparable" means within 1 standard deviation on completion rate and defect rate.
+2. **L1 (same-class):** At least 2 external projects (Go or Python CLI tools with test suites) must run 50+ sprints each with published metrics comparable to Sylveste's self-building metrics. "Comparable" means within 1 standard deviation on completion rate and defect rate.
 
 3. **L2 (cross-domain, directional):** At least 3 additional projects in different domains (web frontend, API backend, infrastructure-as-code) must run 20+ sprints each. Metrics can be worse than L0/L1 but must show the system is functional (>50% sprint completion rate, no existential failures).
 
-4. **L3 is explicitly NOT required for v1.0.** The docs should say: "Demarch v1.0 is tested on Go/Python CLI tools and has directional evidence on web and infrastructure projects. Arbitrary domain support is a v2.0 goal."
+4. **L3 is explicitly NOT required for v1.0.** The docs should say: "Sylveste v1.0 is tested on Go/Python CLI tools and has directional evidence on web and infrastructure projects. Arbitrary domain support is a v2.0 goal."
 
 ### Why This Matters
 
-The research shows that "agent scaffolding matters as much as the underlying model" -- frameworks running identical models scored 17 issues apart on 731 problems. This means Demarch's specific prompts, routing, and phase structure are tuned to the codebases it has been tested on. Claiming generalization without evidence is the #1 way agentic platforms lose trust in production. 40% of multi-agent pilots fail within six months of deployment, and the primary cause is the gap between demo performance and real-world diversity.
+The research shows that "agent scaffolding matters as much as the underlying model" -- frameworks running identical models scored 17 issues apart on 731 problems. This means Sylveste's specific prompts, routing, and phase structure are tuned to the codebases it has been tested on. Claiming generalization without evidence is the #1 way agentic platforms lose trust in production. 40% of multi-agent pilots fail within six months of deployment, and the primary cause is the gap between demo performance and real-world diversity.
 
 ---
 
@@ -265,7 +265,7 @@ The research shows that "agent scaffolding matters as much as the underlying mod
 
 ### Behavioral Stability (S2) -- Measured Requirements
 
-- [ ] Pass@8 metrics published for 3+ task complexity tiers on the Demarch codebase
+- [ ] Pass@8 metrics published for 3+ task complexity tiers on the Sylveste codebase
 - [ ] Sprint completion rate > 80% on self-building workloads
 - [ ] Post-merge defect rate tracked and published (target: declining trend over 90-day window)
 - [ ] Gate false-positive rate < 20% (measured by human override frequency)
@@ -330,7 +330,7 @@ Key actions:
 Bump to v0.8.0 when the evaluation infrastructure is operational: pass@k benchmarks, adversarial test suite, canary window mechanism, anomaly detection. This signals: "we can measure production readiness."
 
 Key actions:
-- Build pass@k evaluation harness for Demarch self-building tasks
+- Build pass@k evaluation harness for Sylveste self-building tasks
 - Build adversarial test suite (inject known bugs, wrong strategies)
 - Operationalize canary windows for model upgrades
 - Set up anomaly detection on core metrics

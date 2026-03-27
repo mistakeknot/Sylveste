@@ -2,9 +2,9 @@
 
 ## Bead Tracking
 
-All work is tracked at the **Demarch root level** using the monorepo `.beads/` database. Module-level `.beads/` databases are read-only archives of historical closed beads.
+All work is tracked at the **Sylveste root level** using the monorepo `.beads/` database. Module-level `.beads/` databases are read-only archives of historical closed beads.
 
-- Create beads from the Demarch root: `cd ~/projects/Demarch && bd create --title="[module] Description" ...`
+- Create beads from the Sylveste root: `cd ~/projects/Sylveste && bd create --title="[module] Description" ...`
 - Use `[module]` prefix in bead titles to identify the relevant module (e.g., `[interlock]`, `[interflux]`, `[clavain]`)
 - Filter by module: `bd list --status=open | grep -i interlock`
 - Cross-module beads use multiple prefixes: `[interlock/intermute]`
@@ -52,6 +52,6 @@ Recovered beads are tagged `recovered, placeholder` so they are distinguishable 
 
 ## Roadmap
 
-The platform roadmap is at [`docs/demarch-roadmap.md`](../docs/demarch-roadmap.md) with machine-readable canonical output in [`docs/roadmap.json`](../docs/roadmap.json). Regenerate both with `/interpath:roadmap` from the Demarch root. Auto-generate module-level roadmaps from beads with `scripts/generate-module-roadmaps.sh` or `/interpath:propagate`.
+The platform roadmap is at [`docs/demarch-roadmap.md`](../docs/demarch-roadmap.md) with machine-readable canonical output in [`docs/roadmap.json`](../docs/roadmap.json). Regenerate both with `/interpath:roadmap` from the Sylveste root. Auto-generate module-level roadmaps from beads with `scripts/generate-module-roadmaps.sh` or `/interpath:propagate`.
 
 `scripts/sync-roadmap-json.sh` generates the canonical JSON rollup from the root roadmap and beads data. `scripts/generate-module-roadmaps.sh` auto-generates per-module `docs/roadmap.md` files from beads state.

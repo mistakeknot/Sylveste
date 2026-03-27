@@ -3,7 +3,7 @@ artifact_type: cuj
 journey: interfluence-voice-tuning
 actor: regular user (developer or writer who wants AI output in their voice)
 criticality: p3
-bead: Demarch-2c7
+bead: Sylveste-2c7
 ---
 
 # Interfluence Voice Tuning

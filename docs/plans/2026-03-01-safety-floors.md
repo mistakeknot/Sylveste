@@ -92,7 +92,7 @@ YAML
 
 **Step 2: Run test to verify it fails**
 
-Run: `cd /home/mk/projects/Demarch/os/clavain && bats tests/shell/test_routing.bats --filter "safety floor"`
+Run: `cd /home/mk/projects/Sylveste/os/clavain && bats tests/shell/test_routing.bats --filter "safety floor"`
 Expected: FAIL — `routing_resolve_model` does not read agent-roles.yaml yet.
 
 **Step 3: Add cache declarations for safety floor data**
@@ -208,7 +208,7 @@ At the end of `_routing_load_cache()` (before the final `_ROUTING_CACHE_POPULATE
 
 **Step 6: Run test to verify parsing works (tests still fail — clamping not added yet)**
 
-Run: `cd /home/mk/projects/Demarch/os/clavain && bats tests/shell/test_routing.bats --filter "safety floor"`
+Run: `cd /home/mk/projects/Sylveste/os/clavain && bats tests/shell/test_routing.bats --filter "safety floor"`
 Expected: Still FAIL — parsing populates cache but `routing_resolve_model` doesn't clamp yet.
 
 **Step 7: Commit**
@@ -340,12 +340,12 @@ With:
 
 **Step 4: Run tests to verify they pass**
 
-Run: `cd /home/mk/projects/Demarch/os/clavain && bats tests/shell/test_routing.bats --filter "safety floor"`
+Run: `cd /home/mk/projects/Sylveste/os/clavain && bats tests/shell/test_routing.bats --filter "safety floor"`
 Expected: All 3 safety floor tests PASS.
 
 **Step 5: Run full routing test suite to check for regressions**
 
-Run: `cd /home/mk/projects/Demarch/os/clavain && bats tests/shell/test_routing.bats`
+Run: `cd /home/mk/projects/Sylveste/os/clavain && bats tests/shell/test_routing.bats`
 Expected: All existing tests still PASS.
 
 **Step 6: Commit**
@@ -392,7 +392,7 @@ YAML
 
 **Step 2: Run test — should already pass (clamping is generic)**
 
-Run: `cd /home/mk/projects/Demarch/os/clavain && bats tests/shell/test_routing.bats --filter "planner role"`
+Run: `cd /home/mk/projects/Sylveste/os/clavain && bats tests/shell/test_routing.bats --filter "planner role"`
 Expected: PASS — the clamping logic is agent-agnostic, driven by agent-roles.yaml data.
 
 **Step 3: Update agent-roles.yaml**
@@ -509,12 +509,12 @@ YAML
 
 **Step 2: Run all safety floor tests**
 
-Run: `cd /home/mk/projects/Demarch/os/clavain && bats tests/shell/test_routing.bats --filter "safety floor"`
+Run: `cd /home/mk/projects/Sylveste/os/clavain && bats tests/shell/test_routing.bats --filter "safety floor"`
 Expected: All 7 safety floor tests PASS.
 
 **Step 3: Run full test suite**
 
-Run: `cd /home/mk/projects/Demarch/os/clavain && bats tests/shell/test_routing.bats`
+Run: `cd /home/mk/projects/Sylveste/os/clavain && bats tests/shell/test_routing.bats`
 Expected: All tests PASS (existing + new).
 
 **Step 4: Commit**

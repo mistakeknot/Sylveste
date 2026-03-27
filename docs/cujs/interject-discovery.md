@@ -3,7 +3,7 @@ artifact_type: cuj
 journey: interject-discovery
 actor: regular user (developer staying current in their domain)
 criticality: p3
-bead: Demarch-2c7
+bead: Sylveste-2c7
 ---
 
 # Interject Ambient Discovery

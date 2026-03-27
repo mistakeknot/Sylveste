@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-dxzr
+bead: Sylveste-dxzr
 stage: design
 requirements:
   - F1: masaq METRIC wrappers
@@ -15,9 +15,9 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-dxzr (epic) with children Demarch-fjvb, Demarch-2s7p, Demarch-xuvh, Demarch-ngwf, Demarch-6ap0, Demarch-j2p9, Demarch-79iq, Demarch-l3dr
+**Bead:** Sylveste-dxzr (epic) with children Sylveste-fjvb, Sylveste-2s7p, Sylveste-xuvh, Sylveste-ngwf, Sylveste-6ap0, Sylveste-j2p9, Sylveste-79iq, Sylveste-l3dr
 **Phase:** planned (as of 2026-03-17T21:56:50Z)
-**Goal:** Bring Demarch ecosystem from 7% to >50% interlab observability by adding METRIC-emitting benchmark scripts to all optimizable components.
+**Goal:** Bring Sylveste ecosystem from 7% to >50% interlab observability by adding METRIC-emitting benchmark scripts to all optimizable components.
 
 **Architecture:** Each component gets an `interlab.sh` script that wraps existing benchmarks (Go via `go-bench-harness.sh`, Python via new `py-bench-harness.sh`) to emit `METRIC name=value` lines. For components lacking benchmarks, we add `func Benchmark*` functions to existing test files. interlab's `run_experiment` tool parses these METRIC lines — no changes to interlab core needed.
 
@@ -52,7 +52,7 @@ requirements:
 
 ## Task 1: masaq interlab.sh — Priompt Benchmark Wrapper
 
-**Bead:** Demarch-6ap0
+**Bead:** Sylveste-6ap0
 **Phase:** planned (as of 2026-03-17T21:56:50Z)
 **Files:**
 - Create: `masaq/interlab.sh`
@@ -103,7 +103,7 @@ git commit -m "feat(masaq): add interlab.sh benchmark harness for priompt, diff,
 
 ## Task 2: intermap interlab.sh — Pattern Detection Benchmark Wrapper
 
-**Bead:** Demarch-j2p9
+**Bead:** Sylveste-j2p9
 **Phase:** planned (as of 2026-03-17T21:56:50Z)
 **Files:**
 - Create: `interverse/intermap/interlab.sh`
@@ -140,7 +140,7 @@ git commit -m "feat(intermap): add interlab.sh benchmark harness"
 
 ## Task 3: interlens interlab.sh — Python Quality Score Wrapper
 
-**Bead:** Demarch-j2p9
+**Bead:** Sylveste-j2p9
 **Phase:** planned (as of 2026-03-17T21:56:50Z)
 **Files:**
 - Create: `interverse/interlens/interlab.sh`
@@ -217,7 +217,7 @@ git commit -m "feat(interlens): add interlab.sh benchmark harness for quality sc
 
 ## Task 4: tldr-swinton interlab.sh — Token Efficiency Eval Wrapper
 
-**Bead:** Demarch-79iq
+**Bead:** Sylveste-79iq
 **Phase:** planned (as of 2026-03-17T21:56:50Z)
 **Files:**
 - Create: `interverse/tldr-swinton/interlab.sh`
@@ -267,7 +267,7 @@ git commit -m "feat(tldr-swinton): add interlab.sh eval harness for token effici
 
 ## Task 5: Clavain Satisfaction Benchmark Script
 
-**Bead:** Demarch-l3dr
+**Bead:** Sylveste-l3dr
 **Phase:** planned (as of 2026-03-17T21:56:50Z)
 **Files:**
 - Create: `os/Clavain/interlab-satisfaction.sh`
@@ -341,7 +341,7 @@ git commit -m "feat(clavain): add satisfaction/scenario Go benchmarks and interl
 
 ## Task 6: Skaffen Go Benchmarks + Harness
 
-**Bead:** Demarch-2s7p
+**Bead:** Sylveste-2s7p
 **Phase:** planned (as of 2026-03-17T21:56:50Z)
 **Files:**
 - Create: `os/Skaffen/internal/router/bench_test.go`
@@ -402,7 +402,7 @@ git commit -m "feat(skaffen): add router decision benchmark and interlab harness
 
 ## Task 7: Autarch Go Benchmarks + Harness
 
-**Bead:** Demarch-2s7p
+**Bead:** Sylveste-2s7p
 **Phase:** planned (as of 2026-03-17T21:56:50Z)
 **Files:**
 - Create: `apps/Autarch/internal/gurgeh/spec/bench_test.go`
@@ -454,7 +454,7 @@ git commit -m "feat(autarch): add specflow analyzer benchmark and interlab harne
 
 ## Task 8: Intercore Go Benchmarks + Harness
 
-**Bead:** Demarch-2s7p
+**Bead:** Sylveste-2s7p
 **Phase:** planned (as of 2026-03-17T21:56:50Z)
 **Files:**
 - Create: `core/intercore/internal/dispatch/bench_test.go`
@@ -514,7 +514,7 @@ git commit -m "feat(intercore): add dispatch benchmark and interlab harness"
 
 ## Task 9: Intermute Go Benchmarks + Harness
 
-**Bead:** Demarch-2s7p
+**Bead:** Sylveste-2s7p
 **Phase:** planned (as of 2026-03-17T21:56:50Z)
 **Files:**
 - Create: `core/intermute/internal/storage/bench_test.go` (or appropriate storage package)
@@ -562,7 +562,7 @@ git commit -m "feat(intermute): add reservation write benchmark and interlab har
 
 ## Task 10: Generic Python Benchmark Harness
 
-**Bead:** Demarch-xuvh
+**Bead:** Sylveste-xuvh
 **Phase:** planned (as of 2026-03-17T21:56:50Z)
 **Files:**
 - Create: `interverse/interlab/scripts/py-bench-harness.sh`
@@ -664,7 +664,7 @@ git commit -m "feat(interlab): add py-bench-harness.sh for Python plugin benchma
 
 ## Task 11: Apply Python Harness to 5 Plugins
 
-**Bead:** Demarch-xuvh
+**Bead:** Sylveste-xuvh
 **Phase:** planned (as of 2026-03-17T21:56:50Z)
 **Files:**
 - Create: `interverse/intercache/interlab.sh`
@@ -712,7 +712,7 @@ git commit -m "feat(interverse): add interlab.sh to intercache, intermem, interj
 
 ## Task 12: Interlab Meta-Observability
 
-**Bead:** Demarch-ngwf
+**Bead:** Sylveste-ngwf
 **Phase:** planned (as of 2026-03-17T21:56:50Z)
 **Files:**
 - Create: `interverse/interlab/interlab-meta.sh`
@@ -791,7 +791,7 @@ git commit -m "feat(interlab): add meta-observability benchmark for campaign eff
 
 ## Task 13: Update scan-plugin-quality.sh with METRIC-Readiness
 
-**Bead:** Demarch-xuvh
+**Bead:** Sylveste-xuvh
 **Phase:** planned (as of 2026-03-17T21:56:50Z)
 **Files:**
 - Modify: `interverse/interlab/scripts/scan-plugin-quality.sh`
@@ -829,7 +829,7 @@ git commit -m "feat(interlab): add METRIC-readiness column to scan-plugin-qualit
 
 ## Task 14: End-to-End Validation — Run a masaq Campaign
 
-**Bead:** Demarch-6ap0
+**Bead:** Sylveste-6ap0
 **Phase:** planned (as of 2026-03-17T21:56:50Z)
 **Files:** None (validation only)
 

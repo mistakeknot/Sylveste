@@ -1,5 +1,5 @@
 # Quality Review: Pollard Progressive Result Reveal
-**Plan:** `/home/mk/projects/Demarch/docs/plans/2026-02-23-pollard-progressive-reveal.md`
+**Plan:** `/home/mk/projects/Sylveste/docs/plans/2026-02-23-pollard-progressive-reveal.md`
 **Reviewer:** fd-quality (Flux-drive Quality & Style Reviewer)
 **Date:** 2026-02-23
 **Languages in scope:** Go

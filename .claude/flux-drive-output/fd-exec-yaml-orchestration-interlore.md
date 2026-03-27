@@ -28,18 +28,18 @@ This costs nothing (no scheduling change, since task-3 already gates on task-2) 
 
 ---
 
-## Finding 2: Bead Demarch-7a8c shared by Task 3 and Task 5 — INTENTIONAL, minor concern
+## Finding 2: Bead Sylveste-7a8c shared by Task 3 and Task 5 — INTENTIONAL, minor concern
 
 **Severity:** Low (informational)
 
-Task 3 (bead Demarch-7a8c): "Implement interlore:scan observe skill"
-Task 5 (bead Demarch-7a8c): "End-to-end scan test on real artifacts"
+Task 3 (bead Sylveste-7a8c): "Implement interlore:scan observe skill"
+Task 5 (bead Sylveste-7a8c): "End-to-end scan test on real artifacts"
 
 This is defensible. Task 5 is a validation-only step ("No new files — validation only") that verifies task-3's deliverable works end-to-end. Sharing a bead communicates "this is the same unit of work — implement + validate." The bead tracks the scan capability as a whole.
 
-**Minor concern:** If task-5 fails, the bead can't be partially closed (task-3 done, task-5 not). The orchestrator or `bd close` invocation needs to account for this — closing Demarch-7a8c should only happen after task-5 succeeds, not after task-3. Plan should state this explicitly.
+**Minor concern:** If task-5 fails, the bead can't be partially closed (task-3 done, task-5 not). The orchestrator or `bd close` invocation needs to account for this — closing Sylveste-7a8c should only happen after task-5 succeeds, not after task-3. Plan should state this explicitly.
 
-**Recommendation:** No change needed to the exec.yaml. Add a note in the plan's execution notes: "Demarch-7a8c should only be closed after task-5 passes, not after task-3."
+**Recommendation:** No change needed to the exec.yaml. Add a note in the plan's execution notes: "Sylveste-7a8c should only be closed after task-5 passes, not after task-3."
 
 ---
 
@@ -144,7 +144,7 @@ The `mode: dependency-driven` field should save a correct orchestrator — it wo
 | # | Finding | Severity | Action |
 |---|---------|----------|--------|
 | 1 | task-5 missing task-2 dependency | High | Add `task-2` to depends |
-| 2 | Bead Demarch-7a8c shared (task-3, task-5) | Low | Add close-after-task-5 note |
+| 2 | Bead Sylveste-7a8c shared (task-3, task-5) | Low | Add close-after-task-5 note |
 | 3 | grep -c MISSION verify is weak | Medium | Strengthen grep patterns |
 | 4 | 300s timeout for task-2 scaffold | Low | No change needed |
 | 5 | task-2 files is directory, not file list | Medium | Enumerate or document semantics |

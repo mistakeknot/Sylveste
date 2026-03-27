@@ -1,6 +1,6 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-p83z
+bead: Sylveste-p83z
 stage: discover
 ---
 

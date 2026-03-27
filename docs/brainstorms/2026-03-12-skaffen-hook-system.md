@@ -1,6 +1,6 @@
-# Brainstorm: Skaffen Hook System (Demarch-6i0.2)
+# Brainstorm: Skaffen Hook System (Sylveste-6i0.2)
 
-**Bead:** Demarch-6i0.2
+**Bead:** Sylveste-6i0.2
 **Date:** 2026-03-12
 
 ## Problem

@@ -4,8 +4,8 @@
 **Reviewer Synthesis Agent:** Intersynth
 **Target Codebases:**
 - `research/hermes_agent/` — Hermes Agent codebase (reference)
-- `apps/autarch/` — Demarch Autarch (L3 orchestration, training roadmap)
-- `apps/intercom/` — Demarch Intercom (messaging/gateway, scheduled output)
+- `apps/autarch/` — Sylveste Autarch (L3 orchestration, training roadmap)
+- `apps/intercom/` — Sylveste Intercom (messaging/gateway, scheduled output)
 - `apps/intercom/rust/intercomd/` — Rust daemon
 
 **Agent Reports Analyzed:**
@@ -22,9 +22,9 @@
 
 ## Executive Summary
 
-Hermes Agent is a production-tested reference for Demarch's current and future architecture. The research identified **8 critical intercom bugs to fix now** (P1/P0), **15 adaptation opportunities for immediate backlog** (patterns directly portable with minimal Hermes coupling), and **3 architectural decisions for Autarch's training roadmap**.
+Hermes Agent is a production-tested reference for Sylveste's current and future architecture. The research identified **8 critical intercom bugs to fix now** (P1/P0), **15 adaptation opportunities for immediate backlog** (patterns directly portable with minimal Hermes coupling), and **3 architectural decisions for Autarch's training roadmap**.
 
-**The verdict:** Hermes is mature enough for pattern extraction, but Demarch should NOT adopt it wholesale — instead, port specific defensive patterns and session/identity abstractions. Hermes's greatest value is in its *errors* (what *not* to do) and its *defensive layers* (redaction, pairing, session reset policies) rather than in feature-level integration.
+**The verdict:** Hermes is mature enough for pattern extraction, but Sylveste should NOT adopt it wholesale — instead, port specific defensive patterns and session/identity abstractions. Hermes's greatest value is in its *errors* (what *not* to do) and its *defensive layers* (redaction, pairing, session reset policies) rather than in feature-level integration.
 
 **Critical path forward:**
 - Fix 5 critical P1 intercom reliability bugs immediately (blocking safe scheduler operation).
@@ -46,7 +46,7 @@ Hermes Agent is a production-tested reference for Demarch's current and future a
 
 **Hermes pattern:** `scheduler.py:308–326` marks job as run *after* `_deliver_result()` completes — but the file lock (`tick()`) prevents re-entry during this window.
 
-**Demarch fix:** Implement atomic task claim before dispatch (see **Adaptation AO-SA-1** below).
+**Sylveste fix:** Implement atomic task claim before dispatch (see **Adaptation AO-SA-1** below).
 
 **Acceptance criteria:** Task with `next_run <= now` is updated to `status='running'` + future timestamp *before* container dispatch, in a single atomic SQL operation.
 
@@ -62,7 +62,7 @@ Hermes Agent is a production-tested reference for Demarch's current and future a
 
 **Hermes pattern:** `scheduler.py:320–325` issues one `mark_job_run()` call atomically.
 
-**Demarch fix:** Wrap both calls in a single SQL transaction (see **Adaptation AO-SA-2**).
+**Sylveste fix:** Wrap both calls in a single SQL transaction (see **Adaptation AO-SA-2**).
 
 **Acceptance criteria:** Both `INSERT task_run_logs` and `UPDATE scheduled_tasks` happen in a single `BEGIN/COMMIT`, or neither.
 
@@ -78,7 +78,7 @@ Hermes Agent is a production-tested reference for Demarch's current and future a
 
 **Hermes pattern:** `scheduler.py:285–291` acquires an exclusive `fcntl.flock` that prevents concurrent tick execution.
 
-**Demarch fix:** Use `SELECT ... FOR UPDATE SKIP LOCKED` to atomically claim tasks (see **Adaptation AO-SA-1**).
+**Sylveste fix:** Use `SELECT ... FOR UPDATE SKIP LOCKED` to atomically claim tasks (see **Adaptation AO-SA-1**).
 
 **Acceptance criteria:** At most one daemon instance can claim a task for execution at a time, verified by `get_due_tasks()` returning only tasks not currently claimed.
 
@@ -94,7 +94,7 @@ Hermes Agent is a production-tested reference for Demarch's current and future a
 
 **Hermes pattern:** Hermes uses the filesystem (no connection pooling); not directly applicable. But `deadpool-postgres` or `bb8` solve this.
 
-**Demarch fix:** Add error-triggered eviction in `with_client()` (see **Adaptation AO-IA-1**).
+**Sylveste fix:** Add error-triggered eviction in `with_client()` (see **Adaptation AO-IA-1**).
 
 **Acceptance criteria:** After a `with_client()` call fails with a connection-category error, the next `get()` call reconnects instead of returning the stale client.
 
@@ -110,7 +110,7 @@ Hermes Agent is a production-tested reference for Demarch's current and future a
 
 **Hermes pattern:** Uses `uuid.uuid4()` for 128-bit entropy (10,000x better collision resistance).
 
-**Demarch fix:** Replace `rand_u16()` with `uuid::Uuid::new_v4()` or atomic counter (see **Adaptation AO-IA-2**).
+**Sylveste fix:** Replace `rand_u16()` with `uuid::Uuid::new_v4()` or atomic counter (see **Adaptation AO-IA-2**).
 
 **Acceptance criteria:** IPC message filenames are guaranteed unique within the intercomd process lifetime; zero collision probability at practical concurrency levels.
 
@@ -126,7 +126,7 @@ Hermes Agent is a production-tested reference for Demarch's current and future a
 
 **Hermes pattern:** `RedactingFormatter` covers the Python logging framework, but NOT direct file I/O. Hermes has this same gap.
 
-**Demarch fix:** Implement a `Go redaction library` (see **Adaptation AO-SEC-1**) and apply it to all session persistence paths in Autarch and Intercom.
+**Sylveste fix:** Implement a `Go redaction library` (see **Adaptation AO-SEC-1**) and apply it to all session persistence paths in Autarch and Intercom.
 
 **Acceptance criteria:** All session/transcript data written to persistent storage (Postgres, SQLite, filesystem) is redacted using the shared library before write.
 
@@ -297,7 +297,7 @@ Hermes Agent is a production-tested reference for Demarch's current and future a
 - **Priority:** P2 (multi-tool settings support)
 - **Effort:** 2 days (config parser + loader)
 - **Hermes reference:** `honcho_integration/client.py:54–157`
-- **Config:** `~/.demarch/config.json` with host-block resolution (`tool.coldwine` can override global settings).
+- **Config:** `~/.sylveste/config.json` with host-block resolution (`tool.coldwine` can override global settings).
 - **Acceptance:** All Autarch tools can read shared settings; integration keys (Honcho, analytics) stored centrally.
 
 **AO-UA-6: Cross-app user identity bridge (Autarch ↔ intercom)**
@@ -351,11 +351,11 @@ Hermes Agent is a production-tested reference for Demarch's current and future a
 
 ### Verdict: Safe to Adapt Patterns, Not Wholesale Integration
 
-**What Demarch should do:**
+**What Sylveste should do:**
 1. Port defensive patterns from Hermes (redaction, pairing, validation) as shared libraries.
 2. Adopt architectural concepts (user identity separation, session reset policies) in intercom/autarch.
-3. **NOT** adopt Hermes's multi-process coordination model (file locks, cron, systemd integration) — Demarch has different architecture (containerized agents, single-process scheduler).
-4. **NOT** adopt Hermes's terminal backend isolation (modal, docker, ssh) — Demarch uses container-native isolation.
+3. **NOT** adopt Hermes's multi-process coordination model (file locks, cron, systemd integration) — Sylveste has different architecture (containerized agents, single-process scheduler).
+4. **NOT** adopt Hermes's terminal backend isolation (modal, docker, ssh) — Sylveste uses container-native isolation.
 
 ### Critical Path (Next 2 Weeks)
 
@@ -418,10 +418,10 @@ Hermes Agent is a production-tested reference for Demarch's current and future a
 **Key insights:**
 - Hermes's `redact.py` (5-layer regex redaction) is production-tested and directly portable to Go.
 - PairingStore (OTP + rate limit + lockout) replaces static allowlist and is ready for Rust port.
-- `_secure_write()` pattern is correct but inconsistently applied in Hermes; Demarch should apply universally.
+- `_secure_write()` pattern is correct but inconsistently applied in Hermes; Sylveste should apply universally.
 - Tool name allowlist (valid_tool_names set) is P1 for Autarch MCP router.
 
-**Critical gap:** Session JSON persisted without redaction (P0 issue found in Demarch).
+**Critical gap:** Session JSON persisted without redaction (P0 issue found in Sylveste).
 
 **Actionable items:**
 - AO-SEC-1: Go redaction library (P0, 3d, unblocks all credential protection)
@@ -474,7 +474,7 @@ Hermes Agent is a production-tested reference for Demarch's current and future a
 - Linked workspaces enable cross-app user model accumulation.
 - Session reset policy (idle timeout, daily reset) prevents context leak across group ownership changes.
 
-**No bugs in Hermes; all items are architectural patterns for Demarch future state.**
+**No bugs in Hermes; all items are architectural patterns for Sylveste future state.**
 
 **Actionable items:**
 - AO-UA-1: UserPeer primitive (P1, 3d, foundation)
@@ -552,7 +552,7 @@ Hermes Agent is a production-tested reference for Demarch's current and future a
 - `honcho_integration/session.py` — UserPeer/workspace primitives, context prefetch, migration
 - `honcho_integration/client.py` — config resolution chain, linked workspaces
 
-### Demarch Files Affected
+### Sylveste Files Affected
 
 **Bugs to fix:**
 - `apps/intercom/rust/intercomd/src/scheduler.rs` — dispatch loop, re-verify check
@@ -574,12 +574,12 @@ Hermes Agent is a production-tested reference for Demarch's current and future a
 
 ## Conclusion
 
-Hermes Agent is a **mature reference for defensive patterns and session abstractions**, not a wholesale integration target. Demarch's best ROI comes from:
+Hermes Agent is a **mature reference for defensive patterns and session abstractions**, not a wholesale integration target. Sylveste's best ROI comes from:
 
 1. **This week:** Fix 5 critical P1 reliability bugs in the scheduler (8.5 days).
 2. **Next 2 weeks:** Implement shared security libraries (redaction, pairing, secure I/O) (7 days).
 3. **Next 4–6 weeks:** Adopt architectural patterns (user identity separation, session reset policies, cross-app linking) for future state.
 4. **Training roadmap (3–6 months):** Port training-related patterns (VerifierContext, CapabilityDistribution) to Autarch.
 
-**No regressions expected.** All recommended adaptations are from production-tested Hermes code, and Demarch's existing architecture (container-native, single-daemon scheduler, Rust/tokio) is already better than Hermes's in most dimensions.
+**No regressions expected.** All recommended adaptations are from production-tested Hermes code, and Sylveste's existing architecture (container-native, single-daemon scheduler, Rust/tokio) is already better than Hermes's in most dimensions.
 

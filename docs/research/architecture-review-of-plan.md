@@ -1,5 +1,5 @@
 # Architecture Review: Intent Submission Mechanism
-**Plan:** `/home/mk/projects/Demarch/docs/plans/2026-02-26-intent-submission-mechanism.md`
+**Plan:** `/home/mk/projects/Sylveste/docs/plans/2026-02-26-intent-submission-mechanism.md`
 **Bead:** iv-gyq9l
 **Date:** 2026-02-26
 **Reviewer:** fd-architecture (Claude Sonnet 4.6)

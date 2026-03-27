@@ -38,7 +38,7 @@ These aren't exotic scenarios. The third one — what happens when the new user'
 
 **Scope: Appropriately Focused**
 
-The document correctly scopes to the platform user (using Demarch on their own project) and explicitly excludes the contributor journey. That boundary is right. The document could afford to be slightly narrower in the narrative — the paragraph about understanding what just happened after the sprint works well but could be tightened — but the overall scope is appropriate.
+The document correctly scopes to the platform user (using Sylveste on their own project) and explicitly excludes the contributor journey. That boundary is right. The document could afford to be slightly narrower in the narrative — the paragraph about understanding what just happened after the sprint works well but could be tightened — but the overall scope is appropriate.
 
 **Friction Point Honesty: Good, With One Understatement**
 
@@ -114,7 +114,7 @@ The distinction between plan-stage review and ship-stage review is mentioned onc
 
 The document describes a code review system with Interspect learning, dismissal-to-routing feedback, and automated agent selection based on historical effectiveness. The problem is that approximately half of this system is described as Phase 2 or planned. The document's scope encompasses both the current system and the intended system, and it is not always clear which is which beyond the inline parenthetical notes.
 
-This creates a product promise problem. A developer reading this document to decide whether to use Demarch's review system will form expectations based on the full narrative, including the Interspect learning loop. When they discover that the learning loop is Phase 2, they may feel misled even though the document technically disclosed it. The scope should either narrow to current-state functionality or explicitly lead with "this is the target architecture, here is what ships today."
+This creates a product promise problem. A developer reading this document to decide whether to use Sylveste's review system will form expectations based on the full narrative, including the Interspect learning loop. When they discover that the learning loop is Phase 2, they may feel misled even though the document technically disclosed it. The scope should either narrow to current-state functionality or explicitly lead with "this is the target architecture, here is what ships today."
 
 The "over time, the review gets better" paragraph at the document's end describes the flywheel as if it is operating today. It is not yet operating today. That paragraph should be clearly marked as aspirational.
 
@@ -140,7 +140,7 @@ The unrealistic parts are the learning-loop passages. "Over time, the review get
 
 **1. Shared Bead ID Across All Three Documents**
 
-All three CUJs have `bead: Demarch-9ha` in their frontmatter. This is almost certainly a copy-paste artifact from a template. Three distinct P0/P1 journeys should have distinct tracking beads. This is a documentation integrity issue — if CUJs are monitored by interwatch for staleness, they need accurate bead references.
+All three CUJs have `bead: Sylveste-9ha` in their frontmatter. This is almost certainly a copy-paste artifact from a template. Three distinct P0/P1 journeys should have distinct tracking beads. This is a documentation integrity issue — if CUJs are monitored by interwatch for staleness, they need accurate bead references.
 
 **2. Success Signal Tables Are Stronger Than Narratives**
 
@@ -170,7 +170,7 @@ The issues that reduce product value but do not block success:
 
 4. Reflect phase payoff is invisible in-session. Users need a visible, immediate signal that reflect completed and produced output, even if the downstream calibration benefit takes longer to manifest.
 5. The companion plugin selection step in first-install.md contradicts its own friction section. Either the narrative should describe a recommended starter set, or the friction section should be elevated to acknowledge this as a blocking gap.
-6. All three documents share a single bead reference (`Demarch-9ha`). This should be corrected before the CUJs are used as interwatch monitoring targets.
+6. All three documents share a single bead reference (`Sylveste-9ha`). This should be corrected before the CUJs are used as interwatch monitoring targets.
 
 The smallest change set with the highest user outcome impact:
 
@@ -182,9 +182,9 @@ The smallest change set with the highest user outcome impact:
 
 ## Relevant File Paths
 
-- `/home/mk/projects/Demarch/docs/cujs/first-install.md`
-- `/home/mk/projects/Demarch/docs/cujs/running-a-sprint.md`
-- `/home/mk/projects/Demarch/docs/cujs/code-review.md`
-- `/home/mk/projects/Demarch/docs/cujs/README.md`
-- `/home/mk/projects/Demarch/PHILOSOPHY.md`
-- `/home/mk/projects/Demarch/docs/research/user-product-opportunity-review.md`
+- `/home/mk/projects/Sylveste/docs/cujs/first-install.md`
+- `/home/mk/projects/Sylveste/docs/cujs/running-a-sprint.md`
+- `/home/mk/projects/Sylveste/docs/cujs/code-review.md`
+- `/home/mk/projects/Sylveste/docs/cujs/README.md`
+- `/home/mk/projects/Sylveste/PHILOSOPHY.md`
+- `/home/mk/projects/Sylveste/docs/research/user-product-opportunity-review.md`

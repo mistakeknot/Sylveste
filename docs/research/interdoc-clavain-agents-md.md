@@ -1,7 +1,7 @@
 # Interdoc Analysis: Clavain AGENTS.md Refresh
 
 **Date:** 2026-02-25
-**Target:** `/home/mk/projects/Demarch/os/clavain/AGENTS.md`
+**Target:** `/home/mk/projects/Sylveste/os/clavain/AGENTS.md`
 **Current size:** 503 lines
 **Target size:** 350-450 lines
 
@@ -66,7 +66,7 @@
 
 8. **Missing `cmd/clavain-cli/` documentation.** A Go CLI binary was added (commit `c69c545`) with budget, checkpoint, children, claim, complexity, exec, phase, sprint commands and 55 tests. Not mentioned anywhere in AGENTS.md.
 
-9. **L2 layer context missing.** The AGENTS.md doesn't explain Clavain's position in the Demarch architecture: it's Layer 2 (OS), sitting between Intercore (L1 kernel) and Autarch (L3 apps). This context is important for understanding dependency direction.
+9. **L2 layer context missing.** The AGENTS.md doesn't explain Clavain's position in the Sylveste architecture: it's Layer 2 (OS), sitting between Intercore (L1 kernel) and Autarch (L3 apps). This context is important for understanding dependency direction.
 
 ### Content Extraction Candidates
 

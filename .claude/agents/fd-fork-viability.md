@@ -47,7 +47,7 @@ Skaffen is a Rust coding agent being built by forking pi_agent_rust and adding O
 
 ### 6. Assess whether the stated performance numbers (sub
 
-- Assess whether the stated performance numbers (sub-100ms startup, 12x memory reduction) are measured from pi_agent_rust itself or are projections — and whether they hold under Demarch's actual session workload
+- Assess whether the stated performance numbers (sub-100ms startup, 12x memory reduction) are measured from pi_agent_rust itself or are projections — and whether they hold under Sylveste's actual session workload
 
 ## What NOT to Flag
 

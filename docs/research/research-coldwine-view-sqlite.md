@@ -2,7 +2,7 @@
 
 **Date:** 2026-02-25  
 **Task:** Understand Coldwine TUI view, SQLite data layer, and how to wire a "Create Sprint" action  
-**Scope:** `/home/mk/projects/Demarch/apps/autarch/`
+**Scope:** `/home/mk/projects/Sylveste/apps/autarch/`
 
 ---
 
@@ -19,7 +19,7 @@
 
 ## 1. Coldwine TUI View Architecture
 
-### File: `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/coldwine.go` (398 lines)
+### File: `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/coldwine.go` (398 lines)
 
 #### ColdwineView Struct (lines 16-32)
 ```go
@@ -129,7 +129,7 @@ func (v *ColdwineView) Commands() []tui.Command {
 
 ## 2. SQLite Schema and Data Model
 
-### File: `/home/mk/projects/Demarch/apps/autarch/internal/coldwine/storage/schema.go` (188 lines)
+### File: `/home/mk/projects/Sylveste/apps/autarch/internal/coldwine/storage/schema.go` (188 lines)
 
 #### MigrateV2 Creates Schema (line 103)
 
@@ -191,7 +191,7 @@ CREATE TABLE IF NOT EXISTS work_tasks (
 - Coldwine data = Intermute domain (Spec/Epic/Story/Task)
 - Sprint = Intercore domain (managed by `ic sprint create`)
 
-### Epic Model File: `/home/mk/projects/Demarch/apps/autarch/internal/coldwine/storage/epic.go` (94 lines)
+### Epic Model File: `/home/mk/projects/Sylveste/apps/autarch/internal/coldwine/storage/epic.go` (94 lines)
 
 ```go
 func InsertEpic(db *sql.DB, e Epic) error {
@@ -207,7 +207,7 @@ func DeleteEpic(db *sql.DB, id string) error
 
 Field names used: `ID`, `FeatureRef`, `Title`, `Status` (typed as `EpicStatus`), `Priority`, `CreatedAt`, `UpdatedAt`
 
-### Client Model Types: `/home/mk/projects/Demarch/apps/autarch/pkg/autarch/models.go` (137 lines)
+### Client Model Types: `/home/mk/projects/Sylveste/apps/autarch/pkg/autarch/models.go` (137 lines)
 
 ```go
 type EpicStatus string
@@ -258,7 +258,7 @@ type Task struct {
 
 ## 3. Command Palette Architecture
 
-### File: `/home/mk/projects/Demarch/apps/autarch/internal/tui/palette.go` (390 lines)
+### File: `/home/mk/projects/Sylveste/apps/autarch/internal/tui/palette.go` (390 lines)
 
 #### Command Registration Pattern
 
@@ -271,7 +271,7 @@ func (p *Palette) SetCommands(cmds []Command) {
 }
 ```
 
-#### Command Type Definition: `/home/mk/projects/Demarch/apps/autarch/internal/tui/palette_types.go`
+#### Command Type Definition: `/home/mk/projects/Sylveste/apps/autarch/internal/tui/palette_types.go`
 
 ```go
 type Command struct {
@@ -300,7 +300,7 @@ In `coldwine.go` lines 354-397, `Commands()` returns the slice. The palette like
 
 ## 4. Chat Handler and Slash Commands
 
-### File: `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/coldwine_chat_handler.go` (110 lines)
+### File: `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/coldwine_chat_handler.go` (110 lines)
 
 `ColdwineChatHandler` is a **stream bridge** that sends chat input to Claude CLI:
 
@@ -332,7 +332,7 @@ func (h *ColdwineChatHandler) ResetSession()
 
 ## 5. Intercore Client Integration
 
-### File: `/home/mk/projects/Demarch/apps/autarch/pkg/intercore/client.go` (>617 lines)
+### File: `/home/mk/projects/Sylveste/apps/autarch/pkg/intercore/client.go` (>617 lines)
 
 **Intercore is available via a Go client in the autarch package:**
 
@@ -365,7 +365,7 @@ func (c *Client) RunAgentAdd(ctx context.Context, runID, agentType string, name,
 
 #### How Intercore is Used in main.go
 
-File: `/home/mk/projects/Demarch/apps/autarch/cmd/autarch/main.go` (605 lines)
+File: `/home/mk/projects/Sylveste/apps/autarch/cmd/autarch/main.go` (605 lines)
 
 **Intercore setup** (lines 122-138):
 ```go
@@ -439,7 +439,7 @@ app.SetDashboardViewFactory(func(c *autarch.Client) []tui.View {
 ### Prerequisites
 
 1. **Add SprintCreate to intercore.Client:**
-   - File: `/home/mk/projects/Demarch/apps/autarch/pkg/intercore/operations.go`
+   - File: `/home/mk/projects/Sylveste/apps/autarch/pkg/intercore/operations.go`
    - Add method:
      ```go
      func (c *Client) SprintCreate(ctx context.Context, runID string) (string, error) {
@@ -579,14 +579,14 @@ This is a **design decision** to be made: are sprints truly separate from epics,
 
 ## Appendix: File Locations
 
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/coldwine.go` (ColdwineView, messages, Commands())
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/views/coldwine_chat_handler.go` (Chat handler, no slash commands)
-- `/home/mk/projects/Demarch/apps/autarch/internal/coldwine/storage/schema.go` (SQLite schema, MigrateV2)
-- `/home/mk/projects/Demarch/apps/autarch/internal/coldwine/storage/epic.go` (Epic CRUD)
-- `/home/mk/projects/Demarch/apps/autarch/pkg/autarch/client.go` (Intermute HTTP client)
-- `/home/mk/projects/Demarch/apps/autarch/pkg/autarch/models.go` (Spec, Epic, Story, Task types)
-- `/home/mk/projects/Demarch/apps/autarch/pkg/intercore/client.go` (Intercore CLI client)
-- `/home/mk/projects/Demarch/apps/autarch/pkg/intercore/operations.go` (Intercore operations)
-- `/home/mk/projects/Demarch/apps/autarch/cmd/autarch/main.go` (View wiring, client initialization)
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/palette.go` (Palette architecture)
-- `/home/mk/projects/Demarch/apps/autarch/internal/tui/palette_types.go` (Command type)
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/coldwine.go` (ColdwineView, messages, Commands())
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/coldwine_chat_handler.go` (Chat handler, no slash commands)
+- `/home/mk/projects/Sylveste/apps/autarch/internal/coldwine/storage/schema.go` (SQLite schema, MigrateV2)
+- `/home/mk/projects/Sylveste/apps/autarch/internal/coldwine/storage/epic.go` (Epic CRUD)
+- `/home/mk/projects/Sylveste/apps/autarch/pkg/autarch/client.go` (Intermute HTTP client)
+- `/home/mk/projects/Sylveste/apps/autarch/pkg/autarch/models.go` (Spec, Epic, Story, Task types)
+- `/home/mk/projects/Sylveste/apps/autarch/pkg/intercore/client.go` (Intercore CLI client)
+- `/home/mk/projects/Sylveste/apps/autarch/pkg/intercore/operations.go` (Intercore operations)
+- `/home/mk/projects/Sylveste/apps/autarch/cmd/autarch/main.go` (View wiring, client initialization)
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/palette.go` (Palette architecture)
+- `/home/mk/projects/Sylveste/apps/autarch/internal/tui/palette_types.go` (Command type)

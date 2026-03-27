@@ -7,11 +7,11 @@ stage: design
 
 **Version:** 0.1.0
 **Date:** 2026-03-26
-**Owner:** Demarch / Interverse
+**Owner:** Sylveste / Interverse
 
 ## 1. Problem Statement
 
-Demarch agents (orchestrated by Clavain) depend entirely on cloud LLM APIs for inference. This creates three structural problems:
+Sylveste agents (orchestrated by Clavain) depend entirely on cloud LLM APIs for inference. This creates three structural problems:
 
 1. **Cost at scale.** Multi-agent workflows (subagents, review agents, routing decisions) generate thousands of API calls per session. At cloud pricing, routine C1/C2 tasks that don't need frontier models still cost frontier prices.
 2. **Privacy leakage.** Sensitive code (.env-adjacent files, internal APIs, credentials handling) is sent to third-party endpoints. There is no mechanism to keep private code local.
@@ -25,7 +25,7 @@ The M5 Max with 128GB unified memory is the inflection point where local models 
 The autonomous routing layer that decides which model handles which task. Clavain needs an OpenAI-compatible endpoint it can route to via Track B5, with confidence scores to drive cascade decisions (try local, escalate to cloud if confidence < threshold). Clavain never interacts with interfere's internals -- only the API contract matters.
 
 ### Human Developer (secondary)
-The person running Demarch on their Mac. They care about: the system not crashing their machine (OOM kernel panics), not throttling due to thermal pressure, and seeing cost savings vs cloud. They interact via health endpoints, cost dashboards, and thermal status. They may also curl the endpoint directly for ad-hoc local inference.
+The person running Sylveste on their Mac. They care about: the system not crashing their machine (OOM kernel panics), not throttling due to thermal pressure, and seeing cost savings vs cloud. They interact via health endpoints, cost dashboards, and thermal status. They may also curl the endpoint directly for ad-hoc local inference.
 
 ### Experiment Researcher (tertiary)
 The developer designing and running interlab campaigns on the inference pipeline. They need experiment hooks that can be toggled independently, clear before/after metrics, and kill criteria enforcement. They interact via interlab campaign configs and experiment toggle flags.
@@ -140,7 +140,7 @@ interfere explicitly does NOT:
 - **Serve multiple users.** This is a single-machine, single-developer inference server. No multi-tenancy, no auth, no rate limiting beyond backpressure.
 - **Train or fine-tune models.** interfere serves inference. Training, fine-tuning, and adapter optimization are out of scope (future: adapter hot-loading may be added).
 - **Compete with Ollama/vllm-mlx for general use.** interfere exists because those tools don't expose the hooks needed for early exit, reservoir routing, and thermal scheduling. If the community adds these features, interfere may simplify or deprecate.
-- **Provide a UI.** All interaction is API-first. Dashboards (cost, thermal, experiments) are consumed by other Demarch components, not rendered by interfere.
+- **Provide a UI.** All interaction is API-first. Dashboards (cost, thermal, experiments) are consumed by other Sylveste components, not rendered by interfere.
 
 ## 5. Success Metrics
 

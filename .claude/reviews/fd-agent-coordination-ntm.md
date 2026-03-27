@@ -1,8 +1,8 @@
-# NTM Agent Coordination: Competitive Analysis for Demarch
+# NTM Agent Coordination: Competitive Analysis for Sylveste
 
 **Date:** 2026-02-22
-**Scope:** `/home/mk/projects/Demarch/research/ntm/internal/` -- coordinator, swarm, ensemble, supervisor, agentmail, handoff, scheduler, assignment, pipeline, workflow, approval, policy modules
-**Purpose:** Identify coordination patterns worth adopting to strengthen Demarch's Intercore kernel, interlock, intermux, and agent-mail systems.
+**Scope:** `/home/mk/projects/Sylveste/research/ntm/internal/` -- coordinator, swarm, ensemble, supervisor, agentmail, handoff, scheduler, assignment, pipeline, workflow, approval, policy modules
+**Purpose:** Identify coordination patterns worth adopting to strengthen Sylveste's Intercore kernel, interlock, intermux, and agent-mail systems.
 
 ---
 
@@ -26,7 +26,7 @@ Agent Mail (MCP-based inter-agent messaging + file reservations)
 Supervisor (daemon lifecycle: health, restart, port allocation)
 ```
 
-Demarch's equivalent stack: Clavain (orchestration OS) -> Intercore (kernel) -> Interlock + Agent-Mail (coordination) -> Intermux (visibility). The key difference: NTM is a single monolithic Go binary with all layers tightly integrated; Demarch is a plugin ecosystem where each concern is a separate module.
+Sylveste's equivalent stack: Clavain (orchestration OS) -> Intercore (kernel) -> Interlock + Agent-Mail (coordination) -> Intermux (visibility). The key difference: NTM is a single monolithic Go binary with all layers tightly integrated; Sylveste is a plugin ecosystem where each concern is a separate module.
 
 ---
 
@@ -55,7 +55,7 @@ Then it uses a greedy selection algorithm: sort all candidates by score, pick to
 - Profile-based routing uses persona tag matching and file focus patterns
 - Five strategies: `balanced`, `speed`, `quality`, `dependency`, `round-robin`
 
-**Demarch gap:** Interlock handles file reservations but has no multi-factor scoring for work assignment. The agent-mail MCP has `reserve_files` and `send_message` but no automated assignment engine.
+**Sylveste gap:** Interlock handles file reservations but has no multi-factor scoring for work assignment. The agent-mail MCP has `reserve_files` and `send_message` but no automated assignment engine.
 
 **Recommendation:** Build a scoring engine in Intercore that considers agent capabilities (model strengths), current context usage, file reservation overlap, and dependency-graph centrality when routing work. This is the single highest-value pattern to adopt.
 
@@ -72,7 +72,7 @@ The state machine enables automatic work assignment (assign to idle agents), con
 
 **Key detail:** The optimized path (`GetAgentStatusWithOutput`) avoids redundant tmux captures by passing pre-captured output through the pipeline. This is critical for scaling -- NTM can monitor 20+ panes without tmux call explosion.
 
-**Demarch gap:** Intermux provides visibility (peek, activity feed, who-is-editing) but the state transitions are not formalized into an event-driven machine that triggers automatic actions.
+**Sylveste gap:** Intermux provides visibility (peek, activity feed, who-is-editing) but the state transitions are not formalized into an event-driven machine that triggers automatic actions.
 
 **Recommendation:** Formalize agent state as a state machine in Intercore with event emission. This becomes the foundation for automated assignment, respawn, and health alerting.
 
@@ -86,7 +86,7 @@ The state machine enables automatic work assignment (assign to idle agents), con
 
 The conflict includes glob pattern matching (`matchesPattern`) supporting exact, prefix, single-star, and double-star patterns.
 
-**Demarch gap:** Interlock's `check_conflicts` and `negotiate_release` cover similar ground, but the priority-based automatic negotiation (lowest-priority holder gets asked first) and the three-option negotiation protocol are more structured.
+**Sylveste gap:** Interlock's `check_conflicts` and `negotiate_release` cover similar ground, but the priority-based automatic negotiation (lowest-priority holder gets asked first) and the three-option negotiation protocol are more structured.
 
 **Recommendation:** Add priority-weighted negotiation to interlock's release protocol. When conflicts arise, automatically target the lowest-priority holder rather than requiring manual selection.
 
@@ -105,7 +105,7 @@ The `TransferReservations()` function implements a careful protocol:
 3. On conflict: wait grace period (2s default), retry once
 4. On persistent conflict: **roll back** to old agent's reservations for approximate atomicity
 
-**Demarch gap:** Agent-mail has `release_file_reservations` and `reserve_files` but no atomic transfer protocol with rollback semantics. Handoff context is ad-hoc rather than structured.
+**Sylveste gap:** Agent-mail has `release_file_reservations` and `reserve_files` but no atomic transfer protocol with rollback semantics. Handoff context is ad-hoc rather than structured.
 
 **Recommendation:** Implement reservation transfer as a first-class operation in agent-mail MCP with rollback semantics. This is essential for session rotation (context exhaustion) without losing file locks.
 
@@ -113,9 +113,9 @@ The `TransferReservations()` function implements a careful protocol:
 
 ## 3. Inter-Agent Communication Design
 
-### 3.1 NTM's Agent Mail vs Demarch's Agent-Mail MCP
+### 3.1 NTM's Agent Mail vs Sylveste's Agent-Mail MCP
 
-Both systems use the same underlying `mcp-agent-mail` server. NTM wraps it with a Go HTTP client (`agentmail/client.go`) while Demarch accesses it via MCP tool calls.
+Both systems use the same underlying `mcp-agent-mail` server. NTM wraps it with a Go HTTP client (`agentmail/client.go`) while Sylveste accesses it via MCP tool calls.
 
 **NTM's client features:**
 - HTTP client with bearer token auth, 10s/30s timeouts
@@ -130,7 +130,7 @@ Both systems use the same underlying `mcp-agent-mail` server. NTM wraps it with 
 - **Digest summaries** sent periodically to human agent with agent status, alerts, work summary
 - Messages use `importance: "high"` for conflicts and `ack_required: true` for assignments
 
-**Demarch difference:** Agent-mail MCP provides the same primitives but communication patterns are defined by plugins (interlock for conflicts, agent-mail for general messaging). There is no centralized communication protocol defining message formats for assignment, negotiation, or digests.
+**Sylveste difference:** Agent-mail MCP provides the same primitives but communication patterns are defined by plugins (interlock for conflicts, agent-mail for general messaging). There is no centralized communication protocol defining message formats for assignment, negotiation, or digests.
 
 **Recommendation:** Define canonical message schemas in Intercore for common coordination patterns (assignment, conflict, digest, handoff). This allows any plugin to produce/consume structured coordination messages.
 
@@ -142,7 +142,7 @@ NTM's coordinator generates periodic digests (`DigestSummary`) sent to the confi
 - Alerts for error states, stalled agents, high context (>85%)
 - Work summary: pending, in-progress, completed today, blocked, top ready items
 
-**Demarch gap:** Intermux provides `activity_feed` and `peek_agent` but no automated digest generation. Intercheck does session health monitoring but doesn't produce periodic human-readable summaries.
+**Sylveste gap:** Intermux provides `activity_feed` and `peek_agent` but no automated digest generation. Intercheck does session health monitoring but doesn't produce periodic human-readable summaries.
 
 **Recommendation:** Add a digest generator to Intermux or Intercore that periodically summarizes swarm health and sends it via agent-mail.
 
@@ -160,7 +160,7 @@ NTM's coordinator generates periodic digests (`DigestSummary`) sent to the confi
 
 This maps directly to a `SwarmPlan` with `SessionSpec[]` containing `PaneSpec[]`, ready for the `SessionOrchestrator` to create tmux sessions.
 
-**Demarch gap:** No automatic resource allocation based on work volume. Agent count per project is manually configured.
+**Sylveste gap:** No automatic resource allocation based on work volume. Agent count per project is manually configured.
 
 ### 4.2 Ensemble Reasoning Modes (UNIQUE TO NTM)
 
@@ -180,7 +180,7 @@ The **EnsembleManager** lifecycle:
 
 **Synthesis strategies:** manual, adversarial, consensus, creative, analytical, deliberative, prioritized, dialectical, meta-reasoning, argumentation-graph. Each strategy has metadata about whether it needs a synthesizer agent, what mode that agent should use, and what the output emphasizes.
 
-**Demarch relevance:** Demarch's intersynth (multi-agent synthesis engine) and interlens (cognitive augmentation lenses) could adopt the formal taxonomy of reasoning modes and the multi-strategy synthesis approach. The NTM ensemble system is significantly more developed.
+**Sylveste relevance:** Sylveste's intersynth (multi-agent synthesis engine) and interlens (cognitive augmentation lenses) could adopt the formal taxonomy of reasoning modes and the multi-strategy synthesis approach. The NTM ensemble system is significantly more developed.
 
 **Recommendation:** Study NTM's ensemble types and synthesis strategies as a reference design for intersynth. The taxonomy (12 categories x 3 tiers) and the pluggable synthesis strategy pattern are architecturally clean.
 
@@ -196,7 +196,7 @@ The **EnsembleManager** lifecycle:
 
 The respawn pipeline: detect limit -> kill agent -> rotate account (optional) -> respawn in same pane -> inject marching orders -> verify ready
 
-**Demarch gap:** No automatic respawn-on-limit. Agents that hit limits require manual intervention.
+**Sylveste gap:** No automatic respawn-on-limit. Agents that hit limits require manual intervention.
 
 **Recommendation:** Build a respawn capability into Intermux or Intercore that detects context exhaustion and automatically rotates agents, carrying forward the handoff context.
 
@@ -228,10 +228,10 @@ The `AutomationConfig` controls:
 - Notification on request and decision
 - Blocking wait with channel-based completion notification
 
-**Demarch gap:** Interlock has file reservation negotiation but no general-purpose approval engine. There is no destructive command policy system.
+**Sylveste gap:** Interlock has file reservation negotiation but no general-purpose approval engine. There is no destructive command policy system.
 
 **Recommendation:**
-1. Add a policy file (`.demarch/policy.yaml`) with allowed/blocked/approval-required command patterns
+1. Add a policy file (`.sylveste/policy.yaml`) with allowed/blocked/approval-required command patterns
 2. Build a lightweight approval engine in Intercore for sensitive operations (force-release, destructive git, production deployment)
 3. The SLB pattern (two-person rule with graceful fallback) is worth adopting for force-release scenarios
 
@@ -254,7 +254,7 @@ The `AutomationConfig` controls:
 
 The scheduler runs 4 concurrent worker goroutines (configurable) that pull from the fair queue, check rate limits and headroom, then execute.
 
-**Demarch gap:** No spawn scheduler. Agent creation is direct. No rate limiting, backoff, or headroom checking.
+**Sylveste gap:** No spawn scheduler. Agent creation is direct. No rate limiting, backoff, or headroom checking.
 
 **Recommendation:** Implement a spawn scheduler in Intercore with:
 - Rate limiting (global + per-agent-type)
@@ -271,7 +271,7 @@ The scheduler runs 4 concurrent worker goroutines (configurable) that pull from 
 - Thread-safe with read-write mutex
 - Event emission on state changes
 
-**Demarch gap:** Agent-mail tracks messages and reservations but there is no centralized assignment registry mapping work items to agents.
+**Sylveste gap:** Agent-mail tracks messages and reservations but there is no centralized assignment registry mapping work items to agents.
 
 **Recommendation:** Build an assignment store in Intercore (or extend beads) that tracks which agent is working on what, with a formal state machine. This is essential for answering "who is working on what?" and detecting orphaned work.
 
@@ -302,7 +302,7 @@ The `Executor` runs workflows with global timeout, progress events, and resumabl
 - **Flow config** as a state machine with transitions triggered by: file_created, file_modified, command_success, command_failure, agent_says, all_agents_idle, manual, time_elapsed
 - **Approval mode** within flows: any, all, quorum
 
-**Demarch gap:** Clavain provides brainstorm-to-ship orchestration but no declarative YAML workflow engine. Interphase tracks phase gates but doesn't define executable workflow schemas.
+**Sylveste gap:** Clavain provides brainstorm-to-ship orchestration but no declarative YAML workflow engine. Interphase tracks phase gates but doesn't define executable workflow schemas.
 
 **Recommendation:** The full pipeline engine is complex to replicate, but the workflow template concept (named patterns with coordination type and trigger-based transitions) is worth adopting in Intercore. Start with the coordination types (ping-pong, pipeline, parallel, review-gate) as first-class primitives.
 
@@ -331,7 +331,7 @@ Ranked by impact and implementation complexity:
 
 ## 9. Key Architectural Differences
 
-| Dimension | NTM | Demarch |
+| Dimension | NTM | Sylveste |
 |-----------|-----|---------|
 | Architecture | Monolithic Go binary | Plugin ecosystem (MCP + hooks) |
 | Agent communication | HTTP client to Agent Mail | MCP tool calls to Agent Mail |
@@ -344,18 +344,18 @@ Ranked by impact and implementation complexity:
 
 **NTM's monolithic advantage:** Everything is in one process, so cross-cutting concerns (scheduling + assignment + conflict detection + respawn) can share state cheaply. State transitions are atomic within a mutex.
 
-**Demarch's plugin advantage:** Each concern is independently deployable and testable. New coordination patterns can be added without modifying a kernel binary. The MCP protocol enables heterogeneous agent participation.
+**Sylveste's plugin advantage:** Each concern is independently deployable and testable. New coordination patterns can be added without modifying a kernel binary. The MCP protocol enables heterogeneous agent participation.
 
-**Bridging strategy:** Intercore should be the "thin coordinator" that provides the event bus, state machine, and scoring engine, while delegating implementation details to plugins. NTM's tightly-coupled design is effective but fragile -- Demarch's plugin model is the right architecture, but it needs Intercore to provide the coordination primitives that NTM gets from being monolithic.
+**Bridging strategy:** Intercore should be the "thin coordinator" that provides the event bus, state machine, and scoring engine, while delegating implementation details to plugins. NTM's tightly-coupled design is effective but fragile -- Sylveste's plugin model is the right architecture, but it needs Intercore to provide the coordination primitives that NTM gets from being monolithic.
 
 ---
 
 ## 10. Summary
 
-NTM's coordination layer is mature and well-engineered, particularly in three areas where Demarch currently has gaps:
+NTM's coordination layer is mature and well-engineered, particularly in three areas where Sylveste currently has gaps:
 
 1. **Automated work assignment** with multi-factor scoring (agent capability, context usage, file overlap, dependency centrality, persona affinity)
 2. **Formal agent lifecycle management** (state machine, health monitoring, automatic respawn, account rotation, handoff with reservation transfer)
 3. **Safety infrastructure** (destructive command policies, approval workflows with SLB, headroom guards)
 
-The highest-value adoptions for Demarch are: (a) the assignment scoring engine as an Intercore primitive, (b) agent state machine with event emission, and (c) reservation transfer with rollback semantics in agent-mail. These three together would give Demarch's distributed plugin architecture the coordination intelligence that NTM gets from its monolithic design.
+The highest-value adoptions for Sylveste are: (a) the assignment scoring engine as an Intercore primitive, (b) agent state machine with event emission, and (c) reservation transfer with rollback semantics in agent-mail. These three together would give Sylveste's distributed plugin architecture the coordination intelligence that NTM gets from its monolithic design.

@@ -5,7 +5,7 @@
 
 ## What We're Building
 
-A Clavain skill called `project-onboard` that makes any project "fully operational" in the Demarch ecosystem. It handles both greenfield repos and existing projects by introspecting first, then filling gaps. The goal: run one command and get the same level of automation, workflow, and self-improvement that Demarch has.
+A Clavain skill called `project-onboard` that makes any project "fully operational" in the Sylveste ecosystem. It handles both greenfield repos and existing projects by introspecting first, then filling gaps. The goal: run one command and get the same level of automation, workflow, and self-improvement that Sylveste has.
 
 ## How It Works
 
@@ -47,7 +47,7 @@ Create everything that's missing (idempotent — safe to re-run).
 **What project-onboard owns (nothing else does this):**
 
 Core docs (seeded with real content from interview + repo scan):
-- `CLAUDE.md` — project structure, git workflow, working style (follows Demarch conventions)
+- `CLAUDE.md` — project structure, git workflow, working style (follows Sylveste conventions)
 - `AGENTS.md` — comprehensive dev guide, architecture, dependencies
 - `PHILOSOPHY.md` — design principles, goals, tradeoffs
 
@@ -100,7 +100,7 @@ Use interview answers (especially "key goals") to generate real artifacts:
 
 - **Introspect-first** makes it work for both new and existing projects
 - **Guided interview with smart defaults** balances personalization with speed
-- **Full Demarch docs tree** because Demarch grew into it organically and every directory serves a purpose — new projects shouldn't have to rediscover that structure
+- **Full Sylveste docs tree** because Sylveste grew into it organically and every directory serves a purpose — new projects shouldn't have to rediscover that structure
 - **Seeded content** because empty templates are demoralizing and rarely get filled in
 - **Interpath integration** because generating vision/PRD/roadmap from real goals makes the project feel alive immediately
 - **Observability from day one** because the self-improvement loop only works if drift detection is watching
@@ -109,7 +109,7 @@ Use interview answers (especially "key goals") to generate real artifacts:
 
 1. **Scope: both greenfield and existing projects** — introspect first, fill gaps (idempotent)
 2. **Interactivity: guided interview with smart defaults** — infer what you can, ask what you can't
-3. **Docs structure: full Demarch tree** — all subdirectories, not a minimal subset
+3. **Docs structure: full Sylveste tree** — all subdirectories, not a minimal subset
 4. **Content: seeded from interview + repo scan** — not empty templates
 5. **Beads: delegate to `bd init` + `bd setup claude`** — hooks come for free, no manual installation
 6. **Delegate, don't duplicate** — `/clavain:init` for .clavain/, `/clavain:setup` already handled plugins/MCP/ic. This skill only owns what nothing else does.
@@ -119,8 +119,8 @@ Use interview answers (especially "key goals") to generate real artifacts:
 
 ## Open Questions
 
-1. **CONVENTIONS.md** — should we generate one? Demarch has it for canonical doc paths. Might be useful for any project.
+1. **CONVENTIONS.md** — should we generate one? Sylveste has it for canonical doc paths. Might be useful for any project.
 2. **Serena/TLDRs config** — should onboarding also set up `.serena/project.yml` and `.tldrs/` cache? These are tooling-specific, not project-specific.
 3. **Git hooks conflict** — if the project already has git hooks (husky, lefthook, etc.), `bd init` hooks might conflict. How to handle?
-4. **Monorepo handling** — for monorepos, should onboarding run per-module or just at the root? Demarch has per-module CLAUDE.md/AGENTS.md but that's a lot for initial setup.
-5. **Template versioning** — when Demarch conventions evolve, how do onboarded projects stay current? Could tie into interwatch drift detection.
+4. **Monorepo handling** — for monorepos, should onboarding run per-module or just at the root? Sylveste has per-module CLAUDE.md/AGENTS.md but that's a lot for initial setup.
+5. **Template versioning** — when Sylveste conventions evolve, how do onboarded projects stay current? Could tie into interwatch drift detection.

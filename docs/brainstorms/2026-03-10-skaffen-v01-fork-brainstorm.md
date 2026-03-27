@@ -1,6 +1,6 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-rp5
+bead: Sylveste-rp5
 stage: discover
 status: superseded
 superseded_by: docs/brainstorms/2026-03-11-skaffen-go-rewrite-brainstorm.md
@@ -8,8 +8,8 @@ superseded_by: docs/brainstorms/2026-03-11-skaffen-go-rewrite-brainstorm.md
 
 # Skaffen v0.1: Fork pi_agent_rust, Rebrand, CI Green
 
-**Bead:** Demarch-rp5
-**Parent epic:** Demarch-6qb (Skaffen sovereign agent runtime)
+**Bead:** Sylveste-rp5
+**Parent epic:** Sylveste-6qb (Skaffen sovereign agent runtime)
 **Epic brainstorm:** docs/brainstorms/2026-03-10-skaffen-sovereign-agent-brainstorm.md (D11)
 
 ## What We're Building
@@ -25,7 +25,7 @@ Vendoring custom deps (asupersync, charmed_rust, rich_rust, sqlmodel_rust) gives
 ## Key Decisions
 
 ### D1: Repo layout — Standalone Skaffen repo
-The Skaffen GitHub repo (`github.com/mistakeknot/Skaffen`) gets all Rust source. `os/Skaffen/` in the Demarch monorepo remains a docs-only anchor, matching the Clavain pattern. No git submodules.
+The Skaffen GitHub repo (`github.com/mistakeknot/Skaffen`) gets all Rust source. `os/Skaffen/` in the Sylveste monorepo remains a docs-only anchor, matching the Clavain pattern. No git submodules.
 
 ### D2: Dependencies — Vendor critical deps
 Copy asupersync, charmed_rust, rich_rust, and sqlmodel_rust into the Skaffen repo as vendored workspace crates (e.g., `vendor/asupersync/`). Keeps all original deps functional but under our control. Replace with standard crates (tokio, ratatui, etc.) incrementally in later versions.

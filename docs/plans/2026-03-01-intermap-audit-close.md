@@ -26,7 +26,7 @@
 
 Run:
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap
+cd /home/mk/projects/Sylveste/interverse/intermap
 go build -o /tmp/intermap-test ./cmd/intermap-mcp/
 echo '{"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}},"id":1}' | /tmp/intermap-test 2>/dev/null | head -1
 ```
@@ -38,12 +38,12 @@ Read `bin/launch-mcp.sh` and confirm it auto-builds the binary if missing.
 
 **Step 3: Run Go tests**
 
-Run: `cd /home/mk/projects/Demarch/interverse/intermap && go test ./... -v 2>&1 | tail -20`
+Run: `cd /home/mk/projects/Sylveste/interverse/intermap && go test ./... -v 2>&1 | tail -20`
 Expected: All packages pass.
 
 **Step 4: Close bead**
 
-Run: `export BEADS_DIR=/home/mk/projects/Demarch/.beads && bd close iv-728k --reason="Verified: Go MCP server builds, serves 9 tools, launch-mcp.sh auto-builds, all Go tests pass"`
+Run: `export BEADS_DIR=/home/mk/projects/Sylveste/.beads && bd close iv-728k --reason="Verified: Go MCP server builds, serves 9 tools, launch-mcp.sh auto-builds, all Go tests pass"`
 
 ---
 
@@ -53,16 +53,16 @@ Run: `export BEADS_DIR=/home/mk/projects/Demarch/.beads && bd close iv-728k --re
 - Read: `internal/registry/registry.go`, `internal/registry/registry_test.go`
 - Read: `internal/tools/tools.go` (project_registry + resolve_project handlers)
 
-**Step 1: Run the project_registry tool against Demarch**
+**Step 1: Run the project_registry tool against Sylveste**
 
 Test via Python bridge since Go tools require MCP protocol:
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap
+cd /home/mk/projects/Sylveste/interverse/intermap
 PYTHONPATH=python python3 -c "
 from intermap.analyze import run_command
 import json
 # Test code_structure as a proxy — registry is Go-only
-result = run_command('structure', '/home/mk/projects/Demarch/interverse/intermap/python/intermap', {'max_results': 5})
+result = run_command('structure', '/home/mk/projects/Sylveste/interverse/intermap/python/intermap', {'max_results': 5})
 print(json.dumps(result, indent=2)[:500])
 "
 ```
@@ -70,12 +70,12 @@ Expected: Returns file structure with functions/classes.
 
 **Step 2: Verify registry tests pass**
 
-Run: `cd /home/mk/projects/Demarch/interverse/intermap && go test ./internal/registry/ -v`
+Run: `cd /home/mk/projects/Sylveste/interverse/intermap && go test ./internal/registry/ -v`
 Expected: All registry tests pass — project discovery, language detection, resolve.
 
 **Step 3: Close bead**
 
-Run: `export BEADS_DIR=/home/mk/projects/Demarch/.beads && bd close iv-h3jl --reason="Verified: project_registry scans workspace, resolve_project maps paths, registry tests pass"`
+Run: `export BEADS_DIR=/home/mk/projects/Sylveste/.beads && bd close iv-h3jl --reason="Verified: project_registry scans workspace, resolve_project maps paths, registry tests pass"`
 
 ---
 
@@ -90,7 +90,7 @@ Run: `export BEADS_DIR=/home/mk/projects/Demarch/.beads && bd close iv-h3jl --re
 
 Run:
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap
+cd /home/mk/projects/Sylveste/interverse/intermap
 grep -r "tldr_swinton" python/ 2>/dev/null || echo "CLEAN: no tldr_swinton references"
 grep -r "from.*vendor" python/intermap/*.py 2>/dev/null || echo "CLEAN: no vendor imports in main modules"
 ```
@@ -98,12 +98,12 @@ Expected: No `tldr_swinton` imports. Only `vendor/dirty_flag.py` referenced from
 
 **Step 2: Verify Python tests pass with intermap imports**
 
-Run: `cd /home/mk/projects/Demarch/interverse/intermap && PYTHONPATH=python python3 -m pytest python/tests/ -v --tb=short 2>&1 | tail -10`
+Run: `cd /home/mk/projects/Sylveste/interverse/intermap && PYTHONPATH=python python3 -m pytest python/tests/ -v --tb=short 2>&1 | tail -10`
 Expected: 67 tests pass.
 
 **Step 3: Close bead**
 
-Run: `export BEADS_DIR=/home/mk/projects/Demarch/.beads && bd close iv-vwj3 --reason="Verified: All modules use intermap.* imports, only vendor/dirty_flag.py remains vendored, 67 Python tests pass"`
+Run: `export BEADS_DIR=/home/mk/projects/Sylveste/.beads && bd close iv-vwj3 --reason="Verified: All modules use intermap.* imports, only vendor/dirty_flag.py remains vendored, 67 Python tests pass"`
 
 ---
 
@@ -117,20 +117,20 @@ Run: `export BEADS_DIR=/home/mk/projects/Demarch/.beads && bd close iv-vwj3 --re
 
 Run:
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap
+cd /home/mk/projects/Sylveste/interverse/intermap
 PYTHONPATH=python python3 -m pytest python/tests/test_cross_project.py -v
 ```
 Expected: All tests pass.
 
-**Step 2: Test against live Demarch monorepo**
+**Step 2: Test against live Sylveste monorepo**
 
 Run:
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap
+cd /home/mk/projects/Sylveste/interverse/intermap
 PYTHONPATH=python python3 -c "
 from intermap.cross_project import scan_cross_project_deps
 import json
-result = scan_cross_project_deps('/home/mk/projects/Demarch/interverse')
+result = scan_cross_project_deps('/home/mk/projects/Sylveste/interverse')
 print(f'Projects found: {len(result.get(\"projects\", []))}')
 for p in result.get('projects', [])[:5]:
     print(f'  {p[\"name\"]}: {len(p.get(\"depends_on\", []))} deps')
@@ -140,7 +140,7 @@ Expected: Finds multiple interverse plugins with dependency information.
 
 **Step 3: Close bead**
 
-Run: `export BEADS_DIR=/home/mk/projects/Demarch/.beads && bd close iv-80s4e --reason="Verified: cross_project_deps scans monorepo, detects Go/Python/plugin deps, tests pass"`
+Run: `export BEADS_DIR=/home/mk/projects/Sylveste/.beads && bd close iv-80s4e --reason="Verified: cross_project_deps scans monorepo, detects Go/Python/plugin deps, tests pass"`
 
 ---
 
@@ -154,7 +154,7 @@ Run: `export BEADS_DIR=/home/mk/projects/Demarch/.beads && bd close iv-80s4e --r
 
 Run:
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap
+cd /home/mk/projects/Sylveste/interverse/intermap
 PYTHONPATH=python python3 -m pytest python/tests/test_patterns.py -v
 ```
 Expected: All pattern tests pass (Go MCP tools, HTTP handlers, interfaces, FastMCP, skills, hooks, auto-detection, confidence).
@@ -163,11 +163,11 @@ Expected: All pattern tests pass (Go MCP tools, HTTP handlers, interfaces, FastM
 
 Run:
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap
+cd /home/mk/projects/Sylveste/interverse/intermap
 PYTHONPATH=python python3 -c "
 from intermap.detect_patterns import detect_patterns
 import json
-result = detect_patterns('/home/mk/projects/Demarch/interverse/intermap')
+result = detect_patterns('/home/mk/projects/Sylveste/interverse/intermap')
 patterns = result.get('patterns', [])
 print(f'Patterns found: {len(patterns)}')
 for p in patterns[:5]:
@@ -178,7 +178,7 @@ Expected: Detects Go MCP tool registrations, Python analysis patterns.
 
 **Step 3: Close bead**
 
-Run: `export BEADS_DIR=/home/mk/projects/Demarch/.beads && bd close iv-dta9w --reason="Verified: detect_patterns finds Go MCP tools, HTTP handlers, FastMCP, skills, hooks with confidence scoring, 10 tests pass"`
+Run: `export BEADS_DIR=/home/mk/projects/Sylveste/.beads && bd close iv-dta9w --reason="Verified: detect_patterns finds Go MCP tools, HTTP handlers, FastMCP, skills, hooks with confidence scoring, 10 tests pass"`
 
 ---
 
@@ -193,7 +193,7 @@ This bead (iv-dl72x) is the audit itself — verifying all 6 original tools work
 
 Run:
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap
+cd /home/mk/projects/Sylveste/interverse/intermap
 go test ./... 2>&1
 PYTHONPATH=python python3 -m pytest python/tests/ --tb=short 2>&1 | tail -5
 ```
@@ -203,7 +203,7 @@ Expected: All Go + Python tests pass.
 
 Run:
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap
+cd /home/mk/projects/Sylveste/interverse/intermap
 PYTHONPATH=python python3 -m pytest python/tests/test_sidecar.py -v
 ```
 Expected: Sidecar ready signal, multi-request, error handling, clean EOF — all pass.
@@ -212,7 +212,7 @@ Expected: Sidecar ready signal, multi-request, error handling, clean EOF — all
 
 Run:
 ```bash
-export BEADS_DIR=/home/mk/projects/Demarch/.beads
+export BEADS_DIR=/home/mk/projects/Sylveste/.beads
 bd update iv-dl72x --notes="Audit results (2026-03-01):
 - Go tests: 6 packages pass (cache, client, mcpfilter, python, registry, tools)
 - Python tests: 67 pass (structure, cross_project, extractors, live_changes, perf, patterns, sidecar, analyze)
@@ -223,7 +223,7 @@ bd update iv-dl72x --notes="Audit results (2026-03-01):
 
 **Step 4: Close bead**
 
-Run: `export BEADS_DIR=/home/mk/projects/Demarch/.beads && bd close iv-dl72x --reason="Full audit complete: 6 Go packages + 67 Python tests pass, sidecar integration verified, all 9 tools functional"`
+Run: `export BEADS_DIR=/home/mk/projects/Sylveste/.beads && bd close iv-dl72x --reason="Full audit complete: 6 Go packages + 67 Python tests pass, sidecar integration verified, all 9 tools functional"`
 
 ---
 
@@ -244,7 +244,7 @@ Since tldr-swinton has 18 unique tools (semantic search, CFG/DFG, structural sea
 
 **Step 1: Add overlap documentation to intermap CLAUDE.md**
 
-Add a "## Tool Overlap with tldr-swinton" section to `/home/mk/projects/Demarch/interverse/intermap/CLAUDE.md`:
+Add a "## Tool Overlap with tldr-swinton" section to `/home/mk/projects/Sylveste/interverse/intermap/CLAUDE.md`:
 
 ```markdown
 ## Tool Overlap with tldr-swinton
@@ -263,7 +263,7 @@ Both plugins coexist — use tldr-swinton for file-level analysis and intermap f
 
 **Step 2: Add cross-reference to tldr-swinton CLAUDE.md**
 
-Add a note to `/home/mk/projects/Demarch/interverse/tldr-swinton/CLAUDE.md`:
+Add a note to `/home/mk/projects/Sylveste/interverse/tldr-swinton/CLAUDE.md`:
 
 ```markdown
 ## Tool Overlap with intermap
@@ -275,7 +275,7 @@ Add a note to `/home/mk/projects/Demarch/interverse/tldr-swinton/CLAUDE.md`:
 
 Run:
 ```bash
-export BEADS_DIR=/home/mk/projects/Demarch/.beads
+export BEADS_DIR=/home/mk/projects/Sylveste/.beads
 bd update iv-mif9 --title="F3: Document tool overlap with tldr-swinton (no removal needed)"
 bd close iv-mif9 --reason="Tools were independently implemented, not moved. Overlap documented in both CLAUDE.md files. No removal needed — different scopes (file-level vs project-level)."
 ```
@@ -283,8 +283,8 @@ bd close iv-mif9 --reason="Tools were independently implemented, not moved. Over
 **Step 4: Commit changes**
 
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap && git add CLAUDE.md && git commit -m "docs: document tool overlap with tldr-swinton"
-cd /home/mk/projects/Demarch/interverse/tldr-swinton && git add CLAUDE.md && git commit -m "docs: add intermap tool overlap cross-reference"
+cd /home/mk/projects/Sylveste/interverse/intermap && git add CLAUDE.md && git commit -m "docs: document tool overlap with tldr-swinton"
+cd /home/mk/projects/Sylveste/interverse/tldr-swinton && git add CLAUDE.md && git commit -m "docs: add intermap tool overlap cross-reference"
 ```
 
 ---
@@ -297,7 +297,7 @@ cd /home/mk/projects/Demarch/interverse/tldr-swinton && git add CLAUDE.md && git
 
 **Step 1: Write vision document**
 
-Create `/home/mk/projects/Demarch/interverse/intermap/docs/intermap-vision.md` covering:
+Create `/home/mk/projects/Sylveste/interverse/intermap/docs/intermap-vision.md` covering:
 - Design principles: stateless, cache-only, Go+Python bridge, sidecar-first
 - Architecture overview: Go MCP server → Python sidecar → AST/git analysis
 - Frontier axes: project-level mapping → cross-project deps → live change awareness → architecture patterns
@@ -305,23 +305,23 @@ Create `/home/mk/projects/Demarch/interverse/intermap/docs/intermap-vision.md` c
 
 **Step 2: Write roadmap document**
 
-Create `/home/mk/projects/Demarch/interverse/intermap/docs/intermap-roadmap.md` with now/next/later:
+Create `/home/mk/projects/Sylveste/interverse/intermap/docs/intermap-roadmap.md` with now/next/later:
 - **Now (v0.1.x):** 9 tools working, sidecar mode, Python extraction complete
 - **Next (v0.2):** Go-level caching for detect_patterns/cross_project_deps, symbol body-range detection, performance hardening
 - **Later (v0.3+):** Language expansion beyond Go/Python, persistent index, real-time filesystem watching
 
 **Step 3: Generate roadmap.json for interpath aggregation**
 
-Create `/home/mk/projects/Demarch/interverse/intermap/docs/roadmap.json` with structured data matching interpath schema.
+Create `/home/mk/projects/Sylveste/interverse/intermap/docs/roadmap.json` with structured data matching interpath schema.
 
 **Step 4: Close bead**
 
-Run: `export BEADS_DIR=/home/mk/projects/Demarch/.beads && bd close iv-3kz0v --reason="Vision, roadmap, and roadmap.json written"`
+Run: `export BEADS_DIR=/home/mk/projects/Sylveste/.beads && bd close iv-3kz0v --reason="Vision, roadmap, and roadmap.json written"`
 
 **Step 5: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap && git add docs/ && git commit -m "docs: add vision, roadmap, and roadmap.json for interpath"
+cd /home/mk/projects/Sylveste/interverse/intermap && git add docs/ && git commit -m "docs: add vision, roadmap, and roadmap.json for interpath"
 ```
 
 ---
@@ -332,7 +332,7 @@ cd /home/mk/projects/Demarch/interverse/intermap && git add docs/ && git commit 
 
 Run:
 ```bash
-export BEADS_DIR=/home/mk/projects/Demarch/.beads
+export BEADS_DIR=/home/mk/projects/Sylveste/.beads
 for id in iv-728k iv-vwj3 iv-mif9 iv-h3jl iv-3kz0v iv-80s4e iv-dta9w iv-dl72x; do
   echo -n "$id: "; bd show "$id" 2>&1 | head -1
 done
@@ -341,13 +341,13 @@ Expected: All show CLOSED.
 
 **Step 2: Close epic bead**
 
-Run: `export BEADS_DIR=/home/mk/projects/Demarch/.beads && bd close iv-w7bh --reason="All 8 features verified/completed: audit passed, extraction confirmed, overlap documented, docs written"`
+Run: `export BEADS_DIR=/home/mk/projects/Sylveste/.beads && bd close iv-w7bh --reason="All 8 features verified/completed: audit passed, extraction confirmed, overlap documented, docs written"`
 
 **Step 3: Push all repos**
 
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap && git push
-cd /home/mk/projects/Demarch/interverse/tldr-swinton && git push
-cd /home/mk/projects/Demarch && git add .beads/ && git commit -m "bd: close intermap epic (iv-w7bh) and all feature beads" && git push
+cd /home/mk/projects/Sylveste/interverse/intermap && git push
+cd /home/mk/projects/Sylveste/interverse/tldr-swinton && git push
+cd /home/mk/projects/Sylveste && git add .beads/ && git commit -m "bd: close intermap epic (iv-w7bh) and all feature beads" && git push
 bash .beads/push.sh
 ```

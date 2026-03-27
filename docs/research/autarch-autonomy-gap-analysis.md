@@ -2,15 +2,15 @@
 
 **Date:** 2026-02-25
 **Status:** Analysis
-**Context:** Evaluating the gap between Autarch's current human-centric UX and Demarch's vision of increasing agent autonomy through recursive rings of autonomous agencies.
+**Context:** Evaluating the gap between Autarch's current human-centric UX and Sylveste's vision of increasing agent autonomy through recursive rings of autonomous agencies.
 
 ---
 
 ## The Diagnosis
 
-Autarch was designed as a human operator's cockpit. Demarch has since evolved into a platform for autonomous agencies where the human is an executive — a visionary, judge, and strategic decision-maker — not an operator. The four Autarch apps (Bigend, Gurgeh, Coldwine, Pollard) still assume the human is *in* the loop at every step, when the architecture now calls for the human to be *above* the loop.
+Autarch was designed as a human operator's cockpit. Sylveste has since evolved into a platform for autonomous agencies where the human is an executive — a visionary, judge, and strategic decision-maker — not an operator. The four Autarch apps (Bigend, Gurgeh, Coldwine, Pollard) still assume the human is *in* the loop at every step, when the architecture now calls for the human to be *above* the loop.
 
-This isn't a bug in Autarch — it's a phase mismatch. Autarch was correct for L0-L1 autonomy (Record, Enforce). But Demarch is now at L2 (React) and pushing toward L3 (Auto-remediate). The UX assumptions haven't kept pace.
+This isn't a bug in Autarch — it's a phase mismatch. Autarch was correct for L0-L1 autonomy (Record, Enforce). But Sylveste is now at L2 (React) and pushing toward L3 (Auto-remediate). The UX assumptions haven't kept pace.
 
 ## The Seven Gaps
 
@@ -33,7 +33,7 @@ This isn't a bug in Autarch — it's a phase mismatch. Autarch was correct for L
 **Target state:** Each tool maps to a **ring** in a recursive agency structure. The outer ring (strategic) makes high-level decisions. Middle rings (tactical) decompose and coordinate. Inner rings (operational) execute. Each ring is an autonomous sub-agency that escalates to the ring above only on exception.
 
 ```
-Vision (Demarch autonomy model):
+Vision (Sylveste autonomy model):
 
                 ┌─────────────────────┐
                 │   HUMAN (Judge)     │
@@ -234,7 +234,7 @@ The human sits above all rings as the executive who:
 - Reviews outcomes (what shipped, what quality, what cost)
 - Adjusts policy (autonomy levels, budget constraints, gate thresholds)
 
-This is already what the Demarch vision describes. Autarch just hasn't caught up to the architecture it's supposed to surface.
+This is already what the Sylveste vision describes. Autarch just hasn't caught up to the architecture it's supposed to surface.
 
 ## Recommended Next Steps
 
@@ -247,4 +247,4 @@ This is already what the Demarch vision describes. Autarch just hasn't caught up
 
 ---
 
-*This analysis evaluates the structural gap between Autarch's current human-operator UX and Demarch's vision of autonomous agencies. It does not propose specific implementation — that belongs in a plan doc after review.*
+*This analysis evaluates the structural gap between Autarch's current human-operator UX and Sylveste's vision of autonomous agencies. It does not propose specific implementation — that belongs in a plan doc after review.*

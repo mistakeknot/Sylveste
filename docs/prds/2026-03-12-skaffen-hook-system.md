@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-6i0.2
+bead: Sylveste-6i0.2
 stage: design
 ---
 # PRD: Skaffen Hook System

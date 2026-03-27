@@ -1,4 +1,4 @@
-# Quality Gates — TurboQuant (Demarch-4dy)
+# Quality Gates — TurboQuant (Sylveste-4dy)
 
 ## Status: PASS
 

@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-og7m
+bead: Sylveste-og7m
 stage: design
 batch: 2
 ---

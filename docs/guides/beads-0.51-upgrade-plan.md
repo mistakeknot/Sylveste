@@ -11,7 +11,7 @@ This guide is now the post-migration reference, not a pending plan.
 - CLI version: `bd 0.56.1` (latest at verification time)
 - Storage/backend: Dolt
 - Sync mode: `dolt-native` (`bd config get sync.mode`)
-- Active tracker: Demarch root `.beads/` (module-level `.beads/` are archival/read-only)
+- Active tracker: Sylveste root `.beads/` (module-level `.beads/` are archival/read-only)
 - `bd sync` behavior: deprecated compatibility no-op
 
 ## Operational rules after migration

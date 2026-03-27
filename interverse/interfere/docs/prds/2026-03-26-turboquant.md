@@ -1,13 +1,13 @@
 ---
 artifact_type: prd
-bead: Demarch-4dy
+bead: Sylveste-4dy
 stage: design
 ---
 # PRD: TurboQuant — 3-bit KV Cache Compression
 
 ## Problem
 
-interfere's KV cache quantization uses mlx-lm's built-in uniform bit-width scheme (2/4/8-bit), which trades quality for memory savings. At 2-bit, quality degrades noticeably on long-context tasks. The planned Q8K/Q4V approach (Demarch-dw8) improves this but still uses 4-8 effective bits. TurboQuant (ICLR 2026) achieves 3-bit quantization with zero accuracy loss via polar coordinate mapping + JL residual correction — strictly better.
+interfere's KV cache quantization uses mlx-lm's built-in uniform bit-width scheme (2/4/8-bit), which trades quality for memory savings. At 2-bit, quality degrades noticeably on long-context tasks. The planned Q8K/Q4V approach (Sylveste-dw8) improves this but still uses 4-8 effective bits. TurboQuant (ICLR 2026) achieves 3-bit quantization with zero accuracy loss via polar coordinate mapping + JL residual correction — strictly better.
 
 ## Solution
 
@@ -60,7 +60,7 @@ Implement TurboQuant as an experiment module (`server/experiments/turbo_quant.py
 - mlx-lm KV cache API must expose tensors for interception (research during planning)
 - Existing experiment framework (`server/experiments/config.py`)
 - Existing benchmark harness (`server/benchmark.py`, `benchmark_cli.py`)
-- Demarch-m0m (autoresearch campaign) will consume this experiment for parameter tuning
+- Sylveste-m0m (autoresearch campaign) will consume this experiment for parameter tuning
 
 ## Open Questions
 

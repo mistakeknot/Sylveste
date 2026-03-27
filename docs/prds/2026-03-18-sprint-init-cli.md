@@ -1,6 +1,6 @@
 # PRD: clavain-cli sprint-init
 
-**Bead:** Demarch-czxk
+**Bead:** Sylveste-czxk
 **Date:** 2026-03-18
 **Status:** Draft
 
@@ -45,9 +45,9 @@ A single `clavain-cli sprint-init <bead_id>` Go subcommand that:
 - No changes to other sprint subcommands
 
 ## Acceptance Criteria
-1. `clavain-cli sprint-init Demarch-czxk` produces formatted banner with bead, complexity, phase, budget
+1. `clavain-cli sprint-init Sylveste-czxk` produces formatted banner with bead, complexity, phase, budget
 2. sprint.md bootstrap section uses single CLI call
-3. `NO_COLOR=1 clavain-cli sprint-init Demarch-czxk` produces plain text
+3. `NO_COLOR=1 clavain-cli sprint-init Sylveste-czxk` produces plain text
 4. Invalid bead ID returns non-zero exit code
 5. Missing bd/ic/complexity gracefully degrade (partial output, not crash)
 

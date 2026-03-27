@@ -1,16 +1,16 @@
-# mcp_agent_mail vs Demarch — Gap Analysis
+# mcp_agent_mail vs Sylveste — Gap Analysis
 
 **Date:** 2026-02-24
-**Source:** research/mcp_agent_mail (commit HEAD), Demarch vision docs, intermute/interlock source
-**Purpose:** Identify what mcp_agent_mail does that Demarch should be doing (or doing better)
+**Source:** research/mcp_agent_mail (commit HEAD), Sylveste vision docs, intermute/interlock source
+**Purpose:** Identify what mcp_agent_mail does that Sylveste should be doing (or doing better)
 
 ---
 
 ## Executive Summary
 
-mcp_agent_mail is a focused, well-designed multi-agent messaging server. Demarch's coordination stack (intermute + interlock) already covers most of the same ground but with a different architecture. The interesting gaps are not "we're missing X" but "they solved X more elegantly" or "they thought about a problem we haven't addressed yet."
+mcp_agent_mail is a focused, well-designed multi-agent messaging server. Sylveste's coordination stack (intermute + interlock) already covers most of the same ground but with a different architecture. The interesting gaps are not "we're missing X" but "they solved X more elegantly" or "they thought about a problem we haven't addressed yet."
 
-**5 things worth stealing. 3 things Demarch does better. 2 things neither does well.**
+**5 things worth stealing. 3 things Sylveste does better. 2 things neither does well.**
 
 ---
 
@@ -22,9 +22,9 @@ mcp_agent_mail is a focused, well-designed multi-agent messaging server. Demarch
 
 **What we do:** Intermute has no contact model. Any registered agent can message any other agent in the same project. Interlock's negotiation protocol is specifically for file release — not general messaging permissions.
 
-**Why it matters for Demarch:** As autonomy increases (L2→L3→L4), agents will spawn sub-agents that spawn sub-agents. Without contact policy, a runaway agent could flood the message bus. More importantly, Interspect's learning loop needs signal quality — if agents can filter out irrelevant messages, the signal/noise ratio improves.
+**Why it matters for Sylveste:** As autonomy increases (L2→L3→L4), agents will spawn sub-agents that spawn sub-agents. Without contact policy, a runaway agent could flood the message bus. More importantly, Interspect's learning loop needs signal quality — if agents can filter out irrelevant messages, the signal/noise ratio improves.
 
-**Adoption path:** Add `contact_policy` field to intermute's `agents` table. Default to `open` for backward compatibility (Demarch agents within a sprint trust each other). Enforce at `POST /api/messages`. Low-effort, high-value guardrail for multi-project scenarios.
+**Adoption path:** Add `contact_policy` field to intermute's `agents` table. Default to `open` for backward compatibility (Sylveste agents within a sprint trust each other). Enforce at `POST /api/messages`. Low-effort, high-value guardrail for multi-project scenarios.
 
 ### 2. Message Acknowledgment Semantics
 
@@ -32,7 +32,7 @@ mcp_agent_mail is a focused, well-designed multi-agent messaging server. Demarch
 
 **What we do:** Intermute has `ack` and `read` events in the append-only events table, but there's no concept of "this message requires acknowledgment." It's fire-and-forget — the sender has no way to know if the recipient processed the message vs just received it.
 
-**Why it matters for Demarch:** Gate transitions often depend on "did the review agent actually process the findings?" Currently, Clavain polls for completion via sprint state. Ack semantics would let Intercore enforce "review agent acknowledged all findings before Ship gate opens" as a kernel-level invariant, not an OS-level poll.
+**Why it matters for Sylveste:** Gate transitions often depend on "did the review agent actually process the findings?" Currently, Clavain polls for completion via sprint state. Ack semantics would let Intercore enforce "review agent acknowledged all findings before Ship gate opens" as a kernel-level invariant, not an OS-level poll.
 
 **Adoption path:** Add `ack_required` boolean to intermute's messages schema. Add `POST /api/messages/{id}/ack` endpoint (distinct from existing `read`). Intercore gates can then reference `message.acked` as a gate condition.
 
@@ -42,7 +42,7 @@ mcp_agent_mail is a focused, well-designed multi-agent messaging server. Demarch
 
 **What we do:** Intermute has no message search. Finding a message requires knowing the thread_id or iterating through inbox cursors. No full-text indexing.
 
-**Why it matters for Demarch:** As sprints accumulate, the message history becomes institutional knowledge. "What did the review agent say about the auth refactor?" requires search. Interspect's learning loop could mine message history for patterns (e.g., "which review findings are consistently dismissed?" requires searching message bodies).
+**Why it matters for Sylveste:** As sprints accumulate, the message history becomes institutional knowledge. "What did the review agent say about the auth refactor?" requires search. Interspect's learning loop could mine message history for patterns (e.g., "which review findings are consistently dismissed?" requires searching message bodies).
 
 **Adoption path:** Add FTS5 virtual table to intermute.db. Index `messages.body` and `messages.subject`. Add `GET /api/messages/search?q=...` endpoint. Moderate effort, high leverage for Interspect Phase 2.
 
@@ -52,7 +52,7 @@ mcp_agent_mail is a focused, well-designed multi-agent messaging server. Demarch
 
 **What we do:** Interlock has individual tools. Starting a coordination session requires: `reserve_files` + `list_agents` + `send_message`. Each is a separate MCP call. If the agent's context compresses between calls, it may forget to complete the sequence.
 
-**Why it matters for Demarch:** Token efficiency is a frontier axis. Each MCP round-trip costs tokens for the tool call + response parsing. Macros reduce this. More importantly, they encode "the right way to do X" — the compound operation pattern from Clavain's philosophy.
+**Why it matters for Sylveste:** Token efficiency is a frontier axis. Each MCP round-trip costs tokens for the tool call + response parsing. Macros reduce this. More importantly, they encode "the right way to do X" — the compound operation pattern from Clavain's philosophy.
 
 **Adoption path:** Add compound tools to interlock MCP server: `join_session` (register + reserve + announce), `handoff_files` (release + notify + transfer reservations). These are thin wrappers, not new primitives — fits the "mechanism, not policy" kernel principle because the macros live in the driver layer (L2).
 
@@ -62,13 +62,13 @@ mcp_agent_mail is a focused, well-designed multi-agent messaging server. Demarch
 
 **What we do:** Intermute stores everything in SQLite. The events table is append-only (good), but there's no git-level audit trail. If the database is lost, the history is gone.
 
-**Why it matters for Demarch:** Demarch's philosophy is "durable over ephemeral." The kernel (Intercore) already uses SQLite with WAL mode, which is solid. But git-backed messages would give us: (a) cross-session searchability via standard tools, (b) backup via `git push`, (c) human-readable message history without any tooling, (d) blame/authorship tracking for Interspect evidence.
+**Why it matters for Sylveste:** Sylveste's philosophy is "durable over ephemeral." The kernel (Intercore) already uses SQLite with WAL mode, which is solid. But git-backed messages would give us: (a) cross-session searchability via standard tools, (b) backup via `git push`, (c) human-readable message history without any tooling, (d) blame/authorship tracking for Interspect evidence.
 
 **Adoption path:** This is the most expensive item. Don't duplicate mcp_agent_mail's dual-persistence approach (SQLite + Git). Instead, consider a lighter version: periodic `git archive` of intermute's message history as a background job. Or: use mcp-agent-mail itself as the archive layer (it's already an MCP server in our stack).
 
 ---
 
-## What Demarch Already Does Better
+## What Sylveste Already Does Better
 
 ### 1. Real-Time Delivery (WebSocket)
 
@@ -80,7 +80,7 @@ mcp_agent_mail is **poll-based only** — agents call `fetch_inbox` periodically
 
 mcp_agent_mail is a monolith — the messaging protocol, file reservations, contact policy, and search are all in one 11K-line `app.py`. There's no concept of separating mechanism from policy.
 
-Demarch's 3-layer architecture means coordination primitives live in the kernel (Intercore), coordination policy lives in the OS (Clavain), and the MCP surface lives in drivers (Interlock). This means you can swap the coordination policy without touching the kernel — e.g., a documentation project could use different file reservation TTLs than a code project.
+Sylveste's 3-layer architecture means coordination primitives live in the kernel (Intercore), coordination policy lives in the OS (Clavain), and the MCP surface lives in drivers (Interlock). This means you can swap the coordination policy without touching the kernel — e.g., a documentation project could use different file reservation TTLs than a code project.
 
 ### 3. Event Sourcing with Cursors
 
@@ -96,7 +96,7 @@ mcp_agent_mail explicitly notes "messages archived forever (manual cleanup only)
 
 ### 2. Cross-Project Coordination at Scale
 
-mcp_agent_mail has cross-project contact requests (`to_agent="project:slug#AgentName"`) but no cross-project message routing or file reservation coordination. Intermute is project-scoped — no cross-project primitives at all. The Demarch vision doc identifies "Multi-Project Portfolio Orchestration" as gap 8.1, with kernel primitives landed but not yet orchestrated.
+mcp_agent_mail has cross-project contact requests (`to_agent="project:slug#AgentName"`) but no cross-project message routing or file reservation coordination. Intermute is project-scoped — no cross-project primitives at all. The Sylveste vision doc identifies "Multi-Project Portfolio Orchestration" as gap 8.1, with kernel primitives landed but not yet orchestrated.
 
 ---
 
@@ -127,9 +127,9 @@ mcp_agent_mail has cross-project contact requests (`to_agent="project:slug#Agent
 - mcp_agent_mail is Python/FastMCP; intermute is Go
 - mcp_agent_mail uses dual persistence (Git + SQLite); intermute uses SQLite only
 - mcp_agent_mail is poll-based; intermute is WebSocket-first
-- mcp_agent_mail is a monolith; Demarch separates mechanism/policy
+- mcp_agent_mail is a monolith; Sylveste separates mechanism/policy
 
-**Instead:** Cherry-pick the 5 ideas above into the existing Demarch stack. The research clone stays useful as a reference for implementation details (e.g., FTS5 trigger patterns, contact policy state machine, macro composition patterns).
+**Instead:** Cherry-pick the 5 ideas above into the existing Sylveste stack. The research clone stays useful as a reference for implementation details (e.g., FTS5 trigger patterns, contact policy state machine, macro composition patterns).
 
 ### Should we use mcp_agent_mail as a companion MCP server?
 

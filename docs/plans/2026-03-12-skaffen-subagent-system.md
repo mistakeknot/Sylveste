@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-6i0.18
+bead: Sylveste-6i0.18
 stage: design
 requirements:
   - F1: SubagentRunner — goroutine lifecycle management
@@ -15,7 +15,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-6i0.18
+**Bead:** Sylveste-6i0.18
 **Goal:** Add a subagent system to Skaffen so the LLM can spawn parallel child agents via an Agent tool, with Explore (read-only) and General (write-capable) built-in types, extensible via `.skaffen/agents/` config.
 
 **Architecture:** Each subagent is a fresh `agentloop.Loop` goroutine with scoped context (no full parent conversation). Write-capable subagents coordinate via Intercore `ic coordination reserve`. A new `internal/subagent/` package owns all subagent types; the `Agent` tool is registered in the phase-gated tool registry. TUI shows subagent results as inline collapsible blocks.

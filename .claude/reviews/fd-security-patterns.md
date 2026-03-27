@@ -1,7 +1,7 @@
-# Security Patterns: Hermes Agent Analysis for Demarch Adaptation
+# Security Patterns: Hermes Agent Analysis for Sylveste Adaptation
 
 **Reviewer:** fd-security-patterns
-**Source:** `/home/mk/projects/Demarch/research/hermes_agent/`
+**Source:** `/home/mk/projects/Sylveste/research/hermes_agent/`
 **Date:** 2026-03-02
 **Decision lens:** Patterns that plug specific gaps not already covered by existing safety floors (lib-routing.sh) or interspect (hook_id allowlist, review_events schema).
 
@@ -9,9 +9,9 @@
 
 ## Executive Summary
 
-Hermes Agent contains five security patterns that are directionally mature and partially adoptable for Demarch. The strongest is `redact.py` — a layered regex redaction system with a `RedactingFormatter` that hooks into Python's logging infrastructure. The weakest is the `_secure_write()` pattern: correct in its target module (`pairing.py`) but inconsistently applied across the rest of the codebase. The most critical gap for Demarch is the absence of runtime log redaction in Autarch (Go) and Intercom (Node/Rust). A Demarch-specific redaction library would plug this immediately.
+Hermes Agent contains five security patterns that are directionally mature and partially adoptable for Sylveste. The strongest is `redact.py` — a layered regex redaction system with a `RedactingFormatter` that hooks into Python's logging infrastructure. The weakest is the `_secure_write()` pattern: correct in its target module (`pairing.py`) but inconsistently applied across the rest of the codebase. The most critical gap for Sylveste is the absence of runtime log redaction in Autarch (Go) and Intercom (Node/Rust). A Sylveste-specific redaction library would plug this immediately.
 
-The NTM analysis (`fd-safety-observability-ntm.md`) already recommended a redaction engine at highest priority. Hermes Agent confirms that direction and provides a concrete, production-tested Python reference. The adaptation path for Demarch is clear: port `redact.py` patterns to Go for Autarch and to TypeScript for Intercom's Node layer.
+The NTM analysis (`fd-safety-observability-ntm.md`) already recommended a redaction engine at highest priority. Hermes Agent confirms that direction and provides a concrete, production-tested Python reference. The adaptation path for Sylveste is clear: port `redact.py` patterns to Go for Autarch and to TypeScript for Intercom's Node layer.
 
 ---
 
@@ -63,7 +63,7 @@ Five independent redaction layers applied sequentially to any string:
 
 **Gap:** The `_SECRET_ENV_NAMES` regex is `(?:API_?KEY|TOKEN|SECRET|PASSWORD|PASSWD|CREDENTIAL|AUTH)`. `SUDO_PASSWORD` matches `PASSWORD` — so it IS covered. However `SUDO` alone would not be caught if someone uses a custom name without these keywords.
 
-**P0 gap:** AWS keys, JWTs, private keys, and database URLs are absent. These are all present in NTM's redaction engine (13 categories vs. Hermes's ~5 effective categories). For Demarch's multi-cloud agents this is a concrete risk.
+**P0 gap:** AWS keys, JWTs, private keys, and database URLs are absent. These are all present in NTM's redaction engine (13 categories vs. Hermes's ~5 effective categories). For Sylveste's multi-cloud agents this is a concrete risk.
 
 **Adoptability:** Very high. The five-layer architecture, word-boundary anchoring, and `RedactingFormatter` pattern are directly portable to Go (via a `slog.Handler` wrapper) and TypeScript (via a `winston` transport or `pino` redact plugin). The test suite covers all layers with `printenv`-simulation tests that verify real-world env-dump scenarios.
 
@@ -112,7 +112,7 @@ Implements a cryptographic pairing code system for authorizing new users on mess
 - **`_rate_limits.json` lacks its own TTL:** Failed attempts and rate limit timestamps accumulate indefinitely. A long-running deployment will grow this file without bound and could cause performance issues over years (minor, but worth noting).
 - **`_record_failed_attempt()` prints to stdout** (line 254): `print(f"[pairing] Platform {platform} locked out...")`. This bypasses the `RedactingFormatter` and is not logged via the structured logger. Inconsistent with the "codes never logged" philosophy.
 
-**Adoptability for Demarch/Intercom:** High. Intercom currently uses a static `TELEGRAM_ALLOWED_USERS` env var for authorization. The PairingStore is a direct upgrade: it replaces a deploy-time configuration step with a runtime pairing flow that requires no server restart. The Intercom Rust daemon (`intercomd`) would need to implement equivalent logic — the patterns translate cleanly to Rust's `rand::rngs::OsRng` + `base32` or a custom unambiguous alphabet.
+**Adoptability for Sylveste/Intercom:** High. Intercom currently uses a static `TELEGRAM_ALLOWED_USERS` env var for authorization. The PairingStore is a direct upgrade: it replaces a deploy-time configuration step with a runtime pairing flow that requires no server restart. The Intercom Rust daemon (`intercomd`) would need to implement equivalent logic — the patterns translate cleanly to Rust's `rand::rngs::OsRng` + `base32` or a custom unambiguous alphabet.
 
 ### Tag: P1
 
@@ -162,7 +162,7 @@ Surveying all file writes in `research/hermes_agent/`:
 
 **Note on atomicity:** `_secure_write()` itself is not atomic — it writes then chmods. Between the `write_text()` and `chmod()` calls, the file is briefly world-readable (if created new) under a permissive umask. True atomic secure write requires writing to a temp file, chmodding the temp file, then `os.rename()` to the target. Hermes does not implement this pattern.
 
-**Adoptability for Demarch:** The pattern is correct in intent but needs two fixes before adoption: (1) use `tempfile + os.rename()` for atomicity, (2) apply consistently to all state files containing secrets. In Autarch (Go), the equivalent is `os.WriteFile()` followed by `os.Chmod()`, or better: write to a temp file in the same directory, `os.Chmod(tmp, 0600)`, then `os.Rename(tmp, dst)`.
+**Adoptability for Sylveste:** The pattern is correct in intent but needs two fixes before adoption: (1) use `tempfile + os.rename()` for atomicity, (2) apply consistently to all state files containing secrets. In Autarch (Go), the equivalent is `os.WriteFile()` followed by `os.Chmod()`, or better: write to a temp file in the same directory, `os.Chmod(tmp, 0600)`, then `os.Rename(tmp, dst)`.
 
 ### Tag: P0 (for the `.env` write gap in Hermes); P2 (for the atomic write improvement)
 
@@ -285,7 +285,7 @@ def get_env_value(key: str) -> Optional[str]:
 
 The `load_env()` call on fallback is a direct file read (not `os.getenv`), meaning it picks up changes to the `.env` file without process restart. This is convenient but means an attacker who can write to `~/.hermes/.env` can inject credentials that take effect on the next `get_env_value()` call.
 
-**Multi-tenant gap:** There is no namespace isolation between multiple users or agent instances on the same machine. `~/.hermes/.env` is a single file for all agents running under the same Unix user. In Demarch's multi-agent deployments where multiple Autarch agents run concurrently under the same service account, this creates credential sharing — all agents see the same API keys. This is likely acceptable for Hermes's single-user design but would be a regression for Demarch's multi-tenant model.
+**Multi-tenant gap:** There is no namespace isolation between multiple users or agent instances on the same machine. `~/.hermes/.env` is a single file for all agents running under the same Unix user. In Sylveste's multi-agent deployments where multiple Autarch agents run concurrently under the same service account, this creates credential sharing — all agents see the same API keys. This is likely acceptable for Hermes's single-user design but would be a regression for Sylveste's multi-tenant model.
 
 **Missing: `.env` file permission check at startup.** The loader does not verify `os.stat(~/.hermes/.env).st_mode` before loading. If the file has been world-readable due to a missed `chmod` (see Section 3), the agent loads it anyway without warning. A startup check that warns when the file mode is looser than `0o600` would be valuable.
 
@@ -299,9 +299,9 @@ The `load_env()` call on fallback is a direct file read (not `os.getenv`), meani
 
 ### Not Covered by Any Pattern in Hermes
 
-These gaps exist across the Hermes codebase and would also need to be addressed in any Demarch adaptation:
+These gaps exist across the Hermes codebase and would also need to be addressed in any Sylveste adaptation:
 
-**G1. No secrets in trajectories/sessions check.** `run_agent.py`'s `_save_session_log()` writes full message history to `~/.hermes/sessions/session_*.json` without running `redact_sensitive_text()` first. The `RedactingFormatter` only covers the Python logging framework; it does NOT cover data written to disk via direct file I/O. The same issue applies to `gateway/session.py` transcript writes and `gateway/mirror.py` JSONL writes. A tool that returns an API key in its output will persist that key to disk in the session log. `agent/trajectory.py` similarly writes trajectories without redaction. This is a **P0 gap in Hermes** and would be a P0 gap in any Demarch adoption that includes session persistence.
+**G1. No secrets in trajectories/sessions check.** `run_agent.py`'s `_save_session_log()` writes full message history to `~/.hermes/sessions/session_*.json` without running `redact_sensitive_text()` first. The `RedactingFormatter` only covers the Python logging framework; it does NOT cover data written to disk via direct file I/O. The same issue applies to `gateway/session.py` transcript writes and `gateway/mirror.py` JSONL writes. A tool that returns an API key in its output will persist that key to disk in the session log. `agent/trajectory.py` similarly writes trajectories without redaction. This is a **P0 gap in Hermes** and would be a P0 gap in any Sylveste adoption that includes session persistence.
 
 **G2. `save_config()` and `save_env_value()` use default umask permissions.** Analyzed in Section 3. The `.env` file at `~/.hermes/.env` is written without explicit `chmod 0o600`. On a typical Linux system with `umask 022`, newly created files are `0o644` (world-readable). This is the most concrete credential exposure risk in the Hermes codebase.
 
@@ -313,11 +313,11 @@ These gaps exist across the Hermes codebase and would also need to be addressed 
 
 ---
 
-## Comparison to Existing Demarch Safety Floors
+## Comparison to Existing Sylveste Safety Floors
 
 Based on `fd-safety-observability-ntm.md` and the NTM analysis:
 
-| Pattern | Hermes | NTM (already reviewed) | Demarch current state | Delta |
+| Pattern | Hermes | NTM (already reviewed) | Sylveste current state | Delta |
 |---|---|---|---|---|
 | Runtime log redaction | Yes (`RedactingFormatter`) | Yes (13 categories, priority-ordered, deterministic placeholders) | **None** | Both sources recommend; adopt NTM's richer Go engine, use Hermes as reference for the Python/logging.Formatter pattern |
 | Pairing/user authorization | Yes (PairingStore) | Not in NTM | Intercom uses static `TELEGRAM_ALLOWED_USERS` | Gap: Hermes's PairingStore is a production-ready upgrade for Intercom |
@@ -332,7 +332,7 @@ Interspect (hook_id allowlist, review_events schema) provides event-level filter
 
 ## Adaptation Opportunities — Beads to Create
 
-The following are concrete items Demarch should track. Listed in descending priority.
+The following are concrete items Sylveste should track. Listed in descending priority.
 
 ### P0 Items
 
@@ -359,7 +359,7 @@ In Autarch's MCP client routing layer, build a `valid_tool_names` set from the r
 _Reference: `research/hermes_agent/run_agent.py:3491-3522`_
 
 **AO-6: Startup `.env` permission check**
-In any Demarch component that loads secrets from a file (Autarch CLI, Intercom Node host), check the file mode at startup and emit a WARN if the file is readable by group or world. Example: `if (stat.Mode() & 0o077) != 0 { warn("credentials file is group/world readable: %s", path) }`.
+In any Sylveste component that loads secrets from a file (Autarch CLI, Intercom Node host), check the file mode at startup and emit a WARN if the file is readable by group or world. Example: `if (stat.Mode() & 0o077) != 0 { warn("credentials file is group/world readable: %s", path) }`.
 _Reference: `research/hermes_agent/hermes_cli/config.py:631-657` (gap identified)_
 
 ### P2 Items
@@ -383,7 +383,7 @@ The Intercom Node host (`apps/intercom/src/index.ts`) handles messaging channel 
 _Reference: `research/hermes_agent/agent/redact.py:107-115` (RedactingFormatter pattern)_
 
 **AO-11: `_record_failed_attempt()` stdout print — replace with structured logger**
-In the Hermes pairing module, `_record_failed_attempt()` prints lockout events directly to stdout (line 254). In any Demarch adaptation, replace this with a structured log call that goes through the redacting formatter. This is a minor consistency fix but reinforces the principle that all output paths are covered.
+In the Hermes pairing module, `_record_failed_attempt()` prints lockout events directly to stdout (line 254). In any Sylveste adaptation, replace this with a structured log call that goes through the redacting formatter. This is a minor consistency fix but reinforces the principle that all output paths are covered.
 _Reference: `research/hermes_agent/gateway/pairing.py:254`_
 
 ---

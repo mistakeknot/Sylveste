@@ -9,7 +9,7 @@ You have activated the interchart capability.
 ## Base Instructions
 # interchart — AGENTS.md
 
-Interactive ecosystem diagram generator for the Demarch monorepo. Scans all plugins, skills, agents, MCP servers, hooks, and infrastructure nodes and produces a self-contained D3.js force graph.
+Interactive ecosystem diagram generator for the Sylveste monorepo. Scans all plugins, skills, agents, MCP servers, hooks, and infrastructure nodes and produces a self-contained D3.js force graph.
 
 **Live diagram:** https://mistakeknot.github.io/interchart/
 
@@ -21,10 +21,10 @@ Interactive ecosystem diagram generator for the Demarch monorepo. Scans all plug
 
 ```bash
 # Generate diagram
-bash scripts/generate.sh /root/projects/Demarch
+bash scripts/generate.sh /root/projects/Sylveste
 
 # Scanner only (JSON to stdout)
-node scripts/scan.js /root/projects/Demarch
+node scripts/scan.js /root/projects/Sylveste
 
 # Deploy (commit to main triggers Actions)
 git add templates/ecosystem.html data/scan.json
@@ -58,7 +58,7 @@ Review [`PHILOSOPHY.md`](../../PHILOSOPHY.md) during:
 - Handoff/retrospective
 
 For brainstorming/planning outputs, add two short lines:
-- **Alignment:** one sentence on how the proposal supports the module's purpose within Demarch's philosophy.
+- **Alignment:** one sentence on how the proposal supports the module's purpose within Sylveste's philosophy.
 - **Conflict/Risk:** one sentence on any tension with philosophy (or 'none').
 
 If a high-value change conflicts with philosophy, either:

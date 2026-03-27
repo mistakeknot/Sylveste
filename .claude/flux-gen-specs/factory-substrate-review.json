@@ -17,7 +17,7 @@
       "There is a clear argument for why existing tools (Dolt, filesystem CAS) are insufficient, with concrete limitations cited",
       "Installation and upgrade path is specified with version pinning strategy"
     ],
-    "task_context": "Demarch is adding CXDB as required infrastructure for its plugin ecosystem. This is a significant commitment — CXDB becomes as fundamental as Dolt, meaning every developer and agent environment must run it.",
+    "task_context": "Sylveste is adding CXDB as required infrastructure for its plugin ecosystem. This is a significant commitment — CXDB becomes as fundamental as Dolt, meaning every developer and agent environment must run it.",
     "anti_overlap": [
       "fd-evidence-pipeline covers how plugins wire into CXDB (not whether CXDB should exist)",
       "fd-scenario-validation covers the scenario bank schema and dev/holdout split (not storage layer)",
@@ -42,7 +42,7 @@
       "The migration path from current storage to CXDB is phased with dual-write or backfill strategy",
       "At least one end-to-end example traces evidence from action to CXDB to judge query"
     ],
-    "task_context": "Demarch's philosophy is 'every action produces evidence' and 'evidence earns authority.' The evidence pipeline is the backbone connecting plugin actions to the validation/scoring system via CXDB.",
+    "task_context": "Sylveste's philosophy is 'every action produces evidence' and 'evidence earns authority.' The evidence pipeline is the backbone connecting plugin actions to the validation/scoring system via CXDB.",
     "anti_overlap": [
       "fd-dependency-risk covers whether CXDB is the right choice (not how data flows through it)",
       "fd-llm-judge-gates covers the scoring and gating logic that consumes evidence (not evidence production)",
@@ -107,7 +107,7 @@
     "review_areas": [
       "Where is policy enforcement implemented — in the Claude Code plugin layer, in Clavain CLI, or in CXDB? Can an agent bypass restrictions by calling tools directly?",
       "Are execution phases clearly defined with unambiguous transitions? What prevents an agent from claiming it's in a different phase?",
-      "How do capability policies compose with existing Demarch mechanisms (interlock file reservations, interspect hook allowlists, sprint routing)?",
+      "How do capability policies compose with existing Sylveste mechanisms (interlock file reservations, interspect hook allowlists, sprint routing)?",
       "Is the policy schema extensible for new tools/phases without requiring code changes? Can policies be defined per-project or per-scenario?",
       "What's the enforcement granularity — entire tool blocked, or specific arguments/patterns restricted?",
       "How are policy violations reported — silently blocked, logged to evidence pipeline, or escalated? Does violation evidence feed into judge scoring?"
@@ -117,7 +117,7 @@
       "At least one concrete phase transition example shows which tools are available/restricted at each step",
       "Policy violations produce evidence that flows into the scoring pipeline"
     ],
-    "task_context": "Demarch's philosophy is 'evidence earns authority' — agents should only have capabilities justified by their track record and current task phase. Capability policies are the enforcement mechanism for this principle.",
+    "task_context": "Sylveste's philosophy is 'evidence earns authority' — agents should only have capabilities justified by their track record and current task phase. Capability policies are the enforcement mechanism for this principle.",
     "anti_overlap": [
       "fd-llm-judge-gates covers scoring outcomes, not the policies that constrain agent behavior during execution",
       "fd-evidence-pipeline covers evidence flow mechanics, not what actions generate policy violation evidence",

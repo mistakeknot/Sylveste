@@ -1,6 +1,6 @@
 # Safety Review: Native Kernel Coordination Plan
 
-**Plan:** `/home/mk/projects/Demarch/docs/plans/2026-02-25-native-kernel-coordination.md`
+**Plan:** `/home/mk/projects/Sylveste/docs/plans/2026-02-25-native-kernel-coordination.md`
 **Date:** 2026-02-25
 **Reviewer:** Flux-drive Safety Reviewer
 **Risk Classification:** HIGH
@@ -81,7 +81,7 @@ This is safe because each value is separately double-quoted and passed to `exec`
 
 **Severity:** HIGH | **Exploitability:** MEDIUM (requires timing) | **Blast radius:** Lock stolen from live agent, agent proceeds without coordination
 
-**Location:** `/home/mk/projects/Demarch/core/intercore/internal/coordination/sweep.go` — `pidAlive()` and `findStalePIDs()`
+**Location:** `/home/mk/projects/Sylveste/core/intercore/internal/coordination/sweep.go` — `pidAlive()` and `findStalePIDs()`
 
 The plan uses `syscall.Kill(pid, 0)` to determine whether the owning process is alive before forcibly releasing a `named_lock`. This is a classic PID reuse race:
 
@@ -113,7 +113,7 @@ Alternatively, the race goes the other direction:
 
 **Location:** Plan Task 2 references copying `MaxTokens=50, MaxWildcards=10` from Intermute's `overlap.go`, but the `Store.Reserve()` code in Task 1 / Task 3 does not call `ValidateComplexity()` before entering the conflict-check loop.
 
-Looking at the existing Intermute glob code at `/home/mk/projects/Demarch/core/intermute/internal/glob/overlap.go`, the `ValidateComplexity()` function exists and the plan says to copy it. But `Store.Reserve()` as written calls `PatternsOverlap(lock.Pattern, existing.pattern)` in a loop over all existing active locks — with no validation of either pattern before the loop begins.
+Looking at the existing Intermute glob code at `/home/mk/projects/Sylveste/core/intermute/internal/glob/overlap.go`, the `ValidateComplexity()` function exists and the plan says to copy it. But `Store.Reserve()` as written calls `PatternsOverlap(lock.Pattern, existing.pattern)` in a loop over all existing active locks — with no validation of either pattern before the loop begins.
 
 The conflict-check loop in `store.go` (lines 207-243 of the plan):
 ```go
@@ -223,7 +223,7 @@ This is especially dangerous combined with the Transfer feature (Task 6), where 
 
 **Severity:** MEDIUM | **Exploitability:** LOW (requires another agent to craft commit messages) | **Blast radius:** Working tree corruption, merge conflicts introduced mid-session
 
-**Location:** `/home/mk/projects/Demarch/interverse/interlock/hooks/pre-edit.sh` lines 42-47 (existing code, carried forward into new plan)
+**Location:** `/home/mk/projects/Sylveste/interverse/interlock/hooks/pre-edit.sh` lines 42-47 (existing code, carried forward into new plan)
 
 The hook currently performs `git pull --rebase` when it receives a `"commit:<hash>"` inbox message from another agent. This logic is retained in the plan (the hook is modified for `ic` integration but this section is unchanged). The trigger is an inbox message where the subject starts with `"commit:"` — any agent (or a compromised inbox) can send such a message to cause another agent to pull and rebase mid-session.
 
@@ -269,7 +269,7 @@ However, indexes are not created in the migration block — the plan says "Index
 The existing `db.Open()` in Intercore checks that the parent directory of the DB path is not a symlink:
 
 ```go
-// From /home/mk/projects/Demarch/core/intercore/internal/db/db.go lines 41-43:
+// From /home/mk/projects/Sylveste/core/intercore/internal/db/db.go lines 41-43:
 dir := filepath.Dir(path)
 if info, err := os.Lstat(dir); err == nil && info.Mode()&os.ModeSymlink != 0 {
     return nil, fmt.Errorf("open: %s is a symlink (refusing to create DB)")

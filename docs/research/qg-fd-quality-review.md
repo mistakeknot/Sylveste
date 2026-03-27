@@ -19,7 +19,7 @@ Three production-relevant issues were found. The most structurally significant i
 
 ## Findings File
 
-Full findings written to: `/home/mk/projects/Demarch/interverse/interflux/.clavain/quality-gates/fd-quality.md`
+Full findings written to: `/home/mk/projects/Sylveste/interverse/interflux/.clavain/quality-gates/fd-quality.md`
 
 Verdict: **needs-changes**
 

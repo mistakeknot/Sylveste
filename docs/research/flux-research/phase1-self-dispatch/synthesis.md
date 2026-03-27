@@ -11,7 +11,7 @@
 
 ## Executive Summary
 
-Demarch has the foundation to implement a **self-dispatching loop in Phase 1** using existing infrastructure (Dolt-backed beads, intermux watcher, Clavain heartbeat). The key architectural decision is **optimistic grab-and-validate claiming** (no central coordinator) combined with **event-driven trigger via Stop hook** (not timer-based polling). The system requires three small changes to Dolt atomicity, two new state schema fields, and a 200-line watchdog sweep for failure recovery.
+Sylveste has the foundation to implement a **self-dispatching loop in Phase 1** using existing infrastructure (Dolt-backed beads, intermux watcher, Clavain heartbeat). The key architectural decision is **optimistic grab-and-validate claiming** (no central coordinator) combined with **event-driven trigger via Stop hook** (not timer-based polling). The system requires three small changes to Dolt atomicity, two new state schema fields, and a 200-line watchdog sweep for failure recovery.
 
 **Critical finding:** The current non-atomic claim (separate `bd update --claim` + `bd set-state`) has a crash window where beads are marked claimed but identity-not-written, leaving them zombied. This must be fixed first — it's the single highest-priority change.
 

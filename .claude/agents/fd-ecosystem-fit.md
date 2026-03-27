@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-37 sessions and 112 commits over 3 days of Claude Code usage in the Demarch monorepo produced analytics-driven suggestions across 4 categories: instruction additions, features to try, usage pattern changes, and ambitious future workflows. The evaluation must determine which suggestions are worth acting on.
+37 sessions and 112 commits over 3 days of Claude Code usage in the Sylveste monorepo produced analytics-driven suggestions across 4 categories: instruction additions, features to try, usage pattern changes, and ambitious future workflows. The evaluation must determine which suggestions are worth acting on.
 
 ## Review Approach
 
@@ -68,7 +68,7 @@ A good review from this agent:
 
 ## Decision Lens
 
-A suggestion is adopted only if it fills a genuine capability gap not already covered by an existing skill, hook, agent, or command; or if it represents a qualitatively better approach than the current implementation. The primary failure mode is reinventing infrastructure that Demarch already built.
+A suggestion is adopted only if it fills a genuine capability gap not already covered by an existing skill, hook, agent, or command; or if it represents a qualitatively better approach than the current implementation. The primary failure mode is reinventing infrastructure that Sylveste already built.
 
 ## Prioritization
 

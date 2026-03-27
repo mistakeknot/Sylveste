@@ -24,7 +24,7 @@ The three core CUJs (first-install, running-a-sprint, code-review) contain 14 pr
 
 ### [P2] first-install.md:4 -- Actor label "stranger" contradicts Go prerequisite
 
-**Issue:** The actor is "stranger (new platform user, no prior Demarch exposure)" and the journey aims for zero-config ("without requiring manual configuration"). But the README lists Go 1.22+ as a **required** prerequisite, and `bd` (beads CLI) requires `go install github.com/mistakeknot/beads/cmd/bd@latest`. A developer without Go installed hits a wall before reaching `/clavain:project-onboard`. The CUJ acknowledges this in Known Friction Points (line 53) but the journey prose doesn't reflect the friction -- it reads as though install is seamless.
+**Issue:** The actor is "stranger (new platform user, no prior Sylveste exposure)" and the journey aims for zero-config ("without requiring manual configuration"). But the README lists Go 1.22+ as a **required** prerequisite, and `bd` (beads CLI) requires `go install github.com/mistakeknot/beads/cmd/bd@latest`. A developer without Go installed hits a wall before reaching `/clavain:project-onboard`. The CUJ acknowledges this in Known Friction Points (line 53) but the journey prose doesn't reflect the friction -- it reads as though install is seamless.
 
 **Fix:** Either (a) add a sentence in the journey prose acknowledging the Go prerequisite and its impact, or (b) update the actor label to "stranger (developer with Go toolchain)" to set expectations. The current disconnect between the narrative and reality will confuse readers who try to validate the journey.
 

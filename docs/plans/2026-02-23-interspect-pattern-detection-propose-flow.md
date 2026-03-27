@@ -92,7 +92,7 @@ EOF
 
 **Step 2: Run test to verify it fails**
 
-Run: `cd /home/mk/projects/Demarch/os/clavain && bats tests/shell/test_interspect_routing.bats --filter "get_routing_eligible" -t`
+Run: `cd /home/mk/projects/Sylveste/os/clavain && bats tests/shell/test_interspect_routing.bats --filter "get_routing_eligible" -t`
 Expected: FAIL with "_interspect_get_routing_eligible: command not found"
 
 **Step 3: Write minimal implementation**
@@ -154,7 +154,7 @@ _interspect_get_routing_eligible() {
 
 **Step 4: Run test to verify it passes**
 
-Run: `cd /home/mk/projects/Demarch/os/clavain && bats tests/shell/test_interspect_routing.bats --filter "get_routing_eligible" -t`
+Run: `cd /home/mk/projects/Sylveste/os/clavain && bats tests/shell/test_interspect_routing.bats --filter "get_routing_eligible" -t`
 Expected: 4 PASS
 
 **Step 5: Commit**
@@ -225,7 +225,7 @@ git commit -m "feat(interspect): add _interspect_get_routing_eligible helper"
 
 **Step 2: Run test to verify it fails**
 
-Run: `cd /home/mk/projects/Demarch/os/clavain && bats tests/shell/test_interspect_routing.bats --filter "get_overlay_eligible" -t`
+Run: `cd /home/mk/projects/Sylveste/os/clavain && bats tests/shell/test_interspect_routing.bats --filter "get_overlay_eligible" -t`
 Expected: FAIL
 
 **Step 3: Write minimal implementation**
@@ -292,7 +292,7 @@ _interspect_get_overlay_eligible() {
 
 **Step 4: Run test to verify it passes**
 
-Run: `cd /home/mk/projects/Demarch/os/clavain && bats tests/shell/test_interspect_routing.bats --filter "get_overlay_eligible" -t`
+Run: `cd /home/mk/projects/Sylveste/os/clavain && bats tests/shell/test_interspect_routing.bats --filter "get_overlay_eligible" -t`
 Expected: 3 PASS
 
 **Step 5: Commit**
@@ -380,7 +380,7 @@ EOF
 
 **Step 2: Run test to verify it fails**
 
-Run: `cd /home/mk/projects/Demarch/os/clavain && bats tests/shell/test_interspect_routing.bats --filter "apply_propose" -t`
+Run: `cd /home/mk/projects/Sylveste/os/clavain && bats tests/shell/test_interspect_routing.bats --filter "apply_propose" -t`
 Expected: FAIL with "_interspect_apply_propose: command not found"
 
 **Step 3: Write minimal implementation**
@@ -531,7 +531,7 @@ _interspect_apply_propose_locked() {
 
 **Step 4: Run test to verify it passes**
 
-Run: `cd /home/mk/projects/Demarch/os/clavain && bats tests/shell/test_interspect_routing.bats --filter "apply_propose" -t`
+Run: `cd /home/mk/projects/Sylveste/os/clavain && bats tests/shell/test_interspect_routing.bats --filter "apply_propose" -t`
 Expected: 4 PASS
 
 **Step 5: Commit**
@@ -580,7 +580,7 @@ git commit -m "feat(interspect): add _interspect_apply_propose for propose-actio
 
 **Step 2: Run test to verify it fails**
 
-Run: `cd /home/mk/projects/Demarch/os/clavain && bats tests/shell/test_interspect_routing.bats --filter "is_cross_cutting" -t`
+Run: `cd /home/mk/projects/Sylveste/os/clavain && bats tests/shell/test_interspect_routing.bats --filter "is_cross_cutting" -t`
 Expected: FAIL
 
 **Step 3: Write minimal implementation**
@@ -590,7 +590,7 @@ Expected: FAIL
 # Cross-cutting agents get extra safety gates in the propose flow —
 # they provide foundational review coverage that should not be silently excluded.
 # This list is intentionally static and NOT derived from the agent registry or DB.
-# Source of truth: Demarch CLAUDE.md "7 core review agents" — these 4 are the
+# Source of truth: Sylveste CLAUDE.md "7 core review agents" — these 4 are the
 # structural subset (architecture, quality, safety, correctness) vs domain-specific
 # (user-product, performance, game-design).
 # When adding or reclassifying agents, update this list AND the /interspect:propose
@@ -608,7 +608,7 @@ _interspect_is_cross_cutting() {
 
 **Step 4: Run test to verify it passes**
 
-Run: `cd /home/mk/projects/Demarch/os/clavain && bats tests/shell/test_interspect_routing.bats --filter "is_cross_cutting" -t`
+Run: `cd /home/mk/projects/Sylveste/os/clavain && bats tests/shell/test_interspect_routing.bats --filter "is_cross_cutting" -t`
 Expected: 5 PASS
 
 **Step 5: Commit**
@@ -631,11 +631,11 @@ The header comment in `lib-interspect.sh` lists available functions. Add the 4 n
 
 **Step 2: Run full test suite**
 
-Run: `cd /home/mk/projects/Demarch/os/clavain && bats tests/shell/test_interspect_routing.bats -t`
+Run: `cd /home/mk/projects/Sylveste/os/clavain && bats tests/shell/test_interspect_routing.bats -t`
 Expected: ALL PASS (existing tests + new tests)
 
 Also run the general routing tests:
-Run: `cd /home/mk/projects/Demarch/os/clavain && bats tests/shell/test_routing.bats -t`
+Run: `cd /home/mk/projects/Sylveste/os/clavain && bats tests/shell/test_routing.bats -t`
 Expected: ALL PASS (no regressions)
 
 **Step 3: Commit**

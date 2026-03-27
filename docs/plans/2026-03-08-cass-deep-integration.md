@@ -8,7 +8,7 @@ stage: design
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
 **Bead:** none
-**Goal:** Integrate cass across Demarch — shrink interstat, move session search to intersearch, wire cass into 4 downstream commands, add cross-agent analytics to galiana.
+**Goal:** Integrate cass across Sylveste — shrink interstat, move session search to intersearch, wire cass into 4 downstream commands, add cross-agent analytics to galiana.
 
 **Architecture:** cass becomes the session intelligence backend (search, timeline, context, export, analytics). interstat keeps its unique value: bead-correlated token metrics, failure classification, cost-per-landable-change. intersearch gets a new session-search skill wrapping all cass subcommands.
 
@@ -202,7 +202,7 @@ Formats: `markdown`, `text`, `json`, `html`. Use `--include-tools` for tool call
 ### "Show token analytics" / "How many tokens this week?"
 ```bash
 cass analytics tokens --days 7 --json
-cass analytics tokens --workspace /home/mk/projects/Demarch --json --group-by day
+cass analytics tokens --workspace /home/mk/projects/Sylveste --json --group-by day
 ```
 Also available: `cass analytics tools --json`, `cass analytics models --json`.
 
@@ -553,7 +553,7 @@ cd interverse/internext && ic publish --patch
 **Step 7: Push all repos**
 
 ```bash
-cd /home/mk/projects/Demarch
+cd /home/mk/projects/Sylveste
 git push
 cd interverse/interstat && git push
 cd ../intersearch && git push

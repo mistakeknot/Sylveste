@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-vd1
+bead: Sylveste-vd1
 stage: design
 requirements:
   - D1: Mutation types in Campaign YAML
@@ -13,7 +13,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans
 
-**Bead:** Demarch-vd1
+**Bead:** Sylveste-vd1
 **Goal:** Add structured, deterministic mutation types to autoresearch campaigns — parameter sweeps, swaps, toggles, scales, removes, reorders, enum sweeps.
 **Architecture:** Extend `internal/experiment/campaign.go` with mutation types + expansion. Extend `store.go` with mutation tracking. Extend `internal/tool/experiment_init.go` with next_mutation response.
 **PRD:** `docs/specs/2026-03-16-mutation-engine-prd.md`

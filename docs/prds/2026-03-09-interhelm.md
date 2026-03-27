@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-ekh
+bead: Sylveste-ekh
 stage: design
 ---
 

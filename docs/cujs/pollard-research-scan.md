@@ -3,7 +3,7 @@ artifact_type: cuj
 journey: pollard-research-scan
 actor: regular user (developer or researcher tracking a domain)
 criticality: p3
-bead: Demarch-2c7
+bead: Sylveste-2c7
 ---
 
 # Pollard Research Intelligence Scan

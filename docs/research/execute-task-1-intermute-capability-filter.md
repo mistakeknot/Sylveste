@@ -2,7 +2,7 @@
 
 **Date:** 2026-02-22
 **Status:** COMPLETE -- all tests pass
-**Plan:** `/root/projects/Demarch/docs/plans/2026-02-22-agent-capability-discovery.md`
+**Plan:** `/root/projects/Sylveste/docs/plans/2026-02-22-agent-capability-discovery.md`
 
 ---
 

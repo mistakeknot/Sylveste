@@ -1,7 +1,7 @@
 # fd-token-schema-integrity — Token Schema Review
 
 > Reviewer: protocol specification engineer (token schema integrity)
-> Source: `/home/mk/projects/Demarch/docs/brainstorms/2026-03-19-attp-interweave-brainstorm.md`
+> Source: `/home/mk/projects/Sylveste/docs/brainstorms/2026-03-19-attp-interweave-brainstorm.md`
 > Comparison: Intercom `handoff.json` schema, Clavain `handoff.md` format
 > Date: 2026-03-19
 
@@ -290,7 +290,7 @@ The spec should recommend (not mandate) inlining for files under 4 KiB and refer
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `agent.identity` | `string` | yes | Agent name/type (e.g., `"claude-code"`, `"cursor"`, `"copilot"`). Framework-agnostic — not a Demarch-specific identifier. |
+| `agent.identity` | `string` | yes | Agent name/type (e.g., `"claude-code"`, `"cursor"`, `"copilot"`). Framework-agnostic — not a Sylveste-specific identifier. |
 | `agent.version` | `string` | no | Agent software version. |
 | `agent.session_id` | `string` | no | Opaque session identifier from the agent runtime. Not required because some agents don't expose session IDs. |
 | `machine.tailscale_id` | `string` | no | Tailscale machine identity. Present when transport is Tailscale. |
@@ -313,13 +313,13 @@ The spec should recommend (not mandate) inlining for files under 4 KiB and refer
 
 ## 6. Framework-Agnostic Positioning: Extension Namespacing
 
-The brainstorm correctly states attp is standalone and framework-agnostic. The base token spec MUST NOT contain Demarch-specific fields. Demarch's interweave implementation uses the `extensions` object.
+The brainstorm correctly states attp is standalone and framework-agnostic. The base token spec MUST NOT contain Sylveste-specific fields. Sylveste's interweave implementation uses the `extensions` object.
 
 ```json
 {
   "extensions": {
-    "demarch.interweave": {
-      "bead_id": "Demarch-e1mi",
+    "sylveste.interweave": {
+      "bead_id": "Sylveste-e1mi",
       "sprint_id": "sprint-42",
       "intercore_routing": {
         "stage": "implement",
@@ -332,14 +332,14 @@ The brainstorm correctly states attp is standalone and framework-agnostic. The b
 
 ### Rules
 
-1. Extension keys use reverse-domain-ish naming: `"demarch.interweave"`, `"cursor.workspace"`, `"copilot.session"`. No registry required — key is producer's namespace.
+1. Extension keys use reverse-domain-ish naming: `"sylveste.interweave"`, `"cursor.workspace"`, `"copilot.session"`. No registry required — key is producer's namespace.
 2. Extensions are always optional. A consumer that doesn't understand an extension MUST ignore it (same as unknown fields).
-3. Extensions MUST NOT duplicate base fields. If interweave needs to attach a bead ID, it goes in `extensions.demarch.interweave.bead_id`, not in a top-level `bead_id`.
+3. Extensions MUST NOT duplicate base fields. If interweave needs to attach a bead ID, it goes in `extensions.sylveste.interweave.bead_id`, not in a top-level `bead_id`.
 4. The `extensions` object itself is optional. A valid token with no extensions omits the field entirely.
 
 ---
 
-## 7. Comparison with Existing Demarch Handoff Formats
+## 7. Comparison with Existing Sylveste Handoff Formats
 
 ### Intercom's `handoff.json` (local, same-machine)
 
@@ -438,8 +438,8 @@ Clavain's handoff generates freeform markdown for human copy-paste. attp tokens 
     }
   ],
   "extensions": {
-    "demarch.interweave": {
-      "bead_id": "Demarch-e1mi",
+    "sylveste.interweave": {
+      "bead_id": "Sylveste-e1mi",
       "sprint_id": "sprint-42"
     }
   }

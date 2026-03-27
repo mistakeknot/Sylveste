@@ -181,7 +181,7 @@ Not all terminals support TrueColor hex values. Current code uses `lipgloss.Colo
 
 - **Light terminal users** can use Skaffen without unreadable colors
 - **Theme switching** becomes possible (runtime or config)
-- **Future Masaq consumers** (Autarch, other Demarch tools) get themes for free
+- **Future Masaq consumers** (Autarch, other Sylveste tools) get themes for free
 - **Community themes** have a clear extension point
 
 ## Risks

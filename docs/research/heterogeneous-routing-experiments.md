@@ -6,7 +6,7 @@
 
 ## Context
 
-Demarch has three routing systems:
+Sylveste has three routing systems:
 1. **Static routing** (`routing.yaml` + `lib-routing.sh`) — phase→model mapping, shipped as B1
 2. **Agent scoring** (flux-drive protocol) — domain-aware 0-7 scoring, shipped
 3. **Interspect overrides** — evidence-driven exclusions, collecting but not yet applying

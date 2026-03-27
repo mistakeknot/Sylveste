@@ -1,6 +1,6 @@
 # Secret Scanning Baseline
 
-This guide defines the Demarch baseline for `iv-446o7.1`:
+This guide defines the Sylveste baseline for `iv-446o7.1`:
 
 - PR and scheduled secret scanning
 - Standardized scanner/config
@@ -23,7 +23,7 @@ The baseline sync writes these files into each product repo:
 
 All managed files include this marker:
 
-`demarch-managed: secret-scan-baseline v1`
+`sylveste-managed: secret-scan-baseline v1`
 
 Files without the marker are treated as unmanaged and are not overwritten.
 

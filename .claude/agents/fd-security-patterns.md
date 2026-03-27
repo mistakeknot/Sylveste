@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-Analyzing Hermes Agent to find patterns adaptable for Demarch's Autarch (L3 agent orchestration) and intercom (messaging/gateway).
+Analyzing Hermes Agent to find patterns adaptable for Sylveste's Autarch (L3 agent orchestration) and intercom (messaging/gateway).
 
 ## Review Approach
 
@@ -63,13 +63,13 @@ A good review from this agent:
 - Provides a concrete failure scenario for each P0/P1 finding — what breaks, under what conditions, and who is affected
 - Recommends the smallest viable fix, not an architecture overhaul — one diff hunk, not a rewrite
 - Frames uncertain findings as questions: "Does this handle X?" not "This doesn't handle X"
-- Identify redaction patterns Demarch's logging doesn't implement
-- Determine if PairingStore lockout mechanism is absent from Demarch auth flows
+- Identify redaction patterns Sylveste's logging doesn't implement
+- Determine if PairingStore lockout mechanism is absent from Sylveste auth flows
 - Find inconsistent _secure_write() usage revealing security boundary gaps
 
 ## Decision Lens
 
-Prioritizes patterns that plug specific gaps in Demarch's current security posture. De-prioritizes anything already covered by existing safety floors or interspect.
+Prioritizes patterns that plug specific gaps in Sylveste's current security posture. De-prioritizes anything already covered by existing safety floors or interspect.
 
 ## Prioritization
 

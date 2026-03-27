@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-Demarch has CUJ gates with three states and signal tiers. Design formal mapping from gate output to rework taxonomy disposition.
+Sylveste has CUJ gates with three states and signal tiers. Design formal mapping from gate output to rework taxonomy disposition.
 
 ## Review Approach
 

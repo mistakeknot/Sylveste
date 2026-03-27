@@ -1,7 +1,7 @@
 # Terminal Rendering Patterns: ntm Analysis for Autarch
 
-**Source:** `/home/mk/projects/Demarch/research/ntm/`
-**Target:** `/home/mk/projects/Demarch/apps/autarch/`
+**Source:** `/home/mk/projects/Sylveste/research/ntm/`
+**Target:** `/home/mk/projects/Sylveste/apps/autarch/`
 **Date:** 2026-02-22
 **Type:** Flux-drive intermediate findings (research review)
 
@@ -20,8 +20,8 @@ The strongest patterns to adopt: the three-tier icon fallback system, the semant
 ### 1.1 Catppuccin Theme Struct (ADOPT)
 
 **Files:**
-- `/home/mk/projects/Demarch/research/ntm/internal/tui/theme/theme.go` (lines 14-60)
-- `/home/mk/projects/Demarch/research/ntm/internal/tui/theme/semantic.go` (lines 8-67)
+- `/home/mk/projects/Sylveste/research/ntm/internal/tui/theme/theme.go` (lines 14-60)
+- `/home/mk/projects/Sylveste/research/ntm/internal/tui/theme/semantic.go` (lines 8-67)
 
 The `Theme` struct defines all Catppuccin palette colors as typed `lipgloss.Color` fields -- Base, Mantle, Crust, Surface0-2, Text, Subtext, Overlay, plus all 14 accent colors. Pre-built theme instances exist for Mocha, Macchiato, Latte, Nord, and Plain (no-color).
 
@@ -47,7 +47,7 @@ Components never reference raw Catppuccin names -- they go through `theme.Semant
 
 ### 1.2 Agent-Specific Colors (ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/theme/theme.go` (lines 51-55)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/theme/theme.go` (lines 51-55)
 
 Each theme defines per-agent colors: Claude (Mauve/purple), Codex (Blue), Gemini (Yellow), User (Green). These are semantically meaningful -- `t.Claude`, `t.Codex` -- not generic color names.
 
@@ -55,7 +55,7 @@ The semantic palette exposes `AgentColor(agentType string) lipgloss.Color` for d
 
 ### 1.3 NO_COLOR and Dark/Light Auto-Detection (ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/theme/theme.go` (lines 310-400)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/theme/theme.go` (lines 310-400)
 
 Implements the NO_COLOR standard (https://no-color.org/) with NTM-specific override. Auto-detection uses `termenv.HasDarkBackground()` with an important SSH guard:
 
@@ -72,7 +72,7 @@ The Plain theme uses empty `lipgloss.Color("")` values (terminal defaults) and a
 
 ### 1.4 Pre-Built Style Factory (ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/theme/theme.go` (lines 405-570)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/theme/theme.go` (lines 405-570)
 
 `NewStyles(t Theme) Styles` creates a complete set of pre-built lipgloss styles from a theme. The `Styles` struct has categorized fields: App, Header, Title, Divider, Normal, Bold, Dim, Highlight, Success/Warning/Error/Info, Box/BoxTitle, Claude/Codex/Gemini/User, Button/ButtonActive, Input/InputFocused, Help, StatusBar.
 
@@ -80,7 +80,7 @@ This eliminates per-component style creation. Every component calls `theme.Defau
 
 ### 1.5 Theme Gradient Helper (ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/theme/theme.go` (lines 572-591)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/theme/theme.go` (lines 572-591)
 
 ```go
 func (t Theme) Gradient(steps int) []lipgloss.Color {
@@ -97,7 +97,7 @@ Returns theme-aware gradient stops. All gradient effects pull from the current t
 
 ### 2.1 Spacing, Size, and Typography Tokens (ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/styles/tokens.go` (full file, ~400 lines)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/styles/tokens.go` (full file, ~400 lines)
 
 A comprehensive design token system organized into named structs:
 
@@ -114,13 +114,13 @@ type Breakpoints struct { XS, SM, MD, LG, XL, Wide, UltraWide int }
 
 ### 2.2 Responsive Breakpoints (ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/styles/tokens.go` (lines 175-190)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/styles/tokens.go` (lines 175-190)
 
 Default breakpoints: XS=40, SM=60, MD=80, LG=120, XL=160, Wide=200, UltraWide=240. These drive both token selection and layout mode switching.
 
 ### 2.3 Adaptive Card Dimensions (ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/styles/tokens.go` (lines 370-400)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/styles/tokens.go` (lines 370-400)
 
 ```go
 func AdaptiveCardDimensions(totalWidth, minCardWidth, maxCardWidth, gap int) (cardWidth, cardsPerRow int)
@@ -134,7 +134,7 @@ Calculates optimal card width and count for grid layouts. Directly applicable to
 
 ### 3.1 Layout Tiers with Hysteresis (STRONGLY ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/layout/layout.go` (lines 1-110)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/layout/layout.go` (lines 1-110)
 
 Five tiers: Narrow (<120), Split (120-199), Wide (200-239), Ultra (240-319), Mega (>=320). The critical pattern is **hysteresis** to prevent flickering on resize:
 
@@ -161,7 +161,7 @@ Without hysteresis, dragging a terminal window across a breakpoint causes rapid 
 
 ### 3.2 Proportional Panel Splitting (ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/layout/layout.go` (lines 300-360)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/layout/layout.go` (lines 300-360)
 
 Three layout functions for multi-panel splits:
 
@@ -175,7 +175,7 @@ Each accounts for border/padding budget (subtracts 6-10 cols before dividing). A
 
 ### 3.3 Dashboard Responsive Layout (ADOPT PATTERN, NOT EXACT VALUES)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/dashboard/layout.go` (lines 30-160)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/dashboard/layout.go` (lines 30-160)
 
 The `CalculateLayout` function returns a `LayoutDimensions` struct with calculated widths, column visibility flags, and a hidden-column count for the header:
 
@@ -194,7 +194,7 @@ Progressive column revelation: Status shows at 60+ cols, Context at 100+, Model/
 
 ### 3.4 Pane Title Truncation (ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/layout/layout.go` (lines 260-310)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/layout/layout.go` (lines 260-310)
 
 `TruncatePaneTitle` preserves the agent suffix when truncating long pane names:
 
@@ -211,7 +211,7 @@ It finds the `__<agent>_<number>` suffix, reserves space for it, then truncates 
 
 ### 4.1 Gradient Text Rendering (ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/styles/styles.go` (lines 95-140)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/styles/styles.go` (lines 95-140)
 
 Per-character color interpolation using RGB lerp:
 
@@ -228,7 +228,7 @@ Supports multi-stop gradients. Used for banner logos, dividers, borders, and pro
 
 ### 4.2 Shimmer Animation (STRONGLY ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/styles/styles.go` (lines 175-220)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/styles/styles.go` (lines 175-220)
 
 ```go
 func Shimmer(text string, tick int, colors ...string) string {
@@ -253,7 +253,7 @@ When enabled, `Shimmer` falls back to static `GradientText`. This is an accessib
 
 ### 4.3 Pulse Effect (ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/styles/styles.go` (lines 230-245)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/styles/styles.go` (lines 230-245)
 
 ```go
 func Pulse(baseColor string, tick int) lipgloss.Color {
@@ -266,13 +266,13 @@ A sine-wave brightness oscillation for pulsing status indicators.
 
 ### 4.4 Gradient Border Box (ADOPT SELECTIVELY)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/styles/styles.go` (lines 145-175)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/styles/styles.go` (lines 145-175)
 
 Creates boxes where the border characters themselves have gradient colors. The top/bottom borders use `GradientText` on the `"---"` line, and vertical borders get colored independently. Visually striking but expensive for large boxes.
 
 ### 4.5 Animated Status Dots (ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/styles/styles.go` (lines 370-378)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/styles/styles.go` (lines 370-378)
 
 ```go
 func StatusDot(color lipgloss.Color, animated bool, tick int) string {
@@ -289,7 +289,7 @@ A pie-chart-style filling animation for status dots. Eight frames cycling from e
 
 ### 5.1 Three-Tier Icon Fallback (STRONGLY ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/icons/icons.go` (full file, ~350 lines)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/icons/icons.go` (full file, ~350 lines)
 
 Three complete icon sets: `NerdFonts` (rich glyphs), `Unicode` (standard symbols), `ASCII` (pure ASCII). A `WithFallback` method uses reflection to chain them:
 
@@ -308,7 +308,7 @@ The `IconSet` struct has 50+ named fields covering Navigation, Status, Objects, 
 
 ### 5.2 Box Component with Builder Pattern (ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/components/box.go` (full file)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/components/box.go` (full file)
 
 Fluent builder API:
 
@@ -326,7 +326,7 @@ Five border styles: Rounded, Double, Thick, Normal, Hidden. Title insertion into
 
 ### 5.3 State Rendering Components (ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/components/state.go` (full file)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/components/state.go` (full file)
 
 Unified rendering for Empty, Loading, Error, and Retrying states. The `EmptyStateOptions` struct supports contextual icons (Waiting, Empty, External, Success, Unknown), title, description, and suggested action:
 
@@ -344,7 +344,7 @@ The `RetryState` function tracks attempt counts: "Attempt 3 of 5".
 
 ### 5.4 Scroll State and Indicators (ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/components/scroll.go` (full file)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/components/scroll.go` (full file)
 
 Clean scroll state tracking:
 
@@ -363,7 +363,7 @@ Plus directional arrows (up/down/both) styled with theme colors.
 
 ### 5.5 Progress Bar with Terminal Capability Fallback (ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/components/progress.go` (full file)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/components/progress.go` (full file)
 
 Two progress bar types: determinate (`ProgressBar`) and indeterminate (`IndeterminateBar`). Both check terminal capabilities:
 
@@ -392,13 +392,13 @@ if pos >= b.Width-barWidth {
 
 ### 5.6 Freshness Indicators (ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/components/freshness.go`
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/components/freshness.go`
 
 `RenderFreshnessIndicator` shows "Updated Xs ago" with automatic staleness detection (2x the refresh interval). `RenderStaleBadge` produces a yellow "STALE" badge. Used in panel footers.
 
 ### 5.7 Badge System (ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/styles/badges.go` (full file, ~600 lines)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/styles/badges.go` (full file, ~600 lines)
 
 A comprehensive badge library with fixed-width support for alignment:
 
@@ -425,7 +425,7 @@ const (
 
 ### 6.1 Capability Caching (ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/terminal/caps.go` (full file)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/terminal/caps.go` (full file)
 
 Detects TrueColor support (COLORTERM, TERM, known terminal programs) and Unicode block character support (locale settings, terminal type). Results are cached in a package-level pointer with `ResetCache()` for testing.
 
@@ -437,7 +437,7 @@ The conservative detection approach is notable: it does not assume truecolor jus
 
 ### 7.1 Multi-Phase Palette Model (ADOPT PATTERN)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/palette/model.go` (lines 1-100)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/palette/model.go` (lines 1-100)
 
 The palette uses a phase state machine: Command -> Target -> Confirm (or XFSearch -> XFResults). Each phase has its own `update*Phase` and `view*Phase` methods.
 
@@ -456,7 +456,7 @@ This keeps the main Update/View switch clean. Each phase transition sets up the 
 
 ### 7.2 Session Selector with Animated Selection (ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/palette/selector.go` (full file)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/palette/selector.go` (full file)
 
 The selector uses shimmer on the selected item's pointer and gradient text on the selected session name. Number keys (1-9) provide quick selection. An animated attached-session dot pulses between green and teal.
 
@@ -472,7 +472,7 @@ keyStyle := lipgloss.NewStyle().
 
 ### 8.1 Panel Interface (ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/dashboard/panels/panel.go` (lines 1-100)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/dashboard/panels/panel.go` (lines 1-100)
 
 Clean panel abstraction:
 
@@ -491,7 +491,7 @@ type Panel interface {
 
 ### 8.2 Sparkline and MiniBar Rendering (ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/dashboard/layout.go` (lines 205-250)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/dashboard/layout.go` (lines 205-250)
 
 `RenderSparkline` uses Unicode block characters (`" "`, `"▏"`, `"▎"`, `"▍"`, `"▌"`, `"▋"`, `"▊"`, `"▉"`, `"█"`) for smooth sub-character-width progress. Nine levels of granularity within a single character cell.
 
@@ -499,7 +499,7 @@ type Panel interface {
 
 ### 8.3 Adaptive Tick Rate (ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/dashboard/dashboard.go` (lines 65-72)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/dashboard/dashboard.go` (lines 65-72)
 
 ```go
 type ActivityState int
@@ -517,13 +517,13 @@ When idle, the tick rate drops to save CPU. When user interacts or output flows,
 
 ### 9.1 Dual-Format Detection (ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/output/format.go` (full file)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/output/format.go` (full file)
 
 Auto-detects output format: explicit --json flag > NTM_OUTPUT_FORMAT env > pipe detection (non-terminal defaults to JSON) > text for interactive. This makes `ntm status | jq .` work automatically.
 
 ### 9.2 Step Progress for CLI Operations (ADOPT)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/output/progress.go` (lines 1-150)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/output/progress.go` (lines 1-150)
 
 ```go
 steps := NewSteps().SetTotal(5)
@@ -540,7 +540,7 @@ Outputs `[1/5] Checking config... check-mark` with colored status icons and auto
 
 ### 10.1 Monolithic Dashboard Model (AVOID)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/dashboard/dashboard.go` (lines 300-560)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/dashboard/dashboard.go` (lines 300-560)
 
 The `Model` struct has 100+ fields spanning: pane state, agent counts, health data, mail integration, CASS search, ensemble modes, checkpoint status, handoff status, cost tracking, Ollama cache, spawn state, pending rotations, and more. This is a maintenance liability.
 
@@ -559,7 +559,7 @@ These overlap but don't align perfectly. The comment in `layout/layout.go` ackno
 
 ### 10.3 Raw ANSI Escapes in Gradient Functions (CAUTION)
 
-**File:** `/home/mk/projects/Demarch/research/ntm/internal/tui/styles/styles.go` (line 130)
+**File:** `/home/mk/projects/Sylveste/research/ntm/internal/tui/styles/styles.go` (line 130)
 
 ```go
 result.WriteString(fmt.Sprintf("\x1b[38;2;%d;%d;%dm%c\x1b[0m", c.R, c.G, c.B, r))
@@ -621,6 +621,6 @@ The main `dashboard.go` is 6716 lines. Even with good separation of panels, the 
 ## 13. Integration Notes
 
 - ntm uses `github.com/charmbracelet/lipgloss`, `github.com/charmbracelet/bubbletea`, `github.com/charmbracelet/glamour`, and `github.com/muesli/termenv` -- the same stack as Autarch.
-- The theme/styles/icons packages have no external dependencies beyond lipgloss and could be extracted into a shared `pkg/tui` package in Demarch.
+- The theme/styles/icons packages have no external dependencies beyond lipgloss and could be extracted into a shared `pkg/tui` package in Sylveste.
 - ntm's `terminal/caps.go` and `icons/icons.go` are self-contained and could be copied directly.
 - The shimmer/gradient code (~200 lines in `styles/styles.go`) is pure math + ANSI output -- trivially portable.

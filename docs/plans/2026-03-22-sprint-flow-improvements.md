@@ -1,17 +1,17 @@
 ---
 artifact_type: plan
-bead: Demarch-0ztn
+bead: Sylveste-0ztn
 stage: planned
 ---
 # Plan: Sprint Flow Improvements (Iteration 1)
 
 **PRD:** docs/prds/2026-03-22-sprint-flow-improvements.md
-**Bead:** Demarch-0ztn
+**Bead:** Sylveste-0ztn
 **Scope:** 3 P1 bugs + 2 theme increments (5 features)
 **Parallelism:** F1, F2, F3 are independent. F4 depends on F2. F5 is independent.
 **Build sequence:** F2 → F3 → F1 → F4 → F5
 
-## Task 1: Fix Step 9 sprint-advance calibration corruption (F2, Demarch-84sv)
+## Task 1: Fix Step 9 sprint-advance calibration corruption (F2, Sylveste-84sv)
 
 **What:** Step 9's `sprint-advance "shipping"` performs the `shipping → reflect` transition (NOT a duplicate of Step 7's `executing → shipping`). Both pass `"shipping"` as `currentPhase`, causing `recordPhaseTokens` to double-attribute tokens under "shipping". Fix: keep the call but pass the correct phase identifier.
 
@@ -33,7 +33,7 @@ stage: planned
 
 **Verify:** After change, Step 7 records under "shipping", Step 9 records under "reflect-entry" — no double-attribution. `/reflect` Step 1 will see phase=`reflect` (set by ic kernel, not by the string argument).
 
-## Task 2: Mitigate TOCTOU in cmdBeadClaim (F3, Demarch-r9b5)
+## Task 2: Mitigate TOCTOU in cmdBeadClaim (F3, Sylveste-r9b5)
 
 **What:** Add best-effort locking to `cmdBeadClaim` to reduce (not eliminate) the race window. The claim system is fundamentally advisory — `bd` CLI calls from shell scripts bypass any Go-side lock, and `bd` has no atomic CAS for labels. Document this limitation explicitly.
 
@@ -56,7 +56,7 @@ stage: planned
 
 **Lock scope:** Entire `cmdBeadClaim` function body. Nested call from `cmdSprintClaim` (line 149) acquires a separate `"bead-claim"` namespace lock — documented as safe.
 
-## Task 3: Make set-artifact + sprint-advance less fragile (F1, Demarch-2wzj)
+## Task 3: Make set-artifact + sprint-advance less fragile (F1, Sylveste-2wzj)
 
 **What:** The "Phase Tracking" section in sprint.md calls `set-artifact` then `sprint-advance` as two separate commands. If advance fails, the artifact is recorded but phase didn't advance. This is actually the correct behavior (artifact should be recorded regardless), but the SKILL.md doesn't explain this and callers may be confused.
 
@@ -71,7 +71,7 @@ stage: planned
 2. Do NOT add success-path stderr logging to `cmdSetArtifact` (plan review: inconsistent with codebase pattern where stderr is for warnings/errors and significant state transitions only, not routine operations). The existing `cxdbRecordArtifact` call provides the audit trail.
 3. Update the two-call pattern to handle advance failure gracefully: log warning to stderr but don't halt.
 
-## Task 4: Harden reflect gate (F4, Demarch-6lpp)
+## Task 4: Harden reflect gate (F4, Sylveste-6lpp)
 
 **Depends on:** Task 1 (Step 9 phase fix must land first)
 
@@ -118,7 +118,7 @@ stage: planned
    - Read the reflection file, extract first 3 substantive lines (skip frontmatter block between `---` markers)
    - Output formatted learnings using `printf '%s\n'` pattern in SKILL.md (not bare `echo`) to avoid shell metacharacter issues
 
-## Task 5: Degraded mode definitions (F5, Demarch-qlnk)
+## Task 5: Degraded mode definitions (F5, Sylveste-qlnk)
 
 **What:** Define a capability reduction table and update Error Recovery to use degradation instead of halt.
 

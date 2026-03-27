@@ -1,13 +1,13 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-6qb
+bead: Sylveste-6qb
 stage: discover
 ---
 
 # Skaffen Research Sweep — Academic Paper Evaluations
 
 **Date:** 2026-03-16
-**Bead:** Demarch-6qb (Skaffen sovereign agent runtime epic)
+**Bead:** Sylveste-6qb (Skaffen sovereign agent runtime epic)
 **Phase:** brainstorm (as of 2026-03-16T05:56:36Z)
 
 ## What We Did

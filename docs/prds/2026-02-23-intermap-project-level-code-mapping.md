@@ -14,9 +14,9 @@ Audit the existing 6 tools, complete the tldr-swinton extraction, then add three
 ## Features
 
 ### F1: Audit existing MCP tools
-**What:** Run every MCP tool against real Demarch projects and evaluate accuracy, performance, and integration ergonomics.
+**What:** Run every MCP tool against real Sylveste projects and evaluate accuracy, performance, and integration ergonomics.
 **Acceptance criteria:**
-- [ ] Each of the 6 tools tested against at least 3 real Demarch projects (Go, Python, mixed)
+- [ ] Each of the 6 tools tested against at least 3 real Sylveste projects (Go, Python, mixed)
 - [ ] Accuracy report: call graphs verified against manual inspection, false positives/negatives documented
 - [ ] Performance benchmarks: response time per tool, memory usage, cache hit rates
 - [ ] Integration gaps documented: what's missing for interflux, Clavain, and other consumers
@@ -62,7 +62,7 @@ Audit the existing 6 tools, complete the tldr-swinton extraction, then add three
 - [ ] Detects Python dependencies (path dependencies in `pyproject.toml`, relative imports)
 - [ ] Detects plugin dependencies (MCP server references, skill invocations)
 - [ ] Returns structured JSON: `{project: string, depends_on: [{project, type, via}]}`
-- [ ] Tested against Demarch monorepo — correctly identifies interlock→intermute, interject→intersearch, etc.
+- [ ] Tested against Sylveste monorepo — correctly identifies interlock→intermute, interject→intersearch, etc.
 
 ### F7: Architecture pattern detection
 **What:** New MCP tool that identifies and labels structural patterns in a project — layers, boundaries, handler chains, MCP registrations.
@@ -72,7 +72,7 @@ Audit the existing 6 tools, complete the tldr-swinton extraction, then add three
 - [ ] Detects Python patterns: FastMCP server patterns, CLI command groups, plugin skill structures
 - [ ] Detects cross-language patterns: MCP server ↔ plugin manifest alignment, Go↔Python bridge interfaces
 - [ ] Returns structured JSON: `{patterns: [{type, location, confidence, description}]}`
-- [ ] At least 5 pattern types detected across Demarch projects
+- [ ] At least 5 pattern types detected across Sylveste projects
 
 ### F8: Live change awareness
 **What:** New MCP tool that reports what has changed since a baseline (git diff based), with structural annotation of which functions/classes were affected.

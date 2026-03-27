@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-A self-regulating AI factory needs six feedback loops, each with a distinct sample rate and control action. This document maps concrete control-theory mechanisms to Demarch's existing data sources (`bd stats`, interstat, intermux, fleet-registry.yaml), identifies what signals are already observable, and specifies the minimal new instrumentation required to close each loop.
+A self-regulating AI factory needs six feedback loops, each with a distinct sample rate and control action. This document maps concrete control-theory mechanisms to Sylveste's existing data sources (`bd stats`, interstat, intermux, fleet-registry.yaml), identifies what signals are already observable, and specifies the minimal new instrumentation required to close each loop.
 
 The central finding: **three of the six loops can be closed today with existing data; the other three require only per-bead timestamp enrichment and a 20-line aggregation query.** No new databases or services are needed — the signals exist but are not yet connected to actuators.
 
@@ -41,7 +41,7 @@ actual_agents(t)  = clamp(desired_agents(t), min_agents, max_agents)
 
 **Why PI, not PID:** The derivative term reacts to rate-of-change, useful for fast disturbance rejection. Agent spawning has 30-60 second latency (tmux session creation + context loading), which makes derivative action noisy and counterproductive. PI is sufficient.
 
-### Mapping to Demarch Data Sources
+### Mapping to Sylveste Data Sources
 
 | Signal | Source | Query |
 |--------|--------|-------|

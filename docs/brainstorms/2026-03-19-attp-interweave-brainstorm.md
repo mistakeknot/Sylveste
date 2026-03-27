@@ -1,6 +1,6 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-e1mi
+bead: Sylveste-e1mi
 stage: discover
 ---
 
@@ -10,7 +10,7 @@ stage: discover
 
 **attp** (Agent Token Transfer Protocol) is a standalone, framework-agnostic protocol for structured bidirectional context transfer between AI coding agents on separate machines. It enables two (or more) people's Claude Code sessions to collaborate seamlessly — sharing repo state, decisions, file content, and work requests — without shared tmux, screen-sharing, or pasting prose summaries.
 
-**interweave** is Demarch's L1 kernel implementation of attp, sitting at `core/interweave/` alongside intercore and intermute. It bridges attp to Demarch's existing coordination primitives.
+**interweave** is Sylveste's L1 kernel implementation of attp, sitting at `core/interweave/` alongside intercore and intermute. It bridges attp to Sylveste's existing coordination primitives.
 
 ### Primary Use Case
 
@@ -22,7 +22,7 @@ Same repo, asymmetric access. Machine A has sensitive gitignored data (credentia
 |---|---|---|
 | intercore | CPU / ISA | Config, routing, cost, identity |
 | intermute | Local bus / IPC | Same-machine messaging, reservations |
-| **interweave** | NIC + driver | Demarch's attp transport implementation |
+| **interweave** | NIC + driver | Sylveste's attp transport implementation |
 | **attp** | TCP/IP | Cross-machine context transfer protocol |
 
 ## Why This Approach
@@ -60,7 +60,7 @@ Balances self-containment (works async) with weight (doesn't bundle the whole re
 
 ## Key Decisions
 
-1. **attp is independent** — standalone repo (`~/projects/attp`), no Demarch dependencies. Framework-agnostic spec + Go reference implementation.
+1. **attp is independent** — standalone repo (`~/projects/attp`), no Sylveste dependencies. Framework-agnostic spec + Go reference implementation.
 
 2. **interweave is L1 kernel** — `core/interweave/`, same level as intercore/intermute. Not an interverse plugin. Every higher-level cross-machine feature builds on it.
 

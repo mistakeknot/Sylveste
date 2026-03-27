@@ -2,7 +2,7 @@
 artifact_type: flux-drive-review
 reviewer: fd-payload-typing
 plan: docs/plans/2026-03-26-event-envelope-v2.md
-bead: Demarch-og7m.2.1
+bead: Sylveste-og7m.2.1
 agent: claude-opus-4-6
 status: complete
 findings: 7

@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-19
 **Reviewers:** 6 agents (token-schema-integrity, mcp-tool-surface, merkle-exclusion-strategy, multiparty-topology, conflict-resolution-boundary, safety-attp)
-**Source:** `/home/mk/projects/Demarch/docs/brainstorms/2026-03-19-attp-interweave-brainstorm.md`
+**Source:** `/home/mk/projects/Sylveste/docs/brainstorms/2026-03-19-attp-interweave-brainstorm.md`
 
 ---
 
@@ -45,7 +45,7 @@ The token schema is not just "metadata + content." It must enable a receiver wit
 - `payloads` array with discriminated `mode: "inline"` or `mode: "ref"` (never implicit)
 - `provenance` object (origin, chain-of-custody)
 - `requests` and `decisions` arrays (structured, not prose)
-- `extensions` namespace (Demarch-specific data like bead_id goes here, not top-level)
+- `extensions` namespace (Sylveste-specific data like bead_id goes here, not top-level)
 
 **Implication:** The token schema is now specified (see fd-token-schema-integrity for complete JSON schema). Implementation can begin.
 
@@ -84,7 +84,7 @@ fd-conflict-resolution-boundary and fd-multiparty-topology both insist on a clea
 - `sensitivity`: includes both `excluded_paths` list (human-readable) and `exclusion_attestation` (crypto proof)
 - `payloads`: each item is either `mode: "inline"` with `content` field, or `mode: "ref"` with `fetch_via` field — explicit discriminator, no ambiguity
 - `provenance`: includes `chain` (append-only chain-of-custody) and `sequence` (monotonic counter within conversation)
-- `extensions`: namespaced (e.g., `"demarch.interweave": { bead_id, sprint_id, ... }`)
+- `extensions`: namespaced (e.g., `"sylveste.interweave": { bead_id, sprint_id, ... }`)
 
 **Complete example:** See fd-token-schema-integrity § 8.
 
@@ -316,9 +316,9 @@ fd-conflict-resolution-boundary specifies exactly how attp and interlock interac
 The L1 kernel integration points:
 
 1. **intermute mapping:** interweave registers attp peers as intermute agents. Session lifecycle in attp maps to agent lifecycle in intermute.
-2. **interlock integration:** attp detects conflicts; interweave maps structural conflicts to interlock's `negotiate_release`. interlock knows about attp reservations (Demarch-specific extension in tokens).
+2. **interlock integration:** attp detects conflicts; interweave maps structural conflicts to interlock's `negotiate_release`. interlock knows about attp reservations (Sylveste-specific extension in tokens).
 3. **intercore routing:** attp token flow is driven by intercore stage transitions. When a bead moves from `discover` to `implement`, interweave may push updated context tokens.
-4. **Clavain/SDK:** attp clients (agents in Demarch) use the Go reference implementation in `core/interweave/`. Handoff from Clavain's `/handoff` command to attp token generation.
+4. **Clavain/SDK:** attp clients (agents in Sylveste) use the Go reference implementation in `core/interweave/`. Handoff from Clavain's `/handoff` command to attp token generation.
 
 ---
 

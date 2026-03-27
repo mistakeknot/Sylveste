@@ -9,7 +9,7 @@ status: baseline
 
 **Bead:** iv-b46xi
 
-First measurement of the Demarch north star metric: **what does it cost to ship a reviewed, tested change?**
+First measurement of the Sylveste north star metric: **what does it cost to ship a reviewed, tested change?**
 
 This note is a baseline snapshot, not the final canonical denominator for "landable change." For the current attribution gaps and the follow-on work to close them, see [interspect-event-validity-and-outcome-attribution.md](../research/interspect-event-validity-and-outcome-attribution.md).
 
@@ -71,13 +71,13 @@ This note is a baseline snapshot, not the final canonical denominator for "landa
 
 5. **API vs subscription pricing**: Claude Code users on Max plan pay a flat subscription, not per-token. API pricing gives a comparable baseline for optimization decisions but doesn't reflect actual out-of-pocket cost.
 
-6. **Denominator is provisional**: This baseline uses session-window commit counts, but Demarch does not yet have one canonical landed-change entity across measurement consumers. See [interspect-event-validity-and-outcome-attribution.md](../research/interspect-event-validity-and-outcome-attribution.md).
+6. **Denominator is provisional**: This baseline uses session-window commit counts, but Sylveste does not yet have one canonical landed-change entity across measurement consumers. See [interspect-event-validity-and-outcome-attribution.md](../research/interspect-event-validity-and-outcome-attribution.md).
 
 ## How to Reproduce
 
 ```bash
 # Run the baseline query
-bash interverse/interstat/scripts/cost-query.sh baseline --repo=/home/mk/projects/Demarch
+bash interverse/interstat/scripts/cost-query.sh baseline --repo=/home/mk/projects/Sylveste
 
 # USD cost breakdown
 bash interverse/interstat/scripts/cost-query.sh cost-usd

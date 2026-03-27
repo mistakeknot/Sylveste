@@ -6,7 +6,7 @@
 
 ## What We're Building
 
-A unified observability layer spanning all three Demarch architectural layers:
+A unified observability layer spanning all three Sylveste architectural layers:
 
 1. **Structured logging** — Replace ad-hoc `fmt.Fprintf(os.Stderr)` / `echo >&2` with machine-parseable structured output using `log/slog` (Go) and JSON log helpers (bash)
 2. **Distributed tracing** — Propagate `trace_id` + `span_id` across process boundaries via environment variables (`IC_TRACE_ID`, `IC_SPAN_ID`), linking the event bus, audit log, interband sidebands, and bash hooks into a single causal chain

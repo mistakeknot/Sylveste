@@ -9,7 +9,7 @@ title: Researcher runs an early exit experiment campaign
 
 ## Actor
 
-**Experiment researcher** -- a developer or data scientist using interlab (the Demarch experiment platform) to measure inference optimizations. They design campaigns with explicit baselines, treatments, success metrics, and kill criteria. In the interfere context, they are testing whether esoteric optimization techniques produce real speedups without quality regression.
+**Experiment researcher** -- a developer or data scientist using interlab (the Sylveste experiment platform) to measure inference optimizations. They design campaigns with explicit baselines, treatments, success metrics, and kill criteria. In the interfere context, they are testing whether esoteric optimization techniques produce real speedups without quality regression.
 
 ## Trigger
 

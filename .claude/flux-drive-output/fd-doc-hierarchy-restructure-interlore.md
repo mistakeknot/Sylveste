@@ -34,7 +34,7 @@ The PRD introduces MISSION.md as a new root document and promotes VISION.md alon
 - **Clavain `project-onboard` skill** (SKILL.md lines 32, 66; SKILL-compact.md lines 13, 36) generates PHILOSOPHY.md from a template during onboarding
 - **Clavain `watchables.yaml.tmpl`** (line 22) watches `PHILOSOPHY.md` by path
 - **interscribe SKILL.md** (line 205) lists PHILOSOPHY.md in its reference directory tree
-- **docs/demarch-vision.md** has 5+ inline references to specific PHILOSOPHY.md sections (e.g., "See PHILOSOPHY.md section Earned Authority")
+- **docs/sylveste-vision.md** has 5+ inline references to specific PHILOSOPHY.md sections (e.g., "See PHILOSOPHY.md section Earned Authority")
 
 **Failure scenario:** If the restructure changes the semantics or role of PHILOSOPHY.md (even without renaming it), every one of these 48 AGENTS.md boilerplate sections becomes misleading. If the restructure ever promotes MISSION.md to where PHILOSOPHY.md cross-refs point, 47 test suites will fail on every plugin.
 
@@ -44,7 +44,7 @@ The PRD introduces MISSION.md as a new root document and promotes VISION.md alon
 
 ### P0: plugin-standard.md Canonical Boilerplate Must Be Updated
 
-**Location:** `/home/mk/projects/Demarch/docs/canon/plugin-standard.md` lines 122-145 (AGENTS.md Standard Header)
+**Location:** `/home/mk/projects/Sylveste/docs/canon/plugin-standard.md` lines 122-145 (AGENTS.md Standard Header)
 
 **Issue:** `plugin-standard.md` defines the exact AGENTS.md header that every plugin is expected to copy. This header is:
 
@@ -90,20 +90,20 @@ The PRD's acceptance criteria say "MISSION.md exists at project root with one-pa
 
 ---
 
-### P1: VISION.md Is a Rename/Promotion of docs/demarch-vision.md -- 18+ References Unaddressed
+### P1: VISION.md Is a Rename/Promotion of docs/sylveste-vision.md -- 18+ References Unaddressed
 
-**Location:** PRD F1 (line 21), existing file at `docs/demarch-vision.md` (v3.4, 2026-03-13)
+**Location:** PRD F1 (line 21), existing file at `docs/sylveste-vision.md` (v3.4, 2026-03-13)
 
-**Issue:** The project already has a mature vision document at `docs/demarch-vision.md` (version 3.4, actively maintained). The PRD says "Establish VISION.md" at project root as a sibling of PHILOSOPHY.md. It does not acknowledge that `demarch-vision.md` exists, nor specify whether VISION.md is:
-- A rename/move of `docs/demarch-vision.md` to `VISION.md`
-- A new summary document that links to `docs/demarch-vision.md`
+**Issue:** The project already has a mature vision document at `docs/sylveste-vision.md` (version 3.4, actively maintained). The PRD says "Establish VISION.md" at project root as a sibling of PHILOSOPHY.md. It does not acknowledge that `sylveste-vision.md` exists, nor specify whether VISION.md is:
+- A rename/move of `docs/sylveste-vision.md` to `VISION.md`
+- A new summary document that links to `docs/sylveste-vision.md`
 - A replacement
 
-18 files reference `demarch-vision` by name (including `docs/architecture.md`, `docs/demarch-reference.md`, `CONVENTIONS.md`, `.interwatch/watchables.yaml`, and multiple plans/PRDs).
+18 files reference `sylveste-vision` by name (including `docs/architecture.md`, `docs/sylveste-reference.md`, `CONVENTIONS.md`, `.interwatch/watchables.yaml`, and multiple plans/PRDs).
 
-**Failure scenario:** If VISION.md is created as a new file without addressing `demarch-vision.md`, the project has two vision docs with no defined relationship. If it is a rename, 18 cross-references break silently (no CI catches broken markdown links).
+**Failure scenario:** If VISION.md is created as a new file without addressing `sylveste-vision.md`, the project has two vision docs with no defined relationship. If it is a rename, 18 cross-references break silently (no CI catches broken markdown links).
 
-**Smallest fix:** Add an acceptance criterion: "VISION.md is {rename of | summary pointing to} docs/demarch-vision.md. Old path either removed with redirect or retained as symlink. Cross-references updated."
+**Smallest fix:** Add an acceptance criterion: "VISION.md is {rename of | summary pointing to} docs/sylveste-vision.md. Old path either removed with redirect or retained as symlink. Cross-references updated."
 
 ---
 
@@ -187,6 +187,6 @@ Additionally, `interlab/scripts/plugin-benchmark.sh` line 193 iterates the same 
 | Shell scripts checking for PHILOSOPHY.md | 2 | `interlab/scripts/plugin-benchmark.sh`, Clavain onboard | Only if required-files list changes |
 | Clavain project-onboard templates | 3 files | `os/Clavain/skills/project-onboard/` | Yes, needs MISSION.md template |
 | interscribe skill reference | 1 | `interverse/interscribe/skills/interscribe/SKILL.md` | If directory tree example changes |
-| `demarch-vision.md` references | 18 | Various docs/ files | Yes, if VISION.md replaces it |
+| `sylveste-vision.md` references | 18 | Various docs/ files | Yes, if VISION.md replaces it |
 | `plugin-standard.md` AGENTS.md header | 1 (canonical) | `docs/canon/plugin-standard.md` | Yes |
 | `doc-structure.md` hierarchy description | 1 (canonical) | `docs/canon/doc-structure.md` | Yes (in PRD scope) |

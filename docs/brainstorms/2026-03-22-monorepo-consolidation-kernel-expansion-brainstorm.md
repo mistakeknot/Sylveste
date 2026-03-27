@@ -1,12 +1,12 @@
 # Monorepo Consolidation & Kernel Expansion — Brainstorm
 
 **Date:** 2026-03-22
-**Epic:** Demarch-og7m (29 children: 2 P0, 18 P1, 6 P2, 3 P3)
+**Epic:** Sylveste-og7m (29 children: 2 P0, 18 P1, 6 P2, 3 P3)
 **Input:** 4 structural + 7 esoteric review agents, synthesis at `.claude/flux-drive-output/synthesis-esoteric-cross-cutting.md`
 
 ## Context
 
-Multi-agent analysis of the full Demarch monorepo (54 plugins, 6 pillars, 3 layers) identified systemic patterns across architecture, security, calibration, and governance. Three cross-agent patterns emerged independently from 7 different analytical lenses:
+Multi-agent analysis of the full Sylveste monorepo (54 plugins, 6 pillars, 3 layers) identified systemic patterns across architecture, security, calibration, and governance. Three cross-agent patterns emerged independently from 7 different analytical lenses:
 
 1. **Static constants masquerading as intelligence** — hardcoded thresholds (interspect confidence, routing safety floors, complexity tiers) lack calibration loops. PHILOSOPHY.md's 4-stage closed-loop pattern is incomplete for 4/6 domains.
 2. **Silent degradation under concurrent load** — interspect.db drops writes at 5+ agents, event pipeline crowds out low-volume sources, reservations grow O(N*M) with no cap.

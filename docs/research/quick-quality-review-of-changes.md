@@ -149,7 +149,7 @@ if ! echo "$PATH" | tr ':' '\n' | grep -qx "${HOME}/.local/bin"; then
   1. `core/intercore/cmd/ic/main.go` (monorepo root)
   2. `../core/intercore/cmd/ic/main.go` (one level up)
   3. `../../core/intercore/cmd/ic/main.go` (two levels up, NOT in install.sh)
-  4. `~/projects/Demarch/core/intercore/cmd/ic/main.go` (standard clone location)
+  4. `~/projects/Sylveste/core/intercore/cmd/ic/main.go` (standard clone location)
 
   - ✓ Comprehensive for user manual setup
   - ⚠️ **Discrepancy**: install.sh only checks options 1–2, then falls back to clone. This is **not a bug** — install.sh is for automated bootstrap, setup.md is for manual fallback. See note below.
@@ -165,7 +165,7 @@ if ! echo "$PATH" | tr ':' '\n' | grep -qx "${HOME}/.local/bin"; then
 - **Path warn message**: Line 195 correctly suggests the export syntax ✓
 
 #### Consistency with install.sh
-- **Source path difference**: setup.md checks `../../core/intercore`, install.sh doesn't. Reason: setup.md is for a user who may have cloned Demarch in unexpected locations (e.g., nested subdirectories). install.sh is automated and assumes standard monorepo or one-level-deep subproject. **This is acceptable divergence** — setup.md is more defensive.
+- **Source path difference**: setup.md checks `../../core/intercore`, install.sh doesn't. Reason: setup.md is for a user who may have cloned Sylveste in unexpected locations (e.g., nested subdirectories). install.sh is automated and assumes standard monorepo or one-level-deep subproject. **This is acceptable divergence** — setup.md is more defensive.
 - **Init behavior**: Both acknowledge `ic init` may return non-zero if already initialized ✓
 - **Health check**: Both run `ic health` to verify ✓
 

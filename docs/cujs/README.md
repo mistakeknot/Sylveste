@@ -22,7 +22,7 @@ Signal types: `measurable` (automatable), `observable` (instrumented), `qualitat
 
 ## Scope
 
-The current CUJ set covers **solo platform usage** — a single developer using Demarch to build software on their own project. Known gaps:
+The current CUJ set covers **solo platform usage** — a single developer using Sylveste to build software on their own project. Known gaps:
 
 - **Contributor journey** — cloning the monorepo, understanding the architecture, submitting a PR
 - **Multi-agent coordination** — interlock, intermux, and beads in a team context

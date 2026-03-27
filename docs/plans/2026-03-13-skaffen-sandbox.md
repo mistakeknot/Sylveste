@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-6i0.10
+bead: Sylveste-6i0.10
 stage: design
 requirements:
   - F1: SandboxPolicy types and config loading
@@ -15,7 +15,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-6i0.10
+**Bead:** Sylveste-6i0.10
 **Goal:** Add cross-platform OS-level sandboxing to Skaffen so LLM tool calls and MCP plugins are restricted to project-scoped filesystem/network access by default.
 
 **Architecture:** New `internal/sandbox/` package defines `Policy` (rules) and `Sandbox` (enforcer). Two platform backends: bwrap (Linux) wraps subprocesses in mount/PID/network namespaces; Seatbelt (macOS) generates `.sb` profiles and wraps with `sandbox-exec`. In-process tools get Go-level path validation via `Sandbox.CheckPath()`. The `Sandbox` is injected into `tool.Registry`, `tool.BashTool`, and `mcp.Manager` at startup.

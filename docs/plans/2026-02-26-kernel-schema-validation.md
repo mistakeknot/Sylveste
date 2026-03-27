@@ -18,20 +18,20 @@
 
 **Step 1: Add the dependency**
 
-Run: `cd /home/mk/projects/Demarch/core/intercore && go get github.com/invopop/jsonschema@latest`
+Run: `cd /home/mk/projects/Sylveste/core/intercore && go get github.com/invopop/jsonschema@latest`
 
 Expected: `go.mod` gains `github.com/invopop/jsonschema` line, `go.sum` updated.
 
 **Step 2: Verify it compiles**
 
-Run: `cd /home/mk/projects/Demarch/core/intercore && go build ./...`
+Run: `cd /home/mk/projects/Sylveste/core/intercore && go build ./...`
 
 Expected: clean build, exit 0.
 
 **Step 3: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/core/intercore
+cd /home/mk/projects/Sylveste/core/intercore
 git add go.mod go.sum
 git commit -m "deps(intercore): add invopop/jsonschema for contract generation"
 ```
@@ -129,14 +129,14 @@ var EventContracts = []ContractType{
 
 **Step 2: Verify it compiles**
 
-Run: `cd /home/mk/projects/Demarch/core/intercore && go build ./contracts/...`
+Run: `cd /home/mk/projects/Sylveste/core/intercore && go build ./contracts/...`
 
 Expected: clean build. If any internal types are unexported or packages have circular imports, fix by adding json struct tags or using type aliases.
 
 **Step 3: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/core/intercore
+cd /home/mk/projects/Sylveste/core/intercore
 git add contracts/
 git commit -m "feat(intercore): add contract type registry for schema generation"
 ```
@@ -242,7 +242,7 @@ func bytesContains(haystack, needle []byte) bool {
 
 **Step 2: Run test to verify it fails**
 
-Run: `cd /home/mk/projects/Demarch/core/intercore && go test ./contracts/ -run TestGenerate -v`
+Run: `cd /home/mk/projects/Sylveste/core/intercore && go test ./contracts/ -run TestGenerate -v`
 
 Expected: FAIL — `GenerateSchemas` undefined.
 
@@ -315,14 +315,14 @@ func GenerateSchemas(outDir string) error {
 
 **Step 4: Run test to verify it passes**
 
-Run: `cd /home/mk/projects/Demarch/core/intercore && go test ./contracts/ -run TestGenerate -v`
+Run: `cd /home/mk/projects/Sylveste/core/intercore && go test ./contracts/ -run TestGenerate -v`
 
 Expected: PASS
 
 **Step 5: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/core/intercore
+cd /home/mk/projects/Sylveste/core/intercore
 git add contracts/
 git commit -m "feat(intercore): JSON Schema generator from Go output structs"
 ```
@@ -371,20 +371,20 @@ Update the `//go:generate` directive in `contracts/generate.go` to:
 
 **Step 2: Run the generator**
 
-Run: `cd /home/mk/projects/Demarch/core/intercore && go generate ./contracts/...`
+Run: `cd /home/mk/projects/Sylveste/core/intercore && go generate ./contracts/...`
 
 Expected: schema files appear in `contracts/cli/` and `contracts/events/`.
 
 **Step 3: Verify generated schemas**
 
-Run: `ls /home/mk/projects/Demarch/core/intercore/contracts/cli/ /home/mk/projects/Demarch/core/intercore/contracts/events/`
+Run: `ls /home/mk/projects/Sylveste/core/intercore/contracts/cli/ /home/mk/projects/Sylveste/core/intercore/contracts/events/`
 
 Expected: `.json` files for each registered contract type.
 
 **Step 4: Commit the generated snapshots**
 
 ```bash
-cd /home/mk/projects/Demarch/core/intercore
+cd /home/mk/projects/Sylveste/core/intercore
 git add contracts/
 git commit -m "feat(intercore): generate initial JSON Schema snapshots for all CLI output"
 ```
@@ -439,20 +439,20 @@ Edit `core/intercore/.github/workflows/ci.yml` to add a `contracts` job after th
 **Step 2: Create the overrides directory**
 
 ```bash
-mkdir -p /home/mk/projects/Demarch/core/intercore/contracts/overrides
-touch /home/mk/projects/Demarch/core/intercore/contracts/overrides/.gitkeep
+mkdir -p /home/mk/projects/Sylveste/core/intercore/contracts/overrides
+touch /home/mk/projects/Sylveste/core/intercore/contracts/overrides/.gitkeep
 ```
 
 **Step 3: Verify CI file is valid YAML**
 
-Run: `cd /home/mk/projects/Demarch/core/intercore && python3 -c "import yaml; yaml.safe_load(open('.github/workflows/ci.yml'))"`
+Run: `cd /home/mk/projects/Sylveste/core/intercore && python3 -c "import yaml; yaml.safe_load(open('.github/workflows/ci.yml'))"`
 
 Expected: no error.
 
 **Step 4: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/core/intercore
+cd /home/mk/projects/Sylveste/core/intercore
 git add .github/workflows/ci.yml contracts/overrides/.gitkeep
 git commit -m "feat(intercore): add contract snapshot CI gate with override mechanism"
 ```
@@ -526,7 +526,7 @@ Maps each Intercore contract surface to its owner, consumers, and versioning pol
 **Step 2: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch
+cd /home/mk/projects/Sylveste
 git add docs/contract-ownership.md
 git commit -m "docs: add contract ownership matrix for Intercore CLI surfaces"
 ```
@@ -542,7 +542,7 @@ git commit -m "docs: add contract ownership matrix for Intercore CLI surfaces"
 **Step 1: Create the migrations directory**
 
 ```bash
-mkdir -p /home/mk/projects/Demarch/core/intercore/internal/db/migrations
+mkdir -p /home/mk/projects/Sylveste/core/intercore/internal/db/migrations
 ```
 
 **Step 2: Create the baseline migration**
@@ -630,7 +630,7 @@ CREATE INDEX IF NOT EXISTS idx_scheduler_jobs_session ON scheduler_jobs(session_
 **Step 4: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/core/intercore
+cd /home/mk/projects/Sylveste/core/intercore
 git add internal/db/migrations/
 git commit -m "feat(intercore): extract baseline + additive migration files (v16-v20)"
 ```
@@ -780,7 +780,7 @@ func TestMigrator_V20NoOp(t *testing.T) {
 
 **Step 2: Run test to verify it fails**
 
-Run: `cd /home/mk/projects/Demarch/core/intercore && go test ./internal/db/ -run TestMigrator -v`
+Run: `cd /home/mk/projects/Sylveste/core/intercore && go test ./internal/db/ -run TestMigrator -v`
 
 Expected: FAIL — `NewMigrator` undefined.
 
@@ -932,20 +932,20 @@ func (m *Migrator) applyAdditive(ctx context.Context, currentVersion int) (int, 
 
 **Step 4: Run test to verify it passes**
 
-Run: `cd /home/mk/projects/Demarch/core/intercore && go test ./internal/db/ -run TestMigrator -v`
+Run: `cd /home/mk/projects/Sylveste/core/intercore && go test ./internal/db/ -run TestMigrator -v`
 
 Expected: all 4 tests PASS.
 
 **Step 5: Run full test suite**
 
-Run: `cd /home/mk/projects/Demarch/core/intercore && go test -race ./...`
+Run: `cd /home/mk/projects/Sylveste/core/intercore && go test -race ./...`
 
 Expected: all tests pass (existing tests should still work since `Migrate()` is unchanged).
 
 **Step 6: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/core/intercore
+cd /home/mk/projects/Sylveste/core/intercore
 git add internal/db/migrator.go internal/db/migrator_test.go
 git commit -m "feat(intercore): versioned migration runner with forward-only application"
 ```
@@ -1071,14 +1071,14 @@ func TestMigrator_FailureProducesActionableError(t *testing.T) {
 
 **Step 2: Run the tests**
 
-Run: `cd /home/mk/projects/Demarch/core/intercore && go test ./internal/db/ -run TestMigrator -v`
+Run: `cd /home/mk/projects/Sylveste/core/intercore && go test ./internal/db/ -run TestMigrator -v`
 
 Expected: all tests PASS.
 
 **Step 3: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/core/intercore
+cd /home/mk/projects/Sylveste/core/intercore
 git add internal/db/migrator_test.go
 git commit -m "test(intercore): forward-migration CI tests for all upgrade paths"
 ```
@@ -1104,7 +1104,7 @@ Edit `core/intercore/.github/workflows/ci.yml`, add to the `test` job steps:
 **Step 2: Commit**
 
 ```bash
-cd /home/mk/projects/Demarch/core/intercore
+cd /home/mk/projects/Sylveste/core/intercore
 git add .github/workflows/ci.yml
 git commit -m "ci(intercore): add explicit forward-migration test step"
 ```
@@ -1117,13 +1117,13 @@ git commit -m "ci(intercore): add explicit forward-migration test step"
 
 **Step 1: Build the binary**
 
-Run: `cd /home/mk/projects/Demarch/core/intercore && go build -o ic ./cmd/ic`
+Run: `cd /home/mk/projects/Sylveste/core/intercore && go build -o ic ./cmd/ic`
 
 Expected: clean build.
 
 **Step 2: Run all tests with race detector**
 
-Run: `cd /home/mk/projects/Demarch/core/intercore && go test -race ./...`
+Run: `cd /home/mk/projects/Sylveste/core/intercore && go test -race ./...`
 
 Expected: all tests pass.
 
@@ -1131,7 +1131,7 @@ Expected: all tests pass.
 
 Run:
 ```bash
-cd /home/mk/projects/Demarch/core/intercore
+cd /home/mk/projects/Sylveste/core/intercore
 go generate ./contracts/...
 git diff --exit-code contracts/
 ```
@@ -1140,14 +1140,14 @@ Expected: no diff (schemas match committed snapshots).
 
 **Step 4: Verify integration tests if available**
 
-Run: `cd /home/mk/projects/Demarch/core/intercore && bash test-integration.sh`
+Run: `cd /home/mk/projects/Sylveste/core/intercore && bash test-integration.sh`
 
 Expected: all integration tests pass.
 
 **Step 5: Final commit**
 
 ```bash
-cd /home/mk/projects/Demarch/core/intercore
+cd /home/mk/projects/Sylveste/core/intercore
 git add -A
 git commit -m "feat(intercore): kernel schema validation — contract snapshots + versioned migrations"
 ```

@@ -3,14 +3,14 @@ artifact_type: cuj
 journey: skaffen-sovereign-session
 actor: regular user (developer using Skaffen for autonomous tasks)
 criticality: p1
-bead: Demarch-2c7
+bead: Sylveste-2c7
 ---
 
 # Skaffen Sovereign Agent Session
 
 ## Why This Journey Matters
 
-Skaffen is the sovereign agent runtime — the thing that actually thinks, decides, and acts. Every other Demarch component (Clavain, Mycroft, the plugins) exists to orchestrate, review, or support what happens inside a Skaffen session. If a Skaffen session is slow, opaque, or untrustworthy, the entire platform fails regardless of how good the coordination is.
+Skaffen is the sovereign agent runtime — the thing that actually thinks, decides, and acts. Every other Sylveste component (Clavain, Mycroft, the plugins) exists to orchestrate, review, or support what happens inside a Skaffen session. If a Skaffen session is slow, opaque, or untrustworthy, the entire platform fails regardless of how good the coordination is.
 
 The OODARC loop (Observe-Orient-Decide-Act-Reflect-Compound) is Skaffen's core innovation. Unlike simple prompt-response agents, Skaffen separates thinking into phases: observing the environment, orienting on the problem, deciding on an approach, acting (writing code, running commands), reflecting on the outcome, and compounding learnings for future sessions. Each phase can use a different model (cheap for Observe, expensive for Decide), different tools (restricted during Orient, full access during Act), and different trust levels (strict defaults at L0-L1, softened gates at L2+ — see Tool Trust CUJ).
 

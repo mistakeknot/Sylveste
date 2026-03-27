@@ -1,7 +1,7 @@
 # Agent Specs: Autarch UX Review
 
 Generated: 2026-02-25
-Target: /home/mk/projects/Demarch/apps/autarch/
+Target: /home/mk/projects/Sylveste/apps/autarch/
 
 ## Analysis Summary
 
@@ -109,7 +109,7 @@ Surfaces Intercore run/dispatch/event state — the closest thing to "pure kerne
       "A user seeing the TUI for the first time should be able to infer their current stage and remaining steps from visible UI chrome alone",
       "The golden-path smoke test (scripts/golden-path-smoke.sh) should correspond to an actual user-executable sequence, not just file-level event verification"
     ],
-    "task_context": "Autarch is a 4-tool tabbed Bubble Tea TUI (Bigend, Gurgeh, Coldwine, Pollard) serving as Layer 3 of the Demarch autonomous software development platform. The onboarding wizard lives inside Gurgeh and is the primary first-run experience. The vision's north star is cost per landable change across autonomy, quality, and token efficiency axes.",
+    "task_context": "Autarch is a 4-tool tabbed Bubble Tea TUI (Bigend, Gurgeh, Coldwine, Pollard) serving as Layer 3 of the Sylveste autonomous software development platform. The onboarding wizard lives inside Gurgeh and is the primary first-run experience. The vision's north star is cost per landable change across autonomy, quality, and token efficiency axes.",
     "anti_overlap": [
       "fd-ux-cross-tool-composition covers post-onboarding cross-tab handoffs and tool-to-tool data flows",
       "fd-ux-kernel-surface-gap covers the gap between kernel/OS capabilities and TUI rendering",
@@ -133,7 +133,7 @@ Surfaces Intercore run/dispatch/event state — the closest thing to "pure kerne
       "A user completing a Gurgeh spec should be able to reach a running Coldwine dispatch in 3 or fewer explicit interactions, with no manual data re-entry",
       "Bigend should be able to serve as a passive dashboard that a user can glance at from any other tab — signals from all tools should flow there without the user switching to Bigend"
     ],
-    "task_context": "Autarch is a 4-tool tabbed Bubble Tea TUI (Bigend, Gurgeh, Coldwine, Pollard) serving as Layer 3 of the Demarch autonomous software development platform. The documented composition pipeline is Gurgeh→Coldwine→Pollard (Bigend observes all). FLOWS.md describes cross-tool handoffs via SpecHandoffMsg, EpicProposal, InsightLink, and the Event Spine.",
+    "task_context": "Autarch is a 4-tool tabbed Bubble Tea TUI (Bigend, Gurgeh, Coldwine, Pollard) serving as Layer 3 of the Sylveste autonomous software development platform. The documented composition pipeline is Gurgeh→Coldwine→Pollard (Bigend observes all). FLOWS.md describes cross-tool handoffs via SpecHandoffMsg, EpicProposal, InsightLink, and the Event Spine.",
     "anti_overlap": [
       "fd-ux-onboarding-friction covers the first-run wizard flow within Gurgeh exclusively",
       "fd-ux-kernel-surface-gap covers the gap between Intercore/Clavain capabilities and TUI rendering",
@@ -157,7 +157,7 @@ Surfaces Intercore run/dispatch/event state — the closest thing to "pure kerne
       "A user should never need to run `ic` CLI commands to understand what is happening in a running sprint — all state visible via `ic run list`, `ic dispatch list`, `ic budget`, and `ic event log` should be surfaceable within the TUI",
       "When Intercore is unavailable, the TUI should present a clear call to action (e.g., 'Start kernel' or a setup guide) rather than silently hiding execution features"
     ],
-    "task_context": "Autarch is a 4-tool tabbed Bubble Tea TUI serving as Layer 3 of the Demarch platform, sitting atop Clavain (OS, Layer 2) and Intercore (kernel, Layer 1). The vision defines a minimal write-path (4 intents: start-run, advance-run, override-gate, submit-artifact) and direct kernel reads for observability. The Sprint tab is the closest thing to a pure kernel rendering surface.",
+    "task_context": "Autarch is a 4-tool tabbed Bubble Tea TUI serving as Layer 3 of the Sylveste platform, sitting atop Clavain (OS, Layer 2) and Intercore (kernel, Layer 1). The vision defines a minimal write-path (4 intents: start-run, advance-run, override-gate, submit-artifact) and direct kernel reads for observability. The Sprint tab is the closest thing to a pure kernel rendering surface.",
     "anti_overlap": [
       "fd-ux-agency-layer-leak covers the reverse problem: agency logic that should be in the kernel/OS but lives in the TUI",
       "fd-ux-onboarding-friction covers onboarding wizard UX specifically",
@@ -181,7 +181,7 @@ Surfaces Intercore run/dispatch/event state — the closest thing to "pure kerne
       "If a second UI client (e.g., a web UI) were built tomorrow, it should be able to replicate Autarch's core workflows by implementing only the four write intents and read-from-kernel — any logic that would have to be duplicated in the second client is a layer leak",
       "The sprint-merge PRD (2026-02-25) merging Sprint into Coldwine should result in more kernel-read rendering, not more TUI-layer state machines"
     ],
-    "task_context": "Autarch is a 4-tool tabbed Bubble Tea TUI serving as Layer 3 of the Demarch platform. The vision explicitly states: apps should be pure rendering surfaces that read kernel state and submit intents to the OS. Today, Gurgeh contains arbiter logic and Coldwine contains dispatch-to-task mapping — both identified as extraction candidates in autarch-vision.md.",
+    "task_context": "Autarch is a 4-tool tabbed Bubble Tea TUI serving as Layer 3 of the Sylveste platform. The vision explicitly states: apps should be pure rendering surfaces that read kernel state and submit intents to the OS. Today, Gurgeh contains arbiter logic and Coldwine contains dispatch-to-task mapping — both identified as extraction candidates in autarch-vision.md.",
     "anti_overlap": [
       "fd-ux-kernel-surface-gap covers the opposite problem: kernel capabilities not surfaced in the TUI",
       "fd-ux-cross-tool-composition covers cross-tab handoffs and signal routing between tools",
@@ -190,12 +190,12 @@ Surfaces Intercore run/dispatch/event state — the closest thing to "pure kerne
   },
   {
     "name": "fd-ux-vision-delivery-gap",
-    "focus": "Review the gaps between what the Autarch and Demarch vision documents promise and what the TUI actually delivers today, focusing on missing critical user journeys and feature gaps that would be invisible to a code reader",
+    "focus": "Review the gaps between what the Autarch and Sylveste vision documents promise and what the TUI actually delivers today, focusing on missing critical user journeys and feature gaps that would be invisible to a code reader",
     "persona": "A product manager doing a vision-against-reality audit. Reads vision documents as customer promises and the codebase as the current product, then catalogs the delta — not to blame but to prioritize what must ship to make the vision credible.",
     "decision_lens": "Prioritizes gaps that affect the core north-star metric (cost per landable change across autonomy, quality, token efficiency) and gaps that would be immediately apparent to a user who read the vision before trying the product. Deprioritizes style/polish issues.",
     "review_areas": [
       "Audit the 'Autarch status tool' vision section (autarch-vision.md:191-198, 244-249) against the Sprint tab and Bigend: the vision defines four views (what's running, dispatch state, event log, token/budget) — which of these are actually rendered today and which are absent or placeholder?",
-      "Check whether the Demarch north-star metric 'cost per landable change' is surfaced anywhere in the TUI — if token budget and run cost are captured by Intercore, is there a view that helps users understand the efficiency axis of the three-axis metric?",
+      "Check whether the Sylveste north-star metric 'cost per landable change' is surfaced anywhere in the TUI — if token budget and run cost are captured by Intercore, is there a view that helps users understand the efficiency axis of the three-axis metric?",
       "Review the 'swappable toolset' and 'reference implementation' claims (vision.md:59-61): does the current TUI architecture actually support being replaced by an alternative UI client, or are there hardcoded dependencies (Intermute-specific types, autarch.Client concrete types) that would require forking rather than re-implementing?",
       "Identify capabilities described in FLOWS.md as existing (e.g., RunTargetedScan, ArbiterView coordinator wiring, targeted research brief → Pollard flow) that the oracle review found to be no-ops or disconnected — these are documented features that the TUI claims but does not deliver",
       "Assess the 'Bigend as multi-project mission control' vision: autarch-vision.md:103 and FLOWS.md describe cross-project monitoring, but bigend.go shows a single-project tasks+sessions view — is multi-project aggregation implemented, partially implemented, or entirely absent?",
@@ -205,7 +205,7 @@ Surfaces Intercore run/dispatch/event state — the closest thing to "pure kerne
       "A user who reads autarch-vision.md and then launches the TUI should be able to find the features described in the vision's 'Key user journeys' section without needing to read source code",
       "Silent failure modes (swallowed errors, no-op stubs, orphaned states) should be treated as P1 vision gaps because they degrade the autonomy axis of cost-per-landable-change"
     ],
-    "task_context": "Autarch is a 4-tool tabbed Bubble Tea TUI serving as Layer 3 of the Demarch autonomous software development agency platform. The vision documents (autarch-vision.md, vision.md, FLOWS.md, AGENTS.md) describe the target state; the codebase represents current delivery. The Demarch north star is cost per landable change across autonomy, quality, and token efficiency.",
+    "task_context": "Autarch is a 4-tool tabbed Bubble Tea TUI serving as Layer 3 of the Sylveste autonomous software development agency platform. The vision documents (autarch-vision.md, vision.md, FLOWS.md, AGENTS.md) describe the target state; the codebase represents current delivery. The Sylveste north star is cost per landable change across autonomy, quality, and token efficiency.",
     "anti_overlap": [
       "fd-ux-onboarding-friction covers the onboarding wizard flow specifically, not the broader vision-vs-reality gap",
       "fd-ux-agency-layer-leak covers the architectural layer violation problem, not the feature completeness gap",

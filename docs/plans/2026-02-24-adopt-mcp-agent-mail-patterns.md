@@ -52,7 +52,7 @@ This sprint closes the epic by implementing the ToolError contract (iv-gkory) â€
 ## Task 6: Close epic and commit
 - [x] Run all tests
 - [x] Commit in interbase, interlock
-- [x] Commit docs in Demarch root
+- [x] Commit docs in Sylveste root
 - [x] Close iv-gkory (ToolError implemented)
 - [x] Close iv-bg0a0 (epic â€” unblocks remaining children)
 - [x] bd sync + push

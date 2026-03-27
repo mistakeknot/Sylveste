@@ -1,6 +1,6 @@
 # Routing Enforcement — Shadow→Enforce Promotion
 
-**Beads:** Demarch-k2xf.5 (infrastructure) + Demarch-1x9l.2 (campaign)
+**Beads:** Sylveste-k2xf.5 (infrastructure) + Sylveste-1x9l.2 (campaign)
 **Date:** 2026-03-18
 
 ## Current State

@@ -193,7 +193,7 @@ Returns the filesystem path to a plugin's Claude Code cache directory.
 
 ### ecosystem_root
 
-Returns the Demarch monorepo root directory.
+Returns the Sylveste monorepo root directory.
 
 | Language | Signature | Return |
 |----------|-----------|--------|
@@ -455,9 +455,9 @@ func TestPluginCachePath_Empty(t *testing.T) {
 }
 
 func TestEcosystemRoot_EnvOverride(t *testing.T) {
-	t.Setenv("DEMARCH_ROOT", "/test/demarch")
-	if got := EcosystemRoot(); got != "/test/demarch" {
-		t.Errorf("EcosystemRoot() = %q, want /test/demarch", got)
+	t.Setenv("DEMARCH_ROOT", "/test/sylveste")
+	if got := EcosystemRoot(); got != "/test/sylveste" {
+		t.Errorf("EcosystemRoot() = %q, want /test/sylveste", got)
 	}
 }
 
@@ -478,7 +478,7 @@ Expected: FAIL — functions not defined
 Create `sdk/interbase/go/interbase.go`:
 
 ```go
-// Package interbase provides the Go SDK for Demarch plugin integration.
+// Package interbase provides the Go SDK for Sylveste plugin integration.
 //
 // All guard functions are fail-open: they return false when their dependency
 // is missing. All action functions are silent no-ops when dependencies are
@@ -638,7 +638,7 @@ func PluginCachePath(plugin string) string {
 	return matches[len(matches)-1]
 }
 
-// EcosystemRoot returns the Demarch monorepo root directory.
+// EcosystemRoot returns the Sylveste monorepo root directory.
 // Checks $DEMARCH_ROOT first, then walks up from CWD.
 func EcosystemRoot() string {
 	if root := os.Getenv("DEMARCH_ROOT"); root != "" {
@@ -831,7 +831,7 @@ build-backend = "hatchling.build"
 [project]
 name = "interbase"
 version = "2.0.0"
-description = "Shared integration SDK for Demarch Interverse plugins"
+description = "Shared integration SDK for Sylveste Interverse plugins"
 requires-python = ">=3.11"
 license = "MIT"
 
@@ -949,8 +949,8 @@ def test_plugin_cache_path_empty():
 
 
 def test_ecosystem_root_env_override():
-    with patch.dict(os.environ, {"DEMARCH_ROOT": "/test/demarch"}):
-        assert ecosystem_root() == "/test/demarch"
+    with patch.dict(os.environ, {"DEMARCH_ROOT": "/test/sylveste"}):
+        assert ecosystem_root() == "/test/sylveste"
 
 
 def test_ecosystem_root_unset():
@@ -969,7 +969,7 @@ Expected: FAIL — module `interbase` not found
 Create `sdk/interbase/python/interbase/__init__.py`:
 
 ```python
-"""Interbase — Shared integration SDK for Demarch Interverse plugins.
+"""Interbase — Shared integration SDK for Sylveste Interverse plugins.
 
 All guard functions are fail-open: they return False when their dependency
 is missing. All action functions are silent no-ops when dependencies are
@@ -1160,7 +1160,7 @@ def plugin_cache_path(plugin: str) -> str:
 
 
 def ecosystem_root() -> str:
-    """Return the Demarch monorepo root. Checks $DEMARCH_ROOT then walks up."""
+    """Return the Sylveste monorepo root. Checks $DEMARCH_ROOT then walks up."""
     root = os.environ.get("DEMARCH_ROOT", "")
     if root:
         return root
@@ -1693,9 +1693,9 @@ tests:
 
   - name: ecosystem_root_env_override
     setup:
-      DEMARCH_ROOT: "/test/demarch"
+      DEMARCH_ROOT: "/test/sylveste"
     call: ecosystem_root
-    expect: "/test/demarch"
+    expect: "/test/sylveste"
 
   - name: ecosystem_root_unset_no_crash
     setup:
@@ -1802,7 +1802,7 @@ run_test() {
     # Format: name\tcall\targ0\tsetup_json\texpect_type\texpect_value
     while IFS=$'\t' read -r name call arg0 setup_json expect_type expect_value; do
         # Save and apply setup via allowlist
-        local old_path="${PATH}" old_bead="${CLAVAIN_BEAD_ID:-}" old_intermod="${INTERMOD_LIB:-}" old_demarch="${DEMARCH_ROOT:-}"
+        local old_path="${PATH}" old_bead="${CLAVAIN_BEAD_ID:-}" old_intermod="${INTERMOD_LIB:-}" old_sylveste="${DEMARCH_ROOT:-}"
         if [[ -n "$setup_json" && "$setup_json" != "{}" ]]; then
             while IFS=$'\t' read -r skey sval; do
                 if [[ -n "${ALLOWED_SETUP_VARS[$skey]+x}" ]]; then
@@ -1834,7 +1834,7 @@ for k, v in d.items():
         esac
 
         # Restore
-        export PATH="$old_path" CLAVAIN_BEAD_ID="$old_bead" INTERMOD_LIB="$old_intermod" DEMARCH_ROOT="$old_demarch"
+        export PATH="$old_path" CLAVAIN_BEAD_ID="$old_bead" INTERMOD_LIB="$old_intermod" DEMARCH_ROOT="$old_sylveste"
 
         # Assert
         case "$expect_type" in
@@ -2271,8 +2271,8 @@ if compgen -G "${HOME}/.claude/plugins/cache/*/clavain/*" &>/dev/null; then
 fi
 
 # Test ib_ecosystem_root with env override
-export DEMARCH_ROOT="/test/demarch"
-assert_eq "ecosystem_root env override" "$(ib_ecosystem_root)" "/test/demarch"
+export DEMARCH_ROOT="/test/sylveste"
+assert_eq "ecosystem_root env override" "$(ib_ecosystem_root)" "/test/sylveste"
 unset DEMARCH_ROOT
 
 # Test ib_ecosystem_root walk-up (from inside SDK dir, should find monorepo root)

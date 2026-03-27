@@ -1,6 +1,6 @@
 # Correctness Review: install.sh
 
-**File reviewed:** `/home/mk/projects/Demarch/install.sh`
+**File reviewed:** `/home/mk/projects/Sylveste/install.sh`
 **Date:** 2026-02-24
 **Reviewer:** Julik (Flux-drive Correctness Reviewer)
 
@@ -52,10 +52,10 @@ Additionally: passing flags to a piped `curl | bash` invocation is inherently br
 ```bash
 --help|-h)
     cat <<'USAGE'
-install.sh — Curl-fetchable installer for Demarch (Clavain + Interverse)
+install.sh — Curl-fetchable installer for Sylveste (Clavain + Interverse)
 
 Usage:
-  curl -fsSL https://raw.githubusercontent.com/mistakeknot/Demarch/main/install.sh | bash
+  curl -fsSL https://raw.githubusercontent.com/mistakeknot/Sylveste/main/install.sh | bash
   bash install.sh [--help] [--dry-run] [--verbose]
 
 Flags:

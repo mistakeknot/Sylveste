@@ -1,11 +1,11 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-6qb.8
+bead: Sylveste-6qb.8
 stage: design
 ---
 # Brainstorm: Separate Agent Loop Library from OODARC Workflow Engine
 
-**Bead:** Demarch-6qb.8
+**Bead:** Sylveste-6qb.8
 **Goal:** Refactor Skaffen's `internal/agent/` into two layers: (1) a universal agent loop library (Decide→Act core) and (2) an OODARC workflow engine built on top. Other consumers (Intercom, Autarch) import the library without the phased workflow.
 
 ## Current Architecture
@@ -165,7 +165,7 @@ type PromptHints struct {
 
 - **Medium risk**: The refactoring touches core agent internals but the interfaces are already clean
 - **Test safety**: 82 integration tests on the TUI layer + unit tests on each package provide a safety net
-- **Intercom dependency**: This unblocks Demarch-mvy (Intercom Go rewrite) — high leverage
+- **Intercom dependency**: This unblocks Sylveste-mvy (Intercom Go rewrite) — high leverage
 - **Multi-session**: Likely 2-3 sessions to complete fully (extract → migrate → test → clean up)
 
 ## Open Questions

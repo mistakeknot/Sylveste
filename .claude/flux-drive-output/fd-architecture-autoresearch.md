@@ -130,11 +130,11 @@ If the interlab mutation emit (Task 6, Step 3) must use a different `--source=au
 
 ## Relevant Files
 
-- `/home/mk/projects/Demarch/os/Skaffen/internal/tool/builtin.go` — registration site; `RegisterQualityHistory` is the pattern to follow
-- `/home/mk/projects/Demarch/os/Skaffen/internal/tool/quality_history.go` — precedent for tool wrapping a store via interface
-- `/home/mk/projects/Demarch/os/Skaffen/internal/mutations/store.go` — precedent for domain store living outside `tool/`
-- `/home/mk/projects/Demarch/os/Skaffen/internal/evidence/emitter.go` — existing pipeline; `EmitExperiment` must not fork this
-- `/home/mk/projects/Demarch/os/Skaffen/internal/agent/deps.go` — `Evidence` struct; correct place to add `ExperimentEvent` field
-- `/home/mk/projects/Demarch/os/Skaffen/internal/git/git.go` — existing git ops; `GitOps` should compose this, not duplicate it
-- `/home/mk/projects/Demarch/os/Skaffen/internal/tui/status.go` — `updateStatusSlots` signature; no `tool` import, keep it that way
-- `/home/mk/projects/Demarch/docs/plans/2026-03-15-autoresearch-skaffen.md` — plan under review
+- `/home/mk/projects/Sylveste/os/Skaffen/internal/tool/builtin.go` — registration site; `RegisterQualityHistory` is the pattern to follow
+- `/home/mk/projects/Sylveste/os/Skaffen/internal/tool/quality_history.go` — precedent for tool wrapping a store via interface
+- `/home/mk/projects/Sylveste/os/Skaffen/internal/mutations/store.go` — precedent for domain store living outside `tool/`
+- `/home/mk/projects/Sylveste/os/Skaffen/internal/evidence/emitter.go` — existing pipeline; `EmitExperiment` must not fork this
+- `/home/mk/projects/Sylveste/os/Skaffen/internal/agent/deps.go` — `Evidence` struct; correct place to add `ExperimentEvent` field
+- `/home/mk/projects/Sylveste/os/Skaffen/internal/git/git.go` — existing git ops; `GitOps` should compose this, not duplicate it
+- `/home/mk/projects/Sylveste/os/Skaffen/internal/tui/status.go` — `updateStatusSlots` signature; no `tool` import, keep it that way
+- `/home/mk/projects/Sylveste/docs/plans/2026-03-15-autoresearch-skaffen.md` — plan under review

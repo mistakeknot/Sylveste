@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-p83z
+bead: Sylveste-p83z
 stage: strategized
 brainstorm: docs/brainstorms/2026-03-24-f9-sse-data-pipe.md
 ---

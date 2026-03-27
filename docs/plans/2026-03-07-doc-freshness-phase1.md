@@ -10,7 +10,7 @@ The drift-check Stop hook is **already installed** in Clavain's `auto-stop-actio
 
 **Remaining work is only the sync script fix:**
 
-The `iv-ey5wb` roadmap restructure moved P2/P3 items from `docs/demarch-roadmap.md` to `docs/backlog.md`. The `sync-roadmap-json.sh` script's `collect_interverse_roadmap_from_markdown()` only reads the root roadmap, so it now misses the detailed inventory.
+The `iv-ey5wb` roadmap restructure moved P2/P3 items from `docs/sylveste-roadmap.md` to `docs/backlog.md`. The `sync-roadmap-json.sh` script's `collect_interverse_roadmap_from_markdown()` only reads the root roadmap, so it now misses the detailed inventory.
 
 ## Tasks
 

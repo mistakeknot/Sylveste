@@ -2,7 +2,7 @@
 
 **Reviewer role:** Flux-drive User & Product Reviewer
 **Plan:** `docs/plans/2026-03-09-interhelm.md`
-**Bead:** Demarch-ekh
+**Bead:** Sylveste-ekh
 **Plan stage at review time:** design (v0.1.0 plan; plugin already implemented at v0.2.0 with a fourth skill added post-plan)
 
 ---
@@ -81,7 +81,7 @@ The plan's "while we're here" items are limited. The bump-version script (Task 1
 
 ### Missing success signal
 
-The plan defines no measurable success signal for post-release validation. The "Truths" section verifies structural completeness (files exist, tests pass) but does not specify how the team would know the plugin is actually being used, whether agents discover the skills correctly, or whether the token reduction claim is validated in production. Per Demarch PHILOSOPHY.md, "wired or it doesn't exist" — a feature with no observation mechanism is inventory, not capability.
+The plan defines no measurable success signal for post-release validation. The "Truths" section verifies structural completeness (files exist, tests pass) but does not specify how the team would know the plugin is actually being used, whether agents discover the skills correctly, or whether the token reduction claim is validated in production. Per Sylveste PHILOSOPHY.md, "wired or it doesn't exist" — a feature with no observation mechanism is inventory, not capability.
 
 The plan needs: (a) a way to know if `interhelm:runtime-diagnostics` is invoked when a native app project opens, (b) a way to measure whether screenshots decrease in sessions where interhelm is active.
 
@@ -137,7 +137,7 @@ The skill specifies that projects should document their diagnostic server in CLA
 
 **Auto-health hook fires against non-running app (F6):** The hook executes the health CLI after every Rust source file edit, producing silent failures (app not running during development) with no useful output. The "Health regression detected" message implies a before/after comparison that is not performed. This hook will fire frequently in normal development, produce no useful output most of the time, and occasionally fire with a false alarm.
 
-**No measurable success signal defined:** The plan has no post-release measurement defined. There is no way to know if agents discover and use the skills, whether the 7.5x token reduction claim holds in production, or whether the hooks fire at the right frequency. Per Demarch PHILOSOPHY.md's "wired or it doesn't exist" principle, a feature that emits no observable evidence when it activates is incomplete.
+**No measurable success signal defined:** The plan has no post-release measurement defined. There is no way to know if agents discover and use the skills, whether the 7.5x token reduction claim holds in production, or whether the hooks fire at the right frequency. Per Sylveste PHILOSOPHY.md's "wired or it doesn't exist" principle, a feature that emits no observable evidence when it activates is incomplete.
 
 **Rust-only templates vs. framework-agnostic positioning:** The templates are Rust/hyper-specific. The skills are framework-agnostic. An Electron developer receives skill guidance but no starting-point code. The README's "works with Tauri, Electron, web apps" claim is accurate for the skills but not for the templates. Either add a Node/TypeScript template or narrow the positioning.
 

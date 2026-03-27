@@ -604,10 +604,10 @@ All 4 extractions in this phase are independent and can be executed in parallel.
 
 ### Task 4.4: Update root CLAUDE.md plugin registry
 
-**What:** Add new plugins to the Demarch monorepo CLAUDE.md structure section.
+**What:** Add new plugins to the Sylveste monorepo CLAUDE.md structure section.
 
 **Files:**
-- Edit: `/home/mk/projects/Demarch/CLAUDE.md` — add intersense, interknow, intertree, interskill, interplug, interpulse to the interverse listing
+- Edit: `/home/mk/projects/Sylveste/CLAUDE.md` — add intersense, interknow, intertree, interskill, interplug, interpulse to the interverse listing
 
 **Acceptance:**
 - All 6 new plugins listed with one-line descriptions

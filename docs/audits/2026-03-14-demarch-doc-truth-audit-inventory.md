@@ -1,11 +1,11 @@
-# Demarch Documentation Truth Audit Inventory
+# Sylveste Documentation Truth Audit Inventory
 
 **Date:** 2026-03-14  
 **Purpose:** Coverage appendix for the 2026-03-14 truth audit
 
 ## Method
 
-- Counted in-scope docs from the Demarch root, root `docs/`, root `agents/`, top-level context files, and repos under `apps/`, `core/`, `os/`, `sdk/`, and `interverse/`.
+- Counted in-scope docs from the Sylveste root, root `docs/`, root `agents/`, top-level context files, and repos under `apps/`, `core/`, `os/`, `sdk/`, and `interverse/`.
 - Excluded generated/cache directories such as `.git/`, `.venv/`, `node_modules/`, `dist/`, `target/`, `.pytest_cache/`, and `.tldrs/`.
 - Classified canonical docs as `README`, `AGENTS`, `CLAUDE`, `PHILOSOPHY`, and files with `vision`, `roadmap`, `architecture`, `reference`, or `glossary` in the title/path.
 - Counted Markdown-link failures directly.
@@ -128,7 +128,7 @@
 | docs/plans/2026-03-05-factory-substrate.md | 53 |
 | os/Clavain/docs/research/review-cross-references.md | 52 |
 | docs/plans/2026-02-20-reflect-phase-sprint-integration.md | 51 |
-| os/Skaffen/docs/sprints/Demarch-6i0.11-transcript.md | 51 |
+| os/Skaffen/docs/sprints/Sylveste-6i0.11-transcript.md | 51 |
 | docs/plans/2026-02-19-intercore-e3-hook-cutover.md | 48 |
 | docs/plans/2026-03-10-skaffen-v01-fork.md | 48 |
 | core/intercore/docs/plans/2026-02-18-intercore-event-bus.md | 47 |
@@ -136,7 +136,7 @@
 | docs/plans/2026-03-10-conversation-resumption.md | 44 |
 | docs/plans/2026-02-28-intercom-h2-last-mile.md | 43 |
 | docs/plans/2026-03-04-c5-self-building-loop.md | 41 |
-| docs/sprints/Demarch-j2f-transcript.md | 40 |
+| docs/sprints/Sylveste-j2f-transcript.md | 40 |
 | os/Clavain/docs/research/correctness-review-of-m2-plan.md | 40 |
 | apps/Autarch/AGENTS.md | 39 |
 

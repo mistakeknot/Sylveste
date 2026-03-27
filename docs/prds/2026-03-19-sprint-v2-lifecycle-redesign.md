@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-lta9
+bead: Sylveste-lta9
 stage: strategize
 source: docs/brainstorms/2026-03-19-sprint-v2-lifecycle-redesign-brainstorm.md
 ---
@@ -94,7 +94,7 @@ The 10-step sprint lifecycle has brittle inter-step handoffs (scored 3/10), inco
 
 **Scope:**
 ```
-Sprint Progress (Demarch-xxxx):
+Sprint Progress (Sylveste-xxxx):
 - [x] Step 1: Brainstorm ✓ docs/brainstorms/...
 - [x] Step 2: Strategy ✓ docs/prds/...
 - [ ] Step 3: Write Plan

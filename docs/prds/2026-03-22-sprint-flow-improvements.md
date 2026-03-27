@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-0ztn
+bead: Sylveste-0ztn
 stage: design
 ---
 # PRD: Sprint Flow Improvements (Iteration 1)
@@ -17,7 +17,7 @@ Fix the three P1 bugs in clavain-cli Go code and sprint SKILL.md, then implement
 
 ### F1: Bug — Make set-artifact + sprint-advance atomic
 **What:** Combine `set-artifact` and `sprint-advance` into a single operation so artifact recording can't be orphaned if advance fails.
-**Bead:** Demarch-2wzj
+**Bead:** Sylveste-2wzj
 **Files:** `os/Clavain/cmd/clavain-cli/phase.go`
 **Acceptance criteria:**
 - [ ] New `cmdSetArtifactAndAdvance` function that writes artifact first, then advances; if advance fails, logs warning but artifact is still recorded (current behavior preserved — artifact is always recorded)
@@ -26,7 +26,7 @@ Fix the three P1 bugs in clavain-cli Go code and sprint SKILL.md, then implement
 
 ### F2: Bug — Fix Step 9 sprint-advance phase corruption
 **What:** Step 9 (Reflect) calls `sprint-advance "shipping"` when entering reflect, which records a "shipping" phase transition instead of letting `/reflect` own the phase advance.
-**Bead:** Demarch-84sv
+**Bead:** Sylveste-84sv
 **Files:** `os/Clavain/skills/sprint/SKILL.md`
 **Acceptance criteria:**
 - [ ] Step 9 no longer calls `sprint-advance` before `/reflect`
@@ -35,7 +35,7 @@ Fix the three P1 bugs in clavain-cli Go code and sprint SKILL.md, then implement
 
 ### F3: Bug — Fix TOCTOU in cmdBeadClaim
 **What:** Two sessions can both read `claimed_by` as unclaimed, both pass the check, and both write their claim. The last writer wins silently.
-**Bead:** Demarch-r9b5
+**Bead:** Sylveste-r9b5
 **Files:** `os/Clavain/cmd/clavain-cli/claim.go`
 **Acceptance criteria:**
 - [ ] Bead claim uses locking (ic lock or fallback mkdir lock) to serialize the read-check-write sequence
@@ -45,7 +45,7 @@ Fix the three P1 bugs in clavain-cli Go code and sprint SKILL.md, then implement
 
 ### F4: Reflect gate hardening (Theme 2 minimum viable)
 **What:** Change reflect from soft gate (warn but allow skipping) to firm gate requiring a minimal artifact (3 lines minimum). Show value at sprint start by surfacing recent reflect learnings.
-**Bead:** Demarch-6lpp
+**Bead:** Sylveste-6lpp
 **Files:** `os/Clavain/skills/sprint/SKILL.md`, `os/Clavain/cmd/clavain-cli/phase.go`
 **Acceptance criteria:**
 - [ ] Step 9 requires a reflect artifact with >= 3 non-empty lines before allowing advance to Step 10
@@ -55,7 +55,7 @@ Fix the three P1 bugs in clavain-cli Go code and sprint SKILL.md, then implement
 
 ### F5: Degraded mode definitions (Theme 5 minimum viable)
 **What:** Define explicit degraded modes so sprints continue at reduced capability instead of halting on subsystem failures. Replace binary running/halted with a degradation ladder.
-**Bead:** Demarch-qlnk
+**Bead:** Sylveste-qlnk
 **Files:** `os/Clavain/skills/sprint/SKILL.md`, `os/Clavain/config/degraded-modes.yaml` (new)
 **Acceptance criteria:**
 - [ ] `config/degraded-modes.yaml` defines capability reduction table for 5 subsystems: review fleet, test suite, intercore, routing, budget

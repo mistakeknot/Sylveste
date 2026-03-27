@@ -1,7 +1,7 @@
 # Task 4 Execution: Add Capability Declarations to Interflux
 
 **Date:** 2026-02-22
-**Plan:** `/root/projects/Demarch/docs/plans/2026-02-22-agent-capability-discovery.md`
+**Plan:** `/root/projects/Sylveste/docs/plans/2026-02-22-agent-capability-discovery.md`
 **Task:** Task 4 — Add capability declarations to interflux + write per-agent capability files
 
 ## Summary

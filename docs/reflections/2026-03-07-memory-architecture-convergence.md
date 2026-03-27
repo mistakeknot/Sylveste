@@ -12,7 +12,7 @@ stage: reflect
 
 ## What was built
 
-A comprehensive survey of Demarch's 10 memory-shaped systems, organized into a 5-category taxonomy (C1-C5), with 5 key decisions and 5 actionable recommendations (R3.1-R3.5).
+A comprehensive survey of Sylveste's 10 memory-shaped systems, organized into a 5-category taxonomy (C1-C5), with 5 key decisions and 5 actionable recommendations (R3.1-R3.5).
 
 ## Patterns discovered
 

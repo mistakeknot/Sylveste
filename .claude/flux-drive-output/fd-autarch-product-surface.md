@@ -4,7 +4,7 @@
 **Date:** 2026-03-12
 **Source:** `docs/research/2026-03-12-agent-ui-explorations-chrisbarber.md`
 
-**Alignment:** The strongest ideas in Barber's list reinforce Demarch's OODARC flywheel — real-time evidence surfaces (1, 7, 9, 11), closed-loop preference learning (20, 38, 43), and proactive routing (25, 44, 48) all map directly to the Observe→Orient→Compound cycle Autarch is designed to run.
+**Alignment:** The strongest ideas in Barber's list reinforce Sylveste's OODARC flywheel — real-time evidence surfaces (1, 7, 9, 11), closed-loop preference learning (20, 38, 43), and proactive routing (25, 44, 48) all map directly to the Observe→Orient→Compound cycle Autarch is designed to run.
 **Conflict/Risk:** Gamification ideas (32–35, 49–50) sit in explicit tension with PHILOSOPHY.md's "receipts, not narratives" stance — entertainment theater that doesn't produce evidence is accidental complexity.
 
 ---

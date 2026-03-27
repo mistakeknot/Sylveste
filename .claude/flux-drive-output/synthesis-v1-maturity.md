@@ -1,8 +1,8 @@
-# Synthesis: Demarch v1.0.0 Readiness Across Six Research Frameworks
+# Synthesis: Sylveste v1.0.0 Readiness Across Six Research Frameworks
 
 **Date:** 2026-03-21
 **Scope:** Integration of findings from versioning philosophy, maturity models, OSS readiness signals, cybernetic viability, agent ecosystem readiness, and game design release criteria.
-**Current State:** Demarch v0.6.228
+**Current State:** Sylveste v0.6.228
 **Target:** Define the concrete, measurable v1.0.0 threshold and the v0.7→0.8→0.9→v1.0.0 milestone path
 
 ---
@@ -21,7 +21,7 @@ All four frameworks explicitly reject "feature completeness" as a v1.0 criterion
 - **Game Design:** Alpha→Beta is content completeness. Beta→Gold is *polish and reliability*, not new features. Game developers explicitly say: "Features ship after launch."
 - **Agent Ecosystem:** LangChain's v1.0 had *fewer* abstractions than v0.3, not more. The surface shrank, and with it, the stability commitment became credible.
 
-**What this means for Demarch:** v1.0.0 should NOT wait for:
+**What this means for Sylveste:** v1.0.0 should NOT wait for:
 - All 57 Interverse plugins to be "production-ready" (impossible)
 - All 49 commands to be fully documented
 - All 6 agents to be at maximum capability
@@ -30,7 +30,7 @@ All four frameworks explicitly reject "feature completeness" as a v1.0 criterion
 - The plugin/command/agent API to be frozen (you can add more post-v1.0, but existing ones must work in v1.x)
 - The mechanism for adding them without breaking existing ones to be proven (release process, deprecation policy, backward compatibility testing)
 
-**Demarch's current status:** The L1 kernel (Intercore) already exhibits this maturity. The L2/L3 layers are deliberately marked as evolving. The asymmetry is correct.
+**Sylveste's current status:** The L1 kernel (Intercore) already exhibits this maturity. The L2/L3 layers are deliberately marked as evolving. The asymmetry is correct.
 
 ---
 
@@ -48,13 +48,13 @@ The single most precise threshold is: **the system's past behavior automatically
 - **Game design:** Emergent gameplay is legible (you can explain why outcomes occurred) and non-degenerate (the strategy space remains diverse and does not collapse to a single dominant approach).
 - **Agent ecosystem:** S3 behavioral stability means the system detects model drift, falls back gracefully, and adapts routing without manual intervention.
 
-**What this means for Demarch:** The v1.0 threshold is **not** the closing of a single feedback loop. It is the closing of *at least three independent loops simultaneously*:
+**What this means for Sylveste:** The v1.0 threshold is **not** the closing of a single feedback loop. It is the closing of *at least three independent loops simultaneously*:
 
 1. **Routing loop:** Evidence → routing override proposal → canary evaluation → application or revert (current: plumbing exists, pump is manual)
 2. **Gate threshold loop:** Gate pass/fail rates → threshold adjustment → re-evaluation (current: architecture exists, defaults are hardcoded)
 3. **Phase-cost loop:** Estimated vs. actual cost → cost classifier refinement → future predictions (current: calibrate-phase-costs exists but requires manual invocation)
 
-**Demarch's current status:**
+**Sylveste's current status:**
 
 From fd-autopoiesis-viability.md, the three domains are **not yet simultaneously closed**:
 - Interspect routing override generation: exists architecturally, zero production callers
@@ -89,7 +89,7 @@ Additionally, the **semantic cascade** failure mode (syntactically valid but sem
 
 Detection mechanism: if strategy diversity drops, something is degenerate. Fix is not more rules (more gates), it is rebalancing incentives (rotate metrics, cap optimization rate, randomize audits).
 
-**Demarch's current status:**
+**Sylveste's current status:**
 - Unbounded cascading: gates exist but are not mechanically enforced to halt propagation
 - Silent degradation: Interspect canary windows designed but not yet operational
 - State corruption: bd doctor exists but requires manual invocation
@@ -107,9 +107,9 @@ Detection mechanism: if strategy diversity drops, something is degenerate. Fix i
 
 For Go, Rust, Kubernetes, Terraform (all deterministic): "somebody outside the maintainers runs this in production and gets the correct results."
 
-For Demarch (stochastic): "somebody outside the maintainers runs this on their own code and the *orchestration infrastructure* behaves predictably even though the outputs are inherently variable."
+For Sylveste (stochastic): "somebody outside the maintainers runs this on their own code and the *orchestration infrastructure* behaves predictably even though the outputs are inherently variable."
 
-**What this means for Demarch:**
+**What this means for Sylveste:**
 
 Production evidence should demonstrate:
 - Sprints complete end-to-end
@@ -121,11 +121,11 @@ Production evidence should demonstrate:
 NOT:
 - Every sprint produces perfect code
 - Output is deterministic
-- Cost is identical to Demarch's self-building
+- Cost is identical to Sylveste's self-building
 
-The agent ecosystem research identifies the critical gap: "40% of multi-agent AI pilot projects fail within 6 months of deployment, and the primary cause is the gap between demo performance (on the developer's codebase) and real-world diversity." Demarch must demonstrate: L1 (same-class projects, 50+ sprints each, 2+ external), L2 (cross-domain projects, 20+ sprints each, 3+).
+The agent ecosystem research identifies the critical gap: "40% of multi-agent AI pilot projects fail within 6 months of deployment, and the primary cause is the gap between demo performance (on the developer's codebase) and real-world diversity." Sylveste must demonstrate: L1 (same-class projects, 50+ sprints each, 2+ external), L2 (cross-domain projects, 20+ sprints each, 3+).
 
-**Demarch's current status:** L0 (self-building, 785+ sessions) exists and is measured. L1 and L2 evidence is absent.
+**Sylveste's current status:** L0 (self-building, 785+ sessions) exists and is measured. L1 and L2 evidence is absent.
 
 ---
 
@@ -138,7 +138,7 @@ The platform cannot claim universality. Instead, it must declare what it is desi
 
 SAE autonomous vehicle levels define this precisely: L0-L5 describe what the system is trusted to do and what fallback exists. Expanding the ODD is a separate axis from version bumps.
 
-For Demarch, the v1.0 ODD should declare:
+For Sylveste, the v1.0 ODD should declare:
 
 **In scope:**
 - Single-repository software development
@@ -154,7 +154,7 @@ For Demarch, the v1.0 ODD should declare:
 - Autonomy L3+ (auto-remediation shipping in v0.8/v0.9)
 - Guaranteed outcome quality (quality is model-dependent and model-independent)
 
-**Demarch's current status:** ODD is implicit in PHILOSOPHY.md but not explicitly published as a v1.0 release boundary.
+**Sylveste's current status:** ODD is implicit in PHILOSOPHY.md but not explicitly published as a v1.0 release boundary.
 
 ---
 
@@ -166,15 +166,15 @@ For Demarch, the v1.0 ODD should declare:
 
 Player expression is the degree to which a player's choices produce outcomes that feel personal and distinctive, distinct from freedom (available choices) or agency (causal power).
 
-**Applied to Demarch:** Operator expression — the degree to which a human operator's choices (problem selection, risk tolerance, model preference, review depth) produce measurably different outcomes.
+**Applied to Sylveste:** Operator expression — the degree to which a human operator's choices (problem selection, risk tolerance, model preference, review depth) produce measurably different outcomes.
 
 **Why it matters:** If an operator who prioritizes speed cannot get measurably faster results, and an operator who prioritizes quality cannot get measurably fewer defects, then the configuration surface is decorative. The system has launched without the very feature that distinguishes it from single-model tools.
 
 **Test:** Run two operators with opposite stated risk profiles on identical problem classes. Do they get measurably different outcome profiles (speed vs. quality tradeoff)? If not, configuration is cargo cult.
 
-**This is critical for v1.0 credibility:** Users who adopt Demarch instead of Cursor/Aider are betting that control matters. If control is illusory, they abandon the platform immediately.
+**This is critical for v1.0 credibility:** Users who adopt Sylveste instead of Cursor/Aider are betting that control matters. If control is illusory, they abandon the platform immediately.
 
-**Demarch's current status:** The knobs exist (routing overrides, gate thresholds, agent selection). Whether they *actually produce different outcomes* is untested.
+**Sylveste's current status:** The knobs exist (routing overrides, gate thresholds, agent selection). Whether they *actually produce different outcomes* is untested.
 
 ---
 
@@ -184,9 +184,9 @@ Player expression is the degree to which a player's choices produce outcomes tha
 
 In competitive games, a "healthy meta" means multiple viable strategies exist, no single approach dominates (concentration <70%), and players form a rock-paper-scissors structure where each strategy beats some and loses to others. "It depends" is the correct answer to "what's optimal?"
 
-**Applied to Demarch:** The platform's routing, agent composition, and phase structure must not collapse to a single dominant approach across problem classes. If cheap models outperform expensive ones universally, or if all sprints use the same agent pipeline, the system has a degenerate meta.
+**Applied to Sylveste:** The platform's routing, agent composition, and phase structure must not collapse to a single dominant approach across problem classes. If cheap models outperform expensive ones universally, or if all sprints use the same agent pipeline, the system has a degenerate meta.
 
-**Why this matters:** A degenerate meta collapses the value proposition. If fast/cheap always wins, Demarch becomes "use the cheapest model." If thorough/expensive always wins, Demarch becomes "use the most expensive model." The platform's edge is *problem-contingent decision-making*, and that edge vanishes if the decision space collapses.
+**Why this matters:** A degenerate meta collapses the value proposition. If fast/cheap always wins, Sylveste becomes "use the cheapest model." If thorough/expensive always wins, Sylveste becomes "use the most expensive model." The platform's edge is *problem-contingent decision-making*, and that edge vanishes if the decision space collapses.
 
 **Test:** Analyze 100 completed sprints. Measure:
 - Routing tier distribution (no tier >70%)
@@ -194,7 +194,7 @@ In competitive games, a "healthy meta" means multiple viable strategies exist, n
 - Model-outcome correlation (expensive models on hard problems → fewer defects, statistically significant)
 - Bead granularity diversity (no single size bucket >40%)
 
-**Demarch's current status:** The routing infrastructure supports meta stability. Whether it actually produces it is untested at scale.
+**Sylveste's current status:** The routing infrastructure supports meta stability. Whether it actually produces it is untested at scale.
 
 ---
 
@@ -204,13 +204,13 @@ In competitive games, a "healthy meta" means multiple viable strategies exist, n
 
 Beer's Viable System Model shows that S3 (Control) and S3* (Audit) must balance. S3 allocates resources; S3* verifies that allocation is justified. If S3* is weak, then S3's decisions are unchecked.
 
-In Demarch, S3 is strong (Intercore kernel manages runs, gates, budgets). S3* is moderate (Interspect canary monitoring exists but is not yet fully operational). The imbalance means **the system can allocate tokens and gates based on routing decisions that have never been audited against outcomes**.
+In Sylveste, S3 is strong (Intercore kernel manages runs, gates, budgets). S3* is moderate (Interspect canary monitoring exists but is not yet fully operational). The imbalance means **the system can allocate tokens and gates based on routing decisions that have never been audited against outcomes**.
 
 **Why this matters:** This is the alignment-faking boundary. If the system proposes its own improvements and evaluates its own improvements, with no independent verification, it can optimize for the appearance of improvement (the proxy metric) rather than actual improvement.
 
 **Critical constraint for v1.0:** Interspect cannot modify the evaluation criteria it uses to assess its own overlays. The "judge cannot modify the scoring rubric." This is a structural safety property.
 
-**Demarch's current status:** The structural constraint is articulated in agent-ecosystem-readiness.md Section 4.4. Whether it is mechanically enforced is unclear.
+**Sylveste's current status:** The structural constraint is articulated in agent-ecosystem-readiness.md Section 4.4. Whether it is mechanically enforced is unclear.
 
 ---
 
@@ -233,7 +233,7 @@ In Demarch, S3 is strong (Intercore kernel manages runs, gates, budgets). S3* is
 5. Free energy minimization: the system autonomously reduces surprise
 6. Requisite variety: the calibration data adds variety that default configuration lacks
 
-**Demarch's current status:** This test has never been run. It is the single most diagnostic test for whether the platform has crossed the autonomy threshold.
+**Sylveste's current status:** This test has never been run. It is the single most diagnostic test for whether the platform has crossed the autonomy threshold.
 
 ---
 
@@ -243,13 +243,13 @@ In Demarch, S3 is strong (Intercore kernel manages runs, gates, budgets). S3* is
 
 From Dwarf Fortress case study: the game existed for 16 years with deep, functional systems that only enthusiasts could access. The 2022 Steam release added UI, mouse support, tutorial, and accessibility. Systems unchanged. Result: 300K sales in one week, $7.2M in January 2023.
 
-**Applied to Demarch:** The value of Demarch's infrastructure (multi-model routing, calibration loops, evidence pipelines, review synthesis) is lost if a new developer cannot access it in one hour. If onboarding requires knowing PHILOSOPHY.md, reading .clavain/config.yaml, learning the beads schema, and manually configuring 20 knobs, then that depth is inventory, not capability.
+**Applied to Sylveste:** The value of Sylveste's infrastructure (multi-model routing, calibration loops, evidence pipelines, review synthesis) is lost if a new developer cannot access it in one hour. If onboarding requires knowing PHILOSOPHY.md, reading .clavain/config.yaml, learning the beads schema, and manually configuring 20 knobs, then that depth is inventory, not capability.
 
 **v1.0 requirement:** Time to first shipped change <60 minutes. 70%+ of new users unfamiliar with internals complete first sprint without asking for help. All onboarding stage events instrumented.
 
-**This is the highest-leverage gap.** Demarch's infrastructure is deeper than Cursor/Aider, but the infrastructure is worthless if users cannot reach it. The game design tradition calls this "accessibility is a feature, not an afterthought."
+**This is the highest-leverage gap.** Sylveste's infrastructure is deeper than Cursor/Aider, but the infrastructure is worthless if users cannot reach it. The game design tradition calls this "accessibility is a feature, not an afterthought."
 
-**Demarch's current status:** Onboarding is a known pain point. The documentation assumes operator knowledge of internals. The instrumentation is absent (no events for "user completed first sprint successfully").
+**Sylveste's current status:** Onboarding is a known pain point. The documentation assumes operator knowledge of internals. The instrumentation is absent (no events for "user completed first sprint successfully").
 
 ---
 
@@ -259,11 +259,11 @@ From Dwarf Fortress case study: the game existed for 16 years with deep, functio
 
 Go's announcement: "boring is stable. Boring means being able to focus on your work, not on what's different about Go."
 
-**Applied to Demarch:** Users should not be surprised by the platform itself. Surprise should come from *what the agents discover about the problem*, not from *the platform behaving unexpectedly*. If a user cannot form a correct mental model of what the system will do, they cannot rely on it.
+**Applied to Sylveste:** Users should not be surprised by the platform itself. Surprise should come from *what the agents discover about the problem*, not from *the platform behaving unexpectedly*. If a user cannot form a correct mental model of what the system will do, they cannot rely on it.
 
 This is why "retroactive legibility" (from game design) is critical: after a sprint completes, an independent reviewer can explain why each decision was made from receipts alone.
 
-**Demarch's current status:** The system is not yet boring. Too much magic happens inside the agents and routers that is not visible in the receipts. Users cannot form confident mental models.
+**Sylveste's current status:** The system is not yet boring. Too much magic happens inside the agents and routers that is not visible in the receipts. Users cannot form confident mental models.
 
 ---
 
@@ -283,7 +283,7 @@ This is not actually a contradiction. The distinction is between **mechanism** a
 - **Mechanism stability (v1.0 promise):** How the system responds to model changes is stable. Canary windows work. Fallback routing works. Quality floors are enforced. Degradation is detected within N sprints. The *process of adaptation* is predictable.
 - **Outcome stability (NOT a v1.0 promise):** The specific outputs do not change when models change. This is impossible for LLM systems.
 
-**Demarch's correct position:** v1.0 should promise S3 behavioral stability (graceful degradation and adaptation), not S2 behavioral stability (deterministic outputs). The three-layer model from agent-ecosystem-readiness.md is exactly right:
+**Sylveste's correct position:** v1.0 should promise S3 behavioral stability (graceful degradation and adaptation), not S2 behavioral stability (deterministic outputs). The three-layer model from agent-ecosystem-readiness.md is exactly right:
 - S1: Structural API stability (CLI, schemas, plugin interface) — SemVer promise
 - S2: Behavioral stability under fixed model version — evaluated but not promised
 - S3: Behavioral stability across model upgrades — architectural requirement for v1.0
@@ -306,7 +306,7 @@ Again, not a contradiction. The distinction is between **what the system does by
 
 These are orthogonal. A v1.0 platform can have high autonomy (things happen without human intervention) and high oversight (humans can inspect and override anything). The two are not zero-sum.
 
-**Demarch's correct position:** v1.0 should deliver Autonomy L1-L3 (Record, Enforce, React) with full human override capability at every level. L4-L5 (auto-ship, cross-repo learning) are v2.0+ goals.
+**Sylveste's correct position:** v1.0 should deliver Autonomy L1-L3 (Record, Enforce, React) with full human override capability at every level. L4-L5 (auto-ship, cross-repo learning) are v2.0+ goals.
 
 ---
 
@@ -314,7 +314,7 @@ These are orthogonal. A v1.0 platform can have high autonomy (things happen with
 
 **Stated across all six frameworks:** The system must have **closed-loop calibration operating across at least three independent dimensions simultaneously**.
 
-This is not a feature gap. Demarch already has routing calibration, gate threshold calibration, and phase-cost calibration *designed*. What is missing is *wiring them into autonomous operation*.
+This is not a feature gap. Sylveste already has routing calibration, gate threshold calibration, and phase-cost calibration *designed*. What is missing is *wiring them into autonomous operation*.
 
 **Current state of the three loops:**
 
@@ -363,7 +363,7 @@ This is plumbing work, not architecture work. It is wiring systems that already 
 **Threshold:** The system can measure its own reliability and can recover from common failures without human intervention.
 
 **Concrete deliverables:**
-1. Pass@k evaluation harness for Demarch self-building tasks (at least 3 complexity tiers)
+1. Pass@k evaluation harness for Sylveste self-building tasks (at least 3 complexity tiers)
 2. Adversarial test suite (inject known bugs, wrong strategies, measure detection rate)
 3. Canary window mechanism operational for model upgrades
 4. Anomaly detection on core metrics (cost spike, completion rate drop) with alerting
@@ -371,7 +371,7 @@ This is plumbing work, not architecture work. It is wiring systems that already 
 6. All existential failure modes mechanically prevented (unbounded cascades, silent degradation, state corruption, unprovenanced modification, infinite loops)
 
 **Exit criteria:**
-- Pass@k metrics published for Demarch codebase (3+ tiers)
+- Pass@k metrics published for Sylveste codebase (3+ tiers)
 - Semantic cascade detection rate >70% (measured by adversarial suite)
 - Model upgrade protocol operational with <1 sprint detection latency
 - 100 consecutive sprints without existential failures
@@ -452,7 +452,7 @@ This is plumbing work, not architecture work. It is wiring systems that already 
 - Default prompts and system messages
 - Cost and token consumption (efficiency improvements occur)
 
-**Mechanism:** Behavioral changelog with [behavior] tag. GODEBUG-style pinning: projects can declare `demarch-compat: 1.2` to freeze behavioral defaults to a specific version's values.
+**Mechanism:** Behavioral changelog with [behavior] tag. GODEBUG-style pinning: projects can declare `sylveste-compat: 1.2` to freeze behavioral defaults to a specific version's values.
 
 **Enforcement:** Interspect overlay logs, canary windows before defaults change, ability to pin compatibility version.
 
@@ -509,7 +509,7 @@ This is plumbing work, not architecture work. It is wiring systems that already 
 
 ### Behavioral Stability (Hard Requirements)
 
-- [ ] Pass@k metrics published for ≥3 task complexity tiers on Demarch codebase
+- [ ] Pass@k metrics published for ≥3 task complexity tiers on Sylveste codebase
 - [ ] Sprint completion rate >80% on self-building workloads
 - [ ] Post-merge defect rate tracked with declining trend over 90-day window
 - [ ] Gate false-positive rate <20% (measured by human override frequency)
@@ -578,13 +578,13 @@ This is plumbing work, not architecture work. It is wiring systems that already 
 ## 8. The v1.0.0 Declaration Template
 
 ```markdown
-# Demarch v1.0.0: Production-Ready Autonomous Software Development
+# Sylveste v1.0.0: Production-Ready Autonomous Software Development
 
 **Released:** [date]
 
 ## Stability Commitment
 
-Demarch v1.0.0 declares backward compatibility for the structural API (layer 1:
+Sylveste v1.0.0 declares backward compatibility for the structural API (layer 1:
 CLI, schemas, hooks, events) throughout the v1.x release series. Behavioral
 policies (routing, gates, review criteria) evolve with documented migration paths.
 Model-dependent behavior adapts to external model changes with graceful degradation.
@@ -598,7 +598,7 @@ Model-dependent behavior adapts to external model changes with graceful degradat
 - **Behavioral Envelopes:** The system produces results within documented bounds. Pass@k
   metrics, completion rates, defect detection rates are measured and published.
 
-- **Graceful Adaptation:** When model providers change their offerings, Demarch detects
+- **Graceful Adaptation:** When model providers change their offerings, Sylveste detects
   the impact within N sprints, falls back safely, and re-optimizes routing without human
   manual intervention.
 
@@ -615,7 +615,7 @@ Model-dependent behavior adapts to external model changes with graceful degradat
 - **Deterministic outputs:** The same input will not produce identical outputs across runs
   because the underlying models are stochastic. This is a feature, not a bug.
 
-- **Universal domain coverage:** Demarch is proven on [list ODD]. Arbitrary software
+- **Universal domain coverage:** Sylveste is proven on [list ODD]. Arbitrary software
   development is a v2.0+ goal.
 
 - **Output quality floor:** Agent quality depends on model capabilities, which change
@@ -644,7 +644,7 @@ configurations, calibration data, or plugin installations are required.
 
 ## Maintenance Commitment
 
-Demarch v1.x will receive updates for a minimum of 24 months from v1.0.0 release.
+Sylveste v1.x will receive updates for a minimum of 24 months from v1.0.0 release.
 Security fixes will be backported to the two most recent v1.x minor releases. Feature
 releases occur every [N] weeks with deprecation warnings [N] releases before removal.
 
@@ -661,7 +661,7 @@ projects work but have been tested on only 3 projects. Performance on monorepos 
 
 The single most important finding is that **v1.0.0 should mean the three calibration loops turn autonomously**, not that all features are done. This is neither a massive new undertaking nor a marketing exercise. It is wiring existing systems into their designed feedback loops.
 
-The six frameworks converge on this: a v1.0 platform is one that *improves itself without manual cranking*. Demarch already has the machinery. It needs activation.
+The six frameworks converge on this: a v1.0 platform is one that *improves itself without manual cranking*. Sylveste already has the machinery. It needs activation.
 
 The path is:
 1. **v0.7:** Autonomy loops close

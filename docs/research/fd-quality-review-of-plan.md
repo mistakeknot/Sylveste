@@ -227,7 +227,7 @@ The caveat: `jq` does not validate JSON Schema. The schema file is documentation
 "$id": "routing-overrides.schema.json"
 ```
 
-JSON Schema draft-07 specifies that `$id` should be an absolute URI or a relative URI that resolves against a base. A bare filename is technically valid as a relative URI but validators may warn. If there is no JSON Schema validator in CI (there isn't currently), this is harmless. If one is added later, using an absolute path or `$id: "https://demarch.example/schemas/routing-overrides.schema.json"` avoids the warning.
+JSON Schema draft-07 specifies that `$id` should be an absolute URI or a relative URI that resolves against a base. A bare filename is technically valid as a relative URI but validators may warn. If there is no JSON Schema validator in CI (there isn't currently), this is harmless. If one is added later, using an absolute path or `$id: "https://sylveste.example/schemas/routing-overrides.schema.json"` avoids the warning.
 
 ---
 

@@ -1,7 +1,7 @@
 # Interlock MCP Server Codebase Exploration
 
 **Date:** 2026-02-23  
-**Repository:** `/home/mk/projects/Demarch/interverse/interlock/`  
+**Repository:** `/home/mk/projects/Sylveste/interverse/interlock/`  
 **Purpose:** Understanding Go MCP server structure, tool registration patterns, negotiation protocol, and client architecture.
 
 ---
@@ -28,9 +28,9 @@
 3. Current working directory basename (fallback)
 
 **File locations:**
-- Entry point: `/home/mk/projects/Demarch/interverse/interlock/cmd/interlock-mcp/main.go`
-- Client package: `/home/mk/projects/Demarch/interverse/interlock/internal/client/`
-- Tools package: `/home/mk/projects/Demarch/interverse/interlock/internal/tools/`
+- Entry point: `/home/mk/projects/Sylveste/interverse/interlock/cmd/interlock-mcp/main.go`
+- Client package: `/home/mk/projects/Sylveste/interverse/interlock/internal/client/`
+- Tools package: `/home/mk/projects/Sylveste/interverse/interlock/internal/tools/`
 
 ---
 
@@ -38,7 +38,7 @@
 
 ### `RegisterAll` Function Signature
 
-**Location:** `/home/mk/projects/Demarch/interverse/interlock/internal/tools/tools.go:27-42`
+**Location:** `/home/mk/projects/Sylveste/interverse/interlock/internal/tools/tools.go:27-42`
 
 ```go
 func RegisterAll(s *server.MCPServer, c *client.Client) {
@@ -343,7 +343,7 @@ All negotiation messages use JSON-structured body with `type` field:
 
 ### Polling & Detection (`pollNegotiationThread`)
 
-**Location:** `/home/mk/projects/Demarch/interverse/interlock/internal/tools/tools.go:703-733`
+**Location:** `/home/mk/projects/Sylveste/interverse/interlock/internal/tools/tools.go:703-733`
 
 **Algorithm:**
 1. Fetch all messages in thread via `c.FetchThread(thread_id)`
@@ -517,7 +517,7 @@ type Agent struct {
 
 ### Plugin Manifest (`.claude-plugin/plugin.json`)
 
-**Location:** `/home/mk/projects/Demarch/interverse/interlock/.claude-plugin/plugin.json`
+**Location:** `/home/mk/projects/Sylveste/interverse/interlock/.claude-plugin/plugin.json`
 
 ```json
 {
@@ -646,7 +646,7 @@ func RegisterAll(s *server.MCPServer, c *client.Client) {
 
 ## 9. Test Coverage & Files
 
-**Location:** `/home/mk/projects/Demarch/interverse/interlock/`
+**Location:** `/home/mk/projects/Sylveste/interverse/interlock/`
 
 | Path | Purpose |
 |------|---------|

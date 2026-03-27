@@ -1,11 +1,11 @@
 ---
 artifact_type: plan
-bead: Demarch-uboy.2
+bead: Sylveste-uboy.2
 stage: planned
 ---
 # Plan: Replace chars/4 with JSONL-based actual token counting
 
-**Bead:** Demarch-uboy.2
+**Bead:** Sylveste-uboy.2
 **Goal:** Replace the chars/4 token approximation in synthesize.md Step 3.4c with actual token counts parsed from agent task output JSONL files.
 
 ## Context

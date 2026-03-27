@@ -23,7 +23,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-This review batch evaluates whether Imbue's Darwinian Evolver evolutionary optimization patterns should be adopted into Demarch's autonomous software agency platform. The primary review target is the research synthesis document and four child beads covering model routing, learning logs, verification filters, and agent strategy evolution.
+This review batch evaluates whether Imbue's Darwinian Evolver evolutionary optimization patterns should be adopted into Sylveste's autonomous software agency platform. The primary review target is the research synthesis document and four child beads covering model routing, learning logs, verification filters, and agent strategy evolution.
 
 ## Review Approach
 
@@ -66,7 +66,7 @@ A good review from this agent:
 - Recommends the smallest viable fix, not an architecture overhaul — one diff hunk, not a rewrite
 - Frames uncertain findings as questions: "Does this handle X?" not "This doesn't handle X"
 - The review establishes a recall floor: what category of real findings would be missed by a verification filter, and whether that category is acceptable given the cost savings
-- The review determines whether the verification filter is a new concept for Demarch or a reframing of existing pre-filter logic already present in flux-drive's agent triage scoring
+- The review determines whether the verification filter is a new concept for Sylveste or a reframing of existing pre-filter logic already present in flux-drive's agent triage scoring
 
 ## Decision Lens
 

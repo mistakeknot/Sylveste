@@ -1,6 +1,6 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-6i0.12
+bead: Sylveste-6i0.12
 stage: discover
 ---
 # Skaffen Image Support (@image references)

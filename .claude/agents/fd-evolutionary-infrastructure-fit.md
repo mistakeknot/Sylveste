@@ -22,7 +22,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-This review batch evaluates whether Imbue's Darwinian Evolver evolutionary optimization patterns should be adopted into Demarch's autonomous software agency platform. The primary review target is the research synthesis document and four child beads covering model routing, learning logs, verification filters, and agent strategy evolution.
+This review batch evaluates whether Imbue's Darwinian Evolver evolutionary optimization patterns should be adopted into Sylveste's autonomous software agency platform. The primary review target is the research synthesis document and four child beads covering model routing, learning logs, verification filters, and agent strategy evolution.
 
 ## Review Approach
 
@@ -48,12 +48,12 @@ This review batch evaluates whether Imbue's Darwinian Evolver evolutionary optim
 
 ### 6. Integration depth classification
 
-- Identify which of the four Imbue patterns (organism/evaluator/mutator abstraction, sigmoid parent selection, learning log, verification filter) can be adopted as thin wrappers over existing Demarch primitives vs. which require new infrastructure components
+- Identify which of the four Imbue patterns (organism/evaluator/mutator abstraction, sigmoid parent selection, learning log, verification filter) can be adopted as thin wrappers over existing Sylveste primitives vs. which require new infrastructure components
 
 ## What NOT to Flag
 
 - fd-population-cost-tradeoff covers whether population overhead is economically justified vs. simpler A/B testing alternatives — this agent focuses on structural feasibility, not cost modeling
-- fd-learning-log-vs-interknow covers the specific comparison between Imbue's learning log and Demarch's interknow/compound knowledge compounding — this agent covers infrastructure fit holistically across all four patterns
+- fd-learning-log-vs-interknow covers the specific comparison between Imbue's learning log and Sylveste's interknow/compound knowledge compounding — this agent covers infrastructure fit holistically across all four patterns
 - fd-adopt-adapt-avoid covers the final adopt/adapt/inspire/avoid classification per pattern — this agent provides the infrastructure evidence that classification depends on
 - Only flag the above if they are deeply entangled with your specialist focus and another agent would miss the nuance
 
@@ -65,11 +65,11 @@ A good review from this agent:
 - Recommends the smallest viable fix, not an architecture overhaul — one diff hunk, not a rewrite
 - Frames uncertain findings as questions: "Does this handle X?" not "This doesn't handle X"
 - Each Imbue pattern is classified by integration depth: zero-cost (already present), thin wrapper, additive (new module, no disruption), or invasive (requires modifying existing contracts)
-- The analysis identifies at least one existing Demarch primitive that directly subsumes an Imbue concept without code change, and at least one that conflicts
+- The analysis identifies at least one existing Sylveste primitive that directly subsumes an Imbue concept without code change, and at least one that conflicts
 
 ## Decision Lens
 
-Prioritize findings where adopting a pattern would require dismantling or duplicating existing Demarch infrastructure over findings about feature gaps. Structural incompatibilities that demand parallel systems are more dangerous than missing features that can be added incrementally.
+Prioritize findings where adopting a pattern would require dismantling or duplicating existing Sylveste infrastructure over findings about feature gaps. Structural incompatibilities that demand parallel systems are more dangerous than missing features that can be added incrementally.
 
 ## Prioritization
 

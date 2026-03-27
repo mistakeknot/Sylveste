@@ -47,9 +47,9 @@ Define a typed intent contract between layers: shared Go types for intents and r
 - [ ] All existing Autarch tests pass with new intent path
 
 ### F4: Intercom Intent Migration
-**What:** Replace Intercom's DemarchAdapter shell-exec and file-based IPC with intent submissions. Move query-handler agency logic into Clavain.
+**What:** Replace Intercom's SylvesteAdapter shell-exec and file-based IPC with intent submissions. Move query-handler agency logic into Clavain.
 **Acceptance criteria:**
-- [ ] DemarchAdapter rewritten to submit intents instead of shelling out to `clavain-cli`
+- [ ] SylvesteAdapter rewritten to submit intents instead of shelling out to `clavain-cli`
 - [ ] Query handler agency logic moved to Clavain (OS decides what to execute)
 - [ ] Telegram approval callbacks submit `approval.grant` intents
 - [ ] File-based IPC queries migrated to intent submissions

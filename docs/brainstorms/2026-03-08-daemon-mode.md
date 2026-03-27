@@ -13,7 +13,7 @@ Clavain's `/route` command is session-initiated — a human must start each work
 
 ## Prior Art
 
-Symphony (iv-sym01) provides the reference architecture: poll-dispatch-reconcile loop. Key adaptations for Demarch:
+Symphony (iv-sym01) provides the reference architecture: poll-dispatch-reconcile loop. Key adaptations for Sylveste:
 - **Durable state** via intercore SQLite (not in-memory like Symphony)
 - **Beads** as tracker (not Linear)
 - **Interlock** for file coordination (not worktrees)

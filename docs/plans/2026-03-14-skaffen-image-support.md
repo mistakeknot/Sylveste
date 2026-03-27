@@ -1,13 +1,13 @@
 ---
 artifact_type: plan
-bead: Demarch-6i0.12
+bead: Sylveste-6i0.12
 stage: design
 ---
 # Skaffen Image Support — Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-6i0.12
+**Bead:** Sylveste-6i0.12
 **Goal:** Add image input via `@filepath` auto-detection — when a user references an image file (.png/.jpg/.jpeg/.gif/.webp), Skaffen base64-encodes it and sends it as an image content block alongside the text prompt.
 
 **Architecture:** Extend `ContentBlock` with an `ImageSource` field, add `expandImageMentions()` to extract image refs from user input, change the agent loop to accept multimodal content blocks, update token estimation for images. Session JSONL persistence needs no changes (already schema-agnostic). TUI shows `[img filename.ext (size)]` badge.

@@ -13,7 +13,7 @@
 
 **Verdict: Correctly diagnosed and addressed by proposal.**
 
-The gap accurately identifies a real phase mismatch between Autarch's L0-L1 interaction model and Demarch's L2+ trajectory. The Demarch vision explicitly states "the human is above the loop, not in it" (design principle 5) and the autonomy ladder defines L2 as "the human observes and intervenes on exceptions." The three-mode hierarchy (Executive/Supervisor/Operator) is a reasonable proposal for bridging this.
+The gap accurately identifies a real phase mismatch between Autarch's L0-L1 interaction model and Sylveste's L2+ trajectory. The Sylveste vision explicitly states "the human is above the loop, not in it" (design principle 5) and the autonomy ladder defines L2 as "the human observes and intervenes on exceptions." The three-mode hierarchy (Executive/Supervisor/Operator) is a reasonable proposal for bridging this.
 
 One nuance: the gap implies Gurgeh and Coldwine are equally misaligned, but the Autarch vision doc already acknowledges this as "architectural debt" and schedules arbiter extraction. The gap analysis adds the insight that extraction alone is insufficient without autonomization -- this is a genuine contribution, not a restatement.
 
@@ -23,9 +23,9 @@ One nuance: the gap implies Gurgeh and Coldwine are equally misaligned, but the 
 
 The diagnosis is sound: the four tools map to sequential workflow steps and the human drives the sequence. This is a real limitation at L2+.
 
-However, the proposed remedy -- the "recursive ring model" -- is a new architectural concept that does not appear in any canonical Demarch document. The term "ring" does not appear in the Demarch vision, the Clavain vision, the Intercore vision, or the Autarch vision. The Demarch vision uses "layers" (three architectural layers plus one cross-cutting profiler), "macro-stages" (five lifecycle stages), and "sub-agency" (each macro-stage is a sub-agency). The Clavain vision describes "sub-agencies" with model routing and agent composition per phase.
+However, the proposed remedy -- the "recursive ring model" -- is a new architectural concept that does not appear in any canonical Sylveste document. The term "ring" does not appear in the Sylveste vision, the Clavain vision, the Intercore vision, or the Autarch vision. The Sylveste vision uses "layers" (three architectural layers plus one cross-cutting profiler), "macro-stages" (five lifecycle stages), and "sub-agency" (each macro-stage is a sub-agency). The Clavain vision describes "sub-agencies" with model routing and agent composition per phase.
 
-The gap analysis introduces "ring" as though it is an existing concept being applied ("this is already what the Demarch vision describes" -- line 237) when it is actually a new proposal being introduced by the analysis itself. This is a significant coherence problem: the document claims to identify a gap in Autarch relative to the existing architecture, but the architecture it claims Autarch should catch up to does not exist yet. The ring model may be a good idea, but presenting it as an existing vision that Autarch has "fallen behind" on is misleading.
+The gap analysis introduces "ring" as though it is an existing concept being applied ("this is already what the Sylveste vision describes" -- line 237) when it is actually a new proposal being introduced by the analysis itself. This is a significant coherence problem: the document claims to identify a gap in Autarch relative to the existing architecture, but the architecture it claims Autarch should catch up to does not exist yet. The ring model may be a good idea, but presenting it as an existing vision that Autarch has "fallen behind" on is misleading.
 
 ### Gap 3: Per-Item Interaction vs Exception-Based Attention
 
@@ -47,7 +47,7 @@ The analysis could have folded Gap 3 and Gap 4 into Gap 1 as sub-findings. The t
 
 **Verdict: Correctly diagnosed and addressed by proposal.**
 
-This is a genuinely independent gap. The existing vision docs confirm portfolio orchestration as a shipped capability (Demarch vision: "the kernel manages concurrent runs across multiple projects, portfolio primitives landed"). Yet no Autarch app surfaces this capability as a first-class view. Bigend shows a flat project list but does not expose cross-project budget allocation, dependency-driven verification, or portfolio-level attention routing.
+This is a genuinely independent gap. The existing vision docs confirm portfolio orchestration as a shipped capability (Sylveste vision: "the kernel manages concurrent runs across multiple projects, portfolio primitives landed"). Yet no Autarch app surfaces this capability as a first-class view. Bigend shows a flat project list but does not expose cross-project budget allocation, dependency-driven verification, or portfolio-level attention routing.
 
 The proposal (portfolio ring in Bigend) aligns with the existing architecture without introducing new concepts.
 
@@ -65,7 +65,7 @@ However, this gap overlaps substantially with Gap 1. The autonomization of the a
 
 The gap correctly identifies that no formal escalation protocol exists. The proposed typed protocol (decisions, exceptions, approvals, priority classification) is reasonable. The connection to Interspect's signal taxonomy is apt -- structured escalation enables efficient human signal collection at higher autonomy levels.
 
-However, the remedy section does not address where this protocol lives architecturally. Is the escalation protocol a kernel primitive (like gates and events), an OS policy (like phase chains), or an app-layer concern (like the attention queue)? The analysis proposes it under "Architectural Requirements" as a kernel-level priority queue (item 2), but the Demarch vision explicitly positions the kernel as "mechanism, not policy." An attention queue that prioritizes items by urgency/impact is policy, not mechanism. This is a real architectural question the analysis does not resolve.
+However, the remedy section does not address where this protocol lives architecturally. Is the escalation protocol a kernel primitive (like gates and events), an OS policy (like phase chains), or an app-layer concern (like the attention queue)? The analysis proposes it under "Architectural Requirements" as a kernel-level priority queue (item 2), but the Sylveste vision explicitly positions the kernel as "mechanism, not policy." An attention queue that prioritizes items by urgency/impact is policy, not mechanism. This is a real architectural question the analysis does not resolve.
 
 ---
 
@@ -73,17 +73,17 @@ However, the remedy section does not address where this protocol lives architect
 
 ## [P0] The recursive ring model is not in the published architecture and the document claims it is
 
-The analysis states (line 237): "This is already what the Demarch vision describes. Autarch just hasn't caught up to the architecture it's supposed to surface."
+The analysis states (line 237): "This is already what the Sylveste vision describes. Autarch just hasn't caught up to the architecture it's supposed to surface."
 
-This is false. The Demarch vision describes:
+This is false. The Sylveste vision describes:
 - Three architectural layers (kernel, OS, apps) plus one cross-cutting profiler
 - Five macro-stages (Discover, Design, Build, Ship, Reflect), each a sub-agency
 - An autonomy ladder (L0-L4) with decreasing human intervention
 - Companion plugins as capability drivers
 
-None of these use the term "ring" or describe a recursive nesting of autonomous agencies. The Demarch vision's sub-agency concept is per-macro-stage (each macro-stage is a sub-agency), not per-Autarch-tool. The analysis maps Autarch tools to rings (Pollard = research ring, Gurgeh = design ring, Coldwine = execution ring, Bigend = portfolio ring), but the Demarch vision maps tools to rendering surfaces for kernel state -- the vision explicitly says "apps render; the OS decides; the kernel records."
+None of these use the term "ring" or describe a recursive nesting of autonomous agencies. The Sylveste vision's sub-agency concept is per-macro-stage (each macro-stage is a sub-agency), not per-Autarch-tool. The analysis maps Autarch tools to rings (Pollard = research ring, Gurgeh = design ring, Coldwine = execution ring, Bigend = portfolio ring), but the Sylveste vision maps tools to rendering surfaces for kernel state -- the vision explicitly says "apps render; the OS decides; the kernel records."
 
-The ring model is a legitimate architectural proposal. But it should be presented as a new proposal, not as an existing commitment that Autarch has failed to meet. If adopted, the ring model would require updates to the Demarch vision, the Clavain vision, and the Autarch vision -- it is not a gap in implementation but a gap between the analysis and the published architecture.
+The ring model is a legitimate architectural proposal. But it should be presented as a new proposal, not as an existing commitment that Autarch has failed to meet. If adopted, the ring model would require updates to the Sylveste vision, the Clavain vision, and the Autarch vision -- it is not a gap in implementation but a gap between the analysis and the published architecture.
 
 ## [P0] Three gaps (1, 3, 4) are the same gap described from different vantage points
 
@@ -110,7 +110,7 @@ The analysis presents them as complementary parts of a single "reframe" but does
 
 The analysis uses "autonomy" in three distinct senses:
 
-1. **Autonomy ladder levels** (L0-L4) -- the Demarch vision's definition: how much of the development lifecycle runs without human intervention. This is a property of the system measured by sprint completion rate and intervention frequency.
+1. **Autonomy ladder levels** (L0-L4) -- the Sylveste vision's definition: how much of the development lifecycle runs without human intervention. This is a property of the system measured by sprint completion rate and intervention frequency.
 
 2. **Ring autonomy** -- each ring "runs without human intervention in normal operation." This is a structural property of a subsystem, not a system-level metric. A ring being "autonomous" means something different from the system being at "L3 autonomy."
 
@@ -125,7 +125,7 @@ The analysis uses "agency" in at least three ways:
 - **Agency as architectural concept** -- "agency rings" (Gap 2), meaning structurally nested autonomous units
 - **Agency as capability** -- "agency logic" (Gap 6), meaning the arbiter code that makes decisions
 
-The Demarch vision uses "agency" primarily in sense 1 ("autonomous software development agency"). The Autarch vision uses "agency logic" in sense 3 to describe code that belongs in the OS. The ring analysis introduces sense 2, which is novel.
+The Sylveste vision uses "agency" primarily in sense 1 ("autonomous software development agency"). The Autarch vision uses "agency logic" in sense 3 to describe code that belongs in the OS. The ring analysis introduces sense 2, which is novel.
 
 ## [P2] The analysis assumes Interspect operates per-ring, but Interspect's vision describes per-agent profiling
 
@@ -135,7 +135,7 @@ For Interspect to profile rings rather than agents, it would need ring-level met
 
 ## [P2] The "attention queue" is proposed as a kernel primitive but is policy by the kernel's own definition
 
-Architectural requirement 2 proposes a "kernel-level priority queue of items requiring human judgment." The Demarch vision states the kernel provides "mechanism, not policy -- the kernel doesn't know what 'brainstorm' means." Priority classification (urgency/impact sorting) is policy. The kernel can store and order items (mechanism), but deciding which items need human attention and how to rank them is an OS-level concern.
+Architectural requirement 2 proposes a "kernel-level priority queue of items requiring human judgment." The Sylveste vision states the kernel provides "mechanism, not policy -- the kernel doesn't know what 'brainstorm' means." Priority classification (urgency/impact sorting) is policy. The kernel can store and order items (mechanism), but deciding which items need human attention and how to rank them is an OS-level concern.
 
 This matters because placing the attention queue in the kernel would violate the mechanism/policy boundary that is foundational to the three-layer architecture. The attention queue is more likely an OS-level component (Clavain aggregates escalation signals and presents them through the write-path contract) rendered by an app-level surface (the Autarch dashboard).
 
@@ -153,7 +153,7 @@ The three-mode hierarchy uses "Supervisor" for the middle tier (monitors progres
 
 ## Summary
 
-The analysis correctly identifies a real phase mismatch between Autarch's interaction model and Demarch's autonomy trajectory. Of the seven gaps, five are genuinely distinct (1, 2, 5, 6, 7) and two are restatements (3 and 4 are aspects of 1). The three-mode hierarchy (Executive/Supervisor/Operator) is well-aligned with the published architecture. The recursive ring model is a substantive new architectural proposal but is incorrectly presented as an existing vision -- it would require changes to all four vision documents if adopted. The two proposals (modes and rings) are independent and should be evaluated separately.
+The analysis correctly identifies a real phase mismatch between Autarch's interaction model and Sylveste's autonomy trajectory. Of the seven gaps, five are genuinely distinct (1, 2, 5, 6, 7) and two are restatements (3 and 4 are aspects of 1). The three-mode hierarchy (Executive/Supervisor/Operator) is well-aligned with the published architecture. The recursive ring model is a substantive new architectural proposal but is incorrectly presented as an existing vision -- it would require changes to all four vision documents if adopted. The two proposals (modes and rings) are independent and should be evaluated separately.
 
 | Rating | Count | Summary |
 |--------|-------|---------|

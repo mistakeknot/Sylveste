@@ -16,7 +16,7 @@ A researcher specializing in inference acceleration techniques with hands-on exp
 Acceptance rate is the primary signal — a draft model that accepts 70% of tokens at 3x speed is strictly better than one that accepts 90% at 1.5x speed. Memory cost of loading a second model is treated as a hard constraint on the 128GB budget.
 
 ## Task Context
-The target platform is Apple Silicon M5 Max 128GB with a unified memory architecture. The system serves an autonomous software development agency (Demarch/Clavain) where coding task quality and low-latency tool-call response are primary concerns.
+The target platform is Apple Silicon M5 Max 128GB with a unified memory architecture. The system serves an autonomous software development agency (Sylveste/Clavain) where coding task quality and low-latency tool-call response are primary concerns.
 
 ## Review Areas
 - Verify the draft model shares the same tokenizer and vocabulary as the target model — vocabulary mismatch silently degrades acceptance rate

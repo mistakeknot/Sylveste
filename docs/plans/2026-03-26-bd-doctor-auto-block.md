@@ -1,11 +1,11 @@
 ---
 artifact_type: plan
-bead: Demarch-py89
+bead: Sylveste-py89
 stage: planned
 ---
 # Plan: Auto-run bd doctor on SessionStart, block on corruption
 
-**Bead:** Demarch-py89
+**Bead:** Sylveste-py89
 **Roadmap:** v0.7 exit criterion (B:L2 — gates learn)
 
 ## Current State

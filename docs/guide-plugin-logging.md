@@ -1,10 +1,10 @@
 # Plugin Structured Logging Guide
 
-This guide explains how to adopt structured JSON logging in Demarch plugins. Structured logging enables trace correlation across the kernel (Intercore), OS (Clavain), and plugins (Interverse) using shared environment variables.
+This guide explains how to adopt structured JSON logging in Sylveste plugins. Structured logging enables trace correlation across the kernel (Intercore), OS (Clavain), and plugins (Interverse) using shared environment variables.
 
 ## Why Structured Logging?
 
-Demarch agents span multiple processes: the `ic` kernel CLI, Clavain bash hooks, Go MCP servers, and Python analysis bridges. When something goes wrong, ad-hoc `fmt.Fprintf` and `print()` calls produce unstructured text that cannot be correlated across process boundaries.
+Sylveste agents span multiple processes: the `ic` kernel CLI, Clavain bash hooks, Go MCP servers, and Python analysis bridges. When something goes wrong, ad-hoc `fmt.Fprintf` and `print()` calls produce unstructured text that cannot be correlated across process boundaries.
 
 Structured logging solves this by:
 - Outputting JSON lines to stderr (machine-parseable, greppable)

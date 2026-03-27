@@ -104,13 +104,13 @@ When the agent discovers promising but complex optimizations it won't pursue imm
 - git add -A in log_experiment is aggressive — could commit unintended files
 - No rate limiting on run_experiment — a buggy benchmark that exits instantly could create a tight loop
 
-## Relevance to Demarch
+## Relevance to Sylveste
 
 ### Direct applicability: **Medium-High**
 
-The autoresearch pattern maps well to several Demarch scenarios:
+The autoresearch pattern maps well to several Sylveste scenarios:
 
-| Demarch Use Case | Autoresearch Analog |
+| Sylveste Use Case | Autoresearch Analog |
 |-----------------|---------------------|
 | Skaffen model routing optimization | Metric: latency/cost per phase, command: benchmark suite |
 | TUI render performance | Metric: frame time, command: masaq benchmarks |
@@ -149,4 +149,4 @@ The architecture and UX patterns are excellent and worth studying. The actual co
 5. Ideas backlog to prevent knowledge loss across context resets
 6. Living document (autoresearch.md) as the primary context for fresh agents
 
-These patterns could inspire a Demarch-native autoresearch implementation if we need one. Not a near-term priority — most relevant when we start doing systematic optimization campaigns (model routing, token efficiency, TUI performance).
+These patterns could inspire a Sylveste-native autoresearch implementation if we need one. Not a near-term priority — most relevant when we start doing systematic optimization campaigns (model routing, token efficiency, TUI performance).

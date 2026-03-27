@@ -3,7 +3,7 @@ artifact_type: cuj
 journey: clavain-parallel-dispatch
 actor: regular user (developer running multiple agents on a plan)
 criticality: p2
-bead: Demarch-2c7
+bead: Sylveste-2c7
 ---
 
 # Clavain Parallel Agent Dispatch

@@ -15,7 +15,7 @@
       "Median session-start additionalContext token count reduced by >30% without changing routing accuracy on the heuristic routing table",
       "At least 2 injection blocks in session-start.sh are gated behind a cheap sentinel (file existence, env var, or cached bool) that was previously always evaluated"
     ],
-    "task_context": "Clavain is the L2 OS layer of the Demarch autonomous software agency stack, with 18 skills, 48 commands, and 10 hooks. The session-start.sh hook (524 lines) assembles a multi-part additionalContext payload injected on every session start.",
+    "task_context": "Clavain is the L2 OS layer of the Sylveste autonomous software agency stack, with 18 skills, 48 commands, and 10 hooks. The session-start.sh hook (524 lines) assembles a multi-part additionalContext payload injected on every session start.",
     "anti_overlap": [
       "fd-routing-dispatch-quality covers whether routing decisions degrade when prompts are compressed",
       "fd-session-startup-latency covers wall-clock time and subprocess counts at startup",

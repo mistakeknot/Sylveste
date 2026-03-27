@@ -14,7 +14,7 @@
 
 **Quality:** high — 124 Rust source files, ~105k lines total, 287 unit tests in the server crate alone, 35+ e2e protocol tests, 88+ e2e workflow tests, trybuild macro expansion tests, comprehensive module-level doc comments, a 6528-line dedicated test file, and a dependency upgrade log showing active maintenance as of 2026-02-19. The main limitation is the hard nightly requirement and dependency on the author's own unpublished ecosystem crates (`asupersync`, `rich_rust`).
 
-**Relevance to Demarch:** Directly overlaps with the `intercomd` Rust daemon (currently hand-rolling Axum HTTP without MCP) and any future Demarch Rust MCP servers that need structured concurrency, timeout safety, and tool registration without JSON-RPC boilerplate.
+**Relevance to Sylveste:** Directly overlaps with the `intercomd` Rust daemon (currently hand-rolling Axum HTTP without MCP) and any future Sylveste Rust MCP servers that need structured concurrency, timeout safety, and tool registration without JSON-RPC boilerplate.
 
 ---
 
@@ -122,7 +122,7 @@ The official `rmcp` crate is more conservatively scoped; `fastmcp_rust` is a ful
 
 ## Limitations and Risks
 
-1. **Nightly required** — Rust 2024 Edition features lock this to nightly toolchain. Any Demarch crate adopting it must also use nightly, which is acceptable for experimental work but a policy decision for production.
+1. **Nightly required** — Rust 2024 Edition features lock this to nightly toolchain. Any Sylveste crate adopting it must also use nightly, which is acceptable for experimental work but a policy decision for production.
 
 2. **`asupersync` is the author's own crate** — Not from the broader Rust async ecosystem. If `asupersync` diverges or goes unmaintained, the dependency is load-bearing. The author also has a "no external contributions" policy (stated in README), meaning the project is a one-person effort.
 
@@ -140,34 +140,34 @@ The official `rmcp` crate is more conservatively scoped; `fastmcp_rust` is a ful
 
 - **Replace hand-rolled JSON-RPC in `intercomd`**: `intercomd` currently exposes Axum HTTP routes with no MCP framing. If there is a future need for `intercomd` to expose an MCP interface, adopting `fastmcp-server` would replace custom JSON-RPC dispatch with `#[tool]` annotations on existing handler functions.
 
-- **Proc macro pattern for new Rust MCP servers**: If Demarch adds any new Rust-based MCP server (e.g., an `interbase` Rust SDK companion, or a high-performance Interspect MCP interface), the `#[tool]` macro pattern eliminates boilerplate. The macro crate (`fastmcp-macros`) is self-contained enough to be ported or used as a reference.
+- **Proc macro pattern for new Rust MCP servers**: If Sylveste adds any new Rust-based MCP server (e.g., an `interbase` Rust SDK companion, or a high-performance Interspect MCP interface), the `#[tool]` macro pattern eliminates boilerplate. The macro crate (`fastmcp-macros`) is self-contained enough to be ported or used as a reference.
 
 - **`McpContext` / Budget pattern for `intercomd`**: Even without adopting the full framework, the budget-based timeout model (observable remaining budget, graceful cancellation vs hard timeout) is implementable with standard tokio using a `CancellationToken` + `Instant`. The fastmcp_rust code is a clear reference for how to wire this.
 
-- **`fastmcp-transport` MemoryTransport for testing**: The in-process `MemoryTransport` that bridges two channel endpoints is a clean test harness pattern that could be ported into any Demarch Rust MCP server's test suite without pulling in the full framework.
+- **`fastmcp-transport` MemoryTransport for testing**: The in-process `MemoryTransport` that bridges two channel endpoints is a clean test harness pattern that could be ported into any Sylveste Rust MCP server's test suite without pulling in the full framework.
 
-- **4-valued `Outcome` type**: The `Ok/Err/Cancelled/Panicked` distinction is independently valuable as a design pattern for any long-running Rust async handler in Demarch. Could be modeled in `intercomd` without adopting `asupersync`.
+- **4-valued `Outcome` type**: The `Ok/Err/Cancelled/Panicked` distinction is independently valuable as a design pattern for any long-running Rust async handler in Sylveste. Could be modeled in `intercomd` without adopting `asupersync`.
 
-- **`fastmcp-console` stderr discipline**: The explicit contract that stdout carries only NDJSON JSON-RPC and all human output goes to stderr (with rich formatting) is a pattern Demarch Rust MCP servers should follow. `fastmcp-console` is a reference for how to implement this cleanly.
+- **`fastmcp-console` stderr discipline**: The explicit contract that stdout carries only NDJSON JSON-RPC and all human output goes to stderr (with rich formatting) is a pattern Sylveste Rust MCP servers should follow. `fastmcp-console` is a reference for how to implement this cleanly.
 
 ---
 
 ## Inspiration Opportunities
 
-- **Fluent server builder pattern**: The `Server::new().tool(...).resource(...).run_stdio()` chain is a clean ergonomic API that `interbase` or any future Demarch Rust MCP SDK should emulate, whether or not the framework itself is adopted.
+- **Fluent server builder pattern**: The `Server::new().tool(...).resource(...).run_stdio()` chain is a clean ergonomic API that `interbase` or any future Sylveste Rust MCP SDK should emulate, whether or not the framework itself is adopted.
 
 - **Tag-based component filtering**: Tools/resources/prompts can have tags, and the server's list operations support `include_tags`/`exclude_tags` with AND/OR logic. This is a useful dynamic capability scoping pattern for Autarch or Intercore tool registries.
 
-- **Checkpoint-based cancellation philosophy**: The design principle that every long-running async section should call `ctx.checkpoint()` to yield a cancellation point — rather than hoping tokio Future drops land correctly — is worth propagating into Demarch's Rust async patterns generally.
+- **Checkpoint-based cancellation philosophy**: The design principle that every long-running async section should call `ctx.checkpoint()` to yield a cancellation point — rather than hoping tokio Future drops land correctly — is worth propagating into Sylveste's Rust async patterns generally.
 
-- **`Outcome<T, E>` error taxonomy**: Decoupling "expected failure" from "cancellation" from "panic" produces cleaner error telemetry. Demarch's agent execution pipelines (Autarch, Intercore) could benefit from a similar taxonomy in their task result types.
+- **`Outcome<T, E>` error taxonomy**: Decoupling "expected failure" from "cancellation" from "panic" produces cleaner error telemetry. Sylveste's agent execution pipelines (Autarch, Intercore) could benefit from a similar taxonomy in their task result types.
 
-- **Middleware chain architecture**: The request/response middleware pattern (`on_request()` / `on_response()` / `on_error()`) with built-in `ResponseCachingMiddleware` and `RateLimitingMiddleware` is directly applicable to any Demarch component that routes tool calls through a dispatch layer.
+- **Middleware chain architecture**: The request/response middleware pattern (`on_request()` / `on_response()` / `on_error()`) with built-in `ResponseCachingMiddleware` and `RateLimitingMiddleware` is directly applicable to any Sylveste component that routes tool calls through a dispatch layer.
 
-- **MCPConfig file format**: The JSON/TOML server registry config (`mcp_config.rs`) that maps server names to stdio commands or URLs is a useful standard format for Demarch's plugin ecosystem config.
+- **MCPConfig file format**: The JSON/TOML server registry config (`mcp_config.rs`) that maps server names to stdio commands or URLs is a useful standard format for Sylveste's plugin ecosystem config.
 
 ---
 
 ## Verdict: `inspire-only`
 
-**Rationale:** The framework is high-quality and architecturally sound, but the hard nightly requirement and load-bearing dependency on a one-author crate ecosystem (`asupersync`, `rich_rust`) make wholesale adoption impractical for production Demarch Rust components; the design patterns — proc macro tool registration, budget-based timeouts, 4-valued outcomes, checkpoint cancellation, transport trait separation, and fluent server builder — are worth borrowing directly into any new Demarch Rust MCP server work.
+**Rationale:** The framework is high-quality and architecturally sound, but the hard nightly requirement and load-bearing dependency on a one-author crate ecosystem (`asupersync`, `rich_rust`) make wholesale adoption impractical for production Sylveste Rust components; the design patterns — proc macro tool registration, budget-based timeouts, 4-valued outcomes, checkpoint cancellation, transport trait separation, and fluent server builder — are worth borrowing directly into any new Sylveste Rust MCP server work.

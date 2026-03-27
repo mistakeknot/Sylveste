@@ -1,6 +1,6 @@
 # Plan: Skaffen Web Search Built-in Tool
 
-**Bead:** Demarch-6i0.20
+**Bead:** Sylveste-6i0.20
 **PRD:** docs/prd/2026-03-12-skaffen-web-search-prd.md
 **Date:** 2026-03-12
 
@@ -10,7 +10,7 @@ Add WebSearch (Exa API) and WebFetch (HTTP + HTML extraction) as built-in tools 
 
 ## Task Breakdown
 
-### Task 1: WebSearch tool (`internal/tool/web_search.go`) [Demarch-zpr7]
+### Task 1: WebSearch tool (`internal/tool/web_search.go`) [Sylveste-zpr7]
 
 **Files:** `internal/tool/web_search.go`, `internal/tool/web_search_test.go`
 
@@ -39,7 +39,7 @@ Tests (mock HTTP via `httptest.NewServer`):
 - Timeout: context deadline exceeded handling
 - NumResults > 10: clamped to 10
 
-### Task 2: WebFetch tool (`internal/tool/web_fetch.go`) [Demarch-6tys]
+### Task 2: WebFetch tool (`internal/tool/web_fetch.go`) [Sylveste-6tys]
 
 **Files:** `internal/tool/web_fetch.go`, `internal/tool/web_fetch_test.go`
 
@@ -76,7 +76,7 @@ Tests — use `extractContent()` and `validateURL()` directly for unit tests (av
   - Large response: body drain + truncation
   - Non-text Content-Type: rejected
 
-### Task 3: Phase gate + registration (`internal/tool/registry.go`, `builtin.go`) [Demarch-3pfp]
+### Task 3: Phase gate + registration (`internal/tool/registry.go`, `builtin.go`) [Sylveste-3pfp]
 
 **Files:** `internal/tool/registry.go`, `internal/tool/builtin.go`
 
@@ -87,7 +87,7 @@ Changes:
    - Add `r.RegisterForPhases(NewWebFetchTool(), []Phase{PhaseBrainstorm, PhasePlan, PhaseBuild})`
    - Update comment: "9 built-in tools" (was 7)
 
-### Task 4: Trust rules (`internal/trust/rules.go`) [Demarch-q9nw]
+### Task 4: Trust rules (`internal/trust/rules.go`) [Sylveste-q9nw]
 
 **Files:** `internal/trust/rules.go`, `internal/trust/trust_test.go`
 

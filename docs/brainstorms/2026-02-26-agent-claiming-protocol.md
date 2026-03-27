@@ -6,7 +6,7 @@
 
 ## Problem Statement
 
-When multiple agents work concurrently on the same Demarch monorepo, there is no reliable way for them to:
+When multiple agents work concurrently on the same Sylveste monorepo, there is no reliable way for them to:
 
 1. **Claim work exclusively** — `bd update --status=in_progress` is a soft claim with no collision detection. Another agent can claim the same bead with no error.
 2. **See who's working on what** — `bd list --status=in_progress` shows *what* is claimed but not *by whom*. There's no `bd who` command.

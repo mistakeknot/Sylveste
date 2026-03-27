@@ -1,7 +1,7 @@
 # fd-recursive-ring-architecture Review
 
 **Reviewer:** fd-recursive-ring-architecture (distributed systems architect)
-**Document:** `/home/mk/projects/Demarch/docs/research/autarch-autonomy-gap-analysis.md`
+**Document:** `/home/mk/projects/Sylveste/docs/research/autarch-autonomy-gap-analysis.md`
 **Date:** 2026-02-25
 **Scope:** Whether Intercore's run/phase/gate/dispatch model can represent the proposed recursive ring architecture, and where the document is honest (or not) about infrastructure gaps.
 
@@ -45,7 +45,7 @@ Specific problems with recursive rings:
 
 Today, that external caller is Clavain's hooks. The `session-start.sh` hook and the dispatch completion reactor call `ic run advance` when certain conditions are met. This is L2 (React) behavior: events trigger automatic reactions, but the reaction logic lives in the OS layer (bash hooks), not the kernel.
 
-**The gap for autonomous rings:** If a ring is supposed to be "autonomous -- it runs without human intervention in normal operation" (line 218), something must continuously poll or watch the run state and call `ic run advance` when gates pass. The kernel itself has no daemon, no watcher, no event loop. `ic` is a CLI binary that opens the database, does its work, and exits (this is a design principle, not an accident -- see the Demarch vision doc line 63).
+**The gap for autonomous rings:** If a ring is supposed to be "autonomous -- it runs without human intervention in normal operation" (line 218), something must continuously poll or watch the run state and call `ic run advance` when gates pass. The kernel itself has no daemon, no watcher, no event loop. `ic` is a CLI binary that opens the database, does its work, and exits (this is a design principle, not an accident -- see the Sylveste vision doc line 63).
 
 Options the document should acknowledge:
 
@@ -101,7 +101,7 @@ Note: `StatusFailed` is NOT in this continue clause. A failed child blocks the p
 
 This means:
 1. **If an inner ring fails, the outer ring is permanently blocked** until someone intervenes (cancels the child or resolves the failure).
-2. **There is no auto-remediation path in the kernel.** The kernel blocks. The OS layer would need to detect the block, decide what to do (retry, skip, escalate), and execute the decision. This is exactly the L3 (Auto-remediate) behavior the document says Demarch is "pushing toward" but has not shipped.
+2. **There is no auto-remediation path in the kernel.** The kernel blocks. The OS layer would need to detect the block, decide what to do (retry, skip, escalate), and execute the decision. This is exactly the L3 (Auto-remediate) behavior the document says Sylveste is "pushing toward" but has not shipped.
 3. **Budget exhaustion in an inner ring is a failure mode.** If `budget_enforce` is true and the inner ring exceeds its token budget, `CheckBudgetNotExceeded` fails. The inner ring is stuck at a gate it can never pass. The outer ring sees the child as "active but not advancing" with no diagnostic information about why.
 4. **Timeout/liveness.** There is no concept of "this ring has been stuck for too long." The kernel tracks `created_at` and `updated_at` on runs, but there is no stale-run detection or automatic cancellation. A ring that silently stalls (no dispatches, no failures, just... nothing happening) is invisible to the outer ring.
 

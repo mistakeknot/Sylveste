@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-The research agent produces assess-*.md documents following the pattern in docs/research/assess-beads-viewer-repos.md, outputting structured verdicts (adopt/port-partially/inspire-only/skip) with per-component analysis and integration opportunities mapped to Demarch modules (Clavain, Autarch, Intercore, Interverse, interbase).
+The research agent produces assess-*.md documents following the pattern in docs/research/assess-beads-viewer-repos.md, outputting structured verdicts (adopt/port-partially/inspire-only/skip) with per-component analysis and integration opportunities mapped to Sylveste modules (Clavain, Autarch, Intercore, Interverse, interbase).
 
 ## Review Approach
 
@@ -47,7 +47,7 @@ The research agent produces assess-*.md documents following the pattern in docs/
 
 ### 6. Evaluate whether config files could introduce privilege e...
 
-- Evaluate whether config files could introduce privilege escalation if committed to a shared Demarch subproject
+- Evaluate whether config files could introduce privilege escalation if committed to a shared Sylveste subproject
 
 ## What NOT to Flag
 

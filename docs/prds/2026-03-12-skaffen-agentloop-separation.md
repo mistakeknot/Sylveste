@@ -1,17 +1,17 @@
 ---
 artifact_type: prd
-bead: Demarch-6qb.8
+bead: Sylveste-6qb.8
 stage: design
 ---
 # PRD: Separate Agent Loop Library from OODARC Workflow
 
-**Bead:** Demarch-6qb.8
+**Bead:** Sylveste-6qb.8
 **Brainstorm:** docs/brainstorms/2026-03-12-skaffen-agent-loop-separation.md
 **Decision:** Option A — extract `internal/agentloop/` sub-package
 
 ## Problem
 
-Skaffen's agent loop is coupled to the OODARC 5-phase workflow. Every consumer (Intercom chat daemon, Autarch web UI) must adopt the phased workflow even if they just need a basic Decide→Act loop. This blocks the Intercom Go rewrite (Demarch-mvy) because Intercom shouldn't force chat messages through Brainstorm→Plan→Build→Review→Ship.
+Skaffen's agent loop is coupled to the OODARC 5-phase workflow. Every consumer (Intercom chat daemon, Autarch web UI) must adopt the phased workflow even if they just need a basic Decide→Act loop. This blocks the Intercom Go rewrite (Sylveste-mvy) because Intercom shouldn't force chat messages through Brainstorm→Plan→Build→Review→Ship.
 
 ## Solution
 

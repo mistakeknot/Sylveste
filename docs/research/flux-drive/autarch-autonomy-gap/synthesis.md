@@ -1,7 +1,7 @@
 # Synthesis Report: Autarch Autonomy Gap Analysis
 
 **Review Date:** 2026-02-25
-**Document Under Review:** `/home/mk/projects/Demarch/docs/research/autarch-autonomy-gap-analysis.md`
+**Document Under Review:** `/home/mk/projects/Sylveste/docs/research/autarch-autonomy-gap-analysis.md`
 **Agents:** 6 launched, 6 completed, 0 failed
 **Verdict:** NEEDS-CHANGES (risky)
 
@@ -9,11 +9,11 @@
 
 ## Executive Summary
 
-The gap analysis correctly diagnoses real structural misalignment between Autarch's operator-centric UX and Demarch's executive-centric autonomy vision. The proposed three-mode hierarchy (Executive/Supervisor/Operator) is architecturally sound. However, the analysis significantly understates implementation complexity in three areas:
+The gap analysis correctly diagnoses real structural misalignment between Autarch's operator-centric UX and Sylveste's executive-centric autonomy vision. The proposed three-mode hierarchy (Executive/Supervisor/Operator) is architecturally sound. However, the analysis significantly understates implementation complexity in three areas:
 
 1. **Data model prerequisites** — The proposed modes and escalation protocol require schema changes in Coldwine, Intercore, and Clavain that are not acknowledged.
 2. **Infrastructure gaps** — Autonomous phase advancement, recursive ring support, and escalation state management require kernel or OS-layer work beyond "configuration."
-3. **Architectural coherence** — The recursive ring model is presented as an existing vision commitment when it is actually a new proposal that would require updates to all four canonical vision documents (Demarch, Clavain, Intercore, Autarch).
+3. **Architectural coherence** — The recursive ring model is presented as an existing vision commitment when it is actually a new proposal that would require updates to all four canonical vision documents (Sylveste, Clavain, Intercore, Autarch).
 
 The document should be revised to distinguish between architectural diagnosis (solid) and remedy design (incomplete). A PRD written from this document would ship a partially functional Executive mode that appears complete but lacks the data model to populate it.
 
@@ -87,14 +87,14 @@ The escalation model is described as a message but not a process. Missing:
 ### 5. The Recursive Ring Model Is Not in Published Architecture
 **Sources:** fd-vision-coherence (P0 findings 1 and 2)
 
-The analysis states (line 237): "This is already what the Demarch vision describes. Autarch just hasn't caught up."
+The analysis states (line 237): "This is already what the Sylveste vision describes. Autarch just hasn't caught up."
 
-This is factually incorrect. The Demarch vision describes:
+This is factually incorrect. The Sylveste vision describes:
 - Three layers (kernel, OS, apps) + profiler
 - Five macro-stages per agency, each a sub-agency
 - Autonomy ladder L0-L4
 
-It does NOT describe recursive nesting of autonomous agencies or "rings." The term "ring" does not appear in any canonical Demarch, Clavain, Intercore, or Autarch vision document.
+It does NOT describe recursive nesting of autonomous agencies or "rings." The term "ring" does not appear in any canonical Sylveste, Clavain, Intercore, or Autarch vision document.
 
 The ring model is a legitimate architectural proposal but should be presented as a new proposal, not as an existing commitment Autarch has missed. **Adopting the ring model would require updates to all four vision documents** — it is not a gap in Autarch's implementation but a gap between the analysis and the published architecture.
 
@@ -189,7 +189,7 @@ These are one gap with three facets: role (Gap 1) → frequency (Gap 3) → moda
 ### 13. Mode Naming ("Executive") May Not Fit Primary Audience
 **Source:** fd-user-product (Concern 8)
 
-The Demarch vision's primary user is "one product-minded engineer as effective as a full team," not a manager. The term "Executive" carries corporate connotations that may not resonate. Consider "Steady-State," "Steward," or "Monitor" instead of "Executive."
+The Sylveste vision's primary user is "one product-minded engineer as effective as a full team," not a manager. The term "Executive" carries corporate connotations that may not resonate. Consider "Steady-State," "Steward," or "Monitor" instead of "Executive."
 
 ### 14. Budget Tracking Is Undersurfaced
 **Source:** fd-user-product (Concern 6)
@@ -258,7 +258,7 @@ All six agents converge on these critical problems:
 
 ### No Contradictions
 
-All agents agree on the fundamental diagnosis: Autarch's operator UX and Demarch's executive vision are misaligned. Agents differ on implementation path complexity, but not on whether the gap is real.
+All agents agree on the fundamental diagnosis: Autarch's operator UX and Sylveste's executive vision are misaligned. Agents differ on implementation path complexity, but not on whether the gap is real.
 
 ---
 
@@ -303,8 +303,8 @@ The following are strong enough to survive into a PRD:
 
 ## Files Referenced
 
-- Reviewed document: `/home/mk/projects/Demarch/docs/research/autarch-autonomy-gap-analysis.md`
-- Agent reports: All in `/home/mk/projects/Demarch/docs/research/flux-drive/autarch-autonomy-gap/`
+- Reviewed document: `/home/mk/projects/Sylveste/docs/research/autarch-autonomy-gap-analysis.md`
+- Agent reports: All in `/home/mk/projects/Sylveste/docs/research/flux-drive/autarch-autonomy-gap/`
   - `fd-user-product.md` — UX and product concerns (9 detailed findings)
   - `fd-autonomy-ux-hierarchy.md` — Mode boundaries and data model (4 P0-P1 findings)
   - `fd-recursive-ring-architecture.md` — Distributed systems implications (4 findings)
@@ -318,7 +318,7 @@ The following are strong enough to survive into a PRD:
 
 **Status:** NEEDS-CHANGES
 
-**Summary:** The analysis correctly diagnoses a real structural gap between Autarch's operator UX and Demarch's executive vision. The proposed three-mode hierarchy is architecturally sound. However, the remedy design significantly understates implementation complexity in data model prerequisites, infrastructure requirements, and architectural coherence. The recursive ring model is presented as an existing commitment when it is a new proposal. The document should be revised to:
+**Summary:** The analysis correctly diagnoses a real structural gap between Autarch's operator UX and Sylveste's executive vision. The proposed three-mode hierarchy is architecturally sound. However, the remedy design significantly understates implementation complexity in data model prerequisites, infrastructure requirements, and architectural coherence. The recursive ring model is presented as an existing commitment when it is a new proposal. The document should be revised to:
 
 1. Distinguish architectural diagnosis (solid) from remedy design (incomplete)
 2. Acknowledge data model and infrastructure gaps explicitly

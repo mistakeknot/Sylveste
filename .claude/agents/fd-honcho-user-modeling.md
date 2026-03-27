@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-Analyzing Hermes Agent to find patterns adaptable for Demarch's Autarch (L3 agent orchestration) and intercom (messaging/gateway).
+Analyzing Hermes Agent to find patterns adaptable for Sylveste's Autarch (L3 agent orchestration) and intercom (messaging/gateway).
 
 ## Review Approach
 
@@ -63,13 +63,13 @@ A good review from this agent:
 - Provides a concrete failure scenario for each P0/P1 finding — what breaks, under what conditions, and who is affected
 - Recommends the smallest viable fix, not an architecture overhaul — one diff hunk, not a rewrite
 - Frames uncertain findings as questions: "Does this handle X?" not "This doesn't handle X"
-- Determine if Honcho's peer+session model fits Demarch better than current session-keyed approach
-- Assess if migrate_local_history() XML approach bridges Demarch's existing conversation history
+- Determine if Honcho's peer+session model fits Sylveste better than current session-keyed approach
+- Assess if migrate_local_history() XML approach bridges Sylveste's existing conversation history
 - Identify session_strategy assumptions about single-project vs. multi-project deployments
 
 ## Decision Lens
 
-Prioritizes patterns addressing gaps in Demarch's current session/memory model. De-prioritizes Honcho-specific API details in favor of architectural concepts.
+Prioritizes patterns addressing gaps in Sylveste's current session/memory model. De-prioritizes Honcho-specific API details in favor of architectural concepts.
 
 ## Prioritization
 

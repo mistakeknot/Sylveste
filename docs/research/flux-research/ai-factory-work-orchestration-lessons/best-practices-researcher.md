@@ -79,7 +79,7 @@ MES **automatically decomposes** high-level work orders into:
 
 ### Concrete Implementation
 
-**Demarch's three-tier model should align:**
+**Sylveste's three-tier model should align:**
 
 1. **Epic/Sprint (ERP equivalent):** "Implement modular agent architecture refactor (2-week sprint)"
    - User story density, team capacity, deadline
@@ -310,11 +310,11 @@ Traditional runbooks are static checklists. Modern SRE uses **dynamic runbooks**
 
 ### The Integration Lesson: Adopt Mature Tools, Build Around Them
 
-**Key memory from Demarch project:** "Check assessment docs before building infrastructure. We rebuilt session search when CASS was already assessed as 'adopt'."
+**Key memory from Sylveste project:** "Check assessment docs before building infrastructure. We rebuilt session search when CASS was already assessed as 'adopt'."
 
 For multi-agent orchestration, **don't build custom orchestration logic**. Instead:
 
-- **Phase 1 (Foundation):** Use beads + human scheduling (current Demarch state)
+- **Phase 1 (Foundation):** Use beads + human scheduling (current Sylveste state)
   - Beads track work intent + constraints
   - Humans (team lead) assign beads to agents
   - Sessions log progress against beads
@@ -377,7 +377,7 @@ From SRE incident management:
 
 ### Concrete Implementation
 
-**Monthly Demarch review cycle:**
+**Monthly Sylveste review cycle:**
 1. Query CASS: Sessions that had escalations + cost overruns
 2. Per issue type: "Why did this cost more/escalate?"
 3. Update: Beads template, agent playbooks, time estimates
@@ -397,7 +397,7 @@ VFX teams use one tool (e.g., ShotGrid) that combines:
 
 Not email threads, Slack discussions, separate wikis.
 
-**For Demarch:**
+**For Sylveste:**
 - Beads should be the single source of truth for work state
 - Session logs should feed back into beads (actual progress)
 - Notes should be in beads comments, not Slack

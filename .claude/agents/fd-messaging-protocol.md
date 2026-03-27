@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-mcp_agent_mail is a Python/FastMCP coordination server using SQLite+Git dual persistence and poll-based messaging. Demarch's Intermute uses Go HTTP+WebSocket for real-time agent coordination. The goal is to identify messaging protocol patterns worth adopting in Demarch's stack.
+mcp_agent_mail is a Python/FastMCP coordination server using SQLite+Git dual persistence and poll-based messaging. Sylveste's Intermute uses Go HTTP+WebSocket for real-time agent coordination. The goal is to identify messaging protocol patterns worth adopting in Sylveste's stack.
 
 ## Review Approach
 
@@ -64,7 +64,7 @@ A good review from this agent:
 - Recommends the smallest viable fix, not an architecture overhaul — one diff hunk, not a rewrite
 - Frames uncertain findings as questions: "Does this handle X?" not "This doesn't handle X"
 - Produce a concrete mapping of mcp_agent_mail delivery guarantees to Intermute equivalents — gaps in Intermute's model are adoption candidates
-- Determine whether the poll model is a deliberate offline-resilience choice or simply easier to implement over MCP — this frames whether Demarch should adopt it or treat it as a limitation to work around
+- Determine whether the poll model is a deliberate offline-resilience choice or simply easier to implement over MCP — this frames whether Sylveste should adopt it or treat it as a limitation to work around
 - Identify the minimum polling interval that makes the protocol usable for real-time coordination vs batch review workflows
 
 ## Decision Lens

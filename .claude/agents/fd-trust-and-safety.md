@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-These are product specification CUJs for the Demarch autonomous development platform. They describe target user experiences across quality gates, multi-agent coordination, parallel dispatch, and Skaffen agent runtime. Review is for specification quality, not implementation.
+These are product specification CUJs for the Sylveste autonomous development platform. They describe target user experiences across quality gates, multi-agent coordination, parallel dispatch, and Skaffen agent runtime. Review is for specification quality, not implementation.
 
 ## Review Approach
 

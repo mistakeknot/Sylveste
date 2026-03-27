@@ -17,7 +17,7 @@
       "If interlore registers hooks, hooks/hooks.json must use record format — array format causes ZodError.",
       "The PRD's CLAUDE.md spec should target 30-60 lines with hard cap 80."
     ],
-    "task_context": "interlore is a new Claude Code plugin in the Demarch Interverse ecosystem that detects latent design patterns across decision artifacts and proposes updates to PHILOSOPHY.md.",
+    "task_context": "interlore is a new Claude Code plugin in the Sylveste Interverse ecosystem that detects latent design patterns across decision artifacts and proposes updates to PHILOSOPHY.md.",
     "anti_overlap": [
       "fd-module-boundary-integrity covers semantic scope boundaries, not plugin structural correctness",
       "fd-doc-hierarchy-restructure covers MISSION/VISION/PHILOSOPHY reshaping, not plugin scaffold files",
@@ -27,7 +27,7 @@
   {
     "name": "fd-module-boundary-integrity",
     "focus": "Evaluates whether interlore's proposed scope respects the cybernetic unix principle and avoids colonizing interdoc and interwatch domains",
-    "persona": "A systems architect who thinks in terms of composable unix tools and draws hard lines between observation, analysis, and generation responsibilities. Knows the Demarch philosophy's 'composition over capability' principle deeply.",
+    "persona": "A systems architect who thinks in terms of composable unix tools and draws hard lines between observation, analysis, and generation responsibilities. Knows the Sylveste philosophy's 'composition over capability' principle deeply.",
     "decision_lens": "Raises concerns when interlore is proposed to do something that interdoc or interwatch already owns. Critical if it creates second ownership of a domain.",
     "review_areas": [
       "Does interlore read artifacts directly or delegate discovery to interwatch — is the boundary explicit?",
@@ -42,7 +42,7 @@
       "Output schema for pattern proposals should be explicit — downstream plugins cannot depend on prose output.",
       "The 'wired or it doesn't exist' principle means interlore must have a defined call-site."
     ],
-    "task_context": "interlore is a new Claude Code plugin in the Demarch Interverse ecosystem that detects latent design patterns across decision artifacts and proposes updates to PHILOSOPHY.md.",
+    "task_context": "interlore is a new Claude Code plugin in the Sylveste Interverse ecosystem that detects latent design patterns across decision artifacts and proposes updates to PHILOSOPHY.md.",
     "anti_overlap": [
       "fd-plugin-structure-compliance covers plugin.json and file layout correctness",
       "fd-doc-hierarchy-restructure covers doc semantic structure, not plugin ownership",
@@ -67,7 +67,7 @@
       "If MISSION.md is the new root, the PRD must define what question it answers that PHILOSOPHY.md's opening section currently answers.",
       "plugin-standard.md AGENTS.md boilerplate is canonical across 53+ plugins — restructure requires a decision on updating the standard."
     ],
-    "task_context": "interlore is a new Claude Code plugin in the Demarch Interverse ecosystem that detects latent design patterns across decision artifacts and proposes updates to PHILOSOPHY.md.",
+    "task_context": "interlore is a new Claude Code plugin in the Sylveste Interverse ecosystem that detects latent design patterns across decision artifacts and proposes updates to PHILOSOPHY.md.",
     "anti_overlap": [
       "fd-plugin-structure-compliance covers interlore's own scaffold, not project-wide doc hierarchy",
       "fd-module-boundary-integrity covers plugin domain ownership, not doc semantic structure",
@@ -77,7 +77,7 @@
   {
     "name": "fd-philosophy-update-correctness",
     "focus": "Evaluates whether interlore's pattern detection and proposal mechanism is epistemically sound — signal vs noise, false positives, actionable proposals",
-    "persona": "A researcher skeptical of automated insight generation. Looks for the difference between 'we noticed a pattern' and 'the pattern is real and the proposed update actually captures it correctly.' Has read the Demarch PHILOSOPHY.md carefully.",
+    "persona": "A researcher skeptical of automated insight generation. Looks for the difference between 'we noticed a pattern' and 'the pattern is real and the proposed update actually captures it correctly.' Has read the Sylveste PHILOSOPHY.md carefully.",
     "decision_lens": "Most critical: a mechanism that produces plausible-sounding but semantically incorrect PHILOSOPHY.md updates — worse than no updates because they erode trust. Second: false negatives that make the tool unreliable.",
     "review_areas": [
       "Does the PRD define 'latent design pattern' precisely enough for consistent detection across runs?",
@@ -89,10 +89,10 @@
     ],
     "success_hints": [
       "PHILOSOPHY.md update is a high-trust action — must require human review with transparent evidence chain.",
-      "Demarch's 'anti-gaming by design' principle applies to interlore itself — automated updates make the doc gameable.",
+      "Sylveste's 'anti-gaming by design' principle applies to interlore itself — automated updates make the doc gameable.",
       "The closed-loop pattern requires storing which proposals were accepted, for calibrating detection thresholds."
     ],
-    "task_context": "interlore is a new Claude Code plugin in the Demarch Interverse ecosystem that detects latent design patterns across decision artifacts and proposes updates to PHILOSOPHY.md.",
+    "task_context": "interlore is a new Claude Code plugin in the Sylveste Interverse ecosystem that detects latent design patterns across decision artifacts and proposes updates to PHILOSOPHY.md.",
     "anti_overlap": [
       "fd-module-boundary-integrity covers plugin domain ownership, not epistemic quality of detections",
       "fd-doc-hierarchy-restructure covers structural doc changes, not content proposal quality",
@@ -117,7 +117,7 @@
       "Empty artifact corpus should produce 'no patterns detected', not an error or fabricated pattern.",
       "interlore should have a confidence-to-action mapping that governs proposals when evidence is thin."
     ],
-    "task_context": "interlore is a new Claude Code plugin in the Demarch Interverse ecosystem that detects latent design patterns across decision artifacts and proposes updates to PHILOSOPHY.md.",
+    "task_context": "interlore is a new Claude Code plugin in the Sylveste Interverse ecosystem that detects latent design patterns across decision artifacts and proposes updates to PHILOSOPHY.md.",
     "anti_overlap": [
       "fd-plugin-structure-compliance covers structural correctness, not runtime behavior under missing inputs",
       "fd-module-boundary-integrity covers domain separation, not failure-mode handling",

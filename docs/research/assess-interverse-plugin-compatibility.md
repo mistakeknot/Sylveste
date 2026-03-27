@@ -1,7 +1,7 @@
 # Assessment: Interverse Plugin Compatibility Layer for Skaffen
 
 **Date:** 2026-03-16
-**Bead:** Demarch-6qb.7
+**Bead:** Sylveste-6qb.7
 **Verdict:** adopt (phased)
 
 ## Context

@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-o5u
+bead: Sylveste-o5u
 stage: executed
 requirements:
   - F1: Plugin config parsing
@@ -12,7 +12,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-o5u
+**Bead:** Sylveste-o5u
 **Goal:** Give Skaffen access to Interverse plugin MCP tools with config-driven discovery, lazy spawn, and per-plugin phase gating.
 
 **Architecture:** New `internal/mcp/` package with 5 files: config parser, client wrapper, tool adapter, lifecycle manager, and package doc. The manager is wired into `main.go` after `RegisterBuiltins()`. Uses the official MCP Go SDK (`modelcontextprotocol/go-sdk`) for JSON-RPC stdio transport. Plugins declared in `plugins.toml` with per-plugin phase lists.

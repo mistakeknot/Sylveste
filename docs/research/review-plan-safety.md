@@ -2,9 +2,9 @@
 
 **Date:** 2026-02-24
 **Reviewer:** Flux-Drive Safety Agent (fd-safety)
-**Plan:** `/home/mk/projects/Demarch/docs/plans/2026-02-24-ic-binary-install-path.md`
-**Baseline script:** `/home/mk/projects/Demarch/install.sh`
-**Prior install.sh review:** `/home/mk/projects/Demarch/docs/research/safety-review-install-sh.md`
+**Plan:** `/home/mk/projects/Sylveste/docs/plans/2026-02-24-ic-binary-install-path.md`
+**Baseline script:** `/home/mk/projects/Sylveste/install.sh`
+**Prior install.sh review:** `/home/mk/projects/Sylveste/docs/research/safety-review-install-sh.md`
 **Risk Classification:** Medium (new network fetch path, source-to-binary build step added; no auth or credentials changed; no irreversible data migration)
 
 ---
@@ -96,9 +96,9 @@ Option (b) is simpler and does not require coordinating with the existing `run()
 
 ```bash
 if run git clone --depth=1 --filter=blob:none --sparse \
-    https://github.com/mistakeknot/Demarch.git "$IC_TMPDIR/Demarch" 2>/dev/null; then
-    (cd "$IC_TMPDIR/Demarch" && git sparse-checkout set core/intercore)
-    IC_SRC="$IC_TMPDIR/Demarch/core/intercore"
+    https://github.com/mistakeknot/Sylveste.git "$IC_TMPDIR/Sylveste" 2>/dev/null; then
+    (cd "$IC_TMPDIR/Sylveste" && git sparse-checkout set core/intercore)
+    IC_SRC="$IC_TMPDIR/Sylveste/core/intercore"
 ```
 
 ### Analysis
@@ -120,8 +120,8 @@ Two discrete risks compound:
 ```bash
 INTERCORE_COMMIT="<commit-sha-of-known-good-state>"
 git clone --depth=1 --filter=blob:none --sparse \
-    https://github.com/mistakeknot/Demarch.git "$IC_TMPDIR/Demarch" 2>/dev/null \
-    && git -C "$IC_TMPDIR/Demarch" checkout "$INTERCORE_COMMIT" 2>/dev/null
+    https://github.com/mistakeknot/Sylveste.git "$IC_TMPDIR/Sylveste" 2>/dev/null \
+    && git -C "$IC_TMPDIR/Sylveste" checkout "$INTERCORE_COMMIT" 2>/dev/null
 ```
 
 **Stronger (P2):** After clone, verify a checksum of `core/intercore/go.sum` or a sentinel file before building. This adds maintenance burden but is appropriate if ic ever handles sensitive data.

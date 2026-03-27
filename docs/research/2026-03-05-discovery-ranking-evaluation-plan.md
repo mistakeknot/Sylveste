@@ -24,7 +24,7 @@ A manually-rated reference set to measure precision and recall of the automated 
 ### Method
 
 1. **Collect 100 discoveries** across the first 3-5 scans (mix of sources: arxiv, github, hackernews, exa).
-2. **Human rating** (by project owner): Rate each discovery 1-5 on relevance to Demarch:
+2. **Human rating** (by project owner): Rate each discovery 1-5 on relevance to Sylveste:
    - **5** — Directly applicable, would adopt/build immediately
    - **4** — Strong relevance, worth a brainstorm
    - **3** — Interesting but not actionable this quarter

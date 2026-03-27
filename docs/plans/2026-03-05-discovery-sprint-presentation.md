@@ -280,5 +280,5 @@ cd os/clavain && git push
 **Step 4: Push monorepo**
 
 ```bash
-cd /home/mk/projects/Demarch && git add docs/ && git commit -m "docs: brainstorm + PRD + plan for discovery sprint presentation (iv-zsio)" && git push
+cd /home/mk/projects/Sylveste && git add docs/ && git commit -m "docs: brainstorm + PRD + plan for discovery sprint presentation (iv-zsio)" && git push
 ```

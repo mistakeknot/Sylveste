@@ -1,6 +1,6 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-4dy
+bead: Sylveste-4dy
 stage: discover
 ---
 
@@ -18,7 +18,7 @@ Rejected alternatives:
 - **Pure inline (Approach A):** No isolation, pollutes generate() method
 - **mlx-lm fork (Approach B):** Couples to mlx-lm internals, breaks on upstream updates
 
-The experiment pattern also enables Demarch-m0m (autoresearch parameter tuning) to iterate on grid sizes, JL dimensions, and bit allocation without touching core code.
+The experiment pattern also enables Sylveste-m0m (autoresearch parameter tuning) to iterate on grid sizes, JL dimensions, and bit allocation without touching core code.
 
 ## Key Decisions
 
@@ -32,7 +32,7 @@ The experiment pattern also enables Demarch-m0m (autoresearch parameter tuning) 
 
 5. **KV cache tensor interception.** mlx-lm's `stream_generate` currently treats KV cache as opaque. TurboQuant needs to intercept KV tensors after each attention layer. Two paths: (a) use mlx-lm's `QuantizedKVCache` hook points if they exist, or (b) wrap the model's attention modules to intercept before/after cache updates. Research mlx-lm's cache API during planning.
 
-6. **Replaces the Q8K/Q4V plan.** The existing `kv_quantization` experiment config (key_bits=8, value_bits=4) was the old approach (Demarch-dw8). TurboQuant at 3-bit with zero quality loss is strictly better. Update the config block to use TurboQuant parameters instead.
+6. **Replaces the Q8K/Q4V plan.** The existing `kv_quantization` experiment config (key_bits=8, value_bits=4) was the old approach (Sylveste-dw8). TurboQuant at 3-bit with zero quality loss is strictly better. Update the config block to use TurboQuant parameters instead.
 
 ## Open Questions
 

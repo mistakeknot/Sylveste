@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-Hyperspace AGI is a P2P autonomous AI research network using GossipSub, Loro CRDTs, and GitHub as a 3-layer coordination stack. Demarch is a single-operator multi-agent platform where Clavain orchestrates agents via interlock (file-based reservations) and beads (Dolt-backed issue tracking). The analysis must identify adoptable coordination patterns for a local, single-machine context.
+Hyperspace AGI is a P2P autonomous AI research network using GossipSub, Loro CRDTs, and GitHub as a 3-layer coordination stack. Sylveste is a single-operator multi-agent platform where Clavain orchestrates agents via interlock (file-based reservations) and beads (Dolt-backed issue tracking). The analysis must identify adoptable coordination patterns for a local, single-machine context.
 
 ## Review Approach
 
@@ -39,11 +39,11 @@ Hyperspace AGI is a P2P autonomous AI research network using GossipSub, Loro CRD
 
 ### 4. Evaluate the agent JOURNAL
 
-- Evaluate the agent JOURNAL.md cognitive journal pattern as a structured alternative to Demarch's auto-memory conventions, and whether the two should be unified
+- Evaluate the agent JOURNAL.md cognitive journal pattern as a structured alternative to Sylveste's auto-memory conventions, and whether the two should be unified
 
 ### 5. Identify the philosophical gap between Hyperspace's single
 
-- Identify the philosophical gap between Hyperspace's single-metric optimization (val_loss, NDCG@10) and Demarch's multi-dimensional code quality, and what richer metrics Autarch should use instead
+- Identify the philosophical gap between Hyperspace's single-metric optimization (val_loss, NDCG@10) and Sylveste's multi-dimensional code quality, and what richer metrics Autarch should use instead
 
 ### 6. Assess DiLoCo's 'work locally
 
@@ -64,12 +64,12 @@ A good review from this agent:
 - Recommends the smallest viable fix, not an architecture overhaul — one diff hunk, not a rewrite
 - Frames uncertain findings as questions: "Does this handle X?" not "This doesn't handle X"
 - Agent produces a concrete proposal for what Skaffen's 'mutation history' (best approach per task type) should look like as a data structure
-- Agent identifies the specific feedback loop closure mechanism Demarch is missing that Hyperspace has (what triggers the next hypothesis in Skaffen's loop)
-- Agent makes a clear recommendation on whether the agent JOURNAL.md pattern should replace, extend, or remain separate from Demarch's auto-memory conventions
+- Agent identifies the specific feedback loop closure mechanism Sylveste is missing that Hyperspace has (what triggers the next hypothesis in Skaffen's loop)
+- Agent makes a clear recommendation on whether the agent JOURNAL.md pattern should replace, extend, or remain separate from Sylveste's auto-memory conventions
 
 ## Decision Lens
 
-Prioritize patterns that make Skaffen's autonomous work loop more systematic and compound-learning-aware. Flag philosophical mismatches where Hyperspace's narrow-metric optimization diverges from Demarch's broad software-quality goals.
+Prioritize patterns that make Skaffen's autonomous work loop more systematic and compound-learning-aware. Flag philosophical mismatches where Hyperspace's narrow-metric optimization diverges from Sylveste's broad software-quality goals.
 
 ## Prioritization
 

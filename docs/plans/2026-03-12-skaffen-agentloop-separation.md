@@ -1,13 +1,13 @@
 ---
 artifact_type: plan
-bead: Demarch-6qb.8
+bead: Sylveste-6qb.8
 stage: executing
 requirements:
   - Separate agent loop library from OODARC workflow engine
 ---
 # Skaffen: Agent Loop Separation Plan
 
-**Bead:** Demarch-6qb.8
+**Bead:** Sylveste-6qb.8
 **PRD:** docs/prds/2026-03-12-skaffen-agentloop-separation.md
 **Goal:** Extract universal Decide→Act loop into `internal/agentloop/`, leave OODARC workflow in `internal/agent/`.
 

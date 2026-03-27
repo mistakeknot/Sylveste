@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-rp5
+bead: Sylveste-rp5
 stage: design
 requirements:
   - "F1: Fork + rebrand pi_agent_rust to skaffen"
@@ -13,7 +13,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-rp5
+**Bead:** Sylveste-rp5
 **Goal:** Fork pi_agent_rust into the standalone Skaffen repo with all tests passing, custom deps vendored, and CI green.
 
 **Architecture:** Copy pi_agent_rust source into the existing Skaffen GitHub repo (github.com/mistakeknot/Skaffen). Rename binary from `pi` to `skaffen`, strip branding, vendor 4 custom crate families as workspace members under `vendor/`. Add a no-op OODARC hook at the agent turn boundary behind a feature flag. Establish criterion benchmark baselines and a GitHub Actions CI pipeline.
@@ -65,7 +65,7 @@ ls -la  # Verify current state: docs only, .git present
 Copy everything except `.git/`, `target/`, and files that conflict with existing Skaffen docs:
 
 ```bash
-# From Demarch root
+# From Sylveste root
 rsync -av --exclude='.git' --exclude='target/' --exclude='README.md' \
   --exclude='LICENSE' --exclude='CLAUDE.md' --exclude='AGENTS.md' \
   research/pi_agent_rust/ os/Skaffen/
@@ -121,7 +121,7 @@ In `os/Skaffen/Cargo.toml`:
 - Change `[lib] name = "pi"` → `[lib] name = "skaffen"`
 - Update `repository` → `"https://github.com/mistakeknot/Skaffen"`
 - Update `homepage` → `"https://github.com/mistakeknot/Skaffen"`
-- Update `description` to reference Skaffen/Demarch
+- Update `description` to reference Skaffen/Sylveste
 
 **Step 2: Update CLI help text**
 

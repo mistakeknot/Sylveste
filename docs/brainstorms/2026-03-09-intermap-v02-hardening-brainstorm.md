@@ -20,7 +20,7 @@ Intermap v0.1.4: 9 MCP tools, Go host + Python sidecar, 6 Go test files + 9 Pyth
 
 ### Performance Observations
 
-- `detect_patterns` scans all Go/Python files in a project, parsing ASTs each time. On a large project (intermap itself: 18 Python files + 6 Go packages), this is noticeable but not slow. On the Demarch monorepo root, it could be expensive.
+- `detect_patterns` scans all Go/Python files in a project, parsing ASTs each time. On a large project (intermap itself: 18 Python files + 6 Go packages), this is noticeable but not slow. On the Sylveste monorepo root, it could be expensive.
 - `cross_project_deps` walks all projects scanning go.mod, pyproject.toml, plugin.json. Results change only when those files change — perfect caching candidate.
 - `live_changes` body-range detection works for Python (AST-based line ranges) but has a documented gap: when only the body of a function changes and the header line is unchanged, the hunk-to-symbol mapping can miss the edit if the hunk starts mid-body.
 - Python sidecar's in-process `FileCache` helps with repeated file reads but doesn't help when the MCP server restarts between sessions.

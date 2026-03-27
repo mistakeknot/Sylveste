@@ -1,11 +1,11 @@
 # interdoc: interbase AGENTS.md Refresh
 
-> Research analysis for updating `/home/mk/projects/Demarch/sdk/interbase/AGENTS.md`
+> Research analysis for updating `/home/mk/projects/Sylveste/sdk/interbase/AGENTS.md`
 > Date: 2026-02-25
 
 ## Task Context
 
-Interbase is described in the Demarch root CLAUDE.md as "shared integration SDK for dual-mode plugins." The task prompt described it as a TypeScript/Node package, but this is **incorrect** -- interbase is a **Bash + Go** SDK with no TypeScript, no `package.json`, and no `tsconfig.json`.
+Interbase is described in the Sylveste root CLAUDE.md as "shared integration SDK for dual-mode plugins." The task prompt described it as a TypeScript/Node package, but this is **incorrect** -- interbase is a **Bash + Go** SDK with no TypeScript, no `package.json`, and no `tsconfig.json`.
 
 ## Repo Structure (Actual)
 

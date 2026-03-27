@@ -1,12 +1,12 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-p23
+bead: Sylveste-p23
 stage: discover
 ---
 
 # ScopedSession — Context Isolation with Selective Injection
 
-**Bead:** Demarch-p23
+**Bead:** Sylveste-p23
 
 ## Current State
 
@@ -15,7 +15,7 @@ stage: discover
 - Template expansion with `{{.TaskPrompt}}` and `{{.InjectedContext}}` placeholders
 - Isolated message history (subagent messages don't pollute parent)
 
-Created as part of the subagent system sprint (Demarch-6i0.18). The runner instantiates it at `runner.go:114`.
+Created as part of the subagent system sprint (Sylveste-6i0.18). The runner instantiates it at `runner.go:114`.
 
 ## Gaps vs PRD F3 Acceptance Criteria
 

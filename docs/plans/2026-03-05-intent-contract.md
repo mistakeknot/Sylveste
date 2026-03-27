@@ -1175,6 +1175,6 @@ Task 6 (architecture note) — independent
 
 ## Scope Note: Deferred Features
 
-- **F4 (Intercom migration):** Intercom has zero references to clavain-cli. There's no DemarchAdapter to migrate. When Intercom adds clavain integration, it should use typed intents from the start rather than building a string-based adapter first. Deferred entirely.
+- **F4 (Intercom migration):** Intercom has zero references to clavain-cli. There's no SylvesteAdapter to migrate. When Intercom adds clavain integration, it should use typed intents from the start rather than building a string-based adapter first. Deferred entirely.
 - **F5 (Kernel library bindings):** Optional performance optimization. The CLI path works. Deferred to a follow-up bead.
 - **Idempotency dedup cache:** Tracked in the architecture note as future work. The idempotency key is in the contract types and audit log, but dedup enforcement is deferred.

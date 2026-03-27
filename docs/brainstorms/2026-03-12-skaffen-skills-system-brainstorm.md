@@ -1,6 +1,6 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-6i0.19
+bead: Sylveste-6i0.19
 stage: discover
 ---
 # Skaffen Skills System (SKILL.md Discovery and Invocation)

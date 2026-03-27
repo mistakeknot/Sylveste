@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-og7m
+bead: Sylveste-og7m
 stage: design
 batch: 3
 ---
@@ -63,7 +63,7 @@ Three targeted fixes to the multi-agent coordination surface: reservation resour
 - [ ] High-risk paths mapped: `core/` (intercore, intermute), `os/Clavain/`, `os/Skaffen/`, key Interverse plugins
 - [ ] `@mistakeknot` as owner for all kernel paths
 - [ ] Wildcard fallback `* @mistakeknot` for uncovered paths
-- [ ] File uses GitHub CODEOWNERS syntax (tested: `gh api repos/mistakeknot/Demarch/codeowners/errors` returns empty)
+- [ ] File uses GitHub CODEOWNERS syntax (tested: `gh api repos/mistakeknot/Sylveste/codeowners/errors` returns empty)
 
 ## Execution Order
 

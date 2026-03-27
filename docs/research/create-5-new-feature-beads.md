@@ -47,13 +47,13 @@ All 5 new beads were linked to `iv-w7bh` via `bd dep add`:
 ## Feature Descriptions
 
 ### iv-dl72x — F1: Audit existing Intermap MCP tools
-Run all 6 tools against real Demarch projects. Document accuracy, latency, cache behavior, and integration gaps. Produces bug list and priority recommendations.
+Run all 6 tools against real Sylveste projects. Document accuracy, latency, cache behavior, and integration gaps. Produces bug list and priority recommendations.
 
 ### iv-3kz0v — F5: Write real Intermap vision and roadmap docs
 Replace stub vision.md and roadmap.md with real content. Add roadmap.json for interpath aggregation.
 
 ### iv-80s4e — F6: Cross-project dependency graph MCP tool
-New cross_project_deps MCP tool. Detect Go module deps, Python path deps, plugin deps. Returns structured JSON. Test against Demarch monorepo.
+New cross_project_deps MCP tool. Detect Go module deps, Python path deps, plugin deps. Returns structured JSON. Test against Sylveste monorepo.
 
 ### iv-dta9w — F7: Architecture pattern detection MCP tool
 New detect_patterns MCP tool. Identify handler chains, middleware stacks, interface-impl pairs, MCP registrations, plugin structures. Return with confidence scores.

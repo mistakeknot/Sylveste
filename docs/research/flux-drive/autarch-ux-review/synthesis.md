@@ -2,8 +2,8 @@
 
 **Date:** 2026-02-25
 **Agents dispatched:** 6 (5 custom UX + 1 core user-product)
-**Target:** /home/mk/projects/Demarch/apps/autarch/
-**Verdict:** CONDITIONAL PASS — strong foundations, but 4 P0 issues and 8 P1 issues prevent the TUI from delivering the Autarch and Demarch visions
+**Target:** /home/mk/projects/Sylveste/apps/autarch/
+**Verdict:** CONDITIONAL PASS — strong foundations, but 4 P0 issues and 8 P1 issues prevent the TUI from delivering the Autarch and Sylveste visions
 
 ---
 

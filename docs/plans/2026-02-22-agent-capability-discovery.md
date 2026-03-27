@@ -563,7 +563,7 @@ func TestCapabilityDiscoveryEndToEnd(t *testing.T) {
 	for _, a := range agents {
 		payload := map[string]any{
 			"name":         a.name,
-			"project":      "demarch",
+			"project":      "sylveste",
 			"capabilities": a.caps,
 		}
 		buf, _ := json.Marshal(payload)
@@ -576,7 +576,7 @@ func TestCapabilityDiscoveryEndToEnd(t *testing.T) {
 
 	// Query by single capability — only fd-architecture has review:architecture
 	// (repo-research-analyst has research:architecture — different domain prefix)
-	resp, err := http.Get(srv.URL + "/api/agents?project=demarch&capability=review:architecture")
+	resp, err := http.Get(srv.URL + "/api/agents?project=sylveste&capability=review:architecture")
 	if err != nil {
 		t.Fatalf("query failed: %v", err)
 	}
@@ -597,7 +597,7 @@ func TestCapabilityDiscoveryEndToEnd(t *testing.T) {
 	}
 
 	// Query by OR across domains
-	resp2, err := http.Get(srv.URL + "/api/agents?project=demarch&capability=review:safety,research:codebase")
+	resp2, err := http.Get(srv.URL + "/api/agents?project=sylveste&capability=review:safety,research:codebase")
 	if err != nil {
 		t.Fatalf("query failed: %v", err)
 	}

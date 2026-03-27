@@ -141,7 +141,7 @@ TUI becomes F8 in the Skaffen PRD, after F7 (CLI Entry Point). Dependencies: F3 
 
 ### 7. Naming: Masaq
 
-From Iain M. Banks' *Look to Windward*. Masaq' Orbital is where the Culture renders its most beautiful experiences — fitting for a library that renders the visual surface of Demarch's agent ecosystem. Two syllables, Culture-universe, evocative of display/presentation.
+From Iain M. Banks' *Look to Windward*. Masaq' Orbital is where the Culture renders its most beautiful experiences — fitting for a library that renders the visual surface of Sylveste's agent ecosystem. Two syllables, Culture-universe, evocative of display/presentation.
 
 ## Competitive Research
 

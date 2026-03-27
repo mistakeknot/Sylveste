@@ -1,7 +1,7 @@
-# Interdoc Analysis: Demarch Root AGENTS.md
+# Interdoc Analysis: Sylveste Root AGENTS.md
 
 **Date:** 2026-02-25
-**Target:** `/home/mk/projects/Demarch/AGENTS.md` (376 lines)
+**Target:** `/home/mk/projects/Sylveste/AGENTS.md` (376 lines)
 **Method:** Read current AGENTS.md + CLAUDE.md, explored all top-level and subproject directories, compared documented vs actual structure.
 
 ## Summary of Changes
@@ -43,7 +43,7 @@ These exist at the repo root but are not mentioned in AGENTS.md:
 | `companion-graph.json` | Machine-readable plugin dependency graph (consumed by `/clavain:doctor`) |
 | `CONVENTIONS.md` | Canonical documentation path conventions (referenced but not listed) |
 | `GEMINI.md` | Gemini (Antigravity) context file for non-Claude agents |
-| `install.sh` / `uninstall.sh` | Curl-fetchable installer/uninstaller for Demarch |
+| `install.sh` / `uninstall.sh` | Curl-fetchable installer/uninstaller for Sylveste |
 
 ### 5. Missing Operational Guide Reference
 

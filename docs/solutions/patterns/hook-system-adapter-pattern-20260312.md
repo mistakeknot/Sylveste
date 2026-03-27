@@ -1,6 +1,6 @@
 ---
 artifact_type: reflection
-bead: Demarch-6i0.2
+bead: Sylveste-6i0.2
 stage: reflect
 category: patterns
 title: Hook system adapter pattern and security layering

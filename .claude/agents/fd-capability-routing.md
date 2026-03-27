@@ -21,25 +21,25 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-Hyperspace AGI is a P2P autonomous AI research network using GossipSub, Loro CRDTs, and GitHub as a 3-layer coordination stack. Demarch is a single-operator multi-agent platform where Clavain orchestrates agents via interlock (file-based reservations) and beads (Dolt-backed issue tracking). The analysis must identify adoptable coordination patterns for a local, single-machine context.
+Hyperspace AGI is a P2P autonomous AI research network using GossipSub, Loro CRDTs, and GitHub as a 3-layer coordination stack. Sylveste is a single-operator multi-agent platform where Clavain orchestrates agents via interlock (file-based reservations) and beads (Dolt-backed issue tracking). The analysis must identify adoptable coordination patterns for a local, single-machine context.
 
 ## Review Approach
 
 ### 1. Map Hyperspace's 9 capabilities (Inference
 
-- Map Hyperspace's 9 capabilities (Inference, Research, Proxy, Storage, Embedding, Memory, Orchestration, Validation, Relay) onto Demarch's agent roles and identify which have direct analogs in Clavain's routing model
+- Map Hyperspace's 9 capabilities (Inference, Research, Proxy, Storage, Embedding, Memory, Orchestration, Validation, Relay) onto Sylveste's agent roles and identify which have direct analogs in Clavain's routing model
 
 ### 2. Evaluate the weight
 
 - Evaluate the weight-based capability scoring (+10% inference, +12% research) as a model for extending lib-routing.sh beyond evidence-only routing to include capability declarations
 
-### 3. Assess whether Demarch agents should declare capabilities...
+### 3. Assess whether Sylveste agents should declare capabilities...
 
-- Assess whether Demarch agents should declare capabilities explicitly (like Hyperspace nodes) vs. inferring them from evidence (current Clavain approach), and what the migration cost is
+- Assess whether Sylveste agents should declare capabilities explicitly (like Hyperspace nodes) vs. inferring them from evidence (current Clavain approach), and what the migration cost is
 
 ### 4. Analyze the uptime bonus formula U(t) = 1 + 0
 
-- Analyze the uptime bonus formula U(t) = 1 + 0.2 * ln(1 + t/12) as a model for Clavain's agent-trust weighting — does longevity/reliability belong in Demarch's routing model?
+- Analyze the uptime bonus formula U(t) = 1 + 0.2 * ln(1 + t/12) as a model for Clavain's agent-trust weighting — does longevity/reliability belong in Sylveste's routing model?
 
 ### 5. Evaluate Hyperspace's automatic hardware adaptation (brow...
 
@@ -47,7 +47,7 @@ Hyperspace AGI is a P2P autonomous AI research network using GossipSub, Loro CRD
 
 ### 6. Whether the Orchestration capability (+5%)
 
-- Check whether the Orchestration capability (+5%) and its description ('multi-step task decomposition + routing') creates a recursive routing problem in Demarch's architecture that doesn't exist in Hyperspace's flat peer model
+- Check whether the Orchestration capability (+5%) and its description ('multi-step task decomposition + routing') creates a recursive routing problem in Sylveste's architecture that doesn't exist in Hyperspace's flat peer model
 
 ## What NOT to Flag
 
@@ -64,12 +64,12 @@ A good review from this agent:
 - Recommends the smallest viable fix, not an architecture overhaul — one diff hunk, not a rewrite
 - Frames uncertain findings as questions: "Does this handle X?" not "This doesn't handle X"
 - Agent identifies whether lib-routing.sh should add a capability declaration step before evidence scoring, and what format those declarations should take
-- Agent maps at least 5 of Hyperspace's 9 capabilities to concrete Demarch agent roles with specific routing weight recommendations
-- Agent flags any Hyperspace routing assumptions that would break in Demarch's single-machine, human-operator context without modification
+- Agent maps at least 5 of Hyperspace's 9 capabilities to concrete Sylveste agent roles with specific routing weight recommendations
+- Agent flags any Hyperspace routing assumptions that would break in Sylveste's single-machine, human-operator context without modification
 
 ## Decision Lens
 
-Prioritize capability routing changes that improve Clavain's agent-model matching without adding configuration burden. Flag cases where Hyperspace's capability model assumes infrastructure Demarch doesn't have (network-wide capability discovery).
+Prioritize capability routing changes that improve Clavain's agent-model matching without adding configuration burden. Flag cases where Hyperspace's capability model assumes infrastructure Sylveste doesn't have (network-wide capability discovery).
 
 ## Prioritization
 

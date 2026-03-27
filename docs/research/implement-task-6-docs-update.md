@@ -42,5 +42,5 @@ This follows the same format as other CLI command sections in AGENTS.md (heading
 
 ## Files Modified
 
-- `/home/mk/projects/Demarch/core/intercore/cmd/ic/main.go` (1 line added in printUsage)
-- `/home/mk/projects/Demarch/core/intercore/AGENTS.md` (11 lines added as new section)
+- `/home/mk/projects/Sylveste/core/intercore/cmd/ic/main.go` (1 line added in printUsage)
+- `/home/mk/projects/Sylveste/core/intercore/AGENTS.md` (11 lines added as new section)

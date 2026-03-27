@@ -44,7 +44,7 @@ Skaffen's OODARC has all the phases, but the **Reflect and Compound phases do no
 3. No "best approach" is maintained per task type
 4. The Compound phase has no compounding behavior
 
-By contrast, Hyperspace's Discovery stage explicitly feeds scored results back into the next Hypothesis stage. This is the closed loop that Demarch is missing.
+By contrast, Hyperspace's Discovery stage explicitly feeds scored results back into the next Hypothesis stage. This is the closed loop that Sylveste is missing.
 
 **Priority: P0** — Without this, Skaffen cannot compound learning. Every session is independent.
 
@@ -56,7 +56,7 @@ By contrast, Hyperspace's Discovery stage explicitly feeds scored results back i
 
 Hyperspace agents maintain a `best.json` per project — the current best configuration. Each new experiment mutates this baseline rather than starting fresh. The overnight report shows 14 mutation types applied across 333 experiments. When one agent discovers that Kaiming initialization helps, 23 others adopt it via gossip.
 
-### Current Demarch State
+### Current Sylveste State
 
 Skaffen has **no mutation history**. Each invocation receives a task via prompt and generates a fresh approach. The session system (`os/Skaffen/internal/session/session.go`) persists conversation turns in JSONL, supporting session resume (`Load()`, line 93) and forking (`Fork()`, line 219), but these are conversation-level persistence, not approach-level persistence.
 
@@ -105,7 +105,7 @@ interlab gets closest with its `State` struct (`interverse/interlab/internal/exp
 
 Before generating their next hypothesis, Hyperspace agents read peers' discoveries via GossipSub. "When one agent discovered Kaiming initialization helped, 23 others adopted it within hours."
 
-### Current Demarch State
+### Current Sylveste State
 
 Skaffen does NOT check what other sessions or agents have learned before starting work. The session start flow is:
 
@@ -149,11 +149,11 @@ projects/<project>/agents/<peerId>/JOURNAL.md
 ```
 A running narrative of what worked, what didn't, and why. Per-agent, per-project. Written by the agent itself.
 
-### Demarch's Auto-Memory
+### Sylveste's Auto-Memory
 
 Auto-memory is per-project, shared across all sessions. Lives at:
 ```
-~/.claude/projects/-home-mk-projects-Demarch/memory/MEMORY.md
+~/.claude/projects/-home-mk-projects-Sylveste/memory/MEMORY.md
 ```
 Plus topic files (`beads-troubleshooting.md`, `interspect.md`, `plugins.md`, etc.) linked from MEMORY.md's Topic Files section. Governed by `~/.claude/memory-conventions.md` — provenance dating, proactive recording, one-line lessons with context.
 
@@ -170,11 +170,11 @@ Plus topic files (`beads-troubleshooting.md`, `interspect.md`, `plugins.md`, etc
 
 ### Assessment
 
-**Auto-memory is the right model for Demarch. JOURNAL.md would be a regression.**
+**Auto-memory is the right model for Sylveste. JOURNAL.md would be a regression.**
 
 Reasons:
 
-1. **Single-operator context**: Demarch has one human operator. JOURNAL.md's per-agent isolation makes sense for Hyperspace (different operators, different trust levels) but creates fragmentation in Demarch. The operator wants a single source of truth, not N journals to cross-reference.
+1. **Single-operator context**: Sylveste has one human operator. JOURNAL.md's per-agent isolation makes sense for Hyperspace (different operators, different trust levels) but creates fragmentation in Sylveste. The operator wants a single source of truth, not N journals to cross-reference.
 
 2. **Auto-memory already compounds**: The topic file pattern (`MEMORY.md` links to `beads-troubleshooting.md`, `plugins.md`, etc.) provides structured categorization that JOURNAL.md's flat narrative lacks. Lessons are findable.
 
@@ -209,7 +209,7 @@ No need for JOURNAL.md. The combination of auto-memory + CASS transcripts + muta
 
 Hyperspace optimizes a **single scalar**: `val_loss`, `NDCG@10`, `Sharpe ratio`, `test_pass_rate`. This enables clean "is new better than old?" comparisons and automated leaderboards.
 
-Demarch's quality criteria are **multi-dimensional and partially subjective**:
+Sylveste's quality criteria are **multi-dimensional and partially subjective**:
 - Tests pass (binary)
 - Code correctness (requires reasoning)
 - Code readability (subjective)
@@ -218,7 +218,7 @@ Demarch's quality criteria are **multi-dimensional and partially subjective**:
 - Design consistency (requires project context)
 - Diff reviewability (depends on reviewer)
 
-The ANALYSIS.md correctly identifies this as the core divergence (lines 199-203): "Real software development has multi-dimensional quality (correctness, readability, performance, security). Demarch should resist reducing code quality to a single metric."
+The ANALYSIS.md correctly identifies this as the core divergence (lines 199-203): "Real software development has multi-dimensional quality (correctness, readability, performance, security). Sylveste should resist reducing code quality to a single metric."
 
 ### What Autarch Should Use
 
@@ -269,7 +269,7 @@ interlab's `Result.SecondaryMetrics` (`interverse/interlab/internal/experiment/s
 
 DiLoCo: each agent trains locally for H steps, then shares compressed weight deltas. Automatic fallback to solo if no peers available.
 
-### Current Demarch State
+### Current Sylveste State
 
 Multiple Skaffen instances are coordinated today through:
 - **interlock** (`interverse/interlock/`) — file-based reservation system for exclusive file access
@@ -321,4 +321,4 @@ The fix is architectural, not incremental: Skaffen's `Compound` phase must write
 
 ### Philosophical Alignment Note
 
-Hyperspace's narrow-metric optimization is the wrong model for Demarch to copy directly. But the **mechanism** — track what worked, mutate the best, share discoveries — is exactly right. The adaptation is to replace scalar leaderboards with multi-dimensional quality profiles and Pareto-based selection. This preserves the compound learning property while respecting the complexity of software quality.
+Hyperspace's narrow-metric optimization is the wrong model for Sylveste to copy directly. But the **mechanism** — track what worked, mutate the best, share discoveries — is exactly right. The adaptation is to replace scalar leaderboards with multi-dimensional quality profiles and Pareto-based selection. This preserves the compound learning property while respecting the complexity of software quality.

@@ -1,6 +1,6 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-qsw
+bead: Sylveste-qsw
 stage: discover
 ---
 # Priompt: Priority-Based Prompt Composition for Skaffen
@@ -11,7 +11,7 @@ A shared prompt composition library (`masaq/priompt`) that assembles prompt elem
 
 The library is cache-aware: elements marked `Stable` render first to maximize Anthropic prompt cache prefix hits. Token counting uses a pluggable interface with a character-ratio heuristic default.
 
-**Prior art:** [Priompt](https://github.com/tg1482/priomptipy) (Anysphere/Cursor) — TypeScript/JSX priority scoping. [PriomptiPy](https://pypi.org/project/priompt/) — Python port. No Go implementation exists. We take the core concept (priority-based budget rendering) and build a Go-native version tailored to the Demarch agent ecosystem.
+**Prior art:** [Priompt](https://github.com/tg1482/priomptipy) (Anysphere/Cursor) — TypeScript/JSX priority scoping. [PriomptiPy](https://pypi.org/project/priompt/) — Python port. No Go implementation exists. We take the core concept (priority-based budget rendering) and build a Go-native version tailored to the Sylveste agent ecosystem.
 
 ## Why This Approach
 
@@ -39,7 +39,7 @@ Phase boost uses `map[string]int` rather than importing Skaffen's `tool.Phase` e
 
 | # | Decision | Rationale |
 |---|----------|-----------|
-| D1 | Lives in `masaq/priompt/` | Follows Masaq's rendering-only pattern. No agent imports. Reusable across Demarch agents. |
+| D1 | Lives in `masaq/priompt/` | Follows Masaq's rendering-only pattern. No agent imports. Reusable across Sylveste agents. |
 | D2 | Greedy sort rendering | O(n log n), simple, predictable. ~10-20 elements makes knapsack unnecessary. |
 | D3 | Pluggable Tokenizer interface | Ships with char heuristic (4 chars/token). Upgradeable to tiktoken-go later. |
 | D4 | `Stable` flag for cache optimization | Stable elements render first → stable prefix → cache hits. Major cost savings. |

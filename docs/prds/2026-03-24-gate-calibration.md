@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-0rgc
+bead: Sylveste-0rgc
 stage: design
 ---
 # PRD: Gate Threshold Calibration

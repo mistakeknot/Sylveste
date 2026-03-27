@@ -1,6 +1,6 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-0pvp
+bead: Sylveste-0pvp
 stage: discover
 ---
 
@@ -12,7 +12,7 @@ A systematic optimization pass across all 5 core pillars (Skaffen, Intercore, In
 
 ## Why This Approach
 
-Baselines established in Demarch-2s7p revealed that many hot paths have unnecessary allocations, redundant computation per turn, and O(n*m) algorithms where O(n) suffices. The interlab harness infrastructure already exists (go-bench-harness.sh) — we can iterate with confidence.
+Baselines established in Sylveste-2s7p revealed that many hot paths have unnecessary allocations, redundant computation per turn, and O(n*m) algorithms where O(n) suffices. The interlab harness infrastructure already exists (go-bench-harness.sh) — we can iterate with confidence.
 
 **Guiding principle:** Benchmark first, optimize second. Every child bead starts by establishing a baseline, then targets a specific metric improvement.
 

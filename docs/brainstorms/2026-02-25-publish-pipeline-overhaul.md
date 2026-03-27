@@ -223,7 +223,7 @@ exit 0
 Run `ic publish <version>` in the current plugin directory.
 
 If the `ic` binary is not found, tell the user to install Intercore:
-  `bash /home/mk/projects/Demarch/core/intercore/install.sh`
+  `bash /home/mk/projects/Sylveste/core/intercore/install.sh`
 
 After publish succeeds, remind:
 - Restart Claude Code sessions to pick up the new version

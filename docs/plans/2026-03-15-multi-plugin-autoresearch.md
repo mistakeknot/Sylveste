@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-opc
+bead: Sylveste-opc
 stage: design
 requirements:
   - F1: Plugin PQS scanner script
@@ -10,7 +10,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-opc
+**Bead:** Sylveste-opc
 **Goal:** Create a script that scans all interverse plugins for quality scores, identifies the lowest-scoring ones, and generates campaign specs for `/autoresearch-multi` to improve them.
 
 **Architecture:** A single bash script (`scripts/scan-plugin-quality.sh`) that runs `plugin-benchmark.sh` against each plugin, collects PQS scores, and outputs a ranked report + campaign spec JSON. The campaign spec feeds directly into `plan_campaigns` MCP tool. The mutation store (interlab v0.4.0) records provenance automatically via the wired `/autoresearch` integration.
@@ -145,7 +145,7 @@ fi
 chmod +x interverse/interlab/scripts/scan-plugin-quality.sh
 ```
 
-Run: `cd /home/mk/projects/Demarch && bash interverse/interlab/scripts/scan-plugin-quality.sh --top=3 2>/dev/null`
+Run: `cd /home/mk/projects/Sylveste && bash interverse/interlab/scripts/scan-plugin-quality.sh --top=3 2>/dev/null`
 Expected: Table output with plugin names and PQS scores
 
 **Step 3: Commit**
@@ -156,7 +156,7 @@ git commit -m "feat: add plugin quality scanner (ranks all plugins by PQS)"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch && bash interverse/interlab/scripts/scan-plugin-quality.sh --json --top=3 2>/dev/null | jq '.total_plugins'`
+- run: `cd /home/mk/projects/Sylveste && bash interverse/interlab/scripts/scan-plugin-quality.sh --json --top=3 2>/dev/null | jq '.total_plugins'`
   expect: exit 0
 </verify>
 
@@ -229,7 +229,7 @@ echo "$bottom" | jq --arg benchmark "$BENCHMARK" '[
 chmod +x interverse/interlab/scripts/generate-campaign-spec.sh
 ```
 
-Run: `cd /home/mk/projects/Demarch && bash interverse/interlab/scripts/generate-campaign-spec.sh --top=2 2>/dev/null | jq '.[0].name'`
+Run: `cd /home/mk/projects/Sylveste && bash interverse/interlab/scripts/generate-campaign-spec.sh --top=2 2>/dev/null | jq '.[0].name'`
 Expected: Output like `"pqs-improve-<plugin-name>"`
 
 **Step 3: Commit**
@@ -240,7 +240,7 @@ git commit -m "feat: add campaign spec generator for multi-plugin autoresearch"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch && bash interverse/interlab/scripts/generate-campaign-spec.sh --top=2 2>/dev/null | jq 'length'`
+- run: `cd /home/mk/projects/Sylveste && bash interverse/interlab/scripts/generate-campaign-spec.sh --top=2 2>/dev/null | jq 'length'`
   expect: contains "2"
 </verify>
 
@@ -266,7 +266,7 @@ Scan all plugins, find the lowest-scoring, and run parallel improvement campaign
 
 ```bash
 # 1. Scan all plugins for quality scores
-cd /home/mk/projects/Demarch
+cd /home/mk/projects/Sylveste
 bash interverse/interlab/scripts/scan-plugin-quality.sh
 
 # 2. Generate campaign spec for bottom 5
@@ -285,7 +285,7 @@ git commit -m "docs: add multi-plugin improvement usage to campaigns README"
 ```
 
 <verify>
-- run: `grep -c "Multi-Plugin" /home/mk/projects/Demarch/interverse/interlab/campaigns/README.md`
+- run: `grep -c "Multi-Plugin" /home/mk/projects/Sylveste/interverse/interlab/campaigns/README.md`
   expect: contains "1"
 </verify>
 
@@ -298,19 +298,19 @@ git commit -m "docs: add multi-plugin improvement usage to campaigns README"
 
 **Step 1: Run full scan**
 
-Run: `cd /home/mk/projects/Demarch && bash interverse/interlab/scripts/scan-plugin-quality.sh 2>/dev/null`
+Run: `cd /home/mk/projects/Sylveste && bash interverse/interlab/scripts/scan-plugin-quality.sh 2>/dev/null`
 Expected: Table showing all plugins ranked by PQS
 
 **Step 2: Generate campaign spec**
 
-Run: `cd /home/mk/projects/Demarch && bash interverse/interlab/scripts/generate-campaign-spec.sh --top=3 2>/dev/null | jq .`
+Run: `cd /home/mk/projects/Sylveste && bash interverse/interlab/scripts/generate-campaign-spec.sh --top=3 2>/dev/null | jq .`
 Expected: JSON array with 3 campaign specs
 
 **Step 3: Verify mutation store integration**
 
 The campaign spec includes `task_type: "plugin-quality"` which means when `/autoresearch` runs these campaigns, mutations will be automatically recorded with this task type. Verify the field is present:
 
-Run: `cd /home/mk/projects/Demarch && bash interverse/interlab/scripts/generate-campaign-spec.sh --top=1 2>/dev/null | jq '.[0].task_type'`
+Run: `cd /home/mk/projects/Sylveste && bash interverse/interlab/scripts/generate-campaign-spec.sh --top=1 2>/dev/null | jq '.[0].task_type'`
 Expected: `"plugin-quality"`
 
 **Step 4: Version bump**
@@ -323,6 +323,6 @@ git commit -m "chore: bump interlab to v0.4.1 (multi-plugin quality scanner)"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch && bash interverse/interlab/scripts/scan-plugin-quality.sh --json --top=1 2>/dev/null | jq '.total_plugins > 0'`
+- run: `cd /home/mk/projects/Sylveste && bash interverse/interlab/scripts/scan-plugin-quality.sh --json --top=1 2>/dev/null | jq '.total_plugins > 0'`
   expect: contains "true"
 </verify>

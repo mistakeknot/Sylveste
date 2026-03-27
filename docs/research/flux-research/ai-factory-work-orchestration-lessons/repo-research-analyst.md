@@ -1,4 +1,4 @@
-# AI Factory Work Orchestration Lessons from Demarch
+# AI Factory Work Orchestration Lessons from Sylveste
 
 **Date:** 2026-03-19
 **Status:** Repository research complete
@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-Demarch implements a **progressive, evidence-based approach to AI agent work orchestration** across 3 nested timescales: per-turn (agent reasoning), per-sprint (phase gates), and cross-session (routing calibration via Interspect). The system models work as durable artifacts (beads) with explicit dependencies, routes to specific agents based on complexity + context, and closes feedback loops through measurement and calibration.
+Sylveste implements a **progressive, evidence-based approach to AI agent work orchestration** across 3 nested timescales: per-turn (agent reasoning), per-sprint (phase gates), and cross-session (routing calibration via Interspect). The system models work as durable artifacts (beads) with explicit dependencies, routes to specific agents based on complexity + context, and closes feedback loops through measurement and calibration.
 
 **Key Finding:** The biggest gap between current state and a fully autonomous software factory is **graduated autonomy with earned trust.** Mycroft (fleet orchestrator, v0.1 planned) is the missing piece — it scales human coordination from 3-5 agents to 20+, but only after demonstrating consistent performance through shadow suggestions → approval tracking → automatic demotion on regression.
 
@@ -30,7 +30,7 @@ Demarch implements a **progressive, evidence-based approach to AI agent work orc
 3. User (or agent with authority) accepts or refines the structure
 4. Phase gates enforce prerequisites: plan review before work, design doc before implementation
 
-**No automatic task breakdown:** Demarch doesn't infer subtasks from specs. The human (or a brainstorm agent in future) reads the spec and proposes children. This is intentional — prevents proliferation of meaningless subtasks and keeps humans in the loop where judgment matters.
+**No automatic task breakdown:** Sylveste doesn't infer subtasks from specs. The human (or a brainstorm agent in future) reads the spec and proposes children. This is intentional — prevents proliferation of meaningless subtasks and keeps humans in the loop where judgment matters.
 
 ### Gaps vs. AI Factory Requirements
 
@@ -278,7 +278,7 @@ Implementation: 4-stage pattern (hardcoded defaults → collect actuals → cali
 - **Standalone plugins** (default): no hard kernel dependency. Examples: interlens, interlock, interkasten, tldr-swinton
 - **Kernel-native plugins** (rare): extend kernel subsystems (discovery, events, dispatch). Examples: interject, interspect, interphase
 
-**Implications for work orchestration:** Demarch is composable — Mycroft + Interspect + Clavain routing are independent pieces that cooperate via beads state and events, not monolithic.
+**Implications for work orchestration:** Sylveste is composable — Mycroft + Interspect + Clavain routing are independent pieces that cooperate via beads state and events, not monolithic.
 
 ---
 

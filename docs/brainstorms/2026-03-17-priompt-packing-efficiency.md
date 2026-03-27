@@ -1,6 +1,6 @@
 # Priompt Packing Efficiency — Autoresearch Campaign Brainstorm
 
-**Bead:** Demarch-1x9l.1
+**Bead:** Sylveste-1x9l.1
 **Date:** 2026-03-17
 **Goal:** Maximize budget utilization in priompt's greedy packing algorithm
 

@@ -146,11 +146,11 @@ Pass 2-5 failure cases to a single mutator call instead of one. Tradeoffs:
 
 ---
 
-## 4. Relevance to Demarch
+## 4. Relevance to Sylveste
 
 ### Direct Applicability
 
-| Concept | Demarch Parallel | Notes |
+| Concept | Sylveste Parallel | Notes |
 |---------|-----------------|-------|
 | Population of organisms | Pool of agent strategies | Evolving agent prompts/tools over time |
 | Fitness-weighted selection | Agent performance scoring | Intercore could score agent effectiveness |
@@ -221,4 +221,4 @@ Includes `lineage_visualizer.html` — load JSONL results to interactively explo
 
 This is a **well-engineered, production-ready evolutionary optimization framework** with strong ARC-AGI-2 results. The key contribution isn't the algorithm (which is fairly standard evolutionary computation with LLM mutators) but the **demonstration that simple evolutionary dynamics + LLM reasoning = powerful optimization on hard reasoning tasks**. The open-sourcing is genuine — the code is clean, documented, and immediately usable.
 
-For Demarch, the most transferable ideas are: (1) population-level resilience over individual precision, (2) soft scoring for gradual improvement, (3) learning logs for cross-organism knowledge sharing, and (4) the verification filter pattern.
+For Sylveste, the most transferable ideas are: (1) population-level resilience over individual precision, (2) soft scoring for gradual improvement, (3) learning logs for cross-organism knowledge sharing, and (4) the verification filter pattern.

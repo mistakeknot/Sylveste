@@ -1,6 +1,6 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-g3a
+bead: Sylveste-g3a
 stage: discover
 ---
 # Interspect Calibration Pipeline: Evidence → Routing Overrides

@@ -1,6 +1,6 @@
 # Mission
 
-**Make every Demarch agent self-sufficient** by providing sovereign local inference that continuously optimizes the efficiency/quality frontier on Apple Silicon, with full control over the computation pipeline as a research-grade platform where cross-disciplinary optimization techniques are tested, measured, and composed into production systems.
+**Make every Sylveste agent self-sufficient** by providing sovereign local inference that continuously optimizes the efficiency/quality frontier on Apple Silicon, with full control over the computation pipeline as a research-grade platform where cross-disciplinary optimization techniques are tested, measured, and composed into production systems.
 
 In practice, this means:
 

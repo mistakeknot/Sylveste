@@ -3,7 +3,7 @@
 **Date:** 2026-02-22
 **Reviewed by:** Flux-drive Multi-Agent Review Engine (5 agent outputs synthesized)
 **Target Codebase:** ntm (Go CLI/TUI, 256k LOC, 1,442 files)
-**Purpose:** Identify patterns, products, and anti-patterns for Demarch/Autarch adoption
+**Purpose:** Identify patterns, products, and anti-patterns for Sylveste/Autarch adoption
 
 ---
 
@@ -11,7 +11,7 @@
 
 ntm is a mature multi-agent orchestration platform that manages Claude Code, Codex, and Gemini agents across tmux sessions. Its codebase spans 80+ internal packages organized in three clear layers: Infrastructure (tmux, config, state, events), Orchestration (swarm, coordinator, ensemble, supervisor), and Delivery (CLI, robot API, TUI).
 
-**Key Finding:** ntm's greatest strength is not any single feature, but its comprehensive coordination infrastructure. It handles work assignment, agent lifecycle, context management, safety gates, audit trails, and human-in-the-loop workflows as first-class primitives. Demarch's plugin architecture gains sophistication by adopting these patterns.
+**Key Finding:** ntm's greatest strength is not any single feature, but its comprehensive coordination infrastructure. It handles work assignment, agent lifecycle, context management, safety gates, audit trails, and human-in-the-loop workflows as first-class primitives. Sylveste's plugin architecture gains sophistication by adopting these patterns.
 
 **Deduplication Note:** The five agent reviews converge on the same top patterns with consistent ranking. This synthesis prioritizes by (value × feasibility) and groups by adoption timeframe (P0/P1/P2/P3).
 
@@ -32,7 +32,7 @@ ntm is a mature multi-agent orchestration platform that manages Claude Code, Cod
 - Context penalty (ramp at 80%+ usage)
 - File reservation penalty (existing locks)
 
-**Implementation in Demarch:**
+**Implementation in Sylveste:**
 - Build in Intercore as `AssignmentScorer` interface
 - Integrate with bv (graph engine) for centrality calculation
 - Agent capabilities come from agent-mail profiles
@@ -66,7 +66,7 @@ func (s *Scorer) ScoreAssignment(agent *Agent, bead *Bead) float64 {
 - Automatic pre-write redaction (secrets never logged)
 - Integrity verification (`VerifyIntegrity()` walks chain and validates hashes)
 
-**Demarch targets:**
+**Sylveste targets:**
 - Intercore session events
 - Interlock file reservations/releases
 - Agent-mail message routing
@@ -114,15 +114,15 @@ func (a *AuditLog) VerifyIntegrity() error {
 - Allowlist support (suppress known false positives)
 - Line/column enrichment (source location tagging)
 
-**Why now:** Every component that logs, transmits, or persists text should run through redaction. Demarch must build this in from day one, not retrofit it.
+**Why now:** Every component that logs, transmits, or persists text should run through redaction. Sylveste must build this in from day one, not retrofit it.
 
-**Demarch integration points:**
+**Sylveste integration points:**
 - Agent-mail message routing (redact before inter-agent transmission)
 - Intercore event bus (redact before persistence)
 - Intercheck code quality guards (redact before reporting)
 - Intermux activity feeds (redact before display)
 
-**Reference implementation exists:** Port `/home/mk/projects/Demarch/research/ntm/internal/redaction/` directly as `core/redaction/` Go package.
+**Reference implementation exists:** Port `/home/mk/projects/Sylveste/research/ntm/internal/redaction/` directly as `core/redaction/` Go package.
 
 ---
 
@@ -137,7 +137,7 @@ func (a *AuditLog) VerifyIntegrity() error {
 3. On conflict: wait grace period (2s), retry once
 4. On persistent conflict: rollback to old reservations
 
-**Demarch target:** agent-mail MCP as `transfer_file_reservations` operation
+**Sylveste target:** agent-mail MCP as `transfer_file_reservations` operation
 
 **Why now:** When context exhaustion forces agent rotation, file locks must transfer atomically. Without this, two agents could simultaneously edit the same file.
 
@@ -160,7 +160,7 @@ With monitoring:
 - State transition events emitted to event bus
 - Configurable detection thresholds and timeouts
 
-**Demarch target:** Intercore kernel as `AgentStateMonitor`
+**Sylveste target:** Intercore kernel as `AgentStateMonitor`
 
 **Why now:** Without formal state transitions, automatic work assignment, conflict detection, and health alerts are impossible. This is foundational.
 
@@ -204,7 +204,7 @@ type Detector interface {
 - `token_context`: `{used, max, percentage}`
 - `reservation_transfer`: Instructions for interlock
 
-**Demarch target:** Formalize across Clavain + interphase
+**Sylveste target:** Formalize across Clavain + interphase
 
 **Why now:** Context continuity is essential for long-running projects. Without structured handoffs, each agent restart loses context.
 
@@ -224,11 +224,11 @@ type Detector interface {
 - Agent-specific colors: Claude (Mauve), Codex (Blue), Gemini (Yellow)
 - `theme.Semantic().StatusColor(status)` and `theme.Semantic().AgentColor(agentType)` lookups
 
-**Demarch target:** Autarch apps (Bigend, Gurgeh, Coldwine, Pollard)
+**Sylveste target:** Autarch apps (Bigend, Gurgeh, Coldwine, Pollard)
 
 **Why now:** Currently Autarch hardcodes colors. This pattern enables theme swapping without code changes.
 
-**Reference implementation:** Port `/home/mk/projects/Demarch/research/ntm/internal/tui/theme/` to Autarch as `pkg/tui/theme/`.
+**Reference implementation:** Port `/home/mk/projects/Sylveste/research/ntm/internal/tui/theme/` to Autarch as `pkg/tui/theme/`.
 
 ---
 
@@ -248,7 +248,7 @@ Mega     >=320 columns
 
 Without hysteresis, dragging terminal edges causes rapid tier toggling. With hysteresis, tier sticks until crossing boundary + margin.
 
-**Demarch target:** Autarch TUI all panels (Bigend, Gurgeh, etc.)
+**Sylveste target:** Autarch TUI all panels (Bigend, Gurgeh, etc.)
 
 **Why now:** Simple fix (20 lines) that eliminates an entire class of UX bugs.
 
@@ -266,7 +266,7 @@ Without hysteresis, dragging terminal edges causes rapid tier toggling. With hys
 - Blocking wait with channel-based notification
 - Best-effort notifications (never block core operation)
 
-**Demarch targets:**
+**Sylveste targets:**
 - Interlock: force-release requires approval
 - Clavain: destructive git operations
 - Intercheck: production deployments
@@ -287,7 +287,7 @@ Select Command -> Select Target -> Confirm -> Execute
 
 Each phase transition prevents accidental sends. Target selection shows live pane counts: "Send to Claude (3)" not just "Claude".
 
-**Demarch target:** Autarch broadcast actions (Bigend, Gurgeh)
+**Sylveste target:** Autarch broadcast actions (Bigend, Gurgeh)
 
 **Why now:** Broadcast actions (send-all, deploy-all, force-release) are high-risk. Three-phase flow catches most mistakes.
 
@@ -297,7 +297,7 @@ Each phase transition prevents accidental sends. Target selection shows live pan
 
 ### Tier P0 — Critical Infrastructure (Implement First, Concurrently)
 
-| Priority | Pattern | ntm Source | Demarch Target | Effort | Value | Status |
+| Priority | Pattern | ntm Source | Sylveste Target | Effort | Value | Status |
 |----------|---------|-----------|----------------|--------|-------|--------|
 | **P0** | **Multi-factor assignment scoring** | coordinator/assign.go | Intercore | 8 | 9 | Copy Now |
 | **P0** | **Tamper-evident audit trail** | internal/audit/ | Intercore + Interlock | 8 | 10 | Copy Now |
@@ -308,7 +308,7 @@ Each phase transition prevents accidental sends. Target selection shows live pan
 
 ### Tier P1 — High-Value UX/Safety Patterns (Implement Next)
 
-| Priority | Pattern | ntm Source | Demarch Target | Effort | Value | Status |
+| Priority | Pattern | ntm Source | Sylveste Target | Effort | Value | Status |
 |----------|---------|-----------|----------------|--------|-------|--------|
 | **P1** | **Semantic color palette** | tui/theme/semantic.go | Autarch pkg/tui/theme | 5 | 8 | Adapt Soon |
 | **P1** | **Layout tier + hysteresis** | tui/layout/layout.go | Autarch all panels | 3 | 7 | Adapt Soon |
@@ -321,7 +321,7 @@ Each phase transition prevents accidental sends. Target selection shows live pan
 
 ### Tier P2 — Valuable Refinements (Implement in Next Iteration)
 
-| Priority | Pattern | ntm Source | Demarch Target | Effort | Value | Status |
+| Priority | Pattern | ntm Source | Sylveste Target | Effort | Value | Status |
 |----------|---------|-----------|----------------|--------|-------|--------|
 | **P2** | **Three-tier icon fallback system** | tui/icons/icons.go | Autarch pkg/tui/icons | 3 | 6 | Inspiration |
 | **P2** | **Shimmer/gradient rendering** | tui/styles/styles.go | Autarch TUI polish | 4 | 5 | Inspiration |
@@ -336,7 +336,7 @@ Each phase transition prevents accidental sends. Target selection shows live pan
 
 ### Tier P3 — Interesting but Lower Priority
 
-| Priority | Pattern | ntm Source | Demarch Target | Effort | Value | Status |
+| Priority | Pattern | ntm Source | Sylveste Target | Effort | Value | Status |
 |----------|---------|-----------|----------------|--------|-------|--------|
 | **P3** | **Ensemble reasoning taxonomy** | ensemble/modes.go | intersynth reference | 8 | 6 | Study Only |
 | **P3** | **Workflow template system** | workflow/template.go | Clavain reference | 7 | 5 | Study Only |
@@ -352,9 +352,9 @@ Each phase transition prevents accidental sends. Target selection shows live pan
 
 **Problem:** ntm's `config.Config` owns configuration for every subsystem (agents, palette, tmux, robot, mail, integrations, models, alerts, etc.). Every subsystem adding config keys here creates tight coupling.
 
-**How Demarch should differ:** Subsystem configs should own themselves. Root config loader assembles them by calling `subsystem.LoadConfig(root *RootConfig)`.
+**How Sylveste should differ:** Subsystem configs should own themselves. Root config loader assembles them by calling `subsystem.LoadConfig(root *RootConfig)`.
 
-**Demarch impact:** Keep `CLAUDE.md` and `settings.json` minimal. Plugins own their own config files or define config types in their packages.
+**Sylveste impact:** Keep `CLAUDE.md` and `settings.json` minimal. Plugins own their own config files or define config types in their packages.
 
 ---
 
@@ -365,9 +365,9 @@ Each phase transition prevents accidental sends. Target selection shows live pan
 - `tui/layout/layout.go`: 120/200/240/320
 - `tui/dashboard/layout.go`: 60/100/140/180
 
-**How Demarch should differ:** One canonical tier system, one place, enforced everywhere. If you need different values for different contexts, make them explicit variants, not hidden duplicates.
+**How Sylveste should differ:** One canonical tier system, one place, enforced everywhere. If you need different values for different contexts, make them explicit variants, not hidden duplicates.
 
-**Demarch impact:** Autarch must have a single `pkg/tui/layout/tiers.go` with canonical breakpoints. All panels reference this file.
+**Sylveste impact:** Autarch must have a single `pkg/tui/layout/tiers.go` with canonical breakpoints. All panels reference this file.
 
 ---
 
@@ -375,9 +375,9 @@ Each phase transition prevents accidental sends. Target selection shows live pan
 
 **Problem:** ntm's `dashboard.go` is 6,716 lines, maintains 500+ state fields, imports 28+ internal packages, and polls every data source directly. State collection is tightly coupled to rendering.
 
-**How Demarch should differ:** Separate data aggregation from rendering. Introduce a DataBus or ViewModel layer that subscribes to data sources and emits typed update messages. The model subscribes to update messages, not to data sources.
+**How Sylveste should differ:** Separate data aggregation from rendering. Introduce a DataBus or ViewModel layer that subscribes to data sources and emits typed update messages. The model subscribes to update messages, not to data sources.
 
-**Demarch impact:** Autarch's dashboard(s) must compose from typed sub-models (one per concern). Start with a `DataBus` interface that aggregates state from all sources and emits typed messages.
+**Sylveste impact:** Autarch's dashboard(s) must compose from typed sub-models (one per concern). Start with a `DataBus` interface that aggregates state from all sources and emits typed messages.
 
 ---
 
@@ -385,9 +385,9 @@ Each phase transition prevents accidental sends. Target selection shows live pan
 
 **Problem:** ntm's CLI files (`internal/cli/*.go`) are large and contain business logic that should be in domain packages. This creates duplication when the robot API implements the same operations.
 
-**How Demarch should differ:** CLI parses flags and calls domain functions. Robot API calls the same domain functions. Application service layer is the single source of truth.
+**How Sylveste should differ:** CLI parses flags and calls domain functions. Robot API calls the same domain functions. Application service layer is the single source of truth.
 
-**Demarch impact:** Clavain's commands and Autarch's TUI actions should both call shared application services, not duplicate business logic.
+**Sylveste impact:** Clavain's commands and Autarch's TUI actions should both call shared application services, not duplicate business logic.
 
 ---
 
@@ -395,9 +395,9 @@ Each phase transition prevents accidental sends. Target selection shows live pan
 
 **Problem:** ntm's ensemble is behind `//go:build ensemble_experimental` but the type system (`types.go`, `modes.go`, `synthesizer.go`) ships in all builds. This creates architectural ambiguity.
 
-**How Demarch should differ:** Gate the entire feature or gate nothing. If a feature is experimental, make it a separate plugin, not a partial gate.
+**How Sylveste should differ:** Gate the entire feature or gate nothing. If a feature is experimental, make it a separate plugin, not a partial gate.
 
-**Demarch impact:** Intersynth features should be independently toggleable, not partially gated. Use separate MCP tools or feature flags, not build tags.
+**Sylveste impact:** Intersynth features should be independently toggleable, not partially gated. Use separate MCP tools or feature flags, not build tags.
 
 ---
 
@@ -405,9 +405,9 @@ Each phase transition prevents accidental sends. Target selection shows live pan
 
 **Problem:** ntm embeds model pricing in Go source code. When pricing changes, you must recompile.
 
-**How Demarch should differ:** Externalize all pricing to YAML/JSON config files. Load at runtime.
+**How Sylveste should differ:** Externalize all pricing to YAML/JSON config files. Load at runtime.
 
-**Demarch impact:** If Demarch tracks costs (which it should), pricing must be configurable, not hardcoded.
+**Sylveste impact:** If Sylveste tracks costs (which it should), pricing must be configurable, not hardcoded.
 
 ---
 
@@ -415,9 +415,9 @@ Each phase transition prevents accidental sends. Target selection shows live pan
 
 **Problem:** ntm's quota fetcher sends `/usage` commands to tmux panes and parses the output with regex. This breaks when CLI output formats change.
 
-**How Demarch should differ:** Prefer API-based approaches where available (Claude API, Gemini API). Use PTY parsing only as fallback.
+**How Sylveste should differ:** Prefer API-based approaches where available (Claude API, Gemini API). Use PTY parsing only as fallback.
 
-**Demarch impact:** Agent health checks should use APIs when available, not shell output parsing.
+**Sylveste impact:** Agent health checks should use APIs when available, not shell output parsing.
 
 ---
 
@@ -491,7 +491,7 @@ Clean step-by-step progress with automatic color/no-color fallback.
 
 ---
 
-## Part 5: Demarch-Specific Adoption Roadmap
+## Part 5: Sylveste-Specific Adoption Roadmap
 
 ### Phase 1: Foundation (Months 1-2)
 
@@ -506,7 +506,7 @@ Clean step-by-step progress with automatic color/no-color fallback.
    - Interlock integration for reservation/release events
    - `intercheck doctor` verification
 
-3. **Define Demarch invariants** (expand ntm's 6)
+3. **Define Sylveste invariants** (expand ntm's 6)
    - `no_silent_data_loss`
    - `graceful_degradation`
    - `idempotent_orchestration`
@@ -567,7 +567,7 @@ Clean step-by-step progress with automatic color/no-color fallback.
 
 2. **Monolithic architecture enables sophisticated coordination:** ntm's single Go binary achieves tight integration of scheduling, assignment, conflict detection, and respawn that would be harder to implement across distributed plugins.
 
-3. **Ensemble reasoning taxonomy is substantive:** 80 modes, 12 categories, 9 presets represent real attempts to make AI reasoning strategies legible and composable. This deserves study for Demarch's intersynth design.
+3. **Ensemble reasoning taxonomy is substantive:** 80 modes, 12 categories, 9 presets represent real attempts to make AI reasoning strategies legible and composable. This deserves study for Sylveste's intersynth design.
 
 ### What ntm Reveals About Autarch's Gaps
 
@@ -588,7 +588,7 @@ Clean step-by-step progress with automatic color/no-color fallback.
 ### Highest-Priority (Start Immediately)
 
 - [ ] Port redaction engine to `core/redaction/`
-- [ ] Define Demarch's 9 invariants
+- [ ] Define Sylveste's 9 invariants
 - [ ] Implement hash-chain audit logging in Intercore
 - [ ] Build multi-factor assignment scorer
 - [ ] Formalize agent state machine
@@ -618,27 +618,27 @@ Clean step-by-step progress with automatic color/no-color fallback.
 **Files worth studying in ntm:** (Absolute paths)
 
 ### Coordination Infrastructure
-- `/home/mk/projects/Demarch/research/ntm/internal/coordinator/assign.go` — Multi-factor scoring
-- `/home/mk/projects/Demarch/research/ntm/internal/coordinator/coordinator.go` — Agent state machine
-- `/home/mk/projects/Demarch/research/ntm/internal/handoff/transfer.go` — Reservation transfer
-- `/home/mk/projects/Demarch/research/ntm/internal/approval/engine.go` — Approval workflow
-- `/home/mk/projects/Demarch/research/ntm/internal/audit/logger.go` — Audit trail
-- `/home/mk/projects/Demarch/research/ntm/internal/redaction/redaction.go` — Redaction engine
+- `/home/mk/projects/Sylveste/research/ntm/internal/coordinator/assign.go` — Multi-factor scoring
+- `/home/mk/projects/Sylveste/research/ntm/internal/coordinator/coordinator.go` — Agent state machine
+- `/home/mk/projects/Sylveste/research/ntm/internal/handoff/transfer.go` — Reservation transfer
+- `/home/mk/projects/Sylveste/research/ntm/internal/approval/engine.go` — Approval workflow
+- `/home/mk/projects/Sylveste/research/ntm/internal/audit/logger.go` — Audit trail
+- `/home/mk/projects/Sylveste/research/ntm/internal/redaction/redaction.go` — Redaction engine
 
 ### TUI Infrastructure
-- `/home/mk/projects/Demarch/research/ntm/internal/tui/theme/theme.go` — Theme system
-- `/home/mk/projects/Demarch/research/ntm/internal/tui/theme/semantic.go` — Semantic palette
-- `/home/mk/projects/Demarch/research/ntm/internal/tui/layout/layout.go` — Layout tiers + hysteresis
-- `/home/mk/projects/Demarch/research/ntm/internal/tui/styles/tokens.go` — Design tokens
-- `/home/mk/projects/Demarch/research/ntm/internal/tui/styles/styles.go` — Shimmer/gradient rendering
-- `/home/mk/projects/Demarch/research/ntm/internal/tui/icons/icons.go` — Icon fallback chain
+- `/home/mk/projects/Sylveste/research/ntm/internal/tui/theme/theme.go` — Theme system
+- `/home/mk/projects/Sylveste/research/ntm/internal/tui/theme/semantic.go` — Semantic palette
+- `/home/mk/projects/Sylveste/research/ntm/internal/tui/layout/layout.go` — Layout tiers + hysteresis
+- `/home/mk/projects/Sylveste/research/ntm/internal/tui/styles/tokens.go` — Design tokens
+- `/home/mk/projects/Sylveste/research/ntm/internal/tui/styles/styles.go` — Shimmer/gradient rendering
+- `/home/mk/projects/Sylveste/research/ntm/internal/tui/icons/icons.go` — Icon fallback chain
 
 ### Orchestration
-- `/home/mk/projects/Demarch/research/ntm/internal/swarm/types.go` — SwarmPlan
-- `/home/mk/projects/Demarch/research/ntm/internal/swarm/orchestrator.go` — Session creation
-- `/home/mk/projects/Demarch/research/ntm/internal/swarm/auto_respawner.go` — Crash recovery
-- `/home/mk/projects/Demarch/research/ntm/internal/context/monitor.go` — Context estimation
-- `/home/mk/projects/Demarch/research/ntm/internal/context/predictor.go` — Exhaustion prediction
+- `/home/mk/projects/Sylveste/research/ntm/internal/swarm/types.go` — SwarmPlan
+- `/home/mk/projects/Sylveste/research/ntm/internal/swarm/orchestrator.go` — Session creation
+- `/home/mk/projects/Sylveste/research/ntm/internal/swarm/auto_respawner.go` — Crash recovery
+- `/home/mk/projects/Sylveste/research/ntm/internal/context/monitor.go` — Context estimation
+- `/home/mk/projects/Sylveste/research/ntm/internal/context/predictor.go` — Exhaustion prediction
 
 ---
 
@@ -646,12 +646,12 @@ Clean step-by-step progress with automatic color/no-color fallback.
 
 ntm represents ~5 years of production experience running multiple AI agents simultaneously. Its three standout contributions are:
 
-1. **Comprehensive coordination infrastructure** (assignment, scheduling, conflict resolution, approval) — Demarch should adopt these as Intercore primitives.
+1. **Comprehensive coordination infrastructure** (assignment, scheduling, conflict resolution, approval) — Sylveste should adopt these as Intercore primitives.
 
 2. **Mature safety and audit patterns** (redaction, audit trails, approval gates, invariant enforcement) — Critical for any platform handling production code.
 
 3. **Production-grade TUI architecture** (theme system, layout tiers, panel composition) — Directly applicable to Autarch with minimal adaptation.
 
-The highest-leverage adoptions are the multi-factor assignment scorer, audit trail, and redaction engine — these three would immediately strengthen Demarch's foundation. The phase-based adoption roadmap above makes this concrete: foundation → intelligence → UX polish → advanced capabilities.
+The highest-leverage adoptions are the multi-factor assignment scorer, audit trail, and redaction engine — these three would immediately strengthen Sylveste's foundation. The phase-based adoption roadmap above makes this concrete: foundation → intelligence → UX polish → advanced capabilities.
 
-Demarch's plugin architecture is structurally superior to ntm's monolithic design (modularity wins long-term), but Intercore must provide the coordination primitives that ntm gets from being tightly coupled. By adopting these patterns, Demarch gains the sophistication of a tightly-integrated system while retaining the flexibility of an extensible architecture.
+Sylveste's plugin architecture is structurally superior to ntm's monolithic design (modularity wins long-term), but Intercore must provide the coordination primitives that ntm gets from being tightly coupled. By adopting these patterns, Sylveste gains the sophistication of a tightly-integrated system while retaining the flexibility of an extensible architecture.

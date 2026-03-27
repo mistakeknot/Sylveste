@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-Demarch is adding CXDB as required infrastructure for its plugin ecosystem. This is a significant commitment — CXDB becomes as fundamental as Dolt, meaning every developer and agent environment must run it.
+Sylveste is adding CXDB as required infrastructure for its plugin ecosystem. This is a significant commitment — CXDB becomes as fundamental as Dolt, meaning every developer and agent environment must run it.
 
 ## Review Approach
 

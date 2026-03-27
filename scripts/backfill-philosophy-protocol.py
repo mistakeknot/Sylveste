@@ -9,7 +9,7 @@ import os
 import sys
 from pathlib import Path
 
-DEMARCH_ROOT = Path(__file__).resolve().parent.parent
+SYLVESTE_ROOT = Path(__file__).resolve().parent.parent
 DRY_RUN = "--dry-run" in sys.argv
 
 TARGETS = [
@@ -46,8 +46,8 @@ TARGETS = [
 ]
 
 def compute_relpath(target: str) -> str:
-    target_dir = (DEMARCH_ROOT / target).parent
-    philosophy = DEMARCH_ROOT / "PHILOSOPHY.md"
+    target_dir = (SYLVESTE_ROOT / target).parent
+    philosophy = SYLVESTE_ROOT / "PHILOSOPHY.md"
     return os.path.relpath(philosophy, target_dir)
 
 def build_protocol(relpath: str) -> str:
@@ -66,7 +66,7 @@ Review [`PHILOSOPHY.md`]({relpath}) during:
 - Handoff/retrospective
 
 For brainstorming/planning outputs, add two short lines:
-- **Alignment:** one sentence on how the proposal supports the module's purpose within Demarch's philosophy.
+- **Alignment:** one sentence on how the proposal supports the module's purpose within Sylveste's philosophy.
 - **Conflict/Risk:** one sentence on any tension with philosophy (or 'none').
 
 If a high-value change conflicts with philosophy, either:
@@ -99,7 +99,7 @@ def main():
     missing = 0
 
     for target in TARGETS:
-        filepath = DEMARCH_ROOT / target
+        filepath = SYLVESTE_ROOT / target
         if not filepath.exists():
             print(f"MISSING: {target}")
             missing += 1

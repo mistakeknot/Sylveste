@@ -1,6 +1,6 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-4xp
+bead: Sylveste-4xp
 stage: discover
 ---
 # Brainstorm: Skaffen F4 — Model Routing

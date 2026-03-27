@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-4xp
+bead: Sylveste-4xp
 stage: design
 ---
 # PRD: Skaffen F4 — Model Routing

@@ -164,7 +164,7 @@ Three concrete lessons worth recording from the paper:
 
 ### Integration Path (If We Revisit)
 
-If Skaffen later adds multi-session memory (v0.3+ "cross-session context folding"), SimpleMem's architecture becomes more relevant. At that point, evaluate against MAGMA (multi-graph retrieval, also from the D8 research queue) and AgentFold (learned context folding). The retrieval component (LanceDB + BM25) could integrate via intersearch (Demarch's embedding search plugin) rather than a standalone store.
+If Skaffen later adds multi-session memory (v0.3+ "cross-session context folding"), SimpleMem's architecture becomes more relevant. At that point, evaluate against MAGMA (multi-graph retrieval, also from the D8 research queue) and AgentFold (learned context folding). The retrieval component (LanceDB + BM25) could integrate via intersearch (Sylveste's embedding search plugin) rather than a standalone store.
 
 For now, the priority is implementing D8 as designed: structured phase-boundary summaries + reactive mid-phase compaction with a code-aware scoring heuristic. That delivers the immediate context management improvement without the integration cost of porting a Python memory framework into a Go agent runtime.
 

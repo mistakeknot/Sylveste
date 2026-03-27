@@ -1,6 +1,6 @@
 # Architecture Review: Pollard Hunter Resilience Plan (iv-xlpg)
 
-**Plan file:** `/home/mk/projects/Demarch/docs/plans/2026-02-23-pollard-hunter-resilience.md`
+**Plan file:** `/home/mk/projects/Sylveste/docs/plans/2026-02-23-pollard-hunter-resilience.md`
 **Reviewed:** 2026-02-23
 **Reviewer:** fd-architecture
 

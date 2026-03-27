@@ -43,7 +43,7 @@ attp is a standalone, framework-agnostic protocol for structured bidirectional c
 
 ### 5. The delegation interface to interweave is a stable contract
 
-- Check that the delegation interface to interweave is a stable contract, not direct function calls — so attp works with non-Demarch conflict resolvers
+- Check that the delegation interface to interweave is a stable contract, not direct function calls — so attp works with non-Sylveste conflict resolvers
 
 ### 6. Distinction between structural conflicts (same file edited)
 
@@ -63,13 +63,13 @@ A good review from this agent:
 - Provides a concrete failure scenario for each P0/P1 finding — what breaks, under what conditions, and who is affected
 - Recommends the smallest viable fix, not an architecture overhaul — one diff hunk, not a rewrite
 - Frames uncertain findings as questions: "Does this handle X?" not "This doesn't handle X"
-- A non-Demarch framework can implement a conflict resolver that consumes attp's conflict events without reading interweave source
+- A non-Sylveste framework can implement a conflict resolver that consumes attp's conflict events without reading interweave source
 - attp never makes resolution decisions — always surfaces, delegates, and waits
 - The conflict event payload is sufficient for interlock to reconstruct the causal graph without additional queries
 
 ## Decision Lens
 
-Prioritizes findings where attp retains too much conflict resolution logic (coupling to Demarch) or too little (insufficient information for interweave to resolve correctly). Clean boundary definition is the primary criterion.
+Prioritizes findings where attp retains too much conflict resolution logic (coupling to Sylveste) or too little (insufficient information for interweave to resolve correctly). Clean boundary definition is the primary criterion.
 
 ## Prioritization
 

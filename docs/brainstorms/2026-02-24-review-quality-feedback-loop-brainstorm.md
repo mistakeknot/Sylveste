@@ -13,7 +13,7 @@ Closing this loop enables interspect to detect underperforming agents automatica
 
 **PostToolUse hook on intersynth completion (Approach A):**
 
-- Hooks are the right pattern per Demarch's design principle: "Hooks handle per-file automatic enforcement (zero cooperation needed)"
+- Hooks are the right pattern per Sylveste's design principle: "Hooks handle per-file automatic enforcement (zero cooperation needed)"
 - Zero changes needed in quality-gates or flux-drive callers
 - Fires automatically whenever intersynth synthesize-review completes
 - Filter on tool_input containing "intersynth:synthesize-review" subagent_type

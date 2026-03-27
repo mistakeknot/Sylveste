@@ -85,7 +85,7 @@
 
 ### Task 3.3: Final cleanup
 - [x] Remove any dead interspect references from remaining Clavain files
-- [x] Update Demarch root CLAUDE.md to add interspect to the interverse listing
+- [x] Update Sylveste root CLAUDE.md to add interspect to the interverse listing
 - [x] `git init` in interspect dir, initial commit
 - [x] Commit Phase 3 in Clavain (removal of dead references)
 
@@ -114,5 +114,5 @@
 - `config/defaults/protected-paths.json`
 - `CLAUDE.md`
 
-### Demarch root
+### Sylveste root
 - `CLAUDE.md` — add interspect to interverse listing

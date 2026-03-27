@@ -3,7 +3,7 @@
     "name": "fd-persistence-durability",
     "focus": "SQLite+Git dual-persistence patterns: how mcp_agent_mail achieves durable message storage with Git as audit trail",
     "persona": "A distributed systems engineer specializing in embedded databases and event sourcing. Approaches durability from first principles: what guarantees does each storage layer provide, and where do they complement or conflict?",
-    "decision_lens": "Prioritizes findings where Demarch's current stack (Intercore's SQLite phase store, Interlock's file-based reservations) could learn concrete durability guarantees or rollback patterns. Elevates any finding where Git-as-audit-log creates unexpected coupling or operational overhead.",
+    "decision_lens": "Prioritizes findings where Sylveste's current stack (Intercore's SQLite phase store, Interlock's file-based reservations) could learn concrete durability guarantees or rollback patterns. Elevates any finding where Git-as-audit-log creates unexpected coupling or operational overhead.",
     "review_areas": [
       "How mcp_agent_mail sequences SQLite writes vs Git commits — is Git the source of truth or a secondary audit log, and what happens on crash between the two?",
       "Transaction boundaries: does each MCP tool call map to a single atomic SQLite transaction, and how are partial commits surfaced to callers?",
@@ -14,10 +14,10 @@
     ],
     "success_hints": [
       "Find at least one durability guarantee in mcp_agent_mail that Intercore's sprint store does not currently provide, with a concrete adopt/skip recommendation",
-      "Identify whether Git's atomic commit model is exploited for rollback or is purely decorative — this determines whether Demarch should replicate it",
+      "Identify whether Git's atomic commit model is exploited for rollback or is purely decorative — this determines whether Sylveste should replicate it",
       "Determine if the dual-persistence adds measurable latency overhead that would be unacceptable in Intermute's real-time WebSocket path"
     ],
-    "task_context": "mcp_agent_mail is a Python/FastMCP coordination server using SQLite for runtime state and Git commits for durable audit. Demarch's coordination stack (Intermute, Interlock, Intercore) uses Go with SQLite and file-based approaches but lacks a unified audit trail. The goal is to extract adoptable patterns, not to port the code.",
+    "task_context": "mcp_agent_mail is a Python/FastMCP coordination server using SQLite for runtime state and Git commits for durable audit. Sylveste's coordination stack (Intermute, Interlock, Intercore) uses Go with SQLite and file-based approaches but lacks a unified audit trail. The goal is to extract adoptable patterns, not to port the code.",
     "anti_overlap": [
       "fd-messaging-protocol covers poll semantics, inbox/topic routing, and message delivery guarantees — not storage internals",
       "fd-tool-surface covers the 40+ MCP tool API design and ergonomics — not how tools persist their effects",
@@ -39,10 +39,10 @@
     ],
     "success_hints": [
       "Produce a concrete mapping of mcp_agent_mail delivery guarantees to Intermute equivalents — gaps in Intermute's model are adoption candidates",
-      "Determine whether the poll model is a deliberate offline-resilience choice or simply easier to implement over MCP — this frames whether Demarch should adopt it or treat it as a limitation to work around",
+      "Determine whether the poll model is a deliberate offline-resilience choice or simply easier to implement over MCP — this frames whether Sylveste should adopt it or treat it as a limitation to work around",
       "Identify the minimum polling interval that makes the protocol usable for real-time coordination vs batch review workflows"
     ],
-    "task_context": "mcp_agent_mail is a Python/FastMCP coordination server using SQLite+Git dual persistence and poll-based messaging. Demarch's Intermute uses Go HTTP+WebSocket for real-time agent coordination. The goal is to identify messaging protocol patterns worth adopting in Demarch's stack.",
+    "task_context": "mcp_agent_mail is a Python/FastMCP coordination server using SQLite+Git dual persistence and poll-based messaging. Sylveste's Intermute uses Go HTTP+WebSocket for real-time agent coordination. The goal is to identify messaging protocol patterns worth adopting in Sylveste's stack.",
     "anti_overlap": [
       "fd-persistence-durability covers how messages are stored in SQLite and Git — not how they are routed and consumed",
       "fd-tool-surface covers the MCP tool API shape and naming — not the underlying protocol semantics",
@@ -53,21 +53,21 @@
     "name": "fd-coordination-identity",
     "focus": "Agent identity, contact policies, registration lifecycle, and trust boundaries between agents",
     "persona": "A security-oriented systems designer with experience in capability-based security and distributed identity. Examines how agents are named, how they establish trust, and how policies prevent unauthorized coordination.",
-    "decision_lens": "Prioritizes findings where mcp_agent_mail's contact/policy model reveals gaps in Demarch's agent identity story — specifically Intercore's agent lock/claim model and Interlock's file-reservation ownership. Elevates anything that could prevent agent impersonation or accidental cross-agent interference.",
+    "decision_lens": "Prioritizes findings where mcp_agent_mail's contact/policy model reveals gaps in Sylveste's agent identity story — specifically Intercore's agent lock/claim model and Interlock's file-reservation ownership. Elevates anything that could prevent agent impersonation or accidental cross-agent interference.",
     "review_areas": [
       "Agent registration flow: what information is required at register_agent time, whether identities are ephemeral or persistent across restarts, and how identity is proven on each request",
       "Contact policies: what the set_contact_policy tool enforces (allow-list, deny-list, rate-limit?) and whether policies are per-agent or global",
       "request_contact / respond_contact handshake: what prevents an agent from spoofing another's identity during the contact negotiation, and whether the handshake is replayable",
       "Window identity vs agent identity: what list_window_identities exposes and whether windows are a sub-identity (session) or an alias for an agent",
       "Identity cleanup on agent exit: whether orphaned registrations accumulate (similar to Intercore's orphaned_at pattern) and how they are detected and expired",
-      "Demarch gap analysis: does Intercore's agent lock/claim model provide equivalent identity guarantees, or does it only protect files without establishing agent trust?"
+      "Sylveste gap analysis: does Intercore's agent lock/claim model provide equivalent identity guarantees, or does it only protect files without establishing agent trust?"
     ],
     "success_hints": [
       "Identify whether contact policies create a composable capability model that Interlock's file-reservation ownership model could benefit from",
       "Determine if mcp_agent_mail's identity layer is portable (could wrap Intermute's agent registry) or tightly coupled to SQLite schema",
-      "Flag any identity design where mcp_agent_mail is weaker than Demarch's current model — these are areas where Demarch should not regress"
+      "Flag any identity design where mcp_agent_mail is weaker than Sylveste's current model — these are areas where Sylveste should not regress"
     ],
-    "task_context": "mcp_agent_mail is a Python/FastMCP coordination server with explicit agent registration, contact policies, and window-based sub-identities. Demarch's Intercore manages agent locks and phase gates; Interlock manages file reservations by agent. Neither has an explicit contact-policy layer. The goal is to identify identity patterns worth adopting.",
+    "task_context": "mcp_agent_mail is a Python/FastMCP coordination server with explicit agent registration, contact policies, and window-based sub-identities. Sylveste's Intercore manages agent locks and phase gates; Interlock manages file reservations by agent. Neither has an explicit contact-policy layer. The goal is to identify identity patterns worth adopting.",
     "anti_overlap": [
       "fd-persistence-durability covers how identity state is stored and recovered — not the identity model itself",
       "fd-messaging-protocol covers how messages are routed between identities — not how identities are established",
@@ -89,11 +89,11 @@
       "Comparison with Interlock's tool surface: where Interlock (reserve_files, release_files, check_conflicts, negotiate_release) follows or diverges from mcp_agent_mail's naming patterns, and which approach is more learnable"
     ],
     "success_hints": [
-      "Produce a concrete naming convention recommendation for Demarch's MCP tools based on what mcp_agent_mail does well or poorly",
-      "Identify whether mcp_agent_mail uses a schema registry or inline definitions — the answer determines whether Demarch's tool surfaces should adopt a shared schema library",
+      "Produce a concrete naming convention recommendation for Sylveste's MCP tools based on what mcp_agent_mail does well or poorly",
+      "Identify whether mcp_agent_mail uses a schema registry or inline definitions — the answer determines whether Sylveste's tool surfaces should adopt a shared schema library",
       "Determine if the macro_ tool pattern is a good abstraction boundary or a leaky shortcut that should instead be a skill/workflow layer"
     ],
-    "task_context": "mcp_agent_mail exposes 40+ MCP tools for messaging, identity, and coordination. Demarch has multiple MCP servers (Interlock, Intermap, Intermux, tldr-swinton) each with their own tool surface conventions. The goal is to identify API design patterns that should be standardized across Demarch's MCP tool ecosystem.",
+    "task_context": "mcp_agent_mail exposes 40+ MCP tools for messaging, identity, and coordination. Sylveste has multiple MCP servers (Interlock, Intermap, Intermux, tldr-swinton) each with their own tool surface conventions. The goal is to identify API design patterns that should be standardized across Sylveste's MCP tool ecosystem.",
     "anti_overlap": [
       "fd-messaging-protocol covers the semantic behavior of messaging tools — not how they are named or parameterized",
       "fd-coordination-identity covers the security semantics of identity and policy tools — not their API ergonomics",

@@ -1,10 +1,10 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-ttf
+bead: Sylveste-ttf
 ---
 # Plans-as-Prompts — Structured Verification for Clavain Plans
 
-**Bead:** Demarch-ttf
+**Bead:** Sylveste-ttf
 **Date:** 2026-03-08
 
 ## Problem Statement
@@ -104,7 +104,7 @@ Proposed: Add `requirements` to the YAML frontmatter:
 ```yaml
 ---
 artifact_type: plan
-bead: Demarch-xyz
+bead: Sylveste-xyz
 stage: design
 requirements:
   - F1: User validation

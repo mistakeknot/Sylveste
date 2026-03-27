@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-ekh
+bead: Sylveste-ekh
 stage: design
 requirements:
   - F10: Interhelm plugin scaffold
@@ -19,7 +19,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-ekh
+**Bead:** Sylveste-ekh
 **Goal:** Create the interhelm Interverse plugin — agent-as-operator runtime diagnostics with skills, agent, hooks, and Rust templates.
 
 **Architecture:** Standalone Interverse plugin at `interverse/interhelm/`. Pattern-based plugin (teaches agents to scaffold diagnostic servers, doesn't ship runtime code). Three skills teach the four core patterns + CUJ verification. One review agent validates implementations. Three PostToolUse hooks nudge agents toward diagnostic workflows. Rust/hyper templates in `templates/` provide concrete starting points.
@@ -287,7 +287,7 @@ For brainstorming/planning outputs, add two short lines:
 ```markdown
 # interhelm
 
-Agent-as-operator runtime diagnostics for the [Interverse](https://github.com/mistakeknot/Demarch) plugin ecosystem.
+Agent-as-operator runtime diagnostics for the [Interverse](https://github.com/mistakeknot/Sylveste) plugin ecosystem.
 
 ## What
 

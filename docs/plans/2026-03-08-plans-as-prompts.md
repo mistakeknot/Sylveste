@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-ttf
+bead: Sylveste-ttf
 stage: design
 requirements:
   - F1: Structured verify blocks
@@ -11,7 +11,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-ttf
+**Bead:** Sylveste-ttf
 **Phase:** planned (as of 2026-03-08T09:33:36Z)
 **Goal:** Add structured verification, goal-backward must-haves, and requirement traceability to Clavain plan format.
 

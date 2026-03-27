@@ -3,7 +3,7 @@
 **Bead:** iv-x6gd2
 **Date:** 2026-02-28
 **Status:** Ready for strategy
-**Alignment:** Directly advances Intercom's H2 vision — making it a bidirectional agency participant, not just a read terminal. Core Demarch principle: every action produces evidence, and Intercom becomes the surface through which humans contribute that evidence from messaging.
+**Alignment:** Directly advances Intercom's H2 vision — making it a bidirectional agency participant, not just a read terminal. Core Sylveste principle: every action produces evidence, and Intercom becomes the surface through which humans contribute that evidence from messaging.
 **Conflict/Risk:** None — all architectural decisions were resolved in the vision doc (v0.2). This is pure implementation of decided designs.
 
 ---
@@ -13,7 +13,7 @@
 Intercom is a dual-process personal AI assistant: Node host (channels, commands) + IronClaw (Rust daemon for orchestration, containers, Postgres, Telegram bridge). It faces humans via messaging channels (Telegram, WhatsApp) and runs container-isolated agents (Claude, Gemini, Codex).
 
 The vision doc defines three horizons:
-- **H1 (Agency-Aware Reads): ~90% complete.** 7 Demarch query types work end-to-end across all runtimes.
+- **H1 (Agency-Aware Reads): ~90% complete.** 7 Sylveste query types work end-to-end across all runtimes.
 - **H2 (Agency Participant): Infrastructure built, surface not exposed.** Write operations defined in Rust, IPC dispatch exists, HTTP endpoints wired — but no container tools or event reply bridging.
 - **H3 (Distributed Team Surface): Future.** Role-based access, cross-channel continuity, voice adaptation.
 
@@ -21,15 +21,15 @@ The vision doc defines three horizons:
 
 H2's backend is fully wired in Rust:
 - `WriteOperation` enum: `CreateIssue`, `UpdateIssue`, `CloseIssue`, `StartRun`, `ApproveGate`
-- `DemarchAdapter::execute_write()` with allowlist validation and main-group requirement
-- `POST /v1/demarch/write` HTTP endpoint
+- `SylvesteAdapter::execute_write()` with allowlist validation and main-group requirement
+- `POST /v1/sylveste/write` HTTP endpoint
 - IPC dispatcher routes write query types to operations
 
 What's missing is the **container-facing surface** and the **event reply loop**:
 
 ### Missing Piece 1: Container Write Tools
 
-No write functions in `container/shared/demarch-tools.ts` (only reads). No write MCP tools in `container/agent-runner/src/ipc-mcp-stdio.ts` (only reads). Container agents literally cannot submit write intents.
+No write functions in `container/shared/sylveste-tools.ts` (only reads). No write MCP tools in `container/agent-runner/src/ipc-mcp-stdio.ts` (only reads). Container agents literally cannot submit write intents.
 
 **Needed:** 5 write wrapper functions + 5 MCP tool declarations. They use the same `queryKernel()` IPC bridge that reads use — the host-side IPC dispatcher in `ipc.rs` already routes write query types.
 
@@ -43,21 +43,21 @@ The event consumer in `events.rs` sends Telegram notifications for `gate.pending
 
 **Needed:** Inline button rendering on gate notifications + callback handler that routes APPROVE/REJECT to `WriteOperation::ApproveGate`.
 
-### Missing Piece 3: demarch_research (H1 completion)
+### Missing Piece 3: sylveste_research (H1 completion)
 
-The vision specified 8 read tools. 7 are implemented. `demarch_research` (Pollard query or `ic discovery search`) is missing. Small scope, completes H1 100%.
+The vision specified 8 read tools. 7 are implemented. `sylveste_research` (Pollard query or `ic discovery search`) is missing. Small scope, completes H1 100%.
 
 ## Proposed Work
 
 ### Task 1: Container Write Tools
 
-Add to `container/shared/demarch-tools.ts`:
+Add to `container/shared/sylveste-tools.ts`:
 ```
-demarchCreateIssue(ctx, title, description?, priority?, type?, labels?)
-demarchUpdateIssue(ctx, id, status?, priority?, title?, description?, notes?)
-demarchCloseIssue(ctx, id, reason?)
-demarchStartRun(ctx, title?, description?)
-demarchApproveGate(ctx, gateId, reason?)
+sylvesteCreateIssue(ctx, title, description?, priority?, type?, labels?)
+sylvesteUpdateIssue(ctx, id, status?, priority?, title?, description?, notes?)
+sylvesteCloseIssue(ctx, id, reason?)
+sylvesteStartRun(ctx, title?, description?)
+sylvesteApproveGate(ctx, gateId, reason?)
 ```
 
 Add corresponding MCP tools to `container/agent-runner/src/ipc-mcp-stdio.ts` for Claude runtime. These call `queryKernel()` with write query types — the IPC bridge handles everything.
@@ -74,7 +74,7 @@ In `events.rs`: When sending `gate.pending` notification, include Telegram inlin
 
 In `telegram.rs`: Add callback query handler that:
 1. Parses button callback data (`approve:{gate_id}`, `reject:{gate_id}`, `defer:{gate_id}`)
-2. Routes to `WriteOperation::ApproveGate` via the Demarch adapter
+2. Routes to `WriteOperation::ApproveGate` via the Sylveste adapter
 3. Edits the original message with the result ("Gate approved by @user")
 4. Records the action in kernel event log
 
@@ -90,13 +90,13 @@ Similar to gate approval but for `budget.exceeded` and `run.completed`:
 
 Lower priority than gate approval — gate blocking is the critical path.
 
-### Task 4: demarch_research Tool (H1 Completion)
+### Task 4: sylveste_research Tool (H1 Completion)
 
-Add `demarch_research` to complete H1:
+Add `sylveste_research` to complete H1:
 - Query type: `research`
 - Host handler: Execute `ic discovery search --json` or future Pollard API
-- Container tool: `demarchResearch(ctx, query)`
-- MCP tool: `demarch_research`
+- Container tool: `sylvesteResearch(ctx, query)`
+- MCP tool: `sylveste_research`
 
 Small scope, can be done in parallel with other tasks.
 
@@ -105,7 +105,7 @@ Small scope, can be done in parallel with other tasks.
 These existing beads map to this work:
 - **iv-902u6** (gate approval via Telegram) → Task 2
 - **iv-wjbex** (sprint status push notifications) → Already working (events.rs sends notifications). Close or verify.
-- **iv-niu3a** (discovery triage via messaging) → Partially addressed by Task 1 (`demarchNextWork` read exists, `demarchCreateIssue` write enables acting on it). May need a dedicated "triage flow" skill.
+- **iv-niu3a** (discovery triage via messaging) → Partially addressed by Task 1 (`sylvesteNextWork` read exists, `sylvesteCreateIssue` write enables acting on it). May need a dedicated "triage flow" skill.
 - **iv-elbnh** (session continuity across model switches) → Bug, separate from H2 last mile. Keep open.
 
 ## Risk Assessment

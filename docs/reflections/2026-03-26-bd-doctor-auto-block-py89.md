@@ -1,10 +1,10 @@
 ---
 artifact_type: reflection
-bead: Demarch-py89
+bead: Sylveste-py89
 date: 2026-03-26
 sprint_outcome: shipped
 ---
-# Reflection: F7 — bd doctor auto-run with corruption blocking (Demarch-py89)
+# Reflection: F7 — bd doctor auto-run with corruption blocking (Sylveste-py89)
 
 ## What happened
 
@@ -19,5 +19,5 @@ Used a file sentinel (`/tmp/clavain-bd-corruption-$USER`) rather than calling `b
 
 ## Lessons
 
-1. **v0.7 B:L2 is close.** This was the last open P1. After closing, only the parent epic (Demarch-0rgc) and the meta-epic (Demarch-enxv) remain in-progress. The gate calibration loop (Track A) is the remaining gap.
+1. **v0.7 B:L2 is close.** This was the last open P1. After closing, only the parent epic (Sylveste-0rgc) and the meta-epic (Sylveste-enxv) remain in-progress. The gate calibration loop (Track A) is the remaining gap.
 2. **The prioritization triage earlier in this session surfaced the right work order.** By anchoring P1 to version gates, we closed 6 orphan beads and shipped 2 real features — all gate-blocking — instead of working on any of the 38 former-P1 non-gate items.

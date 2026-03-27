@@ -35,8 +35,8 @@ Creates a new run via `ic run create --project=... --goal=...`, then runs `ic si
 ## Code Reference
 
 ### Situation snapshot command implementation
-- `/home/mk/projects/Demarch/core/intercore/cmd/ic/situation.go` — CLI handler, parses `--run=` and `--events=` flags
-- `/home/mk/projects/Demarch/core/intercore/internal/observation/observation.go` — `Collector.Collect()` gathers Snapshot struct from phase/dispatch/event/scheduler stores
+- `/home/mk/projects/Sylveste/core/intercore/cmd/ic/situation.go` — CLI handler, parses `--run=` and `--events=` flags
+- `/home/mk/projects/Sylveste/core/intercore/internal/observation/observation.go` — `Collector.Collect()` gathers Snapshot struct from phase/dispatch/event/scheduler stores
 
 ### Snapshot JSON structure (from `observation.Snapshot`)
 ```json
@@ -51,7 +51,7 @@ Creates a new run via `ic run create --project=... --goal=...`, then runs `ic si
 ```
 
 ### Test script
-- `/home/mk/projects/Demarch/core/intercore/test-integration.sh` — lines 1365–1399 (new situation snapshot section)
+- `/home/mk/projects/Sylveste/core/intercore/test-integration.sh` — lines 1365–1399 (new situation snapshot section)
 
 ## Verification
 

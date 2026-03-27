@@ -1,6 +1,6 @@
 # fd-plugin-scaffold-correctness-interlore
 
-Review of Task 2 (scaffold) in `/home/mk/projects/Demarch/docs/plans/2026-03-21-interlore.md` against `/home/mk/projects/Demarch/docs/canon/plugin-standard.md`.
+Review of Task 2 (scaffold) in `/home/mk/projects/Sylveste/docs/plans/2026-03-21-interlore.md` against `/home/mk/projects/Sylveste/docs/canon/plugin-standard.md`.
 
 ## Verdict: 5 issues found (2 will cause test failures, 3 conformance deviations)
 

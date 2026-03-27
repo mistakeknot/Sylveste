@@ -4,7 +4,7 @@ Date: 2026-02-25 (updated 2026-02-25)
 
 ## Problem
 
-Four repos in the Demarch monorepo had gitleaks secret scan failures (13 findings total):
+Four repos in the Sylveste monorepo had gitleaks secret scan failures (13 findings total):
 
 1. **Intercore** (`core/intercore`) — 8 findings: synthetic test fixtures (fake JWTs, API keys, GitHub PATs) in `redaction_test.go`, `state_test.go`, `test-integration.sh`, plus a quoted key in a research doc.
 2. **Interject** (`interverse/interject`) — 3 findings of the same `EXA_API_KEY` in historical commits across `plugin.json`, `interject-scan.service`, and `interject-cron`.

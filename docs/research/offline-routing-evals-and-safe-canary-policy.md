@@ -7,7 +7,7 @@ status: draft
 
 # Offline Routing Evals and Safe Canary Policy
 
-**Question:** What evaluation and rollout policy should Demarch use before routing overrides are trusted broadly?
+**Question:** What evaluation and rollout policy should Sylveste use before routing overrides are trusted broadly?
 
 ## Executive Summary
 
@@ -317,4 +317,4 @@ The right answer is not "ship more routing overrides once enough override eviden
 
 `candidate detection -> offline counterfactual score -> narrow live canary -> human-governed promotion or revert`
 
-Demarch already has enough substrate to begin this flow, but not enough to trust it blindly. The missing pieces are not exotic ML; they are measurement integrity, cohort definition, and replayable routing facts.
+Sylveste already has enough substrate to begin this flow, but not enough to trust it blindly. The missing pieces are not exotic ML; they are measurement integrity, cohort definition, and replayable routing facts.

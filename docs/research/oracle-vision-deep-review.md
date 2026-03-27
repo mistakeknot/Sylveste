@@ -63,13 +63,13 @@ STYLE CONSTRAINTS
 
 ---
 
-## Oracle-style review of the uploaded Interverse/Demarch vision set
+## Oracle-style review of the uploaded Interverse/Sylveste vision set
 
 ### 1) Executive verdict
 
 * The core differentiation is **durable, kernel-owned orchestration state + kernel-enforced gates + event log**, with policy living above it and UI above that. This is a coherent “workflow kernel” thesis. 
 * The second differentiator is an explicit **learning loop** (Interspect) that proposes OS-level changes from outcome evidence, with “observe-before-act” and overlay-based reversibility. 
-* The platform story (Demarch) is crisp: autonomy × quality × token efficiency as co-equal axes, improved via profiling flywheel. 
+* The platform story (Sylveste) is crisp: autonomy × quality × token efficiency as co-equal axes, improved via profiling flywheel. 
 * The biggest architecture risk is **boundary leakage**: today, multiple docs acknowledge “aspirational” write-path enforcement and app-layer logic living where it “shouldn’t” (e.g., Gurgeh/Coldwine). Without fast enforcement, the system becomes “everything calls everything,” killing the survivability thesis.
 * The biggest correctness risk is **cross-doc inconsistency about what is shipped vs planned**, especially around discovery primitives and kernel reality vs target state. If not cleaned up, this will create roadmap thrash and external trust loss.
 * The biggest product risk is **scope sprawl**: 30+ modules, multiple TUIs, kernel, OS, profiler, discovery, portfolio orchestration. The adoption ladder helps, but only if each step has extremely sharp “standalone value” and minimal setup friction.
@@ -99,7 +99,7 @@ This is a must-fix because it goes directly to the project’s stated “gates a
 
 You have conflicting claims across docs:
 
-* Demarch says the kernel has a “discovery pipeline” shipped and lists it among shipped kernel capabilities “as of February 2026.” 
+* Sylveste says the kernel has a “discovery pipeline” shipped and lists it among shipped kernel capabilities “as of February 2026.” 
 * Clavain says Discover macro-stage is a future capability dependent on kernel discovery subsystem v3, while also saying interject implements much of it but kernel integration is missing. 
 * Intercore vision contains both “discovery pipeline shipped (E5)” in a success table *and* later states the discovery subsystem/tables do not exist in the current schema and are “planned for v3.” 
 
@@ -170,7 +170,7 @@ But the kernel tracks artifact paths, and artifacts can contain secrets; also In
 #### A. Day-1 workflow is clear, but you should tighten “Discover” messaging
 
 Clavain’s day-1 loop is “brainstorm → plan → plan review → execute → test → quality gates → ship.” 
-Demarch also describes Discover as part of the 5 macro-stages and implies pipeline maturity. 
+Sylveste also describes Discover as part of the 5 macro-stages and implies pipeline maturity. 
 This will confuse new users.
 
 **Recommendation:** make a single, prominent statement:
@@ -261,7 +261,7 @@ Event-driven advancement is valuable, but I would not let it outrun correctness 
 ### 7) Redlines before public launch
 
 1. **Resolve the phase/gate mismatch** (or explicitly disclaim that gates only enforce late phases today).
-2. **Eliminate “shipped vs planned” contradictions** across Demarch/Clavain/Intercore on discovery and other major subsystems.
+2. **Eliminate “shipped vs planned” contradictions** across Sylveste/Clavain/Intercore on discovery and other major subsystems.
 3. **Publish a stable contract for “intents” and “overlays”** (schemas, error handling, rollback mechanics).
 4. **Define minimum viable “cost correctness”** for the north-star metric (token accounting accuracy + reconciliation plan).
 

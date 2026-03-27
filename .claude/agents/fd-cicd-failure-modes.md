@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-Demarch beads flow through agent pipelines with CUJ gates. Extract CI/CD disposition patterns and map to formal taxonomy.
+Sylveste beads flow through agent pipelines with CUJ gates. Extract CI/CD disposition patterns and map to formal taxonomy.
 
 ## Review Approach
 

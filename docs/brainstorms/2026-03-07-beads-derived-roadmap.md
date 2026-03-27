@@ -10,7 +10,7 @@
 `sync-roadmap-json.sh` (700 lines) generates `docs/roadmap.json` by:
 1. Scanning module directories for `docs/roadmap.md` or `docs/roadmap.json`
 2. Parsing markdown/JSON items with regex matching
-3. Scanning the root roadmap (`demarch-roadmap.md`) and `docs/backlog.md` for interverse-level items
+3. Scanning the root roadmap (`sylveste-roadmap.md`) and `docs/backlog.md` for interverse-level items
 4. Assembling module metadata (version, location, roadmap source)
 5. Computing cross-module dependencies
 6. Writing a unified JSON output

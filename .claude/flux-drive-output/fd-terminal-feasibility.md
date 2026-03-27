@@ -650,7 +650,7 @@ A 2D canvas where elements have arbitrary (x,y) positions and can be dragged req
 
 ## Prioritized Implementation Order
 
-For Masaq/Demarch, the highest-value terminal-equivalent components to build (ordered by number of ideas they unlock):
+For Masaq/Sylveste, the highest-value terminal-equivalent components to build (ordered by number of ideas they unlock):
 
 1. **`splitpane` component** — unlocks #17, #42, #47 (3 ideas; also enables multi-agent monitoring)
 2. **`toast`/notification component** — unlocks #24, #34, #35 (3 ideas; essential for any event-driven feedback)

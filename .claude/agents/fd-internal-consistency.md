@@ -43,7 +43,7 @@ Three CUJ documents (first-install.md, running-a-sprint.md, code-review.md) desc
 
 ### 5. The frontmatter `bead` field is consistent
 
-- Check that the frontmatter `bead` field is consistent — all three CUJs reference `Demarch-9ha`, which should be verified as a real parent bead and not a copy-paste artifact
+- Check that the frontmatter `bead` field is consistent — all three CUJs reference `Sylveste-9ha`, which should be verified as a real parent bead and not a copy-paste artifact
 
 ### 6. Identify places where the same feature is described with ...
 

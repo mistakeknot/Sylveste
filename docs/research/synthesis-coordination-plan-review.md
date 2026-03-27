@@ -1,6 +1,6 @@
 # Synthesis: Native Kernel Coordination Plan Review
 
-**Target:** `/home/mk/projects/Demarch/docs/plans/2026-02-25-native-kernel-coordination.md`
+**Target:** `/home/mk/projects/Sylveste/docs/plans/2026-02-25-native-kernel-coordination.md`
 **Date:** 2026-02-25
 **Reviewers:** 4 flux-drive agents (correctness, safety, architecture, quality)
 **Verdict:** **NEEDS_ATTENTION** — Do not proceed to implementation
@@ -244,7 +244,7 @@ Lock IDs use `uuid.NewString()` instead of the project's 8-char base36 `generate
 ### ARCH-4: Scope Semantics Mismatch
 **Agents:** fd-architecture | **Tasks:** 7, 8
 
-Intermute's `Reservation.Project` is a short name (`"Demarch"`). Intercore's `coordination_locks.scope` is the full path (`"/home/mk/projects/Demarch"`). The dual-write bridge will create locks with incompatible scope values, breaking cross-system conflict checks.
+Intermute's `Reservation.Project` is a short name (`"Sylveste"`). Intercore's `coordination_locks.scope` is the full path (`"/home/mk/projects/Sylveste"`). The dual-write bridge will create locks with incompatible scope values, breaking cross-system conflict checks.
 
 **Fix:** Standardize scope to canonical absolute path of git root across all callers. Use `git rev-parse --show-toplevel`.
 
@@ -293,16 +293,16 @@ Intermute's `Reservation.Project` is a short name (`"Demarch"`). Intercore's `co
 
 ## Files Referenced
 
-**Verdict JSON:** `/home/mk/projects/Demarch/.clavain/verdicts/coordination-plan-review.json`
+**Verdict JSON:** `/home/mk/projects/Sylveste/.clavain/verdicts/coordination-plan-review.json`
 
 **Agent Reports:**
-- `/home/mk/projects/Demarch/docs/research/fd-correctness-coordination-plan.md`
-- `/home/mk/projects/Demarch/docs/research/fd-safety-coordination-plan.md`
-- `/home/mk/projects/Demarch/docs/research/fd-architecture-coordination-plan.md`
-- `/home/mk/projects/Demarch/docs/research/fd-quality-coordination-plan.md`
+- `/home/mk/projects/Sylveste/docs/research/fd-correctness-coordination-plan.md`
+- `/home/mk/projects/Sylveste/docs/research/fd-safety-coordination-plan.md`
+- `/home/mk/projects/Sylveste/docs/research/fd-architecture-coordination-plan.md`
+- `/home/mk/projects/Sylveste/docs/research/fd-quality-coordination-plan.md`
 
 **Target Plan:**
-- `/home/mk/projects/Demarch/docs/plans/2026-02-25-native-kernel-coordination.md`
+- `/home/mk/projects/Sylveste/docs/plans/2026-02-25-native-kernel-coordination.md`
 
 ---
 

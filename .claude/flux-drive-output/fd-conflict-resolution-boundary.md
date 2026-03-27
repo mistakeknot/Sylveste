@@ -216,7 +216,7 @@ This is informational. attp does not enforce the reservation — that is interlo
 
 ## 5. Stable Delegation Interface
 
-The contract between attp and any framework's conflict resolver. This interface is framework-agnostic — a non-Demarch system can implement it.
+The contract between attp and any framework's conflict resolver. This interface is framework-agnostic — a non-Sylveste system can implement it.
 
 ### Contract: ConflictResolver
 
@@ -282,7 +282,7 @@ attp supports multiple registered resolvers with priority ordering. For a given 
 2. If that resolver returns `escalate`, attp falls through to the next resolver.
 3. If all resolvers escalate, the conflict enters `escalated` state and surfaces to the human via MCP tool responses.
 
-This lets Demarch register interlock for structural conflicts and a separate sensitivity-policy resolver for sensitivity conflicts, while a non-Demarch system can register a single resolver for both.
+This lets Sylveste register interlock for structural conflicts and a separate sensitivity-policy resolver for sensitivity conflicts, while a non-Sylveste system can register a single resolver for both.
 
 ---
 

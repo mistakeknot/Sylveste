@@ -1,7 +1,7 @@
 # tldr-swinton Codebase Structure & Block-Level Compression Integration Plan
 
 **Date**: 2026-02-25  
-**Project**: tldr-swinton (Demarch/interverse)  
+**Project**: tldr-swinton (Sylveste/interverse)  
 **Purpose**: Understand codebase architecture to implement "LongCodeZip block-level compression" (within-function block compression using tree-sitter AST + knapsack DP).
 
 ---
@@ -9,7 +9,7 @@
 ## 1. Directory Structure & Project Layout
 
 ```
-/home/mk/projects/Demarch/interverse/tldr-swinton/
+/home/mk/projects/Sylveste/interverse/tldr-swinton/
 ├── src/tldr_swinton/
 │   ├── __init__.py
 │   ├── cli.py                              # CLI entry point (tldrs, tldr-swinton commands)
@@ -544,7 +544,7 @@ pytest tests/ -k "block_compress" -v
 8. **Extension points**: Scoring heuristics, language-specific boundaries, multi-pass compression
 
 **Key files to review before extending**:
-- `/home/mk/projects/Demarch/interverse/tldr-swinton/src/tldr_swinton/modules/core/block_compress.py` (462 lines)
-- `/home/mk/projects/Demarch/interverse/tldr-swinton/src/tldr_swinton/modules/core/engines/difflens.py` (850+ lines, lines 731-741 are integration)
-- `/home/mk/projects/Demarch/interverse/tldr-swinton/src/tldr_swinton/modules/core/zoom.py` (263 lines)
-- `/home/mk/projects/Demarch/interverse/tldr-swinton/tests/test_block_compress.py` (306 lines)
+- `/home/mk/projects/Sylveste/interverse/tldr-swinton/src/tldr_swinton/modules/core/block_compress.py` (462 lines)
+- `/home/mk/projects/Sylveste/interverse/tldr-swinton/src/tldr_swinton/modules/core/engines/difflens.py` (850+ lines, lines 731-741 are integration)
+- `/home/mk/projects/Sylveste/interverse/tldr-swinton/src/tldr_swinton/modules/core/zoom.py` (263 lines)
+- `/home/mk/projects/Sylveste/interverse/tldr-swinton/tests/test_block_compress.py` (306 lines)

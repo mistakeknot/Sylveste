@@ -21,13 +21,13 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-Demarch is an autonomous software development agency platform at v0.6.228. The question is what v1.0.0 should mean and commit to, given the platform's outputs depend on evolving AI models.
+Sylveste is an autonomous software development agency platform at v0.6.228. The question is what v1.0.0 should mean and commit to, given the platform's outputs depend on evolving AI models.
 
 ## Review Approach
 
 ### 1. Map NASA Technology Readiness Levels (TRL 1
 
-- Map NASA Technology Readiness Levels (TRL 1-9) onto the Demarch platform lifecycle — identify which TRL the platform currently occupies
+- Map NASA Technology Readiness Levels (TRL 1-9) onto the Sylveste platform lifecycle — identify which TRL the platform currently occupies
 
 ### 2. Map DoD Manufacturing Readiness Levels (MRL 1
 

@@ -1,6 +1,6 @@
 # Safety Review: Agent Claiming Protocol Plan
-**Plan:** `/home/mk/projects/Demarch/docs/plans/2026-02-26-agent-claiming-protocol.md`
-**Brainstorm:** `/home/mk/projects/Demarch/docs/brainstorms/2026-02-26-agent-claiming-protocol.md`
+**Plan:** `/home/mk/projects/Sylveste/docs/plans/2026-02-26-agent-claiming-protocol.md`
+**Brainstorm:** `/home/mk/projects/Sylveste/docs/brainstorms/2026-02-26-agent-claiming-protocol.md`
 **Date:** 2026-02-26
 **Reviewer:** fd-safety (Flux-drive Safety Reviewer)
 **Risk Classification:** Medium — new coordination surface, trust boundary between agents, no external network exposure, no credential handling
@@ -79,7 +79,7 @@ The more serious concern: if Claude Code processes `CLAUDE_ENV_FILE` as a source
 
 ## Finding 3 — HIGH: Shell Injection in bead-agent-bind.sh (Existing File, Batch 3 Interacts)
 
-**Location:** `/home/mk/projects/Demarch/os/clavain/hooks/bead-agent-bind.sh`, line 34 and line 93
+**Location:** `/home/mk/projects/Sylveste/os/clavain/hooks/bead-agent-bind.sh`, line 34 and line 93
 
 This is an existing file that Batch 3 touches indirectly (it reads `bd update --claim` invocations from hook input). Two issues in the existing code that the plan inherits:
 

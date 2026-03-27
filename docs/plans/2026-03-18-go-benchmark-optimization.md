@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-0pvp
+bead: Sylveste-0pvp
 stage: design
 requirements:
   - F1: classifyFailure optimization
@@ -26,7 +26,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-0pvp
+**Bead:** Sylveste-0pvp
 **Goal:** Reduce ns/op and allocs/op across 17 hot-path Go functions in 5 pillars, gated by interlab harness benchmarks.
 
 **Architecture:** Each task follows a strict benchmark→optimize→verify cycle. Write the benchmark first (`_bench_test.go`), record baseline, apply optimization, verify improvement, update interlab harness if needed. No API signature changes — all internal.
@@ -62,7 +62,7 @@ requirements:
 
 ### Task 1: F4 — Optimize classifyComplexity (Clavain CLI)
 
-**Bead:** Demarch-0pvp.1
+**Bead:** Sylveste-0pvp.1
 **Files:**
 - Modify: `os/Clavain/cmd/clavain-cli/complexity.go`
 - Test: `os/Clavain/cmd/clavain-cli/complexity_bench_test.go` (exists)
@@ -150,7 +150,7 @@ git push
 
 ### Task 2: F1 — Benchmark + Optimize classifyFailure (Skaffen agentloop)
 
-**Bead:** Demarch-0pvp.11
+**Bead:** Sylveste-0pvp.11
 **Files:**
 - Modify: `os/Skaffen/internal/agentloop/loop.go`
 - Create: `os/Skaffen/internal/agentloop/loop_bench_test.go`
@@ -199,7 +199,7 @@ git push
 
 ### Task 3: F5 — Benchmark + Optimize extractFileActivity (Skaffen agentloop)
 
-**Bead:** Demarch-0pvp.13
+**Bead:** Sylveste-0pvp.13
 **Files:**
 - Modify: `os/Skaffen/internal/agentloop/loop.go`
 - Add to: `os/Skaffen/internal/agentloop/loop_bench_test.go`
@@ -228,7 +228,7 @@ Add tool name pre-filter check before `json.Unmarshal`. Only unmarshal when tool
 
 ### Task 4: F3 — Benchmark + Optimize trust.Evaluator.Evaluate (Skaffen trust)
 
-**Bead:** Demarch-0pvp.16
+**Bead:** Sylveste-0pvp.16
 **Files:**
 - Modify: `os/Skaffen/internal/trust/trust.go`
 - Create: `os/Skaffen/internal/trust/trust_bench_test.go`
@@ -259,7 +259,7 @@ Alternative: On `Learn()`, partition overrides into exact-match (no glob chars) 
 
 ### Task 5: F2 — Benchmark + Optimize estimateMessageTokens (Skaffen agentloop)
 
-**Bead:** Demarch-0pvp.12
+**Bead:** Sylveste-0pvp.12
 **Files:**
 - Modify: `os/Skaffen/internal/agentloop/loop.go`
 - Add to: `os/Skaffen/internal/agentloop/loop_bench_test.go`
@@ -291,7 +291,7 @@ Cache invalidation: clear entry when message content changes (track by pointer i
 
 ### Task 6: F8 — Optimize composePlan (Clavain CLI)
 
-**Bead:** Demarch-0pvp.5
+**Bead:** Sylveste-0pvp.5
 **Files:**
 - Modify: `os/Clavain/cmd/clavain-cli/compose.go`
 - Test: `os/Clavain/cmd/clavain-cli/compose_bench_test.go` (exists)
@@ -360,7 +360,7 @@ This is a duplicate of Task 1 (F4). Skip.
 
 ### Task 8: F9 — Optimize parseFrontmatter (Skaffen skill)
 
-**Bead:** Demarch-0pvp.4
+**Bead:** Sylveste-0pvp.4
 **Files:**
 - Modify: `os/Skaffen/internal/skill/skill.go`
 - Test: `os/Skaffen/internal/skill/skill_bench_test.go` (exists)
@@ -418,7 +418,7 @@ Expected: <8us without triggers, ~15us with triggers (vs 20us baseline)
 
 ### Task 9: F6 — Benchmark + Optimize Graph.Rank PageRank (Skaffen repomap)
 
-**Bead:** Demarch-0pvp.14
+**Bead:** Sylveste-0pvp.14
 **Files:**
 - Modify: `os/Skaffen/internal/repomap/pagerank.go`
 - Create: `os/Skaffen/internal/repomap/pagerank_bench_test.go`
@@ -444,7 +444,7 @@ Create benchmarks for 100, 500, 1000 node graphs with 5x edges.
 
 ### Task 10: F7 — Benchmark + Optimize ScoreMessages + TopK (Skaffen session)
 
-**Bead:** Demarch-0pvp.15
+**Bead:** Sylveste-0pvp.15
 **Files:**
 - Modify: `os/Skaffen/internal/session/scoring.go`
 - Create: `os/Skaffen/internal/session/scoring_bench_test.go`
@@ -470,7 +470,7 @@ Replace `sort.Slice` + slice truncation with `container/heap` min-heap of size K
 
 ### Task 11: F10 — Reduce scoring Assign allocations (Intercore)
 
-**Bead:** Demarch-0pvp.2
+**Bead:** Sylveste-0pvp.2
 **Files:**
 - Modify: `core/intercore/internal/scoring/scoring.go`
 - Test: `core/intercore/internal/scoring/scoring_bench_test.go` (exists)
@@ -496,7 +496,7 @@ Run: `cd core/intercore && go test -bench='BenchmarkAssign20x8$' -benchmem -coun
 
 ### Task 12: F11 — Optimize TopologicalSort (Intercore portfolio)
 
-**Bead:** Demarch-0pvp.3
+**Bead:** Sylveste-0pvp.3
 **Files:**
 - Modify: `core/intercore/internal/portfolio/topo.go`
 - Test: `core/intercore/internal/portfolio/topo_bench_test.go` (exists)
@@ -538,7 +538,7 @@ Run existing tests to ensure output order matches exactly.
 
 ### Task 13: F12 — Optimize DiffSpecs (Autarch gurgeh)
 
-**Bead:** Demarch-0pvp.6
+**Bead:** Sylveste-0pvp.6
 **Files:**
 - Modify: `apps/Autarch/internal/gurgeh/diff/diff.go`
 - Test: `apps/Autarch/internal/gurgeh/diff/diff_bench_test.go` (exists)
@@ -564,7 +564,7 @@ Apply same pattern to `diffAcceptanceCriteria` and `diffCUJs`.
 
 ### Task 14: F13 — Benchmark ReconcileProject (Autarch events)
 
-**Bead:** Demarch-0pvp.19
+**Bead:** Sylveste-0pvp.19
 **Files:**
 - Modify: `apps/Autarch/pkg/events/reconcile.go`
 - Create: `apps/Autarch/pkg/events/reconcile_bench_test.go`
@@ -588,7 +588,7 @@ Before computing SHA256, check file mtime against last-reconciled time. If uncha
 
 ### Task 15: F14 — Benchmark Hub.Broadcast + snapshot (Intermute ws)
 
-**Bead:** Demarch-0pvp.18
+**Bead:** Sylveste-0pvp.18
 **Files:**
 - Modify: `core/intermute/internal/ws/gateway.go`
 - Create: `core/intermute/internal/ws/gateway_bench_test.go`
@@ -619,7 +619,7 @@ Get from pool, use, return after broadcast completes.
 
 ### Task 16: F15 — Optimize PatternsOverlap (Intermute glob)
 
-**Bead:** Demarch-0pvp.7
+**Bead:** Sylveste-0pvp.7
 **Files:**
 - Modify: `core/intermute/internal/glob/overlap.go`
 - Test: `core/intermute/internal/glob/overlap_bench_test.go` (exists)
@@ -638,7 +638,7 @@ Pre-normalize patterns (filepath.ToSlash + split) at registration time. Store no
 
 ### Task 17: F16 — Benchmark + Cache convertToolDefs (Skaffen agentloop)
 
-**Bead:** Demarch-0pvp.17
+**Bead:** Sylveste-0pvp.17
 **Files:**
 - Modify: `os/Skaffen/internal/agentloop/loop.go`
 - Add to: `os/Skaffen/internal/agentloop/loop_bench_test.go`
@@ -659,7 +659,7 @@ Add `cachedToolDefs []ToolDef` field. Populate on first call, reuse on subsequen
 
 ### Task 18: F17 — Benchmark AtomicWriteFile (Autarch file)
 
-**Bead:** Demarch-0pvp.20
+**Bead:** Sylveste-0pvp.20
 **Files:**
 - Create: `apps/Autarch/internal/file/atomic_bench_test.go`
 

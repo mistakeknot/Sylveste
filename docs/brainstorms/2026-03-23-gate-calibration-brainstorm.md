@@ -1,6 +1,6 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-0rgc
+bead: Sylveste-0rgc
 stage: discover
 ---
 
@@ -8,7 +8,7 @@ stage: discover
 
 ## What We're Building
 
-A calibration loop for Demarch's phase gates that learns from gate outcomes (false positives from human overrides, false negatives from post-gate defects) and adapts gate enforcement tier (hard/soft) per check type and transition. Follows the PHILOSOPHY.md 4-stage pattern: hardcoded defaults → collect actuals → calibrate from history → defaults become fallback.
+A calibration loop for Sylveste's phase gates that learns from gate outcomes (false positives from human overrides, false negatives from post-gate defects) and adapts gate enforcement tier (hard/soft) per check type and transition. Follows the PHILOSOPHY.md 4-stage pattern: hardcoded defaults → collect actuals → calibrate from history → defaults become fallback.
 
 ## Key Reframe
 

@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-mcp_agent_mail is a Python/FastMCP coordination server with explicit agent registration, contact policies, and window-based sub-identities. Demarch's Intercore manages agent locks and phase gates; Interlock manages file reservations by agent. Neither has an explicit contact-policy layer. The goal is to identify identity patterns worth adopting.
+mcp_agent_mail is a Python/FastMCP coordination server with explicit agent registration, contact policies, and window-based sub-identities. Sylveste's Intercore manages agent locks and phase gates; Interlock manages file reservations by agent. Neither has an explicit contact-policy layer. The goal is to identify identity patterns worth adopting.
 
 ## Review Approach
 
@@ -45,9 +45,9 @@ mcp_agent_mail is a Python/FastMCP coordination server with explicit agent regis
 
 - Identity cleanup on agent exit: whether orphaned registrations accumulate (similar to Intercore's orphaned_at pattern) and how they are detected and expired
 
-### 6. Demarch gap analysis: does Intercore's agent lock/claim m...
+### 6. Sylveste gap analysis: does Intercore's agent lock/claim m...
 
-- Demarch gap analysis: does Intercore's agent lock/claim model provide equivalent identity guarantees, or does it only protect files without establishing agent trust?
+- Sylveste gap analysis: does Intercore's agent lock/claim model provide equivalent identity guarantees, or does it only protect files without establishing agent trust?
 
 ## What NOT to Flag
 
@@ -66,11 +66,11 @@ A good review from this agent:
 - Frames uncertain findings as questions: "Does this handle X?" not "This doesn't handle X"
 - Identify whether contact policies create a composable capability model that Interlock's file-reservation ownership model could benefit from
 - Determine if mcp_agent_mail's identity layer is portable (could wrap Intermute's agent registry) or tightly coupled to SQLite schema
-- Flag any identity design where mcp_agent_mail is weaker than Demarch's current model — these are areas where Demarch should not regress
+- Flag any identity design where mcp_agent_mail is weaker than Sylveste's current model — these are areas where Sylveste should not regress
 
 ## Decision Lens
 
-Prioritizes findings where mcp_agent_mail's contact/policy model reveals gaps in Demarch's agent identity story — specifically Intercore's agent lock/claim model and Interlock's file-reservation ownership. Elevates anything that could prevent agent impersonation or accidental cross-agent interference.
+Prioritizes findings where mcp_agent_mail's contact/policy model reveals gaps in Sylveste's agent identity story — specifically Intercore's agent lock/claim model and Interlock's file-reservation ownership. Elevates anything that could prevent agent impersonation or accidental cross-agent interference.
 
 ## Prioritization
 

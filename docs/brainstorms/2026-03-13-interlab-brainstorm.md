@@ -3,11 +3,11 @@ artifact_type: brainstorm
 bead: projects-z6k
 stage: discover
 ---
-# interlab: Autonomous Experiment Loop for Demarch
+# interlab: Autonomous Experiment Loop for Sylveste
 
 ## What We're Building
 
-A Demarch-native autonomous experiment loop that lets an agent continuously optimize a metric by editing code, running a benchmark, measuring the result, and keeping or reverting the change. Inspired by pi-autoresearch (assessed in docs/research/assess-pi-autoresearch.md, verdict: inspire-only).
+A Sylveste-native autonomous experiment loop that lets an agent continuously optimize a metric by editing code, running a benchmark, measuring the result, and keeping or reverting the change. Inspired by pi-autoresearch (assessed in docs/research/assess-pi-autoresearch.md, verdict: inspire-only).
 
 **Two components:**
 1. **interlab** (`interverse/interlab/`) — Go MCP server providing 3 stateless tools (`init_experiment`, `run_experiment`, `log_experiment`) with JSONL persistence, git operations, and ic events bridge

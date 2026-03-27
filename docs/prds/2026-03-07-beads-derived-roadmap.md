@@ -37,7 +37,7 @@ Add: `collect_items_from_beads()` — runs `bd list --json`, maps priority→pha
 Parse module from bead title in order:
 1. `[module]` bracket prefix (e.g., `[intercore]`, `[clavain/interphase]`)
 2. `mod:` label (e.g., `mod:intercom`)
-3. Fallback: "demarch" (root project)
+3. Fallback: "sylveste" (root project)
 
 ### F3: Keep module metadata scanning
 Preserve the filesystem scan loop that collects: version, location, roadmap source (now just "has docs/roadmap.md or not"), open bead count per module.

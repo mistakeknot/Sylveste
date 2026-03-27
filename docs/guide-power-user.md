@@ -7,7 +7,7 @@
 ## Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mistakeknot/Demarch/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/mistakeknot/Sylveste/main/install.sh | bash
 ```
 
 Then open Claude Code and install companion plugins:
@@ -26,7 +26,7 @@ This installs 26 companion plugins (required + recommended) for code review, pha
 /clavain:project-onboard
 ```
 
-Run this once in any project to get full Demarch-level automation. It:
+Run this once in any project to get full Sylveste-level automation. It:
 - Scans the repo and reports what infrastructure exists
 - Asks a few questions (name, goals, build commands — skips what it can infer)
 - Initializes beads tracking, CLAUDE.md, AGENTS.md, docs/ structure, and observability
@@ -110,4 +110,4 @@ Each agent produces a verdict (CLEAN or NEEDS_ATTENTION). You only need to read 
 
 Want the full platform (Go services, TUI tools)? See [Full Setup Guide](guide-full-setup.md).
 
-Want to contribute to Demarch? See [Contributing Guide](guide-contributing.md).
+Want to contribute to Sylveste? See [Contributing Guide](guide-contributing.md).

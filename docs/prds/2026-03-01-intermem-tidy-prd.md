@@ -61,6 +61,6 @@ When MEMORY.md exceeds budget:
 
 - `intermem tidy --dry-run` completes in < 5 seconds
 - f3ar MEMORY.md (98 lines, no topic files) → architecture section extracted to topic file
-- Demarch MEMORY.md (64 lines, 4 topic files) → no changes (under budget)
+- Sylveste MEMORY.md (64 lines, 4 topic files) → no changes (under budget)
 - Stale count detection catches at least `48 Interverse plugins` drift
 - Tests cover: extraction, skip-existing, protected sections, dry-run, stale detection

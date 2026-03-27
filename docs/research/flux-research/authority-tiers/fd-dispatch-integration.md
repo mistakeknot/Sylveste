@@ -108,11 +108,11 @@ This matches AWS IAM's pattern: deny at the API boundary (pre-claim), audit at C
 
 AWS policy evaluation follows a strict order: explicit deny always wins, regardless of any allow elsewhere. The evaluation is synchronous — every API call is checked before execution.
 
-Key structural insights for Demarch:
+Key structural insights for Sylveste:
 
 - **Deny is a hard veto, not a vote.** If any policy says deny, the action is denied. This maps to: if the authority store says an agent lacks domain authority, that's a hard block — Mycroft tier doesn't override it.
-- **Multiple policy layers compose via intersection.** SCPs (org-level) AND identity policies AND resource policies must all allow. For Demarch: fleet tier (Mycroft T0-T3) AND domain authority AND bead constraints all must allow.
-- **Evaluation is per-request, not per-session.** Each action is checked independently. For Demarch: check at claim time (one request), not once at session start.
+- **Multiple policy layers compose via intersection.** SCPs (org-level) AND identity policies AND resource policies must all allow. For Sylveste: fleet tier (Mycroft T0-T3) AND domain authority AND bead constraints all must allow.
+- **Evaluation is per-request, not per-session.** Each action is checked independently. For Sylveste: check at claim time (one request), not once at session start.
 
 ### OPA/Rego: Admission Controllers
 
@@ -121,8 +121,8 @@ OPA Gatekeeper in Kubernetes intercepts API requests through a validating admiss
 Key structural insights:
 
 - **Webhook is synchronous and blocking.** The API server waits for the webhook response. This is the model for the pre-claim authority check — it must be fast and synchronous.
-- **ConstraintTemplate + Constraint separation.** The policy logic (Rego) is separate from the parameterization (which resources, which rules). For Demarch: the authority check function is generic; the domain-authority YAML configures it per agent and domain.
-- **Dry-run mode.** Gatekeeper supports `enforcement: dryrun` — log violations but don't block. This maps directly to Demarch's shadow mode convention (already used in complexity routing B2 and calibration B3).
+- **ConstraintTemplate + Constraint separation.** The policy logic (Rego) is separate from the parameterization (which resources, which rules). For Sylveste: the authority check function is generic; the domain-authority YAML configures it per agent and domain.
+- **Dry-run mode.** Gatekeeper supports `enforcement: dryrun` — log violations but don't block. This maps directly to Sylveste's shadow mode convention (already used in complexity routing B2 and calibration B3).
 
 ### XACML PDP/PEP: Decoupled Architecture
 
@@ -132,7 +132,7 @@ The XACML pattern cleanly separates:
 - **PIP** (Policy Information Point): provides attribute values (bead metadata, agent history)
 - **PAP** (Policy Administration Point): manages policies
 
-For Demarch's Phase 4 minimal:
+For Sylveste's Phase 4 minimal:
 - **PEP** = the authority check function inserted in route.md
 - **PDP** = a shell function that reads the authority YAML and returns allow/deny
 - **PIP** = `bd show` output (bead metadata) + `bd state` (agent history)
@@ -144,7 +144,7 @@ No need for a separate service. The PDP is a function call.
 
 Drawing from all three patterns:
 
-| Mode | Description | Demarch Mapping |
+| Mode | Description | Sylveste Mapping |
 |------|-------------|-----------------|
 | **Synchronous deny** | Block the request before execution | Pre-claim authority check returns DENY |
 | **Async audit** | Allow but log for review | Post-execution file scope audit via Interspect |
@@ -162,7 +162,7 @@ Every authority check (grant or deny) produces an Authority Decision Record:
 authority_decision:
   timestamp: "2026-03-19T14:32:05Z"
   agent_id: "grey-area"                  # Fleet agent name
-  bead_id: "Demarch-4f2a"
+  bead_id: "Sylveste-4f2a"
   domain: "core/intercore"               # Resolved domain from bead metadata
   action: "claim"                        # claim | execute | commit
   decision: "allow"                      # allow | deny | degrade
@@ -179,7 +179,7 @@ On deny, additional fields:
 ```yaml
   deny_reason: "agent grey-area has no authority for domain security/*"
   deny_action: "skip"                   # skip | quarantine | escalate
-  next_candidate: "Demarch-4f2b"        # Bead tried next (if skip)
+  next_candidate: "Sylveste-4f2b"        # Bead tried next (if skip)
 ```
 
 ### Flow to Interspect

@@ -2,9 +2,9 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Goal:** Wire 5 container write tools + gate approval inline buttons + budget/run event actions + demarch_research to complete Intercom's H2 bidirectional agency participation.
+**Goal:** Wire 5 container write tools + gate approval inline buttons + budget/run event actions + sylveste_research to complete Intercom's H2 bidirectional agency participation.
 
-**Architecture:** All write tools use the existing `queryKernel()` IPC bridge from containers. The host-side IPC dispatcher in `ipc.rs` already routes write query types (`create_issue`, `update_issue`, etc.) to `DemarchAdapter::execute_write()`. We're adding the container surface (TypeScript wrapper functions + MCP tool declarations) and the Telegram callback handling for gate/budget events.
+**Architecture:** All write tools use the existing `queryKernel()` IPC bridge from containers. The host-side IPC dispatcher in `ipc.rs` already routes write query types (`create_issue`, `update_issue`, etc.) to `SylvesteAdapter::execute_write()`. We're adding the container surface (TypeScript wrapper functions + MCP tool declarations) and the Telegram callback handling for gate/budget events.
 
 **Tech Stack:** TypeScript (container tools, MCP tools), Rust (Telegram callback handler, event notification buttons), Zod (MCP param validation), Grammy patterns (inline keyboards via raw Telegram Bot API)
 
@@ -14,19 +14,19 @@
 
 ---
 
-### Task 1: Add write wrapper functions to demarch-tools.ts
+### Task 1: Add write wrapper functions to sylveste-tools.ts
 
 **Files:**
-- Modify: `apps/intercom/container/shared/demarch-tools.ts`
+- Modify: `apps/intercom/container/shared/sylveste-tools.ts`
 
 **Step 1: Add the 5 write functions after existing read functions**
 
-Append to `apps/intercom/container/shared/demarch-tools.ts` after line 51:
+Append to `apps/intercom/container/shared/sylveste-tools.ts` after line 51:
 
 ```typescript
 // --- Write operations (H2) ---
 
-export function demarchCreateIssue(
+export function sylvesteCreateIssue(
   _ctx: IpcContext,
   title: string,
   description?: string,
@@ -42,7 +42,7 @@ export function demarchCreateIssue(
   return queryKernel('create_issue', params);
 }
 
-export function demarchUpdateIssue(
+export function sylvesteUpdateIssue(
   _ctx: IpcContext,
   id: string,
   status?: string,
@@ -60,7 +60,7 @@ export function demarchUpdateIssue(
   return queryKernel('update_issue', params);
 }
 
-export function demarchCloseIssue(
+export function sylvesteCloseIssue(
   _ctx: IpcContext,
   id: string,
   reason?: string,
@@ -70,7 +70,7 @@ export function demarchCloseIssue(
   return queryKernel('close_issue', params);
 }
 
-export function demarchStartRun(
+export function sylvesteStartRun(
   _ctx: IpcContext,
   title?: string,
   description?: string,
@@ -81,7 +81,7 @@ export function demarchStartRun(
   return queryKernel('start_run', params);
 }
 
-export function demarchApproveGate(
+export function sylvesteApproveGate(
   _ctx: IpcContext,
   gateId: string,
   reason?: string,
@@ -100,8 +100,8 @@ Expected: No errors (new functions follow exact same pattern as existing reads)
 **Step 3: Commit**
 
 ```bash
-git add apps/intercom/container/shared/demarch-tools.ts
-git commit -m "feat(intercom): add 5 Demarch write tool wrappers for container agents"
+git add apps/intercom/container/shared/sylveste-tools.ts
+git commit -m "feat(intercom): add 5 Sylveste write tool wrappers for container agents"
 ```
 
 ---
@@ -116,11 +116,11 @@ git commit -m "feat(intercom): add 5 Demarch write tool wrappers for container a
 Insert before the `// Start the stdio transport` line (line 407) in `ipc-mcp-stdio.ts`:
 
 ```typescript
-// --- Demarch Write Tools (H2) ---
+// --- Sylveste Write Tools (H2) ---
 
 server.tool(
-  'demarch_create_issue',
-  'Create a new work item (bead) in the Demarch issue tracker. Returns JSON with the new bead ID.',
+  'sylveste_create_issue',
+  'Create a new work item (bead) in the Sylveste issue tracker. Returns JSON with the new bead ID.',
   {
     title: z.string().describe('Title for the new issue (required)'),
     description: z.string().optional().describe('Detailed description of the issue'),
@@ -140,7 +140,7 @@ server.tool(
 );
 
 server.tool(
-  'demarch_update_issue',
+  'sylveste_update_issue',
   'Update an existing work item (bead). Only provided fields are changed.',
   {
     id: z.string().describe('Bead ID to update (required, e.g., "beads-abc123")'),
@@ -163,7 +163,7 @@ server.tool(
 );
 
 server.tool(
-  'demarch_close_issue',
+  'sylveste_close_issue',
   'Close a work item (bead), marking it as completed.',
   {
     id: z.string().describe('Bead ID to close (required)'),
@@ -178,8 +178,8 @@ server.tool(
 );
 
 server.tool(
-  'demarch_start_run',
-  'Start a new sprint/run in the Demarch kernel. This is a policy-governing action that may require human confirmation.',
+  'sylveste_start_run',
+  'Start a new sprint/run in the Sylveste kernel. This is a policy-governing action that may require human confirmation.',
   {
     title: z.string().optional().describe('Title for the new run'),
     description: z.string().optional().describe('Description of the run goals'),
@@ -194,7 +194,7 @@ server.tool(
 );
 
 server.tool(
-  'demarch_approve_gate',
+  'sylveste_approve_gate',
   'Approve or advance a gate in the current sprint. This is a policy-governing action that may require human confirmation.',
   {
     gate_id: z.string().describe('Gate ID to approve (required)'),
@@ -218,16 +218,16 @@ Expected: No errors
 
 ```bash
 git add apps/intercom/container/agent-runner/src/ipc-mcp-stdio.ts
-git commit -m "feat(intercom): add 5 Demarch write MCP tools for Claude container agents"
+git commit -m "feat(intercom): add 5 Sylveste write MCP tools for Claude container agents"
 ```
 
 ---
 
-### Task 3: Add demarch_research read tool (H1 completion)
+### Task 3: Add sylveste_research read tool (H1 completion)
 
 **Files:**
 - Modify: `apps/intercom/src/query-handlers.ts`
-- Modify: `apps/intercom/container/shared/demarch-tools.ts`
+- Modify: `apps/intercom/container/shared/sylveste-tools.ts`
 - Modify: `apps/intercom/container/agent-runner/src/ipc-mcp-stdio.ts`
 
 **Step 1: Add research handler to query-handlers.ts**
@@ -264,24 +264,24 @@ In `handleQuery`, add before the `default:` case (line 209):
       return handleResearch(params);
 ```
 
-**Step 3: Add wrapper function to demarch-tools.ts**
+**Step 3: Add wrapper function to sylveste-tools.ts**
 
-Append to `apps/intercom/container/shared/demarch-tools.ts`:
+Append to `apps/intercom/container/shared/sylveste-tools.ts`:
 
 ```typescript
-export function demarchResearch(_ctx: IpcContext, query: string): Promise<string> {
+export function sylvesteResearch(_ctx: IpcContext, query: string): Promise<string> {
   return queryKernel('research', { query });
 }
 ```
 
 **Step 4: Add MCP tool declaration to ipc-mcp-stdio.ts**
 
-Insert with the other Demarch read tools (after `demarch_run_events`, before the write tools section):
+Insert with the other Sylveste read tools (after `sylveste_run_events`, before the write tools section):
 
 ```typescript
 server.tool(
-  'demarch_research',
-  'Search for research findings, discoveries, and knowledge in the Demarch platform.',
+  'sylveste_research',
+  'Search for research findings, discoveries, and knowledge in the Sylveste platform.',
   {
     query: z.string().describe('Search query — keywords or topic to research'),
   },
@@ -300,8 +300,8 @@ Expected: No errors
 **Step 6: Commit**
 
 ```bash
-git add apps/intercom/src/query-handlers.ts apps/intercom/container/shared/demarch-tools.ts apps/intercom/container/agent-runner/src/ipc-mcp-stdio.ts
-git commit -m "feat(intercom): add demarch_research tool — completes H1 read toolkit"
+git add apps/intercom/src/query-handlers.ts apps/intercom/container/shared/sylveste-tools.ts apps/intercom/container/agent-runner/src/ipc-mcp-stdio.ts
+git commit -m "feat(intercom): add sylveste_research tool — completes H1 read toolkit"
 ```
 
 ---
@@ -716,12 +716,12 @@ pub struct TelegramCallbackResponse {
 
 ```rust
     /// Handle a callback query from an inline keyboard button press.
-    /// Parses the callback data, routes to the appropriate Demarch write operation,
+    /// Parses the callback data, routes to the appropriate Sylveste write operation,
     /// edits the original message with the result, and answers the callback.
     pub async fn handle_callback(
         &self,
         request: TelegramCallbackRequest,
-        demarch: &intercom_core::DemarchAdapter,
+        sylveste: &intercom_core::SylvesteAdapter,
     ) -> anyhow::Result<TelegramCallbackResponse> {
         // Parse callback_data: "action:target_id"
         let parts: Vec<&str> = request.data.splitn(2, ':').collect();
@@ -743,25 +743,25 @@ pub struct TelegramCallbackResponse {
 
         let (write_result, status_text) = match action {
             "approve" => {
-                let resp = demarch.execute_write(
+                let resp = sylveste.execute_write(
                     intercom_core::WriteOperation::ApproveGate {
                         gate_id: Some(target_id.clone()),
                         reason: Some(format!("Approved by {sender} via Telegram")),
                     },
                     true, // gate approval always acts as main
                 );
-                let ok = resp.status == intercom_core::DemarchStatus::Ok;
+                let ok = resp.status == intercom_core::SylvesteStatus::Ok;
                 (resp.result, if ok { format!("✅ Gate {target_id} approved by @{sender}") } else { format!("❌ Failed: {}", resp.result) })
             }
             "reject" => {
-                let resp = demarch.execute_write(
+                let resp = sylveste.execute_write(
                     intercom_core::WriteOperation::ApproveGate {
                         gate_id: Some(target_id.clone()),
                         reason: Some(format!("Rejected by {sender} via Telegram")),
                     },
                     true,
                 );
-                let ok = resp.status == intercom_core::DemarchStatus::Ok;
+                let ok = resp.status == intercom_core::SylvesteStatus::Ok;
                 (resp.result, if ok { format!("❌ Gate {target_id} rejected by @{sender}") } else { format!("❌ Failed: {}", resp.result) })
             }
             "defer" => {
@@ -827,7 +827,7 @@ async fn handle_telegram_callback(
     State(state): State<AppState>,
     Json(request): Json<telegram::TelegramCallbackRequest>,
 ) -> impl IntoResponse {
-    match state.telegram.handle_callback(request, &state.demarch).await {
+    match state.telegram.handle_callback(request, &state.sylveste).await {
         Ok(response) => Json(response).into_response(),
         Err(err) => {
             tracing::error!(error = %err, "Telegram callback handler failed");
@@ -1037,7 +1037,7 @@ git commit -m "test(intercom): add tests for inline keyboard buttons and callbac
 ### Task 9: Integration test — end-to-end write tool via IPC
 
 **Files:**
-- Create: `apps/intercom/container/shared/demarch-tools.test.ts` (if test infrastructure exists)
+- Create: `apps/intercom/container/shared/sylveste-tools.test.ts` (if test infrastructure exists)
 
 **Step 1: Test write tools can construct correct IPC queries**
 
@@ -1047,22 +1047,22 @@ This is a lightweight verification that write functions produce correctly-shaped
 import { describe, it, expect, vi } from 'vitest';
 
 // Mock queryKernel to capture calls
-vi.mock('./ipc-demarch.js', () => ({
+vi.mock('./ipc-sylveste.js', () => ({
   queryKernel: vi.fn().mockResolvedValue('{"ok":true}'),
 }));
 
-import { queryKernel } from './ipc-demarch.js';
+import { queryKernel } from './ipc-sylveste.js';
 import {
-  demarchCreateIssue,
-  demarchCloseIssue,
-  demarchApproveGate,
-  demarchResearch,
-} from './demarch-tools.js';
+  sylvesteCreateIssue,
+  sylvesteCloseIssue,
+  sylvesteApproveGate,
+  sylvesteResearch,
+} from './sylveste-tools.js';
 
-describe('demarch write tools', () => {
+describe('sylveste write tools', () => {
   it('create_issue sends title and optional params', async () => {
     const ctx = {} as any;
-    await demarchCreateIssue(ctx, 'Test issue', 'Description', '2', 'task');
+    await sylvesteCreateIssue(ctx, 'Test issue', 'Description', '2', 'task');
     expect(queryKernel).toHaveBeenCalledWith('create_issue', {
       title: 'Test issue',
       description: 'Description',
@@ -1073,7 +1073,7 @@ describe('demarch write tools', () => {
 
   it('close_issue sends id and optional reason', async () => {
     const ctx = {} as any;
-    await demarchCloseIssue(ctx, 'beads-abc', 'done');
+    await sylvesteCloseIssue(ctx, 'beads-abc', 'done');
     expect(queryKernel).toHaveBeenCalledWith('close_issue', {
       id: 'beads-abc',
       reason: 'done',
@@ -1082,7 +1082,7 @@ describe('demarch write tools', () => {
 
   it('approve_gate sends gate_id', async () => {
     const ctx = {} as any;
-    await demarchApproveGate(ctx, 'gate-review', 'LGTM');
+    await sylvesteApproveGate(ctx, 'gate-review', 'LGTM');
     expect(queryKernel).toHaveBeenCalledWith('approve_gate', {
       gate_id: 'gate-review',
       reason: 'LGTM',
@@ -1091,7 +1091,7 @@ describe('demarch write tools', () => {
 
   it('research sends query', async () => {
     const ctx = {} as any;
-    await demarchResearch(ctx, 'WebSocket performance');
+    await sylvesteResearch(ctx, 'WebSocket performance');
     expect(queryKernel).toHaveBeenCalledWith('research', {
       query: 'WebSocket performance',
     });
@@ -1101,14 +1101,14 @@ describe('demarch write tools', () => {
 
 **Step 2: Run tests**
 
-Run: `cd apps/intercom && npx vitest run container/shared/demarch-tools.test.ts`
+Run: `cd apps/intercom && npx vitest run container/shared/sylveste-tools.test.ts`
 Expected: All tests pass
 
 **Step 3: Commit**
 
 ```bash
-git add apps/intercom/container/shared/demarch-tools.test.ts
-git commit -m "test(intercom): integration tests for Demarch write tools and research tool"
+git add apps/intercom/container/shared/sylveste-tools.test.ts
+git commit -m "test(intercom): integration tests for Sylveste write tools and research tool"
 ```
 
 ---

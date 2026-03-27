@@ -1,12 +1,12 @@
 ---
 artifact_type: plan
-bead: Demarch-4dy
+bead: Sylveste-4dy
 prd: interverse/interfere/docs/prds/2026-03-26-turboquant.md
 features:
-  - Demarch-fsj  # F1: PolarQuant core
-  - Demarch-60j  # F2: QJL residual correction
-  - Demarch-ikf  # F3: Experiment module integration
-  - Demarch-keo  # F4: Benchmark comparison
+  - Sylveste-fsj  # F1: PolarQuant core
+  - Sylveste-60j  # F2: QJL residual correction
+  - Sylveste-ikf  # F3: Experiment module integration
+  - Sylveste-keo  # F4: Benchmark comparison
 revision: 2  # Post-review rewrite — autoresearch-first approach
 review_findings: |
   P0: Storage layout was ~12 bits/element (not 3). Dequantize-on-fetch O(seq_len) per token.
@@ -26,7 +26,7 @@ Three-agent review (correctness, performance, architecture) found critical issue
 2. **Dequantize-on-fetch is O(seq_len):** 2.4ms overhead/token at 4K, 43ms at 32K. Incremental buffer defeats memory savings.
 3. **Best path forward (Option C from perf review):** Apply polar transform, then use MLX's native `mx.quantize` at 4-bit. Keeps the fused `quantized_scaled_dot_product_attention` kernel — no custom dequantize needed.
 
-**Decision:** Build a minimal scaffold, then let autoresearch (Demarch-m0m) explore the mutation space. The key unknown — whether polar coordinate transformation improves quantization quality vs vanilla kv4 — is empirical.
+**Decision:** Build a minimal scaffold, then let autoresearch (Sylveste-m0m) explore the mutation space. The key unknown — whether polar coordinate transformation improves quantization quality vs vanilla kv4 — is empirical.
 
 ## Architecture: Polar-Transformed Native Quantization
 
@@ -60,7 +60,7 @@ class PolarAttentionWrapper:
 
 ## Tasks
 
-### Task 1: Polar transform primitives (F1: Demarch-fsj)
+### Task 1: Polar transform primitives (F1: Sylveste-fsj)
 
 **File:** `server/experiments/turbo_quant.py` (new)
 
@@ -115,7 +115,7 @@ def inverse_polar_transform(tensor: mx.array) -> mx.array:
 
 **Acceptance:** Round-trip error (transform then inverse) < 0.01% normalized MSE. This measures only the transform — quantization error is separate.
 
-### Task 2: QJL residual correction (F2: Demarch-60j)
+### Task 2: QJL residual correction (F2: Sylveste-60j)
 
 **File:** `server/experiments/turbo_quant.py` (extend)
 
@@ -136,7 +136,7 @@ if qjl_enabled:
 
 **Tests:** Same as original plan.
 
-### Task 3: Attention wrapper + experiment integration (F3: Demarch-ikf)
+### Task 3: Attention wrapper + experiment integration (F3: Sylveste-ikf)
 
 **Files:**
 - `server/experiments/turbo_quant.py` — `PolarAttentionWrapper` class
@@ -265,7 +265,7 @@ qjl_enabled = qjl_raw if isinstance(qjl_raw, bool) else str(qjl_raw).lower() in 
 - Mutual exclusion: `kv_bits=4` + `turbo_quant.enabled=true` raises ValueError
 - Layer restoration: after generate(), `model.model.layers[0].self_attn` is the original class
 
-### Task 4: Benchmark integration (F4: Demarch-keo)
+### Task 4: Benchmark integration (F4: Sylveste-keo)
 
 **Files:** `server/benchmark_cli.py`, `server/benchmark.py`
 
@@ -276,7 +276,7 @@ Same as original plan with these fixes from review:
 - Add long-context prompts (2K, 4K tokens) to benchmark corpus for context-scaling measurement
 - Report `kv_mode` in results; set `kv_bits` to the underlying native bits (e.g., 4) for consistency
 
-### Task 5: Autoresearch scaffold (Demarch-m0m)
+### Task 5: Autoresearch scaffold (Sylveste-m0m)
 
 **File:** `interlab-turboquant-tune.sh` (new, in interfere root)
 
@@ -318,7 +318,7 @@ print(f'METRIC ttft_ms {d.get(\"median_ttft_ms\", 0)}')
 - `TQ_JL_DIM`: 32, 64, 128
 - `TQ_MODEL`: test model for quick iteration
 
-**Kill criteria (from Demarch-m0m):** 10 experiments with no memory reduction at iso-quality.
+**Kill criteria (from Sylveste-m0m):** 10 experiments with no memory reduction at iso-quality.
 
 ## Execution Order
 

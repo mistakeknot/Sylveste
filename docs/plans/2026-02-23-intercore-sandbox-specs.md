@@ -31,7 +31,7 @@ Two JSON TEXT columns on the `dispatches` table:
 {
   "tools_allowed": ["Read", "Grep", "Glob", "Bash"],
   "tools_denied": [],
-  "working_dir": "/home/mk/projects/Demarch",
+  "working_dir": "/home/mk/projects/Sylveste",
   "access_mode": "workspace-write",
   "max_turns": 50,
   "max_commands": 200

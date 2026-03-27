@@ -3,7 +3,7 @@
 **Date:** 2026-02-28
 **Bead ID:** iv-58pym
 **Source:** https://github.com/Dicklesworthstone/slb
-**Task:** Evaluate integration/inspiration value for Demarch (os/clavain, interverse/interlock, core/intermute)
+**Task:** Evaluate integration/inspiration value for Sylveste (os/clavain, interverse/interlock, core/intermute)
 
 ---
 
@@ -170,13 +170,13 @@ slb's emergency-execute requires the operator to compute `sha256(command)` and p
 
 ## Skip Opportunities
 
-- **Full slb daemon deployment.** The daemon is heavyweight for Demarch's current use case (single-user, single-machine). The patterns are valuable; the full client-server architecture is overkill until Demarch runs multi-user agent fleets.
+- **Full slb daemon deployment.** The daemon is heavyweight for Sylveste's current use case (single-user, single-machine). The patterns are valuable; the full client-server architecture is overkill until Sylveste runs multi-user agent fleets.
 
 - **Rollback capture system.** Well-implemented but Clavain already has git-based rollback via worktrees. The tar.gz filesystem capture and kubectl manifest capture are interesting but not needed.
 
 - **Bubble Tea TUI dashboard.** Autarch already has Bigend for agent monitoring. Another TUI adds no value.
 
-- **Agent Mail integration.** Demarch has interject for cross-agent messaging. Different protocol, same purpose.
+- **Agent Mail integration.** Sylveste has interject for cross-agent messaging. Different protocol, same purpose.
 
 ---
 
@@ -188,15 +188,15 @@ slb's emergency-execute requires the operator to compute `sha256(command)` and p
 
 - **`slb patterns list --json` panics** due to `-t` shorthand collision between global `--toon` and command-local `--tier`. Trivial fix (change shorthand) but shipped as-is.
 
-- **SQLite per-project means no cross-project coordination** without explicit config. Fine for Demarch's monorepo but would be a friction point in a multi-repo setup.
+- **SQLite per-project means no cross-project coordination** without explicit config. Fine for Sylveste's monorepo but would be a friction point in a multi-repo setup.
 
 ---
 
 ## Verdict: inspire-only
 
-**Rationale:** slb is a well-engineered system with several excellent patterns (five-gate execution, HMAC audit trail, table-driven state machine, dynamic quorum, parse-failure upgrade). However, Demarch already has dcg for the pre-execution safety layer (verdict: adopt from the earlier assessment) and interlock for multi-agent coordination. slb's value to Demarch is in its **patterns and design principles**, not its runtime. The five-gate model, HMAC signing, and dynamic quorum are worth porting as concepts into Clavain's existing infrastructure rather than deploying slb as a separate system.
+**Rationale:** slb is a well-engineered system with several excellent patterns (five-gate execution, HMAC audit trail, table-driven state machine, dynamic quorum, parse-failure upgrade). However, Sylveste already has dcg for the pre-execution safety layer (verdict: adopt from the earlier assessment) and interlock for multi-agent coordination. slb's value to Sylveste is in its **patterns and design principles**, not its runtime. The five-gate model, HMAC signing, and dynamic quorum are worth porting as concepts into Clavain's existing infrastructure rather than deploying slb as a separate system.
 
-The full daemon/client architecture solves a problem Demarch doesn't yet have (multi-user agent fleets with formal peer approval workflows). If that need emerges, slb would be a strong candidate for adoption — but today, extracting patterns is the right move.
+The full daemon/client architecture solves a problem Sylveste doesn't yet have (multi-user agent fleets with formal peer approval workflows). If that need emerges, slb would be a strong candidate for adoption — but today, extracting patterns is the right move.
 
 ---
 

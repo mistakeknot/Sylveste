@@ -1,4 +1,4 @@
-# Demarch v1.0 Roadmap
+# Sylveste v1.0 Roadmap
 
 > Living document. Last updated: 2026-03-23. Current version: v0.6.229.
 
@@ -84,7 +84,7 @@ Gate thresholds adjust from historical pass/fail data.
 | Threshold adjustment | Algorithm: historical rates → adjusted thresholds | Medium |
 | `bd doctor` auto-run | SessionStart hook, block sprint on corruption | Small |
 
-**Bead:** Demarch-0rgc (gate calibration), Demarch-py89 (bd doctor auto-run)
+**Bead:** Sylveste-0rgc (gate calibration), Sylveste-py89 (bd doctor auto-run)
 
 ### B:L3 — Existential Failures Prevented
 
@@ -112,13 +112,13 @@ Adversarial test suite validates detection rates. Intentionally inject wrong str
 
 ### C:L1 — Self-Building (current baseline)
 
-Proven on the Demarch codebase. 800+ sessions, $2.93/landable-change baseline (measured 2026-03-18). Metrics collected via interstat/cost-query.sh.
+Proven on the Sylveste codebase. 800+ sessions, $2.93/landable-change baseline (measured 2026-03-18). Metrics collected via interstat/cost-query.sh.
 
 ### C:L2 — Single External Project
 
 One external project (Go or Python) with 50+ completed sprints. Metrics collected and compared to self-building baseline.
 
-**Selection criteria:** Open source, >10K LOC, active development, language Demarch handles well. Not a fork or derivative of Demarch.
+**Selection criteria:** Open source, >10K LOC, active development, language Sylveste handles well. Not a fork or derivative of Sylveste.
 
 **Metrics to collect:** Sprint completion rate, cost per landable change, gate false-positive rate, time per sprint.
 
@@ -126,7 +126,7 @@ One external project (Go or Python) with 50+ completed sprints. Metrics collecte
 
 3+ external projects across domains (web, infrastructure, data). 20+ sprints each. Directional evidence that the system generalizes.
 
-**Operational Design Domain (ODD):** Published document declaring what Demarch is designed for and what is explicitly out of scope.
+**Operational Design Domain (ODD):** Published document declaring what Sylveste is designed for and what is explicitly out of scope.
 
 ### C:L4 — Accessible Onboarding
 
@@ -151,9 +151,9 @@ The three calibration loops operate autonomously. Gates learn from their own out
 - [ ] Anomaly detection flags >2x cost/duration deviations
 
 **Beads:**
-- Demarch-enxv.2: Wire calibration loops (routing, phase-cost)
-- Demarch-0rgc: Gate threshold calibration loop
-- Demarch-py89: bd doctor auto-run
+- Sylveste-enxv.2: Wire calibration loops (routing, phase-cost)
+- Sylveste-0rgc: Gate threshold calibration loop
+- Sylveste-py89: bd doctor auto-run
 - BEGIN external project runs (C:L2 prep, no formal gate)
 
 ### v0.8.0 — Measurement & Resilience
@@ -182,7 +182,7 @@ Self-healing operational. Adversarial testing passes. Multiple external projects
 - [ ] ODD published: in-scope, out-of-scope, autonomy tier promises
 - [ ] Deletion-recovery test passes: amnesiac >15% worse, recovery <50 sprints, no manual intervention
 
-**Bead:** Demarch-enxv.3 (deletion-recovery test)
+**Bead:** Sylveste-enxv.3 (deletion-recovery test)
 
 ### v1.0.0 — Stability Declaration
 
@@ -217,12 +217,12 @@ Next gate: v0.7 (A:L3 + B:L2 + C:L1)
 
 | Bead | Track | Level Target | Status |
 |------|-------|-------------|--------|
-| Demarch-enxv.1 | Meta | Stability contract | ✓ Closed |
-| Demarch-enxv.2 | A | L1.5 → L3 | Open (P2) |
-| Demarch-enxv.3 | Cross | Deletion-recovery test | Open (P2) |
-| Demarch-0rgc | A+B | A:L3 + B:L2 (gate calibration) | Open (P2) |
-| Demarch-py89 | B | B:L2 (bd doctor auto-run) | Open (P2) |
-| Demarch-c44z | Meta | This roadmap artifact | Open (P1) |
+| Sylveste-enxv.1 | Meta | Stability contract | ✓ Closed |
+| Sylveste-enxv.2 | A | L1.5 → L3 | Open (P2) |
+| Sylveste-enxv.3 | Cross | Deletion-recovery test | Open (P2) |
+| Sylveste-0rgc | A+B | A:L3 + B:L2 (gate calibration) | Open (P2) |
+| Sylveste-py89 | B | B:L2 (bd doctor auto-run) | Open (P2) |
+| Sylveste-c44z | Meta | This roadmap artifact | Open (P1) |
 
 ## Progress Tracking
 

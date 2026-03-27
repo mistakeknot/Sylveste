@@ -1,6 +1,6 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-g4ja
+bead: Sylveste-g4ja
 stage: discover
 ---
 

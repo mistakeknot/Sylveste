@@ -6,7 +6,7 @@
 
 ## Problem
 
-Demarch has 4 incompatible logging patterns across its 3 architectural layers (L1 kernel, L2 OS, L3 plugins) with no structured output and no cross-layer trace correlation. Debugging multi-agent workflows requires manually correlating `session_id` across disparate stderr streams — the event bus has `TraceID`/`SpanID` fields in `EventEnvelope` but they're siloed from the audit log, interband, and bash hooks.
+Sylveste has 4 incompatible logging patterns across its 3 architectural layers (L1 kernel, L2 OS, L3 plugins) with no structured output and no cross-layer trace correlation. Debugging multi-agent workflows requires manually correlating `session_id` across disparate stderr streams — the event bus has `TraceID`/`SpanID` fields in `EventEnvelope` but they're siloed from the audit log, interband, and bash hooks.
 
 ## Solution
 

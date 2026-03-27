@@ -1,6 +1,6 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-enxv
+bead: Sylveste-enxv
 stage: discover
 ---
 
@@ -12,7 +12,7 @@ A milestone roadmap from v0.6 → v0.7 → v0.8 → v0.9 → v1.0 structured as 
 
 **Purpose:** Internal north star now, transitioning to external communication as we approach v0.9/v1.0. Early milestones optimize for actionability (what to work on); later milestones optimize for credibility (measurable claims).
 
-**Epic scope:** Demarch-enxv stays open for the full v0.7→v1.0 journey. All milestones are children of this epic.
+**Epic scope:** Sylveste-enxv stays open for the full v0.7→v1.0 journey. All milestones are children of this epic.
 
 ## The Three Tracks
 
@@ -48,7 +48,7 @@ The system works on codebases the developers don't control, and new users can re
 
 | Level | Name | Definition | Current State |
 |-------|------|-----------|---------------|
-| L1 | Self-building | Proven on the Demarch codebase only | 800+ sessions, $2.93/landable-change baseline. |
+| L1 | Self-building | Proven on the Sylveste codebase only | 800+ sessions, $2.93/landable-change baseline. |
 | L2 | Single external | 1 external project with 50+ sprints, metrics collected | Not started. |
 | L3 | Multi-external + ODD | 3+ external projects, ODD published, directional evidence | Not started. |
 | L4 | Accessible | Onboarding <60min, 70%+ new users succeed without help, instrumented | Not started. Onboarding is a known pain point. |

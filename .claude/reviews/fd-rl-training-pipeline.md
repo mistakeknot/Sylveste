@@ -2,8 +2,8 @@
 
 **Reviewer:** fd-rl-training-pipeline (ML engineer specializing in RL from environment feedback)
 **Date:** 2026-03-02
-**Target:** `/home/mk/projects/Demarch/research/hermes_agent/`
-**Scope:** Adapting patterns for Demarch's Autarch (L3 orchestration) and intercom (messaging/gateway)
+**Target:** `/home/mk/projects/Sylveste/research/hermes_agent/`
+**Scope:** Adapting patterns for Sylveste's Autarch (L3 orchestration) and intercom (messaging/gateway)
 
 ---
 

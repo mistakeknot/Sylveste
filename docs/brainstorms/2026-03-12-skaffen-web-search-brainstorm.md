@@ -1,6 +1,6 @@
 # Brainstorm: Skaffen Web Search Built-in Tool
 
-**Bead:** Demarch-6i0.20
+**Bead:** Sylveste-6i0.20
 **Date:** 2026-03-12
 **Status:** brainstorm
 
@@ -10,7 +10,7 @@
 
 ## Existing Infrastructure
 
-Demarch already has 90% of the web search plumbing:
+Sylveste already has 90% of the web search plumbing:
 
 - **intersearch** (`interverse/intersearch/src/intersearch/exa.py`) — async Exa API client with semantic search, autoprompt, result deduplication, highlighting, graceful degradation on missing API key
 - **Exa API** — endpoint `https://api.exa.ai/search`, auth via `EXA_API_KEY` header, returns title/url/text/highlights/score/publishedDate
@@ -32,7 +32,7 @@ Add `WebSearchTool` and `WebFetchTool` to `internal/tool/` as built-in tools, im
 
 **Cons:**
 - Duplicates Exa client logic (Go vs existing Python)
-- Skaffen-specific — other Demarch tools can't reuse directly
+- Skaffen-specific — other Sylveste tools can't reuse directly
 
 **Scope:** ~300 lines Go (tool + Exa HTTP client + tests)
 
@@ -42,7 +42,7 @@ Expose Exa search as an MCP tool in the existing intersearch server. Skaffen loa
 
 **Pros:**
 - Reuses existing Python Exa client
-- All Demarch tools get web search (not just Skaffen)
+- All Sylveste tools get web search (not just Skaffen)
 - Matches ecosystem pattern (MCP is the extensibility model)
 
 **Cons:**

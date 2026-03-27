@@ -3,7 +3,7 @@ artifact_type: cuj
 journey: interwatch-drift-detection
 actor: regular user (developer maintaining documentation accuracy)
 criticality: p2
-bead: Demarch-2c7
+bead: Sylveste-2c7
 ---
 
 # Interwatch Drift Detection

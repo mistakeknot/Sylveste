@@ -155,15 +155,15 @@ By anchoring on Boyd, the document:
 
 **What's correct about the anchor:**
 
-The Reflect phase IS important for AI agents. The evidence cycle IS Demarch's core bet (PHILOSOPHY.md confirms this). But "Reflect" is a consequence of the evidence architecture, not a consequence of Boyd's model.
+The Reflect phase IS important for AI agents. The evidence cycle IS Sylveste's core bet (PHILOSOPHY.md confirms this). But "Reflect" is a consequence of the evidence architecture, not a consequence of Boyd's model.
 
 **Recommendation:** Reframe the document's opening:
-- Lead with Demarch's philosophy (evidence → authority → actions)
+- Lead with Sylveste's philosophy (evidence → authority → actions)
 - Show that this naturally produces an evidence accumulation phase
 - Show that Boyd's OODA is ANALOGOUS but not prescriptive
 - Don't justify Reflect by comparison to Boyd; justify it by reference to PHILOSOPHY.md's flywheel
 
-This shifts the anchor from "how do we extend a military model" to "how do we formalize Demarch's proven decision patterns."
+This shifts the anchor from "how do we extend a military model" to "how do we formalize Sylveste's proven decision patterns."
 
 ---
 
@@ -375,7 +375,7 @@ Is Orient meant to be **formalizable** (we can express it as rules/patterns), or
 
 ## Synthesis & Recommended Path
 
-**The document's core claim is correct:** Demarch needs explicit OODARC formalization to match its philosophy.
+**The document's core claim is correct:** Sylveste needs explicit OODARC formalization to match its philosophy.
 
 **The document's weakness:** Presents this as a binary choice (A vs B) when the actual decision should be sequential (A→B) or parallel (do A fast, then formalize into B).
 
@@ -408,7 +408,7 @@ Before implementing either approach, the document should address:
 
 - [ ] Reframe as Hybrid-First (A→B sequencing) rather than binary choice
 - [ ] Add migration-cost analysis showing A→B is non-disruptive
-- [ ] Shift anchor from Boyd's OODA to Demarch's philosophy (evidence → authority)
+- [ ] Shift anchor from Boyd's OODA to Sylveste's philosophy (evidence → authority)
 - [ ] Measure or bound Approach B's overhead against <100ms per-turn budget
 - [ ] Decompose Reflect into React (within-cycle) vs Reflect (cross-cycle)
 - [ ] Define escalation signals (when per-turn escalates to sprint)
@@ -433,7 +433,7 @@ Before implementing either approach, the document should address:
 
 ## Conclusion
 
-The OODARC loops brainstorm is **strong on architectural clarity** but **weak on decision discipline.** The core insight (Demarch needs explicit learning loops) is correct. The implementation options (A vs B) are both defensible.
+The OODARC loops brainstorm is **strong on architectural clarity** but **weak on decision discipline.** The core insight (Sylveste needs explicit learning loops) is correct. The implementation options (A vs B) are both defensible.
 
 But the document presents a false choice. The real decision is **sequencing and measurement**: start with A's delivery value, then progressively formalize into B as patterns stabilize and the abstraction cost becomes clear.
 

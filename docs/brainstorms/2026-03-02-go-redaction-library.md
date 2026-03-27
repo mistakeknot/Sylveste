@@ -25,7 +25,7 @@ Provider-specific (7): OpenAI (3 variants), Anthropic, GitHub (2 variants), Goog
 Cloud (3): AWS access key (AKIA/ASIA), AWS secret key
 Auth (3): JWT, Bearer token, Private key (RSA/DSA/EC/OPENSSH)
 Connection (1): Database URL (postgres/mysql/mongodb/redis)
-Demarch-specific (4): Notion (2 variants), Slack (3 variants), HuggingFace, Exa
+Sylveste-specific (4): Notion (2 variants), Slack (3 variants), HuggingFace, Exa
 Generic (3): Password, Generic API key, Generic secret
 
 ### Features

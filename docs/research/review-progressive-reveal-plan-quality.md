@@ -1,5 +1,5 @@
 # Quality Review: Pollard Progressive Result Reveal — Full Analysis
-**Plan reviewed:** `/home/mk/projects/Demarch/docs/plans/2026-02-23-pollard-progressive-reveal.md`
+**Plan reviewed:** `/home/mk/projects/Sylveste/docs/plans/2026-02-23-pollard-progressive-reveal.md`
 **Source files read:** `pollard.go`, `research_overlay.go`, `research/run.go`, `research/coordinator.go`, `research/messages.go`, `pkg/autarch/models.go`, `pkg/autarch/source.go`, existing test files in `internal/tui/views/`
 **Reviewer:** fd-quality (Flux-drive Quality & Style Reviewer)
 **Date:** 2026-02-23
@@ -9,7 +9,7 @@
 ## File Written
 
 Full review findings are at:
-`/home/mk/projects/Demarch/.claude/reviews/fd-quality-progressive-reveal.md`
+`/home/mk/projects/Sylveste/.claude/reviews/fd-quality-progressive-reveal.md`
 
 ---
 

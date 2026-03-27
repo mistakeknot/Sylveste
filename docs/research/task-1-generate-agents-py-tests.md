@@ -6,8 +6,8 @@ Created `interverse/interflux/scripts/generate-agents.py` (template engine for d
 
 ## Files Created
 
-1. **`/home/mk/projects/Demarch/interverse/interflux/scripts/generate-agents.py`** — Core template engine (executable, ~350 lines)
-2. **`/home/mk/projects/Demarch/interverse/interflux/tests/structural/test_generate_agents.py`** — Test suite (23 tests, ~340 lines)
+1. **`/home/mk/projects/Sylveste/interverse/interflux/scripts/generate-agents.py`** — Core template engine (executable, ~350 lines)
+2. **`/home/mk/projects/Sylveste/interverse/interflux/tests/structural/test_generate_agents.py`** — Test suite (23 tests, ~340 lines)
 
 ## Script Architecture
 

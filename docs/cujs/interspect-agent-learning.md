@@ -3,7 +3,7 @@ artifact_type: cuj
 journey: interspect-agent-learning
 actor: regular user (developer tuning agent performance)
 criticality: p2
-bead: Demarch-2c7
+bead: Sylveste-2c7
 ---
 
 # Interspect Agent Learning and Calibration
@@ -12,7 +12,7 @@ bead: Demarch-2c7
 
 Multi-agent systems produce varying quality. One review agent consistently catches real bugs. Another produces 80% false positives. A dispatch agent works great for Go code but struggles with Rust. Without measurement, these differences are invisible — the developer treats all agents equally and wonders why quality is inconsistent.
 
-Interspect is the profiler and learning system for Demarch's agent fleet. It tracks which agents produce findings that are acted upon, which get dismissed, which dispatches succeed, and which fail. Over time, this evidence feeds into routing decisions: better agents get more work, worse agents get downweighted or excluded from triage.
+Interspect is the profiler and learning system for Sylveste's agent fleet. It tracks which agents produce findings that are acted upon, which get dismissed, which dispatches succeed, and which fail. Over time, this evidence feeds into routing decisions: better agents get more work, worse agents get downweighted or excluded from triage.
 
 This journey covers how the developer observes, understands, and tunes agent performance — the meta-level of "how well are my tools working?"
 

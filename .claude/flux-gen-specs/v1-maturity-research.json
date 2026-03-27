@@ -17,7 +17,7 @@
       "Distinguishes between 'API stability' (structural) and 'behavioral stability' (semantic)",
       "Identifies at least one versioning scheme from a non-software domain that maps well onto the autonomous dev agency context"
     ],
-    "task_context": "Demarch is an autonomous software development agency platform at v0.6.228. The question is what v1.0.0 should mean and commit to, given the platform's outputs depend on evolving AI models.",
+    "task_context": "Sylveste is an autonomous software development agency platform at v0.6.228. The question is what v1.0.0 should mean and commit to, given the platform's outputs depend on evolving AI models.",
     "anti_overlap": [
       "fd-maturity-models covers organizational readiness frameworks (NASA TRL, DoD MRL) and biological stage models",
       "fd-oss-readiness-signals covers the empirical signals that specific OSS projects used at 1.0 declaration",
@@ -30,7 +30,7 @@
     "persona": "A systems scientist who moves fluently between aerospace readiness frameworks, developmental biology, and complexity theory. Specializes in finding structural isomorphisms between maturity models across domains.",
     "decision_lens": "Prioritizes findings where a maturity model from another domain reveals a non-obvious threshold or gate that would be invisible inside the software framing.",
     "review_areas": [
-      "Map NASA Technology Readiness Levels (TRL 1-9) onto the Demarch platform lifecycle — identify which TRL the platform currently occupies",
+      "Map NASA Technology Readiness Levels (TRL 1-9) onto the Sylveste platform lifecycle — identify which TRL the platform currently occupies",
       "Map DoD Manufacturing Readiness Levels (MRL 1-10) for the 'production of autonomous dev work' use case",
       "Survey biological development stage models (embryonic/fetal/neonatal/juvenile/adult, Waddington's landscape) for structural analogs to platform maturation",
       "Analyze CAS phase transition literature for what constitutes a 'criticality' in a developing system",
@@ -42,7 +42,7 @@
       "Names at least one maturity signal that only appears in non-software frameworks",
       "Distinguishes 'readiness to deploy' from 'readiness to be relied upon'"
     ],
-    "task_context": "Demarch is an autonomous software development agency platform at v0.6.228. The question is what v1.0.0 should mean and commit to, given the platform's outputs depend on evolving AI models.",
+    "task_context": "Sylveste is an autonomous software development agency platform at v0.6.228. The question is what v1.0.0 should mean and commit to, given the platform's outputs depend on evolving AI models.",
     "anti_overlap": [
       "fd-versioning-philosophy covers version contract semantics and OSS release conventions",
       "fd-autopoiesis-viability covers Beer's VSM viability and autopoiesis thresholds specifically",
@@ -67,7 +67,7 @@
       "Produces a readiness signal checklist derived from empirical patterns across 4+ projects",
       "Identifies at least one signal structurally inapplicable to agentic platforms"
     ],
-    "task_context": "Demarch is an autonomous software development agency platform at v0.6.228. The question is what v1.0.0 should mean and commit to, given the platform's outputs depend on evolving AI models.",
+    "task_context": "Sylveste is an autonomous software development agency platform at v0.6.228. The question is what v1.0.0 should mean and commit to, given the platform's outputs depend on evolving AI models.",
     "anti_overlap": [
       "fd-versioning-philosophy covers the philosophical meaning of versioning contracts",
       "fd-maturity-models covers abstract maturity frameworks (TRL, MRL, biology)",
@@ -80,11 +80,11 @@
     "persona": "A cybernetician and complexity theorist with deep familiarity with Beer's VSM, Maturana and Varela's autopoiesis, Prigogine's dissipative structures, and stigmergy research. Applies frameworks without forcing them.",
     "decision_lens": "Prioritizes findings that identify non-obvious threshold conditions — moments where a system transitions from 'scripted' to 'self-maintaining'. Values findings invisible to a purely software-framing analysis.",
     "review_areas": [
-      "Apply Beer's Viable System Model: map the five VSM systems onto Demarch's components and identify which are present, missing, or underdeveloped",
+      "Apply Beer's Viable System Model: map the five VSM systems onto Sylveste's components and identify which are present, missing, or underdeveloped",
       "Analyze the autopoiesis threshold: at what point does an autonomous dev agency become self-maintaining rather than merely self-operating?",
       "Survey thermodynamic free energy framing (Friston's free energy principle, Prigogine's dissipative structures): what observable platform behaviors correspond to reaching a stable dissipative regime?",
       "Analyze stigmergy maturity in ant colonies: qualitative phase transitions as colony size grows — identify analogous phase transitions in multi-agent dev platforms",
-      "Apply Ashby's Law of Requisite Variety: does Demarch's agent repertoire have sufficient variety for its target problem space?",
+      "Apply Ashby's Law of Requisite Variety: does Sylveste's agent repertoire have sufficient variety for its target problem space?",
       "Synthesize: which framework yields the most operationally useful v1.0 criterion, and what single observable test would determine if the threshold has been crossed?"
     ],
     "success_hints": [
@@ -92,7 +92,7 @@
       "Identifies where the biological/cybernetic analogies break down and what that reveals",
       "Applies Beer's VSM rigorously enough to identify at least one missing VSM system"
     ],
-    "task_context": "Demarch is an autonomous software development agency platform at v0.6.228. The question is what v1.0.0 should mean and commit to, given the platform's outputs depend on evolving AI models.",
+    "task_context": "Sylveste is an autonomous software development agency platform at v0.6.228. The question is what v1.0.0 should mean and commit to, given the platform's outputs depend on evolving AI models.",
     "anti_overlap": [
       "fd-maturity-models covers NASA TRL, DoD MRL, and biological stage models",
       "fd-agent-ecosystem-readiness covers AI agent ecosystem maturity in the engineering framing",
@@ -117,7 +117,7 @@
       "Identifies at least one failure mode unique to agentic platforms that must be absent at v1.0",
       "Surveys at least 3 existing AI agent frameworks' versioning histories"
     ],
-    "task_context": "Demarch is an autonomous software development agency platform at v0.6.228. The question is what v1.0.0 should mean and commit to, given the platform's outputs depend on evolving AI models.",
+    "task_context": "Sylveste is an autonomous software development agency platform at v0.6.228. The question is what v1.0.0 should mean and commit to, given the platform's outputs depend on evolving AI models.",
     "anti_overlap": [
       "fd-oss-readiness-signals covers traditional OSS dev infrastructure versioning history",
       "fd-versioning-philosophy covers abstract contract semantics of versioning",
@@ -142,7 +142,7 @@
       "Identifies at least one game design concept with a non-obvious but precise analog in autonomous dev agency operation",
       "References specific game launch case studies to ground recommendations"
     ],
-    "task_context": "Demarch is an autonomous software development agency platform at v0.6.228. The question is what v1.0.0 should mean and commit to, given the platform's outputs depend on evolving AI models.",
+    "task_context": "Sylveste is an autonomous software development agency platform at v0.6.228. The question is what v1.0.0 should mean and commit to, given the platform's outputs depend on evolving AI models.",
     "anti_overlap": [
       "fd-maturity-models covers biological development stages and formal organizational maturity frameworks",
       "fd-agent-ecosystem-readiness covers AI-specific production readiness and agent framework versioning",

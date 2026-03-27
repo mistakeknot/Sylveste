@@ -1,7 +1,7 @@
 # Intermute File Reservation System — Code Exploration
 
 **Date:** 2026-02-25  
-**Codebase:** `/home/mk/projects/Demarch/core/intermute/`  
+**Codebase:** `/home/mk/projects/Sylveste/core/intermute/`  
 **Focus:** SQLite storage layer, HTTP handlers, system initialization, schema, and glob pattern overlap logic
 
 ---
@@ -10,7 +10,7 @@
 
 ### main.go — Storage & Sweeper Setup
 
-**File:** `/home/mk/projects/Demarch/core/intermute/cmd/intermute/main.go`
+**File:** `/home/mk/projects/Sylveste/core/intermute/cmd/intermute/main.go`
 
 - **Store initialization (line 53):**
   ```go
@@ -49,7 +49,7 @@
 
 ## 2. go.mod Dependencies
 
-**File:** `/home/mk/projects/Demarch/core/intermute/go.mod`
+**File:** `/home/mk/projects/Sylveste/core/intermute/go.mod`
 
 ```
 go 1.24
@@ -70,7 +70,7 @@ require (
 
 ## 3. Database Schema — file_reservations Table
 
-**File:** `/home/mk/projects/Demarch/core/intermute/internal/storage/sqlite/schema.sql`  
+**File:** `/home/mk/projects/Sylveste/core/intermute/internal/storage/sqlite/schema.sql`  
 **Lines:** 55–69
 
 ```sql
@@ -107,7 +107,7 @@ CREATE INDEX IF NOT EXISTS idx_reservations_active
 
 ## 4. Core Domain Models
 
-**File:** `/home/mk/projects/Demarch/core/intermute/internal/core/models.go`
+**File:** `/home/mk/projects/Sylveste/core/intermute/internal/core/models.go`
 
 ### Reservation Struct (lines 79–96)
 
@@ -148,7 +148,7 @@ type ConflictDetail struct {
 
 ## 5. HTTP Handlers — Reservations API
 
-**File:** `/home/mk/projects/Demarch/core/intermute/internal/http/handlers_reservations.go`
+**File:** `/home/mk/projects/Sylveste/core/intermute/internal/http/handlers_reservations.go`
 
 ### ReservationStore Interface (lines 60–68)
 
@@ -180,7 +180,7 @@ type ReservationStore interface {
 
 ## 6. SQLite Storage — Reservation Methods
 
-**File:** `/home/mk/projects/Demarch/core/intermute/internal/storage/sqlite/sqlite.go`
+**File:** `/home/mk/projects/Sylveste/core/intermute/internal/storage/sqlite/sqlite.go`
 
 ### Reserve() (lines 1328–1432)
 
@@ -240,7 +240,7 @@ func (s *Store) SweepExpired(_ context.Context, expiredBefore, heartbeatAfter ti
 
 ## 7. HTTP Router
 
-**File:** `/home/mk/projects/Demarch/core/intermute/internal/http/router.go`
+**File:** `/home/mk/projects/Sylveste/core/intermute/internal/http/router.go`
 
 ```go
 func NewRouter(svc *Service, wsHandler http.Handler, mw func(http.Handler) http.Handler) http.Handler
@@ -257,7 +257,7 @@ All routes protected by auth middleware.
 
 ## 8. Background Sweeper
 
-**File:** `/home/mk/projects/Demarch/core/intermute/internal/storage/sqlite/sweeper.go`
+**File:** `/home/mk/projects/Sylveste/core/intermute/internal/storage/sqlite/sweeper.go`
 
 ### Sweeper Struct (lines 18–25)
 
@@ -282,7 +282,7 @@ type Sweeper struct {
 
 ## 9. Glob Pattern Overlap Logic
 
-**File:** `/home/mk/projects/Demarch/core/intermute/internal/glob/overlap.go`
+**File:** `/home/mk/projects/Sylveste/core/intermute/internal/glob/overlap.go`
 
 ### ValidateComplexity() (lines 42–66)
 

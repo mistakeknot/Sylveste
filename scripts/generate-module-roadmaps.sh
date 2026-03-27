@@ -5,7 +5,7 @@
 # For each module directory under apps/, os/, core/, interverse/, sdk/:
 #   - Queries beads for open/in-progress/blocked/recently-closed items
 #   - Writes docs/roadmap.md with standardized format
-#   - Links back to the root Demarch Roadmap for strategic context
+#   - Links back to the root Sylveste Roadmap for strategic context
 
 set -euo pipefail
 
@@ -108,7 +108,7 @@ for base in "$ROOT_DIR/apps" "$ROOT_DIR/os" "$ROOT_DIR/core" "$ROOT_DIR/interver
         {
             echo "# ${module} Roadmap"
             echo ""
-            echo "> Auto-generated from beads on ${DATE}. Strategic context: [Demarch Roadmap](${roadmap_rel})"
+            echo "> Auto-generated from beads on ${DATE}. Strategic context: [Sylveste Roadmap](${roadmap_rel})"
             echo ""
 
             if [ -n "$in_progress_items" ]; then

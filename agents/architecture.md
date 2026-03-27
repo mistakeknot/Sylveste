@@ -2,15 +2,15 @@
 
 ## Overview
 
-Demarch is the physical monorepo for the open-source autonomous software development agency platform. It contains six pillars: **Intercore** (`/core`) the orchestration kernel, **Clavain** (`/os/Clavain`) the agent OS and reference agency, **Skaffen** (`/os/Skaffen`) the sovereign agent runtime, **Interverse** (`/interverse`) the companion plugin ecosystem, **Autarch** (`/apps`) the TUI surfaces, and **Interspect** (cross-cutting profiler, currently in Interverse). Plus `sdk/` for shared libraries (interbase). Each module keeps its own `.git` as a nested independent repo. The root `Demarch/` also has a `.git` for the monorepo skeleton (scripts, docs, CLAUDE.md). Git operations apply to the nearest `.git`; verify with `git rev-parse --show-toplevel`.
+Sylveste is the physical monorepo for the open-source autonomous software development agency platform. It contains six pillars: **Intercore** (`/core`) the orchestration kernel, **Clavain** (`/os/Clavain`) the agent OS and reference agency, **Skaffen** (`/os/Skaffen`) the sovereign agent runtime, **Interverse** (`/interverse`) the companion plugin ecosystem, **Autarch** (`/apps`) the TUI surfaces, and **Interspect** (cross-cutting profiler, currently in Interverse). Plus `sdk/` for shared libraries (interbase). Each module keeps its own `.git` as a nested independent repo. The root `Sylveste/` also has a `.git` for the monorepo skeleton (scripts, docs, CLAUDE.md). Git operations apply to the nearest `.git`; verify with `git rev-parse --show-toplevel`.
 
 ## Glossary
 
 | Term | Meaning |
 |------|---------|
-| **Pillar** | One of the 6 top-level components of Demarch: Intercore, Clavain, Skaffen, Interverse, Autarch, Interspect. Organizational term — use "layer" (L1/L2/L3) for architectural dependency. |
+| **Pillar** | One of the 6 top-level components of Sylveste: Intercore, Clavain, Skaffen, Interverse, Autarch, Interspect. Organizational term — use "layer" (L1/L2/L3) for architectural dependency. |
 | **Layer** | Architectural dependency level: L1 (Kernel/Intercore), L2 (OS/Clavain + Drivers/Interverse), L3 (Apps/Autarch). Interspect is cross-cutting. |
-| **Beads** | File-based issue tracker (`bd` CLI). Each project can have a `.beads/` database. All active tracking is at Demarch root. |
+| **Beads** | File-based issue tracker (`bd` CLI). Each project can have a `.beads/` database. All active tracking is at Sylveste root. |
 | **Plugin** | A Claude Code extension (skills, commands, hooks, agents, MCP servers) installed from the marketplace. |
 | **MCP** | Model Context Protocol — enables plugins to expose tools as server processes that Claude Code calls directly. |
 | **Driver** | A companion plugin (part of the Interverse pillar) that extends Clavain with one capability. Also called "companion plugin." |
@@ -42,7 +42,7 @@ Each subproject has its own CLAUDE.md and AGENTS.md — read those before editin
 | `masaq/` | — | Shared Bubble Tea component library (Go) — themes, keys, viewport, priompt |
 | `docs/` | — | Platform-level docs only (brainstorms, research, solutions) |
 
-> **Docs convention:** `Demarch/docs/` is for platform-level work only. Each subproject keeps its own docs.
+> **Docs convention:** `Sylveste/docs/` is for platform-level work only. Each subproject keeps its own docs.
 > **Artifact naming:** See [`CONVENTIONS.md`](../CONVENTIONS.md) for canonical paths.
 
 ## Key Dependency Chains
@@ -71,4 +71,4 @@ Standalone plugins (no cross-deps): intercache, interchart, intercheck, intercra
 
 ## Compatibility
 
-Historical symlinks at `/root/projects/<name>` previously pointed into this monorepo. These have been removed. The canonical path is `~/projects/Demarch/`.
+Historical symlinks at `/root/projects/<name>` previously pointed into this monorepo. These have been removed. The canonical path is `~/projects/Sylveste/`.

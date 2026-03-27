@@ -1,7 +1,7 @@
 # Verify Commits Reference Valid Beads
 
 **Date:** 2026-02-27
-**Scope:** Git commits from 2026-02-24 to 2026-02-27 in Demarch monorepo
+**Scope:** Git commits from 2026-02-24 to 2026-02-27 in Sylveste monorepo
 **Purpose:** Verify that all bead IDs referenced in git commit messages exist in the beads database (`.beads/issues.jsonl`)
 
 ## Summary

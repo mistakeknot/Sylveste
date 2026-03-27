@@ -2,7 +2,7 @@
 
 ## Task Summary
 
-Added Intercore kernel (`ic`) build and verification to the Clavain modpack setup command (`/home/mk/projects/Demarch/os/clavain/commands/setup.md`).
+Added Intercore kernel (`ic`) build and verification to the Clavain modpack setup command (`/home/mk/projects/Sylveste/os/clavain/commands/setup.md`).
 
 ## Changes Made
 
@@ -13,10 +13,10 @@ Inserted a new section between Step 5 (Beads init) and Step 6 (Verify Configurat
 - **Check first**: `command -v ic && ic health` -- if already present and healthy, just report status and skip.
 - **Go toolchain gate**: Checks `go version`; warns and skips if Go not available (>= 1.22 required).
 - **Source discovery**: Checks 4 locations in priority order:
-  1. `core/intercore/cmd/ic/main.go` (Demarch monorepo root)
+  1. `core/intercore/cmd/ic/main.go` (Sylveste monorepo root)
   2. `../core/intercore/cmd/ic/main.go` (one level up)
   3. `../../core/intercore/cmd/ic/main.go` (two levels up)
-  4. `~/projects/Demarch/core/intercore/cmd/ic/main.go` (standard clone location)
+  4. `~/projects/Sylveste/core/intercore/cmd/ic/main.go` (standard clone location)
 - **Build**: `go build -C <dir> -mod=readonly -o ~/.local/bin/ic ./cmd/ic`
 - **Init + verify**: `ic init && ic health`
 - **PATH check**: Warns if `~/.local/bin` is not on `$PATH`.
@@ -57,4 +57,4 @@ ic kernel:         [healthy/not available]
 
 ## File Modified
 
-- `/home/mk/projects/Demarch/os/clavain/commands/setup.md` -- 3 insertions (Step 5b section, verification line, summary line)
+- `/home/mk/projects/Sylveste/os/clavain/commands/setup.md` -- 3 insertions (Step 5b section, verification line, summary line)

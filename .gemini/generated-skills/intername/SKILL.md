@@ -23,7 +23,7 @@ Review [`PHILOSOPHY.md`](../../PHILOSOPHY.md) during:
 - Handoff/retrospective
 
 For brainstorming/planning outputs, add two short lines:
-- **Alignment:** one sentence on how the proposal supports the module's purpose within Demarch's philosophy.
+- **Alignment:** one sentence on how the proposal supports the module's purpose within Sylveste's philosophy.
 - **Conflict/Risk:** one sentence on any tension with philosophy (or 'none').
 
 If a high-value change conflicts with philosophy, either:
@@ -163,7 +163,7 @@ When a new agent type is registered (e.g., via flux-gen), add an entry to each t
 ## Design decisions
 
 - **Deterministic, not hash-based** — same agent always gets same name regardless of project
-- **Project as context, not identity** — show "Lapsed Pacifist @ Demarch", don't encode project into name
+- **Project as context, not identity** — show "Lapsed Pacifist @ Sylveste", don't encode project into name
 - **Dispatches inherit** — "Lapsed Pacifist (2/5)" not a fresh name per dispatch
 - **jq dependency** — acceptable since jq is available on all target platforms; graceful fallback if missing
 - **No hooks** — purely a library + commands plugin; consumers source the library on demand

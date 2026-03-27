@@ -1,6 +1,6 @@
 # Plan: B2 Routing Enforcement + Cost Reduction Campaign
 
-**Beads:** Demarch-k2xf.5, Demarch-1x9l.2
+**Beads:** Sylveste-k2xf.5, Sylveste-1x9l.2
 **Brainstorm:** docs/brainstorms/2026-03-18-routing-enforcement.md
 
 ## Task Breakdown
@@ -38,9 +38,9 @@
 3. Call `routing_resolve_agents` with C5 signals for any agent → must return `opus`
 **Acceptance:** All three assertions pass
 
-### Task 5: Also claim and close Demarch-1x9l.2
+### Task 5: Also claim and close Sylveste-1x9l.2
 **Steps:**
-1. Claim Demarch-1x9l.2
+1. Claim Sylveste-1x9l.2
 2. Document: enforcement is active, cost tracking via interstat/cost-query.sh
 3. Close — the campaign metric (cost_per_landable_change) will be measured in future sessions
 **Acceptance:** Both beads closed

@@ -1,6 +1,6 @@
 # PRD: Systematic Mutation Engine for Autoresearch
 
-**Bead:** Demarch-vd1
+**Bead:** Sylveste-vd1
 **Date:** 2026-03-16
 **Brainstorm:** `docs/brainstorms/2026-03-16-mutation-engine-brainstorm.md`
 

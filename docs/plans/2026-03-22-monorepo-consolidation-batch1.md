@@ -1,7 +1,7 @@
 # Plan: Monorepo Consolidation Batch 1
 
 **Date:** 2026-03-22 (amended 2026-03-23 after flux-drive review)
-**Epic:** Demarch-og7m
+**Epic:** Sylveste-og7m
 **PRD:** `docs/prds/2026-03-22-monorepo-consolidation-batch1.md`
 **Children:** .10 (P0), .11, .13, .14, .15, .16, .25 (P1)
 **Review:** 4 agents (architecture, correctness, safety, quality) — 5 P1+ findings, all addressed below.

@@ -8,7 +8,7 @@
 
 ## Quick Install
 
-If you already ran the main Demarch installer (`install.sh`), Codex skills were installed automatically. Verify with:
+If you already ran the main Sylveste installer (`install.sh`), Codex skills were installed automatically. Verify with:
 
 ```bash
 find ~/.agents/skills -mindepth 1 -maxdepth 1 -type l -printf '%f\n' | sort

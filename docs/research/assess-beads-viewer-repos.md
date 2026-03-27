@@ -2,7 +2,7 @@
 
 **Date:** 2026-02-28
 **Author:** Claude Sonnet 4.6 (automated assessment)
-**Context:** Demarch uses `bd` CLI for beads tracking. Issues stored in `.beads/issues.jsonl` with 2,147 issues at time of assessment. Dashboard work lives in `apps/autarch/` (Bigend = web + TUI, Coldwine = task orchestration). Autarch uses Bubble Tea + Go stack.
+**Context:** Sylveste uses `bd` CLI for beads tracking. Issues stored in `.beads/issues.jsonl` with 2,147 issues at time of assessment. Dashboard work lives in `apps/autarch/` (Bigend = web + TUI, Coldwine = task orchestration). Autarch uses Bubble Tea + Go stack.
 
 ---
 
@@ -23,16 +23,16 @@ Three repos were examined:
 
 **Quality:** High. 56,809 lines of Go across 80+ files in the `ui` package alone. Comprehensive test suite including property-based tests (pgregory/rapid), benchmarks, E2E tests, golden tests, race detector. CI configured. Performance profiling artifacts committed. Opportunity matrices documenting optimization work. AGENTS.md is 23KB with detailed instructions.
 
-**Relevance to Demarch:** Autarch's Bigend is Demarch's multi-project mission control dashboard; beads_viewer is the most sophisticated beads viewer that exists, and Autarch currently has no graph-aware triage or dependency visualization for the 2,147 Demarch issues in `.beads/`.
+**Relevance to Sylveste:** Autarch's Bigend is Sylveste's multi-project mission control dashboard; beads_viewer is the most sophisticated beads viewer that exists, and Autarch currently has no graph-aware triage or dependency visualization for the 2,147 Sylveste issues in `.beads/`.
 
 **Integration opportunities:**
 
-- **`--robot-*` flags pattern** — bv's 40+ robot-mode flags (`--robot-triage`, `--robot-next`, `--robot-plan`, `--robot-insights`, `--robot-graph`, etc.) with JSON/TOON output are immediately useful. Run `bv --robot-triage` against Demarch's `.beads/issues.jsonl` today without any code changes; the loader already supports `issues.jsonl` as a preferred filename.
+- **`--robot-*` flags pattern** — bv's 40+ robot-mode flags (`--robot-triage`, `--robot-next`, `--robot-plan`, `--robot-insights`, `--robot-graph`, etc.) with JSON/TOON output are immediately useful. Run `bv --robot-triage` against Sylveste's `.beads/issues.jsonl` today without any code changes; the loader already supports `issues.jsonl` as a preferred filename.
 - **`pkg/analysis/triage.go` — TriageResult struct** — The unified triage output (QuickRef, Recommendations, QuickWins, BlockersToClear, ProjectHealth, Alerts, Commands) is a clean JSON schema that Autarch's Bigend dashboard could consume. Adapt the struct directly into Autarch's beads integration layer.
-- **`pkg/analysis/` — 9-metric graph engine** — PageRank, betweenness, HITS, critical path, eigenvector, k-core, cycles, topo sort, density. `gonum/graph` is already a Demarch dependency via Autarch. Port or import `pkg/analysis/` to add graph intelligence to `bd` or Bigend.
+- **`pkg/analysis/` — 9-metric graph engine** — PageRank, betweenness, HITS, critical path, eigenvector, k-core, cycles, topo sort, density. `gonum/graph` is already a Sylveste dependency via Autarch. Port or import `pkg/analysis/` to add graph intelligence to `bd` or Bigend.
 - **`pkg/drift/` — Drift detection** — Alert types for new cycles, PageRank changes, velocity drops, abandoned claims, potential duplicates. Directly applicable to Autarch's Coldwine sprint monitoring.
 - **`pkg/recipe/` — Saved view configs** — YAML-defined filter/sort/view configurations. Useful pattern for Bigend's "saved views" / filter presets.
-- **`pkg/agents/` — AGENTS.md injection** — Auto-injects beads workflow instructions into project AGENTS.md files. Demarch could adopt this pattern to keep all subproject AGENTS.md files current with the `bd`/`bv` workflow.
+- **`pkg/agents/` — AGENTS.md injection** — Auto-injects beads workflow instructions into project AGENTS.md files. Sylveste could adopt this pattern to keep all subproject AGENTS.md files current with the `bd`/`bv` workflow.
 - **`pkg/watcher/` — Debounced file watcher** — Clean fsnotify wrapper with debounce, platform-specific detection, polling fallback. Useful for Autarch's live-reload feature in Bigend's daemon.
 - **`pkg/ui/board.go` — Kanban swimlanes** — Swimlane mode (status / priority / type / label), inline card expansion, search-within-board. Adaptable to Bigend's TUI board tab.
 - **`pkg/ui/velocity_comparison.go` — Velocity sparklines** — 4-week velocity by label with trend detection (accelerating/decelerating/erratic). Port to Bigend's sprint view.
@@ -46,11 +46,11 @@ Three repos were examined:
 - **Content hash caching** — `data_hash` field in every robot output enables agents to skip reprocessing unchanged data. Apply to Autarch's MCP server cache layer.
 - **TOON (token-optimized output)** — bv integrates `toon-go` for compact token output. Autarch's MCP server could offer `--format toon` for agent-facing endpoints.
 - **Tutorial system** (`pkg/ui/tutorial.go`) — Interactive onboarding inside TUI. Relevant for Autarch's onboarding flow.
-- **AGENT_FRIENDLINESS_REPORT.md pattern** — Periodic structured audit of agent-facing CLI ergonomics. Worth adopting as a Demarch doc convention.
+- **AGENT_FRIENDLINESS_REPORT.md pattern** — Periodic structured audit of agent-facing CLI ergonomics. Worth adopting as a Sylveste doc convention.
 
 **Verdict:** port-partially
 
-**Rationale:** The robot-mode CLI works against Demarch's `.beads/issues.jsonl` today with zero changes; the Go graph analysis packages (`pkg/analysis/`, `pkg/drift/`, `pkg/recipe/`) are production-ready and directly portable to Autarch's Go codebase, filling a critical gap in Autarch's beads intelligence layer.
+**Rationale:** The robot-mode CLI works against Sylveste's `.beads/issues.jsonl` today with zero changes; the Go graph analysis packages (`pkg/analysis/`, `pkg/drift/`, `pkg/recipe/`) are production-ready and directly portable to Autarch's Go codebase, filling a critical gap in Autarch's beads intelligence layer.
 
 ---
 
@@ -62,12 +62,12 @@ Three repos were examined:
 
 **Quality:** High. Well-structured with explicit module headers, JSDoc, DIAGNOSTICS state machine, WASM memory management via `withSubgraph()` RAII pattern, OPFS caching, chunk-reassembly for large DBs, graceful fallback to pre-computed static JSON when WASM unavailable. The hybrid scorer (`hybrid_scorer.js`) mirrors a Go implementation and has an inline test runner (`hybrid_scorer.test.js`). Dracula-palette theme is consistent across all modules.
 
-**Relevance to Demarch:** Autarch's Bigend already has a web server (`internal/bigend/web/`) with Go HTML templates. beads_viewer-pages provides a production-quality, zero-dependency frontend for exactly the dependency graph and analytics views that Bigend's web dashboard currently lacks.
+**Relevance to Sylveste:** Autarch's Bigend already has a web server (`internal/bigend/web/`) with Go HTML templates. beads_viewer-pages provides a production-quality, zero-dependency frontend for exactly the dependency graph and analytics views that Bigend's web dashboard currently lacks.
 
 **Integration opportunities:**
 
 - **`graph.js` + force-graph WASM** — Production dependency graph visualization with multi-metric coloring (status, priority, PageRank, betweenness), critical path highlighting (gold glow), cycle detection (pink edges), pan/zoom, click-to-focus, filter panel, accessibility labels. This is the hardest component to build from scratch; adopt it directly.
-- **`viewer.js` SQL.js pattern** — Client-side SQLite querying via WASM with OPFS caching and chunk-reassembly. Demarch's `.beads/beads.db` is already a SQLite file; ship it alongside the static page and the viewer queries it directly with FTS5 search. No server API needed for read-only views.
+- **`viewer.js` SQL.js pattern** — Client-side SQLite querying via WASM with OPFS caching and chunk-reassembly. Sylveste's `.beads/beads.db` is already a SQLite file; ship it alongside the static page and the viewer queries it directly with FTS5 search. No server API needed for read-only views.
 - **`charts.js`** — Burndown/burnup chart, label dependency heatmap, priority distribution pie, type breakdown bar. All Chart.js, all self-contained. Direct drop-in for Bigend's analytics tab.
 - **`hybrid_scorer.js` HybridScorer** — Client-side graph-aware search ranking with configurable presets (default, bug-hunting, sprint-planning, impact-first, text-only). Port the preset system to Bigend's search UX.
 - **Static JSON data protocol** — `data/meta.json`, `data/triage.json`, `data/project_health.json`, `data/graph_layout.json`, `data/history.json` as generated artifacts from `bv --robot-*`. Bigend could generate these as part of its build/export pipeline and serve them alongside the static viewer. The schema is stable (matches bv TriageResult).
@@ -95,7 +95,7 @@ Three repos were examined:
 
 **Quality:** Low-medium as a standalone artifact. The 3 test issues have no meaningful dependencies and the data dir has no `history.json` (only triage, meta, project_health, graph_layout). This is a template/scaffold repository, not a feature repo. The additional `graph-demo.html` is standalone Dracula-themed graph demo using force-graph directly — a useful isolated test harness.
 
-**Relevance to Demarch:** This repo demonstrates the minimal setup needed to bootstrap a new project's beads web dashboard — useful as a starting template but not as an integration source since beads_viewer-pages contains all the same code with a richer data set.
+**Relevance to Sylveste:** This repo demonstrates the minimal setup needed to bootstrap a new project's beads web dashboard — useful as a starting template but not as an integration source since beads_viewer-pages contains all the same code with a richer data set.
 
 **Integration opportunities:**
 
@@ -116,22 +116,22 @@ Three repos were examined:
 
 ## Cross-Cutting Observations
 
-### Compatibility with Demarch's .beads format
+### Compatibility with Sylveste's .beads format
 
-All three repos are built around the same beads format that Demarch uses. The loader in beads_viewer explicitly lists `issues.jsonl` as a supported filename (`PreferredJSONLNames = []string{"beads.jsonl", "issues.jsonl", "beads.base.jsonl"}`), meaning `bv` can run against Demarch's `.beads/` directory today without modification.
+All three repos are built around the same beads format that Sylveste uses. The loader in beads_viewer explicitly lists `issues.jsonl` as a supported filename (`PreferredJSONLNames = []string{"beads.jsonl", "issues.jsonl", "beads.base.jsonl"}`), meaning `bv` can run against Sylveste's `.beads/` directory today without modification.
 
-Demarch's issue format (`id`, `title`, `description`, `status`, `priority`, `issue_type`, `labels`, `dependencies`, `created_at`, `updated_at`, `closed_at`) maps directly to `pkg/model/types.go`'s `Issue` struct.
+Sylveste's issue format (`id`, `title`, `description`, `status`, `priority`, `issue_type`, `labels`, `dependencies`, `created_at`, `updated_at`, `closed_at`) maps directly to `pkg/model/types.go`'s `Issue` struct.
 
 ### Recommended Integration Sequence
 
-1. **Now (zero code):** Run `bv --robot-triage` against Demarch's `.beads/` to get graph-aware triage. Install via `brew install dicklesworthstone/tap/bv`.
+1. **Now (zero code):** Run `bv --robot-triage` against Sylveste's `.beads/` to get graph-aware triage. Install via `brew install dicklesworthstone/tap/bv`.
 2. **Short-term (Autarch TUI):** Port `pkg/analysis/triage.go` TriageResult computation and `pkg/drift/` alert types into Autarch's Bigend. Add a beads triage panel to Bigend's TUI model.
 3. **Medium-term (Autarch web):** Integrate `graph.js` + `viewer.js` into Bigend's web server (`internal/bigend/web/`) as a beads analytics tab. Use bv to generate static JSON data files and serve them alongside the templated HTML.
 4. **Long-term (Autarch pipeline):** Generate the static beads dashboard as a CI artifact on every push via `bv --robot-triage > data/triage.json && bv --robot-graph > data/graph_layout.json` etc.
 
 ### Data Format Note
 
-beads_viewer-pages uses a `beads.sqlite3` at repo root (not in `data/`) as its primary data source; the `data/` JSON files are pre-computed fallbacks. The SQLite DB is generated by `bd sync` or `bd export`. Demarch's `.beads/beads.db` is the same SQLite file — the viewer can query it directly via the SQL.js WASM frontend.
+beads_viewer-pages uses a `beads.sqlite3` at repo root (not in `data/`) as its primary data source; the `data/` JSON files are pre-computed fallbacks. The SQLite DB is generated by `bd sync` or `bd export`. Sylveste's `.beads/beads.db` is the same SQLite file — the viewer can query it directly via the SQL.js WASM frontend.
 
 ### Scoring Note
 

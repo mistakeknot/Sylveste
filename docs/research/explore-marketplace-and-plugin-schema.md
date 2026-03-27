@@ -8,7 +8,7 @@
 ## 1. Marketplace Directory Structure
 
 ### Location
-`/home/mk/projects/Demarch/core/marketplace/` — A standalone Git repository (has `.git/` directory)
+`/home/mk/projects/Sylveste/core/marketplace/` — A standalone Git repository (has `.git/` directory)
 
 ### Directory Layout
 ```
@@ -73,7 +73,7 @@ interagency-marketplace/
 ## 3. Central Marketplace Manifest: marketplace.json
 
 ### Location & Role
-**File:** `/home/mk/projects/Demarch/core/marketplace/.claude-plugin/marketplace.json`
+**File:** `/home/mk/projects/Sylveste/core/marketplace/.claude-plugin/marketplace.json`
 
 **Purpose:** Central registry listing all 33 plugins in the interagency-marketplace ecosystem.
 
@@ -266,7 +266,7 @@ Two types:
 ## 5. Hooks System (hooks.json)
 
 ### Location
-`/home/mk/projects/Demarch/os/clavain/hooks/hooks.json` — Clavain's hook definitions
+`/home/mk/projects/Sylveste/os/clavain/hooks/hooks.json` — Clavain's hook definitions
 
 ### Schema Structure
 ```json
@@ -488,7 +488,7 @@ git push
 
 **Step 3: Register in marketplace**
 
-Edit `/home/mk/projects/Demarch/core/marketplace/.claude-plugin/marketplace.json`:
+Edit `/home/mk/projects/Sylveste/core/marketplace/.claude-plugin/marketplace.json`:
 ```json
 {
   "name": "my-plugin",
@@ -525,9 +525,9 @@ scripts/bump-version.sh 0.2.0
 
 ---
 
-## 10. Key Design Decisions (Demarch)
+## 10. Key Design Decisions (Sylveste)
 
-1. **External repos only** — Plugins live in separate GitHub repos under `mistakeknot/`, not in Demarch monorepo
+1. **External repos only** — Plugins live in separate GitHub repos under `mistakeknot/`, not in Sylveste monorepo
 2. **Version synchronization critical** — marketplace.json version MUST match plugin.json version
 3. **All fields required** — No optional fields in marketplace.json
 4. **Strict object format** — source field is always `{source: "url", url: "..."}`, never shorthand
@@ -540,7 +540,7 @@ scripts/bump-version.sh 0.2.0
 ## 11. Summary: The Three Layers
 
 ### Layer 1: Marketplace Manifest
-- **File:** `/home/mk/projects/Demarch/core/marketplace/.claude-plugin/marketplace.json`
+- **File:** `/home/mk/projects/Sylveste/core/marketplace/.claude-plugin/marketplace.json`
 - **Role:** Central registry of 33 plugins
 - **Managed by:** Marketplace maintainer
 - **Users see:** Plugin descriptions, versions, source URLs
@@ -564,7 +564,7 @@ scripts/bump-version.sh 0.2.0
 ### clavain (0.6.78) — Monolithic Hub
 - **Type:** Multi-agent framework
 - **Contains:** 4 agents, 55+ commands, 16 skills, 10 hooks, 1 MCP (context7)
-- **Role:** Orchestrates entire Demarch workflow
+- **Role:** Orchestrates entire Sylveste workflow
 - **Companions:** 31 other plugins (refactored from clavain as complexity grew)
 
 ### interflux (0.2.27) — Multi-Agent Review

@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-f18
+bead: Sylveste-f18
 stage: design
 requirements:
   - F8: TUI Mode (Skaffen standalone conversational REPL + Masaq shared library)
@@ -9,7 +9,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-f18
+**Bead:** Sylveste-f18
 **Goal:** Ship a standalone conversational REPL for Skaffen (`skaffen` default mode) backed by Masaq, a shared Bubble Tea component library.
 
 **Architecture:** Two deliverables: (1) Masaq (`github.com/mistakeknot/masaq`) — a separate Go module providing rendering-only Bubble Tea sub-models (theme, diff, markdown, question, viewport, keys, compact). No agent concepts. (2) Skaffen TUI (`os/Skaffen/internal/tui/`) — composes Masaq components into a chat-first REPL with smart trust, phase awareness, and session management. The agent loop (`internal/agent/loop.go`) gains a streaming callback interface so the TUI can render events in real-time instead of calling `Collect()`.
@@ -77,7 +77,7 @@ The module path matches the future separate repo.
 **Step 3: Create masaq.go package doc**
 
 ```go
-// Package masaq provides shared Bubble Tea rendering components for the Demarch
+// Package masaq provides shared Bubble Tea rendering components for the Sylveste
 // agent ecosystem. Named after Masaq' Orbital from Iain M. Banks' Look to Windward.
 //
 // Masaq owns rendering primitives only — it never imports agent, provider, or tool

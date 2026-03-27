@@ -81,11 +81,11 @@
     "name": "fd-theme-clustering",
     "focus": "Cluster all 50 ideas into 6-8 thematic groups, identify the densest clusters, and rank clusters by implementation leverage across Skaffen/Masaq/Autarch",
     "persona": "A product analyst with a background in human-computer interaction and agent interface design. This agent reads across all 50 ideas simultaneously to find the latent taxonomy — not one idea at a time — and then evaluates each cluster's strategic value for a terminal-first agent OS.",
-    "decision_lens": "Favor clusters that appear in multiple ideas (high density = strong user signal), that address terminal-native workflows (not mobile/hardware), and that cut across multiple Demarch layers (meaning one cluster effort yields gains in Skaffen, Masaq, and Autarch simultaneously).",
+    "decision_lens": "Favor clusters that appear in multiple ideas (high density = strong user signal), that address terminal-native workflows (not mobile/hardware), and that cut across multiple Sylveste layers (meaning one cluster effort yields gains in Skaffen, Masaq, and Autarch simultaneously).",
     "review_areas": [
       "Identify recurring thematic clusters across all 50: observability/metrics (tok/s, ETA, progress, waveform), multi-agent fleet management (spatial map, dashboard, task dispatch), context/memory management (compaction, SRS review, rolling window), parallel exploration (alternatives, A/B, speculative queue), personalization/learning (taste model, energy-aware routing, auto-shortcuts), gamification (game controls, victory, critical hits, leaderboard)",
       "Count idea density per cluster and rank clusters by count — which themes did Barber return to most frequently?",
-      "Cross-reference each cluster against which Demarch layer(s) it primarily touches: L2 (Skaffen), shared rendering (Masaq), L3 product (Autarch), or multi-layer",
+      "Cross-reference each cluster against which Sylveste layer(s) it primarily touches: L2 (Skaffen), shared rendering (Masaq), L3 product (Autarch), or multi-layer",
       "Identify the 'quick win' cluster: ideas that are thematically related, touch Masaq components only, and could ship together as a single Masaq release",
       "Identify the 'strategic cluster': ideas that would most differentiate a terminal-first agent OS from GUI-first competitors, even if they require more infrastructure",
       "Flag any ideas that don't fit cleanly into any cluster and explain why (outliers, hardware-dependent, requires external infrastructure)"

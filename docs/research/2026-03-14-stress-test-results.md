@@ -1,7 +1,7 @@
 # Skaffen Cross-Repo Stress Test — First Campaign Results
 
 **Date:** 2026-03-14
-**Bead:** Demarch-ome7 (epic), Demarch-vmen (F6)
+**Bead:** Sylveste-ome7 (epic), Sylveste-vmen (F6)
 **Infrastructure:** intermix parallel batch runner (tmux + MCP tools)
 
 ## Campaign Configuration

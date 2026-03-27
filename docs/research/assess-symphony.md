@@ -79,9 +79,9 @@ hooks:
 
 ---
 
-## Demarch Equivalence Map
+## Sylveste Equivalence Map
 
-| Symphony Concept | Demarch Equivalent | Status |
+| Symphony Concept | Sylveste Equivalent | Status |
 |------------------|--------------------|--------|
 | Issue tracker polling | `bd ready` / `bd list` via discovery scanner | Exists (lib-discovery.sh) |
 | Linear adapter | Beads (native); no external tracker adapter | **Gap**: iv-sym02 proposes this |
@@ -105,15 +105,15 @@ hooks:
 
 ### 1. Stateless vs Durable Orchestrator
 
-Symphony intentionally has **no persistent database**. On restart, it re-polls the tracker and re-discovers workspaces. Demarch's intercore uses **durable SQLite** (`dispatches`, `runs`, `sessions`, `phase_events`) to maintain history, cost attribution, and audit trails.
+Symphony intentionally has **no persistent database**. On restart, it re-polls the tracker and re-discovers workspaces. Sylveste's intercore uses **durable SQLite** (`dispatches`, `runs`, `sessions`, `phase_events`) to maintain history, cost attribution, and audit trails.
 
-**Assessment:** Symphony's approach is simpler to operate (no migration, no corruption risk) but loses history on restart. Demarch's durable state is essential for cost tracking, landed-change correlation, and the interspect feedback loop. **Skip** — the stateless model is a deliberate simplification that would regress Demarch's observability.
+**Assessment:** Symphony's approach is simpler to operate (no migration, no corruption risk) but loses history on restart. Sylveste's durable state is essential for cost tracking, landed-change correlation, and the interspect feedback loop. **Skip** — the stateless model is a deliberate simplification that would regress Sylveste's observability.
 
 ### 2. External Tracker as Source of Truth vs Native Beads
 
-Symphony treats Linear as the authoritative work source. The orchestrator only reads; the agent writes. Demarch owns its tracker (beads) and treats external trackers as optional sync targets.
+Symphony treats Linear as the authoritative work source. The orchestrator only reads; the agent writes. Sylveste owns its tracker (beads) and treats external trackers as optional sync targets.
 
-**Assessment:** Symphony's read-only tracker contract is clean but means the orchestrator has no control over issue lifecycle — it can't close stale beads, create child tasks, or manage dependencies. Demarch needs tracker control for the discovery pipeline, cascade-close, and dependency leverage scoring. **Skip** the read-only model. **Adapt** the external tracker adapter idea (iv-sym02) as an optional beads sync layer.
+**Assessment:** Symphony's read-only tracker contract is clean but means the orchestrator has no control over issue lifecycle — it can't close stale beads, create child tasks, or manage dependencies. Sylveste needs tracker control for the discovery pipeline, cascade-close, and dependency leverage scoring. **Skip** the read-only model. **Adapt** the external tracker adapter idea (iv-sym02) as an optional beads sync layer.
 
 ### 3. Per-Issue Workspace Isolation
 
@@ -126,7 +126,7 @@ Symphony creates a physical directory per ticket (`<root>/<sanitized_identifier>
 - **Git stash is globally shared** across worktrees — documented cross-agent data corruption vector.
 - Every worktree must eventually merge back. Conflicts are discovered late instead of prevented early.
 
-Demarch's interlock model (file-level reservation with negotiated release) is **strictly better** for overlapping work: conflicts are prevented at edit time, all agents see each other's committed work immediately via trunk-based development, and there's zero merge overhead. The one thing worktrees enable — concurrent filesystem writes to different files — is a narrow problem solvable with an index lock, not a whole isolation layer.
+Sylveste's interlock model (file-level reservation with negotiated release) is **strictly better** for overlapping work: conflicts are prevented at edit time, all agents see each other's committed work immediately via trunk-based development, and there's zero merge overhead. The one thing worktrees enable — concurrent filesystem writes to different files — is a narrow problem solvable with an index lock, not a whole isolation layer.
 
 **Skip** — worktrees solve a problem (uncoordinated agents colliding on files) that interlock already solves better. Adopting them would regress context sharing between agents and break trunk-based development.
 
@@ -134,13 +134,13 @@ Demarch's interlock model (file-level reservation with negotiated release) is **
 
 Symphony puts prompt template, runtime settings, hooks, and tracker config in a single versioned file. This is elegant for teams that want to version their agent behavior with their code.
 
-**Assessment:** Demarch already distributes this across CLAUDE.md (behavior), SKILL.md (prompts), hooks.json (hooks), and AGENTS.md (architecture). The unified file is simpler but less composable — Demarch's plugin system needs per-plugin config, not a monolithic workflow file. **Skip** the unified file format. **Inspire-from** the dynamic reload pattern if Demarch ever needs live hook reconfiguration.
+**Assessment:** Sylveste already distributes this across CLAUDE.md (behavior), SKILL.md (prompts), hooks.json (hooks), and AGENTS.md (architecture). The unified file is simpler but less composable — Sylveste's plugin system needs per-plugin config, not a monolithic workflow file. **Skip** the unified file format. **Inspire-from** the dynamic reload pattern if Sylveste ever needs live hook reconfiguration.
 
 ### 5. Multi-Turn Continuation Within a Worker
 
 Symphony's agent runner supports up to `max_turns` per worker session, re-checking tracker state between turns. Continuation turns send guidance, not the full prompt. This avoids session setup overhead for iterative work.
 
-**Assessment:** Demarch's Clavain sprint workflow already handles multi-phase execution (brainstorm -> strategy -> plan -> execute -> review -> ship) within a single Claude Code session. The explicit `max_turns` cap with inter-turn state refresh is a useful safety pattern. **Adapt** — the cap-and-refresh pattern could be added to `ic dispatch` to prevent runaway agents.
+**Assessment:** Sylveste's Clavain sprint workflow already handles multi-phase execution (brainstorm -> strategy -> plan -> execute -> review -> ship) within a single Claude Code session. The explicit `max_turns` cap with inter-turn state refresh is a useful safety pattern. **Adapt** — the cap-and-refresh pattern could be added to `ic dispatch` to prevent runaway agents.
 
 ---
 
@@ -150,9 +150,9 @@ Symphony's agent runner supports up to `max_turns` per worker session, re-checki
 
 | Pattern | Target | Why |
 |---------|--------|-----|
-| **Exponential backoff with capped retry** | iv-sym03 | `min(10s * 2^(attempt-1), max_backoff)` is a clean formula. Demarch's retry logic exists but lacks backoff cap configuration. Integrate with intercore's durable retry tracking (not in-memory like Symphony). |
-| **Stall detection as reconciliation** | intercore (enhance existing heartbeat) | Kill + retry on inactivity timeout. Demarch's heartbeat model (45-min claimed_at window) is similar but coarser; per-agent event-based stall detection is tighter. No dedicated bead — enhancement to existing `ic dispatch` reconciliation loop. |
-| **Workspace lifecycle hooks** (after_create, before_run, after_run, before_remove) | iv-sym08 | Clean separation of concerns. Demarch has session-level hooks but no workspace-level hooks. The 4-hook model with failure semantics (fatal vs best-effort) is well-designed. |
+| **Exponential backoff with capped retry** | iv-sym03 | `min(10s * 2^(attempt-1), max_backoff)` is a clean formula. Sylveste's retry logic exists but lacks backoff cap configuration. Integrate with intercore's durable retry tracking (not in-memory like Symphony). |
+| **Stall detection as reconciliation** | intercore (enhance existing heartbeat) | Kill + retry on inactivity timeout. Sylveste's heartbeat model (45-min claimed_at window) is similar but coarser; per-agent event-based stall detection is tighter. No dedicated bead — enhancement to existing `ic dispatch` reconciliation loop. |
+| **Workspace lifecycle hooks** (after_create, before_run, after_run, before_remove) | iv-sym08 | Clean separation of concerns. Sylveste has session-level hooks but no workspace-level hooks. The 4-hook model with failure semantics (fatal vs best-effort) is well-designed. |
 
 ### Adapt
 
@@ -168,13 +168,13 @@ Symphony's agent runner supports up to `max_turns` per worker session, re-checki
 
 | Pattern | Why skip |
 |---------|----------|
-| **Stateless in-memory orchestrator** | Demarch needs durable state for cost attribution, landed-change correlation, and interspect feedback loops. Symphony's restart-from-tracker model would lose this. |
-| **Unified WORKFLOW.md config file** | Demarch's distributed config (CLAUDE.md + SKILL.md + hooks.json + AGENTS.md) is more composable for a plugin ecosystem. Monolithic config doesn't scale to 49 plugins. |
+| **Stateless in-memory orchestrator** | Sylveste needs durable state for cost attribution, landed-change correlation, and interspect feedback loops. Symphony's restart-from-tracker model would lose this. |
+| **Unified WORKFLOW.md config file** | Sylveste's distributed config (CLAUDE.md + SKILL.md + hooks.json + AGENTS.md) is more composable for a plugin ecosystem. Monolithic config doesn't scale to 49 plugins. |
 | **Linear as sole tracker** | Beads is the native tracker; Linear/GitHub are optional sync targets, not primary sources. |
-| **Read-only tracker contract** | Demarch needs tracker writes for discovery pipeline (bd create, bd close), cascade-close, and dependency management. |
-| **Codex app-server protocol** | Demarch uses Claude Code's native subprocess model, which is simpler (no JSON-RPC handshake). The app-server protocol is Codex-specific. |
+| **Read-only tracker contract** | Sylveste needs tracker writes for discovery pipeline (bd create, bd close), cascade-close, and dependency management. |
+| **Codex app-server protocol** | Sylveste uses Claude Code's native subprocess model, which is simpler (no JSON-RPC handshake). The app-server protocol is Codex-specific. |
 | **Dynamic config file watching** | Claude Code sessions are ephemeral (minutes to hours). Live reload within a session adds complexity for minimal benefit. |
-| **Per-issue workspace isolation (worktrees)** | Demarch's interlock provides real-time file-level coordination, which prevents conflicts at edit time. Worktrees defer conflicts to merge time, fragment agent context (CooperBench: 30-50% worse outcomes), and break trunk-based development. The industry uses worktrees because they lack coordination layers, not because isolation is optimal. |
+| **Per-issue workspace isolation (worktrees)** | Sylveste's interlock provides real-time file-level coordination, which prevents conflicts at edit time. Worktrees defer conflicts to merge time, fragment agent context (CooperBench: 30-50% worse outcomes), and break trunk-based development. The industry uses worktrees because they lack coordination layers, not because isolation is optimal. |
 
 ---
 
@@ -196,4 +196,4 @@ This assessment enables concrete scoping for the 7 downstream beads:
 
 ## Verdict: `adapt-selectively`
 
-**Rationale:** Symphony's spec is well-engineered and covers orchestration concerns comprehensively. However, Demarch already has most of the equivalent infrastructure across intercore + Clavain + interstat, and four of Symphony's core design bets (stateless orchestrator, external tracker as truth, unified config file, workspace isolation via worktrees) conflict with Demarch's architecture. The valuable patterns to adopt are exponential retry backoff, workspace lifecycle hooks, and stall detection — which map cleanly to existing Demarch beads (iv-sym03, iv-sym08). Workspace isolation (iv-sym05) was initially marked Adopt but downgraded to Skip after deeper research showed that Demarch's interlock + trunk-based model provides strictly better conflict prevention with zero merge overhead, while worktrees fragment agent context (CooperBench: 30-50% worse outcomes in isolated agents). The adapter interface for external trackers (iv-sym02) is worth building as an optional sync layer, not a primary work source.
+**Rationale:** Symphony's spec is well-engineered and covers orchestration concerns comprehensively. However, Sylveste already has most of the equivalent infrastructure across intercore + Clavain + interstat, and four of Symphony's core design bets (stateless orchestrator, external tracker as truth, unified config file, workspace isolation via worktrees) conflict with Sylveste's architecture. The valuable patterns to adopt are exponential retry backoff, workspace lifecycle hooks, and stall detection — which map cleanly to existing Sylveste beads (iv-sym03, iv-sym08). Workspace isolation (iv-sym05) was initially marked Adopt but downgraded to Skip after deeper research showed that Sylveste's interlock + trunk-based model provides strictly better conflict prevention with zero merge overhead, while worktrees fragment agent context (CooperBench: 30-50% worse outcomes in isolated agents). The adapter interface for external trackers (iv-sym02) is worth building as an optional sync layer, not a primary work source.

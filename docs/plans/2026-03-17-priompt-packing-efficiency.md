@@ -1,6 +1,6 @@
 # Plan: Priompt Packing Efficiency Campaign
 
-**Bead:** Demarch-1x9l.1
+**Bead:** Sylveste-1x9l.1
 **Brainstorm:** docs/brainstorms/2026-03-17-priompt-packing-efficiency.md
 **PRD:** docs/prd/2026-03-17-priompt-packing-efficiency-prd.md
 

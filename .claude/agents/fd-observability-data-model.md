@@ -21,13 +21,13 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-Hyperspace AGI is a P2P autonomous AI research network using GossipSub, Loro CRDTs, and GitHub as a 3-layer coordination stack. Demarch is a single-operator multi-agent platform where Clavain orchestrates agents via interlock (file-based reservations) and beads (Dolt-backed issue tracking). The analysis must identify adoptable coordination patterns for a local, single-machine context.
+Hyperspace AGI is a P2P autonomous AI research network using GossipSub, Loro CRDTs, and GitHub as a 3-layer coordination stack. Sylveste is a single-operator multi-agent platform where Clavain orchestrates agents via interlock (file-based reservations) and beads (Dolt-backed issue tracking). The analysis must identify adoptable coordination patterns for a local, single-machine context.
 
 ## Review Approach
 
 ### 1. Evaluate the per
 
-- Evaluate the per-agent experiment format (run-NNN.json + run-NNN.md + best.json + JOURNAL.md) and design a Demarch-equivalent for Autarch work items and interlab campaigns
+- Evaluate the per-agent experiment format (run-NNN.json + run-NNN.md + best.json + JOURNAL.md) and design a Sylveste-equivalent for Autarch work items and interlab campaigns
 
 ### 2. Assess the 'hourly network snapshot' pattern (snapshots/l...
 
@@ -43,7 +43,7 @@ Hyperspace AGI is a P2P autonomous AI research network using GossipSub, Loro CRD
 
 ### 5. Assess the 'point any LLM at snapshots/latest
 
-- Assess the 'point any LLM at snapshots/latest.json' UX philosophy against Demarch's current approach to observability, and identify where Intercom currently builds dashboards it shouldn't
+- Assess the 'point any LLM at snapshots/latest.json' UX philosophy against Sylveste's current approach to observability, and identify where Intercom currently builds dashboards it shouldn't
 
 ### 6. Evaluate the per
 
@@ -63,8 +63,8 @@ A good review from this agent:
 - Provides a concrete failure scenario for each P0/P1 finding — what breaks, under what conditions, and who is affected
 - Recommends the smallest viable fix, not an architecture overhaul — one diff hunk, not a rewrite
 - Frames uncertain findings as questions: "Does this handle X?" not "This doesn't handle X"
-- Agent produces a concrete file schema for a Demarch experiment record (equivalent to run-NNN.json) that works for both interlab campaigns and Autarch beads work
-- Agent identifies which existing Demarch observability tools (interstat, cass, intersearch) already produce snapshot-friendly JSON and which require new output modes
+- Agent produces a concrete file schema for a Sylveste experiment record (equivalent to run-NNN.json) that works for both interlab campaigns and Autarch beads work
+- Agent identifies which existing Sylveste observability tools (interstat, cass, intersearch) already produce snapshot-friendly JSON and which require new output modes
 - Agent gives a clear verdict on whether Intercom should implement a leaderboard generator or whether existing beads + cass data is sufficient with a simpler query interface
 
 ## Decision Lens

@@ -52,7 +52,7 @@ Treat any design where a slow or misbehaving group can delay, corrupt, or observ
 
 - One group's container backpressure cannot delay message delivery to any other group — per-group queue fairness preserved
 - The is_authorized_target check for non-main group IPC sends is enforced at the same or earlier point in the new design
-- The Demarch write restriction (main-group-only) is enforced with the same group identity signal in the redesigned IPC path
+- The Sylveste write restriction (main-group-only) is enforced with the same group identity signal in the redesigned IPC path
 
 ## Anti-Overlap
 

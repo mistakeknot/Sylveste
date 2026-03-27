@@ -11,7 +11,7 @@
 
 The plan is well-structured with correct TDD discipline, proper error-wrapping convention, and idiomatic iota enum design. Five issues warrant correction before implementation: two are compile-time failures, two are design concerns, and one is a test fragility risk. The overall architecture is sound.
 
-Full review with code samples: `/home/mk/projects/Demarch/.claude/reviews/fd-quality-broadcast-plan.md`
+Full review with code samples: `/home/mk/projects/Sylveste/.claude/reviews/fd-quality-broadcast-plan.md`
 
 ---
 

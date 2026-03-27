@@ -35,7 +35,7 @@ Each test should initialize a temporary git repo fixture, create baseline commit
 
 Run:
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap
+cd /home/mk/projects/Sylveste/interverse/intermap
 PYTHONPATH=python python3 -m pytest python/tests/test_live_changes.py -k "body_edit or method_body or pure_deletion or non_python" -v
 ```
 Expected: At least one new regression test fails due to current def-line-only symbol matching behavior.
@@ -52,8 +52,8 @@ Expected: All new regression tests pass.
 **Step 5: Commit**
 
 ```bash
-git -C /home/mk/projects/Demarch/interverse/intermap add python/intermap/live_changes.py python/tests/test_live_changes.py
-git -C /home/mk/projects/Demarch/interverse/intermap commit -m "test+fix: harden live_changes symbol overlap regression coverage"
+git -C /home/mk/projects/Sylveste/interverse/intermap add python/intermap/live_changes.py python/tests/test_live_changes.py
+git -C /home/mk/projects/Sylveste/interverse/intermap commit -m "test+fix: harden live_changes symbol overlap regression coverage"
 ```
 
 ### Task 2: Structured Observability for Extraction Failures
@@ -73,7 +73,7 @@ Add a test using `caplog` and extractor monkeypatching to force extraction failu
 
 Run:
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap
+cd /home/mk/projects/Sylveste/interverse/intermap
 PYTHONPATH=python python3 -m pytest python/tests/test_live_changes.py -k "extractor_error or caplog" -v
 ```
 Expected: Fails before implementation.
@@ -86,7 +86,7 @@ Update exception handling in `get_live_changes` to emit the required structured 
 
 Run:
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap
+cd /home/mk/projects/Sylveste/interverse/intermap
 PYTHONPATH=python python3 -m pytest python/tests/test_live_changes.py -v
 ```
 Expected: Pass.
@@ -94,8 +94,8 @@ Expected: Pass.
 **Step 5: Commit**
 
 ```bash
-git -C /home/mk/projects/Demarch/interverse/intermap add python/intermap/live_changes.py python/tests/test_live_changes.py
-git -C /home/mk/projects/Demarch/interverse/intermap commit -m "feat: add structured extractor error observability for live_changes"
+git -C /home/mk/projects/Sylveste/interverse/intermap add python/intermap/live_changes.py python/tests/test_live_changes.py
+git -C /home/mk/projects/Sylveste/interverse/intermap commit -m "feat: add structured extractor error observability for live_changes"
 ```
 
 ### Task 3: Performance Optimization + Guarded Rollback Mode
@@ -118,7 +118,7 @@ Create `test_live_changes_perf.py` to:
 
 Run:
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap
+cd /home/mk/projects/Sylveste/interverse/intermap
 PYTHONPATH=python python3 -m pytest python/tests/test_live_changes_perf.py -q
 ```
 Expected: Baseline metrics recorded; threshold not met before optimization.
@@ -137,8 +137,8 @@ Expected: `>=30%` median latency improvement on repeated identical calls, with c
 **Step 5: Commit**
 
 ```bash
-git -C /home/mk/projects/Demarch/interverse/intermap add python/intermap/live_changes.py python/tests/test_live_changes.py python/tests/test_live_changes_perf.py
-git -C /home/mk/projects/Demarch/interverse/intermap commit -m "perf: optimize live_changes repeated calls with guarded legacy fallback"
+git -C /home/mk/projects/Sylveste/interverse/intermap add python/intermap/live_changes.py python/tests/test_live_changes.py python/tests/test_live_changes_perf.py
+git -C /home/mk/projects/Sylveste/interverse/intermap commit -m "perf: optimize live_changes repeated calls with guarded legacy fallback"
 ```
 
 ### Task 4: Final Verification + Documentation Evidence
@@ -151,7 +151,7 @@ git -C /home/mk/projects/Demarch/interverse/intermap commit -m "perf: optimize l
 
 Run:
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap
+cd /home/mk/projects/Sylveste/interverse/intermap
 PYTHONPATH=python python3 -m pytest python/tests/test_live_changes.py python/tests/test_live_changes_perf.py -v
 ```
 Expected: Pass.
@@ -164,7 +164,7 @@ Append benchmark summary (baseline median, optimized median, improvement %, comm
 
 Run:
 ```bash
-cd /home/mk/projects/Demarch/interverse/intermap
+cd /home/mk/projects/Sylveste/interverse/intermap
 go build ./...
 ```
 Expected: Build succeeds.
@@ -172,6 +172,6 @@ Expected: Build succeeds.
 **Step 4: Commit docs and verification updates**
 
 ```bash
-git -C /home/mk/projects/Demarch/interverse/intermap add docs/research/performance-review-of-sprint.md docs/research/quality-review-of-sprint.md
-git -C /home/mk/projects/Demarch/interverse/intermap commit -m "docs: capture live_changes hardening benchmark and rollback guidance"
+git -C /home/mk/projects/Sylveste/interverse/intermap add docs/research/performance-review-of-sprint.md docs/research/quality-review-of-sprint.md
+git -C /home/mk/projects/Sylveste/interverse/intermap commit -m "docs: capture live_changes hardening benchmark and rollback guidance"
 ```

@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-og7m.2.1
+bead: Sylveste-og7m.2.1
 stage: plan-reviewed
 review_status: revised after 7-agent flux-drive (architecture, correctness, quality, schema-evolution, envelope-semantics, payload-typing, json-schema-gen)
 requirements:
@@ -12,7 +12,7 @@ requirements:
 ---
 # EventEnvelope v2 Schema — Implementation Plan
 
-**Bead:** Demarch-og7m.2.1
+**Bead:** Sylveste-og7m.2.1
 **Goal:** Define the v2 envelope schema, payload types, and marshal/parse functions. V1 remains unchanged — this is schema-only, no writer changes.
 
 **Architecture:** All Go in `core/intercore/internal/event/`. Schema generation via `go generate ./contracts/...` (same pipeline used for F2). No DB changes — `envelope_json` column stores JSON blobs, schema change is invisible to SQLite.
@@ -238,7 +238,7 @@ with v1 read fallback.
 No writers changed — this is schema + helpers only. Writers migrate to v2
 in og7m.2.2; v1 removal in og7m.2.6.
 
-Fixes Demarch-og7m.2.1
+Fixes Sylveste-og7m.2.1
 ```
 
 <verify>

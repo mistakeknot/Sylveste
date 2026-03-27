@@ -1,13 +1,13 @@
 ---
 artifact_type: plan
-bead: Demarch-6qb.7
+bead: Sylveste-6qb.7
 stage: plan
 ---
 
 # Plan: Interverse Plugin Compatibility Layer for Skaffen
 
 **Date:** 2026-03-16
-**Bead:** Demarch-6qb.7
+**Bead:** Sylveste-6qb.7
 **PRD:** docs/prds/2026-03-16-interverse-plugin-compat.md
 **Assessment:** docs/research/assess-interverse-plugin-compatibility.md
 
@@ -167,7 +167,7 @@ After all phases:
 1. `go test ./... -count=1` — all tests pass (919+ existing + new)
 2. `go vet ./...` — clean
 3. `go build ./cmd/skaffen` — compiles
-4. Manual: run `skaffen` in Demarch monorepo, verify `/skills` shows Interverse skills, `/` autocomplete shows Interverse commands, MCP tools appear in registry
+4. Manual: run `skaffen` in Sylveste monorepo, verify `/skills` shows Interverse skills, `/` autocomplete shows Interverse commands, MCP tools appear in registry
 
 ## File Summary
 

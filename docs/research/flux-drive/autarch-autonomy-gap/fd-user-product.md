@@ -3,7 +3,7 @@
 **Date:** 2026-02-25
 **Reviewer:** fd-user-product
 **Document under review:** docs/research/autarch-autonomy-gap-analysis.md
-**Supporting sources:** docs/demarch-vision.md, apps/autarch/docs/autarch-vision.md, apps/autarch/CLAUDE.md
+**Supporting sources:** docs/sylveste-vision.md, apps/autarch/docs/autarch-vision.md, apps/autarch/CLAUDE.md
 
 ---
 
@@ -25,7 +25,7 @@ All three states belong to one person across different moments in the same day. 
 
 The core diagnosis is accurate. The seven gaps are real and the phase-mismatch framing is the right way to think about them. Gap 3 (per-item vs exception-based interaction) and Gap 4 (chat-centric vs dashboard-centric) are the most important, and the document correctly names them first among the implications.
 
-The recursive ring model matches Demarch's published architecture. The mapping of Bigend/Gurgeh/Coldwine/Pollard to strategic/design/execution/research rings is conceptually clean and consistent with what the vision documents describe.
+The recursive ring model matches Sylveste's published architecture. The mapping of Bigend/Gurgeh/Coldwine/Pollard to strategic/design/execution/research rings is conceptually clean and consistent with what the vision documents describe.
 
 The attention metric claim — "the human should interact with less than 10% of items the agency processes at L2-L3" — is an appropriately concrete success signal. This kind of quantified target is what makes post-release validation possible. It should survive into any PRD.
 
@@ -84,7 +84,7 @@ This is correct for an experienced user with high trust in the agency. It is a s
 
 The problem: invisibility of normal operation removes the feedback loop that builds trust. A user who cannot observe what the agency is doing in normal operation has no basis for developing calibrated trust in the agency's judgment. They can only evaluate the 10% of escalations they see, which are by definition the cases where the agency was uncertain or stuck. This creates a systematically negative sample of agency behavior.
 
-The Demarch vision document explicitly names "proof by demonstration" as a credibility pillar. The Executive dashboard as described removes the demonstration from view.
+The Sylveste vision document explicitly names "proof by demonstration" as a credibility pillar. The Executive dashboard as described removes the demonstration from view.
 
 This is not an argument for returning to per-item interaction. It is an argument for a "healthy activity" signal in the portfolio view — not individual operation details, but an activity pulse that shows the agency is working and progressing. Something like: "interflux sprint: 7 phases completed in the last 2 hours, 0 exceptions" gives the user enough to calibrate trust without requiring them to engage with each step.
 
@@ -96,9 +96,9 @@ Recommendation: Add a "since your last visit" summary to each ring in the portfo
 
 ## Concern 4: The Portfolio View Assumes Flat Project Semantics
 
-Gap 5 correctly identifies the need for a portfolio view, but the mockup shows projects as a flat list of rings. This works at the current scale (a few concurrent sprints) but does not handle the organizational structure that emerges when using Demarch at the stated target scale.
+Gap 5 correctly identifies the need for a portfolio view, but the mockup shows projects as a flat list of rings. This works at the current scale (a few concurrent sprints) but does not handle the organizational structure that emerges when using Sylveste at the stated target scale.
 
-The Demarch vision references "concurrent agencies" and "cross-project verification" as kernel primitives. At any meaningful scale, the portfolio has structure: some projects are dependencies of others, some sprints are children of larger initiatives, some rings are research feeding a design feeding an execution chain.
+The Sylveste vision references "concurrent agencies" and "cross-project verification" as kernel primitives. At any meaningful scale, the portfolio has structure: some projects are dependencies of others, some sprints are children of larger initiatives, some rings are research feeding a design feeding an execution chain.
 
 A flat ring list loses this structure. The user cannot tell from the mockup whether "interflux sprint" and "interlock sprint" are independent or related. If the interlock sprint's output feeds the interflux sprint's input, and the interlock sprint is blocked, the user needs to know that two rings are affected, not one.
 
@@ -168,9 +168,9 @@ Recommendation: The PRD should define which apps must be migration-complete befo
 
 ## Concern 8: "Executive" Is the Wrong Name for This Mode
 
-This is a terminology concern with product adoption implications. The document uses "Executive" to mean "sets objectives and reviews outcomes." In the context of a personal engineering rig (Demarch's stated primary audience: "one product-minded engineer, as effective as a full team"), "executive" carries corporate connotations that do not fit the user.
+This is a terminology concern with product adoption implications. The document uses "Executive" to mean "sets objectives and reviews outcomes." In the context of a personal engineering rig (Sylveste's stated primary audience: "one product-minded engineer, as effective as a full team"), "executive" carries corporate connotations that do not fit the user.
 
-The Demarch audience is a technical individual contributor who also does product strategy. Calling their primary operating mode "Executive" may feel aspirational in a way that creates friction — it sounds like a feature for managers, not engineers.
+The Sylveste audience is a technical individual contributor who also does product strategy. Calling their primary operating mode "Executive" may feel aspirational in a way that creates friction — it sounds like a feature for managers, not engineers.
 
 More precisely, what the document describes is the "steady-state" mode — what the user does when things are working. The complementary modes are "intervention" (Supervisor) and "exploration/onboarding" (Operator). These names are more neutral and more descriptive of what the user is actually doing.
 

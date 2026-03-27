@@ -3,7 +3,7 @@ artifact_type: cuj
 journey: coldwine-sprint-execution
 actor: regular user (developer running task sprints)
 criticality: p2
-bead: Demarch-2c7
+bead: Sylveste-2c7
 ---
 
 # Coldwine Sprint Execution
@@ -39,5 +39,5 @@ When all tasks complete, Coldwine generates a sprint summary: what shipped, what
 
 - **Agent output rendering** — long diffs in the TUI can be slow. The viewport needs efficient scrolling for large outputs.
 - **No automatic beads integration** — sprint completion doesn't auto-close beads. Manual step required.
-- **Review workflow assumes branches** — trunk-based development (Demarch's model) means review is commit-level, not PR-level. Coldwine's review UI was designed for branch-based flow.
+- **Review workflow assumes branches** — trunk-based development (Sylveste's model) means review is commit-level, not PR-level. Coldwine's review UI was designed for branch-based flow.
 - **Model initialization overhead** — first agent dispatch in a sprint has cold-start latency.

@@ -1,6 +1,6 @@
 # Plan: F19 Unified Compose
 
-**Bead:** Demarch-jpum.12
+**Bead:** Sylveste-jpum.12
 **Date:** 2026-03-25
 **PRD:** docs/prds/2026-03-25-f19-unified-compose.md
 **Brainstorm:** docs/brainstorms/2026-03-25-f19-unified-compose-brainstorm.md

@@ -6,7 +6,7 @@
 
 ## Problem
 
-Demarch MCP servers expose ~111 tools total. Each tool definition costs ~100-300 tokens in system prompt context. Agents loading 5 MCP servers pay 15-30k tokens before any work begins. Most tasks only need 10-20 tools. There is no filtering mechanism — every agent sees every tool.
+Sylveste MCP servers expose ~111 tools total. Each tool definition costs ~100-300 tokens in system prompt context. Agents loading 5 MCP servers pay 15-30k tokens before any work begins. Most tasks only need 10-20 tools. There is no filtering mechanism — every agent sees every tool.
 
 ## Solution
 

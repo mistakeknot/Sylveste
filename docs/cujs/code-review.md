@@ -3,7 +3,7 @@ artifact_type: cuj
 journey: code-review
 actor: regular user (developer reviewing code or documents)
 criticality: p1
-bead: Demarch-9ha
+bead: Sylveste-9ha
 ---
 
 # Multi-Agent Code Review
@@ -12,9 +12,9 @@ bead: Demarch-9ha
 
 Code review is where quality is either built in or bolted on. Most AI review tools produce a wall of suggestions — formatting nits, style preferences, and obvious observations mixed with the one finding that actually matters. The developer reads twenty findings, dismisses eighteen, and hopes they didn't accidentally dismiss the important one. This is worse than no review at all, because it creates false confidence.
 
-Demarch solves this through cognitive diversity: instead of one model reviewing everything, specialized agents examine the change from distinct perspectives — architecture, safety, correctness, quality, performance, user experience. Each agent has an explicit lens, declared capabilities, and a track record that Interspect monitors. The synthesis layer deduplicates findings, ranks by severity, and produces a verdict. The developer reads one structured report, not twelve raw outputs.
+Sylveste solves this through cognitive diversity: instead of one model reviewing everything, specialized agents examine the change from distinct perspectives — architecture, safety, correctness, quality, performance, user experience. Each agent has an explicit lens, declared capabilities, and a track record that Interspect monitors. The synthesis layer deduplicates findings, ranks by severity, and produces a verdict. The developer reads one structured report, not twelve raw outputs.
 
-This matters for Demarch specifically because the review fleet is where Interspect has the most immediate leverage. An agent that consistently produces false positives gets downweighted. An agent whose findings are always acted upon gets prioritized. The signal density of the review fleet directly feeds the learning loop. Bad review is not just annoying — it's expensive data pollution.
+This matters for Sylveste specifically because the review fleet is where Interspect has the most immediate leverage. An agent that consistently produces false positives gets downweighted. An agent whose findings are always acted upon gets prioritized. The signal density of the review fleet directly feeds the learning loop. Bad review is not just annoying — it's expensive data pollution.
 
 ### Current State vs. Planned
 

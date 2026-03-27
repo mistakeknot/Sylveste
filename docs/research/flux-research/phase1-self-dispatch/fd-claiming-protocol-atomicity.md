@@ -2,7 +2,7 @@
 
 **Author**: flux-research (distributed systems engineer persona)
 **Date**: 2026-03-19
-**Scope**: Atomic claiming for the Demarch self-dispatch loop — optimistic vs pessimistic, CAS semantics, heartbeat/TTL, race handling
+**Scope**: Atomic claiming for the Sylveste self-dispatch loop — optimistic vs pessimistic, CAS semantics, heartbeat/TTL, race handling
 **Status**: Research complete
 
 ---
@@ -38,11 +38,11 @@ Celery's claim model is **broker-mediated pessimistic leasing**:
    - **RabbitMQ/SQS**: at-least-once (redelivery on timeout)
    - **Redis pub/sub**: at-most-once (message lost on disconnect)
 
-**Key insight for Demarch**: Celery's `visibility_timeout` is the equivalent of a claim TTL. With `acks_late=True`, tasks are only acked on completion — but if the task takes longer than the visibility timeout, the broker redelivers it to another worker, causing **duplicate execution**. This is the exact analog of the stale-claim problem.
+**Key insight for Sylveste**: Celery's `visibility_timeout` is the equivalent of a claim TTL. With `acks_late=True`, tasks are only acked on completion — but if the task takes longer than the visibility timeout, the broker redelivers it to another worker, causing **duplicate execution**. This is the exact analog of the stale-claim problem.
 
 **Celery's mitigation**: `reject_on_worker_lost=True` combined with idempotent tasks. The system accepts that duplicates will occasionally occur and relies on idempotency to make them safe.
 
-**Relevance**: Beads are not naturally idempotent (a coding task that commits code cannot be trivially replayed). This means Demarch needs stronger claim exclusivity than Celery provides, or must make the work itself idempotent (e.g., check if the commit already exists before executing).
+**Relevance**: Beads are not naturally idempotent (a coding task that commits code cannot be trivially replayed). This means Sylveste needs stronger claim exclusivity than Celery provides, or must make the work itself idempotent (e.g., check if the commit already exists before executing).
 
 Sources: [Celery Tasks docs](https://docs.celeryq.dev/en/stable/userguide/tasks.html), [Celery configuration](https://docs.celeryq.dev/en/main/userguide/configuration.html), [Optimizing Celery Retries at Scale](https://medium.com/@bhagyarana80/optimizing-celery-retries-and-visibility-timeouts-at-high-scale-aa79f923d880)
 
@@ -61,7 +61,7 @@ Temporal's model is fundamentally different — the **server owns task state**, 
 - `HeartbeatTimeout`: max interval between heartbeats during execution
 - `ScheduleToCloseTimeout`: end-to-end timeout including retries
 
-**Key insight for Demarch**: Temporal separates "claim" (worker picks up task token) from "identity" (worker heartbeats with that token). There is no gap — the claim IS the task token, and the heartbeat extends it. Demarch's two-phase `bd update --claim` + `bd set-state` is the anti-pattern here. The fix is to make claiming and identity-writing a single operation.
+**Key insight for Sylveste**: Temporal separates "claim" (worker picks up task token) from "identity" (worker heartbeats with that token). There is no gap — the claim IS the task token, and the heartbeat extends it. Sylveste's two-phase `bd update --claim` + `bd set-state` is the anti-pattern here. The fix is to make claiming and identity-writing a single operation.
 
 **Temporal's crash handling**: If a worker crashes, it stops heartbeating. The server detects this via `HeartbeatTimeout` and retries. The worker never has to "write its identity" separately — the server knows which worker has the task token because the server issued it.
 
@@ -69,7 +69,7 @@ Sources: [Temporal Activity timeouts](https://temporal.io/blog/activity-timeouts
 
 ### 2.3 Comparison Table
 
-| Property | Celery | Temporal | Current Demarch |
+| Property | Celery | Temporal | Current Sylveste |
 |---|---|---|---|
 | Claim mechanism | Broker hides message | Server issues task token | `bd update --claim` (Dolt row) |
 | Identity binding | Implicit (worker received msg) | Implicit (task token holder) | Explicit `bd set-state` (separate write) |
@@ -114,19 +114,19 @@ The alternative is a **stampede pattern**: all idle agents independently query `
 - No coordinator — pure peer-to-peer, no single point of failure
 - Simpler implementation — one `bd update --claim` with CAS semantics
 - Lower latency for the common case (no contention with <20 agents)
-- Already close to what Demarch does today
+- Already close to what Sylveste does today
 
 **Disadvantages**:
 - Wasted work under contention — N agents may all try to claim the same top-priority bead
 - Requires CAS semantics in the claim operation to prevent double-assignment
 - Priority inversion — agent A may claim bead X while better-suited agent B was about to
 
-### 3.3 Recommendation for Demarch (<20 agents)
+### 3.3 Recommendation for Sylveste (<20 agents)
 
 **Use optimistic grab-and-validate.** Rationale:
 
 1. **Fleet size**: With <20 agents, the probability of two agents racing for the same bead is low. Even in the worst case (all agents idle simultaneously, one new bead appears), only one retry round is needed.
-2. **No coordinator requirement**: Demarch's architecture is process-per-tmux-pane. Introducing a bidding manager means a new daemon, a new failure mode, and a new communication protocol.
+2. **No coordinator requirement**: Sylveste's architecture is process-per-tmux-pane. Introducing a bidding manager means a new daemon, a new failure mode, and a new communication protocol.
 3. **Dolt provides natural CAS**: If `bd update --claim` is implemented as a Dolt transaction that checks `status=open` before setting `status=in_progress`, concurrent claimants will conflict at the Dolt merge level. Only the first writer wins; the second gets a merge conflict. This is free CAS from the existing datastore.
 4. **Claim jitter**: Add 0-500ms random delay before claiming to spread stampedes. For 10-minute tasks, 500ms jitter is imperceptible.
 
@@ -136,7 +136,7 @@ The alternative is a **stampede pattern**: all idle agents independently query `
 
 ## 4. Kubernetes Lease Objects: CAS Without a Lock Server
 
-Kubernetes Leases (`coordination.k8s.io/v1`) are a production-proven pattern for distributed claiming that maps directly to Demarch's needs:
+Kubernetes Leases (`coordination.k8s.io/v1`) are a production-proven pattern for distributed claiming that maps directly to Sylveste's needs:
 
 ### 4.1 How K8s Leases Work
 
@@ -147,9 +147,9 @@ Kubernetes Leases (`coordination.k8s.io/v1`) are a production-proven pattern for
 
 **Key design property**: There is no lock server. The API server's etcd backend provides CAS via `resourceVersion`. The Lease object is just a regular Kubernetes resource — no special coordination service.
 
-### 4.2 Mapping to Demarch
+### 4.2 Mapping to Sylveste
 
-| K8s Lease Field | Demarch Bead Equivalent |
+| K8s Lease Field | Sylveste Bead Equivalent |
 |---|---|
 | `holderIdentity` | `claimed_by` (session ID) |
 | `leaseDurationSeconds` | Stale-claim TTL |
@@ -212,7 +212,7 @@ The question: what values for heartbeat interval (H) and stale-claim TTL (T) min
 - Celery + SQS: `visibility_timeout` default is 1 hour (designed for batch jobs, not interactive tasks).
 - General rule of thumb: timeout = 2-3x heartbeat interval, and heartbeat interval >= 10x round-trip time.
 
-**Demarch-specific constraints**:
+**Sylveste-specific constraints**:
 - Tasks are ~10 minutes. A 1-hour visibility timeout (Celery-style) wastes 50 minutes if the agent dies at t=1m.
 - The heartbeat is `clavain-cli bead-heartbeat`, which writes `claimed_at` to Dolt. This is a Dolt transaction — not free. At ~100ms per write, a 30s heartbeat adds negligible overhead.
 - False positive cost is HIGH: if an active agent's claim is revoked, it may commit code that conflicts with the new claimant. Two agents pushing to the same branch is worse than one agent being idle.
@@ -336,11 +336,11 @@ Uber's DISCO (Dispatch Optimization) system faces the exact same race: multiple 
 
 **Key insight**: Uber avoids the race entirely by **centralizing the decision per geographic cell**. There is no bidding, no optimistic locking — the shard owner makes an authoritative assignment.
 
-### 7.2 Applicability to Demarch
+### 7.2 Applicability to Sylveste
 
-Demarch's "cell" is the bead priority queue. With a single Dolt database (no sharding), the equivalent of Uber's cell-shard is Dolt itself — all claim writes go through one database.
+Sylveste's "cell" is the bead priority queue. With a single Dolt database (no sharding), the equivalent of Uber's cell-shard is Dolt itself — all claim writes go through one database.
 
-**What Demarch can borrow from Uber**:
+**What Sylveste can borrow from Uber**:
 1. **Server-side decision**: Rather than agents independently racing to claim, a lightweight dispatcher (the `sprint-find-active` sweep, or a new `bead-dispatch` command) could assign beads to agents authoritatively. This eliminates races entirely.
 2. **Accept timeout**: After assignment, the agent has N seconds to acknowledge (start heartbeating). If it doesn't, the bead is reassigned. This handles the "assigned but agent crashed before starting" case.
 3. **No-bid policy**: Agents don't choose their beads — the dispatcher assigns based on priority, capability, and load. This is simpler than CNP bidding and avoids the "every agent grabs the same top-priority bead" stampede.

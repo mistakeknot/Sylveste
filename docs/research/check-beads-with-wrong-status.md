@@ -5,7 +5,7 @@ Period analyzed: 2026-02-24 to 2026-02-27
 
 ## Summary
 
-Cross-referenced 73 commits across 6 repositories (Demarch root, clavain, intercore, intermute, intercom, intermap, interphase, autarch) with 23 bead IDs found in commit messages and 118 total recovered beads. Found **21 beads with incorrect status** requiring fixes, plus **1 dependency integrity issue**.
+Cross-referenced 73 commits across 6 repositories (Sylveste root, clavain, intercore, intermute, intercom, intermap, interphase, autarch) with 23 bead IDs found in commit messages and 118 total recovered beads. Found **21 beads with incorrect status** requiring fixes, plus **1 dependency integrity issue**.
 
 ---
 
@@ -62,7 +62,7 @@ These beads have only `docs:` commits (brainstorms, PRDs, plans) and should rema
 | Bead ID | Current Status | Reasoning |
 |---------|---------------|-----------|
 | iv-be0ik.1 | P4 OPEN | docs: CI baseline plan -- planning only |
-| iv-be0ik.2 | P4 OPEN | docs: CI test coverage matrix -- planning docs in Demarch root, BUT also has `ci:` commit `9adf8d4` in interphase and `d1e350f` in interflux. **Ambiguous** -- see note below. |
+| iv-be0ik.2 | P4 OPEN | docs: CI test coverage matrix -- planning docs in Sylveste root, BUT also has `ci:` commit `9adf8d4` in interphase and `d1e350f` in interflux. **Ambiguous** -- see note below. |
 | iv-eblwb | P4 OPEN | docs: Autarch UX review -- review artifacts only |
 | iv-gyq9l | P4 OPEN | docs: brainstorm and plan for intent submission |
 | iv-jay06 | P4 OPEN | docs: interbase multi-language SDK brainstorm/PRD/plan |
@@ -72,7 +72,7 @@ These beads have only `docs:` commits (brainstorms, PRDs, plans) and should rema
 
 ### Notes on ambiguous cases
 
-**iv-be0ik.2**: Has `docs:` commit in Demarch root but also a `ci: add test-running CI workflow (iv-be0ik.2)` commit in interphase (`9adf8d4`) and interflux (`d1e350f`). The CI workflow was actually implemented. **Recommend closing**: `bd close iv-be0ik.2 --reason "CI workflow implemented in interphase 9adf8d4 and interflux d1e350f"`
+**iv-be0ik.2**: Has `docs:` commit in Sylveste root but also a `ci: add test-running CI workflow (iv-be0ik.2)` commit in interphase (`9adf8d4`) and interflux (`d1e350f`). The CI workflow was actually implemented. **Recommend closing**: `bd close iv-be0ik.2 --reason "CI workflow implemented in interphase 9adf8d4 and interflux d1e350f"`
 
 **iv-446o7.2**: Has `ci: add Dependabot config for automated dependency updates (iv-446o7.2)` commits in intercore (`c6fc4cf`), intermute (`c9427c3`), clavain (`c0d2073`), autarch (`374f6b0`). This work is clearly done. **Recommend closing**: `bd close iv-446o7.2 --reason "Dependabot config deployed to all 4 repos"`
 

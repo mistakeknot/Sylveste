@@ -1,12 +1,12 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-fqb
+bead: Sylveste-fqb
 stage: discover
 ---
 
 # Interrank Power-Up: Task-Based Model Recommendation
 
-**Bead:** Demarch-fqb
+**Bead:** Sylveste-fqb
 
 ## What We're Building
 

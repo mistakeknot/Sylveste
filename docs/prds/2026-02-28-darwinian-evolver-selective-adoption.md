@@ -9,7 +9,7 @@
 
 Imbue's Darwinian Evolver demonstrates powerful evolutionary optimization patterns for LLM-driven code/prompt improvement. A 5-agent review assessed architectural fit, economic viability, knowledge system overlap, pre-filter applicability, and adoption classification. The verdict: **selective adoption** of 2 mechanisms, not wholesale import.
 
-Two genuine gaps were identified in Demarch:
+Two genuine gaps were identified in Sylveste:
 1. **Failure signal absence (P0):** Interknow only compounds successes — agents repeat failed approaches across sessions
 2. **No post-fix verification (P1):** After resolving review findings, no cheap check confirms the fix actually addressed the flagged pattern before re-review
 
@@ -72,7 +72,7 @@ Two genuine gaps were identified in Demarch:
 
 - **Population-level evolutionary dynamics** — negative ROI ($480-1000/cycle vs $1.17/change baseline). A/B testing via shadow routing captures 80-90% of benefit at <5% cost.
 - **Sigmoid-weighted selection** — conflicts with earned authority and transparent scoring principles.
-- **Organism/Evaluator/Mutator abstraction** — Demarch already has equivalent separation across Intercore/Clavain/agents.
+- **Organism/Evaluator/Mutator abstraction** — Sylveste already has equivalent separation across Intercore/Clavain/agents.
 - **`interevolve` plugin** — deferred until Interspect reaches Level 3+ autonomy with positive metrics.
 
 ## Implementation Priority

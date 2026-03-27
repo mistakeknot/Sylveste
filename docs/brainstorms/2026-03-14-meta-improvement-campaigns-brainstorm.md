@@ -1,18 +1,18 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-7xm8
+bead: Sylveste-7xm8
 stage: discover
 ---
 
 # Meta-Improvement Campaigns: Agents Improving the Agent Toolchain
 
-**Bead:** Demarch-7xm8
+**Bead:** Sylveste-7xm8
 **Date:** 2026-03-14
 **Source:** research/agi-hyperspace/ANALYSIS-EXTENDED.md section 3 (Causes domain)
 
 ## What We're Building
 
-A self-improvement infrastructure where Demarch's own plugins optimize themselves through interlab campaigns. Inspired by Hyperspace's "Causes" domain, where agents optimized the research process itself (search ranking, literature analysis, skill forging) and rediscovered scientific breakthroughs through mutation search.
+A self-improvement infrastructure where Sylveste's own plugins optimize themselves through interlab campaigns. Inspired by Hyperspace's "Causes" domain, where agents optimized the research process itself (search ranking, literature analysis, skill forging) and rediscovered scientific breakthroughs through mutation search.
 
 **Two deliverables:**
 

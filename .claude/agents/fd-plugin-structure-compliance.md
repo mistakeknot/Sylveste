@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-interlore is a new Claude Code plugin in the Demarch Interverse ecosystem that detects latent design patterns across decision artifacts and proposes updates to PHILOSOPHY.md.
+interlore is a new Claude Code plugin in the Sylveste Interverse ecosystem that detects latent design patterns across decision artifacts and proposes updates to PHILOSOPHY.md.
 
 ## Review Approach
 

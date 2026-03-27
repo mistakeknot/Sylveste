@@ -2,7 +2,7 @@
 
 **Date**: 2026-02-25
 **Plugin**: tldr-swinton (v0.7.14)
-**Source**: `/home/mk/projects/Demarch/interverse/tldr-swinton/AGENTS.md`
+**Source**: `/home/mk/projects/Sylveste/interverse/tldr-swinton/AGENTS.md`
 **Original size**: 668 lines
 
 ## Analysis Summary
@@ -13,7 +13,7 @@ The tldr-swinton AGENTS.md is the largest plugin AGENTS.md in the Interverse at 
 
 ### 1. Stale References (P0)
 
-- **Pre-monorepo paths**: Lines 19-25, 30 reference `/root/projects/Interverse/infra/interbench` -- this is now at `/home/mk/projects/Demarch/core/interbench`
+- **Pre-monorepo paths**: Lines 19-25, 30 reference `/root/projects/Interverse/infra/interbench` -- this is now at `/home/mk/projects/Sylveste/core/interbench`
 - **Stale skill name**: Line 593 says "ashpool-sync" but the actual skill is `tldrs-interbench-sync`
 - **Pre-restructure source paths**: File Reference table (lines 563-583) uses flat paths like `cli.py`, `api.py`, `ast_extractor.py` -- actual paths are now under `src/tldr_swinton/modules/core/` and `src/tldr_swinton/modules/semantic/`
 
@@ -109,5 +109,5 @@ No changes needed -- CLAUDE.md is already properly structured with Claude-specif
 
 ## Files Modified
 
-1. `/home/mk/projects/Demarch/interverse/tldr-swinton/AGENTS.md` -- rewritten (668 -> ~370 lines)
-2. `/home/mk/projects/Demarch/interverse/tldr-swinton/docs/dev-reference.md` -- new, extracted content
+1. `/home/mk/projects/Sylveste/interverse/tldr-swinton/AGENTS.md` -- rewritten (668 -> ~370 lines)
+2. `/home/mk/projects/Sylveste/interverse/tldr-swinton/docs/dev-reference.md` -- new, extracted content

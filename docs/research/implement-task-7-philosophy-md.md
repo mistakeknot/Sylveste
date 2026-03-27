@@ -33,7 +33,7 @@ The OODARC Lens section uses `###` heading level (subsection of `## The Core Bet
 
 ## File State
 
-- **File:** `/home/mk/projects/Demarch/PHILOSOPHY.md`
+- **File:** `/home/mk/projects/Sylveste/PHILOSOPHY.md`
 - **New line count:** 134 lines (was 122, +12)
 - **Commit:** `c5ef9ce` on `main`
 - **No other files modified.**

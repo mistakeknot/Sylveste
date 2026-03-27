@@ -1,12 +1,12 @@
 ---
 artifact_type: plan
-bead: Demarch-ysxe
+bead: Sylveste-ysxe
 stage: plan
 version: 1
 ---
 # Plan: AI Factory Wave 1 — Foundation
 
-**Epic:** Demarch-ysxe
+**Epic:** Sylveste-ysxe
 **PRD:** docs/prds/2026-03-20-ai-factory-orchestration.md
 **Brainstorm:** docs/brainstorms/2026-03-19-ai-factory-orchestration-brainstorm.md
 **Research:** docs/research/flux-research/phase1-self-dispatch/synthesis.md

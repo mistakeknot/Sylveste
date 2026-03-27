@@ -28,7 +28,7 @@
 | Layer | CLAUDE.md files | AGENTS.md files | Total words |
 |-------|----------------|-----------------|-------------|
 | Global (`~/.claude/`) | 1 (1,068w) | 1 (1,680w) | 2,748 |
-| Root (Demarch/) | 1 (826w) | 1 (3,119w) | 3,945 |
+| Root (Sylveste/) | 1 (826w) | 1 (3,119w) | 3,945 |
 | Subprojects | 56 | 50 | ~66,000 |
 | Auto-memory | — | — | 3,288 |
 | **Total** | **58** | **52** | **~76,000** |

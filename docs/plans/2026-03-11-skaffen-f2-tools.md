@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-hop
+bead: Sylveste-hop
 stage: design
 prd: docs/prds/2026-03-11-skaffen-go-rewrite.md
 requirements:
@@ -13,7 +13,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-hop
+**Bead:** Sylveste-hop
 **Goal:** Tool interface, phase-aware registry, and 7 built-in tools that the OODARC agent loop (F3) will use to execute actions.
 
 **Architecture:** The `internal/tool/` package defines a `Tool` interface and a `Registry` that maps phase → available tools. Each built-in tool is a separate file implementing the interface. The registry returns `provider.ToolDef` schemas for LLM tool_use and dispatches `Execute()` calls by name. Phase gating is a simple allow-list map — no tools are created/destroyed per phase, just filtered.

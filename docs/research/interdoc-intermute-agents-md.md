@@ -1,7 +1,7 @@
 # Interdoc Analysis: Intermute AGENTS.md Refresh
 
 **Date:** 2026-02-25
-**Source:** `/home/mk/projects/Demarch/core/intermute/AGENTS.md` (299 lines)
+**Source:** `/home/mk/projects/Sylveste/core/intermute/AGENTS.md` (299 lines)
 **Target:** Same file, refreshed
 
 ## Scope of Analysis
@@ -134,7 +134,7 @@ Read and cross-referenced the following source files against the existing AGENTS
 - Coverage percentages likely outdated.
 
 **Downstream Dependencies:**
-- Path `/root/projects/Autarch` is stale. The monorepo path is `/home/mk/projects/Demarch/apps/autarch`.
+- Path `/root/projects/Autarch` is stale. The monorepo path is `/home/mk/projects/Sylveste/apps/autarch`.
 
 **Multi-Session Coordination:**
 - References `scripts/worktree-setup.sh` and `scripts/worktree-teardown.sh` -- these exist, but section feels procedural and belongs more in CLAUDE.md (which already covers it).
@@ -195,7 +195,7 @@ Agent contacts:
 9. **Document sweeper** (expired reservation cleanup)
 10. **Fix stale router gap** (both routers now include reservations)
 11. **Update test count** (158 functions)
-12. **Fix downstream dependency path** (`/home/mk/projects/Demarch/apps/autarch`)
+12. **Fix downstream dependency path** (`/home/mk/projects/Sylveste/apps/autarch`)
 13. **Add new CLI flags** (--socket, --coordination-dual-write, --intercore-db)
 14. **Remove stale Auracoil section** (outdated review metadata)
 15. **Update database table list** (16 tables total)

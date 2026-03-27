@@ -33,7 +33,7 @@ The resolution: **most of the gap is closeable at moderate depth, which doesn't 
 
 The paradox becomes a *tool*: when you try to write composition docs for a plugin pair and find yourself writing pages of sequencing, state coherence, and error handling, that is the signal. Not a stranger test. Not a commit count. Not a subjective judgment. The document itself tells you what to do.
 
-### What This Means for Demarch's 49 Plugins
+### What This Means for Sylveste's 49 Plugins
 
 Apply the doc-depth test across the ecosystem:
 

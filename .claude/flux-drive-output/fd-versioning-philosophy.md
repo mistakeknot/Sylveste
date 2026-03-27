@@ -1,8 +1,8 @@
 # What Should v1.0.0 Mean for an AI-Native Platform?
 
-Research into versioning contracts, stability promises, and maturity declarations for Demarch.
+Research into versioning contracts, stability promises, and maturity declarations for Sylveste.
 
-**Context:** Demarch is at v0.6.228 -- an autonomous software agency platform orchestrating brainstorm-to-ship workflows via AI agents whose behavior depends on evolving LLM models. The question is what social contract a 1.0 declaration creates, and whether traditional versioning even applies.
+**Context:** Sylveste is at v0.6.228 -- an autonomous software agency platform orchestrating brainstorm-to-ship workflows via AI agents whose behavior depends on evolving LLM models. The question is what social contract a 1.0 declaration creates, and whether traditional versioning even applies.
 
 ---
 
@@ -17,7 +17,7 @@ Key innovations:
 - **"Stability without stagnation"** -- the release train ships every 6 weeks. Stability is not about slowing down; it is about channeling change through explicit gates.
 - The stability promise explicitly does *not* apply to unstable features, even if accidentally usable. This is a bright line: if you opted into nightly features, you accepted breakage.
 
-**Relevance to Demarch:** The editions model is the closest analogue to what Demarch needs. The platform's *mechanisms* (event schema, plugin API, CLI commands) can be stabilized while *policies* (routing heuristics, gate thresholds, review strategies) evolve through something analogous to edition opt-in. Rust proved you can have rapid evolution and a stability promise simultaneously -- the trick is explicit boundaries.
+**Relevance to Sylveste:** The editions model is the closest analogue to what Sylveste needs. The platform's *mechanisms* (event schema, plugin API, CLI commands) can be stabilized while *policies* (routing heuristics, gate thresholds, review strategies) evolve through something analogous to edition opt-in. Rust proved you can have rapid evolution and a stability promise simultaneously -- the trick is explicit boundaries.
 
 ### Go 1.0 (March 2012)
 
@@ -28,7 +28,7 @@ Key innovations:
 - The compatibility promise covers source-level compilation, not binary compatibility.
 - Security fixes may break compatibility, with explicit justification.
 
-**Relevance to Demarch:** GODEBUG is the most directly applicable pattern. Demarch could pin behavioral defaults (routing policies, gate thresholds, review stringency) to the version declared in a project's configuration, even as the platform evolves underneath. A project declaring `demarch: 1.2` would get 1.2-era behavioral defaults on a 1.5 runtime, unless explicitly opted in.
+**Relevance to Sylveste:** GODEBUG is the most directly applicable pattern. Sylveste could pin behavioral defaults (routing policies, gate thresholds, review stringency) to the version declared in a project's configuration, even as the platform evolves underneath. A project declaring `sylveste: 1.2` would get 1.2-era behavioral defaults on a 1.5 runtime, unless explicitly opted in.
 
 ### Kubernetes 1.0 (July 2015)
 
@@ -37,25 +37,25 @@ Kubernetes' 1.0 was less about a stability promise and more about a **production
 - **Beta** (v2beta3): Enabled by default. Maximum lifetime of 9 months or 3 minor releases from introduction to deprecation.
 - **GA/Stable** (v1): Cannot be removed within a major version. There are no current plans for a Kubernetes major version bump, so GA APIs are effectively permanent.
 
-**Relevance to Demarch:** This is the model for feature-level stability tiers. Demarch's 49 commands, 17 skills, and plugin APIs could each carry their own maturity designation (alpha/beta/stable), independent of the platform version number. A v1.0 platform could contain alpha commands. The Kubernetes lesson is: **don't gate the whole platform's release on every feature reaching stability -- tier them independently.**
+**Relevance to Sylveste:** This is the model for feature-level stability tiers. Sylveste's 49 commands, 17 skills, and plugin APIs could each carry their own maturity designation (alpha/beta/stable), independent of the platform version number. A v1.0 platform could contain alpha commands. The Kubernetes lesson is: **don't gate the whole platform's release on every feature reaching stability -- tier them independently.**
 
 ### Terraform 1.0 (June 2021)
 
 Terraform's 1.0 was explicitly a maturity declaration after years at 0.x. The promise: **backward compatibility for the Terraform language and primary CLI workflow, with compatibility problems treated as bugs.** Critical innovation: **providers are versioned independently.** Provider development has a different scope and development speed -- some providers release weekly while Terraform Core releases every few months.
 
-**Relevance to Demarch:** The provider/core separation maps directly to Demarch's architecture. Clavain (the orchestrator) has a different release cadence than the LLM models it depends on, the Interverse plugins it composes, and the Intercore kernel underneath. Terraform proved that decoupling the core's version contract from its extensions' lifecycles is not just possible but necessary.
+**Relevance to Sylveste:** The provider/core separation maps directly to Sylveste's architecture. Clavain (the orchestrator) has a different release cadence than the LLM models it depends on, the Interverse plugins it composes, and the Intercore kernel underneath. Terraform proved that decoupling the core's version contract from its extensions' lifecycles is not just possible but necessary.
 
 ### Nix (Never reached a meaningful 1.0)
 
 Nix is the cautionary tale. The Nix package manager reached version 2.x without ever making a clear stability promise. Flakes, the most important feature of the last five years, remain officially "experimental" despite near-universal adoption. Determinate Nix 3.0 (2025) attempted to resolve this by declaring flakes stable, but the community fracture over governance made the declaration contentious.
 
-**Relevance to Demarch:** The Nix lesson is that **indefinite 0.x or perpetual "experimental" erodes trust more than an imperfect 1.0.** Users route around the lack of stability promises by pinning specific commits and building their own stability layers. The cost of not declaring 1.0 is not zero -- it is that users build shadow stability infrastructure that the project does not control.
+**Relevance to Sylveste:** The Nix lesson is that **indefinite 0.x or perpetual "experimental" erodes trust more than an imperfect 1.0.** Users route around the lack of stability promises by pinning specific commits and building their own stability layers. The cost of not declaring 1.0 is not zero -- it is that users build shadow stability infrastructure that the project does not control.
 
 ### LangChain 1.0 (Late 2025)
 
 The most directly comparable project. LangChain spent years at 0.x with notorious API churn, then declared 1.0 with the promise: **no breaking changes until 2.0.** Deprecated features receive security updates through all 1.x releases. The split into langchain-core and langchain (with separate versioning) mirrors Terraform's provider/core pattern.
 
-**Relevance to Demarch:** LangChain's 1.0 is a recovery from trust damage caused by prolonged instability. Demarch can learn from both the problem (breaking changes erode adoption) and the solution (stabilize the core interfaces, let the edges evolve).
+**Relevance to Sylveste:** LangChain's 1.0 is a recovery from trust damage caused by prolonged instability. Sylveste can learn from both the problem (breaking changes erode adoption) and the solution (stabilize the core interfaces, let the edges evolve).
 
 ---
 
@@ -73,7 +73,7 @@ Every project above solved the same tension differently. The pattern that emerge
 
 The common thread: **none of them promise that nothing changes. They promise that change is explicit, opt-in, and non-surprising.** The stability contract is about predictability of change, not absence of change.
 
-For Demarch, the right combination is likely: **core/extension decoupling** (Terraform pattern) + **feature-level maturity tiers** (Kubernetes pattern) + **version-pinned behavioral defaults** (Go GODEBUG pattern). Editions may be premature at 1.0 but become relevant at 2.0.
+For Sylveste, the right combination is likely: **core/extension decoupling** (Terraform pattern) + **feature-level maturity tiers** (Kubernetes pattern) + **version-pinned behavioral defaults** (Go GODEBUG pattern). Editions may be premature at 1.0 but become relevant at 2.0.
 
 ---
 
@@ -93,7 +93,7 @@ Traditional SemVer operates at Layers 1-2. AI platforms need a contract for Laye
 
 ### Why Model Changes Are Not Platform Breaking Changes
 
-Consider: Anthropic releases Claude Opus 4.7, and Demarch's review agents produce slightly different findings. The *platform* did not change. The *model* changed. But the user experience changed. Is this a breaking change?
+Consider: Anthropic releases Claude Opus 4.7, and Sylveste's review agents produce slightly different findings. The *platform* did not change. The *model* changed. But the user experience changed. Is this a breaking change?
 
 The answer must be **no**, for the same reason Terraform does not consider AWS API changes to be Terraform breaking changes. The platform's contract covers what the *platform* controls:
 - The structural shape of inputs and outputs (schema stability)
@@ -109,7 +109,7 @@ What the platform does NOT control:
 
 Anthropic's own approach is instructive. They offer model aliases (`claude-sonnet-4-5`) that float to the latest snapshot, and pinned model IDs (`claude-sonnet-4-5-20250514`) that freeze behavior. Their recommendation: **aliases for experimentation, pinned versions for production.**
 
-Demarch should adopt an analogous pattern: the platform declares which model families it supports and routes to, but specific model versions are a deployment concern, not a platform version concern. The platform's version contract covers the *routing policy* (how models are selected), not the *model behavior* (what the selected model does).
+Sylveste should adopt an analogous pattern: the platform declares which model families it supports and routes to, but specific model versions are a deployment concern, not a platform version concern. The platform's version contract covers the *routing policy* (how models are selected), not the *model behavior* (what the selected model does).
 
 ### The Behavioral Envelope
 
@@ -142,7 +142,7 @@ The pharma lifecycle is the strongest non-software analogue because the *product
 
 **Key insight:** The NDA is a **sufficiency-of-evidence** declaration, not a **perfection** declaration. The FDA does not certify that the drug cures everyone -- it certifies that the evidence meets a threshold for benefit vs. risk. This maps directly to a software 1.0: not "the platform is complete" but "the evidence supports production use."
 
-**Protocol amendments** are particularly relevant. When the drug changes during clinical trials, the change is versioned with explicit references to the prior version and a description of what changed and why. This is how Demarch should handle behavioral policy changes: versioned amendments with explicit rationale, not silent updates.
+**Protocol amendments** are particularly relevant. When the drug changes during clinical trials, the change is versioned with explicit references to the prior version and a description of what changed and why. This is how Sylveste should handle behavioral policy changes: versioned amendments with explicit rationale, not silent updates.
 
 ### NASA Technology Readiness Levels (TRL 1-9)
 
@@ -167,7 +167,7 @@ Aircraft certification provides a versioning model for products that evolve afte
 - **Supplemental Type Certificate (STC):** A versioned modification to the certified design. Specifies what changed, how it affects the TC, new operational limitations, and which serial numbers (effectivity) are affected.
 - **Effectivity lists** track which specific aircraft have which modifications, creating a per-instance version history.
 
-**Key insight:** The STC system handles "the thing itself changes over time" by maintaining an immutable base certification plus composable, versioned modifications. Each modification is independently certified. This maps to Demarch's plugin/extension model: the core platform has a base certification (1.0), and each plugin/behavioral policy change is an independently versioned modification.
+**Key insight:** The STC system handles "the thing itself changes over time" by maintaining an immutable base certification plus composable, versioned modifications. Each modification is independently certified. This maps to Sylveste's plugin/extension model: the core platform has a base certification (1.0), and each plugin/behavioral policy change is an independently versioned modification.
 
 ### SAE Autonomous Vehicle Levels (L0-L5)
 
@@ -179,9 +179,9 @@ The SAE levels describe *what the system is trusted to do*, not what version it 
 - L4: High automation (system drives within ODD, no human fallback needed)
 - L5: Full automation (no ODD restrictions)
 
-**Key insight:** The levels describe a **trust ladder** -- each level is defined by what authority is delegated and what fallback exists. This maps directly to Demarch's own autonomy levels (L0: human approves every action -> L5: agent proposes mechanism changes). The SAE lesson is that **autonomy levels are the versioning that matters for trust**, and they are orthogonal to software version numbers. A v1.0 platform could operate at autonomy L1-L2, and a v3.0 at L3-L4, with the autonomy level being the more meaningful indicator to users.
+**Key insight:** The levels describe a **trust ladder** -- each level is defined by what authority is delegated and what fallback exists. This maps directly to Sylveste's own autonomy levels (L0: human approves every action -> L5: agent proposes mechanism changes). The SAE lesson is that **autonomy levels are the versioning that matters for trust**, and they are orthogonal to software version numbers. A v1.0 platform could operate at autonomy L1-L2, and a v3.0 at L3-L4, with the autonomy level being the more meaningful indicator to users.
 
-**The Operational Design Domain (ODD)** -- the set of conditions under which the system is certified to operate -- is another powerful concept. Demarch's 1.0 could declare an ODD: "certified for single-repository software development projects using supported languages, with human review at phase gates." Expanding the ODD is a separate axis from version bumps.
+**The Operational Design Domain (ODD)** -- the set of conditions under which the system is certified to operate -- is another powerful concept. Sylveste's 1.0 could declare an ODD: "certified for single-repository software development projects using supported languages, with human review at phase gates." Expanding the ODD is a separate axis from version bumps.
 
 ---
 
@@ -207,7 +207,7 @@ The SAE levels describe *what the system is trusted to do*, not what version it 
 Instead of a single version number, declare capabilities with maturity tiers:
 
 ```yaml
-platform: demarch
+platform: sylveste
 version: 1.3.0                    # SemVer for structural compatibility
 epoch: foundry                    # Named maturity epoch (see below)
 autonomy: L2                      # Operational autonomy level
@@ -238,7 +238,7 @@ Epochs are not version numbers -- they are marketing and trust signals. They com
 
 ---
 
-## 6. The Minimum Viable Contract for Demarch 1.0
+## 6. The Minimum Viable Contract for Sylveste 1.0
 
 ### What MUST Be Stable
 
@@ -287,11 +287,11 @@ These are not platform promises, and users should not build on them.
 For **structural breaking changes** (API shape, schema, CLI):
 - Minimum 2 minor releases of deprecation warnings before removal
 - Migration guide published with the deprecation notice
-- `demarch doctor` checks for usage of deprecated features
+- `sylveste doctor` checks for usage of deprecated features
 
 For **behavioral breaking changes** (policies, defaults, routing):
 - Release notes flag behavioral changes with `[behavior]` tag
-- GODEBUG-style pinning: projects can declare `demarch-compat: 1.2` to retain 1.2-era behavioral defaults on a 1.5 runtime
+- GODEBUG-style pinning: projects can declare `sylveste-compat: 1.2` to retain 1.2-era behavioral defaults on a 1.5 runtime
 - Behavioral changes must be justified by evidence (outcome data, not opinion)
 
 For **model-driven changes** (new models, model deprecations):
@@ -303,7 +303,7 @@ For **model-driven changes** (new models, model deprecations):
 
 ## 7. Recommended Versioning Contract Template for AI-Native Platforms
 
-This template is generalizable beyond Demarch.
+This template is generalizable beyond Sylveste.
 
 ```markdown
 # [Platform Name] Versioning Contract v1
@@ -367,7 +367,7 @@ Expanding the ODD is independent of version bumps.
 
 ---
 
-## 8. Specific Recommendations for Demarch
+## 8. Specific Recommendations for Sylveste
 
 ### 1. Declare 1.0 as a sufficiency-of-evidence milestone, not a completeness milestone
 
@@ -384,7 +384,7 @@ Distinguish structural, semantic, and behavioral compatibility explicitly in doc
 
 ### 3. Implement GODEBUG-style behavioral pinning
 
-Add a `demarch-compat` directive to project configuration. When set, behavioral defaults (routing policies, gate thresholds, review stringency) are frozen to the declared version's values. This lets the platform evolve while giving production users a predictable upgrade path.
+Add a `sylveste-compat` directive to project configuration. When set, behavioral defaults (routing policies, gate thresholds, review stringency) are frozen to the declared version's values. This lets the platform evolve while giving production users a predictable upgrade path.
 
 ### 4. Use Kubernetes-style feature maturity tiers
 
@@ -396,11 +396,11 @@ Publish a separate model routing changelog. Model routing policy is Layer 2 (sem
 
 ### 6. Consider named maturity epochs for external communication
 
-"Demarch Foundry" communicates more about the platform's stage than "Demarch 1.3.0." Epochs are marketing; versions are contracts. Both are useful.
+"Sylveste Foundry" communicates more about the platform's stage than "Sylveste 1.3.0." Epochs are marketing; versions are contracts. Both are useful.
 
 ### 7. Declare an Operational Design Domain at 1.0
 
-State explicitly what Demarch is designed for at 1.0: single-repository projects, supported languages, human-in-the-loop at phase gates (autonomy L1-L2). This sets expectations correctly and gives a framework for future ODD expansions.
+State explicitly what Sylveste is designed for at 1.0: single-repository projects, supported languages, human-in-the-loop at phase gates (autonomy L1-L2). This sets expectations correctly and gives a framework for future ODD expansions.
 
 ---
 
@@ -416,7 +416,7 @@ The most actionable patterns from software infrastructure:
 - **Terraform's core/provider split:** Decouple platform versioning from extension/model lifecycles
 - **Rust's editions:** Cross-version interop with opt-in breaking changes (future, post-1.0)
 
-The versioning scheme that best fits Demarch is **SemVer for structural contracts + behavioral pinning for policy contracts + feature maturity tiers + named epochs for trust signaling.** This gives users the compatibility signals they need while preserving the platform's ability to improve continuously through model evolution and evidence-driven calibration.
+The versioning scheme that best fits Sylveste is **SemVer for structural contracts + behavioral pinning for policy contracts + feature maturity tiers + named epochs for trust signaling.** This gives users the compatibility signals they need while preserving the platform's ability to improve continuously through model evolution and evidence-driven calibration.
 
 ---
 

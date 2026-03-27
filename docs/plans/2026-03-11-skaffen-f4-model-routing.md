@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-0pj
+bead: Sylveste-0pj
 stage: design
 prd: docs/prds/2026-03-11-skaffen-f4-model-routing.md
 requirements:
@@ -13,7 +13,7 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-0pj
+**Bead:** Sylveste-0pj
 **Goal:** Replace NoOpRouter with a DefaultRouter that selects models based on OODARC phase, config overrides, token budget tracking, and complexity classification.
 
 **Architecture:** New `internal/router/` package. `DefaultRouter` implements `agent.Router` (extended with `RecordUsage`). Three layers: `config.go` loads routing config (JSON + env vars), `budget.go` tracks token usage with degradation modes, `complexity.go` classifies prompt complexity (shadow mode). The agent loop calls `RecordUsage()` after each turn to feed the budget tracker.

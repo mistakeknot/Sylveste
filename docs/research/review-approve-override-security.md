@@ -1,7 +1,7 @@
 # Security Review: Interspect Approve-Override Feature
 
-**File reviewed:** `/home/mk/projects/Demarch/os/clavain/hooks/lib-interspect.sh` (lines ~1158-1400)
-**Schema reviewed:** `/home/mk/projects/Demarch/os/clavain/config/routing-overrides.schema.json`
+**File reviewed:** `/home/mk/projects/Sylveste/os/clavain/hooks/lib-interspect.sh` (lines ~1158-1400)
+**Schema reviewed:** `/home/mk/projects/Sylveste/os/clavain/config/routing-overrides.schema.json`
 **Date:** 2026-02-23
 **Risk classification:** Medium (new write path into git history and SQLite; trust boundary is local developer session)
 
@@ -149,8 +149,8 @@ Neither is exploitable in this local tooling context. The allow-list check provi
 **Location:** The function has no caller authentication. Any code that sources `lib-interspect.sh` can call `_interspect_approve_override` with an arbitrary agent name.
 
 **Current callers:**
-- `/home/mk/projects/Demarch/os/clavain/commands/interspect-approve.md` (line 86, 152) — a Claude Code skill invoked by the developer
-- `/home/mk/projects/Demarch/os/clavain/commands/interspect-propose.md` (line 114) — another skill
+- `/home/mk/projects/Sylveste/os/clavain/commands/interspect-approve.md` (line 86, 152) — a Claude Code skill invoked by the developer
+- `/home/mk/projects/Sylveste/os/clavain/commands/interspect-propose.md` (line 114) — another skill
 
 **Trust model:** Both callers are skills authored in the same repository, run inside Claude Code sessions. The developer must explicitly invoke `/interspect:approve` or `/interspect:propose`. There is no path for an external agent or automated hook to call approve autonomously — the hooks that fire automatically are `interspect-evidence.sh` and `interspect-session.sh`, which call evidence insertion functions, not `_interspect_approve_override`.
 
@@ -172,7 +172,7 @@ However, the file existence check at line 1202 (`[[ -f "$fullpath" ]]` before fl
 
 ### Finding 8 — Informational: Schema `additionalProperties: true` allows schema drift without detection
 
-**Location:** `/home/mk/projects/Demarch/os/clavain/config/routing-overrides.schema.json` lines 8 and 35:
+**Location:** `/home/mk/projects/Sylveste/os/clavain/config/routing-overrides.schema.json` lines 8 and 35:
 ```json
 "additionalProperties": true
 ```

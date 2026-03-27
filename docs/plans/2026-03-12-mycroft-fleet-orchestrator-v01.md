@@ -273,7 +273,7 @@ apps/Autarch/internal/mycroft/briefing/
 2. Write dispatch metadata: claimed_by, assigned_agent, assigned_phase, context_file, assigned_at, assigned_by
 3. Context file path validation: resolve to absolute, reject `..`, reject symlinks outside project root
 4. Compare-and-swap guard: check assigned_at before writing
-5. Spawn tmux session: `tmux new-session -d -s iterm-Demarch-{agent}-01`
+5. Spawn tmux session: `tmux new-session -d -s iterm-Sylveste-{agent}-01`
 6. Log to dispatch_log
 
 **Two-phase claim TTL:**

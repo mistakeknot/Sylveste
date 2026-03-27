@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-e1mi
+bead: Sylveste-e1mi
 stage: design
 requirements:
   - F1: attp protocol spec (JSON schema, versioning)
@@ -10,7 +10,7 @@ requirements:
   - F5: CLI tool (pack, unpack, verify)
   - F6: Safety controls (human confirmation, content quarantine, lazy-fetch integrity)
   - F7: interweave scaffold (Go module, intermute bridge)
-  - F8: interweave MCP adapter (wraps attp server with Demarch extensions)
+  - F8: interweave MCP adapter (wraps attp server with Sylveste extensions)
   - F9: interweave conflict bridge (attp conflicts → interlock negotiation)
 ---
 
@@ -18,11 +18,11 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Epic:** Demarch-e1mi
-**Children:** Demarch-e1mi.1 (attp), Demarch-e1mi.2 (interweave)
-**Goal:** Ship a working cross-machine agent collaboration protocol with crypto-enforced sensitivity boundaries, and Demarch's L1 kernel integration.
+**Epic:** Sylveste-e1mi
+**Children:** Sylveste-e1mi.1 (attp), Sylveste-e1mi.2 (interweave)
+**Goal:** Ship a working cross-machine agent collaboration protocol with crypto-enforced sensitivity boundaries, and Sylveste's L1 kernel integration.
 
-**Architecture:** attp is a standalone repo (`~/projects/attp`) with no Demarch dependencies — Go reference implementation + protocol spec. interweave (`core/interweave/`) bridges attp to intermute/interlock. Both use Go.
+**Architecture:** attp is a standalone repo (`~/projects/attp`) with no Sylveste dependencies — Go reference implementation + protocol spec. interweave (`core/interweave/`) bridges attp to intermute/interlock. Both use Go.
 
 **Source Documents:**
 - Brainstorm: `docs/brainstorms/2026-03-19-attp-interweave-brainstorm.md`
@@ -44,7 +44,7 @@ requirements:
 ## Must-Haves
 
 **Truths** (observable behaviors):
-- attp repo builds, tests pass, CLI works standalone without any Demarch dependency
+- attp repo builds, tests pass, CLI works standalone without any Sylveste dependency
 - Merkle exclusion proof prevents accidental sensitive content inclusion (verified by test)
 - MCP server starts, two instances can exchange tokens over localhost
 - Human confirmation is required before any token send (no auto-share)
@@ -69,7 +69,7 @@ requirements:
 
 ---
 
-## Phase 1: attp Standalone (Demarch-e1mi.1)
+## Phase 1: attp Standalone (Sylveste-e1mi.1)
 
 ### Task 1: Scaffold attp repo
 **Files:** `~/projects/attp/` (new repo)
@@ -92,7 +92,7 @@ requirements:
   - `sensitivity` object: `excluded_paths` + `exclusion_attestation`
   - `provenance`: `origin` + `participants` map + `vector_clock` + `chain` (append-only)
   - `requests`/`decisions`: structured enums with params, not prose
-  - `extensions`: namespaced (e.g., `"demarch.interweave": {}`)
+  - `extensions`: namespaced (e.g., `"sylveste.interweave": {}`)
 - Write spec README explaining versioning rules, field semantics, examples
 **Verify:** Schema validates the example token from fd-token-schema-integrity § 8
 **Deps:** Task 1
@@ -198,7 +198,7 @@ requirements:
 
 ---
 
-## Phase 2: interweave L1 Kernel (Demarch-e1mi.2)
+## Phase 2: interweave L1 Kernel (Sylveste-e1mi.2)
 
 ### Task 9: Scaffold interweave module
 **Files:** `core/interweave/` (new module)
@@ -234,16 +234,16 @@ requirements:
   - If no reservation → create one for the local agent, emit `negotiate_release` to peer
 - Map sensitivity conflicts → always surface to human (never auto-resolve)
 - Emit resolution back to attp via callback: `accept_local`, `accept_remote`, `deferred`, `escalated`
-- Extension data: include `interlock_reservation_id` in attp token extensions (`demarch.interweave` namespace)
+- Extension data: include `interlock_reservation_id` in attp token extensions (`sylveste.interweave` namespace)
 **Verify:** Test: two agents edit same file, attp detects conflict, interweave routes to interlock, reservation holder wins
 **Deps:** Task 9, Task 10
 
 ### Task 12: interweave MCP adapter
 **Files:** `core/interweave/internal/adapter/mcp.go`, `core/interweave/cmd/interweave/main.go`
 **Do:**
-- Wrap attp MCP server with Demarch-specific extensions:
-  - Inject `demarch.interweave` extension data into outgoing tokens (bead_id, sprint_id, session_id)
-  - Parse `demarch.interweave` extensions from incoming tokens
+- Wrap attp MCP server with Sylveste-specific extensions:
+  - Inject `sylveste.interweave` extension data into outgoing tokens (bead_id, sprint_id, session_id)
+  - Parse `sylveste.interweave` extensions from incoming tokens
   - Route to intermute bridge and interlock bridge on relevant events
 - CLI: `interweave serve` — starts attp MCP server + intermute bridge + interlock bridge
 - Config: reads from intercore config (`core/intercore/config/`) for port, exclusion defaults

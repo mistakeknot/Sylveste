@@ -4,7 +4,7 @@ Generated: 2026-02-25
 
 ## Task
 
-Design 5 focused review agents for a strategic architecture analysis document evaluating the gap between Autarch's current human-centric TUI UX and Demarch's vision of increasing agent autonomy through recursive rings of autonomous agencies.
+Design 5 focused review agents for a strategic architecture analysis document evaluating the gap between Autarch's current human-centric TUI UX and Sylveste's vision of increasing agent autonomy through recursive rings of autonomous agencies.
 
 The document covers 7 identified gaps, proposes a three-mode hierarchy (Executive/Supervisor/Operator), and a recursive ring model for autonomous agencies. Components involved: Autarch apps (Bigend, Gurgeh, Coldwine, Pollard), Intercore kernel (runs/phases/gates/dispatches), Clavain OS (workflow policies), and Interspect profiler.
 
@@ -54,7 +54,7 @@ The document spans five distinct analytical territories, each needing a speciali
       "The best finding distinguishes 'UX vocabulary problem' (modes are good but poorly named) from 'UX model problem' (modes don't map to actual user workflows)",
       "Flag any mode boundary that would require users to explicitly switch context vs one that could be inferred from behavior—the latter is stronger and the document should argue for it"
     ],
-    "task_context": "The document is a strategic architecture analysis evaluating how Autarch's four TUI apps (Bigend, Gurgeh, Coldwine, Pollard) must evolve to support increasing agent autonomy in Demarch. The analysis proposes a three-mode hierarchy (Executive/Supervisor/Operator) and a recursive ring model for autonomous agencies, grounded in seven identified gaps between current and target state.",
+    "task_context": "The document is a strategic architecture analysis evaluating how Autarch's four TUI apps (Bigend, Gurgeh, Coldwine, Pollard) must evolve to support increasing agent autonomy in Sylveste. The analysis proposes a three-mode hierarchy (Executive/Supervisor/Operator) and a recursive ring model for autonomous agencies, grounded in seven identified gaps between current and target state.",
     "anti_overlap": [
       "fd-recursive-ring-architecture covers whether the ring model is technically feasible with Intercore/Clavain primitives — not the UX hierarchy",
       "fd-delegation-escalation-protocol covers the concrete protocol for gap 7 (no delegation/escalation) — not the mode classification system",
@@ -79,7 +79,7 @@ The document spans five distinct analytical territories, each needing a speciali
       "The best finding distinguishes 'ring model works with current primitives as-is' from 'ring model requires new schema or API surface' — the document should make this explicit",
       "Flag any place where the document conflates the logical model (rings as a mental model) with the implementation model (rings as actual Intercore constructs)"
     ],
-    "task_context": "The document is a strategic architecture analysis evaluating how Autarch's four TUI apps (Bigend, Gurgeh, Coldwine, Pollard) must evolve to support increasing agent autonomy in Demarch. The analysis proposes a three-mode hierarchy (Executive/Supervisor/Operator) and a recursive ring model for autonomous agencies, grounded in seven identified gaps between current and target state.",
+    "task_context": "The document is a strategic architecture analysis evaluating how Autarch's four TUI apps (Bigend, Gurgeh, Coldwine, Pollard) must evolve to support increasing agent autonomy in Sylveste. The analysis proposes a three-mode hierarchy (Executive/Supervisor/Operator) and a recursive ring model for autonomous agencies, grounded in seven identified gaps between current and target state.",
     "anti_overlap": [
       "fd-autonomy-ux-hierarchy covers whether the Executive/Supervisor/Operator mode boundaries are well-defined for human users — not the underlying Intercore primitives",
       "fd-delegation-escalation-protocol covers the concrete design of the escalation protocol specifically — not the general architecture of recursive rings",
@@ -104,7 +104,7 @@ The document spans five distinct analytical territories, each needing a speciali
       "The best finding identifies whether the protocol is stateless (each escalation is independent) or stateful (escalations accumulate into a history that informs future decisions) — and flags if the document assumes statefulness without specifying where state lives",
       "Flag any escalation path that terminates in 'human review required' without specifying which human, in which mode, via which UX surface — that's an incomplete protocol"
     ],
-    "task_context": "The document is a strategic architecture analysis evaluating how Autarch's four TUI apps (Bigend, Gurgeh, Coldwine, Pollard) must evolve to support increasing agent autonomy in Demarch. The analysis proposes a three-mode hierarchy (Executive/Supervisor/Operator) and a recursive ring model for autonomous agencies, grounded in seven identified gaps between current and target state.",
+    "task_context": "The document is a strategic architecture analysis evaluating how Autarch's four TUI apps (Bigend, Gurgeh, Coldwine, Pollard) must evolve to support increasing agent autonomy in Sylveste. The analysis proposes a three-mode hierarchy (Executive/Supervisor/Operator) and a recursive ring model for autonomous agencies, grounded in seven identified gaps between current and target state.",
     "anti_overlap": [
       "fd-autonomy-ux-hierarchy covers how modes are presented in the UX — not how the delegation protocol is signaled or structured",
       "fd-recursive-ring-architecture covers whether the ring model is compatible with Intercore primitives — not the protocol state machine for escalation within rings",
@@ -129,7 +129,7 @@ The document spans five distinct analytical territories, each needing a speciali
       "The best finding distinguishes between additive changes (new modes layered on top of existing UX) and breaking changes (existing UX must be restructured), with a count of how many of the 7 gaps fall into each category",
       "Flag any assumption that Intercore or Clavain will be extended to support the proposed model — those extension points need to be in scope, not assumed"
     ],
-    "task_context": "The document is a strategic architecture analysis evaluating how Autarch's four TUI apps (Bigend, Gurgeh, Coldwine, Pollard) must evolve to support increasing agent autonomy in Demarch. The analysis proposes a three-mode hierarchy (Executive/Supervisor/Operator) and a recursive ring model for autonomous agencies, grounded in seven identified gaps between current and target state.",
+    "task_context": "The document is a strategic architecture analysis evaluating how Autarch's four TUI apps (Bigend, Gurgeh, Coldwine, Pollard) must evolve to support increasing agent autonomy in Sylveste. The analysis proposes a three-mode hierarchy (Executive/Supervisor/Operator) and a recursive ring model for autonomous agencies, grounded in seven identified gaps between current and target state.",
     "anti_overlap": [
       "fd-recursive-ring-architecture covers whether the ring model is technically sound in its final form — not the transition path to get there",
       "fd-autonomy-ux-hierarchy covers whether the mode hierarchy is well-defined — not whether existing users can survive the transition to it",
@@ -145,16 +145,16 @@ The document spans five distinct analytical territories, each needing a speciali
       "For each of the 7 gaps, verify that the gap statement correctly diagnoses a real limitation of current Autarch vs the proposed vision — flag any gap that is actually a symptom of a different, deeper gap",
       "Check whether the three-mode hierarchy and the recursive ring model are compatible proposals — could they be designed and implemented independently, or does each assume the other exists",
       "Verify that the document's use of key terms (autonomy, delegation, ring, agency, supervisor) is consistent across all sections — flag any term that is used with different meanings in different contexts",
-      "Assess whether the document's vision of 'increasing agent autonomy' is directionally consistent with Demarch's published architecture (Intercore kernel, Clavain OS, Interspect profiler) — or whether it implies a different architectural philosophy",
+      "Assess whether the document's vision of 'increasing agent autonomy' is directionally consistent with Sylveste's published architecture (Intercore kernel, Clavain OS, Interspect profiler) — or whether it implies a different architectural philosophy",
       "Check whether all 7 gaps are genuinely independent — flag any two gaps that are actually the same gap described from different angles, which would indicate the gap taxonomy is overcounted or undercounted",
-      "Evaluate whether the document's conclusion (the proposed model achieves the Demarch autonomy vision) is supported by the analysis, or whether there are unstated assumptions bridging the gap between current state and the proposed future state"
+      "Evaluate whether the document's conclusion (the proposed model achieves the Sylveste autonomy vision) is supported by the analysis, or whether there are unstated assumptions bridging the gap between current state and the proposed future state"
     ],
     "success_hints": [
       "A strong review produces a gap-by-gap verdict: 'correctly diagnosed and addressed', 'correctly diagnosed but not addressed by proposal', or 'incorrectly diagnosed — real issue is X'",
       "The best finding identifies whether the recursive ring model and the three-mode hierarchy form a coherent unified proposal or two separate proposals that were combined in the same document without integration",
-      "Flag any place where the document implicitly assumes that the Demarch vision is fixed and Autarch must change — vs the possibility that the vision itself should be refined based on what Autarch has learned from real usage"
+      "Flag any place where the document implicitly assumes that the Sylveste vision is fixed and Autarch must change — vs the possibility that the vision itself should be refined based on what Autarch has learned from real usage"
     ],
-    "task_context": "The document is a strategic architecture analysis evaluating how Autarch's four TUI apps (Bigend, Gurgeh, Coldwine, Pollard) must evolve to support increasing agent autonomy in Demarch. The analysis proposes a three-mode hierarchy (Executive/Supervisor/Operator) and a recursive ring model for autonomous agencies, grounded in seven identified gaps between current and target state.",
+    "task_context": "The document is a strategic architecture analysis evaluating how Autarch's four TUI apps (Bigend, Gurgeh, Coldwine, Pollard) must evolve to support increasing agent autonomy in Sylveste. The analysis proposes a three-mode hierarchy (Executive/Supervisor/Operator) and a recursive ring model for autonomous agencies, grounded in seven identified gaps between current and target state.",
     "anti_overlap": [
       "fd-autonomy-ux-hierarchy covers whether individual mode boundaries are precise enough to implement — not whether the overall document logic is coherent",
       "fd-recursive-ring-architecture covers whether the ring model is technically compatible with Intercore primitives — not whether the document's argument structure is internally consistent",

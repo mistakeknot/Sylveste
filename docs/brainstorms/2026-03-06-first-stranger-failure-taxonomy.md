@@ -12,7 +12,7 @@ stage: discover
 
 ## Problem Statement
 
-No external user has ever successfully set up Demarch. The installation infrastructure exists (install.sh, modpack-install.sh, setup.md, doctor.md) but has never been validated by a stranger. The system's fail-safe design — every library degrades gracefully, session-start never blocks — means a 60% broken setup produces zero visible errors. A stranger has no way to know what's missing.
+No external user has ever successfully set up Sylveste. The installation infrastructure exists (install.sh, modpack-install.sh, setup.md, doctor.md) but has never been validated by a stranger. The system's fail-safe design — every library degrades gracefully, session-start never blocks — means a 60% broken setup produces zero visible errors. A stranger has no way to know what's missing.
 
 ## Research: Failure Taxonomy
 
@@ -46,7 +46,7 @@ These are the dangerous ones. Install completes, user thinks everything works, b
 | S9 | **ic database not initialized** | `ic health` returns non-zero | One-time stderr warning, then nothing | State management, dispatch, cost tracking all fail |
 | S10 | **Multiple marketplace conflicts** | Wrong plugin version loaded | No error until features misbehave | Subtle bugs, wrong skill versions |
 
-**Assessment:** 10 silent failures, each invisible to a stranger. The root cause: Demarch's fail-safe design treats every dependency as optional. This is correct for resilience but catastrophic for setup validation.
+**Assessment:** 10 silent failures, each invisible to a stranger. The root cause: Sylveste's fail-safe design treats every dependency as optional. This is correct for resilience but catastrophic for setup validation.
 
 ### Tier 3: Confusion Failures (User Doesn't Know What to Do Next)
 

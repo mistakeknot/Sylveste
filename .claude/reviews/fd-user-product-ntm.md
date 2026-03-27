@@ -1,9 +1,9 @@
-# UX and Product Review: NTM — Competitive Analysis for Autarch/Demarch
+# UX and Product Review: NTM — Competitive Analysis for Autarch/Sylveste
 
 **Reviewer:** Flux-drive User & Product Reviewer
 **Date:** 2026-02-22
-**Subject:** NTM (Named Tmux Manager) at `/home/mk/projects/Demarch/research/ntm`
-**Purpose:** Competitive analysis for Autarch TUI apps (Bigend, Gurgeh, Coldwine, Pollard) and broader Demarch platform design
+**Subject:** NTM (Named Tmux Manager) at `/home/mk/projects/Sylveste/research/ntm`
+**Purpose:** Competitive analysis for Autarch TUI apps (Bigend, Gurgeh, Coldwine, Pollard) and broader Sylveste platform design
 
 ---
 
@@ -11,7 +11,7 @@
 
 NTM's primary user is an individual developer or researcher who runs multiple AI coding agents simultaneously and needs to coordinate them without losing context or breaking flow. The job is: spawn, direct, observe, and recover a fleet of AI agents across a tmux session with minimal friction. The user is comfortable in a terminal, tolerates configuration files, but does not want to write orchestration scripts by hand.
 
-This differs from Demarch's primary user, who is likely an agency operator or team using Demarch as the platform layer under their own workflows. Autarch surfaces are more likely to be used by an agent overseer or human reviewer checking on autonomous work-in-progress, rather than someone typing individual prompts. This distinction is critical for all downstream design decisions.
+This differs from Sylveste's primary user, who is likely an agency operator or team using Sylveste as the platform layer under their own workflows. Autarch surfaces are more likely to be used by an agent overseer or human reviewer checking on autonomous work-in-progress, rather than someone typing individual prompts. This distinction is critical for all downstream design decisions.
 
 ---
 
@@ -40,17 +40,17 @@ This is honest about the coordination mechanism: agents communicate via Agent Ma
 
 ### UX Strengths to Leverage
 
-**Stable, typed pane IDs as first-class identifiers.** Every downstream system — health checks, dashboard, robot API, ensemble assignment — keys off pane IDs. Demarch's Autarch should establish an equally stable naming convention for agent panes or process slots. Intermux already monitors tmux, but does it expose a stable pane ID that Autarch can key routing, health, and history against? If not, NTM's naming approach is worth adopting.
+**Stable, typed pane IDs as first-class identifiers.** Every downstream system — health checks, dashboard, robot API, ensemble assignment — keys off pane IDs. Sylveste's Autarch should establish an equally stable naming convention for agent panes or process slots. Intermux already monitors tmux, but does it expose a stable pane ID that Autarch can key routing, health, and history against? If not, NTM's naming approach is worth adopting.
 
 **Stagger delay as a first-class config concern.** NTM exposes `StaggerDelay` in `SessionOrchestrator`. This is evidence that naive parallel spawning fails in practice. Autarch should not assume agents can be started simultaneously.
 
-**One command, full environment.** `ntm quick myproject --template=go` creates the directory, git repo, VSCode config, Claude config, and spawns agents. The user's first success is in one command. Autarch's onboarding flow should target this level of completeness. Currently Demarch's setup requires multiple steps across Clavain, intermux, and interlock — an obvious gap.
+**One command, full environment.** `ntm quick myproject --template=go` creates the directory, git repo, VSCode config, Claude config, and spawns agents. The user's first success is in one command. Autarch's onboarding flow should target this level of completeness. Currently Sylveste's setup requires multiple steps across Clavain, intermux, and interlock — an obvious gap.
 
 ### UX Weaknesses to Avoid
 
-**Tmux coupling is a liability.** The entire system depends on tmux being installed and on the PATH. The robot mode, dashboard, approval flow, and ensemble all break without tmux. NTM acknowledges this (`tmux.IsInstalled()` gates most features gracefully) but the conceptual architecture is tmux-first. Demarch, building for a broader audience including potential web clients and remote operators, should keep the process/session abstraction decoupled from the transport layer. Intercore's kernel is the right place for this — tmux should be one possible backend, not the foundation.
+**Tmux coupling is a liability.** The entire system depends on tmux being installed and on the PATH. The robot mode, dashboard, approval flow, and ensemble all break without tmux. NTM acknowledges this (`tmux.IsInstalled()` gates most features gracefully) but the conceptual architecture is tmux-first. Sylveste, building for a broader audience including potential web clients and remote operators, should keep the process/session abstraction decoupled from the transport layer. Intercore's kernel is the right place for this — tmux should be one possible backend, not the foundation.
 
-**Session naming is a global namespace.** NTM uses tmux session names as the primary key. Two projects with the same name on the same machine collide. Labels partially address this but the problem is structural. Demarch should establish per-project isolation earlier in the design.
+**Session naming is a global namespace.** NTM uses tmux session names as the primary key. Two projects with the same name on the same machine collide. Labels partially address this but the problem is structural. Sylveste should establish per-project isolation earlier in the design.
 
 ---
 
@@ -105,7 +105,7 @@ This is elegant: prompts are documentation, stored in version-controlled text, e
 
 ### UX Weaknesses to Avoid
 
-**Ctrl+F conflicts.** `Ctrl+F` is bound to "favorite" in the palette. In many terminal emulators (especially when running inside tmux), `Ctrl+F` triggers tmux prefix sequences, find-in-page, or forward-word shortcuts. This is a known terminal keyboard conflict. Demarch should audit all key bindings against the tmux prefix key (default `Ctrl+B`), common SSH terminal mappings, and VS Code terminal behavior before finalizing Autarch's keymap.
+**Ctrl+F conflicts.** `Ctrl+F` is bound to "favorite" in the palette. In many terminal emulators (especially when running inside tmux), `Ctrl+F` triggers tmux prefix sequences, find-in-page, or forward-word shortcuts. This is a known terminal keyboard conflict. Sylveste should audit all key bindings against the tmux prefix key (default `Ctrl+B`), common SSH terminal mappings, and VS Code terminal behavior before finalizing Autarch's keymap.
 
 **Ctrl+P conflict.** `Ctrl+P` is bound to "pin" in the palette, but is also the default prefix for many IDE command palettes and a common readline shortcut for previous history. Same audit recommendation.
 
@@ -132,19 +132,19 @@ The `DashboardOutput` in `robot_dashboard.go` provides a fleet-level view for AI
 
 ### UX Strengths to Leverage
 
-**stdout/stderr split as a user contract.** This is the most transferable pattern in the entire codebase. Demarch's robot/machine-readable interface (whatever it becomes) must commit to this split. Mixing human-readable text into stdout breaks every downstream consumer silently.
+**stdout/stderr split as a user contract.** This is the most transferable pattern in the entire codebase. Sylveste's robot/machine-readable interface (whatever it becomes) must commit to this split. Mixing human-readable text into stdout breaks every downstream consumer silently.
 
 **Error envelopes with actionable hints.** `NewErrorResponse(err, ErrCodeX, "Install cass to enable search")` is a great pattern. The hint tells the caller what to do, not just what went wrong. Autarch's error surfaces (both TUI and API) should use this pattern.
 
-**Schema introspection as first-class.** `--robot-schema=all` is forward-looking: any tool that consumes ntm can discover the contract at runtime. Demarch's Intercore kernel or any REST surface for Autarch should expose equivalent schema endpoints.
+**Schema introspection as first-class.** `--robot-schema=all` is forward-looking: any tool that consumes ntm can discover the contract at runtime. Sylveste's Intercore kernel or any REST surface for Autarch should expose equivalent schema endpoints.
 
-**Fleet dashboard as a single JSON document.** The `DashboardOutput` struct is a polling target for an orchestrator — one call gives the entire system state. For Demarch's Autarch, this is the pattern for the "status heartbeat" that Clavain or any external coordinator would poll.
+**Fleet dashboard as a single JSON document.** The `DashboardOutput` struct is a polling target for an orchestrator — one call gives the entire system state. For Sylveste's Autarch, this is the pattern for the "status heartbeat" that Clavain or any external coordinator would poll.
 
 ### UX Weaknesses to Avoid
 
-**Robot mode is only a flag namespace, not a subcommand.** Every robot operation is accessed via `--robot-<operation>`. This creates a flat namespace that will eventually conflict or become unwieldy as more operations are added. Demarch should consider a `ntm robot <subcommand>` structure for its equivalent interface.
+**Robot mode is only a flag namespace, not a subcommand.** Every robot operation is accessed via `--robot-<operation>`. This creates a flat namespace that will eventually conflict or become unwieldy as more operations are added. Sylveste should consider a `ntm robot <subcommand>` structure for its equivalent interface.
 
-**No authentication or rate limiting on robot endpoints.** NTM robot mode is designed for local trusted execution. If Demarch exposes equivalent functionality over a REST or WebSocket layer (which the web plans suggest), authentication must be designed in from the start, not retrofitted.
+**No authentication or rate limiting on robot endpoints.** NTM robot mode is designed for local trusted execution. If Sylveste exposes equivalent functionality over a REST or WebSocket layer (which the web plans suggest), authentication must be designed in from the start, not retrofitted.
 
 ---
 
@@ -211,11 +211,11 @@ Budget controls: `MaxTokensPerMode`, `MaxTotalTokens`, `TimeoutPerMode`, `TotalT
 
 ### UX Strengths to Leverage
 
-**Reasoning mode as a UX primitive.** NTM makes "reasoning mode" a named, documentable, discoverable thing with a code (A1), a description, best-use cases, and failure modes. This is superior to "send a prompt" or "pick an agent." Demarch's interflux (multi-agent review engine) and intersynth (verdict aggregation) would benefit from adopting a similar named-mode vocabulary. The FLUX podcast's interlens plugin already goes in this direction with cognitive lenses — that work should align with or connect to this taxonomy.
+**Reasoning mode as a UX primitive.** NTM makes "reasoning mode" a named, documentable, discoverable thing with a code (A1), a description, best-use cases, and failure modes. This is superior to "send a prompt" or "pick an agent." Sylveste's interflux (multi-agent review engine) and intersynth (verdict aggregation) would benefit from adopting a similar named-mode vocabulary. The FLUX podcast's interlens plugin already goes in this direction with cognitive lenses — that work should align with or connect to this taxonomy.
 
 **Ensemble presets as curated workflows.** A user can say `ntm ensemble spawn myproject --preset architecture-review` and get a specific multi-agent workflow without understanding the underlying mode composition. This is the right UX for power features: provide named, opinionated presets for common cases, and expose the composition API for advanced users. Autarch's action library should offer equivalent "recipe" presets for common development workflows.
 
-**Failure modes as first-class documentation.** Every reasoning mode in NTM documents its failure modes explicitly. This is worth adopting as a convention in Demarch's AGENTS.md descriptions for each interverse plugin and Autarch action.
+**Failure modes as first-class documentation.** Every reasoning mode in NTM documents its failure modes explicitly. This is worth adopting as a convention in Sylveste's AGENTS.md descriptions for each interverse plugin and Autarch action.
 
 **Budget enforcement, not just guidance.** Token budgets are enforced limits on mode runs, not soft suggestions. This is necessary for managing cost in a multi-agent system. Autarch should build cost controls into the action dispatch layer.
 
@@ -223,11 +223,11 @@ Budget controls: `MaxTokensPerMode`, `MaxTotalTokens`, `TimeoutPerMode`, `TotalT
 
 ### UX Weaknesses to Avoid
 
-**Ensemble is behind an experimental build flag.** The most distinctive and differentiating capability in NTM is not available in standard builds. Users who install NTM from the recommended path do not get ensemble. This is a discovery failure: the feature that most justifies the system's complexity is hidden. Demarch should not gate its most valuable orchestration primitives behind build flags or undiscoverable configuration.
+**Ensemble is behind an experimental build flag.** The most distinctive and differentiating capability in NTM is not available in standard builds. Users who install NTM from the recommended path do not get ensemble. This is a discovery failure: the feature that most justifies the system's complexity is hidden. Sylveste should not gate its most valuable orchestration primitives behind build flags or undiscoverable configuration.
 
 **Mode assignment is automatic but opaque.** When an ensemble spawns agents and assigns modes via round-robin or affinity, the user cannot easily see which pane got which mode without querying the ensemble status. The TUI dashboard shows `EnsembleModesDataMsg` but navigating to it requires knowing to look. Assignment should be visible immediately at spawn time.
 
-**The 80-mode taxonomy is powerful but overwhelming for first exposure.** Core tier has approximately 28 modes; advanced adds 50+ more. A user encountering `ntm modes list` for the first time will not know where to start. The preset system partially solves this (use a preset, not individual modes), but the path from "I want to review this architecture" to `--preset architecture-review` requires the user to already know that preset exists. Demarch should invest in better decision-tree or recommendation UI — "what are you trying to do?" before "which mode?"
+**The 80-mode taxonomy is powerful but overwhelming for first exposure.** Core tier has approximately 28 modes; advanced adds 50+ more. A user encountering `ntm modes list` for the first time will not know where to start. The preset system partially solves this (use a preset, not individual modes), but the path from "I want to review this architecture" to `--preset architecture-review` requires the user to already know that preset exists. Sylveste should invest in better decision-tree or recommendation UI — "what are you trying to do?" before "which mode?"
 
 ---
 
@@ -252,9 +252,9 @@ The redaction engine (`/internal/redaction/`) has four modes: off, warn, redact,
 
 ### UX Strengths to Leverage
 
-**Approval as a workflow, not a prompt.** NTM's approval engine is a proper state machine with IDs, expiry, audit trail, and event emission. This is the right level of formality for an agency platform handling production code changes. Demarch's human-in-the-loop design should be this rigorous, not a simple Y/N confirmation dialog.
+**Approval as a workflow, not a prompt.** NTM's approval engine is a proper state machine with IDs, expiry, audit trail, and event emission. This is the right level of formality for an agency platform handling production code changes. Sylveste's human-in-the-loop design should be this rigorous, not a simple Y/N confirmation dialog.
 
-**Two-person rule (SLB) as a named, configurable constraint.** Making SLB a first-class, named concept — not just a comment in the code — is valuable. Demarch's Autarch should expose SLB-equivalent concepts (perhaps "requires oversight" or "requires second agent review") as configurable per-action.
+**Two-person rule (SLB) as a named, configurable constraint.** Making SLB a first-class, named concept — not just a comment in the code — is valuable. Sylveste's Autarch should expose SLB-equivalent concepts (perhaps "requires oversight" or "requires second agent review") as configurable per-action.
 
 **Expiry on approvals.** Approvals that are not acted on within a time window expire automatically. This prevents the system from blocking indefinitely on abandoned requests. Autarch should adopt the same pattern for any human-in-the-loop gate.
 
@@ -264,7 +264,7 @@ The redaction engine (`/internal/redaction/`) has four modes: off, warn, redact,
 
 **No UI for pending approvals in the dashboard.** The approval engine exists, the event system emits `approval.requested` events, but the dashboard model (`dashboard.go`) does not show a pending approvals panel. A user waiting for an approval decision has no ambient awareness that one is pending. Autarch must surface pending approvals as a first-class dashboard element, not an invisible background state.
 
-**Approval identity is a string, not an authenticated principal.** `RequestedBy` and the approver are arbitrary strings. In a shared or multi-user context, this is trivially spoofable. Demarch building toward an agency platform should design identity and authentication into the approval model from the start.
+**Approval identity is a string, not an authenticated principal.** `RequestedBy` and the approver are arbitrary strings. In a shared or multi-user context, this is trivially spoofable. Sylveste building toward an agency platform should design identity and authentication into the approval model from the start.
 
 ---
 
@@ -290,15 +290,15 @@ The handoff status is surfaced in the dashboard as a `HandoffUpdateMsg` with `Go
 
 ### UX Strengths to Leverage
 
-**Handoff as a compact, structured, versioned document.** NTM's `HandoffVersion = "1.0"` with explicit forward-compatibility planning is the right approach. Demarch's Clavain already uses handoffs (likely via interline and interphase), but the structure should be as explicit as NTM's. The `goal`/`now` fields as required fields is a design constraint worth enforcing — a handoff without a clear "now" is not a valid handoff.
+**Handoff as a compact, structured, versioned document.** NTM's `HandoffVersion = "1.0"` with explicit forward-compatibility planning is the right approach. Sylveste's Clavain already uses handoffs (likely via interline and interphase), but the structure should be as explicit as NTM's. The `goal`/`now` fields as required fields is a design constraint worth enforcing — a handoff without a clear "now" is not a valid handoff.
 
 **Token budget at handoff time.** Recording `tokens_used`, `tokens_max`, `tokens_pct` at handoff time lets the next session know how close the previous agent was to context limits. This is critical information for continuity — a session handed off at 90% context needs a different strategy than one at 30%. Autarch's continuity model should include this signal.
 
-**Reservation transfer as an atomic operation.** The `TransferReservations` function with rollback-on-conflict is a sophisticated and necessary primitive for multi-agent systems working on shared files. Interlock in Demarch handles file coordination, but handoff integration — transferring locks at session boundary — may be missing or implicit.
+**Reservation transfer as an atomic operation.** The `TransferReservations` function with rollback-on-conflict is a sophisticated and necessary primitive for multi-agent systems working on shared files. Interlock in Sylveste handles file coordination, but handoff integration — transferring locks at session boundary — may be missing or implicit.
 
 **Outcome taxonomy.** NTM's handoff has a defined outcome vocabulary: `SUCCEEDED`, `PARTIAL_PLUS`, `PARTIAL_MINUS`, `FAILED`. This is more honest than a binary success/failure. Autarch's session completion states should use a similar graduated vocabulary.
 
-**Generator that analyzes agent output.** The `GenerateFromOutput()` function extracts handoff fields from unstructured agent text. This means agents do not need to follow a strict output protocol to produce a valid handoff — the generator does the extraction. Demarch's handoff generation should have an equivalent fallback path.
+**Generator that analyzes agent output.** The `GenerateFromOutput()` function extracts handoff fields from unstructured agent text. This means agents do not need to follow a strict output protocol to produce a valid handoff — the generator does the extraction. Sylveste's handoff generation should have an equivalent fallback path.
 
 ### UX Weaknesses to Avoid
 
@@ -342,7 +342,7 @@ NTM correctly identifies that the painful part of multi-agent development is not
 
 The robot mode / REST parity design (`Get*` / `Print*` function split) is forward-looking. NTM is designed to grow into a headless API while keeping CLI parity. This is the right architecture for a platform tool.
 
-The ensemble reasoning mode taxonomy (80 modes, 12 categories, 9 presets) is ambitious and substantive. It is not a novelty feature — it represents a real attempt to make AI reasoning strategies legible and composable. This is worth studying carefully for Demarch's intersynth and interflux design.
+The ensemble reasoning mode taxonomy (80 modes, 12 categories, 9 presets) is ambitious and substantive. It is not a novelty feature — it represents a real attempt to make AI reasoning strategies legible and composable. This is worth studying carefully for Sylveste's intersynth and interflux design.
 
 ### What NTM Reveals About Autarch's Gaps
 
@@ -380,34 +380,34 @@ Listed by priority:
 
 **Study before committing:**
 - The 80-mode reasoning taxonomy — align with or connect to interlens before duplicating
-- Approval SLB enforcement — validate whether Demarch's user base requires two-person rules
+- Approval SLB enforcement — validate whether Sylveste's user base requires two-person rules
 - The palette's markdown-format command definition — evaluate against Autarch's action registry design
 
 ---
 
 ## Files Referenced
 
-- `/home/mk/projects/Demarch/research/ntm/cmd/ntm/main.go` — entry point
-- `/home/mk/projects/Demarch/research/ntm/internal/palette/model.go` — palette UX model (2017 lines)
-- `/home/mk/projects/Demarch/research/ntm/internal/palette/selector.go` — session selector component
-- `/home/mk/projects/Demarch/research/ntm/internal/robot/robot.go` — robot mode implementation
-- `/home/mk/projects/Demarch/research/ntm/internal/robot/schema.go` — JSON Schema generation
-- `/home/mk/projects/Demarch/research/ntm/internal/robot/robot_dashboard.go` — fleet dashboard output
-- `/home/mk/projects/Demarch/research/ntm/internal/ensemble/types.go` — mode/category type system
-- `/home/mk/projects/Demarch/research/ntm/internal/ensemble/modes.go` — 80-mode taxonomy
-- `/home/mk/projects/Demarch/research/ntm/internal/ensemble/ensembles.go` — 9 built-in presets
-- `/home/mk/projects/Demarch/research/ntm/internal/ensemble/strategy.go` — 6 synthesis strategies
-- `/home/mk/projects/Demarch/research/ntm/internal/ensemble/synthesizer.go` — streaming synthesis
-- `/home/mk/projects/Demarch/research/ntm/internal/ensemble/manager.go` — ensemble lifecycle
-- `/home/mk/projects/Demarch/research/ntm/internal/ensemble/state.go` — SQLite persistence
-- `/home/mk/projects/Demarch/research/ntm/internal/tui/dashboard/dashboard.go` — dashboard model
-- `/home/mk/projects/Demarch/research/ntm/internal/tui/dashboard/layout.go` — responsive layout
-- `/home/mk/projects/Demarch/research/ntm/internal/tui/dashboard/commands.go` — async commands
-- `/home/mk/projects/Demarch/research/ntm/internal/approval/engine.go` — approval workflow
-- `/home/mk/projects/Demarch/research/ntm/internal/handoff/types.go` — handoff document structure
-- `/home/mk/projects/Demarch/research/ntm/internal/handoff/generator.go` — output-to-handoff extraction
-- `/home/mk/projects/Demarch/research/ntm/internal/handoff/transfer.go` — reservation transfer
-- `/home/mk/projects/Demarch/research/ntm/internal/redaction/redaction.go` — output redaction
-- `/home/mk/projects/Demarch/research/ntm/internal/swarm/orchestrator.go` — session orchestration
-- `/home/mk/projects/Demarch/research/ntm/command_palette.md` — user-configurable palette commands
-- `/home/mk/projects/Demarch/research/ntm/README.md` — product overview
+- `/home/mk/projects/Sylveste/research/ntm/cmd/ntm/main.go` — entry point
+- `/home/mk/projects/Sylveste/research/ntm/internal/palette/model.go` — palette UX model (2017 lines)
+- `/home/mk/projects/Sylveste/research/ntm/internal/palette/selector.go` — session selector component
+- `/home/mk/projects/Sylveste/research/ntm/internal/robot/robot.go` — robot mode implementation
+- `/home/mk/projects/Sylveste/research/ntm/internal/robot/schema.go` — JSON Schema generation
+- `/home/mk/projects/Sylveste/research/ntm/internal/robot/robot_dashboard.go` — fleet dashboard output
+- `/home/mk/projects/Sylveste/research/ntm/internal/ensemble/types.go` — mode/category type system
+- `/home/mk/projects/Sylveste/research/ntm/internal/ensemble/modes.go` — 80-mode taxonomy
+- `/home/mk/projects/Sylveste/research/ntm/internal/ensemble/ensembles.go` — 9 built-in presets
+- `/home/mk/projects/Sylveste/research/ntm/internal/ensemble/strategy.go` — 6 synthesis strategies
+- `/home/mk/projects/Sylveste/research/ntm/internal/ensemble/synthesizer.go` — streaming synthesis
+- `/home/mk/projects/Sylveste/research/ntm/internal/ensemble/manager.go` — ensemble lifecycle
+- `/home/mk/projects/Sylveste/research/ntm/internal/ensemble/state.go` — SQLite persistence
+- `/home/mk/projects/Sylveste/research/ntm/internal/tui/dashboard/dashboard.go` — dashboard model
+- `/home/mk/projects/Sylveste/research/ntm/internal/tui/dashboard/layout.go` — responsive layout
+- `/home/mk/projects/Sylveste/research/ntm/internal/tui/dashboard/commands.go` — async commands
+- `/home/mk/projects/Sylveste/research/ntm/internal/approval/engine.go` — approval workflow
+- `/home/mk/projects/Sylveste/research/ntm/internal/handoff/types.go` — handoff document structure
+- `/home/mk/projects/Sylveste/research/ntm/internal/handoff/generator.go` — output-to-handoff extraction
+- `/home/mk/projects/Sylveste/research/ntm/internal/handoff/transfer.go` — reservation transfer
+- `/home/mk/projects/Sylveste/research/ntm/internal/redaction/redaction.go` — output redaction
+- `/home/mk/projects/Sylveste/research/ntm/internal/swarm/orchestrator.go` — session orchestration
+- `/home/mk/projects/Sylveste/research/ntm/command_palette.md` — user-configurable palette commands
+- `/home/mk/projects/Sylveste/research/ntm/README.md` — product overview

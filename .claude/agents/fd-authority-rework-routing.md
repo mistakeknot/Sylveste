@@ -21,13 +21,13 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-Demarch authority tier model exists for domain-scoped decisions. Extend with rework-specific disposition authority matrix.
+Sylveste authority tier model exists for domain-scoped decisions. Extend with rework-specific disposition authority matrix.
 
 ## Review Approach
 
-### 1. Map Demarch authority tiers to disposition types
+### 1. Map Sylveste authority tiers to disposition types
 
-- Map Demarch authority tiers to disposition types, identify gaps
+- Map Sylveste authority tiers to disposition types, identify gaps
 
 ### 2. MRB authority scoping by severity
 

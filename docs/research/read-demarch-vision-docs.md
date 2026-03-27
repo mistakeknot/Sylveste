@@ -1,14 +1,14 @@
-# Demarch Vision & Architecture Analysis
+# Sylveste Vision & Architecture Analysis
 
 **Date:** 2026-02-24  
-**Scope:** Comprehensive review of Demarch vision, pillars, layers, and multi-agent coordination  
-**Source documents:** CLAUDE.md, AGENTS.md, demarch-vision.md, interspect-vision.md, intermute/interlock docs, multi-agent-coordination.md
+**Scope:** Comprehensive review of Sylveste vision, pillars, layers, and multi-agent coordination  
+**Source documents:** CLAUDE.md, AGENTS.md, sylveste-vision.md, interspect-vision.md, intermute/interlock docs, multi-agent-coordination.md
 
 ---
 
-## 1. Overall Demarch Vision
+## 1. Overall Sylveste Vision
 
-Demarch is an **open-source autonomous software development agency platform** that simultaneously advances three frontier axes:
+Sylveste is an **open-source autonomous software development agency platform** that simultaneously advances three frontier axes:
 
 1. **Autonomy** — How much of the development lifecycle runs without human intervention
 2. **Quality** — Defect escape rates, review signal precision, actionable findings vs false positives
@@ -20,7 +20,7 @@ Demarch is an **open-source autonomous software development agency platform** th
 
 ### Why It Exists
 
-LLM agents have an infrastructure problem: nothing survives. Session contexts compress. State dies. Networks drop. Processes crash. An agent that ran for an hour, produced artifacts, dispatched sub-agents, and advanced through phases leaves behind a chat transcript. Demarch handles this with a durable kernel (SQLite-backed Go CLI), an opinionated OS (development discipline), a profiler (learning loop), and 33+ companion drivers.
+LLM agents have an infrastructure problem: nothing survives. Session contexts compress. State dies. Networks drop. Processes crash. An agent that ran for an hour, produced artifacts, dispatched sub-agents, and advanced through phases leaves behind a chat transcript. Sylveste handles this with a durable kernel (SQLite-backed Go CLI), an opinionated OS (development discipline), a profiler (learning loop), and 33+ companion drivers.
 
 ---
 
@@ -214,7 +214,7 @@ Three major systems handle coordination:
 
 **Relation to intermute:**
 - MCP-agent-mail is a **parallel research project** exploring additional messaging capabilities
-- Not yet integrated into main Demarch workflow
+- Not yet integrated into main Sylveste workflow
 - Could complement or eventually replace parts of intermute's messaging API
 - Design explores how to make coordination more agent-friendly
 
@@ -453,7 +453,7 @@ Concrete improvements:
 
 ---
 
-## 9. Summary: Demarch's Coordination Story
+## 9. Summary: Sylveste's Coordination Story
 
 ### The Completed Stack
 1. **Kernel (Intercore)** — Runs, phases, gates, dispatches, events all persisted

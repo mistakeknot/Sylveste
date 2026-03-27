@@ -93,7 +93,7 @@ The main session consumes 7.3M tokens during these gaps — it is not idle. The 
 Only 11 beads have claim metadata (claims were introduced recently). Claim-to-close times:
 - iv-hvoyx: 0.25h (same session)
 - iv-wie5i.2: 0.39h (same session)
-- Demarch-dcy: 0.45h (same session)
+- Sylveste-dcy: 0.45h (same session)
 - iv-057uu: 0.47h (same session)
 - iv-zfvdf: 1.85h (same session)
 - iv-g36hy: 4.16h (multi-session)

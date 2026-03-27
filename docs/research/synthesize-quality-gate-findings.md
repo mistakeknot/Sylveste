@@ -25,7 +25,7 @@
 #### 1. **File Descriptor Leak in `_atomic_write` (QS-01 / F2)**
 - **Severity:** P2 (MEDIUM)
 - **Agents:** fd-correctness (F2), fd-quality (QS-01) — **CONVERGENCE: 2/3**
-- **Location:** `/home/mk/projects/Demarch/interverse/interflux/scripts/generate-agents.py:369–384`
+- **Location:** `/home/mk/projects/Sylveste/interverse/interflux/scripts/generate-agents.py:369–384`
 - **Issue:** Double-close on rename failure path after successful `os.close(fd)`. Exception handler calls `os.close(fd)` again, relying on OSError catch to swallow EBADF. More critically, `KeyboardInterrupt` after `os.close` but before `os.rename` bypasses cleanup entirely, leaving `.tmp` orphan files in `agents_dir`.
 - **Impact:** Temp files can accumulate on disk; silent failure mode makes production incident diagnosis harder. Not an immediate file corruption risk (unlink runs inside except), but violates POSIX cleanup discipline.
 - **Recommended Fix:** Restructure with two separate try blocks: (1) write+fsync+close in finally block, (2) rename with separate exception handler for unlink. This pattern already used correctly in `detect-domains.py:write_cache`.
@@ -126,7 +126,7 @@
 - **Severity:** P3 (LOW, test hygiene)
 - **Agents:** fd-quality (QS-06), fd-architecture (A5) — **CONVERGENCE: 2/3**
 - **Location:** `tests/structural/test_generate_agents.py:491–504`
-- **Issue:** `TestCLIIntegration.test_cli_json_output()` cannot monkeypatch `DOMAINS_DIR` for subprocess, so falls back to reading live `/home/mk/projects/Demarch/interverse/interflux/config/flux-drive/domains/game-simulation.md`. Test is sensitive to real profile structure; if profile is renamed or restructured, test fails with unintuitive assertion error. Test is effectively an integration test dressed as unit test.
+- **Issue:** `TestCLIIntegration.test_cli_json_output()` cannot monkeypatch `DOMAINS_DIR` for subprocess, so falls back to reading live `/home/mk/projects/Sylveste/interverse/interflux/config/flux-drive/domains/game-simulation.md`. Test is sensitive to real profile structure; if profile is renamed or restructured, test fails with unintuitive assertion error. Test is effectively an integration test dressed as unit test.
 - **Impact:** Brittle test; false negatives when domain profiles change.
 - **Recommended Fix:** Add `--domains-dir` CLI override to `generate-agents.py` for test purposes. Let subprocess tests pass a mock domains dir. Alternatively, rename class to `TestCLIIntegrationRealProfiles` and add `@pytest.mark.integration` marker.
 
@@ -226,17 +226,17 @@ The P3 issues can be fixed immediately or deferred to next sprint without blocki
 ## Files & Code References
 
 ### Key Files Reviewed
-- `/home/mk/projects/Demarch/interverse/interflux/scripts/generate-agents.py` (PRIMARY)
-- `/home/mk/projects/Demarch/interverse/interflux/scripts/detect-domains.py` (MODIFIED)
-- `/home/mk/projects/Demarch/interverse/interflux/skills/flux-drive/SKILL.md` (MODIFIED)
-- `/home/mk/projects/Demarch/interverse/interflux/commands/flux-gen.md` (MODIFIED)
-- `/home/mk/projects/Demarch/interverse/interflux/tests/structural/test_generate_agents.py` (NEW)
-- `/home/mk/projects/Demarch/interverse/interflux/AGENTS.md` (STALE)
+- `/home/mk/projects/Sylveste/interverse/interflux/scripts/generate-agents.py` (PRIMARY)
+- `/home/mk/projects/Sylveste/interverse/interflux/scripts/detect-domains.py` (MODIFIED)
+- `/home/mk/projects/Sylveste/interverse/interflux/skills/flux-drive/SKILL.md` (MODIFIED)
+- `/home/mk/projects/Sylveste/interverse/interflux/commands/flux-gen.md` (MODIFIED)
+- `/home/mk/projects/Sylveste/interverse/interflux/tests/structural/test_generate_agents.py` (NEW)
+- `/home/mk/projects/Sylveste/interverse/interflux/AGENTS.md` (STALE)
 
 ### Agent Output Locations
-- `/home/mk/projects/Demarch/interverse/interflux/.clavain/quality-gates/fd-architecture.md`
-- `/home/mk/projects/Demarch/interverse/interflux/.clavain/quality-gates/fd-correctness.md`
-- `/home/mk/projects/Demarch/interverse/interflux/.clavain/quality-gates/fd-quality.md`
+- `/home/mk/projects/Sylveste/interverse/interflux/.clavain/quality-gates/fd-architecture.md`
+- `/home/mk/projects/Sylveste/interverse/interflux/.clavain/quality-gates/fd-correctness.md`
+- `/home/mk/projects/Sylveste/interverse/interflux/.clavain/quality-gates/fd-quality.md`
 
 ---
 

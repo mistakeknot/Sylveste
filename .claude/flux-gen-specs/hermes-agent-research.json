@@ -17,7 +17,7 @@
       "Find the reward function contract and assess if general enough for Autarch's task types",
       "Flag Hermes-specific tool names hard-coded into agent loop that would need parameterization"
     ],
-    "task_context": "Analyzing Hermes Agent to find patterns adaptable for Demarch's Autarch (L3 agent orchestration) and intercom (messaging/gateway).",
+    "task_context": "Analyzing Hermes Agent to find patterns adaptable for Sylveste's Autarch (L3 agent orchestration) and intercom (messaging/gateway).",
     "anti_overlap": [
       "fd-gateway-messaging covers gateway delivery, platform adapters, and channel directory",
       "fd-mini-swe-agent covers execution environment abstraction and trajectory format bridge",
@@ -42,7 +42,7 @@
       "Assess if gateway hook system could serve as lightweight plugin protocol for intercom",
       "Identify platform-specific assumptions that won't generalize to intercom's multi-tenant model"
     ],
-    "task_context": "Analyzing Hermes Agent to find patterns adaptable for Demarch's Autarch (L3 agent orchestration) and intercom (messaging/gateway).",
+    "task_context": "Analyzing Hermes Agent to find patterns adaptable for Sylveste's Autarch (L3 agent orchestration) and intercom (messaging/gateway).",
     "anti_overlap": [
       "fd-rl-training-pipeline covers Atropos environments, reward functions, two-phase training",
       "fd-security-patterns covers pairing system security properties in depth",
@@ -51,9 +51,9 @@
   },
   {
     "name": "fd-security-patterns",
-    "focus": "Security patterns in Hermes beyond what Demarch has already captured — redaction, auth, sandboxing",
+    "focus": "Security patterns in Hermes beyond what Sylveste has already captured — redaction, auth, sandboxing",
     "persona": "A security engineer focused on secrets management, credential isolation, and least-privilege design in agentic systems.",
-    "decision_lens": "Prioritizes patterns that plug specific gaps in Demarch's current security posture. De-prioritizes anything already covered by existing safety floors or interspect.",
+    "decision_lens": "Prioritizes patterns that plug specific gaps in Sylveste's current security posture. De-prioritizes anything already covered by existing safety floors or interspect.",
     "review_areas": [
       "redact.py layered regex redaction: prefix patterns (sk-, ghp_, xox*), ENV assignments, JSON fields, Authorization headers, Telegram tokens",
       "PairingStore security: unambiguous alphabet, secrets.choice(), 1-hour TTL, 3 pending cap, rate limiting, lockout, 0o600 permissions",
@@ -63,11 +63,11 @@
       ".env loading priority chain — credential isolation guarantees in multi-tenant deployments"
     ],
     "success_hints": [
-      "Identify redaction patterns Demarch's logging doesn't implement",
-      "Determine if PairingStore lockout mechanism is absent from Demarch auth flows",
+      "Identify redaction patterns Sylveste's logging doesn't implement",
+      "Determine if PairingStore lockout mechanism is absent from Sylveste auth flows",
       "Find inconsistent _secure_write() usage revealing security boundary gaps"
     ],
-    "task_context": "Analyzing Hermes Agent to find patterns adaptable for Demarch's Autarch (L3 agent orchestration) and intercom (messaging/gateway).",
+    "task_context": "Analyzing Hermes Agent to find patterns adaptable for Sylveste's Autarch (L3 agent orchestration) and intercom (messaging/gateway).",
     "anti_overlap": [
       "fd-gateway-messaging covers gateway delivery and hook system architecture",
       "fd-rl-training-pipeline covers agent loop from ML/training perspective",
@@ -92,7 +92,7 @@
       "Identify if execute() backend interface is formally documented or duck-typed",
       "Assess if sentinel approach is robust enough or if structured completion protocol is preferable"
     ],
-    "task_context": "Analyzing Hermes Agent to find patterns adaptable for Demarch's Autarch (L3 agent orchestration) and intercom (messaging/gateway).",
+    "task_context": "Analyzing Hermes Agent to find patterns adaptable for Sylveste's Autarch (L3 agent orchestration) and intercom (messaging/gateway).",
     "anti_overlap": [
       "fd-rl-training-pipeline covers Atropos base env and reward functions",
       "fd-security-patterns covers terminal isolation from security perspective",
@@ -103,7 +103,7 @@
     "name": "fd-honcho-user-modeling",
     "focus": "Honcho cross-session user modeling architecture as pattern for Autarch's agent identity and memory layer",
     "persona": "An AI systems architect specializing in long-term agent memory, user representation, and cross-session context continuity.",
-    "decision_lens": "Prioritizes patterns addressing gaps in Demarch's current session/memory model. De-prioritizes Honcho-specific API details in favor of architectural concepts.",
+    "decision_lens": "Prioritizes patterns addressing gaps in Sylveste's current session/memory model. De-prioritizes Honcho-specific API details in favor of architectural concepts.",
     "review_areas": [
       "Peer/session/workspace primitive model — how user_peer_id and assistant_peer_id separate identity from session, asymmetric observe_me/observe_others",
       "context() call for semantic prefetch — single API returning peer_representation, peer_card, message history with semantic search",
@@ -113,11 +113,11 @@
       "Linked workspaces pattern — single config spanning multiple agent hosts sharing user modeling data"
     ],
     "success_hints": [
-      "Determine if Honcho's peer+session model fits Demarch better than current session-keyed approach",
-      "Assess if migrate_local_history() XML approach bridges Demarch's existing conversation history",
+      "Determine if Honcho's peer+session model fits Sylveste better than current session-keyed approach",
+      "Assess if migrate_local_history() XML approach bridges Sylveste's existing conversation history",
       "Identify session_strategy assumptions about single-project vs. multi-project deployments"
     ],
-    "task_context": "Analyzing Hermes Agent to find patterns adaptable for Demarch's Autarch (L3 agent orchestration) and intercom (messaging/gateway).",
+    "task_context": "Analyzing Hermes Agent to find patterns adaptable for Sylveste's Autarch (L3 agent orchestration) and intercom (messaging/gateway).",
     "anti_overlap": [
       "fd-rl-training-pipeline covers training loop and environment config",
       "fd-gateway-messaging covers platform routing, not memory architecture",

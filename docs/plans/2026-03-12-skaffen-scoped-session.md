@@ -1,12 +1,12 @@
 ---
 artifact_type: plan
-bead: Demarch-p23
+bead: Sylveste-p23
 stage: plan
 ---
 
 # Plan: ScopedSession — Context Isolation with Selective Injection
 
-**Bead:** Demarch-p23
+**Bead:** Sylveste-p23
 **Parent PRD:** docs/prds/2026-03-12-skaffen-subagent-system.md (F3)
 **Complexity:** 3/5 (moderate)
 

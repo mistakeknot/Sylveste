@@ -13,7 +13,7 @@
 ## Step 1: Install Clavain + Interverse
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mistakeknot/Demarch/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/mistakeknot/Sylveste/main/install.sh | bash
 ```
 
 Then open Claude Code and install companion plugins:
@@ -42,8 +42,8 @@ You don't need to run `bd init` manually — `/clavain:project-onboard` handles 
 Intercore (`ic`) provides the orchestration kernel: runs, dispatches, gates, and agent lifecycle management.
 
 ```bash
-git clone https://github.com/mistakeknot/Demarch.git
-cd Demarch
+git clone https://github.com/mistakeknot/Sylveste.git
+cd Sylveste
 # From the repo root:
 cd core/intercore
 go build -o ic ./cmd/ic

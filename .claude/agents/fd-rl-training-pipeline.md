@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-Analyzing Hermes Agent to find patterns adaptable for Demarch's Autarch (L3 agent orchestration) and intercom (messaging/gateway).
+Analyzing Hermes Agent to find patterns adaptable for Sylveste's Autarch (L3 agent orchestration) and intercom (messaging/gateway).
 
 ## Review Approach
 

@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-4hu
+bead: Sylveste-4hu
 stage: design
 prd: docs/prds/2026-03-11-skaffen-go-rewrite.md
 requirements:
@@ -14,12 +14,12 @@ requirements:
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-4hu
+**Bead:** Sylveste-4hu
 **Goal:** Streaming LLM provider interface with Anthropic Claude as the default backend and Claude Code subprocess proxy as opt-in alternative.
 
 **Architecture:** The provider package defines a `Provider` interface with a single `Stream` method returning an iterator-style `StreamResponse`. The Anthropic provider implements direct SSE streaming against the Messages API (~300 lines). The Claude Code proxy spawns `claude --print --output-format=stream-json` as a subprocess. Both providers are registered in a factory map keyed by name. All types live in `internal/provider/` with sub-packages for each implementation.
 
-**Tech Stack:** Go 1.22, `net/http` for SSE, `os/exec` for subprocess, `encoding/json` for marshaling. No external dependencies — direct implementation over the official `anthropic-sdk-go` (v1.26.0 exists but adds unnecessary abstraction for our streaming needs and couples us to their type system; ~300 lines of direct SSE parsing gives us full control over the streaming pipeline and matches Demarch's minimal-deps philosophy).
+**Tech Stack:** Go 1.22, `net/http` for SSE, `os/exec` for subprocess, `encoding/json` for marshaling. No external dependencies — direct implementation over the official `anthropic-sdk-go` (v1.26.0 exists but adds unnecessary abstraction for our streaming needs and couples us to their type system; ~300 lines of direct SSE parsing gives us full control over the streaming pipeline and matches Sylveste's minimal-deps philosophy).
 
 **Research findings** (from API docs + SDK analysis):
 - SSE `message_delta.usage.output_tokens` is **cumulative**, not incremental — only read final value

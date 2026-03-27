@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-The brainstorm extracts 8 coordination patterns from the 'when-claudes-meet' experiment and maps them to Demarch's multi-agent infrastructure including Interlock file reservations, Intermute messaging, and Intercore orchestration. The review must identify protocol correctness issues under concurrent agent execution.
+The brainstorm extracts 8 coordination patterns from the 'when-claudes-meet' experiment and maps them to Sylveste's multi-agent infrastructure including Interlock file reservations, Intermute messaging, and Intercore orchestration. The review must identify protocol correctness issues under concurrent agent execution.
 
 ## Review Approach
 

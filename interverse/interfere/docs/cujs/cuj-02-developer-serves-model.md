@@ -9,7 +9,7 @@ title: Developer starts interfere and loads a model
 
 ## Actor
 
-**Human developer** -- a Demarch contributor or user who wants to run local inference on their Apple Silicon Mac. They interact with interfere directly via CLI and HTTP, outside of the Clavain orchestration loop.
+**Human developer** -- a Sylveste contributor or user who wants to run local inference on their Apple Silicon Mac. They interact with interfere directly via CLI and HTTP, outside of the Clavain orchestration loop.
 
 ## Trigger
 

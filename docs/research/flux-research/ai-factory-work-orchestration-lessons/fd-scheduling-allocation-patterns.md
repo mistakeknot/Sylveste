@@ -351,7 +351,7 @@ The risk: stolen tasks may require context the stealing agent lacks. Mitigation:
 
 ---
 
-## Synthesis: Design Recommendations for Demarch
+## Synthesis: Design Recommendations for Sylveste
 
 1. **Hybrid block/dynamic scheduling** with aggressive release times (minutes, not hours). Reserve 40-60% of capacity for priority tiers, keep 40-60% in the dynamic pool. Near-zero spawn cost makes the dynamic pool cheap to maintain.
 

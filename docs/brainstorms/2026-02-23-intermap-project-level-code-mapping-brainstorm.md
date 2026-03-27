@@ -34,7 +34,7 @@ Child beads:
 
 ### Phase 1: Audit (understand before changing)
 
-Run every MCP tool against real Demarch projects. Evaluate:
+Run every MCP tool against real Sylveste projects. Evaluate:
 
 1. **Accuracy & completeness** — Are call graphs correct? Does impact_analysis catch real dependencies? Is code_structure missing important symbols?
 2. **Performance & reliability** — Go→Python subprocess latency, caching effectiveness, failure modes, timeout handling.
@@ -80,8 +80,8 @@ Track file modifications via git diff and update the code map continuously. Curr
 
 ## Success Criteria
 
-- All 6 existing tools pass accuracy audit against real Demarch projects
+- All 6 existing tools pass accuracy audit against real Sylveste projects
 - tldr-swinton extraction complete — no vendored files, clean import paths
-- Cross-project dependency graph covers the Demarch monorepo
+- Cross-project dependency graph covers the Sylveste monorepo
 - At least one interflux review agent consumes intermap data
 - Vision and roadmap docs written (replacing stubs)

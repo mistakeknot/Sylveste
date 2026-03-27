@@ -7,7 +7,7 @@ stage: design
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** none (follow-on to shipped Demarch-6i0.20)
+**Bead:** none (follow-on to shipped Sylveste-6i0.20)
 **Goal:** Add phase-based Exa tier routing, domain/recency filtering, session caching, and Jina Reader fallback to Skaffen's web tools.
 
 **Architecture:** Four independent improvements to `os/Skaffen/internal/tool/`. Tasks 1-2 (PhasedTool interface + tier routing) are coupled. Tasks 3-5 (filtering, caching, Jina fallback) are independent of each other but depend on Task 1's interface. All changes are in the `tool` package — no changes to `agentloop/` or `agent/` beyond what `registry.go` already supports.
@@ -17,7 +17,7 @@ stage: design
 **Prior Learnings:**
 - [`docs/solutions/patterns/web-search-ssrf-defense-20260312.md`](../solutions/patterns/web-search-ssrf-defense-20260312.md) — `RegisterForPhases()` not `Register()` for web tools (silent failure gotcha). Error-path body drains must be bounded.
 - [`docs/solutions/patterns/go-map-hash-determinism-20260223.md`](../solutions/patterns/go-map-hash-determinism-20260223.md) — Sort map keys before hashing when building cache keys. Go map iteration is non-deterministic.
-- [`docs/solutions/patterns/search-surfaces.md`](../solutions/patterns/search-surfaces.md) — Exa is primary web search provider in Demarch. Jina Reader adds a new content extraction surface.
+- [`docs/solutions/patterns/search-surfaces.md`](../solutions/patterns/search-surfaces.md) — Exa is primary web search provider in Sylveste. Jina Reader adds a new content extraction surface.
 
 ---
 

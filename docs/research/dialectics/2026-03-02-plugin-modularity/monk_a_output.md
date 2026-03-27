@@ -6,7 +6,7 @@ A plugin is not a convenient organizational unit. A plugin is a **sovereignty bo
 
 Sovereignty is binary. A module that cannot be versioned independently is not a plugin — it is a namespace. A module that cannot fail independently is not isolated — it is coupled with extra steps. A module that cannot be deleted without auditing its siblings has already lost the property that made it worth creating.
 
-The Demarch monorepo has 49 sovereign plugins. That number is not a problem to be solved. It is a **structural achievement** to be protected.
+The Sylveste monorepo has 49 sovereign plugins. That number is not a problem to be solved. It is a **structural achievement** to be protected.
 
 ## II. The Opponent's Best Shot
 
@@ -24,7 +24,7 @@ Every consolidation success story shares the same structure: an organization tha
 
 Segment did not prove that 140 services were too many. Segment proved that Segment could not build the routing, discovery, and deployment infrastructure to sustain 140 services. Uber did not prove that 2,200 services were architecturally wrong. Uber proved that their service mesh, their deployment pipeline, and their organizational coordination could not keep pace with the granularity they had chosen. The consolidation worked *for them* because rebuilding infrastructure was harder than surrendering boundaries.
 
-But the Demarch ecosystem is not Segment. It is not Uber. It is a plugin ecosystem — and plugin ecosystems have a completely different cost structure because **the infrastructure for sustaining fine-grained boundaries already exists and keeps getting better**.
+But the Sylveste ecosystem is not Segment. It is not Uber. It is a plugin ecosystem — and plugin ecosystems have a completely different cost structure because **the infrastructure for sustaining fine-grained boundaries already exists and keeps getting better**.
 
 Look at the evidence:
 
@@ -52,7 +52,7 @@ Rust workspaces show the same pattern. Crates within a workspace can technically
 
 Physical boundaries are Sam Newman's "ratchet" — they resist erosion mechanically. You cannot accidentally import across a process boundary. You cannot accidentally share state across a plugin manifest boundary. Logical boundaries require continuous policing, and continuous policing always loses to deadline pressure.
 
-The 49 plugins in Demarch are 49 ratchets. Each one mechanically resists the coupling that would otherwise accumulate silently.
+The 49 plugins in Sylveste are 49 ratchets. Each one mechanically resists the coupling that would otherwise accumulate silently.
 
 ## V. The Long Tail Is Where the Value Lives
 

@@ -1,12 +1,12 @@
 ---
 artifact_type: plan
-bead: Demarch-7xs
+bead: Sylveste-7xs
 stage: plan
 ---
 
 # Plan: Converge Interknow + Compound Docs
 
-**Bead:** Demarch-7xs
+**Bead:** Sylveste-7xs
 **PRD:** docs/prds/2026-03-07-converge-interknow-compound-docs.md
 
 ## Tasks

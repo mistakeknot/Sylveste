@@ -1,6 +1,6 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-bncp
+bead: Sylveste-bncp
 stage: discover
 ---
 

@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-og7m
+bead: Sylveste-og7m
 stage: plan-reviewed
 requirements:
   - F1: Event pipeline nucleation fix (.17)
@@ -12,7 +12,7 @@ review_status: revised after flux-drive (architecture, correctness, quality, use
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-og7m
+**Bead:** Sylveste-og7m
 **Goal:** Prepare the event pipeline for unification (fix nucleation + enrich generated schema + add source validation) and add observability for PHILOSOPHY.md's closed-loop maturity gap.
 
 **Architecture:** F1 and F2 are Go in L1 Intercore (event package). F3 is YAML in L2 Clavain + bash in /doctor. F1 and F2 share the event package but don't block each other. F3 is fully independent.
@@ -362,7 +362,7 @@ Behavior change: --limit N now means 'up to N events, balanced across
 sources' — each source gets at most ceil(N/sourceCount) rows. Callers
 debugging a single source should use source-specific query methods.
 
-Fixes Demarch-og7m.17"
+Fixes Sylveste-og7m.17"
 ```
 
 <verify>
@@ -523,7 +523,7 @@ tags on the Go types in `internal/event/`.
 
 Note: `interspect` and `intent` are valid Source values (accepted by `Event.Validate()`)
 but are NOT included in the `ListEvents`/`ListAllEvents` UNION ALL queries. They have
-dedicated query methods. The `.2` sub-epic (Demarch-og7m.2) will unify all sources.
+dedicated query methods. The `.2` sub-epic (Sylveste-og7m.2) will unify all sources.
 
 ## Schemas
 
@@ -540,7 +540,7 @@ Breaking changes require:
 3. Update all consumers listed above
 4. Dual-write during migration period
 
-The planned EventEnvelope v2 (Demarch-og7m.2.1) will update the struct and regenerate.
+The planned EventEnvelope v2 (Sylveste-og7m.2.1) will update the struct and regenerate.
 ```
 
 **Step 6: Build, test, and verify schemas**
@@ -560,7 +560,7 @@ the 7-value constraint. Event.Validate() rejects unknown sources via
 unexported validSources map. README documents which sources appear in
 the unified stream vs dedicated query methods.
 
-Fixes Demarch-og7m.21"
+Fixes Sylveste-og7m.21"
 ```
 
 <verify>
@@ -655,11 +655,11 @@ domains:
     current_stage: 2
     evidence:
       stage_1: "interphase hardcoded gate thresholds (TierHard/TierSoft)"
-      stage_2: "Demarch-0rgc: outcome recording schema + shadow mode active"
+      stage_2: "Sylveste-0rgc: outcome recording schema + shadow mode active"
       stage_3: null
       stage_4: null
     next_step: "promote B3 calibration from shadow — threshold tuning from outcomes"
-    related_bead: "Demarch-0rgc"
+    related_bead: "Sylveste-0rgc"
 
   fleet_budgets:
     description: "Agent token budget estimation"
@@ -721,7 +721,7 @@ Machine-readable stage definitions for PHILOSOPHY.md's 6 calibration
 domains. Reports: 1/6 at stage 4, 1/6 at stage 3, 4/6 at stages 1-2.
 review_triage at stage 3 (not 4): overrides are proposed, not automatic.
 
-Part of Demarch-og7m.23"
+Part of Sylveste-og7m.23"
 ```
 
 Then commit Clavain:
@@ -733,7 +733,7 @@ Reads docs/calibration-stages.yaml and reports per-domain stage with
 PASS/WARN/GAP markers. Uses awk (no pyyaml dependency). Surfaces the
 PHILOSOPHY.md closed-loop gap for sprint planning.
 
-Fixes Demarch-og7m.23"
+Fixes Sylveste-og7m.23"
 ```
 
 <verify>
@@ -748,7 +748,7 @@ Fixes Demarch-og7m.23"
 ## Post-Implementation
 
 After all 3 tasks land:
-1. Close beads: `bd close Demarch-og7m.17`, `bd close Demarch-og7m.21`, `bd close Demarch-og7m.23`
+1. Close beads: `bd close Sylveste-og7m.17`, `bd close Sylveste-og7m.21`, `bd close Sylveste-og7m.23`
 2. Push subproject repos: `cd core/intercore && git push`, `cd os/Clavain && git push`
 3. Export beads: `bd backup export && git add -f .beads/backup/ && git commit -m "chore(beads): close Batch 4" && git push`
 4. Update dependencies: .17 closes → unblocks og7m.2.2; .21 closes → unblocks og7m.2.1

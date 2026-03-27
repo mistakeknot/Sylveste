@@ -3,7 +3,7 @@ artifact_type: cuj
 journey: bigend-mission-control
 actor: regular user (developer managing multiple projects)
 criticality: p2
-bead: Demarch-2c7
+bead: Sylveste-2c7
 ---
 
 # Bigend Multi-Project Mission Control

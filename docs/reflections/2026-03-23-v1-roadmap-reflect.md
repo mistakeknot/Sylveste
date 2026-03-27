@@ -1,6 +1,6 @@
 ---
 artifact_type: reflection
-bead: Demarch-enxv
+bead: Sylveste-enxv
 stage: reflect
 ---
 
@@ -16,11 +16,11 @@ stage: reflect
 
 ## What could improve
 
-- **Epic scope is very large.** Demarch-enxv now tracks the full v0.7→v1.0 journey — potentially months of work across many sessions. The bead will stay open a long time. Consider: should milestone-level sub-epics be created (one per version gate) to provide intermediate closure signals?
+- **Epic scope is very large.** Sylveste-enxv now tracks the full v0.7→v1.0 journey — potentially months of work across many sessions. The bead will stay open a long time. Consider: should milestone-level sub-epics be created (one per version gate) to provide intermediate closure signals?
 
 - **The PRD only scoped v0.7 features.** Future milestones (v0.8, v0.9, v1.0) will need their own PRDs when we approach them. The roadmap artifact provides the guide but doesn't replace per-milestone planning.
 
-- **Gate threshold calibration (F3/Demarch-0rgc) needs its own brainstorm.** It's the largest gap — requires designing a calibration algorithm, not just wiring existing code. This bead should get its own sprint with a proper design phase.
+- **Gate threshold calibration (F3/Sylveste-0rgc) needs its own brainstorm.** It's the largest gap — requires designing a calibration algorithm, not just wiring existing code. This bead should get its own sprint with a proper design phase.
 
 ## Lessons learned
 

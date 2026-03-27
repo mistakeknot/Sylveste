@@ -90,7 +90,7 @@ views.NewPollardView(c, nil),
 
 **Step 3: Build to verify compilation**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go build ./cmd/...`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go build ./cmd/...`
 Expected: Clean build
 
 **Step 4: Commit**
@@ -154,7 +154,7 @@ func (c *Coordinator) StartRun(ctx context.Context, projectID string, hunterName
 
 **Step 2: Run tests**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go test -race ./internal/pollard/research/ -v`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go test -race ./internal/pollard/research/ -v`
 Expected: PASS
 
 **Step 3: Commit**
@@ -270,7 +270,7 @@ Add `"sort"` and `"time"` to imports.
 
 **Step 3: Build to verify compilation**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go build ./cmd/...`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go build ./cmd/...`
 Expected: Clean build
 
 **Step 4: Commit**
@@ -379,7 +379,7 @@ func (v *PollardView) View() string {
 
 **Step 4: Build and verify**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go build ./cmd/...`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go build ./cmd/...`
 Expected: Clean build
 
 **Step 5: Commit**
@@ -474,7 +474,7 @@ func (v *PollardView) renderDocument() string {
 
 **Step 2: Build and verify**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go build ./cmd/...`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go build ./cmd/...`
 Expected: Clean build
 
 **Step 3: Commit**
@@ -548,7 +548,7 @@ func (v *PollardView) ShortHelp() string {
 
 **Step 3: Build and verify**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go build ./cmd/...`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go build ./cmd/...`
 Expected: Clean build
 
 **Step 4: Commit**
@@ -729,7 +729,7 @@ func TestPollardView_RunCompletedClearsRunActive(t *testing.T) {
 
 **Step 2: Run tests**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go test -race ./internal/tui/views/ -run TestPollardView -v`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go test -race ./internal/tui/views/ -run TestPollardView -v`
 Expected: All 6 tests PASS (including StaleRunIDIgnored)
 
 **Step 3: Commit**
@@ -747,12 +747,12 @@ git commit -m "test(pollard): progressive reveal message handling"
 
 **Step 1: Build all binaries**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go build ./cmd/...`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go build ./cmd/...`
 Expected: Clean build, no warnings
 
 **Step 2: Run full test suite**
 
-Run: `cd /home/mk/projects/Demarch/apps/autarch && go test -race ./...`
+Run: `cd /home/mk/projects/Sylveste/apps/autarch && go test -race ./...`
 Expected: All packages PASS
 
 **Step 3: Check plan items off**

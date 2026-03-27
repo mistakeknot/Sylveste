@@ -8,7 +8,7 @@ stage: discover
 
 ## What We're Building
 
-**interfere** — a new interverse companion plugin (`interverse/interfere/`) that provides a custom MLX-LM-based local inference server for Demarch/Clavain, integrated into Clavain's routing system as Track B5 (local model routing). Each esoteric optimization technique is deployed as a monitored interlab experiment campaign.
+**interfere** — a new interverse companion plugin (`interverse/interfere/`) that provides a custom MLX-LM-based local inference server for Sylveste/Clavain, integrated into Clavain's routing system as Track B5 (local model routing). Each esoteric optimization technique is deployed as a monitored interlab experiment campaign.
 
 The goal is to maximize the efficiency/quality frontier: route 60-70% of Clavain's subagent work to local models (cost dominance), eliminate rate limits for interactive work (latency independence), keep sensitive code off cloud APIs (privacy sovereignty), and progressively integrate cross-disciplinary inference techniques from the research frontier.
 

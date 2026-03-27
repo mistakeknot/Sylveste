@@ -4,7 +4,7 @@
 **Bead ID:** iv-ewjom
 **Source:** https://github.com/Dicklesworthstone/post_compact_reminder
 **Source commit:** c59a468 (shallow clone)
-**Task:** Evaluate integration/inspiration value for Demarch (os/clavain, interverse/interdoc)
+**Task:** Evaluate integration/inspiration value for Sylveste (os/clavain, interverse/interdoc)
 
 ---
 
@@ -68,7 +68,7 @@ Four preset messages (minimal, detailed, checklist, default) covering different 
 
 ---
 
-## Transferable to Demarch
+## Transferable to Sylveste
 
 ### Pattern 1: Compaction-Aware Context Recovery (HIGH VALUE)
 

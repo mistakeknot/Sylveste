@@ -3,13 +3,13 @@
 **Reviewer:** fd-honcho-user-modeling
 **Date:** 2026-03-02
 **Target:** `research/hermes_agent/honcho_integration/`, `research/hermes_agent/hermes_cli/config.py`, and honcho/peer/workspace call sites
-**Decision Lens:** Patterns addressing gaps in Demarch's current session/memory model; architectural concepts over Honcho-specific API details
+**Decision Lens:** Patterns addressing gaps in Sylveste's current session/memory model; architectural concepts over Honcho-specific API details
 
 ---
 
 ## Executive Summary
 
-Hermes Agent implements a complete, production-tested user modeling layer on top of a standard chat gateway. Its core insight is that **user identity and conversation session are different primitives** and should be tracked separately. This cleanly maps onto gaps Demarch has in both intercom (which currently tracks `chat_jid` → `session_id` but loses user identity across resets) and Autarch (which has project-scoped sessions but no cross-project user representation). Four patterns are immediately adaptable; the linked-workspaces pattern requires platform-layer commitment.
+Hermes Agent implements a complete, production-tested user modeling layer on top of a standard chat gateway. Its core insight is that **user identity and conversation session are different primitives** and should be tracked separately. This cleanly maps onto gaps Sylveste has in both intercom (which currently tracks `chat_jid` → `session_id` but loses user identity across resets) and Autarch (which has project-scoped sessions but no cross-project user representation). Four patterns are immediately adaptable; the linked-workspaces pattern requires platform-layer commitment.
 
 ---
 
@@ -30,7 +30,7 @@ class HonchoSession:
 
 The `key` is a mutable session slot (`telegram:123456`). The `user_peer_id` is a stable identity that persists across session resets. This is the foundational primitive. Hermes derives `user_peer_id` from config (`peer_name`) or from the channel+chat_id combination when config is absent (`user-{channel}-{chat_id}`).
 
-**Gap in Demarch:** intercom's `db.ts` has `sessions` (keyed on `group_folder`) and `messages` (keyed on `chat_jid`), but no stable user-identity column. When a session resets via `deleteSession(groupFolder)`, all modeling state disappears. The `sender` field in `messages` is platform-local (WhatsApp phone number, Telegram user ID), not a normalized identity.
+**Gap in Sylveste:** intercom's `db.ts` has `sessions` (keyed on `group_folder`) and `messages` (keyed on `chat_jid`), but no stable user-identity column. When a session resets via `deleteSession(groupFolder)`, all modeling state disappears. The `sender` field in `messages` is platform-local (WhatsApp phone number, Telegram user ID), not a normalized identity.
 
 ### Finding 1.2 — Asymmetric observe_me/observe_others controls modeling scope [P1]
 
@@ -43,7 +43,7 @@ ai_config = SessionPeerConfig(observe_me=False, observe_others=True)
 
 The user peer is modeled (observe_me=True) — Honcho builds a persistent representation from the user's messages. The assistant peer is NOT self-modeled (observe_me=False), but it observes the user (observe_others=True). This is asymmetric by design: you want user representations to accumulate, but you don't want self-referential loops in the assistant's model.
 
-**Architectural concept:** This maps to a general principle — in any session memory system, distinguish between "things that should accumulate into a persistent user model" and "things that describe agent state for a single session." Demarch's current intercom stores both symmetrically as messages.
+**Architectural concept:** This maps to a general principle — in any session memory system, distinguish between "things that should accumulate into a persistent user model" and "things that describe agent state for a single session." Sylveste's current intercom stores both symmetrically as messages.
 
 ### Finding 1.3 — workspace_id namespaces multiple agents [P1]
 
@@ -55,7 +55,7 @@ workspace_id: str = "hermes"   # default: agent name
 _honcho_client = Honcho(workspace_id=config.workspace_id, ...)
 ```
 
-Each agent deployment gets its own workspace. Peers and sessions are scoped to a workspace, so users interacting with `hermes` and users interacting with `cursor` (another agent) do not collide unless linked (see Finding 4.2). In Demarch terms: Autarch and intercom would be separate workspaces, with an opt-in bridge.
+Each agent deployment gets its own workspace. Peers and sessions are scoped to a workspace, so users interacting with `hermes` and users interacting with `cursor` (another agent) do not collide unless linked (see Finding 4.2). In Sylveste terms: Autarch and intercom would be separate workspaces, with an opt-in bridge.
 
 ---
 
@@ -85,7 +85,7 @@ This is called once per user turn before the LLM call (`run_agent.py:2829`). The
 
 **Injection site:** `run_agent.py:1250-1273` formats as `"# Honcho User Context\n"` and injects into the system prompt for that turn. The system prompt itself is cached (`_cached_system_prompt`), but the Honcho context is turn-local.
 
-**Gap in Demarch:** intercom's `getRecentConversation()` (`db.ts:305-322`) returns raw N-most-recent messages. There is no semantic retrieval, no user representation, and no per-turn prefetch. The agent receives raw history without synthesis.
+**Gap in Sylveste:** intercom's `getRecentConversation()` (`db.ts:305-322`) returns raw N-most-recent messages. There is no semantic retrieval, no user representation, and no per-turn prefetch. The agent receives raw history without synthesis.
 
 ### Finding 2.2 — context_tokens budget controls prefetch size [P2]
 
@@ -97,7 +97,7 @@ context_tokens: int | None = None   # in config
 context_tokens=raw.get("contextTokens") or host_block.get("contextTokens")
 ```
 
-The `context_tokens` parameter sets a hard token ceiling on what `context()` returns. This prevents the prefetch from consuming too much of the LLM's context window. In Demarch: this directly maps to the "how much history to inject" parameter that intercom currently hardcodes via the `limit` arg in `getRecentConversation`.
+The `context_tokens` parameter sets a hard token ceiling on what `context()` returns. This prevents the prefetch from consuming too much of the LLM's context window. In Sylveste: this directly maps to the "how much history to inject" parameter that intercom currently hardcodes via the `limit` arg in `getRecentConversation`.
 
 ### Finding 2.3 — User observations are routed from memory tool to user model [P1]
 
@@ -110,7 +110,7 @@ if self._honcho and flush_target == "user" and args.get("action") == "add":
 
 When the agent writes to its memory tool with `target=user`, Hermes additionally routes that content to Honcho as a user-peer message tagged `[observation]`. This means structured agent observations (e.g., "user prefers short replies") accumulate in the Honcho model alongside raw conversational history.
 
-**Architectural concept:** There is a dual-write pattern here: memory tool writes go to the local file (MEMORY.md/USER.md) AND to the user model. The local file is authoritative for the current session; the remote model accumulates across sessions. Demarch could apply this to intercom's future memory tooling.
+**Architectural concept:** There is a dual-write pattern here: memory tool writes go to the local file (MEMORY.md/USER.md) AND to the user model. The local file is authoritative for the current session; the remote model accumulates across sessions. Sylveste could apply this to intercom's future memory tooling.
 
 ---
 
@@ -140,7 +140,7 @@ The `delete()` method (`session.py:280-285`) only removes the session from local
 
 **Contrast with intercom:** `deleteSession(groupFolder)` (`db.ts:549-551`) deletes the session row from SQLite. The session ID is gone. The messages remain in the `messages` table keyed by `chat_jid`, but there is no linkage back to a persistent user model. A "clear history" command by the user today destroys context that could have been used to model their preferences.
 
-**Gap in Demarch:** intercom needs a conceptual separation between "reset the conversation context the LLM sees" (clear session window) and "discard accumulated user modeling" (a much rarer and more intentional operation). Currently these are conflated.
+**Gap in Sylveste:** intercom needs a conceptual separation between "reset the conversation context the LLM sees" (clear session window) and "discard accumulated user modeling" (a much rarer and more intentional operation). Currently these are conflated.
 
 ### Finding 3.2 — Session key sanitization is explicit [P2]
 
@@ -179,7 +179,7 @@ The transcript format (`_format_migration_transcript`) wraps messages in `<prior
 
 `migrate_memory_files()` does the same for MEMORY.md and USER.md, wrapping each file with a `<prior_memory_file>` tag plus a description string. This is a clean bootstrapping pattern for any "activate new memory system on existing deployment" scenario.
 
-**Demarch relevance:** When Demarch adds any external user modeling system (Honcho or a Demarch-native equivalent), intercom's existing SQLite message history and any exported memory files need this migration path. The XML-wrap-with-provenance approach is directly reusable. The design principle: **when injecting old data into a new model, always add metadata explaining why the data exists and its relationship to live data**.
+**Sylveste relevance:** When Sylveste adds any external user modeling system (Honcho or a Sylveste-native equivalent), intercom's existing SQLite message history and any exported memory files need this migration path. The XML-wrap-with-provenance approach is directly reusable. The design principle: **when injecting old data into a new model, always add metadata explaining why the data exists and its relationship to live data**.
 
 ### Finding 4.2 — Migration is gated on session cache availability [P2]
 
@@ -192,7 +192,7 @@ if not honcho_session:
     return False
 ```
 
-Migration silently skips if the Honcho session hasn't been initialized yet. This is intentional but means `migrate_local_history()` can only be called after `get_or_create()`. **Implication for Demarch:** migration must be sequenced after session initialization, not during cold boot.
+Migration silently skips if the Honcho session hasn't been initialized yet. This is intentional but means `migrate_local_history()` can only be called after `get_or_create()`. **Implication for Sylveste:** migration must be sequenced after session initialization, not during cold boot.
 
 ---
 
@@ -224,7 +224,7 @@ workspace = (
 
 The resolution is explicit and tested at `tests/honcho_integration/test_client.py:107-135`. One config file services multiple agent hosts on the same machine, each getting host-specific overrides without duplicating shared settings.
 
-**Gap in Demarch:** Autarch's config is per-tool (`.coldwine/`, `.gurgeh/`, `.pollard/`). There is no shared config namespace for cross-tool or cross-agent settings. Any future user modeling layer for Autarch would need a comparable resolution chain, likely using `~/.autarch/config.yaml` or `~/.demarch/config.json` as the root.
+**Gap in Sylveste:** Autarch's config is per-tool (`.coldwine/`, `.gurgeh/`, `.pollard/`). There is no shared config namespace for cross-tool or cross-agent settings. Any future user modeling layer for Autarch would need a comparable resolution chain, likely using `~/.autarch/config.yaml` or `~/.sylveste/config.json` as the root.
 
 ### Finding 5.2 — Auto-enable when API key is present avoids dead config [P2]
 
@@ -242,7 +242,7 @@ else:
 
 This eliminates the common DX failure mode where a user sets an API key but forgets to also set `enabled: true`. The feature activates when the credential is present, disabled when it's absent. Explicit `enabled: false` overrides the auto-detection.
 
-**Demarch relevance:** Any optional integration in intercom or Autarch should follow this pattern. Currently intercom relies entirely on env vars being set; there is no graceful degradation or auto-detection at config load time.
+**Sylveste relevance:** Any optional integration in intercom or Autarch should follow this pattern. Currently intercom relies entirely on env vars being set; there is no graceful degradation or auto-detection at config load time.
 
 ### Finding 5.3 — `session_strategy` decouples session naming from platform topology [P2]
 
@@ -290,13 +290,13 @@ def get_linked_workspaces(self) -> list[str]:
 
 A single `~/.honcho/config.json` with `linkedHosts: ["cursor"]` means Hermes can query the user model accumulated from the user's Cursor IDE sessions. The resolved workspaces list is then used to query additional context sources at prefetch time.
 
-**Demarch relevance:** The L3 agents (Autarch and intercom) are separate applications with distinct session histories. A user who talks to Autarch's TUI and also uses intercom's Telegram bot is the same person. Without linked workspaces (or a Demarch-native equivalent), those two streams of user context are siloed. This is the highest-priority architectural concept in the review.
+**Sylveste relevance:** The L3 agents (Autarch and intercom) are separate applications with distinct session histories. A user who talks to Autarch's TUI and also uses intercom's Telegram bot is the same person. Without linked workspaces (or a Sylveste-native equivalent), those two streams of user context are siloed. This is the highest-priority architectural concept in the review.
 
 **Current state:** intercom has no cross-application user identity at all. Autarch's session model is project-scoped (`lastSessionId` per project directory in `.claude.json`), not user-scoped.
 
 ---
 
-## Synthesis: What Demarch's Current Model Lacks
+## Synthesis: What Sylveste's Current Model Lacks
 
 | Capability | Hermes Agent | intercom (current) | Autarch (current) |
 |---|---|---|---|
@@ -313,7 +313,7 @@ A single `~/.honcho/config.json` with `linkedHosts: ["cursor"]` means Hermes can
 
 ## Adaptation Opportunities
 
-The following items are concrete enough for Demarch bead creation. Ordered by prerequisite dependency — earlier items unblock later ones.
+The following items are concrete enough for Sylveste bead creation. Ordered by prerequisite dependency — earlier items unblock later ones.
 
 ### AO-1 [P0]: Define UserPeer as a first-class type in intercom
 
@@ -339,7 +339,7 @@ The following items are concrete enough for Demarch bead creation. Ordered by pr
 
 ### AO-3 [P1]: Add per-turn semantic context prefetch interface to intercom's runner
 
-**What:** Define a `ContextPrefetcher` interface in intercom's container-runner or IPC layer that takes `(userPeerId, userMessage)` and returns `{ representation: string, card: string }`. The initial implementation can be a no-op stub (returns empty strings). This interface is the integration point for any user modeling backend — Honcho, a Demarch-native system, or a simple embedding search over SQLite history.
+**What:** Define a `ContextPrefetcher` interface in intercom's container-runner or IPC layer that takes `(userPeerId, userMessage)` and returns `{ representation: string, card: string }`. The initial implementation can be a no-op stub (returns empty strings). This interface is the integration point for any user modeling backend — Honcho, a Sylveste-native system, or a simple embedding search over SQLite history.
 
 **Why:** Without this interface, adding user modeling later requires changes throughout the message dispatch pipeline. Defining the interface now as a stub costs little and makes the integration boundary explicit.
 
@@ -361,7 +361,7 @@ The following items are concrete enough for Demarch bead creation. Ordered by pr
 
 ### AO-5 [P1]: Add shared config namespace for Autarch cross-tool settings
 
-**What:** Define a `~/.demarch/config.json` (or `~/.autarch/config.json`) with a host-block resolution chain similar to Hermes's `~/.honcho/config.json`. This config governs settings shared across Autarch's tools (Bigend, Gurgeh, Coldwine, Pollard) and is the home for any future user-modeling integration key. Individual tools consult host blocks for overrides.
+**What:** Define a `~/.sylveste/config.json` (or `~/.autarch/config.json`) with a host-block resolution chain similar to Hermes's `~/.honcho/config.json`. This config governs settings shared across Autarch's tools (Bigend, Gurgeh, Coldwine, Pollard) and is the home for any future user-modeling integration key. Individual tools consult host blocks for overrides.
 
 **Why:** Autarch's current per-tool config directories (`.coldwine/`, `.gurgeh/`) cannot express cross-tool settings. Adding user modeling later requires a config root that all tools can read.
 
@@ -383,7 +383,7 @@ The following items are concrete enough for Demarch bead creation. Ordered by pr
 
 ### AO-7 [P1]: Define cross-application user identity bridge (Autarch ↔ intercom)
 
-**What:** Design a shared `user_peer_id` namespace that Autarch and intercom can both read. Concretely: a `~/.demarch/peers/` directory or a shared Postgres table (reusing intercomd's connection) where `(source_app, platform, platform_user_id) → user_peer_id`. Both applications write to this registry when they encounter a new user; both read from it when building context for a session.
+**What:** Design a shared `user_peer_id` namespace that Autarch and intercom can both read. Concretely: a `~/.sylveste/peers/` directory or a shared Postgres table (reusing intercomd's connection) where `(source_app, platform, platform_user_id) → user_peer_id`. Both applications write to this registry when they encounter a new user; both read from it when building context for a session.
 
 **Why:** The linked-workspaces pattern's value is in cross-application user model accumulation. Without a shared identity registry, Autarch and intercom users are permanently siloed even if they are the same person.
 

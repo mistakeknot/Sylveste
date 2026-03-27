@@ -18,7 +18,7 @@ Add a validation-first factory substrate to Clavain: adopt CXDB for artifact sto
 
 **CXDB hybrid architecture:** Intercore remains the sole system of record for sprint state (phases, gates, dispatches). CXDB owns artifact blobs (scenario trajectories, evidence packs, satisfaction scores) via its Blob CAS with BLAKE3 dedup. The Turn DAG spine is derived from Intercore events, enriched with blob references. This eliminates dual-write consistency problems while giving CXDB its natural role.
 
-**Binary distribution:** Demarch cross-compiles CXDB for 4 targets (linux-x86_64, linux-aarch64, darwin-x86_64, darwin-aarch64) and hosts binaries in a Demarch GitHub release. `clavain setup` downloads the right binary for the platform.
+**Binary distribution:** Sylveste cross-compiles CXDB for 4 targets (linux-x86_64, linux-aarch64, darwin-x86_64, darwin-aarch64) and hosts binaries in a Sylveste GitHub release. `clavain setup` downloads the right binary for the platform.
 
 **Holdout enforcement:** Defense in depth — (1) SessionStart hook excludes `.clavain/scenarios/holdout/` from agent context during Build phase, (2) post-hoc audit detects holdout access and invalidates satisfaction scores from contaminated sprints.
 
@@ -35,7 +35,7 @@ Add a validation-first factory substrate to Clavain: adopt CXDB for artifact sto
 **What:** Adopt StrongDM's open-source CXDB (github.com/strongdm/cxdb) for artifact storage and rich querying. Intercore remains the system of record for sprint state.
 
 **Acceptance criteria:**
-- [ ] Cross-compiled `cxdb-server` binaries for 4 platforms hosted in Demarch GitHub release
+- [ ] Cross-compiled `cxdb-server` binaries for 4 platforms hosted in Sylveste GitHub release
 - [ ] `clavain setup` downloads correct platform binary to `.clavain/cxdb/cxdb-server`
 - [ ] Service lifecycle commands: `clavain-cli cxdb-start`, `cxdb-stop`, `cxdb-status`
 - [ ] PID file management at `.clavain/cxdb/cxdb.pid`
@@ -247,7 +247,7 @@ holdout: false
 
 ## Resolved Questions (from flux-drive review)
 
-1. **CXDB binary distribution:** Demarch cross-compiles and hosts binaries. No upstream PR dependency.
+1. **CXDB binary distribution:** Sylveste cross-compiles and hosts binaries. No upstream PR dependency.
 2. **Type registry bootstrapping:** Ship `clavain-types.json` in plugin. Register all bundles during `cxdb-start` before health check passes. No lazy registration.
 3. **CXDB data lifecycle:** Defer retention policy. Blob CAS deduplicates naturally. Add compaction when storage becomes a measured problem.
 4. **Scenario authoring:** Failure-derived → dev (auto). Spec-derived → holdout (`scenario-generate --from-prd`). Human-curated → holdout (manual). Agents never write holdout.

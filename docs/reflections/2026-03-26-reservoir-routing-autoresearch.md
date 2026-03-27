@@ -1,6 +1,6 @@
 ---
 artifact_type: reflection
-bead: Demarch-4b7
+bead: Sylveste-4b7
 stage: reflect
 ---
 

@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-ysxe
+bead: Sylveste-ysxe
 stage: design
 version: 1
 ---

@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-enxv
+bead: Sylveste-enxv
 stage: design
 ---
 
@@ -8,7 +8,7 @@ stage: design
 
 ## Problem
 
-Demarch at v0.6.229 has the architecture for autonomous operation but lacks the wiring, calibration, and validation to declare stability. Without a structured milestone path, work is uncoordinated — some systems advance while critical gaps (gate calibration, external validation, observability) stall. The system needs a roadmap that defines what "v1.0-ready" means and provides actionable milestones to get there.
+Sylveste at v0.6.229 has the architecture for autonomous operation but lacks the wiring, calibration, and validation to declare stability. Without a structured milestone path, work is uncoordinated — some systems advance while critical gaps (gate calibration, external validation, observability) stall. The system needs a roadmap that defines what "v1.0-ready" means and provides actionable milestones to get there.
 
 ## Solution
 

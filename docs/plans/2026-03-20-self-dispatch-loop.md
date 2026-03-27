@@ -1,11 +1,11 @@
 ---
 artifact_type: plan
-bead: Demarch-ysxe.3
+bead: Sylveste-ysxe.3
 stage: plan-reviewed
 parent_plan: docs/plans/2026-03-20-ai-factory-wave1-foundation.md
 ---
 
-# Plan: Self-Dispatch Loop (Demarch-ysxe.3)
+# Plan: Self-Dispatch Loop (Sylveste-ysxe.3)
 
 ## Goal
 
@@ -13,8 +13,8 @@ Event-driven self-dispatch: agents autonomously claim and execute beads after co
 
 ## Prerequisites (both closed)
 
-- Demarch-ysxe.1: Atomic bead claim (provides `bead_claim()`)
-- Demarch-ysxe.2: Deterministic quality gates (provides `lib-gates.sh`)
+- Sylveste-ysxe.1: Atomic bead claim (provides `bead_claim()`)
+- Sylveste-ysxe.2: Deterministic quality gates (provides `lib-gates.sh`)
 
 ## Files to Create/Modify
 

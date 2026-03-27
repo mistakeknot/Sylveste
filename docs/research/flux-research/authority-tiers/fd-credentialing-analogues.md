@@ -229,7 +229,7 @@ The gap between when competence degrades and when the system detects it. OPPE cy
 | **709 ride** | On-demand reexamination — an orchestrator or human can trigger a targeted competency check at any time, not just on a schedule. The agent must pass to retain the credential. |
 | **Branch transfer requalification** | When an agent trained/evaluated on Domain A is asked to operate in Domain B, it cannot carry over Domain A credentials. It must pass Domain B's evaluation suite independently, even if the domains seem adjacent. |
 
-### Design Implications for Demarch
+### Design Implications for Sylveste
 
 1. **Two-axis authority model**: Agent authority should be factored into (a) a general trust tier (analogous to pay grade — how much autonomy the agent gets in any domain) and (b) domain-specific credentials (analogous to type ratings — which specific tools, APIs, or action classes the agent is authorized for).
 

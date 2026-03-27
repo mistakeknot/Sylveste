@@ -1,7 +1,7 @@
 # Rename `.tandemonium` to `.coldwine` — Analysis & Execution Log
 
 **Date:** 2026-02-24
-**Scope:** `/home/mk/projects/Demarch/apps/autarch`
+**Scope:** `/home/mk/projects/Sylveste/apps/autarch`
 
 ## Summary
 

@@ -1,7 +1,7 @@
 # Task 1: Harden lib-intercore.sh Wrapper Functions
 
 **Date:** 2026-02-24
-**File:** `/home/mk/projects/Demarch/os/clavain/hooks/lib-intercore.sh`
+**File:** `/home/mk/projects/Sylveste/os/clavain/hooks/lib-intercore.sh`
 **Status:** Complete
 
 ## Summary

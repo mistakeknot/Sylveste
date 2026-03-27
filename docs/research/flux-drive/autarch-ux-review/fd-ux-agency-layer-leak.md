@@ -2,7 +2,7 @@
 
 **Reviewer:** fd-ux-agency-layer-leak
 **Date:** 2026-02-25
-**Scope:** /home/mk/projects/Demarch/apps/autarch/
+**Scope:** /home/mk/projects/Sylveste/apps/autarch/
 **Lens:** Layered architecture separation of concerns -- every business rule, state machine, or policy decision found in the TUI layer is a defect against the "apps are pure renderers" contract.
 
 ---
@@ -23,7 +23,7 @@ Findings are prioritized by **blast radius** -- the amount of logic a second UI 
 
 ### Evidence
 
-The arbiter orchestrator at `/home/mk/projects/Demarch/apps/autarch/internal/gurgeh/arbiter/orchestrator.go` is a 1310-line agency engine containing:
+The arbiter orchestrator at `/home/mk/projects/Sylveste/apps/autarch/internal/gurgeh/arbiter/orchestrator.go` is a 1310-line agency engine containing:
 
 1. **8-phase state machine** (types.go:16-42): `PhaseVision -> PhaseProblem -> PhaseUsers -> PhaseFeaturesGoals -> PhaseCUJs -> PhaseRequirements -> PhaseScopeAssumptions -> PhaseAcceptanceCriteria`. The phase chain definition, phase ordering, and valid transitions are all hardcoded in the app layer. A second client must know this exact chain.
 
@@ -54,7 +54,7 @@ A web dashboard client for Gurgeh would need to reimplement: the phase chain, ad
 
 ### Evidence
 
-`/home/mk/projects/Demarch/apps/autarch/internal/tui/views/coldwine.go`, lines 359-399, contains a state machine that maps dispatch completion outcomes to task status transitions:
+`/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/coldwine.go`, lines 359-399, contains a state machine that maps dispatch completion outcomes to task status transitions:
 
 ```go
 // Lines 377-389: Dispatch outcome -> task status mapping
@@ -93,7 +93,7 @@ Any client monitoring dispatches and displaying task status must duplicate: the 
 
 ### Evidence
 
-`/home/mk/projects/Demarch/apps/autarch/internal/tui/views/coldwine.go`, lines 876-897, shows the Coldwine view directly calling `ic.RunCreate()` to create sprints:
+`/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/coldwine.go`, lines 876-897, shows the Coldwine view directly calling `ic.RunCreate()` to create sprints:
 
 ```go
 return func() tea.Msg {
@@ -123,7 +123,7 @@ Any client that creates sprints or dispatches tasks must duplicate: the timeout 
 
 ### Evidence
 
-`/home/mk/projects/Demarch/apps/autarch/internal/tui/views/pollard.go`, line 500:
+`/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/pollard.go`, line 500:
 
 ```go
 hunterNames := []string{"competitor-tracker", "hackernews-trendwatcher", "github-scout"}
@@ -133,7 +133,7 @@ The "Run Research" command palette action hardcodes which hunters to run. This i
 
 ### Related: Insight Linking Policy
 
-`/home/mk/projects/Demarch/apps/autarch/internal/tui/views/pollard.go`, lines 526-538, contains a spec selection policy for linking insights:
+`/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/pollard.go`, lines 526-538, contains a spec selection policy for linking insights:
 
 ```go
 // Link to the first validated spec; fall back to first spec
@@ -184,7 +184,7 @@ A second client performing spec quality assessment must implement both scoring s
 
 ### Evidence
 
-`/home/mk/projects/Demarch/apps/autarch/internal/tui/dispatch_watcher.go` implements a full dispatch completion detection protocol:
+`/home/mk/projects/Sylveste/apps/autarch/internal/tui/dispatch_watcher.go` implements a full dispatch completion detection protocol:
 
 - Polls `ic.DispatchList()` on a timer (lines 54-88)
 - Maintains a `known` map tracking dispatch IDs to last-seen status (line 27)
@@ -207,7 +207,7 @@ Any client monitoring dispatch progress must reimplement: the polling loop, know
 
 ### Evidence
 
-`/home/mk/projects/Demarch/apps/autarch/internal/coldwine/tasks/generate.go`, lines 46-116, contains a `Generator` that implements task decomposition policy:
+`/home/mk/projects/Sylveste/apps/autarch/internal/coldwine/tasks/generate.go`, lines 46-116, contains a `Generator` that implements task decomposition policy:
 
 - Decides whether an epic is "foundational" and needs a setup task (line 66)
 - Automatically generates a test task for every epic (lines 99-115)
@@ -230,7 +230,7 @@ A second client generating tasks from epics must reimplement the entire task gen
 
 ### Evidence
 
-`/home/mk/projects/Demarch/apps/autarch/internal/coldwine/prd/import.go` contains `ImportFromPRD()` which converts Gurgeh specs into Coldwine epics. The test (import_test.go:47-69) shows the conversion rules: a PRD becomes one epic; requirements become stories; complexity maps to estimate strings ("medium" -> "M"); priority integers map to priority labels (1 -> "p1").
+`/home/mk/projects/Sylveste/apps/autarch/internal/coldwine/prd/import.go` contains `ImportFromPRD()` which converts Gurgeh specs into Coldwine epics. The test (import_test.go:47-69) shows the conversion rules: a PRD becomes one epic; requirements become stories; complexity maps to estimate strings ("medium" -> "M"); priority integers map to priority labels (1 -> "p1").
 
 This is a domain translation layer that embeds business rules about how specs should decompose into epics. It sits in the app layer but represents OS-level workflow policy ("when a spec is ready, create these epics with these properties").
 
@@ -247,7 +247,7 @@ A second client doing spec-to-epic conversion must replicate the mapping rules. 
 
 ### Evidence
 
-`/home/mk/projects/Demarch/apps/autarch/internal/tui/views/sprint_commands.go` implements `/sprint` and `/dispatch` slash commands that call Intercore directly. While the command parsing itself is inherently TUI-specific, certain decisions within it are policy:
+`/home/mk/projects/Sylveste/apps/autarch/internal/tui/views/sprint_commands.go` implements `/sprint` and `/dispatch` slash commands that call Intercore directly. While the command parsing itself is inherently TUI-specific, certain decisions within it are policy:
 
 - `/sprint advance` (line 78-91): Automatically selects the first active run (`runs[0]`) when advancing. This "advance the most recent run" heuristic is a policy decision.
 - `/dispatch spawn` (line 166-188): Same pattern -- automatically targets the first active sprint's run.

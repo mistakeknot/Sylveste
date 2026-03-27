@@ -1,6 +1,6 @@
 # Plan: Skaffen Quality Signals
 
-**Bead:** Demarch-khlh
+**Bead:** Sylveste-khlh
 **PRD:** docs/prds/2026-03-14-skaffen-quality-signals.md
 **Date:** 2026-03-14
 

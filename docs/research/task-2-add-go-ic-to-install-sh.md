@@ -2,7 +2,7 @@
 
 ## Summary
 
-Modified `/home/mk/projects/Demarch/install.sh` to add Go as a hard prerequisite and an `ic` (intercore kernel) binary build step. The installer grew from 280 lines to 378 lines across four discrete changes.
+Modified `/home/mk/projects/Sylveste/install.sh` to add Go as a hard prerequisite and an `ic` (intercore kernel) binary build step. The installer grew from 280 lines to 378 lines across four discrete changes.
 
 ## Changes Made
 
@@ -97,4 +97,4 @@ The verification section now checks:
 
 ## File
 
-`/home/mk/projects/Demarch/install.sh` (378 lines)
+`/home/mk/projects/Sylveste/install.sh` (378 lines)

@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-7xm8
+bead: Sylveste-7xm8
 stage: design
 ---
 # PRD: Meta-Improvement Campaigns — Mutation History Store + Pilot
@@ -103,7 +103,7 @@ Build a SQLite-backed mutation history store owned by interlab, exposed via 3 ne
 - **Other meta-improvement campaigns** (interskill, intercheck, interlab-self) — separate beads
 - **Skaffen Orient integration** — mutation_query API should be Skaffen-friendly, but wiring is out of scope
 - **Multi-dimensional Pareto dominance** for `is_new_best` — start with scalar comparison
-- **Cross-project mutation sharing** via interlock broadcast — separate bead (Demarch-gpiv)
+- **Cross-project mutation sharing** via interlock broadcast — separate bead (Sylveste-gpiv)
 - **Campaign template/generator** — document patterns from the pilot, but no formal template system
 
 ## Dependencies

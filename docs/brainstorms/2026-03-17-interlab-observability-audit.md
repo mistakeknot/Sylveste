@@ -1,8 +1,8 @@
 # Brainstorm: Interlab Observability Audit
 
-> **Epic bead:** Demarch-dxzr
+> **Epic bead:** Sylveste-dxzr
 > **Date:** 2026-03-17
-> **Goal:** Ensure all Demarch components have measurable metrics for interlab optimization
+> **Goal:** Ensure all Sylveste components have measurable metrics for interlab optimization
 
 ## Executive Summary
 

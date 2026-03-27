@@ -2,7 +2,7 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Goal:** Enable a developer who has never seen Demarch to install and run `/clavain:route` in under 5 minutes.
+**Goal:** Enable a developer who has never seen Sylveste to install and run `/clavain:route` in under 5 minutes.
 
 **Architecture:** Three deliverables — a user-facing root README, a curl-fetchable install script, and three tier guides — validated by running the full install on a clean environment. The install script wraps existing automation (modpack-install.sh, claude plugins CLI) into a single entry point.
 
@@ -24,7 +24,7 @@ Read `README.md` to understand what content to preserve in the Architecture sect
 Replace `README.md` with user-facing content. Structure:
 
 ```markdown
-# Demarch
+# Sylveste
 
 Autonomous software development agency platform — brainstorm, plan, execute, review, and ship with multi-agent orchestration.
 
@@ -33,7 +33,7 @@ Autonomous software development agency platform — brainstorm, plan, execute, r
 Install Clavain and 30+ companion plugins in one command:
 
 \```bash
-curl -fsSL https://raw.githubusercontent.com/mistakeknot/Demarch/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/mistakeknot/Sylveste/main/install.sh | bash
 \```
 
 Then open Claude Code and run:
@@ -55,7 +55,7 @@ Then open Claude Code and run:
 |-------|-------------|------|
 | [Power User Guide](docs/guide-power-user.md) | Claude Code users adding Clavain to their workflow | 10 min read |
 | [Full Setup Guide](docs/guide-full-setup.md) | Users who want the complete platform (Go services, TUI tools) | 30 min setup |
-| [Contributing Guide](docs/guide-contributing.md) | Developers who want to modify or extend Demarch | 45 min setup |
+| [Contributing Guide](docs/guide-contributing.md) | Developers who want to modify or extend Sylveste | 45 min setup |
 
 ## How It Works
 
@@ -71,7 +71,7 @@ Clavain orchestrates a disciplined development lifecycle:
 
 ## Architecture
 
-Demarch is a monorepo with 5 pillars:
+Sylveste is a monorepo with 5 pillars:
 
 | Pillar | Layer | Description |
 |--------|-------|-------------|
@@ -91,7 +91,7 @@ All plugins are installed from the [interagency-marketplace](https://github.com/
 
 ### Naming Convention
 
-All module names are **lowercase** except **Clavain** (proper noun), **Demarch** (project name), **Interverse** (ecosystem name), and **Autarch** (proper noun).
+All module names are **lowercase** except **Clavain** (proper noun), **Sylveste** (project name), **Interverse** (ecosystem name), and **Autarch** (proper noun).
 
 ## License
 
@@ -151,7 +151,7 @@ Create `install.sh` at the repo root. The script must:
    - Count installed companion plugins (from cache directory)
 8. Print success message:
    ```
-   Demarch installed successfully!
+   Sylveste installed successfully!
 
    Next steps:
      1. Open Claude Code in any project: claude
@@ -159,9 +159,9 @@ Create `install.sh` at the repo root. The script must:
      3. Run: /clavain:route     (start working)
 
    Guides:
-     Power user:   https://github.com/mistakeknot/Demarch/blob/main/docs/guide-power-user.md
-     Full setup:   https://github.com/mistakeknot/Demarch/blob/main/docs/guide-full-setup.md
-     Contributing: https://github.com/mistakeknot/Demarch/blob/main/docs/guide-contributing.md
+     Power user:   https://github.com/mistakeknot/Sylveste/blob/main/docs/guide-power-user.md
+     Full setup:   https://github.com/mistakeknot/Sylveste/blob/main/docs/guide-full-setup.md
+     Contributing: https://github.com/mistakeknot/Sylveste/blob/main/docs/guide-contributing.md
    ```
 
 **Implementation notes:**
@@ -217,7 +217,7 @@ Structure:
 ## Install
 
 \```bash
-curl -fsSL https://raw.githubusercontent.com/mistakeknot/Demarch/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/mistakeknot/Sylveste/main/install.sh | bash
 \```
 
 Then in Claude Code:
@@ -282,7 +282,7 @@ git commit -m "docs: add power user guide for Clavain workflow"
 
 **Step 1: Write the guide**
 
-Target audience: User who wants the complete Demarch platform including Go services.
+Target audience: User who wants the complete Sylveste platform including Go services.
 
 Structure:
 ```markdown
@@ -365,7 +365,7 @@ git commit -m "docs: add full setup guide with Go stack and optional services"
 
 **Step 1: Write the guide**
 
-Target audience: Developer who wants to modify or extend Demarch.
+Target audience: Developer who wants to modify or extend Sylveste.
 
 Structure:
 ```markdown
@@ -378,8 +378,8 @@ Structure:
 ## Clone the Monorepo
 
 \```bash
-git clone https://github.com/mistakeknot/Demarch.git
-cd Demarch
+git clone https://github.com/mistakeknot/Sylveste.git
+cd Sylveste
 \```
 
 Note: Each subproject (os/clavain, interverse/interflux, etc.) keeps its own
@@ -425,7 +425,7 @@ PRs are reviewed with multi-agent flux-drive. To self-review:
 
 [Link to CLAUDE.md for monorepo structure]
 [Link to individual pillar AGENTS.md files]
-[Naming conventions: all lowercase except Clavain, Demarch, Interverse, Autarch]
+[Naming conventions: all lowercase except Clavain, Sylveste, Interverse, Autarch]
 ```
 
 **Step 2: Commit**

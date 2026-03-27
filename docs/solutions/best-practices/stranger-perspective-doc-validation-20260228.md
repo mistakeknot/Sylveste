@@ -18,7 +18,7 @@ Documentation written during feature planning (brainstorms, PRDs, guides) quickl
 
 ## Drift Classes Discovered
 
-The validation of Demarch's first-stranger experience (README, install script, 3 tier guides) found **23 issues** across 5 drift classes:
+The validation of Sylveste's first-stranger experience (README, install script, 3 tier guides) found **23 issues** across 5 drift classes:
 
 | Drift Class | Example | Count |
 |------------|---------|-------|
@@ -28,7 +28,7 @@ The validation of Demarch's first-stranger experience (README, install script, 3
 | **Deprecated commands in examples** | `bd sync` shown as workflow step despite being a deprecated no-op | 2 |
 | **Version/output staleness** | Doctor expected output showed v0.6.76 when actual is v0.6.110 | 3 |
 | **Missing prerequisites** | Power user guide omitted jq and git (required by install.sh) | 1 |
-| **Ambiguous paths** | `cd Demarch/core/intercore` without clarifying working directory | 3 |
+| **Ambiguous paths** | `cd Sylveste/core/intercore` without clarifying working directory | 3 |
 
 ## Solution Pattern
 

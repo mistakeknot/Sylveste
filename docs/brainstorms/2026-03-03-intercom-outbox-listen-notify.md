@@ -154,7 +154,7 @@ After processing each row:
 
 ## Alignment
 
-**Alignment:** This follows Demarch's "adopt mature tools, don't rebuild" philosophy — using Postgres LISTEN/NOTIFY (a battle-tested feature available since Postgres 9.0) instead of building custom message queuing infrastructure.
+**Alignment:** This follows Sylveste's "adopt mature tools, don't rebuild" philosophy — using Postgres LISTEN/NOTIFY (a battle-tested feature available since Postgres 9.0) instead of building custom message queuing infrastructure.
 
 **Conflict/Risk:** None. The outbox pattern reduces accidental complexity (fire-and-forget HTTP → durable write) while preserving the dual-process boundary that aligns with "composition over capability."
 

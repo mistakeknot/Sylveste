@@ -1,11 +1,11 @@
 ---
 artifact_type: plan
-bead: Demarch-4b7
+bead: Sylveste-4b7
 stage: planned
 features:
-  - Demarch-dbc  # F1: Training data generator
-  - Demarch-dp1  # F2: Evaluation harness
-  - Demarch-bgu  # F3: Hidden state extraction
+  - Sylveste-dbc  # F1: Training data generator
+  - Sylveste-dp1  # F2: Evaluation harness
+  - Sylveste-bgu  # F3: Hidden state extraction
 reviewed: true
 review_findings: 5-critical, 5-serious, 5-moderate
 ---
@@ -34,7 +34,7 @@ Move `import mlx.core as mx` and `import mlx.nn as nn` from module level into me
 
 ## Tasks
 
-### T1: Training data generator (Demarch-dbc)
+### T1: Training data generator (Sylveste-dbc)
 
 **File:** `interverse/interfere/server/experiments/training_data.py`
 
@@ -55,7 +55,7 @@ Create a Python module with:
 - Reproducible with same seed
 - `num_per_class=0` raises `ValueError`
 
-### T2: Extend ReservoirReadout with configurable activation (Demarch-dbc)
+### T2: Extend ReservoirReadout with configurable activation (Sylveste-dbc)
 
 **File:** `interverse/interfere/server/experiments/reservoir_routing.py`
 
@@ -70,7 +70,7 @@ Create a Python module with:
 - Test metadata sidecar save/load roundtrip
 - Test hidden_dim mismatch raises clear error on forward pass
 
-### T3: Hidden state extraction (Demarch-bgu)
+### T3: Hidden state extraction (Sylveste-bgu)
 
 **File:** `interverse/interfere/server/inference.py` (as private method `_extract_hidden_state`)
 
@@ -104,7 +104,7 @@ Implementation:
 - `tap_layer > model depth` raises ValueError
 - `tap_layer == model depth` works (last layer)
 
-### T4: Wire reservoir hook into InferenceEngine (Demarch-bgu)
+### T4: Wire reservoir hook into InferenceEngine (Sylveste-bgu)
 
 **File:** `interverse/interfere/server/inference.py`
 
@@ -120,7 +120,7 @@ In `generate()`, before the stream_generate loop:
 
 **Test:** Verify `GenerationMetrics.routing_probs` is populated with correct label keys when reservoir_routing is enabled.
 
-### T5: Training script (Demarch-dp1)
+### T5: Training script (Sylveste-dp1)
 
 **File:** `interverse/interfere/server/experiments/train_reservoir.py`
 
@@ -155,7 +155,7 @@ When `output_format == "metric"`, print METRIC lines to stdout and emit `METRIC 
 
 **Test:** Unit test that training loop converges (loss decreases) and all classes appear in predictions.
 
-### T6: Evaluation harness script (Demarch-dp1)
+### T6: Evaluation harness script (Sylveste-dp1)
 
 **File:** `interverse/interfere/scripts/interlab-reservoir-tune.sh` (in `scripts/` not project root)
 

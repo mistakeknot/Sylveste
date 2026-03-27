@@ -52,6 +52,6 @@ The primary strategic frontier. Evidence-driven agent selection — the flywheel
 
 ## Bugs
 
-- **Demarch-k1b** Swept verdicts attributed to sweeping session, not originating session
-- **Demarch-cwj** `_interspect_next_seq` TOCTOU race in evidence insertion
-- **Demarch-xx4** Bootstrap marker `/tmp/interstat-bootstrap` has no writer
+- **Sylveste-k1b** Swept verdicts attributed to sweeping session, not originating session
+- **Sylveste-cwj** `_interspect_next_seq` TOCTOU race in evidence insertion
+- **Sylveste-xx4** Bootstrap marker `/tmp/interstat-bootstrap` has no writer

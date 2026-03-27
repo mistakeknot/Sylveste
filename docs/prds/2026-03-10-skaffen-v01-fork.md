@@ -1,14 +1,14 @@
 ---
 artifact_type: prd
-bead: Demarch-rp5
+bead: Sylveste-rp5
 stage: design
 status: superseded
-note: "Rust fork completed (Demarch-rp5 CLOSED) but superseded by Go rewrite due to license contamination"
+note: "Rust fork completed (Sylveste-rp5 CLOSED) but superseded by Go rewrite due to license contamination"
 ---
 # PRD: Skaffen v0.1 — Fork pi_agent_rust, Rebrand, CI Green
 
 ## Problem
-Demarch needs a sovereign agent runtime (Skaffen) where OODARC, evidence pipelines, and phase gates are architectural primitives. pi_agent_rust is the best fork base (Rust, 67MB memory, 3857+ tests, Elm TUI, capability-gated extensions) but ships with pi/claude branding and depends on unpublished custom crates we don't control.
+Sylveste needs a sovereign agent runtime (Skaffen) where OODARC, evidence pipelines, and phase gates are architectural primitives. pi_agent_rust is the best fork base (Rust, 67MB memory, 3857+ tests, Elm TUI, capability-gated extensions) but ships with pi/claude branding and depends on unpublished custom crates we don't control.
 
 ## Solution
 Hard-fork pi_agent_rust into the standalone Skaffen repo. Strip branding, vendor custom deps, add a minimal OODARC insertion point, establish performance baselines, and get CI green. This is the mechanical foundation for v0.2+ architectural changes.
@@ -22,7 +22,7 @@ Hard-fork pi_agent_rust into the standalone Skaffen repo. Strip branding, vendor
 - [ ] Binary name is `skaffen` in Cargo.toml `[[bin]]` section
 - [ ] `cargo build` produces a `skaffen` binary (debug + release)
 - [ ] No user-visible strings contain "pi", "claude", or "anthropic" (grep verify)
-- [ ] README.md updated with Skaffen identity and Demarch context
+- [ ] README.md updated with Skaffen identity and Sylveste context
 - [ ] License file preserved/updated per upstream terms
 
 ### F2: Vendor Custom Dependencies
@@ -76,7 +76,7 @@ Hard-fork pi_agent_rust into the standalone Skaffen repo. Strip branding, vendor
 - No crates.io publishing
 
 ## Dependencies
-- **pi_agent_rust source:** Available at `research/pi_agent_rust/` in the Demarch monorepo
+- **pi_agent_rust source:** Available at `research/pi_agent_rust/` in the Sylveste monorepo
 - **Custom crate sources:** asupersync, charmed_rust, rich_rust, sqlmodel_rust (need to locate source repos or extract from pi_agent_rust's Cargo.lock)
 - **Skaffen GitHub repo:** `github.com/mistakeknot/Skaffen` (exists, currently docs-only)
 - **Rust toolchain:** 1.85+ (matching pi_agent_rust's edition 2024)

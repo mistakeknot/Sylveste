@@ -2,7 +2,7 @@
 
 **Date:** 2026-02-22
 **Diff analyzed:** /tmp/qg-diff-1771785677.txt
-**Primary output:** /home/mk/projects/Demarch/interverse/interflux/.clavain/quality-gates/fd-architecture.md
+**Primary output:** /home/mk/projects/Sylveste/interverse/interflux/.clavain/quality-gates/fd-architecture.md
 
 ---
 

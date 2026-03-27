@@ -1,12 +1,12 @@
 # PRD: F19 Unified Compose
 
-**Bead:** Demarch-jpum.12
+**Bead:** Sylveste-jpum.12
 **Date:** 2026-03-25
 **Status:** Draft
 
 ## Overview
 
-Compose four Meadowsyn experiments (F11 fixed-stars, F12 semantic-zoom, F13 ambient-v2, F14 color-switch) into a single unified Ops Room visualization. This is the canonical Meadowsyn view — the "biggest" display that shows the full Demarch factory.
+Compose four Meadowsyn experiments (F11 fixed-stars, F12 semantic-zoom, F13 ambient-v2, F14 color-switch) into a single unified Ops Room visualization. This is the canonical Meadowsyn view — the "biggest" display that shows the full Sylveste factory.
 
 ## User Stories
 

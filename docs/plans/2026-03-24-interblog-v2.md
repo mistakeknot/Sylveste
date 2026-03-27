@@ -91,13 +91,13 @@ stage: design
 
 **Step 1: Initialize Astro project**
 ```bash
-cd /home/mk/projects/Demarch/apps
+cd /home/mk/projects/Sylveste/apps
 pnpm create astro@latest interblog -- --template minimal --typescript strict --install --no-git
 ```
 
 **Step 2: Add dependencies**
 ```bash
-cd /home/mk/projects/Demarch/apps/interblog
+cd /home/mk/projects/Sylveste/apps/interblog
 pnpm add @astrojs/mdx @astrojs/rss @astrojs/sitemap @tailwindcss/vite tailwindcss @octokit/rest
 ```
 
@@ -126,7 +126,7 @@ export default defineConfig({
 {
   "name": "interblog",
   "version": "0.1.0",
-  "description": "Auto-generating engineering blog — surfaces themes from Demarch ecosystem, generates drafts, bridges to Texturaize for editorial review.",
+  "description": "Auto-generating engineering blog — surfaces themes from Sylveste ecosystem, generates drafts, bridges to Texturaize for editorial review.",
   "author": { "name": "mistakeknot" },
   "license": "MIT",
   "keywords": ["blog", "editorial", "content", "engineering", "systems-thinking"],
@@ -186,7 +186,7 @@ git commit -m "feat(interblog): scaffold Astro project + plugin registration"
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/apps/interblog && pnpm build`
+- run: `cd /home/mk/projects/Sylveste/apps/interblog && pnpm build`
   expect: exit 0
 </verify>
 
@@ -236,7 +236,7 @@ git commit -m "feat(interblog): first seed post for editorial portfolio"
 ```
 
 <verify>
-- run: `test -f /home/mk/projects/Demarch/apps/interblog/src/content/published/2026-03-24-*.mdx`
+- run: `test -f /home/mk/projects/Sylveste/apps/interblog/src/content/published/2026-03-24-*.mdx`
   expect: exit 0
 </verify>
 
@@ -297,7 +297,7 @@ git commit -m "feat(interblog): content collection schemas for drafts, review, p
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/apps/interblog && pnpm build`
+- run: `cd /home/mk/projects/Sylveste/apps/interblog && pnpm build`
   expect: exit 0
 </verify>
 
@@ -547,7 +547,7 @@ git commit -m "feat(interblog): post layout with Gwern sidenotes (JS-aligned) + 
 ```
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/apps/interblog && pnpm build`
+- run: `cd /home/mk/projects/Sylveste/apps/interblog && pnpm build`
   expect: exit 0
 </verify>
 
@@ -560,7 +560,7 @@ Same as v1 Tasks 4 + 5 combined. Index page lists published posts (filtered by `
 **Commit:** `feat(interblog): index page + RSS feed`
 
 <verify>
-- run: `cd /home/mk/projects/Demarch/apps/interblog && pnpm build`
+- run: `cd /home/mk/projects/Sylveste/apps/interblog && pnpm build`
   expect: exit 0
 </verify>
 
@@ -587,9 +587,9 @@ Same as v1 Tasks 6-8 with these corrections:
 **Commit:** `feat(interblog): scan, pitch, draft skills`
 
 <verify>
-- run: `test -f /home/mk/projects/Demarch/apps/interblog/skills/scan/SKILL.md`
+- run: `test -f /home/mk/projects/Sylveste/apps/interblog/skills/scan/SKILL.md`
   expect: exit 0
-- run: `test -f /home/mk/projects/Demarch/apps/interblog/skills/draft/SKILL.md`
+- run: `test -f /home/mk/projects/Sylveste/apps/interblog/skills/draft/SKILL.md`
   expect: exit 0
 </verify>
 
@@ -660,7 +660,7 @@ Report the session URL to mk for forwarding to partner via Signal.
 **Commit:** `feat(interblog): send skill — POST draft to Texturaize bridge`
 
 <verify>
-- run: `test -f /home/mk/projects/Demarch/apps/interblog/skills/send/SKILL.md`
+- run: `test -f /home/mk/projects/Sylveste/apps/interblog/skills/send/SKILL.md`
   expect: exit 0
 </verify>
 
@@ -1082,7 +1082,7 @@ git commit -m "feat(interblog): webhook receiver — GitHub API commit, HMAC ver
 ```
 
 <verify>
-- run: `test -f /home/mk/projects/Demarch/apps/interblog/api/webhook/texturaize.ts`
+- run: `test -f /home/mk/projects/Sylveste/apps/interblog/api/webhook/texturaize.ts`
   expect: exit 0
 </verify>
 

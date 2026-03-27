@@ -8,7 +8,7 @@ Owner: `Dicklesworthstone`
 
 - Owner repos discovered: 170 (original scan 2026-02-27)
 - Kept after triage: 28 (score >= 85, relevance: integration or both)
-- Removed: 142 (low relevance to Demarch)
+- Removed: 142 (low relevance to Sylveste)
 - Disk reclaimed: ~4.4 GB (6.6 GB → 1.9 GB)
 
 ## Triage Criteria
@@ -17,7 +17,7 @@ Repos kept if: **score >= 85** AND **relevance_type in (integration, both)**. Sc
 
 ## Integration Philosophy
 
-Do not replicate fully developed external projects. Adopt tools directly (e.g., `dcg` as a hook), port specific patterns/packages into Demarch's codebase, or take design inspiration. See `MEMORY.md` → "External Repos — Integration Philosophy".
+Do not replicate fully developed external projects. Adopt tools directly (e.g., `dcg` as a hook), port specific patterns/packages into Sylveste's codebase, or take design inspiration. See `MEMORY.md` → "External Repos — Integration Philosophy".
 
 ## Assessed Repos (with detailed write-ups)
 

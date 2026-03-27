@@ -1,6 +1,6 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-jpum
+bead: Sylveste-jpum
 stage: discover
 ---
 

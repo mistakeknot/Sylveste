@@ -62,11 +62,11 @@ domains:
     current_stage: 2
     evidence:
       stage_1: "interphase hardcoded gate thresholds (TierHard/TierSoft)"
-      stage_2: "Demarch-0rgc: outcome recording schema + shadow mode active"
+      stage_2: "Sylveste-0rgc: outcome recording schema + shadow mode active"
       stage_3: null
       stage_4: null
     next_step: "promote B3 calibration from shadow — threshold tuning from outcomes"
-    related_bead: "Demarch-0rgc"
+    related_bead: "Sylveste-0rgc"
 
   fleet_budgets:
     description: "Agent token budget estimation"

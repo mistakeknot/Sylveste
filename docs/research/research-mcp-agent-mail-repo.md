@@ -1,7 +1,7 @@
 # MCP Agent Mail Research — Architecture & Protocol Analysis
 
 **Date:** 2026-02-24  
-**Project:** `/home/mk/projects/Demarch/research/mcp_agent_mail`  
+**Project:** `/home/mk/projects/Sylveste/research/mcp_agent_mail`  
 **Status:** Production multi-agent coordination server (FastMCP + HTTP + SQLite + Git)
 
 ---
@@ -40,7 +40,7 @@
 
 ### Entry Points & Modules
 
-**Core Python package:** `/home/mk/projects/Demarch/research/mcp_agent_mail/src/mcp_agent_mail/`
+**Core Python package:** `/home/mk/projects/Sylveste/research/mcp_agent_mail/src/mcp_agent_mail/`
 
 | Module | LoC | Purpose |
 |--------|-----|---------|

@@ -103,7 +103,7 @@ causal and entity edges. For a coding agent:
   the graph lags 30-300s behind the conversation in a fast session.
 - **Dollar cost**: At Haiku rates ($0.25/1M input), 100 consolidation calls
   with ~2K tokens each = $0.05 per session. Negligible, but adds up at fleet
-  scale (Demarch targets $1.17/landable change).
+  scale (Sylveste targets $1.17/landable change).
 
 The fast path (temporal + semantic) is cheap: timestamp append + one embedding
 call per event. This is feasible. The slow path (causal + entity) is where the
@@ -165,7 +165,7 @@ temporal chain. Turn order IS the temporal graph. Free.
 
 **Semantic graph: partially useful.** Could help cross-session recall ("I
 fixed a similar bug in package X last week"). But Skaffen can get this from
-`cass search` (already integrated into the Demarch ecosystem) without building
+`cass search` (already integrated into the Sylveste ecosystem) without building
 a dedicated embedding index.
 
 **Causal graph: the interesting one, but redundant for code.** Code has

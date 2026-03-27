@@ -2,7 +2,7 @@
 
 **Date:** 2026-02-28
 **Bead IDs:** iv-bu3vx (claude_code_agent_farm), iv-4gdfl (destructive_command_guard)
-**Task:** Evaluate integration/inspiration value for Demarch
+**Task:** Evaluate integration/inspiration value for Sylveste
 
 ---
 
@@ -27,7 +27,7 @@ The code is well-structured, heavily commented, and defensively written:
 
 There are no automated tests (only manual verification via the doctor command) and the design uses shell-scraping of tmux pane output to detect Claude Code state, which is inherently brittle. The prompts directory contains 40+ prompt templates covering essentially every major tech stack.
 
-**Relevance to Demarch:** Directly parallels Clavain's subagent dispatch — the agent farm is the external standalone version of what Clavain's sprint workflows do inside Claude Code, and its coordination layer solves the same multi-agent conflict problem that interlock addresses.
+**Relevance to Sylveste:** Directly parallels Clavain's subagent dispatch — the agent farm is the external standalone version of what Clavain's sprint workflows do inside Claude Code, and its coordination layer solves the same multi-agent conflict problem that interlock addresses.
 
 ---
 
@@ -55,7 +55,7 @@ There are no automated tests (only manual verification via the doctor command) a
 
 - **Cooperating agents via prompt-only coordination.** The most architecturally interesting insight: the full multi-agent coordination protocol (lock files, work registry, completed-work log, planned-work queue in `/coordination/`) is entirely driven by the prompt. No code enforces it. The LLM reads and writes JSON files using normal file tools. This demonstrates that interlock's coordination layer could be implemented as a pure-prompt protocol without any compiled MCP server, at least for simpler workflows.
 
-- **Three workflow archetypes: bug-fix, best-practices, cooperating.** The clean separation into these three modes (each with its own prompt and config) maps well to how Clavain could organize sprint types. The best-practices mode (track implementation progress in a markdown file, compute completion %) is particularly applicable to Demarch's own codebase improvement runs.
+- **Three workflow archetypes: bug-fix, best-practices, cooperating.** The clean separation into these three modes (each with its own prompt and config) maps well to how Clavain could organize sprint types. The best-practices mode (track implementation progress in a markdown file, compute completion %) is particularly applicable to Sylveste's own codebase improvement runs.
 
 - **Context percentage detection via tmux scraping.** Four regex patterns against `Context left until auto-compact: N%` and variants. When context drops below threshold (default 20%), the orchestrator sends `/clear` rather than restarting — a lighter-weight recovery. Clavain's long-running sessions should implement this distinction (context-clear vs full restart).
 
@@ -97,7 +97,7 @@ There are no automated tests (only manual verification via the doctor command) a
 - JSON robot-mode output (`--robot` / `DCG_ROBOT=1`), structured exit codes (0=allow, 1=deny, 2=warn, 3=config, 4=parse, 5=io)
 - CI scan mode with SARIF output for pre-commit and GitHub Actions integration
 
-**Relevance to Demarch:** Demarch's current agent safety relies on container isolation (intercom) and Claude Code permission prompts. dcg is a complementary pre-execution layer that blocks at the tool invocation level — directly relevant to Clavain's `PreToolUse` hook infrastructure and to any agent farm that uses `--dangerously-skip-permissions`.
+**Relevance to Sylveste:** Sylveste's current agent safety relies on container isolation (intercom) and Claude Code permission prompts. dcg is a complementary pre-execution layer that blocks at the tool invocation level — directly relevant to Clavain's `PreToolUse` hook infrastructure and to any agent farm that uses `--dangerously-skip-permissions`.
 
 ---
 
@@ -109,11 +109,11 @@ There are no automated tests (only manual verification via the doctor command) a
 
 - **MCP server mode for interlock.** `dcg mcp-server` exposes `check_command` as an MCP tool. Interlock's orchestrator could call this tool before dispatching any Bash command to a subagent — a pre-dispatch safety check that happens at the coordination layer rather than at the agent boundary.
 
-- **Custom packs for Demarch-specific tooling.** dcg supports YAML-defined custom packs in `.dcg/packs/*.yaml`. Demarch could define packs for its own dangerous CLI commands: `bd close --all`, `mutagen sync pause`, `egcleanup`, `ic publish --force`, etc.
+- **Custom packs for Sylveste-specific tooling.** dcg supports YAML-defined custom packs in `.dcg/packs/*.yaml`. Sylveste could define packs for its own dangerous CLI commands: `bd close --all`, `mutagen sync pause`, `egcleanup`, `ic publish --force`, etc.
 
-- **CI scan mode for pre-commit.** The scan mode (`dcg scan --format sarif`) can be integrated into Demarch's CI pipelines to catch committed scripts containing destructive commands before they reach production.
+- **CI scan mode for pre-commit.** The scan mode (`dcg scan --format sarif`) can be integrated into Sylveste's CI pipelines to catch committed scripts containing destructive commands before they reach production.
 
-- **Agent detection for trust tiering.** dcg detects Claude Code via `CLAUDE_CODE=1` or `CLAUDE_SESSION_ID`. Demarch's subagent spawner could set `CLAUDE_CODE=1` and then configure `agents.claude-code.trust_level = "high"` (or `"low"` for untrusted prompts) rather than blocking everything equally.
+- **Agent detection for trust tiering.** dcg detects Claude Code via `CLAUDE_CODE=1` or `CLAUDE_SESSION_ID`. Sylveste's subagent spawner could set `CLAUDE_CODE=1` and then configure `agents.claude-code.trust_level = "high"` (or `"low"` for untrusted prompts) rather than blocking everything equally.
 
 ---
 

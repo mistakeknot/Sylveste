@@ -21,7 +21,7 @@ Reuse the project's terminology, not generic terms.
 
 ## Task Context
 
-The document is a strategic architecture analysis evaluating how Autarch's four TUI apps (Bigend, Gurgeh, Coldwine, Pollard) must evolve to support increasing agent autonomy in Demarch. The analysis proposes a three-mode hierarchy (Executive/Supervisor/Operator) and a recursive ring model for autonomous agencies, grounded in seven identified gaps between current and target state.
+The document is a strategic architecture analysis evaluating how Autarch's four TUI apps (Bigend, Gurgeh, Coldwine, Pollard) must evolve to support increasing agent autonomy in Sylveste. The analysis proposes a three-mode hierarchy (Executive/Supervisor/Operator) and a recursive ring model for autonomous agencies, grounded in seven identified gaps between current and target state.
 
 ## Review Approach
 
@@ -39,7 +39,7 @@ The document is a strategic architecture analysis evaluating how Autarch's four 
 
 ### 4. Assess whether the document's vision of 'increasing agent...
 
-- Assess whether the document's vision of 'increasing agent autonomy' is directionally consistent with Demarch's published architecture (Intercore kernel, Clavain OS, Interspect profiler) — or whether it implies a different architectural philosophy
+- Assess whether the document's vision of 'increasing agent autonomy' is directionally consistent with Sylveste's published architecture (Intercore kernel, Clavain OS, Interspect profiler) — or whether it implies a different architectural philosophy
 
 ### 5. Whether all 7 gaps are genuinely independent
 
@@ -47,7 +47,7 @@ The document is a strategic architecture analysis evaluating how Autarch's four 
 
 ### 6. Evaluate whether the document's conclusion (the proposed ...
 
-- Evaluate whether the document's conclusion (the proposed model achieves the Demarch autonomy vision) is supported by the analysis, or whether there are unstated assumptions bridging the gap between current state and the proposed future state
+- Evaluate whether the document's conclusion (the proposed model achieves the Sylveste autonomy vision) is supported by the analysis, or whether there are unstated assumptions bridging the gap between current state and the proposed future state
 
 ## What NOT to Flag
 
@@ -65,7 +65,7 @@ A good review from this agent:
 - Frames uncertain findings as questions: "Does this handle X?" not "This doesn't handle X"
 - A strong review produces a gap-by-gap verdict: 'correctly diagnosed and addressed', 'correctly diagnosed but not addressed by proposal', or 'incorrectly diagnosed — real issue is X'
 - The best finding identifies whether the recursive ring model and the three-mode hierarchy form a coherent unified proposal or two separate proposals that were combined in the same document without integration
-- Flag any place where the document implicitly assumes that the Demarch vision is fixed and Autarch must change — vs the possibility that the vision itself should be refined based on what Autarch has learned from real usage
+- Flag any place where the document implicitly assumes that the Sylveste vision is fixed and Autarch must change — vs the possibility that the vision itself should be refined based on what Autarch has learned from real usage
 
 ## Decision Lens
 

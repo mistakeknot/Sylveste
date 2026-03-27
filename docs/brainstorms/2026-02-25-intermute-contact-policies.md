@@ -8,7 +8,7 @@
 
 Intermute's messaging bus is currently open — any registered agent can send messages to any other agent in the same project. As the number of agents grows (fleet dispatches, multi-session coordination), agents need the ability to control who can message them.
 
-The mcp-agent-mail reference implementation has contact policies but with a critical flaw: `reply_message` bypasses policy for local recipients (fd-safety F2). Demarch must enforce uniformly on ALL delivery paths.
+The mcp-agent-mail reference implementation has contact policies but with a critical flaw: `reply_message` bypasses policy for local recipients (fd-safety F2). Sylveste must enforce uniformly on ALL delivery paths.
 
 ## Design: Four Policy Levels
 

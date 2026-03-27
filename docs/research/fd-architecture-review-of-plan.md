@@ -1,5 +1,5 @@
 # Architecture Review: Interspect Routing Overrides Schema + Flux-Drive Reader
-**Plan:** `/home/mk/projects/Demarch/docs/plans/2026-02-23-interspect-routing-overrides-schema.md`
+**Plan:** `/home/mk/projects/Sylveste/docs/plans/2026-02-23-interspect-routing-overrides-schema.md`
 **Bead:** iv-r6mf
 **Date:** 2026-02-23
 **Reviewer:** fd-architecture (Flux-Drive Architecture & Design Review)

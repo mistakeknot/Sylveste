@@ -1,16 +1,16 @@
 ---
 artifact_type: plan
-bead: Demarch-6i0
+bead: Sylveste-6i0
 stage: design
 requirements:
-  - F1: Toggleable sidebar panel (Demarch-6i0.15)
-  - F2: VS Code extension (Demarch-6i0.16)
+  - F1: Toggleable sidebar panel (Sylveste-6i0.15)
+  - F2: VS Code extension (Sylveste-6i0.16)
 ---
 # Competitive Gaps Final Two — Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use clavain:executing-plans to implement this plan task-by-task.
 
-**Bead:** Demarch-6i0
+**Bead:** Sylveste-6i0
 **Phase:** planned (as of 2026-03-17T06:35:53Z)
 **Goal:** Close the final 2 competitive feature gaps in Skaffen TUI: a toggleable right-side sidebar and a VS Code extension.
 

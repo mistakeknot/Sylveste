@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: Demarch-7xs
+bead: Sylveste-7xs
 stage: design
 ---
 
@@ -48,8 +48,8 @@ For all 32 existing entries without provenance fields:
 
 ## Non-goals
 
-- Implementing the unified `/recall` command (that's Demarch-h22, depends on this)
-- Implementing decay/archival logic (that's part of Demarch-ecb)
+- Implementing the unified `/recall` command (that's Sylveste-h22, depends on this)
+- Implementing decay/archival logic (that's part of Sylveste-ecb)
 - Removing `config/knowledge/` directory (keep as read-only fallback until all consumers verified)
 - Changing interflux's consumer code (separate follow-up)
 

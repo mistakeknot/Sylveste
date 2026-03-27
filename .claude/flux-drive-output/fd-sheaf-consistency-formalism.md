@@ -2,7 +2,7 @@
 
 **Reviewer:** Sheaf consistency formalism specialist
 **Date:** 2026-03-20
-**Scope:** Task 13 (Stage 4 -- Discourse Sheaf Consistency Checking) as specified in `/home/mk/projects/shadow-work/docs/plans/2026-03-18-khouri-and-system-tracer-plan.md`, cross-referenced with the domain model in Tasks 2-3 and the PRD at `/home/mk/projects/Demarch/apps/Khouri/docs/khouri-prd.md`.
+**Scope:** Task 13 (Stage 4 -- Discourse Sheaf Consistency Checking) as specified in `/home/mk/projects/shadow-work/docs/plans/2026-03-18-khouri-and-system-tracer-plan.md`, cross-referenced with the domain model in Tasks 2-3 and the PRD at `/home/mk/projects/Sylveste/apps/Khouri/docs/khouri-prd.md`.
 **Status:** Pre-implementation design review. No code exists yet for Stage 4; all findings target the specification.
 
 ---

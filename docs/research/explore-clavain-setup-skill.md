@@ -9,7 +9,7 @@
 
 ### Location & Purpose
 
-**File:** `/home/mk/projects/Demarch/os/clavain/commands/setup.md`
+**File:** `/home/mk/projects/Sylveste/os/clavain/commands/setup.md`
 
 The `clavain:setup` command is a comprehensive bootstrap workflow that transforms a fresh Claude Code install into a fully-configured Clavain engineering rig. It runs in phases:
 
@@ -48,7 +48,7 @@ Prior to this design:
 
 ### Design Pattern: agent-rig.json as Single Source of Truth
 
-**File:** `/home/mk/projects/Demarch/os/clavain/agent-rig.json`
+**File:** `/home/mk/projects/Sylveste/os/clavain/agent-rig.json`
 
 The manifest defines all plugins in hierarchical categories:
 
@@ -87,7 +87,7 @@ The manifest defines all plugins in hierarchical categories:
 
 ### The Automation Script: modpack-install.sh
 
-**File:** `/home/mk/projects/Demarch/os/clavain/scripts/modpack-install.sh`
+**File:** `/home/mk/projects/Sylveste/os/clavain/scripts/modpack-install.sh`
 
 A bash script that reads `agent-rig.json` at runtime and automates the entire install flow.
 
@@ -196,7 +196,7 @@ From the dual-mode plugin architecture document (`docs/brainstorms/2026-02-20-du
 
 ### interlock: File Reservation & Agent Coordination
 
-**Location:** `/home/mk/projects/Demarch/interverse/interlock/`
+**Location:** `/home/mk/projects/Sylveste/interverse/interlock/`
 
 **plugin.json:**
 ```json
@@ -250,7 +250,7 @@ From the dual-mode plugin architecture document (`docs/brainstorms/2026-02-20-du
 
 ### interphase: Phase Tracking & Lifecycle Gates
 
-**Location:** `/home/mk/projects/Demarch/interverse/interphase/`
+**Location:** `/home/mk/projects/Sylveste/interverse/interphase/`
 
 **plugin.json:**
 ```json

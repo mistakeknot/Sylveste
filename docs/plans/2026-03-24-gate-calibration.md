@@ -1,6 +1,6 @@
 ---
 artifact_type: plan
-bead: Demarch-0rgc
+bead: Sylveste-0rgc
 prd: docs/prds/2026-03-24-gate-calibration.md
 stage: planned
 ---
@@ -8,7 +8,7 @@ stage: planned
 
 PRD: `docs/prds/2026-03-24-gate-calibration.md`
 Brainstorm: `docs/brainstorms/2026-03-23-gate-calibration-brainstorm.md`
-Bead: Demarch-0rgc (parent: Demarch-enxv)
+Bead: Sylveste-0rgc (parent: Sylveste-enxv)
 
 ## Architecture Constraint
 
@@ -22,7 +22,7 @@ Clavain CLI (`os/Clavain/cmd/clavain-cli/`) is a separate Go module (`github.com
 
 6 batches, ordered by dependency. Each batch is independently testable.
 
-## Batch 1: Bug Fixes (F1) — Demarch-fi7b
+## Batch 1: Bug Fixes (F1) — Sylveste-fi7b
 
 **Goal:** Fix 4 pre-existing bugs. Must land before any calibration code.
 
@@ -142,7 +142,7 @@ The `LoadGateCalibration(path string) (map[string]string, error)` function lives
 
 ---
 
-## Batch 3: Signal Extraction (F2) — Demarch-pix4
+## Batch 3: Signal Extraction (F2) — Sylveste-pix4
 
 **Goal:** Extract TP/FP/TN/FN signals from `phase_events`.
 
@@ -170,7 +170,7 @@ Extract `check_type` from the `reason` JSON field (GateEvidence.Conditions[].Che
 
 ---
 
-## Batch 4: Runtime Integration (F4) — Demarch-p9pg
+## Batch 4: Runtime Integration (F4) — Sylveste-p9pg
 
 **Goal:** `evaluateGate` uses `CalibratedTiers` map for tier overrides.
 
@@ -261,7 +261,7 @@ if calPath != "" {
 
 ---
 
-## Batch 6: Observability (F6) — Demarch-pgl8
+## Batch 6: Observability (F6) — Sylveste-pgl8
 
 ### Task 6.1: Gate provenance in `ic gate check` output
 **File:** `core/intercore/cmd/ic/gate.go` (cmdGateCheck function)

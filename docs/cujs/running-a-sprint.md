@@ -1,16 +1,16 @@
 ---
 artifact_type: cuj
 journey: running-a-sprint
-actor: regular user (developer using Demarch daily)
+actor: regular user (developer using Sylveste daily)
 criticality: p0
-bead: Demarch-9ha
+bead: Sylveste-9ha
 ---
 
 # Running a Sprint
 
 ## Why This Journey Matters
 
-This is the core loop. Everything else in Demarch exists to make this journey work: the kernel records it, the OS orchestrates it, the profiler learns from it, the drivers augment it. A sprint is the atomic unit of autonomous development — the smallest cycle that takes a problem and produces shipped, reviewed, tested code. If this journey is slow, brittle, or opaque, the platform fails regardless of how elegant its architecture is.
+This is the core loop. Everything else in Sylveste exists to make this journey work: the kernel records it, the OS orchestrates it, the profiler learns from it, the drivers augment it. A sprint is the atomic unit of autonomous development — the smallest cycle that takes a problem and produces shipped, reviewed, tested code. If this journey is slow, brittle, or opaque, the platform fails regardless of how elegant its architecture is.
 
 The sprint is also where the three frontier axes are tested simultaneously. Autonomy: how far does the sprint get without human intervention? Quality: does the output survive review and testing? Efficiency: what did it cost in tokens and time? The north-star metric (cost per landable change) is measured here. Every Interspect optimization targets this loop. Every routing decision, every gate calibration, every agent selection is evaluated by its impact on sprint outcomes.
 
@@ -18,7 +18,7 @@ This CUJ is the canonical description of the sprint lifecycle. Other CUJs ([Firs
 
 ## The Journey
 
-The developer starts their session and types `/route`. The discovery scanner checks beads: open issues ranked by priority, stale work that needs attention, in-progress items from previous sessions. The scanner presents the top candidates with recommended actions — "Continue Demarch-abc (plan exists)", "Plan Demarch-def (brainstorm done)", "Start fresh brainstorm." The developer picks one, or provides a bead ID directly (`/route Demarch-xyz`).
+The developer starts their session and types `/route`. The discovery scanner checks beads: open issues ranked by priority, stale work that needs attention, in-progress items from previous sessions. The scanner presents the top candidates with recommended actions — "Continue Sylveste-abc (plan exists)", "Plan Sylveste-def (brainstorm done)", "Start fresh brainstorm." The developer picks one, or provides a bead ID directly (`/route Sylveste-xyz`).
 
 Route classifies the task complexity (1-5) and dispatches to the appropriate workflow. Simple tasks (complexity 1-2) skip brainstorm and strategy, going straight to planning and execution. Moderate tasks (3) get a lightweight brainstorm. Complex tasks (4-5) get the full lifecycle with multi-agent review at the plan stage.
 
@@ -50,7 +50,7 @@ The sprint state is durable. If the developer closes their terminal or the sessi
 
 Simple sprints complete in a single session. Complex work — a cross-cutting refactor, a new module with tests and documentation, a security-sensitive change with thorough review — may span multiple sessions.
 
-When the developer starts a new session and runs `/route`, the discovery scanner detects the in-progress sprint from the previous session. It presents it as the top option: "Resume Demarch-xyz (executing, step 4/7)." The developer selects it, and the sprint continues from the checkpoint. The context from the previous session is gone (context windows don't survive sessions), but the durable state is intact: the plan, the completed steps, the commits, the review findings. The agency re-reads the plan and the relevant code, orients on where it left off, and continues.
+When the developer starts a new session and runs `/route`, the discovery scanner detects the in-progress sprint from the previous session. It presents it as the top option: "Resume Sylveste-xyz (executing, step 4/7)." The developer selects it, and the sprint continues from the checkpoint. The context from the previous session is gone (context windows don't survive sessions), but the durable state is intact: the plan, the completed steps, the commits, the review findings. The agency re-reads the plan and the relevant code, orients on where it left off, and continues.
 
 The resume experience should feel seamless — not "starting over with notes" but "picking up where I left off." The checkpoint tells the agency exactly what's been done and what remains. No re-brainstorming, no re-planning, no re-executing completed steps.
 
@@ -76,7 +76,7 @@ The resume experience should feel seamless — not "starting over with notes" bu
 ## Known Friction Points
 
 - **Discovery ranking opacity.** The scanner ranks beads by priority, staleness, and dependencies, but the ranking logic isn't visible to the developer. A bead that should be top-ranked may be buried if its metadata is incomplete. *Workaround: `/route` with a bead ID bypasses ranking entirely.*
-- **Complexity misclassification.** The classifier uses heuristics (description length, dependency count, file scope). A task that reads as simple but touches a complex subsystem may be underestimated, leading to an undersized workflow (no brainstorm, no review) that produces lower-quality output. *Workaround: provide a bead ID with `/route Demarch-xyz` and the sprint skill will re-classify based on full context.*
+- **Complexity misclassification.** The classifier uses heuristics (description length, dependency count, file scope). A task that reads as simple but touches a complex subsystem may be underestimated, leading to an undersized workflow (no brainstorm, no review) that produces lower-quality output. *Workaround: provide a bead ID with `/route Sylveste-xyz` and the sprint skill will re-classify based on full context.*
 - **Brainstorm-to-plan handoff.** The brainstorm explores; the plan commits. If the brainstorm raises open questions that aren't resolved before planning, the plan may contain ambiguities that surface during execution. *Mitigation: the strategy phase (between brainstorm and plan) is designed to resolve open questions. If it doesn't, the plan review gate should catch ambiguities.*
 - **Gate failures mid-sprint.** A failed gate (test failure, lint error, missing artifact) blocks advancement. The error message tells you what failed but not always why or how to fix it. Recovery requires understanding the phase/gate model. *Workaround: `/clavain:doctor` diagnoses common gate issues. Error message quality is being improved.*
 - **Ship-phase gate failure.** Tests pass during execution but fail at the Ship gate (integration failure, lint regression from an upstream change). The developer must decide: fix and retry, revert last commit, or abandon. *Mitigation: the sprint state machine supports retry from the current phase. No automatic revert.*

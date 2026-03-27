@@ -1,12 +1,12 @@
 ---
 artifact_type: brainstorm
-bead: Demarch-j2f
+bead: Sylveste-j2f
 stage: discover
 ---
 
 # Skaffen v0.3: Intercore Bridge + Interspect Evidence
 
-**Bead:** Demarch-j2f
+**Bead:** Sylveste-j2f
 
 ## What We're Building
 
@@ -26,7 +26,7 @@ The existing `evidence/emitter.go` already has the structure — JSONL writing +
 
 ### ic as mandatory dependency
 
-Rather than conditional bridging with fallback paths, Skaffen v0.3 requires `ic` on PATH and fails at startup if absent. This eliminates all `if icPath != ""` conditionals in the hot path and ensures every Skaffen session produces Intercore data. The ic binary is lightweight (single Go binary, no daemon) and is already available in all Demarch development environments.
+Rather than conditional bridging with fallback paths, Skaffen v0.3 requires `ic` on PATH and fails at startup if absent. This eliminates all `if icPath != ""` conditionals in the hot path and ensures every Skaffen session produces Intercore data. The ic binary is lightweight (single Go binary, no daemon) and is already available in all Sylveste development environments.
 
 ### Both providers support model steering
 
@@ -56,7 +56,7 @@ The decision gate from the original bead ("can ClaudeCodeProvider honor routing 
 - Tests for all new paths
 
 ### Out of scope (separate beads)
-- Interspect calibration pipeline (F3b, Demarch-g3a) — consumes the evidence we emit
+- Interspect calibration pipeline (F3b, Sylveste-g3a) — consumes the evidence we emit
 - Evidence-derived automatic overrides — requires calibration pipeline
 - Override v2 phases array format — consumed as-is from ic, no need to define the format here
 

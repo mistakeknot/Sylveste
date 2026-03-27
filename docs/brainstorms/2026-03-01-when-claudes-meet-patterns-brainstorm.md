@@ -1,8 +1,8 @@
-# When Claudes Meet: Patterns for Demarch's Multi-Agent Roadmap
+# When Claudes Meet: Patterns for Sylveste's Multi-Agent Roadmap
 
 **Date:** 2026-03-01
 **Source:** [anadim/when-claudes-meet](https://github.com/anadim/when-claudes-meet) — two Claude instances coordinating via shared filesystem with zero human intervention
-**Purpose:** Extract patterns from emergent multi-agent coordination and map them to Demarch's backlog
+**Purpose:** Extract patterns from emergent multi-agent coordination and map them to Sylveste's backlog
 
 ---
 
@@ -20,7 +20,7 @@ Both experiments independently produced: filesystem-based discovery protocol (he
 
 ## What We Already Have (No Gaps)
 
-| WCM Pattern | Demarch Coverage |
+| WCM Pattern | Sylveste Coverage |
 |-------------|-----------------|
 | Agent discovery | Intermute agent registry + Intermux tmux scanning |
 | Message passing | Intermute REST + WebSocket messaging |
@@ -38,7 +38,7 @@ Both experiments independently produced: filesystem-based discovery protocol (he
 
 **What WCM did:** Agent claude_e64e05 published `ast.py` before writing the lexer or parser. Agent 67691 could design the interpreter independently because the shared contract was explicit, versioned, and available via the filesystem.
 
-**What Demarch has:** Intercore coordination locks protect files. Interlock negotiates access. But neither provides a mechanism for agents to *publish contracts* — "here's the interface I'll implement against, build to this."
+**What Sylveste has:** Intercore coordination locks protect files. Interlock negotiates access. But neither provides a mechanism for agents to *publish contracts* — "here's the interface I'll implement against, build to this."
 
 **What's additive:** A lightweight contract publication mechanism where agents declare their output schema/interface before building, allowing parallel work against the same contract. This is different from phase gates (which govern transitions) — it's intra-phase coordination.
 
@@ -52,7 +52,7 @@ Both experiments independently produced: filesystem-based discovery protocol (he
 
 **What WCM did:** Both agents proposed task splits in their voting messages. Agent 67691 suggested "I'll do interpreter, you do parser." Agent claude_e64e05 accepted. No external coordinator assigned roles — they emerged from one message exchange.
 
-**What Demarch has:** Capability discovery (iv-ev4o) lets agents declare capabilities. Cost-aware scheduling (iv-pbmc) routes based on budget. Interspect routes based on past performance. But none of these support *negotiated role selection* — agents proposing and accepting responsibility for sub-tasks.
+**What Sylveste has:** Capability discovery (iv-ev4o) lets agents declare capabilities. Cost-aware scheduling (iv-pbmc) routes based on budget. Interspect routes based on past performance. But none of these support *negotiated role selection* — agents proposing and accepting responsibility for sub-tasks.
 
 **What's additive:** A negotiation round where agents (not the orchestrator) propose task ownership based on their assessment of fit. This could happen within Coldwine's 3-5 agent dispatch, where agents receive the task description and bid on subtasks rather than being assigned.
 
@@ -66,11 +66,11 @@ Both experiments independently produced: filesystem-based discovery protocol (he
 
 **What WCM did:** Agent 74071 proposed SHA-256 hash commitments for Battleship boards before the game started. Both agents committed hashes, and verification happened post-game. The system was trustworthy without requiring honesty.
 
-**What Demarch has:** Trust scoring (iv-ynbh) evaluates agent quality post-hoc. Phase gates validate before transitions. But there's no mechanism for agents to *commit to a plan* in a verifiable way — no cryptographic binding between intent and execution.
+**What Sylveste has:** Trust scoring (iv-ynbh) evaluates agent quality post-hoc. Phase gates validate before transitions. But there's no mechanism for agents to *commit to a plan* in a verifiable way — no cryptographic binding between intent and execution.
 
 **What's additive:** Hash-committed intent declarations. Before executing a task, an agent publishes a hash of its planned approach (files to modify, tests to pass, interfaces to honor). After execution, the actual work is verified against the commitment. Deviations are evidence (not necessarily bad, but recorded).
 
-**Why it matters for Demarch's trust ladder:** Level 2 (human reviews evidence post-hoc) gets stronger when the evidence includes a verifiable commitment vs. outcome comparison. "Agent said it would modify X, Y, Z — it actually modified X, Y, Z, W. W was unplanned." This is pure evidence for the flywheel.
+**Why it matters for Sylveste's trust ladder:** Level 2 (human reviews evidence post-hoc) gets stronger when the evidence includes a verifiable commitment vs. outcome comparison. "Agent said it would modify X, Y, Z — it actually modified X, Y, Z, W. W was unplanned." This is pure evidence for the flywheel.
 
 **Relates to:** Intent submission (iv-gyq9l) governs policy-governing writes. This extends to ALL agent work — lightweight, non-blocking, but creating an auditable commitment trail.
 
@@ -82,7 +82,7 @@ Both experiments independently produced: filesystem-based discovery protocol (he
 
 **What WCM did:** While waiting for the other agent, both agents proactively wrote tests, examples, documentation, and tooling. They didn't ask permission — they filled dead time with genuinely useful work.
 
-**What Demarch has:** Intermux detects idle/stuck agents. But detection triggers no action — it's observability only. There's no "idle → suggest productive work" pipeline.
+**What Sylveste has:** Intermux detects idle/stuck agents. But detection triggers no action — it's observability only. There's no "idle → suggest productive work" pipeline.
 
 **What's additive:** When an agent is blocked (waiting on a dependency, phase gate, or another agent's output), the system could suggest productive work: write tests for the interface contract, draft documentation, run static analysis, explore edge cases. This turns blocking time into value.
 
@@ -96,7 +96,7 @@ Both experiments independently produced: filesystem-based discovery protocol (he
 
 **What WCM did:** Agent 67691 found a parser bug through interpreter tests. It wrote a structured message: failing test case, diagnosis ("parser excluded fn from return expressions"), and suggested fix location. Agent claude_e64e05 fixed it within 80 seconds.
 
-**What Demarch has:** Intermute messaging. Interflux multi-agent review (but only for review, not during execution). No structured protocol for one agent to report a bug it found in another agent's work during execution.
+**What Sylveste has:** Intermute messaging. Interflux multi-agent review (but only for review, not during execution). No structured protocol for one agent to report a bug it found in another agent's work during execution.
 
 **What's additive:** A structured bug-passing protocol within sprints. When Agent A discovers a defect in Agent B's output, it sends a structured Intermute message with: failing evidence, diagnosis, suggested fix, severity. Agent B receives it and can act without context-switching overhead.
 
@@ -110,7 +110,7 @@ Both experiments independently produced: filesystem-based discovery protocol (he
 
 **What WCM did:** Both experiments produced rich journals — timestamped narrative entries capturing reasoning, uncertainty, architectural decisions, philosophical observations, and cross-agent observations. These were distinct from code artifacts and served as process documentation.
 
-**What Demarch has:** Interspect captures structured events (session metadata, tool use, outcomes). Intercore logs durable events. But these are machine-structured — no narrative reasoning capture. Intermem (tidy brainstorm just landed) handles memory, but for cross-session recall, not per-sprint process journals.
+**What Sylveste has:** Interspect captures structured events (session metadata, tool use, outcomes). Intercore logs durable events. But these are machine-structured — no narrative reasoning capture. Intermem (tidy brainstorm just landed) handles memory, but for cross-session recall, not per-sprint process journals.
 
 **What's additive:** Per-sprint narrative journals where agents capture WHY they made decisions, not just WHAT they did. This is richer than event logs — it captures uncertainty, rejected alternatives, and reasoning chains. Valuable for: post-hoc review, training data, debugging agent behavior, trust ladder evidence.
 
@@ -124,7 +124,7 @@ Both experiments independently produced: filesystem-based discovery protocol (he
 
 **What WCM did:** Both agents independently produced nearly identical project proposals, philosophical metaphors, and protocol designs — but diverged on implementation strategy (Monte Carlo vs. analytical, narrative vs. structured). The convergence validated shared reasoning; the divergence revealed genuine optionality.
 
-**What Demarch has:** Disagreement pipeline (iv-5muhg) captures when agents disagree in reviews. But it doesn't distinguish between convergence (validating consensus) and divergence (revealing genuine alternatives).
+**What Sylveste has:** Disagreement pipeline (iv-5muhg) captures when agents disagree in reviews. But it doesn't distinguish between convergence (validating consensus) and divergence (revealing genuine alternatives).
 
 **What's additive:** Using convergence/divergence patterns as meta-signals. When multiple agents converge on the same approach independently, that's high-confidence validation. When they diverge, that's genuine optionality worth surfacing. This is more nuanced than binary agree/disagree.
 
@@ -138,7 +138,7 @@ Both experiments independently produced: filesystem-based discovery protocol (he
 
 **What WCM did:** Agents invented their coordination protocol from scratch. The resulting protocol (hello → ack → proposals → voting → build) was simpler and more effective than most specified protocols because it emerged from actual need.
 
-**What Demarch has:** Highly specified coordination infrastructure (Interlock, Intermute, Intercore). This is necessary for production reliability but may over-constrain agent behavior.
+**What Sylveste has:** Highly specified coordination infrastructure (Interlock, Intermute, Intercore). This is necessary for production reliability but may over-constrain agent behavior.
 
 **What's additive:** A "playground mode" where agents can coordinate through minimal primitives (shared filesystem, simple messaging) without the full Interlock/Intermute stack. This would be useful for: prototyping new coordination patterns, testing whether emergent protocols outperform specified ones, and reducing overhead for simple multi-agent tasks.
 
@@ -165,7 +165,7 @@ Both experiments independently produced: filesystem-based discovery protocol (he
 
 ## Key Decisions
 
-1. **Verifiable commitments and idle-time work are P1** — they directly feed the trust ladder flywheel and improve agent utilization, which are core Demarch bets.
+1. **Verifiable commitments and idle-time work are P1** — they directly feed the trust ladder flywheel and improve agent utilization, which are core Sylveste bets.
 2. **Interface contracts, role negotiation, and convergence-divergence are P2** — high value but depend on more infrastructure maturity.
 3. **Journals and bug reporting are P3** — useful but incremental on existing primitives.
 4. **Playground mode is P4** — interesting R&D but conflicts with production requirements.
@@ -225,7 +225,7 @@ Both experiments independently produced: filesystem-based discovery protocol (he
 
 ### Decision Quality Corrections
 
-- **Source bias:** Two experiments from one researcher, same model, minimal infrastructure. Anecdotal evidence treated as validated patterns. P1 commitment extrapolates without proving Demarch experiences these problems.
+- **Source bias:** Two experiments from one researcher, same model, minimal infrastructure. Anecdotal evidence treated as validated patterns. P1 commitment extrapolates without proving Sylveste experiences these problems.
 - **Problem validation needed:** Before committing sprint resources, measure idle-agent time, interface-wait delays, and coordination overhead in last 10 closed sprints.
 - **Pattern 8 underweighted:** Dismisses direct test of core bet ("infrastructure unlocks autonomy") as P4 without validation. Promote to P3 with canary gate.
 
@@ -236,7 +236,7 @@ Both experiments independently produced: filesystem-based discovery protocol (he
 | Verifiable work commitments | P1 | **P2** | Needs lifecycle state machine, deviation-scoring design, and Goodhart-resistance before implementation. Structured declarations, not hashes. |
 | Proactive idle-time work | P1 | **P2** | Blocked on budget-gate design, artifact lifecycle spec, and problem validation (is idle-agent time actually a bottleneck?). |
 | Interface-first contracts | P2 | **P2 (fast-track)** | Convention-only implementation using `run_artifacts`. Wire, not build. Can ship immediately as convention doc. |
-| Role self-selection | P2 | **P3** | Targets trust ladder L3+ but Demarch operates at L1-2. Agent self-assessment of fitness assumes earned authority not yet established. |
+| Role self-selection | P2 | **P3** | Targets trust ladder L3+ but Sylveste operates at L1-2. Agent self-assessment of fitness assumes earned authority not yet established. |
 | Convergence-divergence detection | P2 | **P2** | High value but needs per-domain calibration to avoid consensus bias amplification. Architecture decision resolved (Interspect + Interflux). |
 | Agent process journals | P3 | **P4** | Unverifiable self-reporting violates "structural, not moral." Write-only corpus risk at scale. Merge with iv-64j3 (sprint reflection) if pursued. |
 | Cross-component bug reporting | P3 | **P2 (fast-track)** | Most philosophically aligned pattern: produces structural evidence, no self-assessment required, operates naturally at L1-2. Near-zero marginal cost given shipped disagreement pipeline. |

@@ -39,7 +39,7 @@ Task 1 creates MISSION.md and updates doc-structure.md and plugin-standard.md �
 
 ### 4. VISION
 
-- VISION.md hierarchy diagram references 'existing: docs/demarch-vision.md' but no aliasing step exists — is this a dangling reference?
+- VISION.md hierarchy diagram references 'existing: docs/sylveste-vision.md' but no aliasing step exists — is this a dangling reference?
 
 ### 5. Plugin
 
