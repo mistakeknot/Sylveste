@@ -1,6 +1,6 @@
 # Sylveste Roadmap
 
-**Modules:** `find apps os core interverse sdk -maxdepth 2 -name .git -printf '%h\n' 2>/dev/null | wc -l` | **Beads:** `bd stats` | **Last updated:** 2026-03-15
+**Modules:** `find apps os core interverse sdk -maxdepth 2 -name .git -printf '%h\n' 2>/dev/null | wc -l` | **Beads:** `bd stats` | **Last updated:** 2026-03-27
 **Structure:** [`CLAUDE.md`](../CLAUDE.md)
 **Machine output:** [`docs/roadmap.json`](roadmap.json) — auto-generated superset of roadmap-placed items only (fewer than `bd stats` totals, which track all beads).
 
@@ -87,68 +87,71 @@ Longer-term directions, not yet scoped into specific items. Full inventory: [bac
 |--------|----------|---------|--------|---------|----------------------|
 | agent-rig | core/agent-rig | 0.1.0 | early | no | n/a |
 | autarch | apps/autarch | 0.1.0 | active | yes | n/a |
-| clavain | os/clavain | 0.6.155 | active | yes | n/a |
+| clavain | os/clavain | 0.6.236 | active | yes | n/a |
+| interblog | apps/interblog | 0.1.3 | early | no | n/a |
 | interband | core/interband | — | planned | no | n/a |
 | interbench | core/interbench | — | planned | no | n/a |
 | intercache | interverse/intercache | 0.2.0 | early | no | n/a |
 | interchart | interverse/interchart | 0.1.8 | early | no | n/a |
-| intercheck | interverse/intercheck | 0.2.0 | active | yes | 4 |
+| intercheck | interverse/intercheck | 0.2.2 | active | yes | 4 |
 | intercom | apps/intercom | 1.1.0 | active | shipped | n/a |
 | intercore | core/intercore | — | active | yes | n/a |
 | intercraft | interverse/intercraft | 0.1.2 | active | yes | 4 |
 | interdeep | interverse/interdeep | 0.1.6 | early | no | n/a |
 | interdev | interverse/interdev | 0.2.0 | active | yes | 4 |
-| interdoc | interverse/interdoc | 5.1.2 | active | yes | 4 |
-| interfluence | interverse/interfluence | 0.2.8 | active | yes | 4 |
-| interflux | interverse/interflux | 0.2.36 | active | yes | n/a |
+| interdoc | interverse/interdoc | 5.2.1 | active | yes | 4 |
+| interfere | interverse/interfere | 0.1.0 | early | no | n/a |
+| interfluence | interverse/interfluence | 0.2.10 | active | yes | 4 |
+| interflux | interverse/interflux | 0.2.52 | active | yes | n/a |
 | interform | interverse/interform | 0.1.0 | active | yes | 4 |
-| interject | interverse/interject | 0.1.9 | active | yes | 4 |
-| interkasten | interverse/interkasten | 0.4.9 | early | no | n/a |
-| interknow | interverse/interknow | 0.1.2 | early | no | n/a |
-| interlab | interverse/interlab | 0.4.2 | active | yes | n/a |
+| interhelm | interverse/interhelm | 0.2.0 | active | yes | n/a |
+| interject | interverse/interject | 0.1.14 | active | yes | 4 |
+| interkasten | interverse/interkasten | 0.4.25 | active | no | n/a |
+| interknow | interverse/interknow | 0.1.5 | early | no | n/a |
+| interlab | interverse/interlab | 0.4.6 | active | yes | n/a |
 | interlearn | interverse/interlearn | 0.1.0 | active | yes | 8 |
-| interleave | interverse/interleave | 0.1.1 | early | no | n/a |
+| interleave | interverse/interleave | 0.1.2 | early | no | n/a |
 | interlens | interverse/interlens | 2.2.4 | active | yes | 4 |
-| interline | interverse/interline | 0.2.11 | active | yes | 4 |
-| interlock | interverse/interlock | 0.2.7 | active | yes | n/a |
-| intermap | interverse/intermap | 0.1.5 | active | yes | 7 |
-| intermem | interverse/intermem | 0.2.3 | active | yes | n/a |
-| intermix | interverse/intermix | — | planned | yes | n/a |
+| interline | interverse/interline | 0.2.13 | active | yes | 4 |
+| interlock | interverse/interlock | 0.2.10 | active | yes | n/a |
+| interlore | interverse/interlore | 0.1.0 | early | no | n/a |
+| intermap | interverse/intermap | 0.1.6 | active | yes | 7 |
+| intermem | interverse/intermem | 0.2.4 | active | yes | n/a |
+| intermix | interverse/intermix | 0.1.11 | active | no | n/a |
 | intermonk | interverse/intermonk | 0.1.1 | early | no | n/a |
 | intermute | core/intermute | — | active | yes | n/a |
-| intermux | interverse/intermux | 0.1.2 | active | yes | 4 |
-| intername | interverse/intername | 0.1.1 | early | no | n/a |
-| internext | interverse/internext | 0.1.4 | active | yes | 4 |
-| interpath | interverse/interpath | 0.3.0 | active | yes | 4 |
+| intermux | interverse/intermux | 0.1.5 | active | yes | 4 |
+| intername | interverse/intername | 0.1.2 | early | no | n/a |
+| internext | interverse/internext | 0.1.5 | active | yes | 4 |
+| interpath | interverse/interpath | 0.3.2 | active | yes | 4 |
 | interpeer | interverse/interpeer | 0.1.0 | early | no | n/a |
-| interphase | interverse/interphase | 0.3.13 | active | yes | 4 |
-| interplug | interverse/interplug | 0.1.0 | early | no | n/a |
-| interpub | interverse/interpub | 0.1.7 | active | yes | 4 |
-| interpulse | interverse/interpulse | 0.1.3 | early | no | n/a |
-| interrank | interverse/interrank | 0.1.0 | early | no | n/a |
+| interphase | interverse/interphase | 0.3.17 | active | yes | 4 |
+| interplug | interverse/interplug | 0.1.5 | early | no | n/a |
+| interpub | interverse/interpub | 0.1.8 | active | yes | 4 |
+| interpulse | interverse/interpulse | 0.1.5 | early | no | n/a |
+| interrank | interverse/interrank | 0.3.0 | active | no | n/a |
 | interscribe | interverse/interscribe | 0.1.1 | early | no | n/a |
-| intersearch | interverse/intersearch | 0.2.0 | active | yes | 4 |
+| intersearch | interverse/intersearch | 0.2.1 | active | yes | 4 |
 | ~~intersense~~ | ~~interverse/intersense~~ | — | archived | — | — |
-| interserve | interverse/interserve | 0.1.5 | active | yes | 4 |
-| intership | interverse/intership | 0.3.0 | early | no | n/a |
-| intersight | interverse/intersight | 0.1.3 | early | no | n/a |
-| interskill | interverse/interskill | 0.1.1 | early | no | n/a |
+| intership | interverse/intership | 0.3.1 | early | no | n/a |
+| intersight | interverse/intersight | 0.1.5 | early | no | n/a |
+| interskill | interverse/interskill | 0.1.3 | early | no | n/a |
 | interslack | interverse/interslack | 0.1.0 | active | yes | 4 |
-| interspect | interverse/interspect | 0.1.6 | active | [vision](./interspect-vision.md) | n/a |
-| interstat | interverse/interstat | 0.2.15 | active | yes | 4 |
-| intersynth | interverse/intersynth | 0.1.6 | early | no | n/a |
+| interspect | interverse/interspect | 0.1.18 | active | [vision](./interspect-vision.md) | n/a |
+| interstat | interverse/interstat | 0.2.27 | active | yes | 4 |
+| intersynth | interverse/intersynth | 0.1.9 | early | no | n/a |
 | intertest | interverse/intertest | 0.1.2 | early | no | n/a |
 | intertrace | interverse/intertrace | 0.1.2 | early | no | n/a |
-| intertrack | interverse/intertrack | 0.1.0 | active | yes | n/a |
-| intertree | interverse/intertree | 0.1.0 | early | no | n/a |
-| intertrust | interverse/intertrust | 0.1.2 | early | no | n/a |
+| intertrack | interverse/intertrack | 0.1.4 | active | yes | n/a |
+| intertree | interverse/intertree | 0.1.2 | early | no | n/a |
+| intertrust | interverse/intertrust | 0.1.3 | early | no | n/a |
 | interverse | root | — | active | yes | n/a |
-| interwatch | interverse/interwatch | 0.2.0 | active | yes | 5 |
+| interwatch | interverse/interwatch | 0.3.3 | active | yes | 5 |
 | marketplace | core/marketplace | — | active | yes | n/a |
 | skaffen | os/skaffen | — | active | yes | n/a |
 | tldr-swinton | interverse/tldr-swinton | 0.7.17 | active | yes | n/a |
-| tool-time | interverse/tool-time | 0.3.5 | active | yes | n/a |
-| tuivision | interverse/tuivision | 0.1.6 | active | yes | 4 |
+| tool-time | interverse/tool-time | 0.3.10 | active | yes | n/a |
+| tuivision | interverse/tuivision | 0.2.0 | active | yes | 4 |
 
 **Legend:** active = recent commits or active tracker items; early = manifest exists but roadmap maturity is limited. `n/a` means there is no module-local `.beads` database.
 
