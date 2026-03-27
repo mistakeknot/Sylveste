@@ -18,3 +18,13 @@
 {"issue_id":"sylveste-d5e","label":"artifact_plan:docs/plans/2026-03-27-bhq-validation-7b.md"}
 {"issue_id":"sylveste-d5e","label":"artifact_reflection:docs/solutions/2026-03-27-bhq-validation-results.md"}
 {"issue_id":"sylveste-d5e","label":"artifact_test-pass-sha:4c14f568fa6fc9f2a6212ffc434d09f5ef2fd7eb"}
+{"issue_id":"sylveste-pkx","label":"artifact_brainstorm:docs/brainstorms/2026-03-27-flux-gen-severity-calibration.md"}
+{"issue_id":"sylveste-pkx","label":"artifact_plan:docs/plans/2026-03-27-flux-gen-severity-calibration-plan.md"}
+{"issue_id":"sylveste-pkx","label":"artifact_reflection:docs/reflections/2026-03-27-flux-gen-severity-calibration.md"}
+{"issue_id":"sylveste-pkx","label":"artifact_strategy:docs/plans/2026-03-27-flux-gen-severity-calibration-prd.md"}
+{"issue_id":"sylveste-pkx","label":"artifact_test-pass-sha:87d7ee240b89b7fd9caecee03e25bde2e4c564b1"}
+{"issue_id":"sylveste-pkx","label":"claimed_at:1774648727"}
+{"issue_id":"sylveste-pkx","label":"claimed_by:33d202fe-9593-4670-96fd-bd608a8449a4"}
+{"issue_id":"sylveste-pkx","label":"flux-gen"}
+{"issue_id":"sylveste-pkx","label":"interflux"}
+{"issue_id":"sylveste-pkx","label":"quality"}
