@@ -1,4 +1,4 @@
-# Demarch Conventions
+# Sylveste Conventions
 
 Canonical documentation paths are strict. Do not introduce compatibility aliases or fallback filenames.
 

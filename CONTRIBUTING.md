@@ -1,4 +1,4 @@
-# Contributing to Demarch
+# Contributing to Sylveste
 
 Thank you for your interest in contributing!
 
