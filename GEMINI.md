@@ -6,7 +6,7 @@ Please refer to the following documents for more information:
 
 ## Gemini (Antigravity) Specifics
 
-Gemini should expose the same Demarch slash commands as Claude Code and Codex. Project-local commands are generated into `.gemini/commands/`, and the installer also links them into `~/.gemini/commands/` for global use.
+Gemini should expose the same Sylveste slash commands as Claude Code and Codex. Project-local commands are generated into `.gemini/commands/`, and the installer also links them into `~/.gemini/commands/` for global use.
 
 Follow these environment-specific deviations:
 

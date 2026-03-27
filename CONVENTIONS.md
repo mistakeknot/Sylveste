@@ -14,7 +14,7 @@ Examples:
 - `core/intermute/docs/intermute-vision.md`
 - `os/clavain/docs/PRD.md`
 
-## Demarch Root (monorepo root docs/)
+## Sylveste Root (monorepo root docs/)
 
 - Human roadmap: `docs/demarch-roadmap.md`
 - Machine roadmap feed (canonical for tooling): `docs/roadmap.json`
