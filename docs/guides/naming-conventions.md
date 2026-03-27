@@ -1,12 +1,12 @@
 # Naming Conventions
 
-How modules, pillars, and standalone components are named in Demarch.
+How modules, pillars, and standalone components are named in Sylveste.
 
 ## The Rule
 
 Names should be **two syllables**. Short enough to type, long enough to be distinct.
 
-Examples: *De-march*, *Clav-ain*, *Grid-fire*, *Au-tarch*.
+Examples: *Syl-veste*, *Clav-ain*, *Grid-fire*, *Au-tarch*.
 
 ## Two Naming Tiers
 
@@ -30,7 +30,7 @@ These names are **capitalized** as proper nouns. They get their own repos, their
 
 | Name | Origin | What it names |
 |------|--------|--------------|
-| **Demarch** | Reynolds — Demarchists (Democratic Anarchists) | The project / monorepo |
+| **Sylveste** | Reynolds — Dan Sylveste (Revelation Space protagonist) | The project / monorepo |
 | **Clavain** | Reynolds — Nevil Clavain (protagonist) | L2 OS / workflow agency |
 | **Autarch** | Wolfe — The Autarch (Book of the New Sun) | L3 TUI application |
 | **Gridfire** | Banks — gridfire weapon (Consider Phlebas) | Cybernetic composition layer (brainstorm) |
@@ -58,7 +58,7 @@ Bad: `interdbsync`, `interllmgw`, `interCfg`
 1. Two syllables, from the SF canon above
 2. The name should *feel* right for the thing — evocative, not a literal mapping
 3. Check for CLI conflicts: `which <name>`, `apt list <name>`, `brew search <name>`
-4. Must work lowercase as a command: `gridfire run`, `demarch status`
+4. Must work lowercase as a command: `gridfire run`, `sylveste status`
 5. Must not collide with existing names in the ecosystem
 
 **For a new `inter-*` plugin:**
