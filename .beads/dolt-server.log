@@ -5956,3 +5956,36 @@ time="2026-03-27T08:48:09-07:00" level=warning msg="error running query" connect
 time="2026-03-27T08:48:09-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=933
 time="2026-03-27T08:48:09-07:00" level=info msg=ConnectionClosed connectionID=933
 time="2026-03-27T08:48:10-07:00" level=info msg=ConnectionClosed connectionID=932
+time="2026-03-27T08:48:47-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=934
+time="2026-03-27T08:48:47-07:00" level=info msg=ConnectionClosed connectionID=934
+time="2026-03-27T08:48:47-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=935
+time="2026-03-27T08:48:47-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=936
+time="2026-03-27T08:48:47-07:00" level=info msg=ConnectionClosed connectionID=935
+time="2026-03-27T08:48:47-07:00" level=warning msg="error running query" connectTime="2026-03-27 08:48:47.791046 -0700 PDT m=+41409.216975918" connectionDb=Sylveste connectionID=936 error="nothing to commit" queryTime="2026-03-27 08:48:47.801816 -0700 PDT m=+41409.227745793"
+time="2026-03-27T08:48:48-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=937
+time="2026-03-27T08:48:48-07:00" level=info msg=ConnectionClosed connectionID=937
+time="2026-03-27T08:48:48-07:00" level=info msg=ConnectionClosed connectionID=936
+time="2026-03-27T08:48:48-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=938
+time="2026-03-27T08:48:48-07:00" level=info msg=ConnectionClosed connectionID=938
+time="2026-03-27T08:48:48-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=939
+time="2026-03-27T08:48:48-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=940
+time="2026-03-27T08:48:48-07:00" level=info msg=ConnectionClosed connectionID=939
+time="2026-03-27T08:48:48-07:00" level=warning msg="error running query" connectTime="2026-03-27 08:48:48.929552 -0700 PDT m=+41410.355455668" connectionDb=Sylveste connectionID=940 error="nothing to commit" queryTime="2026-03-27 08:48:48.939606 -0700 PDT m=+41410.365509043"
+time="2026-03-27T08:48:49-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=941
+time="2026-03-27T08:48:49-07:00" level=info msg=ConnectionClosed connectionID=941
+time="2026-03-27T08:48:49-07:00" level=info msg=ConnectionClosed connectionID=940
+time="2026-03-27T08:49:31-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=942
+time="2026-03-27T08:49:31-07:00" level=info msg=ConnectionClosed connectionID=942
+time="2026-03-27T08:49:31-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=943
+time="2026-03-27T08:49:31-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=944
+time="2026-03-27T08:49:31-07:00" level=info msg=ConnectionClosed connectionID=943
+time="2026-03-27T08:49:31-07:00" level=warning msg="error running query" connectTime="2026-03-27 08:49:31.776962 -0700 PDT m=+41453.201877627" connectionDb=Sylveste connectionID=944 error="nothing to commit" queryTime="2026-03-27 08:49:31.787556 -0700 PDT m=+41453.212471877"
+time="2026-03-27T08:49:32-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=945
+time="2026-03-27T08:49:32-07:00" level=info msg=ConnectionClosed connectionID=945
+time="2026-03-27T08:49:32-07:00" level=info msg=ConnectionClosed connectionID=944
+time="2026-03-27T08:49:42-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=946
+time="2026-03-27T08:49:42-07:00" level=info msg=ConnectionClosed connectionID=946
+time="2026-03-27T08:49:42-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=947
+time="2026-03-27T08:49:42-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=948
+time="2026-03-27T08:49:42-07:00" level=info msg=ConnectionClosed connectionID=947
+time="2026-03-27T08:49:42-07:00" level=info msg=ConnectionClosed connectionID=948
