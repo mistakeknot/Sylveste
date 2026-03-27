@@ -192,12 +192,13 @@ Task 0 first (fixes concurrency bug). Then Tasks 1, 2, 3, 3b in parallel.
 
 ## Success Criteria
 
-- [ ] routing.yaml has upgraded model tiers (35B for C1/C2, 122B for C3)
-- [ ] Shadow mode logs hypothetical cost savings to interstat
+- [ ] PriorityRequestQueue wired into interfere server (concurrent request safety)
+- [ ] routing.yaml has upgraded model tiers + lib-routing.sh updated (atomic commit)
+- [ ] Shadow mode logs hypothetical cost savings to interstat (separate table)
 - [ ] PromptCacheManager wired into interfere server
 - [ ] Playtest bridge runs climate-cascade campaign loop to completion on local inference
 - [ ] Shadow baseline document with sample count and enforce/defer recommendation
-- [ ] Computer-use model research doc written with recommendation (DONE: Qwen3-VL-30B-A3B)
+- [x] Computer-use model research doc written with recommendation (DONE: Qwen3-VL-30B-A3B)
 
 ## Out of Scope
 
