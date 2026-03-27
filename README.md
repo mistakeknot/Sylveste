@@ -51,7 +51,7 @@ This sets up beads tracking, CLAUDE.md/AGENTS.md, docs structure, observability,
 |-------|-------------|------|
 | [Power User Guide](docs/guide-power-user.md) | Claude Code users adding Clavain to their workflow | 10 min read |
 | [Full Setup Guide](docs/guide-full-setup.md) | Users who want the complete platform (Go services, TUI tools) | 30 min setup |
-| [Contributing Guide](docs/guide-contributing.md) | Developers who want to modify or extend Demarch | 45 min setup |
+| [Contributing Guide](docs/guide-contributing.md) | Developers who want to modify or extend Sylveste | 45 min setup |
 
 ## How it works
 
