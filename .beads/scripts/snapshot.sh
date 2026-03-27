@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Generate a consolidated <10KB JSON snapshot of Demarch system state.
+# Generate a consolidated <10KB JSON snapshot of Sylveste system state.
 # Idempotent, safe for cron or SessionStart hook. Each data source fails
 # gracefully — partial output is always valid JSON.
 #

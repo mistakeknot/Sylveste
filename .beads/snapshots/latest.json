@@ -17,25 +17,25 @@
   "active_agents": [
     {
       "session_id": "unknown",
-      "bead_id": "Demarch-ir1l",
+      "bead_id": "sylveste-ir1l",
       "claimed_at": "2026-03-15T01:42:50Z",
       "title": "Fix fleet-registry schema: add orchestrator to category enum + routing_level field"
     },
     {
       "session_id": "unknown",
-      "bead_id": "Demarch-xgco",
+      "bead_id": "sylveste-xgco",
       "claimed_at": "2026-03-15T01:42:49Z",
       "title": "bd snapshot --json: consolidated system state for LLM analysis"
     },
     {
       "session_id": "unknown",
-      "bead_id": "Demarch-5u8u",
+      "bead_id": "sylveste-5u8u",
       "claimed_at": "2026-03-15T01:42:51Z",
       "title": "plugin-benchmark.sh: enable interlab /autoresearch on plugin quality"
     },
     {
       "session_id": "unknown",
-      "bead_id": "Demarch-3j0i",
+      "bead_id": "sylveste-3j0i",
       "claimed_at": "2026-03-15T01:41:09Z",
       "title": "Hyperspace AGI adoption: compound learning + observability + plugin evolution"
     },
@@ -49,27 +49,27 @@
   "blockers": [],
   "top_cost_beads_7d": [
     {
-      "bead_id": "Demarch-6i0.8",
+      "bead_id": "sylveste-6i0.8",
       "tokens": 311261,
       "runs": 33
     },
     {
-      "bead_id": "Demarch-u2b",
+      "bead_id": "sylveste-u2b",
       "tokens": 167990,
       "runs": 20
     },
     {
-      "bead_id": "Demarch-fqb",
+      "bead_id": "sylveste-fqb",
       "tokens": 164715,
       "runs": 2
     },
     {
-      "bead_id": "Demarch-hq9",
+      "bead_id": "sylveste-hq9",
       "tokens": 161588,
       "runs": 11
     },
     {
-      "bead_id": "Demarch-0ir",
+      "bead_id": "sylveste-0ir",
       "tokens": 119167,
       "runs": 8
     }

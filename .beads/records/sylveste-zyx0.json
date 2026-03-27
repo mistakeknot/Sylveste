@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "bead_id": "Demarch-zyx0",
+  "bead_id": "sylveste-zyx0",
   "session_id": "unknown",
   "title": "Fix negotiation force-release: check holder liveness via intermute Heartbeat before timeout",
   "timestamp": "2026-03-15T01:47:26Z",
