@@ -34,17 +34,21 @@ echo "  jl_dim: ${TQ_JL_DIM:-256}"
 echo "  max_tokens: $MAX_TOKENS"
 echo ""
 
+tmpdir=$(mktemp -d)
+trap 'rm -rf "$tmpdir"' EXIT
+
 # Run TurboQuant benchmark
-result=$(uv run python -m server.benchmark_cli \
+uv run python -m server.benchmark_cli \
     --model "$MODEL" \
     --kv-mode turbo_quant \
     --max-tokens "$MAX_TOKENS" \
-    --json 2>/dev/null) || { echo "METRIC error 1"; exit 1; }
+    --json > "$tmpdir/turbo.json" 2>/dev/null || { echo "METRIC error 1"; exit 1; }
 
 # Emit interlab METRIC lines
-python3 -c "
+uv run python -c "
 import json, sys
-d = json.loads('''$result''')
+with open('$tmpdir/turbo.json') as f:
+    d = json.load(f)
 print(f'METRIC tok_per_s {d.get(\"median_tok_s\", 0)}')
 print(f'METRIC mean_tok_per_s {d.get(\"mean_tok_s\", 0)}')
 print(f'METRIC ttft_s {d.get(\"median_ttft_s\", 0)}')
@@ -57,15 +61,16 @@ print(f'METRIC kv_bits {d.get(\"kv_bits\", \"none\")}')
 # Run baseline (vanilla kv_bits, no polar transform) for comparison
 echo ""
 echo "=== Baseline (kv_bits=${TQ_KV_BITS:-4}, no polar) ==="
-baseline=$(uv run python -m server.benchmark_cli \
+uv run python -m server.benchmark_cli \
     --model "$MODEL" \
     --kv-bits "${TQ_KV_BITS:-4}" \
     --max-tokens "$MAX_TOKENS" \
-    --json 2>/dev/null) || { echo "METRIC baseline_error 1"; exit 0; }
+    --json > "$tmpdir/baseline.json" 2>/dev/null || { echo "METRIC baseline_error 1"; exit 0; }
 
-python3 -c "
+uv run python -c "
 import json
-d = json.loads('''$baseline''')
+with open('$tmpdir/baseline.json') as f:
+    d = json.load(f)
 print(f'METRIC baseline_tok_per_s {d.get(\"median_tok_s\", 0)}')
 print(f'METRIC baseline_ttft_s {d.get(\"median_ttft_s\", 0)}')
 "
