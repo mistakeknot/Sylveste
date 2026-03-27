@@ -16,9 +16,9 @@ Examples:
 
 ## Sylveste Root (monorepo root docs/)
 
-- Human roadmap: `docs/demarch-roadmap.md`
+- Human roadmap: `docs/sylveste-roadmap.md`
 - Machine roadmap feed (canonical for tooling): `docs/roadmap.json`
-- Vision: `docs/demarch-vision.md`
+- Vision: `docs/sylveste-vision.md`
 - Root-level PRDs: `docs/prds/*.md` (no single root `docs/PRD.md`)
 
 ## Enforcement Rules
