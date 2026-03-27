@@ -177,18 +177,18 @@ Start interfere (35B model only) + Shadow Work, run `climate-cascade` campaign v
 ## Execution Order
 
 ```
+Task 0 (queue fix) ──── BLOCKING: must complete first
+                   │
 Task 1 (config) ──┐
-Task 2 (logging) ──┼── parallel, independent
-Task 3 (bridge) ──┤
+Task 2 (logging) ──┼── parallel, independent (after Task 0)
+Task 3 (bridge) ──┤    (Task 4 campaign loading is folded into Task 3)
 Task 3b (cache)  ──┘
                    │
-Task 4 (adapter) ──── depends on Task 3
-                   │
 Task 5 (shadow baseline) ── depends on Tasks 1+2
-Task 6 (local playtest) ── depends on Tasks 3+3b+4
+Task 6 (local playtest) ── depends on Tasks 0+3+3b
 ```
 
-Tasks 1, 2, 3, 3b can all run in parallel. Task 4 depends on Task 3. Tasks 5 and 6 are operational runs after code is ready.
+Task 0 first (fixes concurrency bug). Then Tasks 1, 2, 3, 3b in parallel.
 
 ## Success Criteria
 
