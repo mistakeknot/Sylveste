@@ -66,8 +66,8 @@ watchables:
 
 # ─── Product artifacts ────────────────────────────────────────────────
 
-- name: demarch-roadmap
-  path: docs/demarch-roadmap.md
+- name: sylveste-roadmap
+  path: docs/sylveste-roadmap.md
   generator: interpath:roadmap
   generator_args: {}
   staleness_days: 5
@@ -78,8 +78,8 @@ watchables:
   - type: file_created
     weight: 1
 
-- name: demarch-vision
-  path: docs/demarch-vision.md
+- name: sylveste-vision
+  path: docs/sylveste-vision.md
   generator: interpath:vision
   generator_args: {}
   staleness_days: 14
