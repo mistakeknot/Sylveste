@@ -201,7 +201,7 @@ See `docs/prds/2026-03-07-memory-architecture-convergence.md` for the full syste
 
 Names are compressed design arguments, not decoration.
 
-The SF canon (Banks, Reynolds, Wolfe, Palmer, Gibson, Mieville) is the only literature that seriously explores governance, autonomy, identity, and systems thinking at scale — which is literally what Demarch builds. Demarch evokes governance, Clavain evokes leadership, Gridfire evokes paradigm-level infrastructure.
+The SF canon (Banks, Reynolds, Wolfe, Palmer, Gibson, Mieville) is the only literature that seriously explores governance, autonomy, identity, and systems thinking at scale — which is literally what Sylveste builds. The project was originally named Demarch (Reynolds' Demarchists — Democratic Anarchists), evoking governance. It was renamed to Sylveste (Dan Sylveste, Reynolds' Revelation Space protagonist) in March 2026 when namespace collision checks confirmed zero conflicts across all registries. Clavain evokes leadership, Gridfire evokes paradigm-level infrastructure.
 
 Two syllables. Feels right in your hands. You learn what they mean once; you feel what they mean every time you type them.
 
