@@ -147,7 +147,7 @@ The bar is high — kernel-native is earned by architectural role, not convenien
 
 *Composition applied to knowledge: many scoped stores with explicit boundaries, unified through retrieval, not migration.*
 
-Demarch has 10 memory-shaped systems across 3 layers. Each was built to solve a specific problem. The taxonomy below prevents future systems from creating yet another knowledge store without checking if an existing category fits.
+Sylveste has 10 memory-shaped systems across 3 layers. Each was built to solve a specific problem. The taxonomy below prevents future systems from creating yet another knowledge store without checking if an existing category fits.
 
 ### Five Categories
 
