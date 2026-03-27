@@ -1,32 +1,25 @@
-"""TurboQuant: Polar-transformed KV cache quantization experiment.
+"""TurboQuant: KV cache quantization experiments.
 
-RESULT: NEGATIVE — polar transform INCREASES quantization error by ~19% (4-bit)
-and the inverse trigonometric transform further AMPLIFIES that error by ~2.7x.
-The approach produces garbage output at all bit widths (2, 4, 8) with quantized
-KV cache. Only works correctly with fp16 (non-quantized) cache.
+RESULT: NEGATIVE for both approaches tested with MLX's native quantization.
 
-Root cause: angle quantization error δθ becomes Cartesian error r * sin(δθ) —
-proportional to the radius. High-radius vectors (most important for attention)
-suffer the most. This is a fundamental mathematical limitation, not fixable by
-layout or bit allocation changes.
+Approach 1 — Polar coordinates (PolarCacheWrapper):
+  Inverse trig amplifies quantization error by 2.7x. Garbage at all bit widths.
 
-The core idea was: convert K/V vectors to polar coordinates before quantization
-so that MLX's native quantizer operates on a distribution (bounded angles,
-non-negative radii) that may compress with lower error than raw Cartesian K/V.
-In practice, Cartesian K/V (centered, symmetric, Gaussian-like) is already
-near-optimal for symmetric quantization, and polar coordinates waste codebook
-capacity on the strictly-positive radius distribution.
+Approach 2 — Orthogonal rotation (TurboQuantCacheWrapper):
+  Mathematically correct (dot product preserved, fp16 path perfect).
+  Per-element K quantization error reduced by 7%.
+  Attention score error reduced by 8%.
+  BUT: final attention output is 1.3x worse via manual dequant and 5x worse
+  via fused mx.quantized_matmul kernel. The fused kernel has distribution-
+  dependent precision optimizations that the rotation disrupts. And the
+  paper's benefit comes from Lloyd-Max centroids specifically tuned to the
+  post-rotation Beta distribution — MLX's affine quantizer (uniform grid +
+  scale + bias) doesn't get significant benefit from the rotation.
 
-Iteration log:
-  1. Original PolarCacheWrapper: called inverse_polar_transform on quantized
-     tuples (data, scales, biases) — structurally broken, never worked.
-  2. Fixed dequantize-then-inverse: correct structure, but 3.1x worse error
-     due to interleaved r/θ layout mixing distributions within quant groups.
-  3. Contiguous layout [radii|angles]: reduced to 1.19x worse (4-bit), but
-     still produces garbage output due to 2.7x error amplification through
-     inverse trigonometric transform.
-
-Kept for reference and to prevent re-derivation of the same dead end.
+To actually implement TurboQuant would require:
+  1. Custom Lloyd-Max quantizer (non-uniform centroids for Beta distribution)
+  2. Custom attention kernel (can't use mx.quantized_matmul with non-affine quant)
+  3. ~3-5x more implementation effort
 
 References:
   - TurboQuant (ICLR 2026, arxiv.org/abs/2504.19874)
@@ -45,70 +38,60 @@ import mlx.core as mx
 
 
 # ---------------------------------------------------------------------------
-# Polar transform primitives
+# Rotation primitives (TurboQuant core)
 # ---------------------------------------------------------------------------
 
 
-def polar_transform(tensor: mx.array) -> mx.array:
-    """Convert tensor from Cartesian to polar representation.
+def make_rotation_matrix(head_dim: int, seed: int = 0) -> mx.array:
+    """Generate a random orthogonal rotation matrix via QR decomposition.
 
-    Pairs adjacent dimensions: (x0, x1), (x2, x3), ...
-    Output layout: [r0, r1, ..., r_{d/2-1}, theta0, theta1, ..., theta_{d/2-1}]
-    Radii and angles are stored in contiguous halves (not interleaved) so that
-    each quantization group contains a single distribution type.
-    Angles are normalized to [0, 1].
-
-    Computation is done in float32 for trig precision.
+    The Q factor of QR(Normal(0,1)^{d×d}) is a Haar-distributed random
+    orthogonal matrix, which is exactly what TurboQuant requires.
 
     Args:
-        tensor: shape (..., head_dim) where head_dim is even.
+        head_dim: Dimension of the head vectors (d).
+        seed: Random seed for reproducibility.
 
     Returns:
-        Polar-transformed tensor of same shape and dtype.
+        Orthogonal matrix Π of shape (head_dim, head_dim), float32.
+        Satisfies Π·Π^T = I.
     """
-    orig_dtype = tensor.dtype
-    t = tensor.astype(mx.float32)
-    *batch, d = t.shape
-    half = d // 2
-    t = t.reshape(*batch, half, 2)
-    x, y = t[..., 0], t[..., 1]
-    r = mx.sqrt(x * x + y * y)
-    theta = mx.arctan2(y, x)  # [-pi, pi]
-    # Normalize theta to [0, 1] for uniform quantization distribution
-    theta_norm = (theta + mx.array(3.141592653589793)) / mx.array(2 * 3.141592653589793)
-    # Contiguous layout: [all radii | all angles] — not interleaved
-    result = mx.concatenate([r, theta_norm], axis=-1)
-    return result.astype(orig_dtype)
+    key = mx.random.key(seed)
+    A = mx.random.normal(shape=(head_dim, head_dim), key=key)
+    # QR decomposition must run on CPU in MLX
+    Q, _R = mx.linalg.qr(A, stream=mx.cpu)
+    mx.eval(Q)
+    return Q
 
 
-def inverse_polar_transform(tensor: mx.array) -> mx.array:
-    """Convert tensor from polar representation back to Cartesian.
-
-    Reverses polar_transform: first half of last dim is radii, second half
-    is normalized angles in [0, 1].
+def rotate(x: mx.array, pi: mx.array) -> mx.array:
+    """Apply rotation: x_rot = x @ Π^T (equivalent to Π @ x per-vector).
 
     Args:
-        tensor: shape (..., head_dim) in polar representation.
+        x: (..., head_dim) tensor to rotate.
+        pi: (head_dim, head_dim) orthogonal rotation matrix.
 
     Returns:
-        Cartesian tensor of same shape and dtype.
+        Rotated tensor of same shape and dtype.
     """
-    orig_dtype = tensor.dtype
-    t = tensor.astype(mx.float32)
-    *batch, d = t.shape
-    half = d // 2
-    r = t[..., :half]
-    theta_norm = t[..., half:]
-    theta = theta_norm * mx.array(2 * 3.141592653589793) - mx.array(3.141592653589793)
-    x = r * mx.cos(theta)
-    y = r * mx.sin(theta)
-    # Interleave back: (x0, y0, x1, y1, ...)
-    result = mx.stack([x, y], axis=-1).reshape(*batch, d)
-    return result.astype(orig_dtype)
+    return x @ pi.T
+
+
+def rotate_inverse(x: mx.array, pi: mx.array) -> mx.array:
+    """Apply inverse rotation: x_orig = x @ Π (since Π^{-1} = Π^T).
+
+    Args:
+        x: (..., head_dim) rotated tensor.
+        pi: (head_dim, head_dim) orthogonal rotation matrix.
+
+    Returns:
+        Tensor rotated back to original space, same shape and dtype.
+    """
+    return x @ pi
 
 
 # ---------------------------------------------------------------------------
-# QJL residual correction
+# QJL residual correction (Phase 2, shared with rotation approach)
 # ---------------------------------------------------------------------------
 
 
@@ -124,14 +107,11 @@ def make_jl_projection(jl_dim: int, head_dim: int, seed: int) -> mx.array:
         Projection matrix of shape (jl_dim, head_dim), float32.
     """
     key = mx.random.key(seed)
-    # Unscaled Gaussian — scaling handled in encode/decode
     return mx.random.normal(shape=(jl_dim, head_dim), key=key)
 
 
 def qjl_encode(residual: mx.array, projection: mx.array) -> mx.array:
     """1-bit Johnson-Lindenstrauss encoding: sign(projection @ residual).
-
-    Uses the standard 1-bit CS formula: bits_i = sign(sum_j P_ij * x_j).
 
     Args:
         residual: (..., head_dim) — quantization residual to compress.
@@ -140,7 +120,6 @@ def qjl_encode(residual: mx.array, projection: mx.array) -> mx.array:
     Returns:
         bits: (..., jl_dim) as int8 with values +1 or -1.
     """
-    # (..., head_dim) @ (head_dim, jl_dim) -> (..., jl_dim)
     projected = residual.astype(mx.float32) @ projection.T
     return mx.where(
         projected >= 0, mx.array(1, dtype=mx.int8), mx.array(-1, dtype=mx.int8)
@@ -150,9 +129,6 @@ def qjl_encode(residual: mx.array, projection: mx.array) -> mx.array:
 def qjl_decode(bits: mx.array, projection: mx.array) -> mx.array:
     """Reconstruct approximate residual from 1-bit JL encoding.
 
-    Uses: x_hat = (1/jl_dim) * P^T @ bits, which is the standard unbiased
-    estimator (up to a sqrt(2/pi) constant) for the 1-bit sketch.
-
     Args:
         bits: (..., jl_dim) int8 values of +1/-1.
         projection: (jl_dim, head_dim) — same projection matrix used to encode.
@@ -161,72 +137,167 @@ def qjl_decode(bits: mx.array, projection: mx.array) -> mx.array:
         Approximate residual of shape (..., head_dim), float32.
     """
     jl_dim = projection.shape[0]
-    # (..., jl_dim) @ (jl_dim, head_dim) -> (..., head_dim)
     return (bits.astype(mx.float32) @ projection) / jl_dim
 
 
 # ---------------------------------------------------------------------------
-# Cache wrapper — polar transform around any mlx-lm cache
+# Cache wrapper — orthogonal rotation around any mlx-lm cache
 # ---------------------------------------------------------------------------
 
 
-class PolarCacheWrapper:
-    """Wraps an mlx-lm cache to apply polar transform on K/V before storage.
+class TurboQuantCacheWrapper:
+    """Wraps an mlx-lm cache to apply orthogonal rotation on K before storage.
 
-    Polar transform converts K/V vectors to (radius, angle) pairs before
-    quantization. The bounded ranges (radius >= 0, angle in [0,1]) may
-    quantize with lower error than unbounded Cartesian values.
+    The rotation concentrates coordinate distributions for better quantization.
+    Since Π is orthogonal, Q·K^T = (Q·Π^T)·(K·Π^T)^T, so we rotate Q at
+    attention time (via install_turbo_quant_attention) and the fused kernel
+    computes correct attention scores on rotated data.
 
-    On retrieval, the quantized polar data is dequantized and inverse-
-    transformed back to Cartesian coordinates. This means we cannot use
-    the fused quantized attention kernel — we explicitly hide the `bits`
-    attribute so `scaled_dot_product_attention` takes the standard
-    (non-quantized) path with our dequantized Cartesian tensors.
+    Unlike the failed PolarCacheWrapper, this wrapper:
+    - DOES expose bits/group_size (fused kernel path is used)
+    - Does NOT dequantize or inverse-transform on retrieval
+    - Only transforms K on storage; Q is transformed at attention time
     """
 
-    def __init__(self, inner_cache: Any):
+    def __init__(self, inner_cache: Any, pi: mx.array, rotate_values: bool = False):
         self._inner = inner_cache
+        self._pi = pi
+        self._rotate_values = rotate_values
 
-    def update_and_fetch(
-        self, keys: mx.array, values: mx.array
-    ) -> tuple[mx.array, mx.array]:
-        # Transform to polar before cache stores (and quantizes)
-        polar_keys = polar_transform(keys)
-        polar_values = polar_transform(values)
-        # Inner cache stores quantized polar representation.
-        # For QuantizedKVCache this returns (data, scales, biases) tuples.
-        q_keys, q_values = self._inner.update_and_fetch(polar_keys, polar_values)
-        # Dequantize and inverse-transform back to Cartesian
-        return (
-            self._dequantize_and_inverse(q_keys),
-            self._dequantize_and_inverse(q_values),
-        )
+    def update_and_fetch(self, keys: mx.array, values: mx.array) -> tuple[Any, Any]:
+        rotated_keys = rotate(keys, self._pi)
+        rotated_values = rotate(values, self._pi) if self._rotate_values else values
+        return self._inner.update_and_fetch(rotated_keys, rotated_values)
 
-    def _dequantize_and_inverse(
-        self, quantized: tuple[mx.array, mx.array, mx.array] | mx.array
-    ) -> mx.array:
-        """Dequantize a quantized tuple and apply inverse polar transform."""
-        if isinstance(quantized, tuple):
-            # (data_uint32, scales, biases) from QuantizedKVCache
-            data, scales, biases = quantized
-            group_size = self._inner.group_size
-            bits = self._inner.bits
-            tensor = mx.dequantize(data, scales, biases, group_size, bits)
-        else:
-            # Plain tensor from non-quantized cache
-            tensor = quantized
-        return inverse_polar_transform(tensor)
+    def to_quantized(
+        self, group_size: int = 64, bits: int = 4
+    ) -> "TurboQuantCacheWrapper":
+        """Delegate quantization to inner cache, re-wrap the result."""
+        if not hasattr(self._inner, "to_quantized"):
+            return self  # inner already quantized
+        new_inner = self._inner.to_quantized(group_size, bits)
+        return TurboQuantCacheWrapper(new_inner, self._pi, self._rotate_values)
 
     def __getattr__(self, name: str) -> Any:
-        # Hide 'bits' and 'group_size' so scaled_dot_product_attention
-        # takes the standard (non-fused) path with our plain tensors.
-        if name in ("bits", "group_size"):
-            raise AttributeError(name)
         return getattr(self._inner, name)
 
 
-def wrap_prompt_cache(
+def wrap_prompt_cache_turbo(
     prompt_cache: list[Any],
-) -> list[PolarCacheWrapper]:
-    """Wrap each layer's cache with polar transform."""
-    return [PolarCacheWrapper(c) for c in prompt_cache]
+    head_dim: int,
+    seed: int = 0,
+    rotate_values: bool = False,
+) -> tuple[list[TurboQuantCacheWrapper], mx.array]:
+    """Wrap each layer's cache with orthogonal rotation.
+
+    Returns the wrapped cache list and the rotation matrix (needed for Q
+    rotation at attention time via install_turbo_quant_attention).
+    """
+    pi = make_rotation_matrix(head_dim, seed)
+    wrapped = [
+        TurboQuantCacheWrapper(c, pi, rotate_values=rotate_values) for c in prompt_cache
+    ]
+    return wrapped, pi
+
+
+# ---------------------------------------------------------------------------
+# Attention monkey-patch for Q rotation
+# ---------------------------------------------------------------------------
+
+_original_sdpa: Any = None
+
+
+def install_turbo_quant_attention(pi: mx.array) -> None:
+    """Monkey-patch scaled_dot_product_attention to rotate Q vectors.
+
+    When K vectors are stored rotated by Π in the cache, Q must also be
+    rotated so that Q_rot · K_rot^T = Q · K^T.
+
+    This patches mlx_lm.models.base.scaled_dot_product_attention, which
+    all model implementations import. The patch checks for a marker attribute
+    on the cache and only applies rotation when TurboQuant is active.
+
+    Must be called once before generation starts. Call
+    uninstall_turbo_quant_attention() to restore the original function.
+    """
+    global _original_sdpa
+    import mlx_lm.models.base as base
+
+    if _original_sdpa is not None:
+        return  # already installed
+
+    _original_sdpa = base.scaled_dot_product_attention
+
+    def turbo_sdpa(queries, keys, values, cache, scale, mask, sinks=None):
+        if cache is not None and isinstance(cache, TurboQuantCacheWrapper):
+            queries = rotate(queries, cache._pi)
+        return _original_sdpa(queries, keys, values, cache, scale, mask, sinks)
+
+    base.scaled_dot_product_attention = turbo_sdpa
+
+    # Also patch any modules that have already imported it
+    import sys
+
+    for name, mod in list(sys.modules.items()):
+        if name.startswith("mlx_lm.models.") and mod is not None:
+            if hasattr(mod, "scaled_dot_product_attention"):
+                if mod.scaled_dot_product_attention is _original_sdpa:
+                    mod.scaled_dot_product_attention = turbo_sdpa
+
+
+def uninstall_turbo_quant_attention() -> None:
+    """Restore the original scaled_dot_product_attention function."""
+    global _original_sdpa
+    if _original_sdpa is None:
+        return
+
+    import sys
+    import mlx_lm.models.base as base
+
+    current_patched = base.scaled_dot_product_attention
+    base.scaled_dot_product_attention = _original_sdpa
+
+    for name, mod in list(sys.modules.items()):
+        if name.startswith("mlx_lm.models.") and mod is not None:
+            if hasattr(mod, "scaled_dot_product_attention"):
+                if mod.scaled_dot_product_attention is current_patched:
+                    mod.scaled_dot_product_attention = _original_sdpa
+
+    _original_sdpa = None
+
+
+# ---------------------------------------------------------------------------
+# Legacy: polar transform (DEPRECATED — produces garbage, kept for reference)
+# ---------------------------------------------------------------------------
+
+
+def polar_transform(tensor: mx.array) -> mx.array:
+    """DEPRECATED: Polar coordinate transform. Produces garbage with quantized
+    KV cache due to 2.7x error amplification through inverse trig. Kept for
+    reference only — use rotation-based TurboQuant instead."""
+    orig_dtype = tensor.dtype
+    t = tensor.astype(mx.float32)
+    *batch, d = t.shape
+    half = d // 2
+    t = t.reshape(*batch, half, 2)
+    x, y = t[..., 0], t[..., 1]
+    r = mx.sqrt(x * x + y * y)
+    theta = mx.arctan2(y, x)
+    theta_norm = (theta + mx.array(3.141592653589793)) / mx.array(2 * 3.141592653589793)
+    result = mx.concatenate([r, theta_norm], axis=-1)
+    return result.astype(orig_dtype)
+
+
+def inverse_polar_transform(tensor: mx.array) -> mx.array:
+    """DEPRECATED: Inverse polar coordinate transform. See polar_transform."""
+    orig_dtype = tensor.dtype
+    t = tensor.astype(mx.float32)
+    *batch, d = t.shape
+    half = d // 2
+    r = t[..., :half]
+    theta_norm = t[..., half:]
+    theta = theta_norm * mx.array(2 * 3.141592653589793) - mx.array(3.141592653589793)
+    x = r * mx.cos(theta)
+    y = r * mx.sin(theta)
+    result = mx.stack([x, y], axis=-1).reshape(*batch, d)
+    return result.astype(orig_dtype)

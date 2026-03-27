@@ -242,25 +242,42 @@ class InferenceEngine:
         # Build kwargs for generate_step (passed through stream_generate)
         gen_kwargs: dict[str, Any] = {}
 
-        # --- Experiment: TurboQuant polar-transformed KV cache ---
+        # --- Experiment: TurboQuant rotation-based KV cache ---
         if self._turbo_quant_cfg is not None and self._turbo_quant_cfg.enabled:
             if kv_bits is not None:
                 raise ValueError(
                     "Cannot set kv_bits when turbo_quant is enabled. "
                     "Configure kv_bits in turbo_quant experiment config instead."
                 )
-            from .experiments.turbo_quant import wrap_prompt_cache
+            from .experiments.turbo_quant import (
+                install_turbo_quant_attention,
+                wrap_prompt_cache_turbo,
+            )
 
             tq_kv_bits = int(self._turbo_quant_cfg.get("kv_bits", 4))
             tq_group_size = int(self._turbo_quant_cfg.get("kv_group_size", 64))
-            gen_kwargs["kv_bits"] = tq_kv_bits
-            gen_kwargs["kv_group_size"] = tq_group_size
-            # Create cache, wrap with polar transform, pass as prompt_cache.
-            # stream_generate will use our wrapped cache instead of creating its own.
+            tq_rotate_values = bool(self._turbo_quant_cfg.get("rotate_values", False))
+            tq_seed = int(self._turbo_quant_cfg.get("rotation_seed", 0))
+            # Derive head_dim from model config
+            model_args = model.args if hasattr(model, "args") else model.model.args
+            head_dim = model_args.hidden_size // model_args.num_attention_heads
+            # Pre-quantize caches before wrapping — avoids issues with
+            # maybe_quantize_kv_cache trying to convert wrapped caches.
             from mlx_lm.models.cache import make_prompt_cache
 
             raw_cache = make_prompt_cache(model, max_kv_size)
-            gen_kwargs["prompt_cache"] = wrap_prompt_cache(raw_cache)
+            quantized_cache = [
+                c.to_quantized(group_size=tq_group_size, bits=tq_kv_bits)
+                for c in raw_cache
+            ]
+            wrapped_cache, pi = wrap_prompt_cache_turbo(
+                quantized_cache,
+                head_dim=head_dim,
+                seed=tq_seed,
+                rotate_values=tq_rotate_values,
+            )
+            gen_kwargs["prompt_cache"] = wrapped_cache
+            install_turbo_quant_attention(pi)
         elif kv_bits is not None:
             gen_kwargs["kv_bits"] = kv_bits
             gen_kwargs["kv_group_size"] = kv_group_size
