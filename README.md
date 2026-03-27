@@ -93,7 +93,7 @@ All plugins are installed from the [interagency-marketplace](https://github.com/
 
 ### Naming convention
 
-All module names are **lowercase** except **Clavain** (proper noun), **Demarch** (project name), **Interverse** (ecosystem name), and **Autarch** (proper noun).
+All module names are **lowercase** except **Clavain** (proper noun), **Sylveste** (project name), **Interverse** (ecosystem name), and **Autarch** (proper noun).
 
 ## Troubleshooting
 
