@@ -1,4 +1,4 @@
-# Demarch Philosophy
+# Sylveste Philosophy
 
 The design bets, tradeoffs, and principles that guide how we build. See MISSION.md for why this project exists.
 
@@ -14,7 +14,7 @@ The cycle: authority enables actions → actions produce evidence → evidence e
 
 ## The Core Bet
 
-Four claims, all of which must be true for Demarch to be right:
+Four claims, all of which must be true for Sylveste to be right:
 
 1. **Infrastructure unlocks autonomy.** The bottleneck for agent capability is infrastructure (durability, coordination, feedback loops), not model intelligence. Better plumbing produces better agents.
 2. **Review phases are where the leverage is.** Most agent tools skip brainstorm, strategy, and specification. The thinking phases are more valuable than the building phases.
