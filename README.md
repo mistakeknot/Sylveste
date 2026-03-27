@@ -1,15 +1,15 @@
-# Demarch
+# Sylveste
 
 A monorepo for building software with agents, where the review phases matter more than the building phases, and the point is not to remove humans from the loop but to make every moment in the loop count.
 
-Demarch is the platform behind [Clavain](https://github.com/mistakeknot/Clavain), a self-improving Claude Code agent rig that orchestrates the full development lifecycle from brainstorm to ship. It coordinates Claude, Codex, and GPT-5.2 Pro into something more useful than any of them alone.
+Sylveste is the platform behind [Clavain](https://github.com/mistakeknot/Clavain), a self-improving Claude Code agent rig that orchestrates the full development lifecycle from brainstorm to ship. It coordinates Claude, Codex, and GPT-5.2 Pro into something more useful than any of them alone.
 
 ## Quick start
 
 Install Clavain and the full companion plugin ecosystem in one command:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mistakeknot/Demarch/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/mistakeknot/Sylveste/main/install.sh | bash
 ```
 
 ### Prerequisites
