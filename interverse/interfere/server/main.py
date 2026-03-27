@@ -15,14 +15,24 @@ from starlette.routing import Route
 from .experiments.config import load_experiment_configs
 from .metal_worker import MetalWorker
 from .schema import ChatCompletionChunk
+from .thermal import ThermalMonitor
 
 
 async def _health(request: Request) -> JSONResponse:
     """GET /health — server readiness check."""
     dry_run: bool = request.app.state.dry_run
     worker: MetalWorker | None = request.app.state.worker
+    thermal: ThermalMonitor | None = request.app.state.thermal
 
     info: dict = {"status": "dry_run" if dry_run else "ready", "models": []}
+
+    if thermal is not None:
+        try:
+            ts = thermal.read()
+            info["thermal"] = {"level": ts.level, "raw_value": ts.raw_value}
+            info["thermal_state"] = ts.raw_value
+        except Exception:
+            info["thermal"] = {"level": "unknown", "raw_value": -1}
 
     if worker is not None and worker.is_alive():
         try:
@@ -56,7 +66,7 @@ async def _generate_dry_run_tokens(
 async def _generate_worker_tokens(
     worker: MetalWorker,
     model: str,
-    prompt: str,
+    messages: list[dict],
     max_tokens: int,
     temperature: float,
     kv_bits: int | None = None,
@@ -70,7 +80,7 @@ async def _generate_worker_tokens(
     # Each iteration of worker.generate() blocks on resp_queue.get().
     token_iter = worker.generate(
         model_name=model,
-        prompt=prompt,
+        messages=messages,
         max_tokens=max_tokens,
         temperature=temperature,
         kv_bits=kv_bits,
@@ -134,19 +144,10 @@ async def _chat_completions(request: Request) -> JSONResponse | StreamingRespons
     if dry_run or worker is None:
         generator = _generate_dry_run_tokens(model)
     else:
-        # Build a simple prompt from messages (last user message).
-        prompt = ""
-        for msg in reversed(messages):
-            if msg.get("role") == "user":
-                prompt = msg.get("content", "")
-                break
-        if not prompt:
-            prompt = messages[-1].get("content", "")
-
         generator = _generate_worker_tokens(
             worker,
             model,
-            prompt,
+            messages,
             max_tokens,
             temperature,
             kv_bits=kv_bits,
@@ -163,6 +164,50 @@ async def _chat_completions(request: Request) -> JSONResponse | StreamingRespons
     )
 
 
+async def _load_model(request: Request) -> JSONResponse:
+    """POST /v1/models/load — preload a model into the Metal subprocess."""
+    worker: MetalWorker | None = request.app.state.worker
+    if worker is None or not worker.is_alive():
+        return JSONResponse(
+            {"error": {"message": "Worker not available", "type": "server_error"}},
+            status_code=503,
+        )
+
+    try:
+        body = await request.json()
+    except Exception:
+        return JSONResponse(
+            {
+                "error": {
+                    "message": "Invalid JSON body",
+                    "type": "invalid_request_error",
+                }
+            },
+            status_code=400,
+        )
+
+    model_name = body.get("model", "")
+    if not model_name:
+        return JSONResponse(
+            {
+                "error": {
+                    "message": "model is required",
+                    "type": "invalid_request_error",
+                }
+            },
+            status_code=400,
+        )
+
+    resp = worker.load_model(model_name, timeout=120.0)
+    if resp.status == "error":
+        return JSONResponse(
+            {"error": {"message": resp.error, "type": "server_error"}},
+            status_code=500,
+        )
+
+    return JSONResponse({"status": "loaded", "model": model_name, "data": resp.data})
+
+
 def create_app(dry_run: bool = False) -> Starlette:
     """Create the interfere Starlette application.
 
@@ -174,11 +219,19 @@ def create_app(dry_run: bool = False) -> Starlette:
         None if dry_run else MetalWorker(experiment_configs=exp_configs)
     )
 
+    # Thermal monitoring runs in the main process (no Metal dependency)
+    thermal: ThermalMonitor | None = None
+    try:
+        thermal = ThermalMonitor()
+    except Exception:
+        pass  # Non-macOS or libSystem unavailable
+
     @asynccontextmanager
     async def _lifespan(app: Starlette):
         # Startup
         app.state.dry_run = dry_run
         app.state.worker = None
+        app.state.thermal = thermal
         if worker is not None:
             worker.start()
             app.state.worker = worker
@@ -190,10 +243,12 @@ def create_app(dry_run: bool = False) -> Starlette:
     routes = [
         Route("/health", _health, methods=["GET"]),
         Route("/v1/chat/completions", _chat_completions, methods=["POST"]),
+        Route("/v1/models/load", _load_model, methods=["POST"]),
     ]
 
     app = Starlette(routes=routes, lifespan=_lifespan)
     # Set state eagerly so tests that skip lifespan still work
     app.state.dry_run = dry_run
     app.state.worker = None
+    app.state.thermal = thermal
     return app

@@ -167,19 +167,37 @@ def _worker_loop(
 
         if request.command is WorkerCommand.GENERATE:
             model_name = request.payload.get("model_name", "")
+            messages = request.payload.get("messages")
             prompt = request.payload.get("prompt", "")
             max_tokens = request.payload.get("max_tokens", 512)
             temperature = request.payload.get("temperature", 0.7)
 
-            if not model_name or not prompt:
+            if not model_name or (not prompt and not messages):
                 resp_queue.put(
                     WorkerResponse(
                         request_id=request.request_id,
                         status="error",
-                        error="model_name and prompt are required",
+                        error="model_name and (prompt or messages) are required",
                     )
                 )
                 continue
+
+            # Apply chat template if messages provided
+            if messages and not prompt:
+                engine._ensure_loaded(model_name)
+                _, tokenizer = engine._models[model_name]
+                try:
+                    prompt = tokenizer.apply_chat_template(
+                        messages,
+                        tokenize=False,
+                        add_generation_prompt=True,
+                    )
+                except Exception:
+                    # Fallback: concatenate messages as plain text
+                    prompt = "\n".join(
+                        f"{m.get('role', 'user')}: {m.get('content', '')}"
+                        for m in messages
+                    )
 
             try:
                 # Stream tokens back as individual responses.
@@ -347,7 +365,8 @@ class MetalWorker:
     def generate(
         self,
         model_name: str,
-        prompt: str,
+        messages: list[dict] | None = None,
+        prompt: str = "",
         max_tokens: int = 512,
         temperature: float = 0.7,
         timeout: float = 60.0,
@@ -359,6 +378,10 @@ class MetalWorker:
 
         Yields decoded text segments. Raises on error or timeout.
 
+        Pass *messages* (list of {role, content} dicts) for chat-template
+        formatting, or *prompt* for raw text. If both are provided, messages
+        takes precedence.
+
         Concurrent calls are serialized by ``_generate_lock`` so token
         streams from different HTTP requests cannot interleave on the
         shared ``resp_queue``.
@@ -367,10 +390,13 @@ class MetalWorker:
             request_id = f"gen-{time.monotonic_ns()}"
             payload: dict[str, Any] = {
                 "model_name": model_name,
-                "prompt": prompt,
                 "max_tokens": max_tokens,
                 "temperature": temperature,
             }
+            if messages is not None:
+                payload["messages"] = messages
+            else:
+                payload["prompt"] = prompt
             if kv_bits is not None:
                 payload["kv_bits"] = kv_bits
                 payload["kv_group_size"] = kv_group_size
