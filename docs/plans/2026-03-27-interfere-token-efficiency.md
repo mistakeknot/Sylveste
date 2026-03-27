@@ -17,11 +17,24 @@ Use interfere's existing server to:
 
 ## Review Findings Applied
 
-Plan review surfaced 4 issues addressed below:
-- **P1 (performance):** 35B + 122B coexistence leaves only 13GB KV headroom in 96GiB Metal limit. **Fix:** Use 35B exclusively for playtest bridge (not 122B). 35B-A3B at 88 tok/s with 18GB leaves ample room.
-- **P1 (user-product):** Bridge system prompt had no game domain context. **Fix:** Include Shadow Work domain preamble from campaign YAML.
-- **P2 (performance):** PromptCacheManager exists in prompt_cache.py but isn't wired into main.py. **Fix:** Added Task 3b.
-- **P2 (user-product):** Task 5 shadow-to-enforce timeline undefined. **Fix:** Scoped as "gather baseline + check existing samples" not open-ended.
+Plan review surfaced 12 issues across 4 agents. Critical fixes:
+
+**Critical (blocking):**
+- **C1 (correctness):** PriorityRequestQueue is dead code — concurrent requests interleave token streams. **Fix:** Added Task 0 to wire queue into main.py before any bridge work.
+- **C2 (correctness):** New model ID `local:qwen3.5-122b-a10b-4bit` missing from `tier_mappings`. **Fix:** Task 1 now does atomic config update (tier_mappings + complexity_routing together).
+- **C3 (architecture):** `_routing_model_tier()` in lib-routing.sh has hardcoded model names — new IDs silently disable safety floors. **Fix:** Task 1 also updates lib-routing.sh.
+
+**High:**
+- **H1 (performance):** 35B + 122B coexistence leaves only 13GB KV headroom. **Fix:** Bridge uses 35B exclusively.
+- **H2 (architecture):** Bridge script inside interfere couples it to Shadow Work. **Fix:** Moved to `scripts/` at monorepo root.
+- **H3 (user-product):** Bridge system prompt had no game domain context. **Fix:** Domain preamble from campaign YAML.
+
+**Medium (addressed in implementation):**
+- Shadow cost logging goes to separate `local_routing_shadow` table (not `agent_runs`)
+- Cascade empty-response handled as no-op in bridge (with warning log)
+- Campaign assertions pause game before reading state (TOCTOU fix)
+- PromptCacheManager wired into main.py (Task 3b)
+- Bridge sleep is response-gated (after inference completes), interval default 5s
 
 ## Task Breakdown
 
