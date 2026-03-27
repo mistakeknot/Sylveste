@@ -13,3 +13,5 @@
 {"issue_id":"sylveste-4dy","label":"claimed_at:1774570139"}
 {"issue_id":"sylveste-4dy","label":"claimed_by:75db6b93-4234-4742-8df0-bb595f827029"}
 {"issue_id":"sylveste-d5e","label":"artifact_plan:docs/plans/2026-03-27-bhq-validation-7b.md"}
+{"issue_id":"sylveste-d5e","label":"artifact_reflection:docs/solutions/2026-03-27-bhq-validation-results.md"}
+{"issue_id":"sylveste-d5e","label":"artifact_test-pass-sha:4c14f568fa6fc9f2a6212ffc434d09f5ef2fd7eb"}
