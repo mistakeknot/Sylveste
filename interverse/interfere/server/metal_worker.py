@@ -15,6 +15,7 @@ import enum
 import multiprocessing
 import multiprocessing.queues
 import os
+import threading
 import time
 from dataclasses import dataclass, field
 from typing import Any, Generator
@@ -273,6 +274,11 @@ class MetalWorker:
         self._process: multiprocessing.Process | None = None
         self._req_queue: multiprocessing.Queue | None = None  # type: ignore[type-arg]
         self._resp_queue: multiprocessing.Queue | None = None  # type: ignore[type-arg]
+        # Serialize generate() calls so concurrent HTTP requests don't
+        # interleave token streams on the shared resp_queue. The Metal
+        # subprocess is single-threaded, so this lock simply ensures we
+        # finish reading all tokens from one request before starting the next.
+        self._generate_lock = threading.Lock()
 
     # -- lifecycle -----------------------------------------------------------
 
@@ -352,36 +358,41 @@ class MetalWorker:
         """Stream generated tokens from the Metal subprocess.
 
         Yields decoded text segments. Raises on error or timeout.
+
+        Concurrent calls are serialized by ``_generate_lock`` so token
+        streams from different HTTP requests cannot interleave on the
+        shared ``resp_queue``.
         """
-        request_id = f"gen-{time.monotonic_ns()}"
-        payload: dict[str, Any] = {
-            "model_name": model_name,
-            "prompt": prompt,
-            "max_tokens": max_tokens,
-            "temperature": temperature,
-        }
-        if kv_bits is not None:
-            payload["kv_bits"] = kv_bits
-            payload["kv_group_size"] = kv_group_size
-        if max_kv_size is not None:
-            payload["max_kv_size"] = max_kv_size
-        self._send(
-            WorkerRequest(
-                command=WorkerCommand.GENERATE,
-                request_id=request_id,
-                payload=payload,
+        with self._generate_lock:
+            request_id = f"gen-{time.monotonic_ns()}"
+            payload: dict[str, Any] = {
+                "model_name": model_name,
+                "prompt": prompt,
+                "max_tokens": max_tokens,
+                "temperature": temperature,
+            }
+            if kv_bits is not None:
+                payload["kv_bits"] = kv_bits
+                payload["kv_group_size"] = kv_group_size
+            if max_kv_size is not None:
+                payload["max_kv_size"] = max_kv_size
+            self._send(
+                WorkerRequest(
+                    command=WorkerCommand.GENERATE,
+                    request_id=request_id,
+                    payload=payload,
+                )
             )
-        )
-        while True:
-            resp = self._recv(timeout=timeout)
-            if resp.status == "token":
-                yield resp.data.get("text", "")
-            elif resp.status == "done":
-                return
-            elif resp.status == "error":
-                raise RuntimeError(resp.error or "generation failed")
-            else:
-                raise RuntimeError(f"unexpected status: {resp.status}")
+            while True:
+                resp = self._recv(timeout=timeout)
+                if resp.status == "token":
+                    yield resp.data.get("text", "")
+                elif resp.status == "done":
+                    return
+                elif resp.status == "error":
+                    raise RuntimeError(resp.error or "generation failed")
+                else:
+                    raise RuntimeError(f"unexpected status: {resp.status}")
 
     # -- internal transport --------------------------------------------------
 

@@ -41,12 +41,23 @@ class InferenceEngine:
     def __init__(
         self,
         experiment_configs: dict[str, ExperimentConfig] | None = None,
+        enable_prompt_cache: bool = True,
     ) -> None:
         self._models: dict[str, tuple] = {}  # model_name -> (model, tokenizer)
         self._experiment_configs = experiment_configs or {}
         self._early_exit_hook: Any | None = None
         self._reservoir_hook: Any | None = None
         self._last_metrics: GenerationMetrics | None = None
+
+        # Prompt prefix cache — deduplicates KV state for repeated system prompts.
+        # Especially valuable for the playtest bridge which sends the same system
+        # prompt + game domain context on every loop iteration.
+        self._prompt_cache: Any | None = None
+        if enable_prompt_cache:
+            from .prompt_cache import PromptCacheManager
+
+            self._prompt_cache = PromptCacheManager()
+
         self._init_hooks()
 
     def _init_hooks(self) -> None:
@@ -117,6 +128,8 @@ class InferenceEngine:
                 "enabled": True,
                 "kv_bits": int(self._bhq_cfg.get("kv_bits", 4)),
             }
+        if self._prompt_cache is not None:
+            stats["prompt_cache"] = self._prompt_cache.stats.to_dict()
         return stats
 
     def _extract_hidden_state(self, model, tokens, tap_layer: int = 24):
