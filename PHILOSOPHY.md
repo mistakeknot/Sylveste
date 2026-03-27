@@ -79,7 +79,7 @@ The fleet enrichment pipeline is the existence proof: `estimate-costs.sh` reads 
 
 **Failure.** Failures will happen. Every failure produces a receipt, no failure cascades unbounded, and every failure is replayable. Optimize for time-to-recovery, not mean-time-between-failures. Defense in depth: contracts, gates, multi-model review, human oversight, post-hoc measurement. Any single layer can fail. All five failing simultaneously is the real risk.
 
-**Self-building.** Demarch builds itself with its own tools. This is simultaneously a design constraint (if Demarch can't build Demarch, the tools aren't good enough), a trust-earning mechanism (each cycle produces evidence for the trust ladder), and a transparency artifact (every decision is auditable via beads and review receipts). Agent friction IS the signal for technical debt — when agents hit the same problem across sessions, that's actionable.
+**Self-building.** Sylveste builds itself with its own tools. This is simultaneously a design constraint (if Sylveste can't build Sylveste, the tools aren't good enough), a trust-earning mechanism (each cycle produces evidence for the trust ladder), and a transparency artifact (every decision is auditable via beads and review receipts). Agent friction IS the signal for technical debt — when agents hit the same problem across sessions, that's actionable.
 
 **Documentation.** Docs are agent memory (persistent state across sessions), decision evidence (auditable receipts of brainstorms, plans, PRDs), and the product interface (CLAUDE.md is agent configuration, skill descriptions are agent capabilities). The quality of docs directly determines the quality of agent output. Stale documentation is silent technical debt — no single stale sentence breaks anything, but together they degrade every agent decision that depends on them. interwatch quantifies this: 14 signal types detect drift between project state and docs, scored into confidence tiers that drive graduated responses from report-only to auto-refresh. Making drift measurable makes the invisible visible.
 
@@ -105,7 +105,7 @@ Currently operating at Level 1-2. Each level requires demonstrated safety at the
 
 Note: this is the *human delegation* ladder — how much authority the human delegates. The vision doc's autonomy ladder (L0-L4: Record → Enforce → React → Auto-remediate → Auto-ship) tracks *system capability* — what the platform can do. The two are orthogonal and advance independently.
 
-**Safety.** Structural, not moral. Demarch enforces structural constraints (bounded blast radius, auditable decisions, revocable authority) through architecture, not ethical reasoning. More autonomy means more responsibility to get safety right. The blast radius is scoped to the actual risk domain: wrong code committed, bad PRs merged, wasted tokens.
+**Safety.** Structural, not moral. Sylveste enforces structural constraints (bounded blast radius, auditable decisions, revocable authority) through architecture, not ethical reasoning. More autonomy means more responsibility to get safety right. The blast radius is scoped to the actual risk domain: wrong code committed, bad PRs merged, wasted tokens.
 
 **Security.** The end state is capability-based, deny-by-default (Gridfire: unforgeable tokens with effects allowlists and resource bounds). Today it's pragmatic layered defense. The threat model prioritizes system boundaries: prompt injection, secret exfiltration, provenance laundering. Trust internal code; spend security budget at boundaries.
 
@@ -117,7 +117,7 @@ Note: this is the *human delegation* ladder — how much authority the human del
 
 *Principle 3 applied everywhere: small, scoped, composed units beat large integrated ones.*
 
-**Unix heritage.** Demarch is a spiritual successor to Unix. Keep: small tools, explicit interfaces, mechanism/policy separation. Replace: untyped streams, ambient authority, text-as-control, hidden state. The problems are fundamentally different (stochastic actors, partial state, trust boundaries everywhere), but composition beating capability is permanent.
+**Unix heritage.** Sylveste is a spiritual successor to Unix. Keep: small tools, explicit interfaces, mechanism/policy separation. Replace: untyped streams, ambient authority, text-as-control, hidden state. The problems are fundamentally different (stochastic actors, partial state, trust boundaries everywhere), but composition beating capability is permanent.
 
 **Agent architecture.** Many small agents with explicit scope over monolithic generalists. Route to the best model for the job — automated measurement determines which. Multi-model diversity is an epistemic hedge: different models have different blind spots, and disagreement is signal. Routing evolves from static tiers through complexity-aware to fully adaptive, where selection becomes empirical.
 
@@ -135,7 +135,7 @@ Criteria for kernel-native designation:
 
 The bar is high — kernel-native is earned by architectural role, not convenience. Most plugins should be standalone. When in doubt, standalone wins.
 
-**External tools.** Adopt mature external tools as dependencies rather than rebuilding them. If a tool is well-maintained, useful, and not worth reinventing, install the binary and call it from Demarch — the same way `bd` (beads) works today. The verdict tiers are: adopt (wire in directly), port-partially (extract patterns or algorithms), inspire-only (borrow design ideas), skip. Source doesn't matter — evaluate the tool, not the contributor. Rebuilding a working tool is accidental complexity; composing with it is the Unix way.
+**External tools.** Adopt mature external tools as dependencies rather than rebuilding them. If a tool is well-maintained, useful, and not worth reinventing, install the binary and call it from Sylveste — the same way `bd` (beads) works today. The verdict tiers are: adopt (wire in directly), port-partially (extract patterns or algorithms), inspire-only (borrow design ideas), skip. Source doesn't matter — evaluate the tool, not the contributor. Rebuilding a working tool is accidental complexity; composing with it is the Unix way.
 
 **Complexity.** The problem IS complex. The goal isn't simplicity — it's managing essential complexity through boundaries, contracts, and composition. Accidental complexity is the enemy. Every addition draws from a complexity budget. Gridfire is the long-term paydown: replace many ad-hoc mechanisms with a few powerful primitives.
 
