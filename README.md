@@ -26,7 +26,7 @@ Install takes ~2 minutes (power user) or ~30 minutes (full platform). Disk: ~2 G
 
 ```bash
 bash install.sh --update      # Update to latest (skip first-time setup)
-bash install.sh --uninstall   # Remove all Demarch components
+bash install.sh --uninstall   # Remove all Sylveste components
 bash install.sh --dry-run     # Preview what would happen
 ```
 
