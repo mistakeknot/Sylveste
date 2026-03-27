@@ -78,7 +78,7 @@ run() {
 
 # --- Preflight ---
 log ""
-log "${BOLD}Demarch Uninstaller${RESET}"
+log "${BOLD}Sylveste Uninstaller${RESET}"
 log ""
 
 if ! command -v claude &>/dev/null; then
@@ -148,8 +148,8 @@ if command -v gemini &>/dev/null; then
     GEMINI_SOURCE=""
     if [[ -f "scripts/install-gemini-interverse.sh" ]]; then
         GEMINI_SOURCE="."
-    elif [[ -f "${HOME}/.local/share/Demarch/scripts/install-gemini-interverse.sh" ]]; then
-        GEMINI_SOURCE="${HOME}/.local/share/Demarch"
+    elif [[ -f "${HOME}/.local/share/Sylveste/scripts/install-gemini-interverse.sh" ]]; then
+        GEMINI_SOURCE="${HOME}/.local/share/Sylveste"
     fi
     
     if [[ -n "$GEMINI_SOURCE" ]]; then
@@ -172,8 +172,8 @@ log ""
 if [[ "$DRY_RUN" == true ]]; then
     success "Dry run complete, no changes made"
 else
-    success "Demarch uninstalled"
+    success "Sylveste uninstalled"
     log ""
-    log "  To reinstall: ${BLUE}curl -fsSL https://raw.githubusercontent.com/mistakeknot/Demarch/main/install.sh | bash${RESET}"
+    log "  To reinstall: ${BLUE}curl -fsSL https://raw.githubusercontent.com/mistakeknot/Sylveste/main/install.sh | bash${RESET}"
 fi
 log ""

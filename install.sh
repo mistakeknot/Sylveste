@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# install.sh -- Curl-fetchable installer for Demarch (Clavain + Interverse)
+# install.sh -- Curl-fetchable installer for Sylveste (Clavain + Interverse)
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/mistakeknot/Demarch/main/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/mistakeknot/Sylveste/main/install.sh | bash
 #   bash install.sh [--help] [--dry-run] [--verbose] [--update] [--uninstall]
 #
 # Flags:
@@ -10,7 +10,7 @@
 #   --dry-run     Show what would happen without executing
 #   --verbose     Enable debug output
 #   --update      Update existing installation (skip first-time setup)
-#   --uninstall   Remove Demarch components (Clavain, companions, ic, Codex/Gemini skills)
+#   --uninstall   Remove Sylveste components (Clavain, companions, ic, Codex/Gemini skills)
 
 set -euo pipefail
 
@@ -46,10 +46,10 @@ for arg in "$@"; do
     case "$arg" in
         --help|-h)
             cat <<'USAGE'
-install.sh -- Curl-fetchable installer for Demarch (Clavain + Interverse)
+install.sh -- Curl-fetchable installer for Sylveste (Clavain + Interverse)
 
 Usage:
-  curl -fsSL https://raw.githubusercontent.com/mistakeknot/Demarch/main/install.sh | bash
+  curl -fsSL https://raw.githubusercontent.com/mistakeknot/Sylveste/main/install.sh | bash
   bash install.sh [--help] [--dry-run] [--verbose] [--update] [--uninstall]
 
 Flags:
@@ -57,7 +57,7 @@ Flags:
   --dry-run     Show what would happen without executing
   --verbose     Enable debug output
   --update      Update existing installation (skip first-time setup)
-  --uninstall   Remove Demarch components (prompts for confirmation)
+  --uninstall   Remove Sylveste components (prompts for confirmation)
 
 Prerequisites:
   Required: jq, Go 1.22+ (builds ic kernel and clavain-cli), git
@@ -127,12 +127,12 @@ run() {
 # --- Uninstall ---
 if [[ "$UNINSTALL" == true ]]; then
     log ""
-    log "${BOLD}Demarch Uninstaller${RESET}"
+    log "${BOLD}Sylveste Uninstaller${RESET}"
     log "${DIM}Removing Clavain + Interverse components${RESET}"
     log ""
 
     if [[ "$DRY_RUN" != true ]]; then
-        printf "${YELLOW}This will remove Demarch components. Continue? [y/N] ${RESET}"
+        printf "${YELLOW}This will remove Sylveste components. Continue? [y/N] ${RESET}"
         read -r confirm
         if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
             log "Aborted."
@@ -237,7 +237,7 @@ if [[ "$UNINSTALL" == true ]]; then
         success "clavain-cli symlink removed"
     fi
 
-    log "${GREEN}✓ Demarch uninstalled.${RESET}"
+    log "${GREEN}✓ Sylveste uninstalled.${RESET}"
     log ""
     log "  Remaining (not removed automatically):"
     log "  - Beads data in .beads/ directories (project-specific)"
@@ -250,10 +250,10 @@ fi
 # --- Prerequisites ---
 log ""
 if [[ "$UPDATE_ONLY" == true ]]; then
-    log "${BOLD}Demarch Updater${RESET}"
+    log "${BOLD}Sylveste Updater${RESET}"
     log "${DIM}Updating Clavain + Interverse to latest${RESET}"
 else
-    log "${BOLD}Demarch Installer${RESET}"
+    log "${BOLD}Sylveste Installer${RESET}"
     log "${DIM}Clavain + Interverse plugin ecosystem${RESET}"
 fi
 log ""
@@ -578,22 +578,22 @@ if command -v codex &>/dev/null; then
         else
             if bash "$CODEX_SOURCE/scripts/install-codex-interverse.sh" install --source "$CODEX_SOURCE" 2>&1; then
                 success "Codex skills installed (Clavain + companions)"
-                if bash "$CODEX_SOURCE/scripts/install-codex-interverse.sh" doctor --source "$CODEX_SOURCE" >/tmp/demarch-codex-doctor.out 2>/tmp/demarch-codex-doctor.err; then
+                if bash "$CODEX_SOURCE/scripts/install-codex-interverse.sh" doctor --source "$CODEX_SOURCE" >/tmp/sylveste-codex-doctor.out 2>/tmp/sylveste-codex-doctor.err; then
                     success "Codex doctor passed"
                 else
                     warn "Codex doctor reported issues after install"
                     if [[ "$VERBOSE" == true ]]; then
                         log "  --- doctor stdout ---"
-                        sed 's/^/  /' /tmp/demarch-codex-doctor.out || true
+                        sed 's/^/  /' /tmp/sylveste-codex-doctor.out || true
                         log "  --- doctor stderr ---"
-                        sed 's/^/  /' /tmp/demarch-codex-doctor.err || true
+                        sed 's/^/  /' /tmp/sylveste-codex-doctor.err || true
                     fi
-                    fail "Demarch install finished with Codex follow-up errors"
+                    fail "Sylveste install finished with Codex follow-up errors"
                     log "  Re-run manually: ${BLUE}bash \"$CODEX_SOURCE/scripts/install-codex-interverse.sh\" doctor --source \"$CODEX_SOURCE\"${RESET}"
-                    rm -f /tmp/demarch-codex-doctor.out /tmp/demarch-codex-doctor.err
+                    rm -f /tmp/sylveste-codex-doctor.out /tmp/sylveste-codex-doctor.err
                     exit 1
                 fi
-                rm -f /tmp/demarch-codex-doctor.out /tmp/demarch-codex-doctor.err
+                rm -f /tmp/sylveste-codex-doctor.out /tmp/sylveste-codex-doctor.err
             else
                 fail "Codex skill install failed"
                 log "  Re-run manually: ${BLUE}bash \"$CODEX_SOURCE/scripts/install-codex-interverse.sh\" install --source \"$CODEX_SOURCE\"${RESET}"
@@ -618,20 +618,20 @@ if command -v gemini &>/dev/null; then
     if [[ -f "scripts/install-gemini-interverse.sh" ]]; then
         GEMINI_SOURCE="."
     elif command -v git &>/dev/null; then
-        GEMINI_CLONE_DIR="${HOME}/.local/share/Demarch"
+        GEMINI_CLONE_DIR="${HOME}/.local/share/Sylveste"
         if [[ -d "$GEMINI_CLONE_DIR/.git" ]]; then
-            log "  Updating Demarch checkout at $GEMINI_CLONE_DIR"
+            log "  Updating Sylveste checkout at $GEMINI_CLONE_DIR"
             git -C "$GEMINI_CLONE_DIR" pull --ff-only 2>/dev/null || true
             git -C "$GEMINI_CLONE_DIR" submodule update --init --recursive 2>/dev/null || true
         else
-            log "  Cloning Demarch for Gemini skills..."
-            git clone --recursive https://github.com/mistakeknot/Demarch.git "$GEMINI_CLONE_DIR" 2>/dev/null || true
+            log "  Cloning Sylveste for Gemini skills..."
+            git clone --recursive https://github.com/mistakeknot/Sylveste.git "$GEMINI_CLONE_DIR" 2>/dev/null || true
         fi
         if [[ -f "$GEMINI_CLONE_DIR/scripts/install-gemini-interverse.sh" ]]; then
             GEMINI_SOURCE="$GEMINI_CLONE_DIR"
         fi
     else
-        warn "git not found. Cannot clone Demarch for Gemini skills."
+        warn "git not found. Cannot clone Sylveste for Gemini skills."
     fi
     
     if [[ -n "$GEMINI_SOURCE" ]]; then
@@ -686,7 +686,7 @@ fi
 
 # --- Next steps ---
 log ""
-log "${GREEN}✓ Demarch installed successfully!${RESET}"
+log "${GREEN}✓ Sylveste installed successfully!${RESET}"
 log ""
 log "${BOLD}Next steps:${RESET}"
 log "  1. Ensure ~/.local/bin is on PATH:  ${BLUE}export PATH=\"\$HOME/.local/bin:\$PATH\"${RESET}"
@@ -697,19 +697,19 @@ if command -v codex &>/dev/null; then
     log ""
     log "${BOLD}Codex CLI:${RESET}"
     log "  Skills installed to ~/.agents/skills/ — restart Codex to load them."
-    log "  Runbook: ${BLUE}https://github.com/mistakeknot/Demarch/blob/main/docs/guide-codex-setup.md${RESET}"
+    log "  Runbook: ${BLUE}https://github.com/mistakeknot/Sylveste/blob/main/docs/guide-codex-setup.md${RESET}"
 fi
 if command -v gemini &>/dev/null; then
     log ""
     log "${BOLD}Gemini CLI:${RESET}"
     log "  Skills generated and linked to ~/.gemini/generated-skills/ globally."
-    log "  Runbook: ${BLUE}https://github.com/mistakeknot/Demarch/blob/main/docs/guide-gemini-setup.md${RESET}"
+    log "  Runbook: ${BLUE}https://github.com/mistakeknot/Sylveste/blob/main/docs/guide-gemini-setup.md${RESET}"
 fi
 log ""
 log "${BOLD}Guides:${RESET}"
-log "  Power user:   ${BLUE}https://github.com/mistakeknot/Demarch/blob/main/docs/guide-power-user.md${RESET}"
-log "  Full setup:   ${BLUE}https://github.com/mistakeknot/Demarch/blob/main/docs/guide-full-setup.md${RESET}"
-log "  Codex setup:  ${BLUE}https://github.com/mistakeknot/Demarch/blob/main/docs/guide-codex-setup.md${RESET}"
-log "  Gemini setup: ${BLUE}https://github.com/mistakeknot/Demarch/blob/main/docs/guide-gemini-setup.md${RESET}"
-log "  Contributing: ${BLUE}https://github.com/mistakeknot/Demarch/blob/main/docs/guide-contributing.md${RESET}"
+log "  Power user:   ${BLUE}https://github.com/mistakeknot/Sylveste/blob/main/docs/guide-power-user.md${RESET}"
+log "  Full setup:   ${BLUE}https://github.com/mistakeknot/Sylveste/blob/main/docs/guide-full-setup.md${RESET}"
+log "  Codex setup:  ${BLUE}https://github.com/mistakeknot/Sylveste/blob/main/docs/guide-codex-setup.md${RESET}"
+log "  Gemini setup: ${BLUE}https://github.com/mistakeknot/Sylveste/blob/main/docs/guide-gemini-setup.md${RESET}"
+log "  Contributing: ${BLUE}https://github.com/mistakeknot/Sylveste/blob/main/docs/guide-contributing.md${RESET}"
 log ""
