@@ -82,8 +82,10 @@ When Track B5 shadow mode logs a "would route locally" decision, also log:
 This feeds interstat's cost-query.sh for sprint summaries.
 
 ### Task 3: Build Playtest Bridge Script
-**Files:** `interverse/interfere/scripts/playtest-bridge.py` (new)
+**Files:** `scripts/playtest-bridge.py` (new, at monorepo root — NOT inside interfere)
 **Effort:** Medium
+
+Standalone script at monorepo root. Interfere is a downstream service (it serves inference); the bridge is a consumer that also happens to consume Shadow Work's API. Placing it inside interfere would couple the inference server to a specific game's HTTP contract.
 
 Python script that connects sw-agent HTTP API (localhost:8790) to interfere (localhost:8421):
 
