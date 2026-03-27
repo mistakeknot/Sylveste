@@ -1,4 +1,4 @@
-# Demarch — Agent Development Guide
+# Sylveste — Agent Development Guide
 
 Open-source autonomous software development agency platform. Six pillars (Intercore, Clavain, Skaffen, Interverse, Autarch, Interspect) across three layers (L1 kernel, L2 OS, L3 apps). 57 Interverse plugins, 18 with MCP servers.
 
