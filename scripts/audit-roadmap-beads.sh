@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # audit-roadmap-beads.sh — Check consistency between roadmap and beads database.
 # Usage: audit-roadmap-beads.sh [--json] [roadmap-path]
-# Default roadmap: docs/demarch-roadmap.md (relative to repo root)
+# Default roadmap: docs/sylveste-roadmap.md (relative to repo root)
 
 set -euo pipefail
 
@@ -17,7 +17,7 @@ done
 
 # Find repo root
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
-ROADMAP="${ROADMAP:-$REPO_ROOT/docs/demarch-roadmap.md}"
+ROADMAP="${ROADMAP:-$REPO_ROOT/docs/sylveste-roadmap.md}"
 
 if [[ ! -f "$ROADMAP" ]]; then
     if $JSON_MODE; then

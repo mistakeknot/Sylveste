@@ -16,7 +16,7 @@ Beads use a two-dimensional label system. Backfill/apply with `scripts/backfill-
 **Module labels** (`mod:<name>`) — which pillar/subproject the bead belongs to:
 ```bash
 # Generate current list:
-(echo "mod:clavain mod:demarch mod:autarch mod:intercom mod:interspect mod:tldrs"; \
+(echo "mod:clavain mod:sylveste mod:autarch mod:intercom mod:interspect mod:tldrs"; \
  ls -d interverse/inter* core/inter* sdk/inter* 2>/dev/null | xargs -I{} basename {} | sed 's/^/mod:/') \
  | tr ' ' '\n' | sort | paste -d'  ' - - - - -
 ```
@@ -52,6 +52,6 @@ Recovered beads are tagged `recovered, placeholder` so they are distinguishable 
 
 ## Roadmap
 
-The platform roadmap is at [`docs/demarch-roadmap.md`](../docs/demarch-roadmap.md) with machine-readable canonical output in [`docs/roadmap.json`](../docs/roadmap.json). Regenerate both with `/interpath:roadmap` from the Sylveste root. Auto-generate module-level roadmaps from beads with `scripts/generate-module-roadmaps.sh` or `/interpath:propagate`.
+The platform roadmap is at [`docs/sylveste-roadmap.md`](../docs/sylveste-roadmap.md) with machine-readable canonical output in [`docs/roadmap.json`](../docs/roadmap.json). Regenerate both with `/interpath:roadmap` from the Sylveste root. Auto-generate module-level roadmaps from beads with `scripts/generate-module-roadmaps.sh` or `/interpath:propagate`.
 
 `scripts/sync-roadmap-json.sh` generates the canonical JSON rollup from the root roadmap and beads data. `scripts/generate-module-roadmaps.sh` auto-generates per-module `docs/roadmap.md` files from beads state.

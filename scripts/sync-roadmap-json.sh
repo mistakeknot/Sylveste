@@ -120,7 +120,7 @@ collect_items_from_beads() {
                 elif (.labels // [] | any(startswith("mod:"))) then
                     (.labels | map(select(startswith("mod:"))) | .[0] | ltrimstr("mod:"))
                 else
-                    "demarch"
+                    "sylveste"
                 end
             ),
             id: .id,

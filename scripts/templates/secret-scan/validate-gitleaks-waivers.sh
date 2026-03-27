@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# demarch-managed: secret-scan-baseline v1
+# sylveste-managed: secret-scan-baseline v1
 #
 # Enforce metadata and expiration on inline gitleaks waivers.
 #

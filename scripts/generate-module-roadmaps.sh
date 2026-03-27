@@ -31,10 +31,10 @@ require() {
 
 require bd
 
-# Compute relative path from module docs/ to root docs/demarch-roadmap.md
+# Compute relative path from module docs/ to root docs/sylveste-roadmap.md
 relative_root_roadmap() {
     local module_location="$1"
-    # Count depth from module docs/ dir: interverse/interflux/docs/ needs ../../../docs/demarch-roadmap.md
+    # Count depth from module docs/ dir: interverse/interflux/docs/ needs ../../../docs/sylveste-roadmap.md
     # module_location is e.g. "interverse/interflux" (2 segments), plus 1 for the docs/ subdir = 3
     local depth
     depth="$(echo "$module_location" | tr '/' '\n' | wc -l)"
@@ -43,7 +43,7 @@ relative_root_roadmap() {
     for ((i = 0; i < depth; i++)); do
         prefix="../${prefix}"
     done
-    echo "${prefix}docs/demarch-roadmap.md"
+    echo "${prefix}docs/sylveste-roadmap.md"
 }
 
 for base in "$ROOT_DIR/apps" "$ROOT_DIR/os" "$ROOT_DIR/core" "$ROOT_DIR/interverse" "$ROOT_DIR/sdk"; do

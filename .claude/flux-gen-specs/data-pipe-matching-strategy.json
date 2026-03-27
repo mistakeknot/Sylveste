@@ -7,7 +7,7 @@
     "review_areas": [
       "Verify whether clavain-cli WIP output already exposes any field (pid, window title, start timestamp) that could serve as a foreign key back to the Notion roster",
       "Check whether the Sylveste- prefix on bead IDs is a stable convention or could vary by project, and whether that prefix alone is sufficient to infer project context",
-      "Evaluate tmux session name patterns (e.g., warp-demarch-claude) for parseable structure: can project and agent-type be reliably extracted with a regex, or are names ad-hoc?",
+      "Evaluate tmux session name patterns (e.g., warp-sylveste-claude) for parseable structure: can project and agent-type be reliably extracted with a regex, or are names ad-hoc?",
       "Assess whether a mapping table approach is operationally viable: who writes to it, what is the write latency, and what happens when clavain-cli restarts?",
       "Check if hex session IDs appear anywhere in tmux environment variables (CLAUDE_SESSION_ID, etc.) that would make tmux a reliable bridge",
       "Determine whether the Notion roster's 85-session snapshot is a point-in-time export or a live-polled feed, and whether its freshness is compatible with live ops join"
@@ -33,7 +33,7 @@
       "Evaluate whether the bead ID prefix (e.g., Sylveste-) is sufficient for project disambiguation in the current deployment, or whether multi-tenant scenarios require a richer field",
       "Assess the output format: if factory-status.go emits a project field, specify whether it belongs on the bead entry, the agent entry, or a top-level context block",
       "Check for versioning risk: adding fields to factory-status JSON output is a breaking change for any existing consumers — enumerate known consumers and their tolerance for schema evolution",
-      "Verify whether the sub-project granularity (meadowsyn vs. demarch root) is knowable at factory-status emit time, or whether it requires a separate registry lookup",
+      "Verify whether the sub-project granularity (meadowsyn vs. sylveste root) is knowable at factory-status emit time, or whether it requires a separate registry lookup",
       "Review whether factory-status.go has access to tmux session metadata at emit time, making the tmux-bridge option redundant if project emission is implemented"
     ],
     "success_hints": [

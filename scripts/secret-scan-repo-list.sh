@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# demarch-managed: secret-scan-baseline v1
+# sylveste-managed: secret-scan-baseline v1
 #
 # Print product repository paths in the Sylveste monorepo.
 # Paths are relative to repo root.

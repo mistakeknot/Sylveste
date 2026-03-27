@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# demarch-managed: secret-scan-baseline v1
+# sylveste-managed: secret-scan-baseline v1
 #
 # Sync the secret-scanning baseline files into product repos.
 #
@@ -52,7 +52,7 @@ done
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 TEMPLATE_DIR="$REPO_ROOT/scripts/templates/secret-scan"
 REPO_LIST_SCRIPT="$REPO_ROOT/scripts/secret-scan-repo-list.sh"
-MANAGED_MARKER="demarch-managed: secret-scan-baseline"
+MANAGED_MARKER="sylveste-managed: secret-scan-baseline"
 
 if [[ ! -x "$REPO_LIST_SCRIPT" ]]; then
   echo "ERROR: missing executable repo list script: $REPO_LIST_SCRIPT" >&2

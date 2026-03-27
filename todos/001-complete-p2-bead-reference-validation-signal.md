@@ -49,4 +49,4 @@ New signal type `bead_reference_stale` in `interwatch-scan.py`:
 - Added to deterministic signals list (produces Certain confidence)
 - Added to roadmap and vision default watchables + signal templates in watchables.yaml
 - Added to signals.md reference doc
-- Smoke tested: found 5 stale refs in demarch-vision.md, 10 in demarch-roadmap.md
+- Smoke tested: found 5 stale refs in sylveste-vision.md, 10 in sylveste-roadmap.md

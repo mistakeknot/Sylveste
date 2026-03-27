@@ -8,16 +8,16 @@ stages:
   - name: "Container Surface (TypeScript)"
     tasks:
       - id: task-1
-        title: "Add write wrapper functions to demarch-tools.ts"
-        files: [apps/intercom/container/shared/demarch-tools.ts]
+        title: "Add write wrapper functions to sylveste-tools.ts"
+        files: [apps/intercom/container/shared/sylveste-tools.ts]
         depends: []
       - id: task-2
         title: "Add write MCP tool declarations for Claude runtime"
         files: [apps/intercom/container/agent-runner/src/ipc-mcp-stdio.ts]
         depends: [task-1]
       - id: task-3
-        title: "Add demarch_research read tool (H1 completion)"
-        files: [apps/intercom/src/query-handlers.ts, apps/intercom/container/shared/demarch-tools.ts, apps/intercom/container/agent-runner/src/ipc-mcp-stdio.ts]
+        title: "Add sylveste_research read tool (H1 completion)"
+        files: [apps/intercom/src/query-handlers.ts, apps/intercom/container/shared/sylveste-tools.ts, apps/intercom/container/agent-runner/src/ipc-mcp-stdio.ts]
         depends: []
 
   - name: "Telegram Inline Keyboard Infrastructure (Rust)"
@@ -51,7 +51,7 @@ stages:
         tier: fast
       - id: task-9
         title: "Integration test — end-to-end write tool via IPC"
-        files: [apps/intercom/container/shared/demarch-tools.test.ts]
+        files: [apps/intercom/container/shared/sylveste-tools.test.ts]
         depends: [task-1, task-3]
         tier: fast
       - id: task-10

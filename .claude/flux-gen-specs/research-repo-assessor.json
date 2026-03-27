@@ -18,13 +18,13 @@
     ],
     "task_context": "The research agent produces assess-*.md documents following the pattern in docs/research/assess-beads-viewer-repos.md, outputting structured verdicts (adopt/port-partially/inspire-only/skip) with per-component analysis and integration opportunities mapped to Sylveste modules (Clavain, Autarch, Intercore, Interverse, interbase).",
     "anti_overlap": [
-      "fd-demarch-module-fit covers how the repo's features map to specific Sylveste modules and pillars — this agent does not evaluate module fit",
+      "fd-sylveste-module-fit covers how the repo's features map to specific Sylveste modules and pillars — this agent does not evaluate module fit",
       "fd-integration-feasibility covers porting effort, API surface, and dependency compatibility at the implementation level — this agent focuses on quality signals, not integration mechanics",
       "fd-security-and-safety-posture covers hook safety, destructive command risks, and agent trust boundaries — this agent focuses on code quality and maintenance, not security semantics"
     ]
   },
   {
-    "name": "fd-demarch-module-fit",
+    "name": "fd-sylveste-module-fit",
     "focus": "Map each component of the external repo to specific Sylveste modules, layers, and beads to determine which verdicts (adopt/port-partially/inspire-only/skip) apply per component",
     "persona": "A Sylveste architect who knows the five-pillar, three-layer structure intimately — Intercore (L1 kernel), Clavain (L2 OS), Interverse (plugins), Autarch (L3 apps), Interspect (cross-cutting profiler) — and can translate external repo features into concrete integration targets with bead-level specificity.",
     "decision_lens": "Integration opportunities are only actionable when anchored to a specific Sylveste module with a named file path or bead. Vague relevance ('could be useful') is not a finding. Each finding must name the target module, the specific gap it fills, and whether it belongs in the adopt/port-partially/inspire-only/skip tier.",
@@ -67,7 +67,7 @@
     "task_context": "The research agent produces assess-*.md documents following the pattern in docs/research/assess-beads-viewer-repos.md, outputting structured verdicts (adopt/port-partially/inspire-only/skip) with per-component analysis and integration opportunities mapped to Sylveste modules (Clavain, Autarch, Intercore, Interverse, interbase).",
     "anti_overlap": [
       "fd-code-quality-and-maturity covers quality signals and test coverage — this agent focuses on porting mechanics, not quality assessment",
-      "fd-demarch-module-fit covers which Sylveste modules are the integration targets — this agent focuses on how hard the integration will be, not where it goes",
+      "fd-sylveste-module-fit covers which Sylveste modules are the integration targets — this agent focuses on how hard the integration will be, not where it goes",
       "fd-security-and-safety-posture covers hook safety and destructive command risks — this agent focuses on build and API compatibility, not security"
     ]
   },
@@ -114,7 +114,7 @@
     ],
     "task_context": "The research agent produces assess-*.md documents following the pattern in docs/research/assess-beads-viewer-repos.md, outputting structured verdicts (adopt/port-partially/inspire-only/skip) with per-component analysis and integration opportunities mapped to Sylveste modules (Clavain, Autarch, Intercore, Interverse, interbase).",
     "anti_overlap": [
-      "fd-demarch-module-fit covers direct integration targets where code will be imported — this agent covers ideas that inform new Sylveste code without direct reuse",
+      "fd-sylveste-module-fit covers direct integration targets where code will be imported — this agent covers ideas that inform new Sylveste code without direct reuse",
       "fd-code-quality-and-maturity covers quality signals that determine trustworthiness — this agent extracts patterns regardless of adoption verdict",
       "fd-security-and-safety-posture covers security risks of adoption — this agent focuses on positive design ideas, not risks"
     ]

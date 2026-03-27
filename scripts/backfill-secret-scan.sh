@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# demarch-managed: secret-scan-baseline v1
+# sylveste-managed: secret-scan-baseline v1
 #
 # Run backfill secret scanning across product repos and write a summary report.
 set -euo pipefail

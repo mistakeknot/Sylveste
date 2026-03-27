@@ -13,7 +13,7 @@ MODULE labels (mod:<name>) — which pillar/subproject:
   mod:interpub, mod:interphase, mod:interdev, mod:interserve,
   mod:interdoc, mod:intership, mod:internext, mod:intertest,
   mod:interslack, mod:interlens, mod:intermux, mod:interfluence,
-  mod:intersynth, mod:intercraft, mod:demarch, mod:tldrs
+  mod:intersynth, mod:intercraft, mod:sylveste, mod:tldrs
 
 THEME labels (theme:<name>) — what kind of work:
   theme:tech-debt, theme:performance, theme:security, theme:ux,
@@ -138,10 +138,10 @@ MODULE_KEYWORDS: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"\btldrs\b", re.I), "mod:tldrs"),
     (re.compile(r"\btldr-swinton\b", re.I), "mod:tldrs"),
     (re.compile(r"\bIronClaw\b", re.I), "mod:intercom"),
-    (re.compile(r"\bbeads\b", re.I), "mod:demarch"),
-    (re.compile(r"\bmonorepo\b", re.I), "mod:demarch"),
-    (re.compile(r"\binstall\.sh\b", re.I), "mod:demarch"),
-    (re.compile(r"\bic publish\b", re.I), "mod:demarch"),
+    (re.compile(r"\bbeads\b", re.I), "mod:sylveste"),
+    (re.compile(r"\bmonorepo\b", re.I), "mod:sylveste"),
+    (re.compile(r"\binstall\.sh\b", re.I), "mod:sylveste"),
+    (re.compile(r"\bic publish\b", re.I), "mod:sylveste"),
 ]
 
 # ---------------------------------------------------------------------------
