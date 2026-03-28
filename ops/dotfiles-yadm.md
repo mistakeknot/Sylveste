@@ -1,5 +1,7 @@
 # Dotfiles Management with yadm
 
+> **Status: Transitional.** yadm is installed on Clavain with host alternates working locally. The existing `mistakeknot/dotfiles` repo still uses the old `common/` prefix structure. See `sylveste-b06` for the full migration plan.
+
 Host-conditional dotfiles using [yadm](https://yadm.io) — manages `~/.claude/` configs with per-hostname alternates.
 
 ## How it works
