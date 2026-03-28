@@ -32,6 +32,7 @@ class WorkerCommand(enum.Enum):
     HEALTH = "health"
     LOAD_MODEL = "load_model"
     GENERATE = "generate"
+    PROBE = "probe"
     SHUTDOWN = "shutdown"
 
 
@@ -161,6 +162,88 @@ def _worker_loop(
                         request_id=request.request_id,
                         status="error",
                         error=f"failed to load {model_name}: {exc}",
+                    )
+                )
+            continue
+
+        if request.command is WorkerCommand.PROBE:
+            # Generate a few tokens and return confidence metadata.
+            # Used by the confidence cascade in the HTTP layer.
+            model_name = request.payload.get("model_name", "")
+            messages = request.payload.get("messages")
+            prompt = request.payload.get("prompt", "")
+            probe_tokens = request.payload.get("probe_tokens", 3)
+            temperature = request.payload.get("temperature", 0.7)
+
+            if not model_name or (not prompt and not messages):
+                resp_queue.put(
+                    WorkerResponse(
+                        request_id=request.request_id,
+                        status="error",
+                        error="model_name and (prompt or messages) are required",
+                    )
+                )
+                continue
+
+            # Apply chat template if messages provided
+            if messages and not prompt:
+                engine._ensure_loaded(model_name)
+                _, tokenizer = engine._models[model_name]
+                try:
+                    prompt = tokenizer.apply_chat_template(
+                        messages,
+                        tokenize=False,
+                        add_generation_prompt=True,
+                    )
+                except Exception:
+                    prompt = "\n".join(
+                        f"{m.get('role', 'user')}: {m.get('content', '')}"
+                        for m in messages
+                    )
+
+            try:
+                import mlx.core as local_mx
+
+                confidences: list[float] = []
+                tokens: list[str] = []
+                t0 = time.time()
+
+                for response in engine._raw_stream_generate(
+                    model_name=model_name,
+                    prompt=prompt,
+                    max_tokens=probe_tokens,
+                    temperature=temperature,
+                ):
+                    if response.logprobs is not None:
+                        probs = local_mx.exp(response.logprobs)
+                        confidence = float(local_mx.max(probs))
+                        confidences.append(confidence)
+                    if response.text:
+                        tokens.append(response.text)
+
+                elapsed = time.time() - t0
+                avg_confidence = (
+                    sum(confidences) / len(confidences) if confidences else 0.0
+                )
+
+                resp_queue.put(
+                    WorkerResponse(
+                        request_id=request.request_id,
+                        status="ok",
+                        data={
+                            "avg_confidence": round(avg_confidence, 4),
+                            "tokens": tokens,
+                            "probe_time_s": round(elapsed, 4),
+                            "per_token_confidence": [round(c, 4) for c in confidences],
+                        },
+                    )
+                )
+            except Exception as exc:
+                resp_queue.put(
+                    WorkerResponse(
+                        request_id=request.request_id,
+                        status="error",
+                        error=f"probe failed: {exc}",
                     )
                 )
             continue
@@ -362,6 +445,42 @@ class MetalWorker:
             timeout=timeout,
         )
 
+    def probe(
+        self,
+        model_name: str,
+        messages: list[dict] | None = None,
+        prompt: str = "",
+        probe_tokens: int = 3,
+        temperature: float = 0.7,
+        timeout: float = 10.0,
+    ) -> WorkerResponse:
+        """Probe a model for confidence on the first N tokens.
+
+        Returns a WorkerResponse with data containing:
+        - avg_confidence: float
+        - tokens: list[str]
+        - probe_time_s: float
+        - per_token_confidence: list[float]
+        """
+        payload: dict[str, Any] = {
+            "model_name": model_name,
+            "probe_tokens": probe_tokens,
+            "temperature": temperature,
+        }
+        if messages is not None:
+            payload["messages"] = messages
+        else:
+            payload["prompt"] = prompt
+
+        return self._roundtrip(
+            WorkerRequest(
+                command=WorkerCommand.PROBE,
+                request_id=f"probe-{time.monotonic_ns()}",
+                payload=payload,
+            ),
+            timeout=timeout,
+        )
+
     def generate(
         self,
         model_name: str,
@@ -414,11 +533,18 @@ class MetalWorker:
                 if resp.status == "token":
                     yield resp.data.get("text", "")
                 elif resp.status == "done":
+                    # Store final metrics so caller can access after exhaustion.
+                    self._last_done_data = resp.data
                     return
                 elif resp.status == "error":
                     raise RuntimeError(resp.error or "generation failed")
                 else:
                     raise RuntimeError(f"unexpected status: {resp.status}")
+
+    @property
+    def last_generation_metrics(self) -> dict:
+        """Metrics from the most recent generate() call (available after generator exhaustion)."""
+        return getattr(self, "_last_done_data", {}).get("metrics", {})
 
     # -- internal transport --------------------------------------------------
 

@@ -8,12 +8,23 @@ import httpx
 import pytest
 
 from server.__main__ import _parse_args
+from server.cascade import CascadeConfig
 from server.main import create_app
 
 
 @pytest.fixture
 def app():
     return create_app(dry_run=True)
+
+
+@pytest.fixture
+def cascade_app():
+    """App with cascade enabled and model tiers (still dry-run)."""
+    return create_app(
+        dry_run=True,
+        model_tiers=["small-model", "large-model"],
+        cascade_config=CascadeConfig(enabled=True),
+    )
 
 
 @pytest.fixture
@@ -75,6 +86,31 @@ def test_parse_args_dry_run() -> None:
     assert args.port == 9000
 
 
+def test_parse_args_cascade() -> None:
+    """Cascade CLI args are parsed correctly."""
+    args = _parse_args(
+        [
+            "--model-tiers",
+            "small-4bit",
+            "large-4bit",
+            "--cascade-accept",
+            "0.85",
+            "--cascade-cloud",
+            "0.3",
+        ]
+    )
+    assert args.model_tiers == ["small-4bit", "large-4bit"]
+    assert args.cascade_accept == 0.85
+    assert args.cascade_cloud == 0.3
+    assert args.no_cascade is False
+
+
+def test_parse_args_no_cascade() -> None:
+    """--no-cascade disables cascade."""
+    args = _parse_args(["--no-cascade"])
+    assert args.no_cascade is True
+
+
 @pytest.mark.asyncio
 async def test_chat_completions_rejects_missing_messages(
     client: httpx.AsyncClient,
@@ -87,3 +123,52 @@ async def test_chat_completions_rejects_missing_messages(
     assert resp.status_code == 400
     data = resp.json()
     assert "error" in data
+
+
+@pytest.mark.asyncio
+async def test_metrics_includes_cascade_stats(client: httpx.AsyncClient) -> None:
+    """GET /metrics includes cascade section."""
+    resp = await client.get("/metrics")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "cascade" in data
+    assert "total_requests" in data["cascade"]
+    assert "accept_rate" in data["cascade"]
+
+
+@pytest.mark.asyncio
+async def test_metrics_tracks_request_count(client: httpx.AsyncClient) -> None:
+    """Request count increments after chat completions calls."""
+    # Make a successful request
+    await client.post(
+        "/v1/chat/completions",
+        json={"model": "m", "messages": [{"role": "user", "content": "Hi"}]},
+    )
+    # Make a failing request (no messages)
+    await client.post("/v1/chat/completions", json={"model": "m"})
+
+    resp = await client.get("/metrics")
+    data = resp.json()
+    assert data["requests"]["total"] == 2
+    assert data["requests"]["errors"] == 1
+
+
+@pytest.mark.asyncio
+async def test_dry_run_skips_cascade(cascade_app) -> None:
+    """In dry-run mode, cascade model_tiers are ignored — direct dry-run generation."""
+    transport = httpx.ASGITransport(app=cascade_app)
+    async with httpx.AsyncClient(
+        transport=transport, base_url="http://testserver"
+    ) as c:
+        resp = await c.post(
+            "/v1/chat/completions",
+            json={
+                "model": "test-model",
+                "messages": [{"role": "user", "content": "Hello"}],
+            },
+        )
+        assert resp.status_code == 200
+        # No cascade header in dry-run
+        assert "X-Interfere-Cascade" not in resp.headers
+        # Still returns SSE
+        assert "text/event-stream" in resp.headers["content-type"]
