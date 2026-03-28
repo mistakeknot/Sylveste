@@ -34,6 +34,7 @@
 {"created_at":"2026-03-28T01:01:10Z","created_by":"33d202fe","depends_on_id":"sylveste-d39","issue_id":"sylveste-d39.1","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-28T01:01:37Z","created_by":"33d202fe","depends_on_id":"sylveste-d39","issue_id":"sylveste-d39.2","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-28T01:02:08Z","created_by":"33d202fe","depends_on_id":"sylveste-d39","issue_id":"sylveste-d39.3","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-28T01:08:10Z","created_by":"33d202fe","depends_on_id":"sylveste-d39","issue_id":"sylveste-d39.4","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-27T08:38:02Z","created_by":"mistakeknot","depends_on_id":"sylveste-bhq","issue_id":"sylveste-d5e","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-27T08:41:36Z","created_by":"mistakeknot","depends_on_id":"sylveste-d5e","issue_id":"sylveste-d5e.1","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-27T08:47:23Z","created_by":"mistakeknot","depends_on_id":"sylveste-d5e","issue_id":"sylveste-d5e.2","metadata":"{}","type":"parent-child"}
