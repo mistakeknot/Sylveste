@@ -51,3 +51,4 @@
 {"id":"int-4b3e94ad","kind":"field_change","created_at":"2026-03-28T04:27:14.860513Z","actor":"mistakeknot","issue_id":"sylveste-4ln","extra":{"field":"status","new_value":"closed","old_value":"in_progress","reason":"Closed"}}
 {"id":"int-980b3a85","kind":"field_change","created_at":"2026-03-28T08:11:57.359339Z","actor":"mistakeknot","issue_id":"sylveste-q4o","extra":{"field":"status","new_value":"in_progress","old_value":"open"}}
 {"id":"int-6951c548","kind":"field_change","created_at":"2026-03-28T08:16:09.331261Z","actor":"mistakeknot","issue_id":"sylveste-q4o","extra":{"field":"status","new_value":"closed","old_value":"in_progress","reason":"Closed"}}
+{"id":"int-39ec8b6f","kind":"field_change","created_at":"2026-03-28T08:26:20.059304Z","actor":"616d9fce","issue_id":"sylveste-2sr","extra":{"field":"status","new_value":"closed","old_value":"open","reason":"Shipped: Prometheus /metrics export with 9 new instruments and dual-format endpoint"}}
