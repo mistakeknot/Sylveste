@@ -11,6 +11,7 @@ from dataclasses import dataclass, field
 from typing import Any, Generator
 
 from .experiments.config import ExperimentConfig
+from .quality import QualityScore, QualityScorer
 
 
 @dataclass
@@ -29,6 +30,7 @@ class GenerationMetrics:
     peak_memory_gb: float = 0.0
     kv_bits: int | None = None
     kv_mode: str | None = None  # "turbo_quant" when polar transform active
+    quality_score: QualityScore | None = None
 
 
 class InferenceEngine:
@@ -354,8 +356,11 @@ class InferenceEngine:
             draft_model_obj, _ = self._models[draft_model_name]
             gen_kwargs["num_draft_tokens"] = num_draft_tokens
 
-        # Track confidence across generation
+        # Track confidence and quality data across generation
         confidences: list[float] = []
+        all_logprobs: list[float] = []
+        all_tokens: list[str] = []
+        _quality_scorer = QualityScorer()
         if self._bhq_cfg and self._bhq_cfg.enabled:
             effective_kv_bits = int(self._bhq_cfg.get("kv_bits", 4))
             effective_kv_mode = "bhq"
@@ -393,18 +398,19 @@ class InferenceEngine:
             draft_model=draft_model_obj,
             **gen_kwargs,
         ):
-            # --- Experiment hook: early exit confidence tracking ---
-            if self._early_exit_hook is not None and response.logprobs is not None:
-                # logprobs are log-probabilities; convert to probabilities for confidence
+            # Collect per-token logprobs for quality scoring
+            if response.logprobs is not None:
                 probs = mx.exp(response.logprobs)
                 confidence = float(mx.max(probs))
                 confidences.append(confidence)
+                # Store the max log-prob for perplexity calculation
+                all_logprobs.append(float(mx.max(response.logprobs)))
 
+            # --- Experiment hook: early exit confidence tracking ---
+            if self._early_exit_hook is not None and response.logprobs is not None:
                 should_exit, _ = self._early_exit_hook.check(response.logprobs)
                 if should_exit:
                     metrics.early_exit_triggers += 1
-                    # Note: actual layer skipping requires model-level integration.
-                    # For now, we track the signal for calibration.
 
             # Capture generation stats from response
             metrics.prompt_tps = response.prompt_tps
@@ -413,6 +419,7 @@ class InferenceEngine:
             metrics.tokens_generated = response.generation_tokens
 
             if response.text:
+                all_tokens.append(response.text)
                 yield response.text
 
         # Finalize metrics
@@ -422,5 +429,12 @@ class InferenceEngine:
             metrics.mean_confidence = sum(confidences) / len(confidences)
         if self._early_exit_hook is not None:
             metrics.early_exit_rate = self._early_exit_hook.exit_rate
+
+        # Quality scoring
+        if all_logprobs and all_tokens:
+            metrics.quality_score = _quality_scorer.score(
+                logprobs=all_logprobs,
+                tokens=all_tokens,
+            )
 
         self._last_metrics = metrics

@@ -122,6 +122,8 @@ async def _generate_worker_tokens(
         "early_exit_rate": metrics.get("early_exit_rate", 0),
         "mean_confidence": metrics.get("mean_confidence", 0),
     }
+    if "quality" in metrics:
+        final["quality"] = metrics["quality"]
     data = json.dumps(final)
     yield f"data: {data}\n\n"
     yield "data: [DONE]\n\n"
@@ -468,6 +470,7 @@ def create_app(
     _request_count: dict = {"total": 0, "errors": 0}
     _latency_samples: list[float] = []
     _model_tiers = model_tiers or []
+    _quality_samples: list[float] = []  # composite quality scores
 
     # Shadow cost logger — writes to interstat's SQLite DB
     _shadow_logger: ShadowLogger | None = None
@@ -487,6 +490,7 @@ def create_app(
         app.state.model_tiers = _model_tiers
         app.state.request_count = _request_count
         app.state.latency_samples = _latency_samples
+        app.state.quality_samples = _quality_samples
         app.state.shadow_logger = _shadow_logger
         if worker is not None:
             worker.start()
@@ -506,6 +510,7 @@ def create_app(
         data: dict = {
             "requests": _request_count.copy(),
             "latency": {},
+            "quality": {},
             "thermal": {},
             "memory": {},
             "models": [],
@@ -521,6 +526,17 @@ def create_app(
                 "p50_s": round(sorted_lat[n // 2], 3),
                 "p95_s": round(sorted_lat[int(n * 0.95)], 3) if n >= 20 else None,
                 "p99_s": round(sorted_lat[int(n * 0.99)], 3) if n >= 100 else None,
+            }
+
+        if _quality_samples:
+            sorted_q = sorted(_quality_samples)
+            nq = len(sorted_q)
+            data["quality"] = {
+                "count": nq,
+                "mean": round(sum(sorted_q) / nq, 4),
+                "p50": round(sorted_q[nq // 2], 4),
+                "min": round(sorted_q[0], 4),
+                "max": round(sorted_q[-1], 4),
             }
 
         if t is not None:
@@ -563,5 +579,6 @@ def create_app(
     app.state.model_tiers = _model_tiers
     app.state.request_count = _request_count
     app.state.latency_samples = _latency_samples
+    app.state.quality_samples = _quality_samples
     app.state.shadow_logger = _shadow_logger
     return app

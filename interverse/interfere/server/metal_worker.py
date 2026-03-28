@@ -317,6 +317,8 @@ def _worker_loop(
                         "mean_confidence": m.mean_confidence,
                         "tokens_generated": m.tokens_generated,
                     }
+                    if m.quality_score is not None:
+                        done_data["metrics"]["quality"] = m.quality_score.to_dict()
                 resp_queue.put(
                     WorkerResponse(
                         request_id=request.request_id,

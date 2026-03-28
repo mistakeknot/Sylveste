@@ -137,6 +137,15 @@ async def test_metrics_includes_cascade_stats(client: httpx.AsyncClient) -> None
 
 
 @pytest.mark.asyncio
+async def test_metrics_includes_quality_section(client: httpx.AsyncClient) -> None:
+    """GET /metrics includes quality section (empty when no real inference)."""
+    resp = await client.get("/metrics")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "quality" in data
+
+
+@pytest.mark.asyncio
 async def test_metrics_tracks_request_count(client: httpx.AsyncClient) -> None:
     """Request count increments after chat completions calls."""
     # Make a successful request
