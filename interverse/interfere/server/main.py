@@ -11,12 +11,25 @@ from contextlib import asynccontextmanager
 
 from starlette.applications import Starlette
 from starlette.requests import Request
-from starlette.responses import JSONResponse, StreamingResponse
+from starlette.responses import JSONResponse, Response, StreamingResponse
 from starlette.routing import Route
 
 from .cascade import CascadeConfig, CascadeDecision, CascadeStats
 from .experiments.config import load_experiment_configs
 from .metal_worker import MetalWorker
+from .prom import (
+    ACTIVE_REQUESTS,
+    CASCADE_DECISIONS,
+    ERRORS_TOTAL,
+    GPU_MEMORY_BYTES,
+    QUALITY_COMPOSITE,
+    REQUEST_COUNT,
+    REQUEST_LATENCY,
+    THERMAL_LEVEL,
+    THERMAL_LEVEL_MAP,
+    TOKENS_GENERATED,
+    generate_metrics_text,
+)
 from .schema import ChatCompletionChunk
 from .shadow_log import ShadowEntry, ShadowLogger
 from .thermal import ThermalMonitor
@@ -83,6 +96,7 @@ async def _generate_worker_tokens(
     loop = asyncio.get_running_loop()
     t0 = time.monotonic()
     completion_tokens = 0
+    tok_counter = TOKENS_GENERATED.labels(model=model)
 
     # Run the blocking generator in a thread so we don't block the event loop.
     # Each iteration of worker.generate() blocks on resp_queue.get().
@@ -106,6 +120,7 @@ async def _generate_worker_tokens(
         if token_text is None:
             break
         completion_tokens += 1
+        tok_counter.inc()
         data = json.dumps(chunk.to_delta_dict(content=token_text))
         yield f"data: {data}\n\n"
 
@@ -203,11 +218,15 @@ async def _chat_completions(request: Request) -> JSONResponse | StreamingRespons
     shadow_logger: ShadowLogger | None = request.app.state.shadow_logger
 
     request_count["total"] += 1
+    ACTIVE_REQUESTS.inc()
 
     try:
         body = await request.json()
     except Exception:
         request_count["errors"] += 1
+        ACTIVE_REQUESTS.dec()
+        ERRORS_TOTAL.labels(error_type="invalid_json").inc()
+        REQUEST_COUNT.labels(status="4xx").inc()
         return JSONResponse(
             {
                 "error": {
@@ -221,6 +240,9 @@ async def _chat_completions(request: Request) -> JSONResponse | StreamingRespons
     messages = body.get("messages")
     if not messages:
         request_count["errors"] += 1
+        ACTIVE_REQUESTS.dec()
+        ERRORS_TOTAL.labels(error_type="missing_messages").inc()
+        REQUEST_COUNT.labels(status="4xx").inc()
         return JSONResponse(
             {
                 "error": {
@@ -284,6 +306,7 @@ async def _chat_completions(request: Request) -> JSONResponse | StreamingRespons
 
             if decision == CascadeDecision.ACCEPT:
                 cascade_stats.accepts += 1
+                CASCADE_DECISIONS.labels(outcome="accept").inc()
                 cascade_stats.total_probe_time_s += probe_resp.data.get(
                     "probe_time_s", 0
                 )
@@ -320,11 +343,13 @@ async def _chat_completions(request: Request) -> JSONResponse | StreamingRespons
                 )
                 if i < len(model_tiers) - 1:
                     cascade_stats.escalations += 1
+                    CASCADE_DECISIONS.labels(outcome="escalate").inc()
                     continue  # try next tier
                 # Last tier — fall through to cloud
 
             # Cloud fallback
             cascade_stats.cloud_fallbacks += 1
+            CASCADE_DECISIONS.labels(outcome="cloud").inc()
             cascade_stats.total_probe_time_s += probe_resp.data.get("probe_time_s", 0)
             # Shadow log: cloud fallback — no local savings
             if shadow_logger is not None:
@@ -343,6 +368,9 @@ async def _chat_completions(request: Request) -> JSONResponse | StreamingRespons
             cascade_header["decision"] = CascadeDecision.CLOUD.value
             cascade_header["model"] = "cloud"
             latency_samples.append(time.monotonic() - t0)
+            REQUEST_LATENCY.labels(model="cloud").observe(time.monotonic() - t0)
+            REQUEST_COUNT.labels(status="2xx").inc()
+            ACTIVE_REQUESTS.dec()
             return JSONResponse(
                 {
                     "cascade": "cloud_fallback",
@@ -379,7 +407,11 @@ async def _chat_completions(request: Request) -> JSONResponse | StreamingRespons
             kv_group_size=kv_group_size,
         )
 
-    latency_samples.append(time.monotonic() - t0)
+    elapsed = time.monotonic() - t0
+    latency_samples.append(elapsed)
+    REQUEST_LATENCY.labels(model=model).observe(elapsed)
+    REQUEST_COUNT.labels(status="2xx").inc()
+    ACTIVE_REQUESTS.dec()
 
     headers = {
         "Cache-Control": "no-cache",
@@ -502,11 +534,44 @@ def create_app(
         if worker is not None and worker.is_alive():
             worker.shutdown()
 
-    async def _metrics(request: Request) -> JSONResponse:
-        """GET /metrics — JSON metrics for monitoring."""
+    def _update_lazy_gauges() -> None:
+        """Update gauges that are read on scrape, not per-request."""
+        if thermal is not None:
+            try:
+                ts = thermal.read()
+                THERMAL_LEVEL.set(THERMAL_LEVEL_MAP.get(ts.level, -1))
+            except Exception:
+                pass
+
+        if worker is not None and worker.is_alive():
+            try:
+                resp = worker.health(timeout=2.0)
+                d = resp.data
+                GPU_MEMORY_BYTES.labels(type="active").set(
+                    d.get("metal_active_memory", 0)
+                )
+                GPU_MEMORY_BYTES.labels(type="peak").set(d.get("metal_peak_memory", 0))
+            except Exception:
+                pass
+
+        if _quality_samples:
+            QUALITY_COMPOSITE.set(_quality_samples[-1])
+
+    async def _metrics(request: Request) -> JSONResponse | Response:
+        """GET /metrics — JSON or Prometheus format based on Accept header."""
         w: MetalWorker | None = request.app.state.worker
         t: ThermalMonitor | None = request.app.state.thermal
 
+        # Content negotiation: text/plain → Prometheus, else JSON
+        accept = request.headers.get("accept", "")
+        if "text/plain" in accept:
+            _update_lazy_gauges()
+            return Response(
+                content=generate_metrics_text(),
+                media_type="text/plain; version=0.0.4; charset=utf-8",
+            )
+
+        # Default: existing JSON format (backward compatible)
         data: dict = {
             "requests": _request_count.copy(),
             "latency": {},
@@ -562,9 +627,18 @@ def create_app(
 
         return JSONResponse(data)
 
+    async def _metrics_prometheus(request: Request) -> Response:
+        """GET /metrics/prometheus — always Prometheus exposition format."""
+        _update_lazy_gauges()
+        return Response(
+            content=generate_metrics_text(),
+            media_type="text/plain; version=0.0.4; charset=utf-8",
+        )
+
     routes = [
         Route("/health", _health, methods=["GET"]),
         Route("/metrics", _metrics, methods=["GET"]),
+        Route("/metrics/prometheus", _metrics_prometheus, methods=["GET"]),
         Route("/v1/chat/completions", _chat_completions, methods=["POST"]),
         Route("/v1/models/load", _load_model, methods=["POST"]),
     ]
