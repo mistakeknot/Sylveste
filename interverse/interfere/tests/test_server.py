@@ -182,3 +182,36 @@ async def test_dry_run_skips_cascade(cascade_app) -> None:
         assert "X-Interfere-Cascade" not in resp.headers
         # Still returns SSE
         assert "text/event-stream" in resp.headers["content-type"]
+
+
+@pytest.mark.asyncio
+async def test_health_reports_restart_count(client: httpx.AsyncClient) -> None:
+    """Health endpoint includes restart_count (0 for dry-run)."""
+    resp = await client.get("/health")
+    data = resp.json()
+    # dry-run has no worker, so no restart_count field
+    assert data["status"] == "dry_run"
+
+
+@pytest.mark.asyncio
+async def test_health_reports_degraded_status() -> None:
+    """Health reports degraded when worker is in degraded mode."""
+    from unittest.mock import MagicMock, PropertyMock
+
+    app = create_app(dry_run=True, thermal_reject_level="sleeping")
+    app.state.dry_run = False  # Override to simulate real worker mode
+    # Simulate a degraded worker
+    mock_worker = MagicMock()
+    type(mock_worker).is_degraded = PropertyMock(return_value=True)
+    type(mock_worker).is_restarting = PropertyMock(return_value=False)
+    mock_worker.is_alive.return_value = False  # is_alive() is a method, not property
+    type(mock_worker).restart_count = PropertyMock(return_value=5)
+    type(mock_worker).last_crash = PropertyMock(return_value=None)
+    app.state.worker = mock_worker
+
+    transport = httpx.ASGITransport(app=app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://test") as c:
+        resp = await c.get("/health")
+        data = resp.json()
+        assert data["status"] == "degraded"
+        assert data["restart_count"] == 5

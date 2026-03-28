@@ -12,6 +12,7 @@ touched by the main (HTTP) process.
 from __future__ import annotations
 
 import enum
+import logging
 import multiprocessing
 import multiprocessing.queues
 import os
@@ -19,6 +20,8 @@ import threading
 import time
 from dataclasses import dataclass, field
 from typing import Any, Generator
+
+log = logging.getLogger("interfere.metal_worker")
 
 
 # ---------------------------------------------------------------------------
@@ -354,6 +357,40 @@ def _worker_loop(
 # the HTTP server process.
 _DEFAULT_MEMORY_LIMIT = 96 * 1024 * 1024 * 1024
 
+# Watchdog defaults
+_WATCHDOG_POLL_INTERVAL = 2.0  # seconds between is_alive() checks
+_MAX_CONSECUTIVE_RESTARTS = 5
+_INITIAL_BACKOFF_S = 2.0
+_MAX_BACKOFF_S = 30.0
+
+
+def classify_crash(exit_code: int | None) -> str:
+    """Classify a worker crash by exit code."""
+    if exit_code is None:
+        return "unknown"
+    if exit_code == 0:
+        return "clean_exit"
+    # Positive codes on macOS: 128 + signal
+    if exit_code == 134 or exit_code == -6:  # SIGABRT
+        return "gpu_abort"
+    if exit_code == 137 or exit_code == -9:  # SIGKILL (OOM)
+        return "oom_killed"
+    if exit_code == 139 or exit_code == -11:  # SIGSEGV
+        return "segfault"
+    if exit_code < 0:
+        return f"signal_{-exit_code}"
+    return f"exit_{exit_code}"
+
+
+@dataclass
+class CrashInfo:
+    """Record of a worker crash event."""
+
+    timestamp: float
+    exit_code: int | None
+    classification: str
+    restart_attempt: int
+
 
 class MetalWorker:
     """Manages a spawned subprocess that owns the Metal GPU context.
@@ -371,6 +408,7 @@ class MetalWorker:
         self,
         memory_limit_bytes: int = _DEFAULT_MEMORY_LIMIT,
         experiment_configs: dict | None = None,
+        enable_watchdog: bool = True,
     ) -> None:
         self._memory_limit_bytes = memory_limit_bytes
         self._experiment_configs = experiment_configs
@@ -382,6 +420,17 @@ class MetalWorker:
         # subprocess is single-threaded, so this lock simply ensures we
         # finish reading all tokens from one request before starting the next.
         self._generate_lock = threading.Lock()
+
+        # Crash recovery state
+        self._enable_watchdog = enable_watchdog
+        self._watchdog_thread: threading.Thread | None = None
+        self._watchdog_stop = threading.Event()
+        self._restart_count: int = 0
+        self._consecutive_crashes: int = 0
+        self._last_crash: CrashInfo | None = None
+        self._crash_history: list[CrashInfo] = []
+        self._restarting = threading.Event()  # set while restart in progress
+        self._degraded = False  # True when max restarts exceeded
 
     # -- lifecycle -----------------------------------------------------------
 
@@ -407,8 +456,14 @@ class MetalWorker:
         )
         self._process.start()
 
+        # Start watchdog after first spawn (not during restart — restart calls start)
+        if self._enable_watchdog and self._watchdog_thread is None:
+            self._start_watchdog()
+
     def shutdown(self, timeout: float = 5.0) -> None:
         """Send SHUTDOWN and wait for the subprocess to exit."""
+        self._stop_watchdog()
+
         if self._process is None or not self._process.is_alive():
             return
 
@@ -424,6 +479,142 @@ class MetalWorker:
     def is_alive(self) -> bool:
         """Return True if the worker subprocess is running."""
         return self._process is not None and self._process.is_alive()
+
+    @property
+    def is_restarting(self) -> bool:
+        """True while a restart is in progress."""
+        return self._restarting.is_set()
+
+    @property
+    def is_degraded(self) -> bool:
+        """True when max consecutive restarts exceeded — will not auto-recover."""
+        return self._degraded
+
+    @property
+    def restart_count(self) -> int:
+        return self._restart_count
+
+    @property
+    def last_crash(self) -> CrashInfo | None:
+        return self._last_crash
+
+    @property
+    def crash_history(self) -> list[CrashInfo]:
+        return list(self._crash_history)
+
+    def restart(self) -> None:
+        """Clean up a dead worker and spawn a fresh one.
+
+        Safe to call when the worker is already dead. Resets the queues
+        since the old ones may be corrupted by the crash.
+        """
+        self._restarting.set()
+        try:
+            # Clean up dead process
+            if self._process is not None:
+                if self._process.is_alive():
+                    self._process.terminate()
+                    self._process.join(timeout=2.0)
+                self._process = None
+
+            # Old queues may be corrupted — recreate
+            self._req_queue = None
+            self._resp_queue = None
+
+            # Spawn fresh worker
+            self.start()
+            self._restart_count += 1
+            log.info(
+                "worker restarted (attempt %d, total restarts: %d)",
+                self._consecutive_crashes,
+                self._restart_count,
+            )
+        finally:
+            self._restarting.clear()
+
+    def _start_watchdog(self) -> None:
+        """Start the background watchdog thread."""
+        if self._watchdog_thread is not None and self._watchdog_thread.is_alive():
+            return
+        self._watchdog_stop.clear()
+        self._watchdog_thread = threading.Thread(
+            target=self._watchdog_loop,
+            daemon=True,
+            name="interfere-watchdog",
+        )
+        self._watchdog_thread.start()
+
+    def _stop_watchdog(self) -> None:
+        """Signal the watchdog to stop."""
+        self._watchdog_stop.set()
+        if self._watchdog_thread is not None:
+            self._watchdog_thread.join(timeout=5.0)
+            self._watchdog_thread = None
+
+    def _watchdog_loop(self) -> None:
+        """Background thread: detect crashes and auto-restart with backoff."""
+        while not self._watchdog_stop.is_set():
+            self._watchdog_stop.wait(timeout=_WATCHDOG_POLL_INTERVAL)
+            if self._watchdog_stop.is_set():
+                break
+
+            if self._degraded or self._restarting.is_set():
+                continue
+
+            if self._process is not None and not self._process.is_alive():
+                # Worker crashed
+                exit_code = self._process.exitcode
+                classification = classify_crash(exit_code)
+                crash = CrashInfo(
+                    timestamp=time.time(),
+                    exit_code=exit_code,
+                    classification=classification,
+                    restart_attempt=self._consecutive_crashes + 1,
+                )
+                self._last_crash = crash
+                self._crash_history.append(crash)
+                self._consecutive_crashes += 1
+
+                log.warning(
+                    "worker crashed: exit_code=%s classification=%s (consecutive: %d/%d)",
+                    exit_code,
+                    classification,
+                    self._consecutive_crashes,
+                    _MAX_CONSECUTIVE_RESTARTS,
+                )
+
+                if self._consecutive_crashes > _MAX_CONSECUTIVE_RESTARTS:
+                    log.error(
+                        "max restarts exceeded (%d) — entering degraded mode",
+                        _MAX_CONSECUTIVE_RESTARTS,
+                    )
+                    self._degraded = True
+                    continue
+
+                # Exponential backoff
+                backoff = min(
+                    _INITIAL_BACKOFF_S * (2 ** (self._consecutive_crashes - 1)),
+                    _MAX_BACKOFF_S,
+                )
+                log.info(
+                    "waiting %.1fs before restart attempt %d",
+                    backoff,
+                    self._consecutive_crashes,
+                )
+                self._watchdog_stop.wait(timeout=backoff)
+                if self._watchdog_stop.is_set():
+                    break
+
+                try:
+                    self.restart()
+                    # Successful restart resets on next successful health check
+                except Exception as exc:
+                    log.error("restart failed: %s", exc)
+
+    def reset_consecutive_crashes(self) -> None:
+        """Call after a successful request to reset the crash counter."""
+        if self._consecutive_crashes > 0:
+            self._consecutive_crashes = 0
 
     # -- commands ------------------------------------------------------------
 

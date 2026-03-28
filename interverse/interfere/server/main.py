@@ -47,7 +47,30 @@ async def _health(request: Request) -> JSONResponse:
     worker: MetalWorker | None = request.app.state.worker
     thermal: ThermalMonitor | None = request.app.state.thermal
 
-    info: dict = {"status": "dry_run" if dry_run else "ready", "models": []}
+    # Determine server status
+    if dry_run:
+        status = "dry_run"
+    elif worker is not None and worker.is_degraded:
+        status = "degraded"
+    elif worker is not None and worker.is_restarting:
+        status = "restarting"
+    elif worker is not None and worker.is_alive():
+        status = "ready"
+    elif worker is not None:
+        status = "worker_down"
+    else:
+        status = "no_worker"
+
+    info: dict = {"status": status, "models": []}
+
+    if worker is not None:
+        info["restart_count"] = worker.restart_count
+        if worker.last_crash is not None:
+            info["last_crash"] = {
+                "classification": worker.last_crash.classification,
+                "exit_code": worker.last_crash.exit_code,
+                "timestamp": worker.last_crash.timestamp,
+            }
 
     if thermal is not None:
         try:
@@ -214,6 +237,7 @@ async def _chat_completions(request: Request) -> JSONResponse | StreamingRespons
     too low, escalates to a larger model or signals cloud fallback.
     """
     t0 = time.monotonic()
+    worker: MetalWorker | None = request.app.state.worker
     inference_queue: PriorityRequestQueue = request.app.state.inference_queue
     thermal_reject_threshold: int = request.app.state.thermal_reject_threshold
 
@@ -251,6 +275,32 @@ async def _chat_completions(request: Request) -> JSONResponse | StreamingRespons
             },
             status_code=503,
             headers={"Retry-After": "10"},
+        )
+
+    # -- Admission control: worker health gate --
+    if worker is not None and worker.is_degraded:
+        REJECTED_TOTAL.labels(reason="degraded").inc()
+        return JSONResponse(
+            {
+                "error": {
+                    "message": "Worker degraded — max restarts exceeded",
+                    "type": "server_error",
+                    "restart_count": worker.restart_count,
+                }
+            },
+            status_code=503,
+        )
+    if worker is not None and worker.is_restarting:
+        REJECTED_TOTAL.labels(reason="restarting").inc()
+        return JSONResponse(
+            {
+                "error": {
+                    "message": "Worker restarting — retry shortly",
+                    "type": "server_error",
+                }
+            },
+            status_code=503,
+            headers={"Retry-After": "5"},
         )
 
     request_count: dict = request.app.state.request_count
@@ -334,7 +384,6 @@ async def _chat_completions(request: Request) -> JSONResponse | StreamingRespons
     queue_wait_start = time.monotonic()
 
     dry_run: bool = request.app.state.dry_run
-    worker: MetalWorker | None = request.app.state.worker
 
     # --- Cascade logic ---
     cascade_header: dict = {}
