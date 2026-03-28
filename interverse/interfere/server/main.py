@@ -23,6 +23,9 @@ from .prom import (
     ERRORS_TOTAL,
     GPU_MEMORY_BYTES,
     QUALITY_COMPOSITE,
+    QUEUE_DEPTH,
+    QUEUE_WAIT_SECONDS,
+    REJECTED_TOTAL,
     REQUEST_COUNT,
     REQUEST_LATENCY,
     THERMAL_LEVEL,
@@ -30,6 +33,7 @@ from .prom import (
     TOKENS_GENERATED,
     generate_metrics_text,
 )
+from .queue import InferenceRequest, PriorityRequestQueue, QueueFullError
 from .schema import ChatCompletionChunk
 from .shadow_log import ShadowEntry, ShadowLogger
 from .thermal import ThermalMonitor
@@ -210,12 +214,56 @@ async def _chat_completions(request: Request) -> JSONResponse | StreamingRespons
     too low, escalates to a larger model or signals cloud fallback.
     """
     t0 = time.monotonic()
+    inference_queue: PriorityRequestQueue = request.app.state.inference_queue
+    thermal_reject_threshold: int = request.app.state.thermal_reject_threshold
+
+    # -- Admission control: thermal gate --
+    t_mon: ThermalMonitor | None = request.app.state.thermal
+    if t_mon is not None:
+        try:
+            ts = t_mon.read()
+            thermal_val = THERMAL_LEVEL_MAP.get(ts.level, 0)
+            if thermal_val >= thermal_reject_threshold:
+                REJECTED_TOTAL.labels(reason="thermal").inc()
+                return JSONResponse(
+                    {
+                        "error": {
+                            "message": f"Server thermally throttled ({ts.level})",
+                            "type": "overloaded",
+                        }
+                    },
+                    status_code=503,
+                    headers={"Retry-After": "30"},
+                )
+        except Exception:
+            pass  # Thermal read failure — allow request through
+
+    # -- Admission control: queue depth gate --
+    QUEUE_DEPTH.set(inference_queue.depth)
+    if inference_queue.depth >= inference_queue.max_depth:
+        REJECTED_TOTAL.labels(reason="queue_full").inc()
+        return JSONResponse(
+            {
+                "error": {
+                    "message": f"Server busy ({inference_queue.depth} requests queued)",
+                    "type": "overloaded",
+                }
+            },
+            status_code=503,
+            headers={"Retry-After": "10"},
+        )
+
     request_count: dict = request.app.state.request_count
     latency_samples: list = request.app.state.latency_samples
     cascade_config: CascadeConfig = request.app.state.cascade_config
     cascade_stats: CascadeStats = request.app.state.cascade_stats
     model_tiers: list[str] = request.app.state.model_tiers
     shadow_logger: ShadowLogger | None = request.app.state.shadow_logger
+
+    # -- Enqueue and track wait time --
+    # Client priority: X-Interfere-Priority header (default 5, lower = higher)
+    client_priority = int(request.headers.get("x-interfere-priority", "5"))
+    client_priority = max(0, min(10, client_priority))  # clamp to 0-10
 
     request_count["total"] += 1
     ACTIVE_REQUESTS.inc()
@@ -258,6 +306,32 @@ async def _chat_completions(request: Request) -> JSONResponse | StreamingRespons
     temperature = body.get("temperature", 0.7)
     kv_bits = body.get("kv_bits")
     kv_group_size = body.get("kv_group_size", 64)
+
+    # Track this request in the queue for depth/backpressure visibility
+    queue_entry = InferenceRequest(
+        request_id=f"req-{id(request)}",
+        priority=client_priority,
+        prompt="",  # not used for tracking, just depth
+        model=model,
+        max_tokens=max_tokens,
+    )
+    try:
+        await inference_queue.put(queue_entry)
+    except QueueFullError:
+        ACTIVE_REQUESTS.dec()
+        REJECTED_TOTAL.labels(reason="queue_full").inc()
+        return JSONResponse(
+            {
+                "error": {
+                    "message": f"Server busy ({inference_queue.depth} requests queued)",
+                    "type": "overloaded",
+                }
+            },
+            status_code=503,
+            headers={"Retry-After": "10"},
+        )
+    QUEUE_DEPTH.set(inference_queue.depth)
+    queue_wait_start = time.monotonic()
 
     dry_run: bool = request.app.state.dry_run
     worker: MetalWorker | None = request.app.state.worker
@@ -367,6 +441,13 @@ async def _chat_completions(request: Request) -> JSONResponse | StreamingRespons
                 )
             cascade_header["decision"] = CascadeDecision.CLOUD.value
             cascade_header["model"] = "cloud"
+            # Dequeue: cloud fallback exits the queue
+            try:
+                await inference_queue.get()
+            except Exception:
+                pass
+            QUEUE_DEPTH.set(inference_queue.depth)
+            QUEUE_WAIT_SECONDS.observe(time.monotonic() - queue_wait_start)
             latency_samples.append(time.monotonic() - t0)
             REQUEST_LATENCY.labels(model="cloud").observe(time.monotonic() - t0)
             REQUEST_COUNT.labels(status="2xx").inc()
@@ -406,6 +487,14 @@ async def _chat_completions(request: Request) -> JSONResponse | StreamingRespons
             kv_bits=kv_bits,
             kv_group_size=kv_group_size,
         )
+
+    # Dequeue: request is being served
+    try:
+        await inference_queue.get()
+    except Exception:
+        pass
+    QUEUE_DEPTH.set(inference_queue.depth)
+    QUEUE_WAIT_SECONDS.observe(time.monotonic() - queue_wait_start)
 
     elapsed = time.monotonic() - t0
     latency_samples.append(elapsed)
@@ -475,6 +564,8 @@ def create_app(
     dry_run: bool = False,
     model_tiers: list[str] | None = None,
     cascade_config: CascadeConfig | None = None,
+    max_queue_depth: int = 8,
+    thermal_reject_level: str = "heavy",
 ) -> Starlette:
     """Create the interfere Starlette application.
 
@@ -483,11 +574,17 @@ def create_app(
 
     *model_tiers* configures the cascade ordering (smallest → largest).
     *cascade_config* tunes thresholds; defaults are sensible.
+    *max_queue_depth* bounds the inference waiting room (503 when full).
+    *thermal_reject_level* rejects new requests at this thermal pressure
+    or above ('heavy', 'trapping', 'sleeping'). Set to 'sleeping' to
+    only reject at the most extreme level.
     """
     exp_configs = load_experiment_configs()
     worker: MetalWorker | None = (
         None if dry_run else MetalWorker(experiment_configs=exp_configs)
     )
+    _inference_queue = PriorityRequestQueue(max_depth=max_queue_depth)
+    _thermal_reject_threshold = THERMAL_LEVEL_MAP.get(thermal_reject_level, 2)
 
     # Thermal monitoring runs in the main process (no Metal dependency)
     thermal: ThermalMonitor | None = None
@@ -524,6 +621,8 @@ def create_app(
         app.state.latency_samples = _latency_samples
         app.state.quality_samples = _quality_samples
         app.state.shadow_logger = _shadow_logger
+        app.state.inference_queue = _inference_queue
+        app.state.thermal_reject_threshold = _thermal_reject_threshold
         if worker is not None:
             worker.start()
             app.state.worker = worker
@@ -655,4 +754,6 @@ def create_app(
     app.state.latency_samples = _latency_samples
     app.state.quality_samples = _quality_samples
     app.state.shadow_logger = _shadow_logger
+    app.state.inference_queue = _inference_queue
+    app.state.thermal_reject_threshold = _thermal_reject_threshold
     return app

@@ -14,7 +14,7 @@ from server.main import create_app
 
 @pytest.fixture
 def app():
-    return create_app(dry_run=True)
+    return create_app(dry_run=True, thermal_reject_level="sleeping")
 
 
 @pytest.fixture
@@ -24,6 +24,7 @@ def cascade_app():
         dry_run=True,
         model_tiers=["small-model", "large-model"],
         cascade_config=CascadeConfig(enabled=True),
+        thermal_reject_level="sleeping",
     )
 
 

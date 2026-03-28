@@ -46,7 +46,7 @@ def _reset_prom_metrics():
 
 @pytest.fixture
 def app():
-    return create_app(dry_run=True)
+    return create_app(dry_run=True, thermal_reject_level="sleeping")
 
 
 @pytest.fixture
