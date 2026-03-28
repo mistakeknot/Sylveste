@@ -1024,6 +1024,10 @@
 {"actor":"mistakeknot","comment":null,"created_at":"2026-03-28T16:12:20Z","event_type":"created","id":"d1762333-f301-424f-80aa-c81a5b3bcc7b","issue_id":"sylveste-fnx","new_value":"","old_value":""}
 {"actor":"mistakeknot","comment":null,"created_at":"2026-03-28T16:12:26Z","event_type":"created","id":"c1a69cc8-ed2c-4837-99ea-e9a23b94ff77","issue_id":"sylveste-jqc","new_value":"","old_value":""}
 {"actor":"mistakeknot","comment":null,"created_at":"2026-03-28T16:12:36Z","event_type":"created","id":"2498c439-9b9b-4451-9b99-fb06de455801","issue_id":"sylveste-ftm","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-28T16:17:13Z","event_type":"created","id":"e05775f9-40b8-4c89-96ff-beedf40482e7","issue_id":"sylveste-f3q","new_value":"","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-28T16:17:22Z","event_type":"closed","id":"2915d011-05dc-4b4b-9ad4-6463436da035","issue_id":"sylveste-f3q","new_value":"Phase 0 experiment complete. 1.5 tok/s measured — below kill criteria threshold. Analysis at docs/benchmarks/streaming_phase0_analysis.md","old_value":""}
+{"actor":"mistakeknot","comment":null,"created_at":"2026-03-28T16:17:46Z","event_type":"created","id":"c723d190-2709-449c-a888-23e441886c6e","issue_id":"sylveste-vpa","new_value":"","old_value":""}
+{"actor":"39b35182","comment":null,"created_at":"2026-03-28T16:20:38Z","event_type":"created","id":"5d350f1a-6e19-4209-8ffd-393993c405a3","issue_id":"sylveste-ayl","new_value":"","old_value":""}
 {"actor":"Claude Code","comment":null,"created_at":"2026-03-28T16:54:45Z","event_type":"created","id":"1cad5cdb-3d6b-4eff-9f68-51bc0f84f7f1","issue_id":"sylveste-rsj","new_value":"","old_value":""}
 {"actor":"Claude Code","comment":"Added label: lane:sota","created_at":"2026-03-28T16:54:45Z","event_type":"label_added","id":"78f97856-a14a-4ebf-8db5-fe8ae25845bb","issue_id":"sylveste-rsj","new_value":null,"old_value":null}
 {"actor":"Claude Code","comment":null,"created_at":"2026-03-28T16:54:52Z","event_type":"created","id":"45834056-6fb8-4545-a378-3f75e65dd166","issue_id":"sylveste-rsj.1","new_value":"","old_value":""}
