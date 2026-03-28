@@ -31,6 +31,9 @@
 {"issue_id":"sylveste-rsj.1.11","label":"lane:sota"}
 {"issue_id":"sylveste-rsj.1.2","label":"lane:autonomy"}
 {"issue_id":"sylveste-rsj.1.2","label":"lane:sota"}
+{"issue_id":"sylveste-rsj.1.3","label":"claimed_at:1774719826"}
+{"issue_id":"sylveste-rsj.1.3","label":"claimed_by:19a08b55-c212-43aa-90a0-2aba9bb350df"}
+{"issue_id":"sylveste-rsj.1.3","label":"complexity:2"}
 {"issue_id":"sylveste-rsj.1.3","label":"lane:autonomy"}
 {"issue_id":"sylveste-rsj.1.3","label":"lane:sota"}
 {"issue_id":"sylveste-rsj.1.4","label":"claimed_at:1774713532"}

@@ -4,9 +4,14 @@
   "counts": {
     "issues": 85,
     "events": 245,
+  "last_dolt_commit": "3fio2blf34s73mivt354ag9tjv3cpr8q",
+  "timestamp": "2026-03-28T17:45:20.05361196Z",
+  "counts": {
+    "issues": 99,
+    "events": 506,
     "comments": 0,
-    "dependencies": 79,
-    "labels": 49,
+    "dependencies": 82,
+    "labels": 52,
     "config": 11
   }
 }
