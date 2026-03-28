@@ -114,3 +114,47 @@ Full agent reports available (17 total across both sessions):
 - Session 1: fd-customer-zero-fit, fd-borg-to-kubernetes-dynamics, fd-agent-orchestration-competitive, fd-architecture-vertical-coupling, fd-gtm-motion-feasibility, fd-systems, fd-decisions
 - Session 2 Review: fd-salon-epistemics, fd-complexity-fitness, fd-metaphor-market, fd-design-affordances, fd-brand-coherence
 - Session 2 Research: fd-stigmergic-discourse, fd-deliberative-emergence, fd-jazz-socratic-improv, fd-swarm-ensemble-frontier, fd-cognitive-diversity-topology
+- Session 3 (Maximally Distant Domains): fd-perfumery-accord, fd-tidal-resonance, fd-judicial-evidence, fd-monastic-scriptoria, fd-indigenous-wayfinding
+
+## Session 3: Maximally Distant Domain Research
+
+Five domains chosen for maximum semantic distance from all prior research, producing structural isomorphisms nobody in AI has borrowed.
+
+### From Perfumery (fd-perfumery-accord)
+- **Volatility-Stratified Ensemble**: Top-note agents (fast provocations), heart agents (core analysis), base agents (persistent context). All active from start — progressive revelation, not sequential relay.
+- **Discourse Fixative**: Always-on, low-salience coherence agent that retards premature convergence, provides referential anchoring, bridges disparate contributions. The sandalwood function.
+- **Drydown Pattern**: Discourse phases where quality shifts from analytical energy to integrative depth. "The drydown quality must be designed at composition time."
+- **Fragrance Families as Discourse Archetypes**: Chypre (contrasting synthesis), Fougere (layered expertise), Oriental (deep convergence), Fresh (rapid divergence).
+- **Indole Cliff / Ratio Governance**: Contrarianism, abstraction, precedent — all have sharp non-linear thresholds between valuable and destructive.
+
+### From Physical Oceanography (fd-tidal-resonance)
+- **Quarter-Wavelength Resonance**: Match prompt injection cadence to topology's natural period. Signal amplifies for free from temporal geometry.
+- **Thermohaline Dual-Timescale Relay**: Fast ephemeral exchange coupled to slow persistent knowledge through "epistemic density" handoffs.
+- **Estuarine Halocline**: The interface between epistemically distinct populations is the most productive zone. Maintain the gradient.
+- **Standing Wave Antinodes**: Shape topology so synthesis agents sit at natural antinodes. Geometry selects where insight concentrates.
+- **Kelvin Boundary Propagation**: Route information along cluster boundaries, not broadcast. Exponential decay away from interface.
+- **AMOC Tipping Monitor**: Variance + autocorrelation + novelty ratio as early warning for discourse collapse.
+
+### From Common Law (fd-judicial-evidence)
+- **Hearsay Rule → Provenance Enforcement**: Block agent claims that cite other agents' unchecked outputs without provenance metadata. Prevents hallucination propagation through citation chains.
+- **Adversarial Process Structural Conditions**: Each side must have genuine incentive to surface weaknesses. Without this, adversarial review degrades to theater.
+- **Precedent as Distributed Memory**: Prior decisions encode reasoning patterns (not just outcomes) that constrain future reasoning.
+- **Burden of Proof as Prior Assignment**: Structural priors distributing the labor of argument.
+- **Voir Dire as Agent Composition**: Qualifying reasoning agents before deliberation.
+- **Harmless vs. Reversible Error**: Not all errors require restart. Quality-tier architecture for graceful degradation.
+
+### From Medieval Paleography (fd-monastic-scriptoria)
+- **Stemma-based Hallucination Tracing**: Tag outputs with provenance vectors. Shared hallucinations across branches identify the "hyparchetype" (introducing turn). Computational phylogenetics for error genealogy.
+- **The Correctorius**: Structurally separate production from verification. Dedicated annotation-only agent. Authority from role, not expertise.
+- **Pecia System (Exemplar Control)**: Parallel agents read from canonical exemplar they never write to directly. Prevents hallucination cascade.
+- **Lectio Divina (Four-Stage Deepening)**: Literal → analytical → adversarial → essence. Each pass references the original, not the prior pass.
+- **Catchwords (Semantic Checksums)**: Lightweight boundary assertions at handoff points.
+- **Oral/Written Bifurcation**: Some knowledge should be ephemeral; some frozen. Not all memory should persist.
+
+### From Indigenous Wayfinding (fd-indigenous-wayfinding)
+- **Songline Isomorphism**: Discourse structure IS knowledge structure. "The conversation IS the garden." Walking the discourse reconstructs the knowledge.
+- **Multi-Modal Redundancy Without Canonical Source**: Encode same question across genuinely different epistemic approaches. Disagreement = the most important signal.
+- **Etak Reference Frame Inversion**: Instead of one canonical state, let agents maintain relative reference frames. Track angular relationships between perspectives.
+- **Distributed Apprenticeship**: Completeness is a community property. Overlapping specialists, not committees of generalists.
+- **Dead Reckoning with Landmark Recalibration**: Track "epistemic elapsed time" since last grounding against verifiable reference.
+- **Meta-insight**: "Some knowledge is only accessible through the process of its use."
