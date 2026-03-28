@@ -7013,3 +7013,116 @@ time="2026-03-28T14:36:25-07:00" level=warning msg="error running query" connect
 time="2026-03-28T14:36:26-07:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=12
 time="2026-03-28T14:36:26-07:00" level=info msg=ConnectionClosed connectionID=12
 time="2026-03-28T14:36:27-07:00" level=info msg=ConnectionClosed connectionID=11
+Starting server with Config HP="127.0.0.1:36669"|T="28800000"|R="false"|L="info"
+database "dolt" is locked by another dolt process; either clone the database to run a second server, or stop the dolt process which currently holds an exclusive write lock on the database
+Starting server with Config HP="127.0.0.1:34433"|T="28800000"|R="false"|L="info"
+database "dolt" is locked by another dolt process; either clone the database to run a second server, or stop the dolt process which currently holds an exclusive write lock on the database
+Starting server with Config HP="127.0.0.1:37353"|T="28800000"|R="false"|L="info"
+database "dolt" is locked by another dolt process; either clone the database to run a second server, or stop the dolt process which currently holds an exclusive write lock on the database
+Starting server with Config HP="127.0.0.1:44699"|T="28800000"|R="false"|L="info"
+database "dolt" is locked by another dolt process; either clone the database to run a second server, or stop the dolt process which currently holds an exclusive write lock on the database
+Starting server with Config HP="127.0.0.1:46203"|T="28800000"|R="false"|L="info"
+database "dolt" is locked by another dolt process; either clone the database to run a second server, or stop the dolt process which currently holds an exclusive write lock on the database
+Starting server with Config HP="127.0.0.1:38655"|T="28800000"|R="false"|L="info"
+database "dolt" is locked by another dolt process; either clone the database to run a second server, or stop the dolt process which currently holds an exclusive write lock on the database
+Starting server with Config HP="127.0.0.1:37433"|T="28800000"|R="false"|L="info"
+database "dolt" is locked by another dolt process; either clone the database to run a second server, or stop the dolt process which currently holds an exclusive write lock on the database
+Starting server with Config HP="127.0.0.1:45835"|T="28800000"|R="false"|L="info"
+database "dolt" is locked by another dolt process; either clone the database to run a second server, or stop the dolt process which currently holds an exclusive write lock on the database
+Starting server with Config HP="127.0.0.1:45353"|T="28800000"|R="false"|L="info"
+database "dolt" is locked by another dolt process; either clone the database to run a second server, or stop the dolt process which currently holds an exclusive write lock on the database
+Starting server with Config HP="127.0.0.1:42869"|T="28800000"|R="false"|L="info"
+database "dolt" is locked by another dolt process; either clone the database to run a second server, or stop the dolt process which currently holds an exclusive write lock on the database
+Starting server with Config HP="127.0.0.1:42869"|T="28800000"|R="false"|L="info"
+database "dolt" is locked by another dolt process; either clone the database to run a second server, or stop the dolt process which currently holds an exclusive write lock on the database
+Starting server with Config HP="127.0.0.1:46223"|T="28800000"|R="false"|L="info"
+database "dolt" is locked by another dolt process; either clone the database to run a second server, or stop the dolt process which currently holds an exclusive write lock on the database
+Starting server with Config HP="127.0.0.1:46223"|T="28800000"|R="false"|L="info"
+database "dolt" is locked by another dolt process; either clone the database to run a second server, or stop the dolt process which currently holds an exclusive write lock on the database
+Starting server with Config HP="127.0.0.1:37939"|T="28800000"|R="false"|L="info"
+database "dolt" is locked by another dolt process; either clone the database to run a second server, or stop the dolt process which currently holds an exclusive write lock on the database
+Starting server with Config HP="127.0.0.1:46161"|T="28800000"|R="false"|L="info"
+database "dolt" is locked by another dolt process; either clone the database to run a second server, or stop the dolt process which currently holds an exclusive write lock on the database
+Starting server with Config HP="127.0.0.1:45329"|T="28800000"|R="false"|L="info"
+database "dolt" is locked by another dolt process; either clone the database to run a second server, or stop the dolt process which currently holds an exclusive write lock on the database
+Starting server with Config HP="127.0.0.1:34813"|T="28800000"|R="false"|L="info"
+time="2026-03-28T23:38:50+01:00" level=info msg="Server ready. Accepting connections."
+time="2026-03-28T23:38:50+01:00" level=warning msg="secure_file_priv is set to \"\", which is insecure."
+time="2026-03-28T23:38:50+01:00" level=warning msg="Any user with GRANT FILE privileges will be able to read any file which the sql-server process can read."
+time="2026-03-28T23:38:50+01:00" level=warning msg="Please consider restarting the server with secure_file_priv set to a safe (or non-existent) directory."
+time="2026-03-28T23:38:50+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=1
+time="2026-03-28T23:38:50+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=2
+time="2026-03-28T23:38:50+01:00" level=info msg=ConnectionClosed connectionID=1
+time="2026-03-28T23:38:50+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=3
+time="2026-03-28T23:38:50+01:00" level=info msg=ConnectionClosed connectionID=2
+time="2026-03-28T23:38:50+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=4
+time="2026-03-28T23:38:50+01:00" level=info msg=ConnectionClosed connectionID=3
+time="2026-03-28T23:38:50+01:00" level=warning msg="error running query" connectTime="2026-03-28 23:38:50.857009404 +0100 CET m=+0.199166248" connectionDb=Sylveste connectionID=4 error="nothing to commit" queryTime="2026-03-28 23:38:50.868943408 +0100 CET m=+0.211100262"
+time="2026-03-28T23:38:51+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=5
+time="2026-03-28T23:38:51+01:00" level=info msg=ConnectionClosed connectionID=5
+time="2026-03-28T23:38:51+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=6
+time="2026-03-28T23:38:51+01:00" level=info msg=ConnectionClosed connectionID=6
+time="2026-03-28T23:38:51+01:00" level=info msg=ConnectionClosed connectionID=4
+time="2026-03-28T23:38:55+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=7
+time="2026-03-28T23:38:55+01:00" level=info msg=ConnectionClosed connectionID=7
+time="2026-03-28T23:38:55+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=8
+time="2026-03-28T23:38:55+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=9
+time="2026-03-28T23:38:55+01:00" level=info msg=ConnectionClosed connectionID=8
+time="2026-03-28T23:38:55+01:00" level=warning msg="error running query" connectTime="2026-03-28 23:38:55.010785098 +0100 CET m=+4.352941942" connectionDb=Sylveste connectionID=9 error="nothing to commit" queryTime="2026-03-28 23:38:55.019707339 +0100 CET m=+4.361864184"
+time="2026-03-28T23:38:55+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=10
+time="2026-03-28T23:38:55+01:00" level=info msg=ConnectionClosed connectionID=10
+Starting server with Config HP="127.0.0.1:33267"|T="28800000"|R="false"|L="info"
+time="2026-03-28T23:38:57+01:00" level=info msg="Server ready. Accepting connections."
+time="2026-03-28T23:38:57+01:00" level=warning msg="secure_file_priv is set to \"\", which is insecure."
+time="2026-03-28T23:38:57+01:00" level=warning msg="Any user with GRANT FILE privileges will be able to read any file which the sql-server process can read."
+time="2026-03-28T23:38:57+01:00" level=warning msg="Please consider restarting the server with secure_file_priv set to a safe (or non-existent) directory."
+time="2026-03-28T23:38:57+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=1
+time="2026-03-28T23:38:57+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=2
+time="2026-03-28T23:38:57+01:00" level=info msg=ConnectionClosed connectionID=1
+time="2026-03-28T23:38:57+01:00" level=info msg=ConnectionClosed connectionID=2
+time="2026-03-28T23:38:57+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=3
+time="2026-03-28T23:38:57+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=4
+time="2026-03-28T23:38:57+01:00" level=info msg=ConnectionClosed connectionID=3
+time="2026-03-28T23:38:57+01:00" level=info msg=ConnectionClosed connectionID=4
+time="2026-03-28T23:39:03+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=5
+time="2026-03-28T23:39:03+01:00" level=info msg=ConnectionClosed connectionID=5
+time="2026-03-28T23:39:03+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=6
+time="2026-03-28T23:39:03+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=7
+time="2026-03-28T23:39:03+01:00" level=info msg=ConnectionClosed connectionID=6
+time="2026-03-28T23:39:03+01:00" level=warning msg="error running query" connectTime="2026-03-28 23:39:03.026911673 +0100 CET m=+5.768109798" connectionDb=Sylveste connectionID=7 error="nothing to commit" queryTime="2026-03-28 23:39:03.034115497 +0100 CET m=+5.775313632"
+time="2026-03-28T23:39:03+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=8
+time="2026-03-28T23:39:03+01:00" level=info msg=ConnectionClosed connectionID=8
+time="2026-03-28T23:39:03+01:00" level=info msg=ConnectionClosed connectionID=7
+time="2026-03-28T23:39:03+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=9
+time="2026-03-28T23:39:03+01:00" level=info msg=ConnectionClosed connectionID=9
+time="2026-03-28T23:39:03+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=10
+time="2026-03-28T23:39:03+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=11
+time="2026-03-28T23:39:03+01:00" level=info msg=ConnectionClosed connectionID=10
+time="2026-03-28T23:39:03+01:00" level=info msg=ConnectionClosed connectionID=11
+Starting server with Config HP="127.0.0.1:43065"|T="28800000"|R="false"|L="info"
+time="2026-03-28T23:39:07+01:00" level=info msg="Server ready. Accepting connections."
+time="2026-03-28T23:39:07+01:00" level=warning msg="secure_file_priv is set to \"\", which is insecure."
+time="2026-03-28T23:39:07+01:00" level=warning msg="Any user with GRANT FILE privileges will be able to read any file which the sql-server process can read."
+time="2026-03-28T23:39:07+01:00" level=warning msg="Please consider restarting the server with secure_file_priv set to a safe (or non-existent) directory."
+time="2026-03-28T23:39:07+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=1
+time="2026-03-28T23:39:07+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=2
+time="2026-03-28T23:39:07+01:00" level=info msg=ConnectionClosed connectionID=1
+time="2026-03-28T23:39:07+01:00" level=info msg=ConnectionClosed connectionID=2
+time="2026-03-28T23:39:07+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=3
+time="2026-03-28T23:39:07+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=4
+time="2026-03-28T23:39:07+01:00" level=info msg=ConnectionClosed connectionID=3
+time="2026-03-28T23:39:07+01:00" level=warning msg="error running query" connectTime="2026-03-28 23:39:07.497240049 +0100 CET m=+0.199641691" connectionDb=Sylveste connectionID=4 error="nothing to commit" queryTime="2026-03-28 23:39:07.504030061 +0100 CET m=+0.206431713"
+time="2026-03-28T23:39:07+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=5
+time="2026-03-28T23:39:07+01:00" level=info msg=ConnectionClosed connectionID=5
+time="2026-03-28T23:39:07+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=6
+time="2026-03-28T23:39:07+01:00" level=info msg=ConnectionClosed connectionID=6
+time="2026-03-28T23:39:07+01:00" level=info msg=ConnectionClosed connectionID=4
+time="2026-03-28T23:39:07+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=7
+time="2026-03-28T23:39:07+01:00" level=info msg=ConnectionClosed connectionID=7
+time="2026-03-28T23:39:07+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=8
+time="2026-03-28T23:39:07+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=9
+time="2026-03-28T23:39:07+01:00" level=info msg=ConnectionClosed connectionID=8
+time="2026-03-28T23:39:07+01:00" level=warning msg="error running query" connectTime="2026-03-28 23:39:07.929774539 +0100 CET m=+0.632176181" connectionDb=Sylveste connectionID=9 error="nothing to commit" queryTime="2026-03-28 23:39:07.934394481 +0100 CET m=+0.636796133"
+time="2026-03-28T23:39:08+01:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=10
+time="2026-03-28T23:39:08+01:00" level=info msg=ConnectionClosed connectionID=10
+time="2026-03-28T23:39:08+01:00" level=info msg=ConnectionClosed connectionID=9

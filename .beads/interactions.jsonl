@@ -63,3 +63,4 @@
 {"id":"int-89cf29a5","kind":"field_change","created_at":"2026-03-28T18:24:47.023976148Z","actor":"46d9cd8d","issue_id":"sylveste-2kw","extra":{"field":"status","new_value":"closed","old_value":"in_progress"}}
 {"id":"int-1f1441b9","kind":"field_change","created_at":"2026-03-28T20:02:13.003452115Z","actor":"Claude Code","issue_id":"sylveste-ln3","extra":{"field":"priority","new_value":"0","old_value":"2"}}
 {"id":"int-b56e4409","kind":"field_change","created_at":"2026-03-28T22:35:37.380000619Z","actor":"Claude Code","issue_id":"sylveste-rsj.1.11","extra":{"field":"status","new_value":"closed","old_value":"in_progress","reason":"Closed"}}
+{"id":"int-970f96e2","kind":"field_change","created_at":"2026-03-28T22:39:03.315847817Z","actor":"Claude Code","issue_id":"sylveste-rsj.1.11","extra":{"field":"status","new_value":"closed","old_value":"open","reason":"Closed"}}
