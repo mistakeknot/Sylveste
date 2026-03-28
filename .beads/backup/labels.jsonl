@@ -18,6 +18,11 @@
 {"issue_id":"sylveste-rsj","label":"lane:sota"}
 {"issue_id":"sylveste-rsj.1","label":"lane:autonomy"}
 {"issue_id":"sylveste-rsj.1","label":"lane:sota"}
+{"issue_id":"sylveste-rsj.1.1","label":"artifact_brainstorm:docs/brainstorms/2026-03-28-autonomous-epic-execution-brainstorm.md"}
+{"issue_id":"sylveste-rsj.1.1","label":"artifact_plan:docs/plans/2026-03-28-autonomous-epic-p0.md"}
+{"issue_id":"sylveste-rsj.1.1","label":"claimed_at:1774715999"}
+{"issue_id":"sylveste-rsj.1.1","label":"claimed_by:19a08b55-c212-43aa-90a0-2aba9bb350df"}
+{"issue_id":"sylveste-rsj.1.1","label":"complexity:3"}
 {"issue_id":"sylveste-rsj.1.1","label":"lane:autonomy"}
 {"issue_id":"sylveste-rsj.1.1","label":"lane:sota"}
 {"issue_id":"sylveste-rsj.1.10","label":"lane:autonomy"}
