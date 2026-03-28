@@ -1,7 +1,7 @@
 ---
-bead: sylveste-80y.49
+bead: sylveste-rsj.1
 stage: plan
-children: [sylveste-80y.49.1, sylveste-80y.49.2, sylveste-80y.49.3, sylveste-80y.49.4]
+children: [sylveste-rsj.1.1, sylveste-rsj.1.2, sylveste-rsj.1.3, sylveste-rsj.1.4]
 ---
 
 # Implementation Plan: Autonomous Epic Execution — P0 Actions
@@ -12,16 +12,16 @@ children: [sylveste-80y.49.1, sylveste-80y.49.2, sylveste-80y.49.3, sylveste-80y
 ## Execution Order
 
 The beads have a natural dependency chain:
-1. **49.1** (strategic_intent) — standalone, touches intercore + Clavain
-2. **49.4** (evidence quarantine) — standalone, touches interspect only
-3. **49.3** (review backpressure) — needs a way to count pending reviews → can use existing review_queue.go from NTM or a simpler bd-based count
-4. **49.2** (post-merge canary) — benefits from 49.4 being in place (quarantined evidence won't pollute routing if canary catches a bad merge)
+1. **rsj.1.1** (strategic_intent) — standalone, touches intercore + Clavain
+2. **rsj.1.4** (evidence quarantine) — standalone, touches interspect only
+3. **rsj.1.3** (review backpressure) — needs a way to count pending reviews → can use existing review_queue.go from NTM or a simpler bd-based count
+4. **rsj.1.2** (post-merge canary) — benefits from rsj.1.4 being in place (quarantined evidence won't pollute routing if canary catches a bad merge)
 
-Recommended: implement 49.1 and 49.4 in parallel, then 49.3, then 49.2.
+Recommended: implement rsj.1.1 and rsj.1.4 in parallel, then rsj.1.3, then rsj.1.2.
 
 ---
 
-## Bead 49.1: Lane-Level `strategic_intent` Field
+## Bead rsj.1.1: Lane-Level `strategic_intent` Field
 
 **Why:** 6 agents converge — intent decays to ~20% by sprint 3. The fix: store intent on the lane, inject it into every dispatch briefing.
 
@@ -77,7 +77,7 @@ Accepts `--name=<id-or-name>` and `--intent=<text>`. Reads current metadata, mer
 
 ---
 
-## Bead 49.2: Post-Merge Canary Gate
+## Bead rsj.1.2: Post-Merge Canary Gate
 
 **Why:** 5 agents converge — silent failure is P0 risk. The system currently records sprint success at bead close, before verifying the merged code actually works.
 
@@ -143,7 +143,7 @@ After push succeeds, run canary validation:
 
 ---
 
-## Bead 49.3: Review Queue Backpressure in Self-Dispatch Scoring
+## Bead rsj.1.3: Review Queue Backpressure in Self-Dispatch Scoring
 
 **Why:** 4 agents converge — system optimizes for agent utilization, not flow. Self-dispatch keeps producing when review queue is full.
 
@@ -202,7 +202,7 @@ fi
 
 ---
 
-## Bead 49.4: Interspect Evidence Quarantine (48h)
+## Bead rsj.1.4: Interspect Evidence Quarantine (48h)
 
 **Why:** CI/CD agent: bad sprints can corrupt the learning baseline. Evidence needs time to season before influencing routing.
 
@@ -256,30 +256,30 @@ INTERSPECT_QUARANTINE_HOURS="${INTERSPECT_QUARANTINE_HOURS:-48}"
 
 ```
 Phase 1 (parallel):
-  49.1: ic lane update + strategic_intent in metadata     [intercore + Clavain]
-  49.4: evidence quarantine column + filter                [interspect]
+  rsj.1.1: ic lane update + strategic_intent in metadata     [intercore + Clavain]
+  rsj.1.4: evidence quarantine column + filter                [interspect]
 
 Phase 2:
-  49.3: review backpressure in dispatch_rescore()          [Clavain]
+  rsj.1.3: review backpressure in dispatch_rescore()          [Clavain]
 
 Phase 3:
-  49.2: post-merge canary gate in landing skill            [Clavain + interspect]
+  rsj.1.2: post-merge canary gate in landing skill            [Clavain + interspect]
 ```
 
 **Why this order:**
-- 49.1 and 49.4 are independent — no shared code, different modules
-- 49.3 needs review tracking which may surface design questions during 49.1/49.4 work
-- 49.2 depends on 49.4 (quarantined evidence is the safety net if canary misses something)
+- rsj.1.1 and rsj.1.4 are independent — no shared code, different modules
+- rsj.1.3 needs review tracking which may surface design questions during rsj.1.1/rsj.1.4 work
+- rsj.1.2 depends on rsj.1.4 (quarantined evidence is the safety net if canary misses something)
 
 ## Original Intent
 
-The 10-agent brainstorm surfaced 15 prioritized actions. This plan covers P0 only. The remaining P1/P2 items are tracked as beads (49.5–49.10 for P1, P2 items are captured in the brainstorm doc):
+The 10-agent brainstorm surfaced 15 prioritized actions. This plan covers P0 only. The remaining P1/P2 items are tracked as beads (rsj.1.5–rsj.1.10 for P1, P2 items are captured in the brainstorm doc):
 
 | P1 | Bead | Trigger |
 |----|------|---------|
-| strategic_contradiction escalation | 49.5 | After 49.1 ships — uses the intent field it creates |
-| Epic-level DoD | 49.6 | After 49.2 ships — builds on canary infrastructure |
-| Provenance vectors | 49.7 | After 49.4 ships — evidence lineage needs quarantine-aware queries |
-| Compound autonomy guard | 49.8 | When Mycroft T2 ships |
-| Decomposition quality metric | 49.9 | After 3 months of data from P0 instruments |
-| Temple invariant checker | 49.10 | After 49.2 proves the canary concept |
+| strategic_contradiction escalation | rsj.1.5 | After rsj.1.1 ships — uses the intent field it creates |
+| Epic-level DoD | rsj.1.6 | After rsj.1.2 ships — builds on canary infrastructure |
+| Provenance vectors | rsj.1.7 | After rsj.1.4 ships — evidence lineage needs quarantine-aware queries |
+| Compound autonomy guard | rsj.1.8 | When Mycroft T2 ships |
+| Decomposition quality metric | rsj.1.9 | After 3 months of data from P0 instruments |
+| Temple invariant checker | rsj.1.10 | After rsj.1.2 proves the canary concept |
