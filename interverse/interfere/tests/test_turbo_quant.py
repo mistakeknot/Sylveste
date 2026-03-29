@@ -8,9 +8,11 @@ import pytest
 
 from server.experiments.turbo_quant import (
     BHQCacheWrapper,
+    BHQResidualCacheWrapper,
     bhq_attention,
     bhq_dequantize,
     bhq_quantize,
+    bhq_residual_attention,
     centroids_to_mx,
     compute_centroid_mse,
     get_lloyd_max_centroids,
@@ -22,6 +24,7 @@ from server.experiments.turbo_quant import (
     qjl_encode,
     rotate,
     wrap_prompt_cache_bhq,
+    wrap_prompt_cache_bhq_residual,
     _centroid_cache,
 )
 
@@ -484,3 +487,161 @@ def test_turbo_quant_mutual_exclusion():
                 max_tokens=1,
             )
         )
+
+
+# ---------------------------------------------------------------------------
+# BHQ + QJL residual correction (Algorithm 2: TurboQuant_prod)
+# ---------------------------------------------------------------------------
+
+
+def test_bhq_residual_cache_accumulates():
+    """BHQ residual cache should accumulate tokens and track offset."""
+    _centroid_cache.clear()
+    head_dim = 64
+    n_kv_heads = 2
+    caches, pi = wrap_prompt_cache_bhq_residual(
+        head_dim, n_kv_heads, n_layers=1, bits=2
+    )
+    cache = caches[0]
+    assert cache.offset == 0
+
+    for step in range(3):
+        k = mx.random.normal(shape=(1, n_kv_heads, 4, head_dim))
+        v = mx.random.normal(shape=(1, n_kv_heads, 4, head_dim))
+        out_k, out_v = cache.update_and_fetch(k, v)
+        mx.eval(out_k, out_v)
+
+    assert cache.offset == 12
+    assert out_k.shape == (1, n_kv_heads, 12, head_dim)
+    assert out_v.shape == (1, n_kv_heads, 12, head_dim)
+
+
+def test_bhq_residual_state_includes_qjl():
+    """BHQ residual cache state should include QJL bits and residual norms."""
+    _centroid_cache.clear()
+    head_dim = 64
+    n_kv_heads = 2
+    caches, _ = wrap_prompt_cache_bhq_residual(head_dim, n_kv_heads, n_layers=1, bits=2)
+    cache = caches[0]
+
+    k = mx.random.normal(shape=(1, n_kv_heads, 8, head_dim))
+    v = mx.random.normal(shape=(1, n_kv_heads, 8, head_dim))
+    cache.update_and_fetch(k, v)
+
+    state = cache.state
+    assert len(state) == 5  # indices, norms, qjl_bits, residual_norms, values
+    indices, norms, qjl_bits, res_norms, values = state
+    assert qjl_bits.shape == (1, n_kv_heads, 8, head_dim)  # jl_dim = head_dim
+    assert qjl_bits.dtype == mx.int8
+    assert res_norms.shape == (1, n_kv_heads, 8, 1)
+
+
+def test_bhq_residual_preserves_norms():
+    """Corrected keys should have approximately correct norms."""
+    _centroid_cache.clear()
+    head_dim = 128
+    n_kv_heads = 4
+    caches, pi = wrap_prompt_cache_bhq_residual(
+        head_dim, n_kv_heads, n_layers=1, bits=2
+    )
+    cache = caches[0]
+
+    mx.random.seed(42)
+    keys = mx.random.normal(shape=(1, n_kv_heads, 16, head_dim)) * 50
+    values = mx.random.normal(shape=(1, n_kv_heads, 16, head_dim))
+
+    out_k, _ = cache.update_and_fetch(keys, values)
+    mx.eval(out_k)
+
+    orig_norms = mx.sqrt(mx.sum(keys.astype(mx.float32) ** 2, axis=-1))
+    out_norms = mx.sqrt(mx.sum(out_k**2, axis=-1))
+    mx.eval(orig_norms, out_norms)
+
+    norm_ratio = (out_norms / orig_norms.astype(mx.float32)).reshape(-1)
+    mx.eval(norm_ratio)
+    # Norms should be approximately preserved (within 30% for 1-bit centroids)
+    assert mx.mean(mx.abs(norm_ratio - 1.0)).item() < 0.3
+
+
+def test_bhq_residual_score_correction_reduces_raw_ip_error():
+    """QJL score correction reduces raw inner product error (pre-softmax).
+
+    The paper's unbiased estimator works on inner products directly, not
+    through the softmax nonlinearity. We verify the correction reduces
+    mean absolute error on raw Q @ K^T scores at the same bit budget.
+    """
+    _centroid_cache.clear()
+    head_dim = 128
+    n_kv_heads = 4
+    batch = 1
+    seq_kv = 64
+
+    pi = make_rotation_matrix(head_dim, seed=42)
+    mx.random.seed(99)
+    Q = mx.random.normal(shape=(batch, n_kv_heads, 1, head_dim))
+    K = mx.random.normal(shape=(batch, n_kv_heads, seq_kv, head_dim))
+    mx.eval(Q, K)
+
+    # Ground truth scores: Q @ K^T
+    Q_f32 = Q.astype(mx.float32)
+    K_f32 = K.astype(mx.float32)
+    scores_gt = Q_f32 @ mx.swapaxes(K_f32, -2, -1)
+    mx.eval(scores_gt)
+
+    # BHQ 3-bit (2-bit centroids) — base dequantized scores
+    caches, pi_res = wrap_prompt_cache_bhq_residual(
+        head_dim, n_kv_heads, n_layers=1, bits=3, seed=42, jl_seed=77
+    )
+    cache = caches[0]
+    V_dummy = mx.zeros((batch, n_kv_heads, seq_kv, head_dim))
+    K_dequant, _ = cache.update_and_fetch(K, V_dummy)
+    mx.eval(K_dequant)
+
+    # Base scores (no correction): Q_rot @ K_hat^T
+    Q_rot = Q_f32 @ pi_res.T
+    base_scores = Q_rot @ mx.swapaxes(K_dequant, -2, -1)
+    mx.eval(base_scores)
+
+    # Corrected scores: base + QJL correction
+    qjl_bits, res_norms = cache.get_qjl_state()
+    mx.eval(qjl_bits, res_norms)
+    Q_proj = Q_rot @ cache.projection.T
+    gamma_bits = res_norms.astype(mx.float32) * qjl_bits.astype(mx.float32)
+    score_correction = (Q_proj @ mx.swapaxes(gamma_bits, -2, -1)) * cache.qjl_scale
+    corrected_scores = base_scores + score_correction
+    mx.eval(corrected_scores)
+
+    # MAE on raw scores
+    base_mae = mx.mean(mx.abs(scores_gt - base_scores)).item()
+    corrected_mae = mx.mean(mx.abs(scores_gt - corrected_scores)).item()
+
+    # The correction should reduce raw inner product error
+    assert corrected_mae < base_mae, (
+        f"Corrected MAE {corrected_mae:.4f} should be lower than "
+        f"base MAE {base_mae:.4f}"
+    )
+
+
+def test_bhq_residual_sliding_window():
+    """Sliding window should trim all residual-related storage."""
+    _centroid_cache.clear()
+    head_dim = 64
+    n_kv_heads = 2
+    max_size = 8
+
+    caches, _ = wrap_prompt_cache_bhq_residual(
+        head_dim, n_kv_heads, n_layers=1, bits=2, max_size=max_size
+    )
+    cache = caches[0]
+
+    # Insert more than max_size tokens
+    for _ in range(3):
+        k = mx.random.normal(shape=(1, n_kv_heads, 4, head_dim))
+        v = mx.random.normal(shape=(1, n_kv_heads, 4, head_dim))
+        cache.update_and_fetch(k, v)
+
+    assert cache.offset == max_size
+    indices, norms, qjl_bits, res_norms, values = cache.state
+    assert indices.shape[2] == max_size
+    assert qjl_bits.shape[2] == max_size
+    assert res_norms.shape[2] == max_size

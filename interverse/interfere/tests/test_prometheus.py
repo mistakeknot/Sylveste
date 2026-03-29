@@ -11,6 +11,8 @@ from server.prom import (
     ACTIVE_REQUESTS,
     CASCADE_DECISIONS,
     ERRORS_TOTAL,
+    QUALITY_HISTOGRAM,
+    QUALITY_PERPLEXITY,
     REQUEST_COUNT,
     REQUEST_LATENCY,
     TOKENS_GENERATED,
@@ -36,6 +38,8 @@ def _reset_prom_metrics():
         ERRORS_TOTAL,
         CASCADE_DECISIONS,
         REQUEST_COUNT,
+        QUALITY_HISTOGRAM,
+        QUALITY_PERPLEXITY,
     ]:
         # _metrics is the internal dict for labeled metrics; _value for unlabeled
         if hasattr(collector, "_metrics"):
@@ -163,3 +167,17 @@ async def test_gpu_memory_gauge_in_prometheus(client: httpx.AsyncClient) -> None
     resp = await client.get("/metrics/prometheus")
     body = resp.text
     assert "interfere_gpu_memory_bytes" in body
+
+
+@pytest.mark.asyncio
+async def test_quality_histograms_in_prometheus(client: httpx.AsyncClient) -> None:
+    """Quality histogram instruments appear in Prometheus output."""
+    # Record a quality observation so the histogram has data
+    from server.main import _record_quality
+
+    _record_quality("test-model", {"composite": 0.85, "perplexity": 5.0}, [])
+
+    resp = await client.get("/metrics/prometheus")
+    body = resp.text
+    assert "interfere_quality_score" in body
+    assert "interfere_quality_perplexity" in body

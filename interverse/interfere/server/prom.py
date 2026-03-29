@@ -63,6 +63,20 @@ QUALITY_COMPOSITE = Gauge(
     "Latest composite quality score from the quality scorer",
 )
 
+QUALITY_HISTOGRAM = Histogram(
+    "interfere_quality_score",
+    "Distribution of composite quality scores per model",
+    labelnames=["model"],
+    buckets=(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 1.0),
+)
+
+QUALITY_PERPLEXITY = Histogram(
+    "interfere_quality_perplexity",
+    "Distribution of perplexity per model (lower is better)",
+    labelnames=["model"],
+    buckets=(1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 500.0),
+)
+
 # -- Total request counter (coarse status buckets) ----------------------------
 REQUEST_COUNT = Counter(
     "interfere_requests_total",

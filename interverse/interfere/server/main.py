@@ -16,6 +16,7 @@ from starlette.routing import Route
 
 from .cascade import CascadeConfig, CascadeDecision, CascadeStats
 from .experiments.config import load_experiment_configs
+from .flashmoe_worker import FlashMoeWorker
 from .metal_worker import MetalWorker
 from .prom import (
     ACTIVE_REQUESTS,
@@ -23,6 +24,8 @@ from .prom import (
     ERRORS_TOTAL,
     GPU_MEMORY_BYTES,
     QUALITY_COMPOSITE,
+    QUALITY_HISTOGRAM,
+    QUALITY_PERPLEXITY,
     QUEUE_DEPTH,
     QUEUE_WAIT_SECONDS,
     REJECTED_TOTAL,
@@ -40,11 +43,36 @@ from .thermal import ThermalMonitor
 
 log = logging.getLogger("interfere")
 
+# Maximum quality samples retained in memory (ring buffer behavior)
+_MAX_QUALITY_SAMPLES = 1000
+
+
+def _record_quality(
+    model: str,
+    quality: dict,
+    quality_samples: list[float] | None,
+) -> None:
+    """Record quality metrics to Prometheus and the in-memory samples list."""
+    composite = quality.get("composite", 0)
+    perplexity = quality.get("perplexity", 0)
+
+    QUALITY_HISTOGRAM.labels(model=model).observe(composite)
+    if perplexity and perplexity != float("inf"):
+        QUALITY_PERPLEXITY.labels(model=model).observe(perplexity)
+    QUALITY_COMPOSITE.set(composite)
+
+    if quality_samples is not None:
+        quality_samples.append(composite)
+        # Trim to bounded size to prevent unbounded memory growth
+        if len(quality_samples) > _MAX_QUALITY_SAMPLES:
+            del quality_samples[: len(quality_samples) - _MAX_QUALITY_SAMPLES]
+
 
 async def _health(request: Request) -> JSONResponse:
     """GET /health — server readiness check."""
     dry_run: bool = request.app.state.dry_run
     worker: MetalWorker | None = request.app.state.worker
+    flashmoe: FlashMoeWorker | None = request.app.state.flashmoe_worker
     thermal: ThermalMonitor | None = request.app.state.thermal
 
     # Determine server status
@@ -56,7 +84,11 @@ async def _health(request: Request) -> JSONResponse:
         status = "restarting"
     elif worker is not None and worker.is_alive():
         status = "ready"
-    elif worker is not None:
+    elif flashmoe is not None and flashmoe.is_alive():
+        status = "ready"
+    elif flashmoe is not None and flashmoe.is_degraded:
+        status = "degraded"
+    elif worker is not None or flashmoe is not None:
         status = "worker_down"
     else:
         status = "no_worker"
@@ -88,6 +120,22 @@ async def _health(request: Request) -> JSONResponse:
         except Exception:
             info["worker"] = {"status": "unresponsive"}
 
+    if flashmoe is not None:
+        fm_health = flashmoe.health(timeout=2.0)
+        info["flashmoe"] = fm_health
+        # Merge flash-moe models into the models list
+        for m in fm_health.get("loaded_models", []):
+            if m not in info["models"]:
+                info["models"].append(m)
+
+    batch_sched = getattr(request.app.state, "batch_scheduler", None)
+    if batch_sched is not None and hasattr(batch_sched, "stats"):
+        info["batch_scheduler"] = {
+            "enabled": True,
+            "pending": batch_sched.pending_count,
+            "stats": batch_sched.stats.to_dict(),
+        }
+
     return JSONResponse(info)
 
 
@@ -117,6 +165,7 @@ async def _generate_worker_tokens(
     temperature: float,
     kv_bits: int | None = None,
     kv_group_size: int = 64,
+    quality_samples: list[float] | None = None,
 ) -> AsyncGenerator[str, None]:
     """Yield SSE tokens from the Metal worker subprocess."""
     chunk = ChatCompletionChunk(model=model)
@@ -166,19 +215,83 @@ async def _generate_worker_tokens(
     }
     if "quality" in metrics:
         final["quality"] = metrics["quality"]
+        _record_quality(model, metrics["quality"], quality_samples)
     data = json.dumps(final)
     yield f"data: {data}\n\n"
     yield "data: [DONE]\n\n"
 
     # Log request metrics
     log.info(
-        "request model=%s tokens=%d time=%.2fs tps=%.1f prompt_tps=%.1f mem=%.2fGB",
+        "request model=%s tokens=%d time=%.2fs tps=%.1f prompt_tps=%.1f mem=%.2fGB q=%.3f",
         model,
         completion_tokens,
         elapsed,
         metrics.get("generation_tps", 0),
         metrics.get("prompt_tps", 0),
         metrics.get("peak_memory_gb", 0),
+        metrics.get("quality", {}).get("composite", 0),
+    )
+
+
+async def _generate_flashmoe_tokens(
+    flashmoe: FlashMoeWorker,
+    model: str,
+    messages: list[dict],
+    max_tokens: int,
+    temperature: float,
+) -> AsyncGenerator[str, None]:
+    """Yield SSE tokens from the flash-moe subprocess via HTTP proxy."""
+    chunk = ChatCompletionChunk(model=model)
+    loop = asyncio.get_running_loop()
+    t0 = time.monotonic()
+    completion_tokens = 0
+    tok_counter = TOKENS_GENERATED.labels(model=model)
+
+    token_iter = flashmoe.generate(
+        model_name=model,
+        messages=messages,
+        max_tokens=max_tokens,
+        temperature=temperature,
+    )
+
+    def _next_token():
+        try:
+            return next(token_iter)
+        except StopIteration:
+            return None
+
+    while True:
+        token_text = await loop.run_in_executor(None, _next_token)
+        if token_text is None:
+            break
+        completion_tokens += 1
+        tok_counter.inc()
+        data = json.dumps(chunk.to_delta_dict(content=token_text))
+        yield f"data: {data}\n\n"
+
+    elapsed = time.monotonic() - t0
+    metrics = flashmoe.last_generation_metrics
+    final = chunk.to_delta_dict(finish_reason="stop")
+    final["usage"] = {
+        "completion_tokens": completion_tokens,
+        "total_time_s": round(elapsed, 3),
+        "generation_tps": metrics.get("generation_tps", 0),
+        "prompt_tps": metrics.get("prompt_tps", 0),
+        "peak_memory_gb": metrics.get("peak_memory_gb", 0),
+        "early_exit_rate": 0,
+        "mean_confidence": 0,
+        "backend": "flash-moe",
+    }
+    data = json.dumps(final)
+    yield f"data: {data}\n\n"
+    yield "data: [DONE]\n\n"
+
+    log.info(
+        "request model=%s backend=flash-moe tokens=%d time=%.2fs tps=%.1f",
+        model,
+        completion_tokens,
+        elapsed,
+        metrics.get("generation_tps", 0),
     )
 
 
@@ -200,6 +313,7 @@ async def _generate_with_probe_prefix(
     probe_tokens: list[str],
     kv_bits: int | None = None,
     kv_group_size: int = 64,
+    quality_samples: list[float] | None = None,
 ) -> AsyncGenerator[str, None]:
     """Yield probe tokens first, then continue generating the rest."""
     chunk = ChatCompletionChunk(model=model)
@@ -220,6 +334,7 @@ async def _generate_with_probe_prefix(
             temperature,
             kv_bits=kv_bits,
             kv_group_size=kv_group_size,
+            quality_samples=quality_samples,
         ):
             yield sse_line
     else:
@@ -305,6 +420,7 @@ async def _chat_completions(request: Request) -> JSONResponse | StreamingRespons
 
     request_count: dict = request.app.state.request_count
     latency_samples: list = request.app.state.latency_samples
+    quality_samples: list = request.app.state.quality_samples
     cascade_config: CascadeConfig = request.app.state.cascade_config
     cascade_stats: CascadeStats = request.app.state.cascade_stats
     model_tiers: list[str] = request.app.state.model_tiers
@@ -384,11 +500,27 @@ async def _chat_completions(request: Request) -> JSONResponse | StreamingRespons
     queue_wait_start = time.monotonic()
 
     dry_run: bool = request.app.state.dry_run
+    flashmoe: FlashMoeWorker | None = request.app.state.flashmoe_worker
+    flashmoe_model: str = request.app.state.flashmoe_model_name
 
     # --- Cascade logic ---
     cascade_header: dict = {}
 
-    if dry_run or worker is None:
+    # Route to flash-moe if model matches (direct request or cascade terminal)
+    if (
+        not dry_run
+        and flashmoe is not None
+        and flashmoe.is_alive()
+        and (
+            model == flashmoe_model
+            or model.startswith("flash-moe/")
+            or model == "flash-moe"
+        )
+    ):
+        generator = _generate_flashmoe_tokens(
+            flashmoe, model, messages, max_tokens, temperature
+        )
+    elif dry_run or worker is None:
         generator = _generate_dry_run_tokens(model)
     elif cascade_config.enabled and model_tiers:
         # Run cascade: probe each tier until one accepts or we exhaust all
@@ -457,6 +589,7 @@ async def _chat_completions(request: Request) -> JSONResponse | StreamingRespons
                     probe_toks,
                     kv_bits=kv_bits,
                     kv_group_size=kv_group_size,
+                    quality_samples=quality_samples,
                 )
                 break
 
@@ -524,6 +657,7 @@ async def _chat_completions(request: Request) -> JSONResponse | StreamingRespons
                 temperature,
                 kv_bits=kv_bits,
                 kv_group_size=kv_group_size,
+                quality_samples=quality_samples,
             )
     else:
         # No cascade — direct generation
@@ -535,6 +669,7 @@ async def _chat_completions(request: Request) -> JSONResponse | StreamingRespons
             temperature,
             kv_bits=kv_bits,
             kv_group_size=kv_group_size,
+            quality_samples=quality_samples,
         )
 
     # Dequeue: request is being served
@@ -615,6 +750,15 @@ def create_app(
     cascade_config: CascadeConfig | None = None,
     max_queue_depth: int = 8,
     thermal_reject_level: str = "heavy",
+    flashmoe_binary: str = "",
+    flashmoe_model_path: str = "",
+    flashmoe_port: int = 0,
+    flashmoe_extra_args: list[str] | None = None,
+    flashmoe_model_name: str = "flash-moe",
+    flashmoe_only: bool = False,
+    flashmoe_malloc_cache: int = 0,
+    flashmoe_predict: bool = False,
+    batch_scheduler: object | None = None,
 ) -> Starlette:
     """Create the interfere Starlette application.
 
@@ -627,11 +771,35 @@ def create_app(
     *thermal_reject_level* rejects new requests at this thermal pressure
     or above ('heavy', 'trapping', 'sleeping'). Set to 'sleeping' to
     only reject at the most extreme level.
+
+    Flash-MoE integration:
+    *flashmoe_binary* path to the infer binary. If set, spawns a
+    FlashMoeWorker alongside (or instead of) the MetalWorker.
+    *flashmoe_model_path* model directory for flash-moe.
+    *flashmoe_port* port for flash-moe's HTTP API (0 = auto-pick).
+    *flashmoe_extra_args* extra CLI args passed to the binary.
+    *flashmoe_model_name* model name used for routing requests.
+    *flashmoe_only* if True, skip MetalWorker entirely.
     """
     exp_configs = load_experiment_configs()
+
+    # MetalWorker: skip if dry_run or flashmoe_only
+    skip_metal = dry_run or flashmoe_only
     worker: MetalWorker | None = (
-        None if dry_run else MetalWorker(experiment_configs=exp_configs)
+        None if skip_metal else MetalWorker(experiment_configs=exp_configs)
     )
+
+    # FlashMoeWorker: create if binary path provided
+    flashmoe_worker: FlashMoeWorker | None = None
+    if flashmoe_binary and not dry_run:
+        flashmoe_worker = FlashMoeWorker(
+            binary_path=flashmoe_binary,
+            model_path=flashmoe_model_path,
+            port=flashmoe_port,
+            extra_args=flashmoe_extra_args,
+            malloc_cache=flashmoe_malloc_cache,
+            predict=flashmoe_predict,
+        )
     _inference_queue = PriorityRequestQueue(max_depth=max_queue_depth)
     _thermal_reject_threshold = THERMAL_LEVEL_MAP.get(thermal_reject_level, 2)
 
@@ -662,6 +830,8 @@ def create_app(
         # Startup
         app.state.dry_run = dry_run
         app.state.worker = None
+        app.state.flashmoe_worker = None
+        app.state.flashmoe_model_name = flashmoe_model_name
         app.state.thermal = thermal
         app.state.cascade_config = _cascade_config
         app.state.cascade_stats = _cascade_stats
@@ -672,13 +842,23 @@ def create_app(
         app.state.shadow_logger = _shadow_logger
         app.state.inference_queue = _inference_queue
         app.state.thermal_reject_threshold = _thermal_reject_threshold
+        app.state.batch_scheduler = batch_scheduler
         if worker is not None:
             worker.start()
             app.state.worker = worker
+        if flashmoe_worker is not None:
+            flashmoe_worker.start()
+            app.state.flashmoe_worker = flashmoe_worker
+        if batch_scheduler is not None and hasattr(batch_scheduler, "start"):
+            await batch_scheduler.start()
         yield
         # Shutdown
+        if batch_scheduler is not None and hasattr(batch_scheduler, "stop"):
+            await batch_scheduler.stop()
         if _shadow_logger is not None:
             _shadow_logger.close()
+        if flashmoe_worker is not None and flashmoe_worker.is_alive():
+            flashmoe_worker.shutdown()
         if worker is not None and worker.is_alive():
             worker.shutdown()
 
@@ -783,18 +963,47 @@ def create_app(
             media_type="text/plain; version=0.0.4; charset=utf-8",
         )
 
+    async def _quality_stats(request: Request) -> JSONResponse:
+        """GET /v1/quality — quality scoring summary for interspect evidence.
+
+        Returns aggregate and recent quality metrics. Consumers can poll
+        this endpoint to build quality evidence for model promotion.
+        """
+        data: dict = {"total_scored": len(_quality_samples), "recent": []}
+
+        if _quality_samples:
+            sorted_q = sorted(_quality_samples)
+            nq = len(sorted_q)
+            data["aggregate"] = {
+                "mean": round(sum(sorted_q) / nq, 4),
+                "p50": round(sorted_q[nq // 2], 4),
+                "p5": round(sorted_q[max(0, int(nq * 0.05))], 4),
+                "p95": round(sorted_q[min(nq - 1, int(nq * 0.95))], 4),
+                "min": round(sorted_q[0], 4),
+                "max": round(sorted_q[-1], 4),
+            }
+            # Last 10 scores for recent trend
+            data["recent"] = [round(s, 4) for s in _quality_samples[-10:]]
+        else:
+            data["aggregate"] = {}
+
+        return JSONResponse(data)
+
     routes = [
         Route("/health", _health, methods=["GET"]),
         Route("/metrics", _metrics, methods=["GET"]),
         Route("/metrics/prometheus", _metrics_prometheus, methods=["GET"]),
         Route("/v1/chat/completions", _chat_completions, methods=["POST"]),
         Route("/v1/models/load", _load_model, methods=["POST"]),
+        Route("/v1/quality", _quality_stats, methods=["GET"]),
     ]
 
     app = Starlette(routes=routes, lifespan=_lifespan)
     # Set state eagerly so tests that skip lifespan still work
     app.state.dry_run = dry_run
     app.state.worker = None
+    app.state.flashmoe_worker = None
+    app.state.flashmoe_model_name = flashmoe_model_name
     app.state.thermal = thermal
     app.state.cascade_config = _cascade_config
     app.state.cascade_stats = _cascade_stats
@@ -805,4 +1014,5 @@ def create_app(
     app.state.shadow_logger = _shadow_logger
     app.state.inference_queue = _inference_queue
     app.state.thermal_reject_threshold = _thermal_reject_threshold
+    app.state.batch_scheduler = batch_scheduler
     return app

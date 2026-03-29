@@ -194,6 +194,41 @@ async def test_health_reports_restart_count(client: httpx.AsyncClient) -> None:
 
 
 @pytest.mark.asyncio
+async def test_quality_endpoint_empty(client: httpx.AsyncClient) -> None:
+    """GET /v1/quality returns empty aggregate when no real inference has run."""
+    resp = await client.get("/v1/quality")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["total_scored"] == 0
+    assert data["aggregate"] == {}
+    assert data["recent"] == []
+
+
+@pytest.mark.asyncio
+async def test_quality_endpoint_with_samples() -> None:
+    """GET /v1/quality returns aggregate stats when quality samples exist."""
+    app = create_app(dry_run=True, thermal_reject_level="sleeping")
+    # Manually populate quality_samples to simulate scored generations
+    app.state.quality_samples.extend([0.7, 0.8, 0.85, 0.9, 0.75])
+
+    transport = httpx.ASGITransport(app=app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://test") as c:
+        resp = await c.get("/v1/quality")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["total_scored"] == 5
+        assert "mean" in data["aggregate"]
+        assert "p50" in data["aggregate"]
+        assert "p5" in data["aggregate"]
+        assert "p95" in data["aggregate"]
+        assert "min" in data["aggregate"]
+        assert "max" in data["aggregate"]
+        assert data["aggregate"]["min"] == 0.7
+        assert data["aggregate"]["max"] == 0.9
+        assert len(data["recent"]) == 5
+
+
+@pytest.mark.asyncio
 async def test_health_reports_degraded_status() -> None:
     """Health reports degraded when worker is in degraded mode."""
     from unittest.mock import MagicMock, PropertyMock
