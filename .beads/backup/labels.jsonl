@@ -1,3 +1,4 @@
+{"issue_id":"sylveste-09h","label":"artifact_brainstorm:docs/brainstorms/2026-03-29-intersite-brainstorm.md"}
 {"issue_id":"sylveste-09h","label":"claimed_at:1774735257"}
 {"issue_id":"sylveste-09h","label":"claimed_by:46d9cd8d-ab71-4a64-a8c6-2bd319ac253a"}
 {"issue_id":"sylveste-09h","label":"complexity:5"}
@@ -24,10 +25,16 @@
 {"issue_id":"sylveste-d5e","label":"artifact_plan:docs/plans/2026-03-27-bhq-validation-7b.md"}
 {"issue_id":"sylveste-d5e","label":"artifact_reflection:docs/solutions/2026-03-27-bhq-validation-results.md"}
 {"issue_id":"sylveste-d5e","label":"artifact_test-pass-sha:4c14f568fa6fc9f2a6212ffc434d09f5ef2fd7eb"}
+{"issue_id":"sylveste-dui","label":"artifact_brainstorm:docs/brainstorms/2026-03-29-flux-gen-prompt-engineering-bugs.md"}
+{"issue_id":"sylveste-dui","label":"artifact_plan:docs/plans/2026-03-29-flux-gen-short-title-fix.md"}
+{"issue_id":"sylveste-dui","label":"flux-gen"}
+{"issue_id":"sylveste-dui","label":"interflux"}
+{"issue_id":"sylveste-dui","label":"prompt-engineering"}
 {"issue_id":"sylveste-e8n","label":"artifact_brainstorm:docs/brainstorms/2026-03-28-idea-garden-brainstorm.md"}
 {"issue_id":"sylveste-e8n","label":"artifact_plan:docs/plans/2026-03-28-idea-garden-interseed.md"}
 {"issue_id":"sylveste-e8n","label":"artifact_prd:docs/prds/2026-03-28-idea-garden.md"}
 {"issue_id":"sylveste-e8n","label":"artifact_prior-art:none-found"}
+{"issue_id":"sylveste-e8n","label":"artifact_reflection:docs/reflections/2026-03-29-idea-garden-interseed-reflect.md"}
 {"issue_id":"sylveste-e8n","label":"claimed_at:1774737889"}
 {"issue_id":"sylveste-e8n","label":"claimed_by:6b85bcd6-53a3-44df-938f-42d1618302e6"}
 {"issue_id":"sylveste-ln3","label":"feature"}
@@ -71,5 +78,7 @@
 {"issue_id":"sylveste-rsj.1.8","label":"lane:sota"}
 {"issue_id":"sylveste-rsj.1.9","label":"lane:autonomy"}
 {"issue_id":"sylveste-rsj.1.9","label":"lane:sota"}
+{"issue_id":"sylveste-rsj.1.9.1","label":"lane:autonomy"}
+{"issue_id":"sylveste-rsj.1.9.1","label":"lane:sota"}
 {"issue_id":"sylveste-vm4","label":"artifact_closed:d956378518bbef3e4da65d30672671bbd7936a44"}
 {"issue_id":"sylveste-vm4","label":"artifact_plan:docs/plans/2026-03-29-flashmoe-cache-tuning.md"}
