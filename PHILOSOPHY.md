@@ -208,6 +208,17 @@ Two syllables. Feels right in your hands. You learn what they mean once; you fee
 
 See [docs/guides/naming-conventions.md](docs/guides/naming-conventions.md) for the practical guide.
 
+### Brand Registers
+
+Two brands, one architecture. The layer boundary is the brand boundary:
+
+- **Sylveste** (SF register) — infrastructure: kernel, OS, profiler, plugins, CLI. For developers and platform builders.
+- **Garden Salon** (organic register) — experience: multiplayer workspace, CRDT shared state, agent-as-participant. For everyone.
+- **Meadowsyn** (bridge) — visualization: real-time systems dashboards connecting infrastructure to experience.
+- **inter-\*** (neutral register) — the ~60 companion plugins. Coexists with both brands.
+
+**Enforcement:** Garden-salon language (organic metaphors, cultivation, tending, blooming) does NOT appear in kernel docs (Intercore), OS docs (Clavain), profiler docs (Interspect), plugin docs (interverse), CLAUDE.md, AGENTS.md, or PHILOSOPHY.md. These stay in the SF register. The organic register is reserved for Garden Salon product surfaces and Meadowsyn. This is a brand decision, not a technical one — mixing registers dilutes both.
+
 ## End State
 
 There is no "done." The flywheel doesn't converge — it compounds. There is no end state for learning.

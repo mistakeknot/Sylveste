@@ -1,7 +1,7 @@
 # Sylveste — Vision
 
-**Version:** 3.4
-**Date:** 2026-03-13
+**Version:** 4.0
+**Date:** 2026-03-29
 **Status:** Active
 
 ---
@@ -14,9 +14,21 @@ Most agent systems pick two. Full autonomy with quality? Expensive — you throw
 
 Sylveste refuses to choose. It orchestrates the full development lifecycle from problem discovery through shipped code, selecting the right model for each task with the discipline, durability, and accountability that shipping real software demands. And it gets cheaper and better every time it runs, because it learns from what happened last time.
 
-Not a coding assistant. Not an AI gateway. Not a framework for calling LLMs. A platform for autonomous software development agencies that build software with discipline, at a cost that keeps declining.
+Not a coding assistant. Not an AI gateway. Not a framework for calling LLMs. A platform for autonomous agencies that do complex knowledge work with discipline, at a cost that keeps declining. Software engineering is the proving ground; the primitives generalize.
 
 The whole thing is open source.
+
+## Two Brands, One Architecture
+
+Sylveste is the infrastructure. Garden Salon is the experience. Meadowsyn is the bridge.
+
+**Sylveste** (SF register) — the durable kernel, opinionated OS, evidence-based learning loop, and plugin ecosystem that makes AI agent orchestration reliable, composable, and self-improving. For developers and platform builders. Named after Revelation Space.
+
+**Garden Salon** (organic register) — the multiplayer workspace where humans and agents think together on shared projects in real-time. Agents are participants, not tools. The CRDT shared state is stigmergic: agents coordinate through the document, not through messages. For everyone. Named after what it is.
+
+**Meadowsyn** (bridge) — the visualization layer that connects infrastructure to experience. Donella Meadows (systems thinking) + Cybersyn (real-time operations). The connective tissue between SF and organic registers.
+
+The layer boundary IS the brand boundary. Infrastructure speaks SF. Experience speaks garden. The inter-\* neutral register (~60 modules) coexists with both. Garden-salon language does not appear in kernel, OS, or plugin documentation — those stay in the SF register.
 
 ## Why This Exists
 
@@ -223,13 +235,17 @@ The cost-per-landable-change baseline was established on 2026-02-28 (iv-b46xi, c
 
 ## Audience
 
-Sylveste is an open-source platform for anyone building autonomous software development agencies. Intercore is the kernel. Clavain is the reference agency. The personal rig is the highest-fidelity eval: built by using it to build itself.
+Two brands serve two audiences through shared infrastructure:
+
+**Sylveste** (infrastructure) — for developers and platform builders who want to build autonomous agencies. Intercore is the kernel. Clavain is the reference agency. Open source from launch.
+
+**Garden Salon** (experience) — for anyone who wants to think with AI agents on shared projects. Agents are participants in the workspace, not tools invoked from a sidebar. The CRDT substrate means agents coordinate through the document itself.
 
 Three concentric circles, in priority order:
 
-1. **Platform.** Open Intercore as infrastructure for anyone building autonomous software development agencies. Open Clavain as the reference agency. The whole stack, open source, from launch.
+1. **Platform.** Open Intercore as infrastructure for anyone building autonomous agencies. Open Clavain as the reference agency. The whole stack, open source, from launch. Software development is the first vertical; the primitives are domain-general.
 
-2. **Proof by demonstration.** Build the system with the system. Every capability must survive contact with its own development process. A system that autonomously builds itself is a more convincing proof than any benchmark.
+2. **Proof by demonstration.** Build the system with the system. Every capability must survive contact with its own development process. A system that autonomously builds itself is a more convincing proof than any benchmark. The autonomous epic execution track (rsj.1) is the latest proof: the system sequences its own multi-feature work.
 
 3. **Personal rig.** One product-minded engineer, as effective as a full team. The personal rig is both the daily driver and the proving ground for the platform. Optimized relentlessly for one workflow, but the architecture ensures those optimizations generalize.
 
@@ -243,46 +259,49 @@ Revenue, when it matters, comes from managed hosting, enterprise support, and pr
 
 ## Where We Are
 
-As of March 2026:
+As of late March 2026:
 
-- **Kernel:** 8 of 10 epics shipped (E1-E8). Runs, phases, gates, dispatches, events, discovery pipeline, rollback, portfolio orchestration, TOCTOU prevention, cost-aware scheduling, fair spawn scheduler, sandbox specs, durable session attribution (v26). All landed and tested. Remaining: E9 (Autarch Phase 2 — Pollard + Gurgeh migration) and E10 (Sandboxing + Autarch Phase 3).
+- **Kernel:** 8 of 10 epics shipped (E1-E8). Runs, phases, gates, dispatches, events, discovery pipeline, rollback, portfolio orchestration, TOCTOU prevention, cost-aware scheduling, fair spawn scheduler, sandbox specs, durable session attribution (v31). All landed and tested. Remaining: E9 (Autarch Phase 2 — Pollard + Gurgeh migration) and E10 (Sandboxing + Autarch Phase 3).
 - **OS:** Full sprint lifecycle (brainstorm → ship) is kernel-driven. Sprint consolidation complete (`/route → /sprint → /work` unified into adaptive single-entry workflow). For current stats: `grep -c '^##' os/Clavain/skills/*/SKILL.md` (skills), `ls os/Clavain/agents/` (agents).
+- **Autonomous epic execution (rsj.1):** `/campaign` command orchestrates epic-level build sequences — topological sort of children by dependency graph, phase-gated dispatch through `/route`, resume-aware checkpointing. Supporting infrastructure: strategic contradiction escalation (lane pause on intent misalignment), outcome-based epic DoD (measurable acceptance criteria beyond "all children closed"), provenance vectors (stemma-based backward tracing of artifact lineage), decomposition quality calibration (historical baseline from 98 epics, auto-calibration at N=30 fresh events), and temple invariant checker (continuous syntax/secret/structural checks during sprint execution). 10 of 12 P0+P1 beads shipped; 2 blocked on external preconditions.
 - **Model routing:** Static routing, complexity-aware routing (C1-C5), and routing override chain (F1-F5) shipped. Adaptive routing (B3) is the next frontier — evidence pipeline and canary monitoring.
 - **Agency architecture:** Track C fully shipped (C1-C5). Agency specs, fleet registry, composer, cross-phase handoff, and self-building loop all landed and tested.
-- **Review engine:** 12 specialized review agents + 5 research agents, deployed through interflux with multi-agent synthesis. Capability declarations shipped. Interoperability benchmark harness completed.
-- **Ecosystem:** Companion plugins shipped, each independently installable (`ls interverse/ | wc -l`). 11 new plugins extracted (2026-02-25) from Clavain, interflux, and interkasten to maintain single-responsibility. Total modules: `find apps os core interverse sdk -maxdepth 2 -name .git -printf '%h\n' 2>/dev/null | wc -l`.
+- **Review engine:** 12 specialized review agents + 37 generated review agents, deployed through interflux with multi-agent synthesis. Capability declarations shipped. Interoperability benchmark harness completed.
+- **Ecosystem:** Companion plugins shipped, each independently installable (`ls interverse/ | wc -l`). Total modules: `find apps os core interverse sdk -maxdepth 2 -name .git -printf '%h\n' 2>/dev/null | wc -l`.
 - **Apps:** Autarch TUI (Bigend monitoring with inline mode, Gurgeh PRD generation, Coldwine task orchestration, Pollard research). Intercom multi-runtime AI assistant bridging Claude, Gemini, and Codex (v1.1.0).
-- **Profiler:** Evidence collection and routing override chain (F1-F5) shipped. Adaptive routing flywheel activated. Next: evidence-driven agent selection (iv-5ztam), canary monitoring, and counterfactual shadow evaluation.
+- **Profiler:** Evidence collection and routing override chain (F1-F5) shipped. Adaptive routing flywheel activated. Evidence quarantine (48h delay before influencing routing) shipped.
+- **Two-brand architecture:** Sylveste (infrastructure) and Garden Salon (experience) established as distinct brands with shared kernel. Meadowsyn (visualization bridge) domain registered.
 - **Self-building:** The system has been building itself for months. Run `bd stats` for current counts.
 
 ## What's Next
 
-Three tracks converged: kernel integration (A), model routing (B1-B2), and agency architecture (C1-C5) are all shipped. The frontier has shifted to four themes:
+Four tracks converged: kernel integration (A), model routing (B1-B2), agency architecture (C1-C5), and autonomous epic execution (D1-D10) are all shipped. The frontier has shifted to five themes:
 
-1. **Intercom cutover** (P0) — Rust/Postgres control-plane migration replacing Node/SQLite.
-2. **Measurement hardening** (P1) — The chain that makes the north-star metric canonical: factory substrate → CXDB integration → sprint execution recording → evidence pipeline wiring.
-3. **Adaptive routing** (P2) — Interspect evidence-driven agent selection, canary monitoring, counterfactual shadow evaluation. The flywheel thesis.
-4. **Infrastructure + DX** (P2) — Autarch Phase 2 (Pollard + Gurgeh migration), go.mod fixes, compaction recovery.
+1. **Garden Salon MVP** (P0) — Multiplayer workspace with CRDT shared state, stigmergic agent participation. The experience brand. See garden-salon brainstorm for architecture.
+2. **Intercom cutover** (P0) — Rust/Postgres control-plane migration replacing Node/SQLite.
+3. **Adaptive routing** (P1) — Interspect evidence-driven agent selection, canary monitoring, counterfactual shadow evaluation. The flywheel thesis. Interspect Phase 2.
+4. **Domain-general north star** (P1) — "Cost per landable change" is software-dev-specific. The platform needs a domain-general metric. Candidates: cost per verified outcome, superadditive capability score (SCS), diversity-weighted signal quality.
+5. **Interflux reaction round** (P2) — Adding one reaction round to multi-agent review unlocks 5 of 7 SOTA techniques (DMAD, Free-MAD, CONSENSAGENT, Lorenzen dialogue, QDAIF). Single highest-leverage architectural change for review quality.
 
 ```
-Track A (Kernel)      Track B (Routing)     Track C (Agency)
-    A1 ✓                  B1 ✓                  C1 ✓
-    │                     │                     │
-    A2 ✓                  B2 ✓─────────────→    C2 ✓
-    │                     │                     │
-    A3 ✓                  B3 ← [frontier]       C3 ✓
-                                                │
+Track A (Kernel)      Track B (Routing)     Track C (Agency)      Track D (Autonomy)
+    A1 ✓                  B1 ✓                  C1 ✓                  D1 ✓ (intent)
+    │                     │                     │                     D2 ✓ (canary)
+    A2 ✓                  B2 ✓─────────────→    C2 ✓                  D3 ✓ (backpressure)
+    │                     │                     │                     D4 ✓ (quarantine)
+    A3 ✓                  B3 ← [frontier]       C3 ✓                  D5-D10 ✓ (P1 batch)
+                                                │                     D11-D12 ● (blocked)
                                                 C4 ✓
                                                 │
                                                C5 ✓ ← convergence
                                           (self-building)
 ```
 
-B3 (adaptive routing via Interspect outcome data) is the primary strategic frontier. See [sylveste-roadmap.md](./sylveste-roadmap.md) for the full prioritized inventory.
+B3 (adaptive routing via Interspect outcome data) is the primary strategic frontier. D-track autonomous epic execution proved the flywheel at the epic level — agents now self-sequence multi-feature work with phase gates, strategic contradiction detection, and decomposition calibration. See [sylveste-roadmap.md](./sylveste-roadmap.md) for the full prioritized inventory.
 
 ## What This Is Not
 
-- **Not a general AI gateway.** It doesn't route arbitrary messages to arbitrary agents. The product orchestrates software development specifically — but the platform primitives (Gridfire: Flows, Actions, Receipts, Gates, Controllers, Capabilities, RunGraphs) are domain-general. Software dev is the proving ground; generalization follows once primitives are battle-tested.
+- **Not a general AI gateway.** It doesn't route arbitrary messages to arbitrary agents. The platform orchestrates complex knowledge work through discipline and evidence. Software development is the first vertical; Garden Salon opens the second (collaborative thinking). The platform primitives (Gridfire: Flows, Actions, Receipts, Gates, Controllers, Capabilities, RunGraphs) are domain-general by design.
 - **Not a coding assistant.** It doesn't help you write code; it *builds software*. The coding is one phase of five.
 - **Not a no-code tool.** It's for people who build software with agents. Full stop.
 - **Not uncontrollably self-modifying.** Interspect modifies OS-level configuration through safe, reversible overlays. It cannot modify the kernel today — but the kernel boundary is a trust threshold, not a permanent architectural invariant. It softens as trust is earned, through gated evidence-based processes, not direct modification. (See PHILOSOPHY.md § Earned Authority.)
