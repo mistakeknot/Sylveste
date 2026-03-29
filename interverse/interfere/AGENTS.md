@@ -116,6 +116,33 @@ Alternative high-end layout (when running gpt-oss-120b):
 ~53GB:  KV cache pool + headroom
 ```
 
+Flash-MoE layout (Qwen3.5-397B-A17B via flash-moe binary):
+```
+~10GB:  macOS + system
+~6GB:   Model weights (mmap'd, 5.52GB)
+~54GB:  Expert cache — --malloc-cache 10000 (recommended)
+~0.5GB: Metal GPU buffers (KV cache, delta-net state, attention)
+~57GB:  Remaining headroom
+```
+
+### Flash-MoE Expert Cache Tuning (2026-03-29 benchmark)
+
+Benchmark: 5 prompts × 32 tokens, M5 Max 128GB, Metal NAX enabled.
+
+| `--malloc-cache` | Cache GB | Mean tok/s | Median tok/s | Startup |
+|------------------|---------|------------|-------------|---------|
+| 2581 | 14.0 | 10.60 | 11.73 | 6s |
+| 5000 | 27.1 | 11.54 | 11.09 | 4s |
+| **10000** | **54.3** | **12.21** | **12.55** | **9s** |
+| 15000 | 81.5 | 10.57 | 11.19 | 27s |
+
+**Recommended: `--flashmoe-malloc-cache 10000`** — best throughput (12.2 tok/s mean).
+15000 is slower due to memory pressure competing with Metal GPU buffers.
+2581 is viable for memory-constrained scenarios (10.6 tok/s, only 14GB).
+
+Note: `--cache-entries` (LRU Metal buffer cache) has a pread EFAULT bug
+on the GPU Metal path — always use `--malloc-cache` instead.
+
 ## Dependencies
 
 - mlx >= 0.22.0
