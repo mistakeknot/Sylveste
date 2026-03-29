@@ -70,6 +70,7 @@ If you ship stages 1-2 without 3-4, you've built a constant masquerading as inte
 | Review triage | agent relevance scores | which findings got acted on | interspect evidence → routing overrides |
 | Gate thresholds | phase gate hardness | false-positive/negative rates | threshold tuning from outcomes |
 | Fleet budgets | agent token estimates | interstat per-agent actuals | `scan-fleet.sh --enrich-costs` |
+| Decomposition quality | predicted child count + complexity dist | actual children, completion rate, re-planning count | interspect `decomposition_outcome` events (N>=30 auto-trigger) |
 
 The fleet enrichment pipeline is the existence proof: `estimate-costs.sh` reads historical actuals from interstat, blends them with registry baselines, and writes calibrated estimates back. Every other row in this table should work the same way.
 
