@@ -120,28 +120,30 @@ Flash-MoE layout (Qwen3.5-397B-A17B via flash-moe binary):
 ```
 ~10GB:  macOS + system
 ~6GB:   Model weights (mmap'd, 5.52GB)
-~54GB:  Expert cache — --malloc-cache 10000 (recommended)
+~35GB:  Expert cache — --malloc-cache 5000 (recommended, 7.1MB × 5000)
 ~0.5GB: Metal GPU buffers (KV cache, delta-net state, attention)
-~57GB:  Remaining headroom
+~76GB:  Remaining headroom
 ```
 
-### Flash-MoE Expert Cache Tuning (2026-03-29 benchmark)
+### Flash-MoE Expert Cache Tuning
 
-Benchmark: 5 prompts × 32 tokens, M5 Max 128GB, Metal NAX enabled.
+**Binary:** upstream 20f8591 + pread fix. Expert size: 7,077,888 bytes (4-bit).
 
-| `--malloc-cache` | Cache GB | Mean tok/s | Median tok/s | Startup |
-|------------------|---------|------------|-------------|---------|
-| 2581 | 14.0 | 10.60 | 11.73 | 6s |
-| 5000 | 27.1 | 11.54 | 11.09 | 4s |
-| **10000** | **54.3** | **12.21** | **12.55** | **9s** |
-| 15000 | 81.5 | 10.57 | 11.19 | 27s |
+Preliminary timing (batch mode, `--timing --tokens 10`):
 
-**Recommended: `--flashmoe-malloc-cache 10000`** — best throughput (12.2 tok/s mean).
-15000 is slower due to memory pressure competing with Metal GPU buffers.
-2581 is viable for memory-constrained scenarios (10.6 tok/s, only 14GB).
+| `--malloc-cache` | Cache GB | expert_io ms/layer | total ms/layer | tok/s |
+|------------------|---------|-------------------|----------------|-------|
+| 5000 | 35.4 | 2.410 | 6.526 | 2.5 |
+| 10000 | 70.8 | 3.566 | 7.208 | 2.3 |
 
-Note: `--cache-entries` (LRU Metal buffer cache) has a pread EFAULT bug
-on the GPU Metal path — always use `--malloc-cache` instead.
+**Recommended: `--flashmoe-malloc-cache 5000`** — 35GB cache gives better throughput
+than 10000 (70GB) due to unified memory contention with Metal GPU buffers. Full sweep pending.
+
+Previous benchmark (Q3 hybrid, pre-upstream merge) is **invalid** — the Q3 format read
+5.4MB from 7.1MB experts, producing garbage output that inflated hit rates and throughput.
+
+**CLI changes after upstream merge:** `--q3-experts` removed. Use explicit
+`--weights`/`--manifest`/`--vocab` paths (--model alone doesn't resolve them).
 
 ## Dependencies
 

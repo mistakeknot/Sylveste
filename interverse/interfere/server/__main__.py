@@ -141,7 +141,7 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--flashmoe-args",
         type=str,
         default="",
-        help='Extra CLI args passed to the flash-moe binary as a single string (e.g., "--q3-experts --think-budget 2048")',
+        help='Extra CLI args passed to the flash-moe binary as a single string (e.g., "--think-budget 2048")',
     )
     fm.add_argument(
         "--flashmoe-only",
@@ -152,7 +152,7 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--flashmoe-malloc-cache",
         type=int,
         default=0,
-        help="GPU-resident expert LRU cache entries (0 = disabled, 10000 = ~54 GB for 88%% hit rate)",
+        help="GPU-resident expert cache entries (0 = disabled, 5000 = ~35 GB recommended for 128GB)",
     )
     fm.add_argument(
         "--flashmoe-predict",
