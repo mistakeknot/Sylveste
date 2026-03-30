@@ -115,6 +115,13 @@
 {"created_at":"2026-03-28T16:55:19Z","created_by":"Claude Code","depends_on_id":"sylveste-rsj.1","issue_id":"sylveste-rsj.1.8","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-28T16:55:19Z","created_by":"Claude Code","depends_on_id":"sylveste-rsj.1","issue_id":"sylveste-rsj.1.9","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-29T17:23:31Z","created_by":"Claude Code","depends_on_id":"sylveste-rsj.1.9","issue_id":"sylveste-rsj.1.9.1","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-30T05:34:17Z","created_by":"b0249ab7","depends_on_id":"sylveste-rsj","issue_id":"sylveste-rsj.3","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-30T05:34:27Z","created_by":"b0249ab7","depends_on_id":"sylveste-rsj.3","issue_id":"sylveste-rsj.3.1","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-30T05:34:33Z","created_by":"b0249ab7","depends_on_id":"sylveste-rsj.3","issue_id":"sylveste-rsj.3.2","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-30T05:34:41Z","created_by":"b0249ab7","depends_on_id":"sylveste-rsj.3","issue_id":"sylveste-rsj.3.3","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-30T05:34:44Z","created_by":"b0249ab7","depends_on_id":"sylveste-rsj.3","issue_id":"sylveste-rsj.3.4","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-30T05:34:49Z","created_by":"b0249ab7","depends_on_id":"sylveste-rsj.3","issue_id":"sylveste-rsj.3.5","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-30T05:34:53Z","created_by":"b0249ab7","depends_on_id":"sylveste-rsj.3","issue_id":"sylveste-rsj.3.6","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-26T09:16:09Z","created_by":"mistakeknot","depends_on_id":"sylveste-4l2","issue_id":"sylveste-uln","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-28T23:50:38Z","created_by":"mistakeknot","depends_on_id":"sylveste-vm4","issue_id":"sylveste-vm4.1","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-28T23:59:27Z","created_by":"mistakeknot","depends_on_id":"sylveste-vm4","issue_id":"sylveste-vm4.2","metadata":"{}","type":"parent-child"}
