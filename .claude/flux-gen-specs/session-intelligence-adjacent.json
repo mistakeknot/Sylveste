@@ -1,0 +1,148 @@
+[
+  {
+    "name": "fd-session-memory-architecture",
+    "focus": "Evaluate the session memory architecture for data flow completeness, storage strategy, and retrieval efficiency",
+    "persona": "Senior platform engineer who has built session replay and observability systems at scale",
+    "decision_lens": "Does the data flow from capture to retrieval have gaps, and are storage choices appropriate for the access patterns?",
+    "review_areas": [
+      "Data flow completeness from session generation to downstream consumption",
+      "Storage strategy: SQLite vs markdown vs cass indexing tradeoffs for each data type",
+      "Cache invalidation strategy for context reuse (stale summary detection)",
+      "Query patterns: are the proposed cass queries efficient for the described access patterns?",
+      "Schema evolution: will the proposed data models survive 6 months of feature additions?"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P0",
+        "scenario": "Insight capture hook adds >500ms latency to every tool call",
+        "condition": "Hook is synchronous and blocks the agent loop"
+      },
+      {
+        "severity": "P1",
+        "scenario": "Context cache serves stale summaries after file changes",
+        "condition": "No invalidation mechanism tied to file modification time"
+      },
+      {
+        "severity": "P2",
+        "scenario": "Dead end extraction produces unstructured prose that cass can't usefully search",
+        "condition": "No structured schema for failure records"
+      }
+    ],
+    "success_hints": "Clear data flow diagrams, explicit invalidation strategies, bounded storage growth",
+    "task_context": "Brainstorm for session intelligence compounding in Sylveste AI development platform",
+    "anti_overlap": "fd-token-economics covers cost; fd-feedback-loop covers learning; this agent covers data architecture"
+  },
+  {
+    "name": "fd-token-economics",
+    "focus": "Analyze token savings proposals for realistic ROI and hidden costs",
+    "persona": "Cost optimization engineer who measures everything in tokens-per-useful-outcome",
+    "decision_lens": "Will the proposed token savings actually materialize, or will overhead eat the gains?",
+    "review_areas": [
+      "Realistic token savings estimates for context reuse vs overhead of cache management",
+      "Cost of insight capture hooks (extra tokens to extract and store) vs value of surfaced insights",
+      "Model routing optimization: historical data quality needed to beat static rules",
+      "Budget cap effectiveness: does limiting refinement cycles actually save tokens or just delay them?",
+      "Hidden costs: cass queries, subprocess calls, additional context injection all consume tokens"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P1",
+        "scenario": "Context reuse adds more tokens (cache lookup + injection) than it saves (avoided file reads)",
+        "condition": "Cache hit rate below ~60% makes the system token-negative"
+      },
+      {
+        "severity": "P2",
+        "scenario": "Model routing optimization requires 50+ sessions of baseline data before outperforming static rules",
+        "condition": "Cold start problem makes the feature useless for new projects"
+      }
+    ],
+    "success_hints": "Concrete token budgets per feature, break-even analysis, measured baselines",
+    "task_context": "Brainstorm for session intelligence compounding in Sylveste AI development platform",
+    "anti_overlap": "fd-session-memory-architecture covers data flow; this agent covers economic viability"
+  },
+  {
+    "name": "fd-feedback-loop-integrity",
+    "focus": "Evaluate whether the proposed feedback loops actually close and produce calibrated improvements",
+    "persona": "ML engineer specializing in online learning systems and feedback loop design",
+    "decision_lens": "Do the proposed loops have clear input signals, measurable outputs, and convergence guarantees?",
+    "review_areas": [
+      "Loop closure: does each proposed feedback path have a measurable output that feeds back to the input?",
+      "Signal quality: are insight captures, dead ends, and agent evidence reliable enough to learn from?",
+      "Calibration: how do you detect when a feedback loop is producing worse outcomes (drift)?",
+      "Cold start: what happens before enough data accumulates for each loop to be useful?",
+      "Compounding vs accumulating: does the system actually improve over time, or just collect more data?",
+      "Negative feedback risks: could surfacing dead ends discourage exploration of approaches that failed for incidental reasons?"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P0",
+        "scenario": "Dead end avoidance blocks a valid approach because a prior session failed for unrelated reasons",
+        "condition": "No expiration or context-sensitivity on failure signals"
+      },
+      {
+        "severity": "P1",
+        "scenario": "Insight compounding has no way to detect when surfaced insights are wrong or outdated",
+        "condition": "No feedback signal from 'insight was surfaced but ignored/contradicted'"
+      }
+    ],
+    "success_hints": "Each loop has: input signal, transformation, output metric, calibration mechanism, degradation detection",
+    "task_context": "Brainstorm for session intelligence compounding in Sylveste AI development platform",
+    "anti_overlap": "fd-session-memory covers storage; fd-token-economics covers cost; this agent covers learning dynamics"
+  },
+  {
+    "name": "fd-dispatch-intelligence",
+    "focus": "Evaluate routing and dispatch proposals for decision quality and operational feasibility",
+    "persona": "Operations researcher who designs adaptive scheduling systems",
+    "decision_lens": "Will the proposed dispatch improvements make better decisions than the current static rules?",
+    "review_areas": [
+      "Context warmth as a routing signal: is session recency actually predictive of lower switching cost?",
+      "Agent success pattern reliability: interspect evidence sample sizes needed for statistically meaningful profiles",
+      "Model cost optimization: risk of quality regression when auto-routing to cheaper models",
+      "Priority interaction: how does context warmth interact with priority and phase scoring?",
+      "Exploration-exploitation tradeoff: if routing always picks warm-context beads, cold beads get starved"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P1",
+        "scenario": "Context warmth scoring causes priority inversion — P2 warm beads chosen over P0 cold beads",
+        "condition": "Warmth weight is too high relative to priority weight"
+      },
+      {
+        "severity": "P2",
+        "scenario": "Agent profiling based on 5 sessions produces noisy recommendations that are worse than random",
+        "condition": "Minimum sample size not enforced before profiles influence dispatch"
+      }
+    ],
+    "success_hints": "Clear weight balance between warmth and priority, minimum sample thresholds, exploration budget",
+    "task_context": "Brainstorm for session intelligence compounding in Sylveste AI development platform",
+    "anti_overlap": "fd-feedback-loop covers learning dynamics; this agent covers operational dispatch decisions"
+  },
+  {
+    "name": "fd-integration-surface",
+    "focus": "Assess the integration complexity and wiring feasibility of connecting existing systems",
+    "persona": "Platform integration architect who has connected dozens of loosely-coupled services",
+    "decision_lens": "Are the proposed integrations achievable with the existing APIs, or do they require upstream changes?",
+    "review_areas": [
+      "API surface audit: do cass, interstat, interspect, and interject expose the data needed for each proposal?",
+      "Hook feasibility: which proposals can be implemented as hooks vs requiring new CLI commands or MCP tools?",
+      "Cross-system data contracts: are the schemas compatible, or do they need translation layers?",
+      "Failure isolation: if one system (e.g., cass) is down, do dependent features degrade gracefully?",
+      "Ordering dependencies: which integrations must ship before others to be useful?"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P1",
+        "scenario": "Proposed cass query pattern doesn't match actual cass CLI output format",
+        "condition": "Brainstorm assumes cass capabilities that don't exist yet"
+      },
+      {
+        "severity": "P2",
+        "scenario": "Insight capture hook depends on conversation format that varies by agent provider",
+        "condition": "15 agent providers in cass have different transcript formats"
+      }
+    ],
+    "success_hints": "Each integration point verified against actual API/CLI, dependency graph explicit, fallback behavior defined",
+    "task_context": "Brainstorm for session intelligence compounding in Sylveste AI development platform",
+    "anti_overlap": "fd-session-memory covers data flow design; this agent covers integration feasibility and wiring"
+  }
+]

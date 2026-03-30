@@ -1,0 +1,44 @@
+[
+  {
+    "name": "fd-raga-melodic-grammar",
+    "focus": "Review through the lens of Hindustani raga — how Indian classical music encodes complex performance knowledge in melodic grammar rules that constrain improvisation",
+    "persona": "Ethnomusicologist specializing in the raga system's knowledge encoding",
+    "decision_lens": "Does the system encode accumulated knowledge as generative constraints rather than lookup tables?",
+    "review_areas": ["Raga grammar as knowledge encoding: are insights stored with enough structure to guide future behavior, not just recall past events?", "Ascending vs descending asymmetry: does the system distinguish building new features vs debugging/reverting?", "Alap-jor-jhala progression: does session intelligence adapt to the phase of work?", "Guru-shishya parampara: is there an equivalent to learning through observation of expert sessions?", "Rasa (emotional color): does the system capture the qualitative character of insights?"],
+    "severity_examples": [{"severity": "P1", "scenario": "Knowledge stored as lookup table rather than generative rules — agents replay past solutions instead of adapting", "condition": "Insight format captures what-was-decided but not the decision framework"}, {"severity": "P2", "scenario": "No phase awareness: same insights surfaced during exploration as during debugging", "condition": "Context surfacing doesn't consider current phase of work"}],
+    "success_hints": "Generative constraints over lookup tables, phase-aware surfacing, master-student knowledge transmission",
+    "task_context": "Brainstorm for session intelligence compounding in Sylveste AI development platform",
+    "anti_overlap": "fd-oral-tradition covers pre-literate transmission; this covers knowledge-as-generative-constraint",
+    "source_domain": "Hindustani raga system / Indian classical music theory",
+    "distance_rationale": "No software engineer would consult Indian music theory — yet ragas solve encoding centuries of performance intelligence as constraints guiding real-time improvisation",
+    "expected_isomorphisms": "Raga grammar to insight encoding as generative rules; aroha/avaroha asymmetry to build vs debug mode; alap-jor-jhala to session phase progression"
+  },
+  {
+    "name": "fd-tibetan-memory-palace",
+    "focus": "Review through the lens of Tibetan Buddhist mandala visualization — complex mental architectures as knowledge retrieval systems",
+    "persona": "Scholar of Tibetan Buddhist cognitive practices specializing in mandala as mnemonic architecture",
+    "decision_lens": "Does the system provide spatial or structural metaphors that make knowledge navigable by association rather than exact queries?",
+    "review_areas": ["Mandala as cognitive map: does the system provide navigable knowledge landscapes?", "Deity yoga as persona simulation: parallels to agent personas adopting specific review lenses", "Bardo transitions: parallels to session transitions (handoff, resume, context switching)", "Terma (hidden treasures): parallels to insights captured now but only relevant in future contexts", "Visualization precision: does insight capture have enough specificity to be useful when retrieved?"],
+    "severity_examples": [{"severity": "P1", "scenario": "Terma without conditions: insights captured for future use have no trigger mechanism", "condition": "No event-driven or context-triggered insight surfacing"}, {"severity": "P2", "scenario": "Imprecise visualization: insights lack enough detail to be actionable months later", "condition": "Insight capture stores summary but not specific code context"}],
+    "success_hints": "Navigable knowledge landscapes, persona-based retrieval, transition protocols, condition-triggered surfacing",
+    "task_context": "Brainstorm for session intelligence compounding in Sylveste AI development platform",
+    "anti_overlap": "fd-raga covers generative constraints; fd-tidal covers physical process dynamics; this covers spatial-cognitive knowledge architecture",
+    "source_domain": "Tibetan Buddhist mandala practice / cognitive architecture",
+    "distance_rationale": "Mandala practice is a pre-scientific cognitive engineering system for navigable knowledge architectures — invisible to engineers who think in databases",
+    "expected_isomorphisms": "Mandala spatial navigation to associative retrieval; deity yoga to agent persona switching; bardo transitions to session handoff; terma to condition-triggered surfacing"
+  },
+  {
+    "name": "fd-tidal-resonance",
+    "focus": "Review through the lens of tidal dynamics — how gravitational resonance creates predictable patterns from chaotic forces",
+    "persona": "Physical oceanographer specializing in tidal prediction and harmonic analysis",
+    "decision_lens": "Are the proposed patterns truly periodic or merely episodic?",
+    "review_areas": ["Harmonic analysis: can session patterns be decomposed into periodic components?", "Tidal prediction vs observation: is the brainstorm proposing empirical pattern matching or causal models?", "Resonance amplification: does the architecture amplify or dampen specific types of knowledge compounding?", "Residual tides: what are the non-periodic patterns in session data?", "Spring/neap cycles: does the system detect interaction effects between different knowledge sources?"],
+    "severity_examples": [{"severity": "P1", "scenario": "Confusing episodic for periodic: system predicts based on coincidental past patterns", "condition": "No statistical significance testing on detected patterns"}, {"severity": "P2", "scenario": "Ignoring residual signals: unusual sessions discarded as noise instead of investigated", "condition": "Outlier session detection not included"}],
+    "success_hints": "Harmonic decomposition of session patterns, causal vs empirical modeling, residual analysis, outlier detection",
+    "task_context": "Brainstorm for session intelligence compounding in Sylveste AI development platform",
+    "anti_overlap": "fd-raga covers knowledge encoding; fd-tibetan covers cognitive architecture; this covers pattern decomposition from physical dynamics",
+    "source_domain": "Physical oceanography / tidal harmonic analysis",
+    "distance_rationale": "Tidal analysis solved extracting predictable patterns from chaotic data centuries before statistics — harmonic decomposition maps to extracting actionable patterns from noisy session data",
+    "expected_isomorphisms": "Harmonic constituents to periodic session patterns; residual tides to anomalous sessions; spring/neap to interaction effects; harbor resonance to architecture amplification"
+  }
+]

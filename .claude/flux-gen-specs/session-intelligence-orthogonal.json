@@ -1,0 +1,126 @@
+[
+  {
+    "name": "fd-clinical-case-reasoning",
+    "focus": "Review through the lens of clinical medicine's institutional memory and case-based reasoning systems",
+    "persona": "Chief medical informatics officer who designed hospital knowledge management systems",
+    "decision_lens": "Does the system learn from cases the way medicine learns from patient outcomes — structured, searchable, and calibrated against reality?",
+    "review_areas": [
+      "Case indexing: are session outcomes captured with enough structure to support differential diagnosis (is this the same problem or a different one)?",
+      "Clinical decision support parallels: surfacing relevant prior cases at the point of care vs at the point of coding",
+      "Morbidity and mortality conference pattern: structured post-incident review that feeds back to protocols",
+      "Alert fatigue: if every session surfaces 10 prior insights, will agents ignore them all?",
+      "Evidence grading: not all prior sessions are equally reliable — is there a quality signal?"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P1",
+        "scenario": "Alert fatigue — too many surfaced insights cause agents to ignore all of them",
+        "condition": "No relevance scoring or attention budget on surfaced context"
+      },
+      {
+        "severity": "P2",
+        "scenario": "No evidence grading — a 2-minute abandoned session weighs equally with a 4-hour completed sprint",
+        "condition": "Session quality/completeness not factored into retrieval ranking"
+      }
+    ],
+    "success_hints": "Structured case records, relevance-scored retrieval, attention budgets, evidence grading",
+    "task_context": "Brainstorm for session intelligence compounding in Sylveste AI development platform",
+    "anti_overlap": "fd-broadcast covers real-time signals; fd-intelligence covers fusion; this covers institutional memory patterns from medicine",
+    "source_domain": "Clinical medicine / health informatics",
+    "distance_rationale": "Medicine has centuries of practice in converting individual case outcomes into institutional protocols — the exact problem of compounding session learnings",
+    "expected_isomorphisms": "M&M conference → /reflect structured extraction; clinical decision support → insight surfacing at point of coding; evidence grading → session quality weighting"
+  },
+  {
+    "name": "fd-broadcast-engineering",
+    "focus": "Review through the lens of television broadcast engineering's real-time signal management and institutional learning",
+    "persona": "Senior broadcast engineer who designed live production learning systems at a major network",
+    "decision_lens": "How does a live production environment learn from every broadcast to improve the next one — and how does that map to session-over-session improvement?",
+    "review_areas": [
+      "Rundown sheet pattern: structured pre-session briefing from prior sessions (like a broadcast rundown)",
+      "Real-time signal switching: choosing which context to surface is like choosing which camera feed to cut to",
+      "Post-production notes: structured capture of what worked and didn't, feeding into next show's prep",
+      "Signal-to-noise in control room: parallels to insight/dead-end surfacing without overwhelming the operator",
+      "Replay and highlight extraction: automated extraction of key moments from a session (like highlight reels)"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P1",
+        "scenario": "No 'rundown sheet' — sessions start cold without a structured briefing from prior work",
+        "condition": "Warm-start primer exists but isn't structured enough to be actionable"
+      },
+      {
+        "severity": "P2",
+        "scenario": "Post-production notes are free-form text instead of structured fields",
+        "condition": "/reflect output lacks machine-parseable structure"
+      }
+    ],
+    "success_hints": "Structured pre-session briefings, automated highlight extraction, signal-priority switching",
+    "task_context": "Brainstorm for session intelligence compounding in Sylveste AI development platform",
+    "anti_overlap": "fd-clinical covers institutional memory; fd-intelligence covers fusion; this covers real-time signal management",
+    "source_domain": "Television broadcast engineering",
+    "distance_rationale": "Broadcast engineers solve the exact problem of learning from every live production to improve the next one, under real-time constraints",
+    "expected_isomorphisms": "Rundown sheets → session primers; post-production notes → /reflect; highlight extraction → insight capture; signal switching → context surfacing priority"
+  },
+  {
+    "name": "fd-intelligence-analysis",
+    "focus": "Review through the lens of intelligence analysis's multi-source fusion and analytic tradecraft",
+    "persona": "Intelligence analyst who designed all-source fusion systems for connecting signals across domains",
+    "decision_lens": "Are the proposed signal fusion patterns robust against deception, noise, and analytic bias — or will they compound errors?",
+    "review_areas": [
+      "All-source fusion: cass + interstat + interspect + interject as intelligence disciplines that must be fused, not just collected",
+      "Analytic confidence levels: each source has different reliability — are confidence levels assigned and propagated?",
+      "Collection requirements: are the proposed capture mechanisms collecting what's actually needed for analysis?",
+      "Dissemination: how are intelligence products (insights, warnings) delivered to consumers (agents) at the right time?",
+      "Counterintelligence: can a bad session pollute the knowledge base and propagate errors?"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P0",
+        "scenario": "Error propagation: a wrong insight from one session gets surfaced in 50 future sessions",
+        "condition": "No mechanism to retract or expire bad insights"
+      },
+      {
+        "severity": "P1",
+        "scenario": "Collection bias: only capturing insights from explanatory mode means non-explanatory sessions contribute nothing",
+        "condition": "Insight capture only works for one output style"
+      }
+    ],
+    "success_hints": "Multi-source fusion with confidence levels, retraction mechanisms, collection coverage analysis",
+    "task_context": "Brainstorm for session intelligence compounding in Sylveste AI development platform",
+    "anti_overlap": "fd-clinical covers case reasoning; fd-broadcast covers real-time signals; this covers multi-source fusion and analytic rigor",
+    "source_domain": "Intelligence analysis / all-source fusion",
+    "distance_rationale": "Intelligence analysis has mature frameworks for fusing signals from heterogeneous sources with different reliability levels — directly applicable to combining cass, interstat, interspect, and interject",
+    "expected_isomorphisms": "All-source fusion → multi-system integration; confidence levels → session quality weighting; collection requirements → what to capture; dissemination → when to surface"
+  },
+  {
+    "name": "fd-newsroom-workflow",
+    "focus": "Review through the lens of newsroom editorial workflow and institutional knowledge management",
+    "persona": "Managing editor who built the digital knowledge system at a major newspaper of record",
+    "decision_lens": "How does a newsroom compound decades of institutional knowledge while keeping it fresh, accurate, and instantly retrievable under deadline pressure?",
+    "review_areas": [
+      "Morgue/clip file pattern: searchable archive of prior coverage that reporters consult before writing (like cass for sessions)",
+      "Beat knowledge: reporters develop deep domain expertise over years — how is this captured when they leave? (like agent profiles)",
+      "Correction workflow: when a published fact is wrong, how does the correction propagate to all downstream citations?",
+      "Source grading: not all sources are equally reliable — parallels to session/insight quality",
+      "Deadline pressure: newsroom retrieval must be fast or it won't be used — same constraint for session context surfacing"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P1",
+        "scenario": "No correction propagation — a wrong insight remains in the archive and gets cited by future sessions",
+        "condition": "No mechanism to mark insights as superseded or retracted"
+      },
+      {
+        "severity": "P2",
+        "scenario": "Retrieval too slow under deadline — agents skip context lookup because it adds latency",
+        "condition": "cass queries or hook overhead exceeds acceptable response time budget"
+      }
+    ],
+    "success_hints": "Fast morgue retrieval, correction propagation, source grading, beat knowledge capture",
+    "task_context": "Brainstorm for session intelligence compounding in Sylveste AI development platform",
+    "anti_overlap": "fd-clinical covers case reasoning; fd-intelligence covers fusion; this covers editorial knowledge management under time pressure",
+    "source_domain": "Newspaper editorial workflow / newsroom knowledge management",
+    "distance_rationale": "Newsrooms have solved institutional knowledge compounding under extreme time pressure for over a century — the speed constraint maps directly to agent session latency budgets",
+    "expected_isomorphisms": "Morgue/clip files → cass search; beat knowledge → agent profiles; correction workflow → insight retraction; deadline pressure → latency budget"
+  }
+]

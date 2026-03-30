@@ -1,0 +1,126 @@
+[
+  {
+    "name": "fd-oral-tradition-memory",
+    "focus": "Review through the lens of oral tradition knowledge systems — how pre-literate societies preserved and transmitted complex knowledge across generations",
+    "persona": "Ethnomusicologist specializing in West African griot traditions and their mnemonic architectures",
+    "decision_lens": "Does the system preserve knowledge through structural encoding (rhythm, repetition, narrative hooks) rather than raw storage — the way oral traditions make knowledge sticky?",
+    "review_areas": [
+      "Mnemonic encoding: are insights stored in forms that are naturally retrievable, or do they require exact-match queries?",
+      "Narrative hooks: oral traditions embed knowledge in stories that trigger recall — does the system attach insights to memorable contexts?",
+      "Generational transmission: how does knowledge survive the death of its original context (session closed, project evolved)?",
+      "Selective forgetting: oral traditions naturally shed low-value knowledge through disuse — is there an equivalent decay mechanism?",
+      "Community validation: knowledge in oral traditions is validated through repeated retelling — insights should be validated through repeated surfacing and confirmation"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P1",
+        "scenario": "Knowledge dies with context: insights stored with session-specific references become uninterpretable after the project evolves",
+        "condition": "No abstraction layer between insight and originating context"
+      },
+      {
+        "severity": "P2",
+        "scenario": "No selective forgetting: the knowledge base grows without bound, diluting signal with noise",
+        "condition": "No decay, archival, or pruning mechanism for low-value insights"
+      }
+    ],
+    "success_hints": "Context-independent insight encoding, narrative attachment, natural decay, community validation loops",
+    "task_context": "Brainstorm for session intelligence compounding in Sylveste AI development platform",
+    "anti_overlap": "fd-monastic covers written preservation; fd-cartography covers spatial navigation; this covers pre-literate knowledge transmission",
+    "source_domain": "West African griot tradition / oral knowledge systems",
+    "distance_rationale": "Pre-literate knowledge systems solved the problem of compounding knowledge without databases — their structural encoding strategies are invisible to engineers who assume text search",
+    "expected_isomorphisms": "Mnemonic encoding → insight format design; narrative hooks → context attachment; selective forgetting → knowledge decay; generational transmission → cross-session survival"
+  },
+  {
+    "name": "fd-monastic-scriptoria",
+    "focus": "Review through the lens of medieval monastic scriptoria — how monasteries preserved, indexed, and transmitted knowledge across centuries",
+    "persona": "Medieval historian specializing in Benedictine knowledge management and the cataloging innovations of the 12th-century renaissance",
+    "decision_lens": "Does the system have the equivalent of a library catalog, a florilegia (curated excerpts), and a scriptorium workflow — the infrastructure that let monasteries compound knowledge for centuries?",
+    "review_areas": [
+      "Cataloging: medieval library catalogs were the first searchable indexes — how does the proposed indexing compare in completeness and navigability?",
+      "Florilegia pattern: curated excerpt collections that distill the best passages — parallels to insight extraction from sessions",
+      "Glossing and marginalia: medieval readers added commentary that became more valuable than the original — parallels to annotations on prior session insights",
+      "Scriptorium workflow: copying introduced errors; scriptoria developed proofreading chains — parallels to insight quality verification",
+      "Cross-referencing: medieval concordances linked related passages across texts — parallels to cass connecting sessions by file/topic"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P1",
+        "scenario": "No florilegia: the system stores full session transcripts but never distills the key passages",
+        "condition": "Insight extraction is proposed but has no quality curation step"
+      },
+      {
+        "severity": "P2",
+        "scenario": "Scribal errors compound: insights copied from sessions accumulate small inaccuracies over time",
+        "condition": "No periodic re-verification of stored insights against current code"
+      }
+    ],
+    "success_hints": "Curated excerpt collections, cross-referencing, quality chains, periodic re-verification",
+    "task_context": "Brainstorm for session intelligence compounding in Sylveste AI development platform",
+    "anti_overlap": "fd-oral-tradition covers pre-literate systems; fd-cartography covers spatial navigation; this covers written knowledge preservation",
+    "source_domain": "Medieval Benedictine scriptoria and library science",
+    "distance_rationale": "Monasteries solved century-scale knowledge compounding with no computers — their cataloging and florilegia innovations are directly applicable to session intelligence curation",
+    "expected_isomorphisms": "Library catalogs → cass indexes; florilegia → curated insight collections; glossing → insight annotations; concordances → cross-session linking"
+  },
+  {
+    "name": "fd-cartographic-wayfinding",
+    "focus": "Review through the lens of Polynesian wayfinding and cartographic knowledge systems — how navigators built and transmitted spatial knowledge without instruments",
+    "persona": "Navigation historian specializing in Micronesian stick chart navigation and the cognitive cartography of traditional Pacific wayfinding",
+    "decision_lens": "Does the system help agents navigate the codebase the way wayfinders navigate the ocean — through accumulated environmental signals, not just maps?",
+    "review_areas": [
+      "Environmental signal reading: wayfinders use wave patterns, star positions, bird behavior — agents should use file change patterns, test results, error frequencies as navigation signals",
+      "Stick chart pattern: abstract representations of currents and swells that encode navigational knowledge — parallels to abstract representations of code change patterns",
+      "Etak (moving reference island): Polynesian navigation reframes the problem as the destination moving toward you — parallels to reframing 'what should I work on?' as 'what work is approaching readiness?'",
+      "Dead reckoning accumulation: small errors compound into large deviations without calibration — parallels to insight drift",
+      "Apprenticeship transmission: wayfinding is taught through years of observation, not manuals — how does the system teach new agents?"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P1",
+        "scenario": "Dead reckoning drift: accumulated context-reuse without periodic re-verification produces divergent understanding",
+        "condition": "Context cache never validates against current file state"
+      },
+      {
+        "severity": "P2",
+        "scenario": "No apprenticeship: new agents in the system have no way to absorb the accumulated navigational knowledge",
+        "condition": "Insights are stored but not structured for progressive disclosure to new sessions"
+      }
+    ],
+    "success_hints": "Multi-signal environmental reading, abstract pattern encoding, periodic calibration, progressive knowledge disclosure",
+    "task_context": "Brainstorm for session intelligence compounding in Sylveste AI development platform",
+    "anti_overlap": "fd-oral-tradition covers knowledge transmission; fd-monastic covers written preservation; this covers spatial/navigational intelligence",
+    "source_domain": "Polynesian wayfinding / Micronesian stick chart navigation",
+    "distance_rationale": "Traditional navigation systems built rich mental models from environmental signals without instruments — directly analogous to building codebase understanding from session patterns without explicit documentation",
+    "expected_isomorphisms": "Environmental signals → file/test/error patterns; stick charts → abstract code pattern maps; etak → readiness-approaching framing; dead reckoning drift → insight staleness"
+  },
+  {
+    "name": "fd-fermentation-culture",
+    "focus": "Review through the lens of fermentation science — how microbial cultures are maintained, propagated, and improved across generations",
+    "persona": "Master fermenter and microbiologist who maintains century-old sourdough and sake koji cultures",
+    "decision_lens": "Is the knowledge base a living culture that improves with each feeding, or a static archive that decays without maintenance?",
+    "review_areas": [
+      "Starter culture pattern: a small portion of the previous batch seeds the next — parallels to session context priming the next session",
+      "Feeding schedule: cultures need regular feeding or they die — parallels to scheduled refinement/re-examination of stored knowledge",
+      "Contamination detection: off-flavors indicate contamination — parallels to detecting when bad data enters the knowledge base",
+      "Selective pressure: desired traits are selected over generations through environmental conditions — parallels to feedback loops that strengthen useful patterns",
+      "Back-slopping: the practice of inoculating new batches with old to maintain flavor consistency — parallels to knowledge continuity across sessions"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P1",
+        "scenario": "Culture death: knowledge base receives no 'feeding' (refinement) and becomes inert — all insights are stale",
+        "condition": "No scheduled re-examination of stored insights against current project state"
+      },
+      {
+        "severity": "P2",
+        "scenario": "Contamination: one bad session introduces wrong patterns that propagate through the culture",
+        "condition": "No contamination detection or quarantine mechanism for unreliable sessions"
+      }
+    ],
+    "success_hints": "Regular feeding schedule, contamination detection, selective pressure through feedback, living culture maintenance",
+    "task_context": "Brainstorm for session intelligence compounding in Sylveste AI development platform",
+    "anti_overlap": "fd-oral-tradition covers transmission; fd-monastic covers archiving; fd-cartographic covers navigation; this covers living knowledge maintenance",
+    "source_domain": "Fermentation science and sourdough/koji culture maintenance",
+    "distance_rationale": "Fermentation cultures are living knowledge systems that improve or die based on maintenance — the exact dynamic of knowledge bases that compound or rot",
+    "expected_isomorphisms": "Starter culture → session context priming; feeding schedule → scheduled refinement; contamination → bad data detection; selective pressure → feedback loops; back-slopping → knowledge continuity"
+  }
+]
