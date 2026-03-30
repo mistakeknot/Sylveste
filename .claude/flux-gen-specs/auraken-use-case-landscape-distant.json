@@ -1,0 +1,150 @@
+[
+  {
+    "name": "fd-persian-carpet-weaving-composition",
+    "focus": "Evaluate Auraken's use case architecture through the compositional hierarchy of Persian carpet weaving — how use cases exist at different granularities and compose from shared base capabilities, like knots form motifs, motifs form medallions, and medallions form complete carpets.",
+    "persona": "A master carpet weaver from the Isfahan school with 40 years of experience, trained in the tradition of designing compositions that work at every scale — from individual knot to complete carpet — with each level having its own aesthetic coherence.",
+    "decision_lens": "Multi-scale compositional design — does each level of the system (individual interaction, use case, cross-domain synthesis) have its own integrity while composing into something greater?",
+    "review_areas": [
+      "Does Auraken's capability architecture compose hierarchically? In carpet weaving, the same knot technique serves geometric and floral designs. Do Auraken's base capabilities (profiling, lens selection, follow-up) compose into use cases as cleanly?",
+      "Is there compositional integrity at each scale? A well-designed carpet motif is beautiful alone AND contributes to the larger design. Does each Auraken use case stand alone AND contribute to the life operating system vision?",
+      "How does the system handle the 'border problem'? Carpet borders mediate between the interior design and the edge. What mediates between Auraken's use case domains — how does cognitive augmentation border ambient recommendations?",
+      "Is there a 'cartoon' (the master design template)? Master weavers work from a full-scale cartoon that ensures compositional harmony. Does Auraken have an equivalent architectural template ensuring use cases don't conflict?",
+      "How does the system handle the 'warp and weft' foundation? Every carpet design depends on the invisible structural foundation. What is Auraken's warp and weft — the invisible infrastructure that all use cases depend on?",
+      "Does the system account for the 'abrash effect' — natural variation that makes handmade carpets more beautiful than machine-made? Does Auraken preserve productive variation across use cases rather than enforcing uniform behavior?"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P1",
+        "scenario": "Use cases don't compose — they conflict",
+        "condition": "Cognitive augmentation and product recommendations have incompatible profile models or interaction patterns, like motifs designed for different carpets forced into one"
+      },
+      {
+        "severity": "P2",
+        "scenario": "No border design between domains",
+        "condition": "User moves between cognitive augmentation and discovery mode with no mediating transition — domains collide rather than compose"
+      },
+      {
+        "severity": "P2",
+        "scenario": "Base capabilities duplicated rather than shared",
+        "condition": "Each use case builds its own profiling/memory/follow-up rather than composing from shared capabilities — like using different knot techniques in one carpet"
+      }
+    ],
+    "success_hints": "The architecture should have clear compositional layers: shared capabilities (knots) → use case patterns (motifs) → cross-domain synthesis (medallions) → unified experience (carpet). Each layer should have its own design integrity.",
+    "task_context": "Auraken is expanding from a single use case (cognitive augmentation) to a multi-domain life operating system. The carpet weaving lens asks whether the use cases compose harmoniously or conflict — and whether the shared base capabilities (profiling, lenses, follow-up) serve all domains cleanly.",
+    "anti_overlap": "Focuses on compositional architecture and multi-scale design — not on temporal accumulation (lacquerware), polyphonic interlock (gamelan), or constitutional assessment (Ayurvedic).",
+    "source_domain": "Persian carpet weaving (Isfahan school, Safavid tradition)",
+    "distance_rationale": "Pre-industrial textile craft operating through multi-scale compositional design — no software architect would consult carpet weaving theory for use case architecture.",
+    "expected_isomorphisms": "The knot→motif→medallion→carpet hierarchy maps to capability→use case→cross-domain synthesis→unified experience. The cartoon (master template) maps to architectural blueprints. The border problem maps to domain transition design."
+  },
+  {
+    "name": "fd-chinese-lacquerware-layering",
+    "focus": "Evaluate Auraken's time-to-value curve and use case sequencing through the multi-layer accumulation process of Chinese lacquerware — where hundreds of thin, invisible layers applied over months create depth, durability, and beauty that no single thick application can achieve.",
+    "persona": "A Fuzhou bodiless lacquerware artisan trained in the traditional 60+ step process, where each of dozens of layers must cure fully before the next is applied, and the final product reveals depth that no single layer contains.",
+    "decision_lens": "Temporal accumulation — which use cases require many sessions of invisible context-building before they become valuable? Which can deliver value from a single thick layer?",
+    "review_areas": [
+      "Does Auraken's vision honestly sequence which use cases require months of context accumulation vs. which work from session one? Lacquerware takes 6-12 months; not every use case needs that.",
+      "Is there a 'curing time' concept? Each lacquer layer must dry before the next. Does Auraken's profile need time between interactions to consolidate — or does rapid-fire conversation actually build worse context?",
+      "How does the system handle the 'invisible layers' problem? Most lacquer layers are invisible in the final product but structurally essential. Which aspects of Auraken's context-building are invisible to the user but critical for later value?",
+      "Is there an honest value curve per use case? Cognitive augmentation might need 5-10 sessions before the uncanny moment (PRD Journey 2). Product recommendations might need 50+. Is this communicated to users?",
+      "How does the system handle the 'sanding between layers' process? Lacquerware requires abrading each layer to create adhesion for the next. Is there an equivalent — moments where existing context must be challenged or revised to create foundation for deeper understanding?",
+      "Does the architecture prevent 'thick layer' shortcuts? A single thick lacquer layer cracks. Does the system resist the temptation to make deep recommendations from shallow context?"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P1",
+        "scenario": "Commerce features promised before context depth warrants them",
+        "condition": "Product recommendations offered from session 1 based on thin demographic signals — the Portland→Patagonia problem that Robinson identified"
+      },
+      {
+        "severity": "P2",
+        "scenario": "No honest value curve communicated to users",
+        "condition": "User expects ambient recommendations immediately but the system needs months of conversation to make them good — invisible layers problem with no user-facing explanation"
+      },
+      {
+        "severity": "P2",
+        "scenario": "Profile consolidation skipped for rapid interaction",
+        "condition": "System treats 20 messages in one hour as equivalent to 20 messages over 5 sessions — no curing time between layers of understanding"
+      }
+    ],
+    "success_hints": "Each use case should have an honest time-to-value estimate. The system should resist recommending from thin context and should communicate (subtly) when it's still in the context-accumulation phase.",
+    "task_context": "Auraken is adding ambient product recommendations to cognitive augmentation. The lacquerware lens asks: how many invisible layers of context are needed before recommendations become valuable rather than offensive? The Robinson insight about over-indexing on sparse signals is exactly the 'thick layer that cracks' failure mode.",
+    "anti_overlap": "Focuses on temporal accumulation and honest value curves — not on compositional hierarchy (carpet), domain interlock (gamelan), or constitutional assessment (Ayurvedic).",
+    "source_domain": "Chinese lacquerware (Fuzhou bodiless lacquer tradition, Ming/Qing period techniques)",
+    "distance_rationale": "Pre-modern craft defined by invisible temporal accumulation — no product designer would consult lacquer curing times for recommendation system time-to-value modeling.",
+    "expected_isomorphisms": "The multi-layer curing process maps to progressive context accumulation. The thick-layer-cracks problem maps to the Portland→Patagonia over-indexing failure. The invisible-but-essential layers map to the hidden profile-building that precedes valuable recommendations."
+  },
+  {
+    "name": "fd-gamelan-orchestral-stratification",
+    "focus": "Evaluate how Auraken's use cases interlock at different temporal frequencies through Javanese gamelan stratification — where instruments playing at different speeds produce emergent harmonic structures that no single voice contains.",
+    "persona": "A dalang (puppet master/conductor) of a Javanese court gamelan ensemble, trained in the layered polyphonic tradition where the slowest gong marks the largest cycle, mid-range instruments elaborate, and fast instruments ornament — all interlocking to produce emergent musical meaning.",
+    "decision_lens": "Stratified polyphony — do use cases operating at different temporal frequencies (per-turn cognitive augmentation, weekly follow-ups, monthly pattern awareness, ambient discovery) interlock to produce emergent value greater than their sum?",
+    "review_areas": [
+      "Does Auraken have a colotomic structure — a hierarchical time-cycle framework where different use cases operate at different frequencies? The gong cycle (monthly: growth tracking) should frame the elaborating instruments (weekly: follow-ups, daily: conversation, ambient: discovery).",
+      "Is there irama (tempo level) awareness? Gamelan has 4 tempo levels where the same melody produces different elaborations. Does Auraken's interaction density change what kind of value each use case produces?",
+      "How do use cases produce emergent value through interlock? In gamelan, the beauty is in the interlocking patterns between voices, not in any single voice. What emerges from cognitive augmentation + ambient discovery + pattern awareness that none produce alone?",
+      "Is there a concept of 'inner melody' (lagu batin)? The melody that no instrument plays but all imply. Is there an implicit use case that emerges from the combination of explicit ones?",
+      "How does the system handle the 'drummer' role? The kendang player coordinates tempo changes across all voices. What coordinates Auraken's use cases — what decides when to shift from cognitive augmentation to ambient discovery?",
+      "Does the system preserve the 'stratified' quality — use cases operating independently at their own tempos — vs. forcing synchronization where none is natural?"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P1",
+        "scenario": "No temporal stratification — all use cases at same frequency",
+        "condition": "Product recommendations, cognitive augmentation, and growth tracking all happen per-turn rather than at their natural frequencies — like a gamelan where every instrument plays the same rhythm"
+      },
+      {
+        "severity": "P2",
+        "scenario": "No emergent value from use case combination",
+        "condition": "Each use case delivers value independently but their combination produces nothing more — missing the interlocking patterns that are the whole point of stratification"
+      },
+      {
+        "severity": "P3",
+        "scenario": "No coordination mechanism between use cases",
+        "condition": "Cognitive augmentation and ambient discovery operate in complete isolation with no shared awareness of the user's current state"
+      }
+    ],
+    "success_hints": "Use cases should operate at their natural temporal frequencies and produce emergent value through their interlock — the monthly growth report should reveal patterns that daily conversations and ambient recommendations couldn't show individually.",
+    "task_context": "Auraken is expanding to multiple use cases that operate at very different timescales — per-turn cognitive augmentation, daily ambient recommendations, weekly follow-ups, monthly growth tracking. The gamelan lens asks whether these frequencies interlock productively.",
+    "anti_overlap": "Focuses on temporal interlock and emergent value from use case combination — not on compositional hierarchy (carpet), temporal accumulation (lacquerware), or constitutional assessment (Ayurvedic).",
+    "source_domain": "Javanese court gamelan (Central Javanese karawitan tradition, stratified polyphony)",
+    "distance_rationale": "Musical ensemble architecture operating through stratified temporal layers — no product designer would consult gamelan theory for multi-use-case temporal coordination.",
+    "expected_isomorphisms": "Colotomic structure (hierarchical time cycles) maps to use case frequency stratification. Irama (tempo levels) maps to interaction density effects. Inner melody (lagu batin) maps to emergent use cases that arise from combination."
+  },
+  {
+    "name": "fd-constitutional-herbalism-terrain",
+    "focus": "Evaluate which Auraken use cases require holistic deep-context understanding vs. which work from shallow single-session input, through the constitutional vs. symptomatic distinction in Western herbal medicine's terrain theory.",
+    "persona": "A clinical herbalist trained in constitutional/terrain-based practice (Matthew Wood, Phyllis Light traditions), who treats the whole person rather than isolated symptoms, and who distinguishes between constitutional remedies (deep, slow, whole-person) and acute remedies (fast, targeted, symptom-specific).",
+    "decision_lens": "Constitutional vs. symptomatic — which use cases are 'constitutional' (requiring deep whole-person context to be effective) and which are 'symptomatic' (effective with shallow context for an immediate need)?",
+    "review_areas": [
+      "Does Auraken's use case taxonomy distinguish between constitutional use cases (cognitive augmentation, growth tracking — need deep context) and symptomatic ones (quick product lookup, simple reframe — work with shallow context)?",
+      "Is there a triage mechanism that routes to the right depth? Constitutional herbalists don't give deep constitutional remedies for a headache. Does Auraken avoid applying deep-context cognitive augmentation to simple questions?",
+      "How does the system handle the 'terrain' concept — that the same symptom in different constitutions needs different treatment? The same product query from different users (with different values, constraints, contexts) needs different recommendation approaches.",
+      "Is there an energetics model? Constitutional herbalism classifies remedies and people on axes (hot/cold, dry/moist). Does Auraken have equivalent axes for classifying both lenses and users?",
+      "How does the system sequence constitutional and symptomatic work? Herbalists address acute symptoms first, then constitutional patterns. Does Auraken handle immediate needs before attempting deep pattern work?",
+      "Does the system track when a symptomatic pattern reveals constitutional issues? Repeated headaches suggest a deeper pattern. Repeated product searches in the same category suggest a deeper need that ambient recommendation could serve."
+    ],
+    "severity_examples": [
+      {
+        "severity": "P1",
+        "scenario": "Constitutional depth applied to symptomatic needs",
+        "condition": "User asks for a quick product recommendation and gets a deep exploration of their values and thinking patterns — like treating a headache with a 6-month constitutional protocol"
+      },
+      {
+        "severity": "P1",
+        "scenario": "Symptomatic depth applied to constitutional needs",
+        "condition": "User has a deep career/identity crisis and gets a quick reframe — like treating chronic fatigue with aspirin"
+      },
+      {
+        "severity": "P2",
+        "scenario": "No triage between use case depths",
+        "condition": "All use cases treated at the same depth regardless of the user's actual need — no distinction between symptomatic and constitutional engagement"
+      }
+    ],
+    "success_hints": "The system should have clear triage between shallow/fast use cases (product lookup, quick reframe) and deep/slow ones (cognitive augmentation, growth tracking, ambient discovery). Each use case should know its own depth requirement.",
+    "task_context": "Auraken is expanding to many use cases with very different depth requirements. The constitutional herbalism lens asks: which use cases are constitutional (need deep context, take time, address whole person) and which are symptomatic (work with shallow context, address immediate need)?",
+    "anti_overlap": "Focuses on depth triage and constitutional vs. symptomatic distinction — not on compositional hierarchy (carpet), temporal accumulation (lacquerware), or temporal interlock (gamelan).",
+    "source_domain": "Constitutional/terrain-based Western herbal medicine (Matthew Wood, Phyllis Light traditions)",
+    "distance_rationale": "Pre-modern healing tradition operating through whole-person constitutional assessment — no product designer would consult herbal energetics for use case depth triage.",
+    "expected_isomorphisms": "The constitutional vs. symptomatic distinction maps directly to deep-context vs. shallow-context use cases. Terrain theory (same symptom, different constitution, different remedy) maps to personalized response to the same query. Acute-before-constitutional sequencing maps to handling immediate needs before deep pattern work."
+  }
+]

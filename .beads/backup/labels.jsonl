@@ -42,6 +42,7 @@
 {"issue_id":"sylveste-e8n","label":"claimed_by:6b85bcd6-53a3-44df-938f-42d1618302e6"}
 {"issue_id":"sylveste-ln3","label":"feature"}
 {"issue_id":"sylveste-muf","label":"auraken"}
+{"issue_id":"sylveste-muf","label":"productrecs"}
 {"issue_id":"sylveste-rb6","label":"artifact_brainstorm:docs/brainstorms/2026-03-29-flashmoe-cache-sweep.md"}
 {"issue_id":"sylveste-rb6","label":"artifact_strategy:docs/strategy/2026-03-29-flashmoe-cache-sweep-strategy.md"}
 {"issue_id":"sylveste-rsj","label":"lane:sota"}
@@ -113,7 +114,7 @@
 {"issue_id":"sylveste-rsj.3.6","label":"lane:sota"}
 {"issue_id":"sylveste-rsj.4","label":"artifact_brainstorm:docs/brainstorms/2026-03-30-domain-general-north-star-brainstorm.md"}
 {"issue_id":"sylveste-rsj.4","label":"artifact_plan:docs/plans/2026-03-30-domain-general-north-star.md"}
-{"issue_id":"sylveste-rsj.4","label":"claimed_at:1774887833"}
+{"issue_id":"sylveste-rsj.4","label":"claimed_at:1774894938"}
 {"issue_id":"sylveste-rsj.4","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-rsj.4","label":"test-heal:ok"}
 {"issue_id":"sylveste-rsj.5","label":"artifact_brainstorm:docs/brainstorms/2026-03-30-qdaif-diversity-archive-brainstorm.md"}

@@ -1,0 +1,150 @@
+[
+  {
+    "name": "fd-concierge-medicine-longitudinal-care",
+    "focus": "Review Auraken's profile architecture and use case expansion through the lens of concierge medicine — longitudinal patient care built on deep trust, calibrated follow-up timing, and biopsychosocial cross-domain modeling.",
+    "persona": "A concierge medicine physician with 20 years of practice managing panels of 50-100 patients, each known deeply across medical, psychological, social, and lifestyle domains.",
+    "decision_lens": "Longitudinal care relationships — how do you build and maintain a deep model of a whole person over years, earning trust incrementally while navigating the boundary between helpful insight and overreach?",
+    "review_areas": [
+      "Does the trust-building arc match clinical best practice? Concierge medicine earns the right to probe sensitive areas over months, not sessions. Does Auraken's PM-on-first-day personality pace trust correctly across use cases?",
+      "How does follow-up timing calibrate to the domain? Medical follow-ups are condition-specific (post-surgery: 48hrs, chronic: quarterly). Auraken's follow-ups should vary by use case — career decisions need weeks, product recommendations need days.",
+      "Is there a boundary detection mechanism? Concierge physicians know when to refer to a specialist. Does Auraken know when a problem exceeds its competence — e.g., when cognitive augmentation crosses into therapy territory?",
+      "How does cross-domain modeling work in practice? A concierge physician sees that sleep issues, work stress, and relationship tension are one problem. Does Auraken's multi-thread tracking (Journey 7) achieve genuine cross-domain synthesis?",
+      "What's the onboarding protocol? Concierge medicine does a comprehensive intake interview. How does Auraken build enough context for each use case without interrogating the user?",
+      "How does the system handle the 'whole person' challenge when expanding to recommendations/commerce? Medical records are unified; Auraken's profile must serve both cognitive augmentation AND product discovery."
+    ],
+    "severity_examples": [
+      {
+        "severity": "P1",
+        "scenario": "Trust pacing mismatch across use cases",
+        "condition": "Product recommendations require less trust than cognitive augmentation — but the system treats all use cases with the same conservative ramp-up, making recommendations useless for months"
+      },
+      {
+        "severity": "P1",
+        "scenario": "No boundary detection between augmentation and therapy",
+        "condition": "User brings clinical-grade mental health issues; system applies cognitive frameworks instead of suggesting professional help"
+      },
+      {
+        "severity": "P2",
+        "scenario": "Follow-up timing not domain-aware",
+        "condition": "Career decision follow-ups at the same frequency as product purchase follow-ups — too frequent for one, too infrequent for the other"
+      }
+    ],
+    "success_hints": "Each use case domain should have its own trust-earning arc, follow-up cadence, and competence boundary. The unified profile serves all domains but the interaction patterns are domain-specific.",
+    "task_context": "Auraken is expanding from cognitive augmentation to a life operating system with multiple use case domains (thinking, recommendations, learning, self-knowledge). Concierge medicine is the closest real-world analogue to a deep-context multi-domain personal service.",
+    "anti_overlap": "Focuses on the practitioner-patient relationship model — trust pacing, follow-up timing, boundary detection. Not on ambient discovery (museum), analytical rigor (intelligence), or financial modeling (wealth).",
+    "source_domain": "Concierge medicine / direct primary care",
+    "distance_rationale": "Medical practice at the intersection of longitudinal relationships and multi-domain personal modeling — parallel to Auraken's challenge but in a physical-health context.",
+    "expected_isomorphisms": "Trust-earning arcs, biopsychosocial modeling, competence boundaries, and follow-up timing calibration all transfer directly to an AI system that builds deep personal context across multiple life domains."
+  },
+  {
+    "name": "fd-wealth-advisory-fiduciary-modeling",
+    "focus": "Review Auraken's recommendation and use case architecture through the lens of holistic wealth advisory — fiduciary obligations, behavioral finance, multi-domain decision entanglement, and the gap between stated and revealed preferences.",
+    "persona": "A fee-only fiduciary wealth advisor managing multi-generational family wealth, trained in behavioral finance and experienced in navigating the tension between what clients say they want and what their behavior reveals.",
+    "decision_lens": "Fiduciary duty and behavioral finance — when you have deep knowledge of someone's full situation, what obligations does that create? And how do you handle the gap between what they say and what they do?",
+    "review_areas": [
+      "Does Auraken acknowledge fiduciary-equivalent obligations? When you know someone's cognitive patterns, values, and blind spots, recommending products creates an asymmetric trust relationship. Is this addressed?",
+      "How does the system handle stated-vs-revealed preference gaps? Wealth advisors constantly see 'I want growth' paired with panic-selling behavior. Auraken's contradiction registry tracks this for cognition — does it extend to recommendations?",
+      "Is there multi-domain decision entanglement modeling? Financial decisions interact with career, health, relationships. Does Auraken's cross-thread tracking (Journey 7) handle the cascade effects when a recommendation in one domain affects another?",
+      "How does the monetization model (affiliate revenue) interact with the trust relationship? Fee-only advisors reject commissions precisely because they create conflicts of interest. Does affiliate recommendation create the same conflict?",
+      "Is there a suitability framework for recommendations? Wealth advisors must demonstrate that recommendations are suitable for the client's specific situation. Does Auraken have equivalent suitability checks?",
+      "How does the system handle the 'advisor's dilemma' — when the right recommendation conflicts with the user's stated preference?"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P0",
+        "scenario": "Affiliate revenue creates undisclosed conflict of interest",
+        "condition": "System recommends products that generate affiliate revenue over better alternatives — the fiduciary violation that destroyed trust in financial services"
+      },
+      {
+        "severity": "P1",
+        "scenario": "No suitability framework for recommendations",
+        "condition": "System recommends products without checking against the user's full context — the equivalent of recommending growth stocks to a retiree"
+      },
+      {
+        "severity": "P2",
+        "scenario": "Stated-vs-revealed preference gap ignored in commerce",
+        "condition": "User says they value minimalism but behavioral patterns show impulse buying — system doesn't reconcile this before recommending"
+      }
+    ],
+    "success_hints": "The recommendation system should have explicit suitability checks, transparent disclosure of affiliate relationships, and a mechanism for reconciling stated vs. revealed preferences before making recommendations.",
+    "task_context": "Auraken is adding product recommendations with affiliate monetization alongside its cognitive augmentation core. The wealth advisory lens examines whether this creates fiduciary-equivalent obligations and conflict-of-interest risks.",
+    "anti_overlap": "Focuses on fiduciary obligations, conflict of interest, and behavioral finance — not on relationship pacing (concierge), discovery UX (museum), or analytical rigor (intelligence).",
+    "source_domain": "Fee-only fiduciary wealth advisory / behavioral finance",
+    "distance_rationale": "Financial advisory combines deep personal knowledge with recommendation obligations and explicit conflict-of-interest frameworks — parallel to Auraken's challenge when adding commerce to cognitive augmentation.",
+    "expected_isomorphisms": "The fiduciary duty framework, stated-vs-revealed preference gaps, suitability requirements, and commission-vs-fee conflict of interest all map directly to an AI system that knows users deeply and recommends products for affiliate revenue."
+  },
+  {
+    "name": "fd-museum-experience-ambient-discovery",
+    "focus": "Review Auraken's ambient recommendation and discovery surfaces through the lens of museum experience design — prepared serendipity, threshold experiences, cognitive pacing, and return visit design.",
+    "persona": "A museum experience designer who has led exhibition design at institutions like the V&A, Exploratorium, and Te Papa, specializing in visitor flow, ambient discovery, and the design of 'aha' moments.",
+    "decision_lens": "Prepared serendipity — how do you design an environment where people discover things they didn't know they wanted, without the discovery feeling forced or algorithmic?",
+    "review_areas": [
+      "Does Auraken's ambient recommendation model achieve prepared serendipity — discoveries that feel natural and personal, not algorithmically served? Museums curate adjacencies that create unexpected connections.",
+      "Is there a threshold experience design? Museums have entrance sequences that shift visitors from 'street mode' to 'museum mode.' How does Auraken transition users between cognitive augmentation mode and discovery/recommendation mode?",
+      "How does cognitive pacing work across use cases? Museums alternate high-intensity exhibits with rest spaces. Does Auraken pace between demanding cognitive work and lighter ambient discovery?",
+      "Is there a return visit design? Museums design for repeat visitors who see different things each time. Does Auraken's recommendation surface evolve with each interaction rather than repeating?",
+      "How does the system handle the 'gift shop problem' — the moment when discovery transitions to commerce? Museums struggle with this transition. Affiliate recommendations are Auraken's gift shop.",
+      "Does the system support 'gallery mode' — a state where the user is browsing/receptive rather than seeking/active? The Robinson insight about window shopping maps directly to this."
+    ],
+    "severity_examples": [
+      {
+        "severity": "P1",
+        "scenario": "Recommendations feel algorithmic rather than serendipitous",
+        "condition": "Products are surfaced with explicit 'because you X' reasoning that breaks the ambient feel — the equivalent of a museum with explanatory placards that say 'we placed this here because of your ticket type'"
+      },
+      {
+        "severity": "P2",
+        "scenario": "No mode transition between augmentation and discovery",
+        "condition": "User is deep in cognitive work on a career problem and gets interrupted by a product recommendation — no threshold experience to separate the modes"
+      },
+      {
+        "severity": "P2",
+        "scenario": "Gift shop problem — commerce transition destroys trust",
+        "condition": "The moment recommendations include affiliate links, users question whether all previous recommendations were commercially motivated"
+      }
+    ],
+    "success_hints": "Ambient discovery should feel like wandering through a curated space — adjacencies create connections, nothing feels pushed, the transition to commerce is spatially/temporally separated from the core experience.",
+    "task_context": "Auraken is adding ambient product recommendations alongside cognitive augmentation. The Robinson NTS insight is that the best recommendation experiences feel like window shopping — ambient, low-pressure, high-volume filtering. Museum experience design is the discipline that has most systematically studied prepared serendipity.",
+    "anti_overlap": "Focuses on the UX of discovery and the ambient-to-commerce transition — not on trust/relationship pacing (concierge), fiduciary obligations (wealth), or analytical rigor (intelligence).",
+    "source_domain": "Museum experience design and exhibition curation",
+    "distance_rationale": "Physical space design for ambient discovery operates through spatial and temporal curation rather than algorithmic recommendation — parallel challenges solved with fundamentally different mechanisms.",
+    "expected_isomorphisms": "Prepared serendipity, threshold experiences, cognitive pacing, return visit design, and the gift shop problem all transfer to designing an AI system that surfaces ambient recommendations alongside focused cognitive work."
+  },
+  {
+    "name": "fd-intelligence-analysis-structured-sensemaking",
+    "focus": "Review Auraken's framework selection rigor and use case expansion through intelligence analysis methodology — structured analytic techniques, confirmation bias mitigation, competing hypotheses, and epistemic status tracking.",
+    "persona": "A senior intelligence analyst with 15+ years at a national intelligence agency, trained in Richards Heuer's Analysis of Competing Hypotheses (ACH) and structured analytic techniques, specializing in avoiding analytic pitfalls.",
+    "decision_lens": "Structured sensemaking — how do you select the right analytical framework while actively guarding against confirmation bias, anchoring, and premature closure?",
+    "review_areas": [
+      "Does Auraken's dynamic lens selection guard against confirmation bias? Intelligence analysis requires considering competing hypotheses. Does the system ever present an alternative lens that would reframe the problem differently?",
+      "Is there epistemic status tracking? Intelligence products distinguish between 'confirmed,' 'probable,' 'possible,' and 'speculative.' Does Auraken's profile track the confidence level of its observations about users?",
+      "How does the system handle adversarial self-challenge? Intelligence analysts are trained to 'red team' their own conclusions. Does Auraken ever challenge its own lens selection or profile assertions?",
+      "Is there a framework for distinguishing signals from noise across use cases? When expanding from cognitive augmentation to recommendations, the signal-to-noise ratio changes dramatically. How does the system calibrate?",
+      "Does the system track analytical failures? Intelligence agencies do post-mortem analysis when predictions fail. Does Auraken learn from wrong lens selections or bad recommendations?",
+      "How does the system handle the 'puzzle vs. mystery' distinction? Some problems have answers that can be found (puzzles); others are genuinely uncertain (mysteries). Different use cases fall on different points of this spectrum."
+    ],
+    "severity_examples": [
+      {
+        "severity": "P1",
+        "scenario": "No confirmation bias mitigation in lens selection",
+        "condition": "System selects a lens that matches its existing model of the user rather than the actual problem — the intelligence failure mode of 'seeing what you expect to see'"
+      },
+      {
+        "severity": "P1",
+        "scenario": "No epistemic status tracking on profile observations",
+        "condition": "All profile facts treated with equal confidence regardless of evidence quality — a single conversation treated as equivalent to months of pattern observation"
+      },
+      {
+        "severity": "P2",
+        "scenario": "No post-mortem on analytical failures",
+        "condition": "When a lens application or recommendation fails, the system doesn't learn from the failure or update its selection model"
+      }
+    ],
+    "success_hints": "Lens selection should include competing hypothesis consideration (what alternative lens would reframe this differently?), epistemic confidence levels on all profile facts, and systematic post-mortem learning from failures.",
+    "task_context": "Auraken selects from a library of interdisciplinary lenses using recognition-primed decision making. Intelligence analysis is the discipline most concerned with avoiding the cognitive biases that RPD is vulnerable to — confirmation bias, anchoring, premature closure.",
+    "anti_overlap": "Focuses on analytical rigor and bias mitigation — not on relationship pacing (concierge), fiduciary obligations (wealth), or discovery UX (museum).",
+    "source_domain": "Intelligence analysis / structured analytic techniques (Richards Heuer, CIA)",
+    "distance_rationale": "Intelligence analysis operates in a high-stakes sensemaking context with formalized methods for avoiding the exact cognitive biases that autonomous framework selection is vulnerable to.",
+    "expected_isomorphisms": "Analysis of Competing Hypotheses maps to competing lens consideration. Epistemic status tracking maps to profile confidence levels. Red teaming maps to self-challenge in lens selection. Post-mortem analysis maps to learning from failed recommendations."
+  }
+]

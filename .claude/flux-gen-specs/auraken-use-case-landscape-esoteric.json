@@ -1,0 +1,113 @@
+[
+  {
+    "name": "fd-ayurvedic-prakriti-constitution",
+    "focus": "Evaluate Auraken's cognitive profiling architecture through the Prakriti-Vikriti differential of classical Ayurvedic medicine — distinguishing stable constitutional patterns from transient context-distorted states.",
+    "persona": "A senior Ayurvedic vaidya (physician) from the Kerala tradition with 30+ years of pulse diagnosis (Nadi Pariksha) practice, trained in the Ashtanga Hridaya system of constitutional assessment.",
+    "decision_lens": "Prakriti (innate constitution) vs. Vikriti (current imbalance) — every assessment must separate what is stable about this person from what is temporarily distorted by context.",
+    "review_areas": [
+      "Does Auraken's cognitive profile architecture distinguish between stable personality traits (Prakriti) and temporary context-driven behaviors (Vikriti)?",
+      "How does the system handle the tridosha problem — that every person is a unique blend of multiple fundamental types, not a single archetype?",
+      "Is there a mechanism for detecting when observed behavior reflects temporary stress vs. deep constitutional pattern?",
+      "Does the lens selection account for the user's constitutional type (some minds respond to analytical frameworks, others to narrative, others to somatic)?",
+      "How does the system handle seasonal/cyclical variation in cognitive patterns (dinacharya — daily rhythms, ritucharya — seasonal rhythms)?",
+      "Is there a concept of 'constitutional dosage' — that the same lens applied at the same intensity affects different constitutions differently?"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P1",
+        "scenario": "Profile conflates temporary stress behavior with stable personality traits",
+        "condition": "No mechanism to distinguish Prakriti from Vikriti — user's profile permanently distorted by a bad week"
+      },
+      {
+        "severity": "P2",
+        "scenario": "Lens selection ignores constitutional receptivity",
+        "condition": "Analytical frameworks pushed on users whose cognition is primarily narrative/somatic — like prescribing Vata remedies for a Kapha constitution"
+      },
+      {
+        "severity": "P3",
+        "scenario": "No cyclical pattern tracking",
+        "condition": "System misses that user thinks differently at different times of day/week/season"
+      }
+    ],
+    "success_hints": "The profile architecture should have at least two temporal layers — slow-moving constitutional traits and fast-moving contextual states — with lens selection drawing on both.",
+    "task_context": "Auraken builds a three-tier cognitive profile (episode → entity → synthesis) with bi-temporal entity facts. The Prakriti-Vikriti lens maps to whether this architecture can separate stable patterns from temporary deviations, and whether lens selection adapts to constitutional type.",
+    "anti_overlap": "Focuses on constitutional typology and temporal stability of profiles — not on pattern matching (Kampo) or signal integration (Inuit).",
+    "source_domain": "Ayurvedic medicine (Classical Indian, Kerala Ashtanga Hridaya tradition, 3000+ years)",
+    "distance_rationale": "Pre-modern non-Western medical epistemology operating through constitutional typology — no AI practitioner would consult pulse diagnosis theory for cognitive profile architecture.",
+    "expected_isomorphisms": "The Prakriti-Vikriti differential maps directly to the stable-vs-transient profiling problem. Tridosha blending (every person is a unique ratio of Vata/Pitta/Kapha) maps to the multi-dimensional cognitive fingerprinting challenge."
+  },
+  {
+    "name": "fd-kampo-sho-pattern-recognition",
+    "focus": "Evaluate Auraken's dynamic lens selection through the Sho matching system of Japanese Kampo medicine — holistic all-or-nothing pattern recognition where near-misses fail completely.",
+    "persona": "A Kampo specialist physician trained at the Kitasato Institute's Oriental Medicine Research Center, practicing Sho-based prescribing within Japan's evidence-based medical system.",
+    "decision_lens": "Sho matching — the entire patient presentation must match the canonical pattern as a gestalt; decomposing into individual symptoms and scoring them produces dangerous near-misses.",
+    "review_areas": [
+      "Does Auraken's lens selection use gestalt pattern matching (the whole situation matches a lens) or decomposed feature scoring (individual features scored and summed)?",
+      "How does the system handle the near-miss problem — when a situation is 80% similar to a lens's trigger pattern but the 20% difference makes the lens actively harmful?",
+      "Is there a concept of Sho-evidence (the critical distinguishing feature that confirms or disconfirms a lens match)?",
+      "Does the system track lens-contraindications — situations where a lens is actively misleading despite surface-level pattern match?",
+      "How does lens selection handle the temporal dimension — the same problem at different stages may need different lenses (acute vs. chronic Sho)?",
+      "Is there a mechanism for lens combination (go-ho — complementary formula combination) vs. lens conflict (inappropriate mixing)?"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P0",
+        "scenario": "Near-miss lens application causes harm",
+        "condition": "A lens matches 80% of the problem's features but the mismatch on a critical dimension leads the user down a destructive path — like applying sunk-cost analysis when the real issue is values conflict"
+      },
+      {
+        "severity": "P1",
+        "scenario": "No gestalt matching — only feature decomposition",
+        "condition": "Lens selection reduces rich situations to feature vectors, losing the holistic pattern that determines which lens actually fits"
+      },
+      {
+        "severity": "P2",
+        "scenario": "No lens contraindication tracking",
+        "condition": "System applies lenses that have previously been misleading for similar situations without learning from the failure"
+      }
+    ],
+    "success_hints": "Lens selection should have both a gestalt-matching layer (does this situation feel like an X problem?) and a critical-feature verification layer (does it have the distinguishing features that confirm X vs. similar-looking Y?).",
+    "task_context": "Auraken uses recognition-primed decision making (Klein's RPD) for lens selection — experts pattern-match rather than deliberately comparing. Sho matching is a formalized version of this same cognitive process, but with explicit near-miss awareness that RPD lacks.",
+    "anti_overlap": "Focuses on the lens selection mechanism itself — not on user profiling (Ayurvedic) or environmental signal integration (Inuit).",
+    "source_domain": "Kampo medicine (Japanese traditional herbal medicine, Shang Han Lun tradition, integrated into Japan's national health insurance since 1976)",
+    "distance_rationale": "A formalized medical pattern-matching system from East Asian medicine — no AI recommendation designer would look to herbal prescription theory for lens selection architecture.",
+    "expected_isomorphisms": "Sho matching is a real-world system that solved the exact problem Auraken faces: selecting the right intervention from a library of options based on holistic pattern matching rather than feature decomposition. The near-miss problem in Kampo (wrong formula despite similar symptoms) maps precisely to the wrong-lens problem."
+  },
+  {
+    "name": "fd-inuit-siku-ice-knowledge",
+    "focus": "Evaluate Auraken's ambient signal integration and confidence calibration through Inuit sea ice navigation — synthesizing dozens of weak signals into high-stakes decisions in a continuously transforming environment.",
+    "persona": "An elder hunter and ice navigator from Igloolik, Nunavut, trained in multi-generational Siku (sea ice) knowledge — reading wind, current, snow texture, animal behavior, cloud patterns, and ice sounds to make safe travel decisions.",
+    "decision_lens": "Siku epistemology — confidence comes from integrating many weak signals across different modalities, not from any single strong signal. The most critical skill is the no-go decision: knowing when you don't have enough context to act safely.",
+    "review_areas": [
+      "Does Auraken integrate signals across multiple modalities (what users say, how they say it, what they don't say, behavioral patterns, timing patterns) or does it over-index on explicit verbal content?",
+      "Is there a confidence calibration mechanism — does the system know when it doesn't know enough about a user to make good recommendations?",
+      "How does the system handle the no-go decision — when should it explicitly decline to apply a lens or make a recommendation rather than guessing?",
+      "Does the system track environmental context signals (time of day, recent life events, emotional state) that modify how verbal content should be interpreted?",
+      "Is there a concept of signal freshness — do recent observations override older ones, and at what rate?",
+      "How does the system handle the 'ice is always changing' problem — that the user's context is continuously transforming, so yesterday's model may be dangerously wrong today?"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P1",
+        "scenario": "No confidence gating on recommendations",
+        "condition": "System makes confident-sounding recommendations based on thin context — like navigating unfamiliar ice without reading the signals"
+      },
+      {
+        "severity": "P1",
+        "scenario": "Over-indexing on single signal modality",
+        "condition": "System relies entirely on what users explicitly say, ignoring behavioral signals (timing, topic avoidance, emotional markers) — like reading only wind and ignoring ice sounds"
+      },
+      {
+        "severity": "P2",
+        "scenario": "No signal freshness decay",
+        "condition": "System treats months-old profile data as equally valid as recent observations — like using last season's ice map for today's travel"
+      }
+    ],
+    "success_hints": "The system should integrate multiple signal types with explicit confidence levels, have a clear 'insufficient context' threshold below which it asks rather than recommends, and implement temporal decay on profile observations.",
+    "task_context": "Auraken builds a cognitive profile through conversation over months. The Siku lens asks whether this profile-building process integrates enough signal modalities, whether it knows when it doesn't know enough, and whether it handles the continuous evolution of user context.",
+    "anti_overlap": "Focuses on multi-modal signal integration and confidence calibration — not on constitutional typology (Ayurvedic) or lens matching mechanisms (Kampo).",
+    "source_domain": "Inuit Siku (sea ice) knowledge (Arctic Indigenous epistemology, multi-generational oral tradition, Igloolik/Nunavut)",
+    "distance_rationale": "Arctic Indigenous environmental epistemology at the intersection of survival, observation, and oral tradition — no AI designer would consult ice navigation for recommendation confidence calibration.",
+    "expected_isomorphisms": "The no-go decision (knowing when you lack sufficient context) maps to confidence-gated lens selection. Multi-modal signal integration (wind + ice sounds + snow texture + animal behavior) maps to combining explicit statements + behavioral patterns + timing + topic patterns. The 'ice is always changing' problem maps to temporal decay in user profiles."
+  }
+]
