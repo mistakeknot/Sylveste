@@ -83,6 +83,7 @@
 {"issue_id":"sylveste-rsj.1.8","label":"lane:sota"}
 {"issue_id":"sylveste-rsj.1.9","label":"lane:autonomy"}
 {"issue_id":"sylveste-rsj.1.9","label":"lane:sota"}
+{"issue_id":"sylveste-rsj.1.9.1","label":"artifact_implementation:632d52f,b19dfbb"}
 {"issue_id":"sylveste-rsj.1.9.1","label":"claimed_at:1774896094"}
 {"issue_id":"sylveste-rsj.1.9.1","label":"claimed_by:7d7a8996-1f5b-43df-b3ea-cb61ad729a86"}
 {"issue_id":"sylveste-rsj.1.9.1","label":"complexity:3"}
