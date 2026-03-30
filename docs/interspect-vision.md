@@ -81,6 +81,10 @@ The transition from human-heavy to automated-heavy signals is not a cliff. It's 
 
 The key insight: automated signals don't replace human signals. They provide a different kind of ground truth. CI failures tell you "this broke." Human dismissals tell you "this was irrelevant." Both are needed. At higher autonomy, there are simply fewer opportunities for human signals because fewer decisions pass through human review. Interspect compensates by leaning harder on outcome-based signals (did the code work? did the change survive?) rather than evaluation-based signals (did the human approve?).
 
+### Graduated signal cost ordering
+
+The signal taxonomy above describes *what* signals exist. A complementary question is *when* to use each one. NetHack's item identification system — where players use cheap signals (appearance, price) before expensive ones (scroll of identify) — provides a useful framework: route to the cheapest signal that resolves the decision, escalating only when cheap signals are ambiguous. See [docs/research/assess-identification-as-calibration.md](../research/assess-identification-as-calibration.md) for a design assessment applying this pattern to Interspect's routing pipeline, and [docs/sylveste-vision.md § External Validation](./sylveste-vision.md#external-validation) for broader empirical grounding.
+
 ## How It Works
 
 ### Phase 1: Evidence (shipped)

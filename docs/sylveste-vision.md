@@ -96,6 +96,16 @@ Sylveste advances three axes simultaneously. Every roadmap decision, every new m
 
 The flywheel connecting these three axes is Interspect. The profiler reads outcome data from every sprint and proposes configuration changes: model downgrades where Haiku catches the same issues as Opus, agent retirement where a reviewer consistently produces findings no one acts on, gate relaxation where a check always passes. Each optimization simultaneously increases autonomy (less human calibration needed), improves quality (resources reallocated to where they matter), and reduces cost (less waste). The system that ships the most sprints learns the fastest, and the system that learns the fastest ships the cheapest.
 
+### External Validation
+
+Two independent research threads validate the core thesis from outside software engineering:
+
+**Orchestration beats raw capability.** Symbolica AI's Arcgentica achieved 36% on ARC-AGI-3 (abstract reasoning) at $1,005 total — while raw Claude Opus 4.6 scored 0.25% at $8,900. A 340x cost-efficiency improvement from orchestrator-delegates-to-sub-agents architecture, not from a better model. The architecture — orchestrator never touches the environment directly, sub-agents return compressed summaries, parallel hypothesis exploration — is structurally isomorphic to how Clavain dispatches companion plugins. The result validates PHILOSOPHY.md claim #1 (infrastructure bottleneck, not intelligence) on abstract reasoning, not just coding.
+
+**Stigmergic coordination scales.** Research on agent coordination via shared environmental traces (stigmergy) shows 36-41% performance advantage over direct messaging at 500+ agents ([Pressure Fields and Temporal Decay, 2025](https://arxiv.org/abs/2601.08129)). Garden Salon's CRDT shared-state design — where agents coordinate through the document, not through messages — is a direct implementation of this pattern. The advantage grows with agent count, which aligns with the flywheel: more agents produce more traces, richer traces enable better coordination, better coordination justifies more agents.
+
+These findings also reveal evaluation gaps. LLMs score 45%+ on SWE-bench but only 12.56% on NetHack (BALROG benchmark, ICLR 2025) — because NetHack demands long-horizon planning under compounding uncertainty with irreversible consequences and emergent complexity. These are exactly the capabilities Sylveste's infrastructure is designed to unlock. See [docs/research/assess-balrog-evaluation.md](./research/assess-balrog-evaluation.md) for an evaluation proposal.
+
 ## Design Principles
 
 ### 1. Mechanism over policy
