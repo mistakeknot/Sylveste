@@ -2,6 +2,7 @@
 {"created_at":"2026-03-28T23:00:58Z","created_by":"46d9cd8d","depends_on_id":"sylveste-09h","issue_id":"sylveste-09h.2","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-28T23:00:58Z","created_by":"46d9cd8d","depends_on_id":"sylveste-09h","issue_id":"sylveste-09h.3","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-29T17:24:47Z","created_by":"46d9cd8d","depends_on_id":"sylveste-09h","issue_id":"sylveste-09h.4","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-30T06:49:15Z","created_by":"Claude Code","depends_on_id":"sylveste-09h","issue_id":"sylveste-09h.5","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-30T05:40:16Z","created_by":"8e534bf7","depends_on_id":"sylveste-dla","issue_id":"sylveste-0md","metadata":"{}","type":"child-of"}
 {"created_at":"2026-03-30T05:40:20Z","created_by":"8e534bf7","depends_on_id":"sylveste-gta","issue_id":"sylveste-0md","metadata":"{}","type":"depends-on"}
 {"created_at":"2026-03-26T07:40:16Z","created_by":"mistakeknot","depends_on_id":"sylveste-cvt","issue_id":"sylveste-1qa","metadata":"{}","type":"blocks"}
@@ -149,6 +150,7 @@
 {"created_at":"2026-03-30T06:06:37Z","created_by":"b0249ab7","depends_on_id":"sylveste-rsj.3","issue_id":"sylveste-rsj.3.7","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-30T06:07:21Z","created_by":"b0249ab7","depends_on_id":"sylveste-rsj.3","issue_id":"sylveste-rsj.3.8","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-30T06:07:50Z","created_by":"b0249ab7","depends_on_id":"sylveste-rsj.3","issue_id":"sylveste-rsj.3.9","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-03-30T07:26:36Z","created_by":"Claude Code","depends_on_id":"sylveste-rsj.4","issue_id":"sylveste-rsj.4.1","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-30T05:40:19Z","created_by":"8e534bf7","depends_on_id":"sylveste-4wm","issue_id":"sylveste-tuo","metadata":"{}","type":"depends-on"}
 {"created_at":"2026-03-30T05:40:15Z","created_by":"8e534bf7","depends_on_id":"sylveste-dla","issue_id":"sylveste-tuo","metadata":"{}","type":"child-of"}
 {"created_at":"2026-03-26T09:16:09Z","created_by":"mistakeknot","depends_on_id":"sylveste-4l2","issue_id":"sylveste-uln","metadata":"{}","type":"blocks"}

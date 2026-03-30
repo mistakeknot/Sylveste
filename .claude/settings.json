@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Write(.claude/agents/**)",
+      "Write(.claude/flux-gen-specs/**)",
+      "Write(docs/research/flux-drive/**)",
+      "Write(docs/research/flux-research/**)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'cd \"$PROJECT_DIR\" && [ -f .beads/heal-dolt.sh ] && bash .beads/heal-dolt.sh .beads 2>&1 || true; bd stats 2>/dev/null | head -1 || echo \"beads: Dolt unavailable, JSONL backup is source of truth\"'"
+          }
+        ]
+      }
+    ]
+  }
+}
