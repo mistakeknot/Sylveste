@@ -25,6 +25,7 @@
 {"issue_id":"sylveste-d5e","label":"artifact_plan:docs/plans/2026-03-27-bhq-validation-7b.md"}
 {"issue_id":"sylveste-d5e","label":"artifact_reflection:docs/solutions/2026-03-27-bhq-validation-results.md"}
 {"issue_id":"sylveste-d5e","label":"artifact_test-pass-sha:4c14f568fa6fc9f2a6212ffc434d09f5ef2fd7eb"}
+{"issue_id":"sylveste-dla","label":"artifact_prd:apps/Auraken/docs/prds/2026-03-29-signal-first-integration.md"}
 {"issue_id":"sylveste-dui","label":"artifact_brainstorm:docs/brainstorms/2026-03-29-flux-gen-prompt-engineering-bugs.md"}
 {"issue_id":"sylveste-dui","label":"artifact_plan:docs/plans/2026-03-29-flux-gen-short-title-fix.md"}
 {"issue_id":"sylveste-dui","label":"flux-gen"}
@@ -82,6 +83,7 @@
 {"issue_id":"sylveste-rsj.1.9.1","label":"lane:sota"}
 {"issue_id":"sylveste-rsj.2","label":"interflux"}
 {"issue_id":"sylveste-rsj.2","label":"reaction-round"}
+{"issue_id":"sylveste-rsj.3","label":"artifact_brainstorm:docs/brainstorms/2026-03-30-roguelike-agent-architecture-brainstorm.md"}
 {"issue_id":"sylveste-rsj.3","label":"lane:sota"}
 {"issue_id":"sylveste-rsj.3.1","label":"lane:sota"}
 {"issue_id":"sylveste-rsj.3.2","label":"lane:sota"}
