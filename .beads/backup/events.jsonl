@@ -2442,3 +2442,19 @@
 {"actor":"b0249ab7","comment":"Added label: lane:sota","created_at":"2026-03-30T05:34:49Z","event_type":"label_added","id":"d7c67297-fa01-4a98-b6fc-3f22cfcb33ae","issue_id":"sylveste-rsj.3.5","new_value":null,"old_value":null}
 {"actor":"b0249ab7","comment":"Added label: lane:sota","created_at":"2026-03-30T05:34:53Z","event_type":"label_added","id":"56a8653f-5ce1-44da-8ed9-7a95ee77a630","issue_id":"sylveste-rsj.3.6","new_value":null,"old_value":null}
 {"actor":"b0249ab7","comment":null,"created_at":"2026-03-30T05:34:53Z","event_type":"created","id":"6bacd384-9ac4-4f71-b2c1-2e81ce005dbf","issue_id":"sylveste-rsj.3.6","new_value":"","old_value":""}
+{"actor":"8e534bf7","comment":null,"created_at":"2026-03-30T05:38:23Z","event_type":"created","id":"830a8a63-6f1f-452a-b898-4ea5e968de6e","issue_id":"sylveste-dvu","new_value":"","old_value":""}
+{"actor":"8e534bf7","comment":null,"created_at":"2026-03-30T05:38:48Z","event_type":"created","id":"336b329c-6d8c-40a1-9bfd-abb0c0f5e90a","issue_id":"sylveste-4wm","new_value":"","old_value":""}
+{"actor":"8e534bf7","comment":null,"created_at":"2026-03-30T05:38:48Z","event_type":"created","id":"50101596-2eaa-4aa6-a06f-be0872c213e5","issue_id":"sylveste-ohh","new_value":"","old_value":""}
+{"actor":"8e534bf7","comment":null,"created_at":"2026-03-30T05:38:48Z","event_type":"created","id":"f47015bf-a395-4fe9-ba77-c3156390d490","issue_id":"sylveste-7gc","new_value":"","old_value":""}
+{"actor":"8e534bf7","comment":null,"created_at":"2026-03-30T05:39:42Z","event_type":"closed","id":"435269ad-afa1-4880-ab89-2e11721ff026","issue_id":"sylveste-u3f","new_value":"Migration complete — moved to apps/Auraken","old_value":""}
+{"actor":"8e534bf7","comment":null,"created_at":"2026-03-30T05:39:43Z","event_type":"created","id":"40216315-8ba0-4e1c-8a5c-a042503c4926","issue_id":"sylveste-dla","new_value":"","old_value":""}
+{"actor":"8e534bf7","comment":null,"created_at":"2026-03-30T05:40:02Z","event_type":"created","id":"1f6c558c-0c15-490c-9d80-b8caf8c50f0a","issue_id":"sylveste-99f","new_value":"","old_value":""}
+{"actor":"8e534bf7","comment":null,"created_at":"2026-03-30T05:40:02Z","event_type":"created","id":"905c11aa-5995-4ea8-b924-3194e08b80c8","issue_id":"sylveste-tuo","new_value":"","old_value":""}
+{"actor":"8e534bf7","comment":null,"created_at":"2026-03-30T05:40:03Z","event_type":"created","id":"4417fab1-2052-4583-88e4-ba6c13dd1e38","issue_id":"sylveste-gta","new_value":"","old_value":""}
+{"actor":"8e534bf7","comment":null,"created_at":"2026-03-30T05:40:03Z","event_type":"created","id":"846f059a-07a9-4f44-bf56-a64156ae83ba","issue_id":"sylveste-vuu","new_value":"","old_value":""}
+{"actor":"8e534bf7","comment":null,"created_at":"2026-03-30T05:40:04Z","event_type":"created","id":"281ef959-6453-4ab7-9ee5-90907d42ada0","issue_id":"sylveste-58i","new_value":"","old_value":""}
+{"actor":"8e534bf7","comment":null,"created_at":"2026-03-30T05:40:04Z","event_type":"created","id":"6cc4568f-7da8-44aa-a83b-6d33232d4a7e","issue_id":"sylveste-0md","new_value":"","old_value":""}
+{"actor":"8e534bf7","comment":null,"created_at":"2026-03-30T05:40:04Z","event_type":"created","id":"d920b74a-13c5-465d-b309-5f829e4f309c","issue_id":"sylveste-lok","new_value":"","old_value":""}
+{"actor":"8e534bf7","comment":null,"created_at":"2026-03-30T05:40:05Z","event_type":"created","id":"546d4bd7-3ea7-4e8e-8d68-30977bffcd3a","issue_id":"sylveste-73q","new_value":"","old_value":""}
+{"actor":"8e534bf7","comment":null,"created_at":"2026-03-30T05:40:05Z","event_type":"created","id":"9de0a44b-5253-48b3-9a2c-f0db6e9f97bf","issue_id":"sylveste-3x5","new_value":"","old_value":""}
+{"actor":"8e534bf7","comment":null,"created_at":"2026-03-30T05:40:05Z","event_type":"created","id":"f60cb7d5-22ea-4d77-b22e-9680c91c71f6","issue_id":"sylveste-x91","new_value":"","old_value":""}
