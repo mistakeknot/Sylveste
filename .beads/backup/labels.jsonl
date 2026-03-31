@@ -1,6 +1,6 @@
 {"issue_id":"sylveste-09h","label":"artifact_brainstorm:docs/brainstorms/2026-03-30-gsv-identity-brainstorm.md"}
-{"issue_id":"sylveste-09h","label":"claimed_at:1774735257"}
-{"issue_id":"sylveste-09h","label":"claimed_by:46d9cd8d-ab71-4a64-a8c6-2bd319ac253a"}
+{"issue_id":"sylveste-09h","label":"claimed_at:1774936363"}
+{"issue_id":"sylveste-09h","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-09h","label":"complexity:5"}
 {"issue_id":"sylveste-2kw","label":"artifact_implementation:6e77f9cc85dfb10899775fd7eaaaf660d38eca74"}
 {"issue_id":"sylveste-2kw","label":"claimed_at:1774722061"}
@@ -145,5 +145,11 @@
 {"issue_id":"sylveste-rsj.6","label":"artifact_plan:docs/plans/2026-03-30-sycophancy-detection.md"}
 {"issue_id":"sylveste-rsj.6","label":"claimed_at:1774881521"}
 {"issue_id":"sylveste-rsj.6","label":"claimed_by:unknown"}
+{"issue_id":"sylveste-rsj.7","label":"artifact_brainstorm:docs/brainstorms/2026-03-31-composable-discourse-protocols-brainstorm.md"}
+{"issue_id":"sylveste-rsj.7","label":"artifact_closed:36a76c6017c7933c973dbd3d3572be5b7625a521"}
+{"issue_id":"sylveste-rsj.7","label":"artifact_plan:docs/plans/2026-03-31-composable-discourse-protocols.md"}
+{"issue_id":"sylveste-rsj.7","label":"artifact_prd:docs/prds/2026-03-31-composable-discourse-protocols.md"}
+{"issue_id":"sylveste-rsj.7","label":"artifact_reflection:docs/reflections/2026-03-31-composable-discourse-protocols-reflect.md"}
+{"issue_id":"sylveste-rsj.7","label":"claimed_at:1774937439"}
 {"issue_id":"sylveste-vm4","label":"artifact_closed:d956378518bbef3e4da65d30672671bbd7936a44"}
 {"issue_id":"sylveste-vm4","label":"artifact_plan:docs/plans/2026-03-29-flashmoe-cache-tuning.md"}
