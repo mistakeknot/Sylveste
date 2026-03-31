@@ -1,0 +1,188 @@
+[
+  {
+    "name": "fd-aviation-safety-crm",
+    "focus": "How aviation crew resource management uses synthetic scenario generation, near-miss analysis, and structured debriefing to systematically improve crew decision-making — and how the boundary between productive scenario stress-testing and over-rehearsed rigidity is managed",
+    "persona": "A CRM instructor and human factors researcher with twenty years designing simulator scenarios for airlines and investigating near-miss incidents for aviation safety boards. Studies how synthetic stress testing improves real-world performance without inducing brittle over-preparation, and how near-miss classification (ASRS reports, LOSA audits) distinguishes genuine decision failures from acceptable variation.",
+    "decision_lens": "Evaluates whether Forge Mode's synthetic scenario generation and near-miss analysis will produce robust improvement or brittle over-fitting — aviation learned that training to specific scenarios without training the underlying recognition skill creates crews that handle rehearsed emergencies well but novel ones worse.",
+    "source_domain": "Aviation crew resource management — simulator-based training, near-miss reporting (ASRS/LOSA), and structured post-flight debriefing",
+    "distance_rationale": "Aviation CRM is the most mature professional discipline for exactly the Forge Mode problem: generating synthetic scenarios to stress-test decision-making, classifying near-misses to improve selection algorithms, and using structured reflection to compound learning — with decades of evidence on what works and what creates false confidence.",
+    "expected_isomorphisms": [
+      "Lens selection near-miss = aviation near-miss event: both involve surface-matching to the wrong response category, where the distinguishing features are subtle and the consequence of wrong selection compounds",
+      "Forge Mode stress test scenarios = simulator check rides: both generate synthetic conditions to reveal failure modes, with the same risk that over-fitting to generated scenarios weakens response to novel situations",
+      "Contraindication metadata = threat and error management (TEM) countermeasures: both are pre-loaded awareness of what can go wrong in specific conditions, designed to catch errors before they propagate",
+      "The Forge Mode flywheel = CRM's continuous improvement loop: stress test -> debrief -> update procedures -> re-test, with the same risk that the loop optimizes for measurable scenarios rather than unmeasurable judgment quality"
+    ],
+    "review_areas": [
+      "Scenario fidelity vs. scenario coverage: aviation simulator training discovered that high-fidelity scenarios improve performance on trained scenarios but can reduce transfer to novel situations — assess whether Forge Mode's synthetic scenarios are testing the lens selection skill or testing specific lens-scenario pairings, and which produces more durable improvement",
+      "Near-miss classification completeness: ASRS near-miss reports revealed that the most dangerous near-misses are the ones nobody recognizes as near-misses — check whether the near-miss lens relationships in the contraindication schema can capture only recognized confusions or also systematically surface unrecognized ones through scenario generation",
+      "The debrief structure problem: CRM research shows that unstructured debriefs produce narrative satisfaction but structured debriefs (what happened, why, what changes) produce behavioral change — assess whether Forge Mode sessions have sufficient structure to produce artifact-quality output or whether conversational flow risks producing insight-feeling without durable artifacts",
+      "Automation complacency analog: when CRM training is highly effective, crews develop meta-complacency ('we trained for this, we are prepared') that paradoxically increases risk from untrained scenarios — evaluate whether Forge Mode's flywheel could create a false sense of lens selection robustness by exhaustively covering known near-misses while leaving unknown near-misses unaddressed",
+      "The instructor effect: simulator scenario quality depends heavily on the instructor's ability to calibrate difficulty — too easy builds false confidence, too hard builds learned helplessness — assess whether Forge Mode has mechanisms for calibrating scenario difficulty to the builder's current skill level, or whether it generates uniformly challenging scenarios regardless of what would produce the most learning"
+    ],
+    "severity_examples": [
+      {
+        "severity": "high",
+        "example": "Forge Mode stress tests optimize for known near-miss pairs (sunk-cost vs. values-conflict) without a mechanism for discovering unknown near-miss relationships — equivalent to training crews for known engine failures while ignoring unrehearsed multi-system interactions"
+      },
+      {
+        "severity": "medium",
+        "example": "The conversational format of Forge sessions risks producing insight-satisfaction without durable behavioral artifacts — CRM research shows this exact failure mode when debrief structure is insufficient"
+      },
+      {
+        "severity": "low",
+        "example": "Forge Mode sessions do not appear to have difficulty calibration — the same level of scenario complexity regardless of how many sessions have been completed and what near-miss coverage already exists"
+      }
+    ],
+    "success_hints": [
+      "The most valuable Forge Mode output should be improvements to the lens selection recognition skill, not just expanded contraindication metadata for specific lenses",
+      "Near-miss discovery should have a systematic component beyond conversational exploration — aviation uses structured scenario variation (same setup, different key variable) to map near-miss boundaries",
+      "Debrief quality in CRM is measured by the specificity and actionability of identified improvements, not by the depth or satisfaction of the conversation itself"
+    ],
+    "task_context": "Forge Mode is a reflexive self-improvement system where a cognitive augmentation agent uses its own capabilities to stress-test its lens selection (conceptual framework matching), simulate user profiles, and apply its own lenses to its own product decisions — generating synthetic scenarios to find where reasoning breaks down and producing concrete metadata artifacts.",
+    "anti_overlap": [
+      "fd-clinical-case-reasoning covers diagnostic near-miss in a medical context with different structural dynamics",
+      "fd-construction-commissioning covers systematic verification but not synthetic scenario generation or near-miss analysis",
+      "fd-feedback-loop-integrity covers feedback loop dynamics but not scenario-based training methodology"
+    ]
+  },
+  {
+    "name": "fd-clinical-case-reasoning",
+    "focus": "How clinical case-based reasoning in medical education uses structured differential diagnosis, simulated patient encounters, and cognitive forcing strategies to improve diagnostic accuracy — and how the tension between over-diagnosis (seeing pathology everywhere) and under-diagnosis (normalizing ambiguity) maps to lens over-application and under-application",
+    "persona": "A clinical reasoning educator and diagnostic error researcher who designs simulated patient encounters for medical school curricula and studies cognitive bias in differential diagnosis. Has published on premature closure, anchoring in clinical reasoning, and the use of cognitive forcing strategies to improve diagnostic accuracy without paralyzing clinicians with excessive deliberation.",
+    "decision_lens": "Evaluates whether Forge Mode's lens selection stress-testing will improve diagnostic accuracy (correct lens for the situation) or induce diagnostic hesitation (so many contraindications that the system becomes afraid to apply any lens confidently).",
+    "source_domain": "Clinical reasoning education — simulated patient encounters, differential diagnosis methodology, cognitive forcing strategies, diagnostic error analysis",
+    "distance_rationale": "Clinical reasoning education has formalized the exact problem Forge Mode addresses: using synthetic cases to improve pattern-matching accuracy while managing the tension between premature closure (applying the first matching framework) and excessive deliberation (checking so many alternatives that action is paralyzed). The differential diagnosis process is structurally isomorphic to lens selection with contraindication checking.",
+    "expected_isomorphisms": [
+      "Lens selection = differential diagnosis: both involve pattern-matching a presenting situation to one of many possible frameworks, where surface features are ambiguous and the wrong match produces harm",
+      "Contraindication check = cognitive forcing strategy: both are deliberate interruptions of pattern-matching intuition designed to catch recognition errors before they propagate into action",
+      "Near-miss lenses = differential diagnosis list: both enumerate alternatives that must be actively excluded before committing to a primary match",
+      "Forge Mode stress tests = simulated patient encounters: both use synthetic scenarios with known correct answers to calibrate the diagnostician's pattern-matching accuracy"
+    ],
+    "review_areas": [
+      "Premature closure in lens selection: the most common diagnostic error in medicine is premature closure — accepting the first diagnosis that fits without adequately considering alternatives — assess whether the Match-Verify-Check pipeline in OODARC Decide creates sufficient resistance to premature closure without creating excessive deliberation that degrades response quality",
+      "The over-testing trap: clinical reasoning education discovered that teaching too many red flags and contraindications can produce over-testing — clinicians order unnecessary tests to rule out unlikely diagnoses — evaluate whether comprehensive contraindication metadata could produce an equivalent over-checking pattern where every lens triggers verification even when the match is clearly correct",
+      "Simulated case design methodology: medical education has rigorous methods for designing simulated cases that test specific diagnostic skills (key feature problems, script concordance tests) — assess whether Forge Mode's scenario generation has equivalent methodological rigor or relies on ad-hoc conversational exploration",
+      "Calibration vs. discrimination: diagnostic accuracy has two components — calibration (confidence matches actual accuracy) and discrimination (ability to distinguish between similar conditions) — determine whether Forge Mode stress tests improve both or primarily improve discrimination at the cost of calibration confidence",
+      "The base rate problem in near-miss analysis: rare diagnoses that are high-consequence produce disproportionate training emphasis, but most presenting patients have common conditions — check whether Forge Mode's near-miss focus produces disproportionate attention to rare edge cases while the most common lens-selection errors in routine conversations go unaddressed",
+      "Post-encounter reflection structure: clinical reasoning education uses specific reflection frameworks (illness scripts, problem representation, semantic qualifiers) to convert case experience into transferable diagnostic knowledge — assess whether Forge Mode artifacts (contraindications, distinguishing features) are structured to produce transferable lens-selection knowledge or case-specific corrections"
+    ],
+    "severity_examples": [
+      {
+        "severity": "high",
+        "example": "The contraindication checking pipeline could induce lens-selection hesitation — so many things to check that the system becomes reluctant to confidently apply any lens, equivalent to the over-testing trap in clinical medicine where excessive differential consideration degrades rather than improves care"
+      },
+      {
+        "severity": "medium",
+        "example": "Forge Mode stress tests may disproportionately focus on dramatic near-miss scenarios while routine lens-selection errors in common conversation types go unexamined — the base rate neglect problem from clinical reasoning education"
+      },
+      {
+        "severity": "low",
+        "example": "Distinguishing features in the contraindication schema are framed as presence indicators rather than absence indicators — clinical reasoning uses both 'red flags' (must be present) and 'green flags' (must be absent) for complete diagnostic discrimination"
+      }
+    ],
+    "success_hints": [
+      "The best clinical reasoning training improves the speed AND accuracy of diagnosis — if Forge Mode's contraindication layer adds latency without measurably improving lens selection accuracy, it is analogous to the over-testing trap",
+      "Simulated patient encounters are effective because they have a known correct diagnosis and a structured debrief — Forge Mode scenarios should similarly have a clear correct lens and a structured artifact output, not open-ended exploration",
+      "The most durable diagnostic improvement comes from building illness scripts (pattern templates) rather than memorizing specific case presentations — Forge Mode should build lens selection heuristics, not case-specific contraindication lists"
+    ],
+    "task_context": "Forge Mode is a reflexive self-improvement system where a cognitive augmentation agent uses its own capabilities to stress-test its lens selection (conceptual framework matching), simulate user profiles, and apply its own lenses to its own product decisions — generating synthetic scenarios to find where reasoning breaks down and producing concrete metadata artifacts.",
+    "anti_overlap": [
+      "fd-aviation-safety-crm covers scenario-based training methodology but not differential diagnosis structure",
+      "fd-feedback-loop-integrity covers self-referential improvement loops but not diagnostic accuracy methodology",
+      "fd-clinical-quality-improvement covers institutional quality but not individual diagnostic reasoning education"
+    ]
+  },
+  {
+    "name": "fd-feedback-loop-integrity",
+    "focus": "How control systems engineering manages the stability, gain, and integrity of feedback loops — particularly the risks of self-referential systems that use their own output as input for self-improvement, including oscillation, runaway gain, and the observer effect where measuring a system changes its behavior",
+    "persona": "A control systems engineer and cybernetics researcher who has designed feedback control for industrial processes, autonomous systems, and adaptive algorithms. Studies how self-referential feedback loops become unstable, how gain must be managed to prevent oscillation, and how the observer effect distorts measurement in systems that measure themselves.",
+    "decision_lens": "Evaluates whether Forge Mode's self-improvement flywheel has the control-theoretic properties needed for stable convergence — correct gain, damping, and separation between the system being improved and the improvement mechanism — or whether it risks the classic pathologies of self-referential feedback: oscillation, runaway optimization, and Goodhart's Law collapse.",
+    "source_domain": "Control systems engineering and cybernetics — feedback loop design, stability analysis, gain management, and observer effect in self-referential systems",
+    "distance_rationale": "Forge Mode is fundamentally a feedback control system: it measures its own performance (stress tests), generates error signals (near-miss identification), and applies corrections (contraindication metadata). Control theory has formal tools for analyzing whether such loops converge, oscillate, or diverge — and the history of self-referential systems is full of cautionary examples that map directly to Forge Mode's architecture.",
+    "expected_isomorphisms": [
+      "Forge Mode flywheel = closed-loop feedback controller: stress test measures error, contraindication update is the corrective action, next stress test is the measurement of the corrected system",
+      "Near-miss analysis = error signal detection: both identify the difference between actual output and desired output, but the quality of the error signal determines whether correction converges or oscillates",
+      "Meta Mode (applying own lenses to own decisions) = self-referential measurement: the system measuring itself with its own instruments, creating the observer effect where the measurement changes what is measured",
+      "Contraindication accumulation = gain increase: each new contraindication increases the system's sensitivity to potential errors, which can improve accuracy (correct gain) or create over-sensitivity (excessive gain leading to oscillation)"
+    ],
+    "review_areas": [
+      "Loop stability analysis: the Forge Mode flywheel (stress test -> update metadata -> validate -> apply to decisions -> find new edge cases -> stress test) is a closed feedback loop — analyze whether this loop has the properties for stable convergence (negative feedback with appropriate gain) or whether it risks oscillation (contraindication added, then removed when it blocks valid applications, then re-added when the removal allows the original error)",
+      "Gain management in contraindication accumulation: each Forge Mode session adds contraindications, distinguishing features, and near-miss relationships — as this metadata grows, the system's sensitivity to potential misapplication increases — determine whether there is a gain-limiting mechanism that prevents the system from becoming so sensitive to false positives that it can no longer confidently select any lens",
+      "Observer effect in Meta Mode: when Auraken applies its own lenses to its own product decisions, the system is simultaneously the observer and the observed — assess whether this self-referential measurement distorts either the measurement or the thing being measured in ways that make the Meta Mode output less trustworthy than external evaluation",
+      "Damping and convergence rate: well-designed feedback systems converge to a stable state — assess whether Forge Mode has damping mechanisms (e.g., diminishing weight of successive corrections, threshold for metadata changes) or whether each session produces equal-weight changes regardless of convergence state",
+      "Goodhart's Law risk in stress test metrics: if Forge Mode optimizes for stress test pass rate (all known near-misses correctly handled), this metric can become the target rather than the measure — the system optimizes for handling generated scenarios rather than for genuine lens selection quality in real conversations"
+    ],
+    "severity_examples": [
+      {
+        "severity": "high",
+        "example": "No explicit gain-limiting mechanism in the Forge Mode flywheel — contraindication metadata grows monotonically with each session, with no mechanism for pruning contraindications that are not validated by real-world pushback events, risking unbounded sensitivity increase"
+      },
+      {
+        "severity": "medium",
+        "example": "Meta Mode's self-referential structure (applying own lenses to own development) creates an observer effect with no external reference signal — the system may converge on internally consistent but externally suboptimal decisions because the measurement instrument and the measured system share the same biases"
+      },
+      {
+        "severity": "low",
+        "example": "The flywheel description does not specify convergence criteria — there is no definition of when Forge Mode stress testing for a particular capability has reached sufficient coverage, risking either premature termination or indefinite iteration"
+      }
+    ],
+    "success_hints": [
+      "A well-designed self-improvement loop needs explicit gain management — the rate of change should decrease as the system converges, not remain constant",
+      "Self-referential measurement (Meta Mode) should be explicitly marked as lower-confidence than external measurement, with mechanisms for external validation of internally-generated conclusions",
+      "The most important missing component in many self-improving systems is a stopping criterion — without one, the improvement loop either runs forever or stops arbitrarily"
+    ],
+    "task_context": "Forge Mode is a reflexive self-improvement system where a cognitive augmentation agent uses its own capabilities to stress-test its lens selection (conceptual framework matching), simulate user profiles, and apply its own lenses to its own product decisions — generating synthetic scenarios to find where reasoning breaks down and producing concrete metadata artifacts.",
+    "anti_overlap": [
+      "fd-aviation-safety-crm covers scenario generation methodology but not feedback loop stability analysis",
+      "fd-clinical-case-reasoning covers diagnostic improvement but not control-theoretic stability properties",
+      "fd-retrospective-facilitation covers structured reflection practices but not the formal dynamics of self-referential systems"
+    ]
+  },
+  {
+    "name": "fd-retrospective-facilitation",
+    "focus": "How agile retrospective facilitation and coaching psychology manage the boundary between productive self-criticism and destructive over-analysis — the facilitation skills that determine whether structured reflection produces actionable improvement or ruminative paralysis",
+    "persona": "An organizational psychologist and professional facilitator who has run thousands of team retrospectives and individual coaching sessions. Studies the conditions under which structured reflection produces behavioral change versus the conditions under which it produces self-conscious paralysis, performative introspection, or 'insight addiction' — the pattern where reflection feels productive but produces no durable behavioral change.",
+    "decision_lens": "Evaluates whether Forge Mode's reflective structure will produce genuine improvement artifacts or whether it risks the facilitation failure modes: insight without action, rumination disguised as analysis, perfectionism masquerading as quality, and the meta-trap where reflecting on reflection becomes the activity instead of the means.",
+    "source_domain": "Retrospective facilitation, coaching psychology, and deliberate practice theory — structured reflection for behavioral improvement",
+    "distance_rationale": "Forge Mode is fundamentally a facilitated reflection practice — the builder and agent collaboratively examine the agent's behavior to improve it. Facilitation science has decades of research on when this works (specific, bounded, artifact-producing) and when it fails (open-ended, insight-oriented, satisfaction-maximizing), and the failure modes map precisely to risks in Forge Mode's design.",
+    "expected_isomorphisms": [
+      "Forge Mode session = structured retrospective: both are time-bounded collaborative reflection sessions that should produce specific, actionable artifacts rather than general insights",
+      "The Forge Mode flywheel = the improvement kata: both describe a cycle of identifying current state, defining target state, experimenting, and reflecting — with the same risk that the cycle becomes ritualistic rather than genuinely experimental",
+      "Profile Sim = role-playing exercises in coaching: both use simulated scenarios to test responses, with the same risk that performance in simulation diverges from performance in practice",
+      "Meta Mode = meta-coaching (coaching about coaching): both apply the improvement methodology to the improvement methodology itself, with the same risk of infinite regress and diminishing returns"
+    ],
+    "review_areas": [
+      "Insight addiction vs. actionable output: coaching psychology distinguishes between insight (understanding a pattern) and behavior change (acting differently) — assess whether Forge Mode sessions are structured to produce behavior-changing artifacts (concrete metadata, specific rule changes) or whether the conversational format risks producing satisfying insights that do not translate into system changes",
+      "The rumination boundary: there is a clinically studied boundary between productive reflection (goal-directed, bounded, concludes with action items) and rumination (recursive, unbounded, produces anxiety rather than clarity) — evaluate whether Forge Mode has structural mechanisms preventing sessions from crossing into meta-rumination about edge cases that are too unlikely to warrant architectural response",
+      "Facilitation bias toward complexity: facilitators and coaches have a documented tendency to make situations appear more complex than they are, because complexity justifies continued facilitation — assess whether Forge Mode's incentive structure encourages finding genuine edge cases or manufacturing complexity that justifies more Forge sessions",
+      "The specificity gradient: effective retrospectives narrow from broad observation to specific, testable action items within a single session — examine whether Forge Mode sub-modes (Dojo, Lab, Meta) have sufficient structure to force narrowing, or whether the conversational format allows comfortable exploration at the broad-observation level without descent to testable specifics",
+      "Diminishing returns in repeated reflection: deliberate practice research shows that reflection on the same skill area produces diminishing returns after initial improvement — determine whether Forge Mode tracks which capability areas have been stress-tested and their current coverage, so sessions can be directed toward areas of genuine uncertainty rather than re-examining already-robust capabilities",
+      "The performative introspection trap: in team retrospectives, teams sometimes perform the ritual of reflection without genuine vulnerability — the equivalent risk in Forge Mode is that the builder and agent collaboratively explore 'safe' edge cases while avoiding the genuinely uncomfortable ones where the product's thesis might be wrong"
+    ],
+    "severity_examples": [
+      {
+        "severity": "high",
+        "example": "No structural mechanism distinguishes productive Forge Mode sessions (specific capability, testable scenario, concrete artifact) from rumination sessions (broad exploration, satisfying conversation, no durable output) — the design principles state artifacts are the output but the architecture does not enforce artifact production"
+      },
+      {
+        "severity": "medium",
+        "example": "The flywheel description implies continuous improvement without diminishing returns tracking — repeated stress testing of already-robust capabilities wastes builder time and creates false confidence through coverage metrics rather than genuine improvement"
+      },
+      {
+        "severity": "low",
+        "example": "Meta Mode (applying own lenses to own decisions) lacks the facilitation structure that prevents meta-reflection from becoming recursive — coaching psychology uses explicit level-setting ('we are now coaching about coaching, and this session ends in 20 minutes') to contain meta-analysis"
+      }
+    ],
+    "success_hints": [
+      "Every Forge Mode session should have a forcing function that requires artifact output — if a session produces only conversation, the facilitation structure has failed regardless of how insightful the conversation felt",
+      "The most effective retrospectives are boring: specific, bounded, conclude with 1-3 concrete changes, and track whether previous changes stuck — Forge Mode should aspire to boring productivity over exciting exploration",
+      "Diminishing returns tracking is essential: if a capability has been stress-tested in 10 sessions with decreasing yield per session, the next session should target a different capability, not continue mining the same vein"
+    ],
+    "task_context": "Forge Mode is a reflexive self-improvement system where a cognitive augmentation agent uses its own capabilities to stress-test its lens selection (conceptual framework matching), simulate user profiles, and apply its own lenses to its own product decisions — generating synthetic scenarios to find where reasoning breaks down and producing concrete metadata artifacts.",
+    "anti_overlap": [
+      "fd-aviation-safety-crm covers structured debriefing in a training context but not the facilitation psychology of productive vs. destructive reflection",
+      "fd-clinical-case-reasoning covers simulated case methodology but not the meta-reflection failure modes",
+      "fd-feedback-loop-integrity covers system-level feedback dynamics but not the human facilitation skills that determine reflection quality"
+    ]
+  }
+]
