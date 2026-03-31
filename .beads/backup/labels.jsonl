@@ -94,6 +94,10 @@
 {"issue_id":"sylveste-rsj.1.9.1","label":"complexity:3"}
 {"issue_id":"sylveste-rsj.1.9.1","label":"lane:autonomy"}
 {"issue_id":"sylveste-rsj.1.9.1","label":"lane:sota"}
+{"issue_id":"sylveste-rsj.12","label":"artifact_brainstorm:docs/brainstorms/2026-03-31-hearsay-rule-brainstorm.md"}
+{"issue_id":"sylveste-rsj.12","label":"artifact_plan:docs/plans/2026-03-31-hearsay-rule.md"}
+{"issue_id":"sylveste-rsj.12","label":"claimed_at:1774933768"}
+{"issue_id":"sylveste-rsj.12","label":"claimed_by:7d7a8996-1f5b-43df-b3ea-cb61ad729a86"}
 {"issue_id":"sylveste-rsj.2","label":"interflux"}
 {"issue_id":"sylveste-rsj.2","label":"reaction-round"}
 {"issue_id":"sylveste-rsj.3","label":"artifact_assessment-1:docs/research/assess-identification-as-calibration.md"}
