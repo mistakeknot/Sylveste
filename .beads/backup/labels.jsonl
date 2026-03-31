@@ -44,6 +44,8 @@
 {"issue_id":"sylveste-e8n","label":"claimed_at:1774737889"}
 {"issue_id":"sylveste-e8n","label":"claimed_by:6b85bcd6-53a3-44df-938f-42d1618302e6"}
 {"issue_id":"sylveste-ln3","label":"feature"}
+{"issue_id":"sylveste-lok","label":"artifact_brainstorm:apps/Auraken/docs/brainstorms/2026-03-31-model-routing.md"}
+{"issue_id":"sylveste-lok","label":"artifact_plan:apps/Auraken/docs/plans/2026-03-31-model-routing.md"}
 {"issue_id":"sylveste-muf","label":"auraken"}
 {"issue_id":"sylveste-muf","label":"productrecs"}
 {"issue_id":"sylveste-rb6","label":"artifact_brainstorm:docs/brainstorms/2026-03-29-flashmoe-cache-sweep.md"}
@@ -151,5 +153,10 @@
 {"issue_id":"sylveste-rsj.7","label":"artifact_prd:docs/prds/2026-03-31-composable-discourse-protocols.md"}
 {"issue_id":"sylveste-rsj.7","label":"artifact_reflection:docs/reflections/2026-03-31-composable-discourse-protocols-reflect.md"}
 {"issue_id":"sylveste-rsj.7","label":"claimed_at:1774937439"}
+{"issue_id":"sylveste-rsj.9","label":"artifact_brainstorm:docs/brainstorms/2026-03-31-discourse-fixative-brainstorm.md"}
+{"issue_id":"sylveste-rsj.9","label":"artifact_plan:docs/plans/2026-03-31-discourse-fixative.md"}
+{"issue_id":"sylveste-rsj.9","label":"artifact_prd:docs/prds/2026-03-31-discourse-fixative.md"}
+{"issue_id":"sylveste-rsj.9","label":"claimed_at:1774940991"}
+{"issue_id":"sylveste-rsj.9","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-vm4","label":"artifact_closed:d956378518bbef3e4da65d30672671bbd7936a44"}
 {"issue_id":"sylveste-vm4","label":"artifact_plan:docs/plans/2026-03-29-flashmoe-cache-tuning.md"}
