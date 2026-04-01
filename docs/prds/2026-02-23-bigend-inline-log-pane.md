@@ -28,7 +28,7 @@ Wire the existing `LogHandler` + `LogPane` infrastructure into Bigend so logs ap
 - [x] Log pane renders as bottom overlay when visible
 - [ ] Auto-hide after configurable timeout (3s default) when no new logs arrive
 - [x] Keyboard toggle to show/hide log pane manually (`ctrl+l`)
-- [x] Log pane does not interfere with existing pane layout or navigation
+- [x] Log pane does not interfer with existing pane layout or navigation
 
 ### F3: Scrollback Dump on Exit
 **What:** After `tea.Program.Run()` returns, dump all captured log entries to stdout so they appear in terminal scrollback.

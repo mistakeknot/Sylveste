@@ -51,7 +51,7 @@ Multi-agent AI discourse needs models for how agents with different speeds, pers
 
 ## What NOT to Flag
 
-- fd-tidal-resonance covers resonance and phase interference from oceanography
+- fd-tidal-resonance covers resonance and phase interfernce from oceanography
 - fd-judicial-evidence covers adversarial process and evidence rules from law
 - fd-monastic-scriptoria covers sequential copying and error propagation from manuscripts
 - Only flag the above if they are deeply entangled with your specialist focus and another agent would miss the nuance

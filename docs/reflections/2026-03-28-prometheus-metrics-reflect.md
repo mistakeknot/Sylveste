@@ -7,7 +7,7 @@ type: reflection
 # Reflection: Prometheus /metrics Export
 
 ## What went well
-- **Format translation, not metrics creation**: interfere already had comprehensive observability. The task was purely exposing existing data in Prometheus format — the right abstraction level.
+- **Format translation, not metrics creation**: interfer already had comprehensive observability. The task was purely exposing existing data in Prometheus format — the right abstraction level.
 - **Dual-format via content negotiation**: Preserves backward compatibility for any JSON consumers while adding Prometheus support. No breaking changes.
 - **Review findings were actionable**: The quality reviewer caught the hot-loop label resolution issue and the latency measurement semantic ambiguity. Both were incorporated during execution.
 
@@ -16,6 +16,6 @@ type: reflection
 - **ACTIVE_REQUESTS dec happens at stream-start**: The gauge decrements when the StreamingResponse is returned, not when streaming completes. For true in-flight tracking, you'd wrap the generator with an async finalizer. Acceptable for now since scrape intervals (15-30s) dwarf individual stream durations.
 
 ## Decisions made
-- Used default prometheus_client registry (not custom) — simpler, and interfere runs as a single process
+- Used default prometheus_client registry (not custom) — simpler, and interfer runs as a single process
 - Kept both `/metrics` (content-negotiated) and `/metrics/prometheus` (explicit) — different consumers may prefer different discovery patterns
 - Thermal level mapped to integers (0-4) rather than string labels — Grafana gauge panels need numeric values for thresholds and alerting

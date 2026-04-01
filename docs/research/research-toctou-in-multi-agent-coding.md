@@ -71,7 +71,7 @@
 - Published at ICLR 2025, OpenHands supports hierarchical agent delegation via `AgentDelegateAction`.
 - Agent isolation is achieved through Docker containerization — each agent operates in its own container, torn down post-session.
 - No published documentation of coordination failures between agents.
-- The architecture prevents cross-agent file interference by design (separate containers).
+- The architecture prevents cross-agent file interfernce by design (separate containers).
 
 **Assessment:**
 - **Failure mode:** Prevented by architecture (container isolation)

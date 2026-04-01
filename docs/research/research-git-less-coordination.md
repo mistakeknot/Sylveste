@@ -316,7 +316,7 @@ for f in $FILES; do
     gofmt -l "$f"
 done
 ```
-This reduces but does not eliminate cross-session interference, because the staged files may include files from another session (due to the shared index problem).
+This reduces but does not eliminate cross-session interfernce, because the staged files may include files from another session (due to the shared index problem).
 
 ---
 
@@ -365,7 +365,7 @@ This reduces but does not eliminate cross-session interference, because the stag
 **Limitations** (from [gitbutlerapp/gitbutler#12224](https://github.com/gitbutlerapp/gitbutler/issues/12224)):
 - "If both agents modify the same file simultaneously, one will overwrite the other's changes before GitButler can assign the diffs."
 - "All applied virtual branches share the same physical workspace" -- no filesystem isolation.
-- Runtime interference: code execution sees a mix of changes from all applied branches.
+- Runtime interfernce: code execution sees a mix of changes from all applied branches.
 - Virtual branches are a logical abstraction over the same physical files.
 
 **Relevance**: GitButler demonstrates the best current attempt at worktree-less multi-agent git coordination. But the core problem remains unsolved -- simultaneous edits to the same file create race conditions at the filesystem level, before GitButler can intervene.
@@ -685,7 +685,7 @@ Use git worktrees or container isolation. The shared working tree approach does 
 - Filesystem-level read-after-write conflicts become frequent
 - Convention-based ownership breaks down as the number of agents exceeds the number of natural package boundaries
 - The commit serialization bottleneck limits throughput
-- Test interference (shared build artifacts, caches, databases) becomes unmanageable
+- Test interfernce (shared build artifacts, caches, databases) becomes unmanageable
 
 ### 9.4 What NOT to Do
 

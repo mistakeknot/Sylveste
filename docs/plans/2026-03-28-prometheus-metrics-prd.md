@@ -8,23 +8,23 @@ status: active
 # PRD: Prometheus /metrics Export for Grafana Monitoring
 
 ## Problem Statement
-interfere exposes rich operational metrics (latency, thermal, GPU memory, cascade routing, quality scores) as JSON. Prometheus/Grafana—the standard monitoring stack—cannot scrape JSON. Overnight playtest sessions need automated dashboards without custom JSON→Prometheus adapters.
+interfer exposes rich operational metrics (latency, thermal, GPU memory, cascade routing, quality scores) as JSON. Prometheus/Grafana—the standard monitoring stack—cannot scrape JSON. Overnight playtest sessions need automated dashboards without custom JSON→Prometheus adapters.
 
 ## Goal
-Add native Prometheus exposition format to interfere's `/metrics` endpoint, enabling direct Grafana scraping.
+Add native Prometheus exposition format to interfer's `/metrics` endpoint, enabling direct Grafana scraping.
 
 ## Features
 
 ### F1: Prometheus Metric Instruments
 Register prometheus_client instruments that get updated in the request lifecycle:
-- `interfere_request_latency_seconds` (Histogram) — per-request, labeled by model
-- `interfere_tokens_generated_total` (Counter) — cumulative tokens produced
-- `interfere_active_requests` (Gauge) — currently in-flight requests
-- `interfere_thermal_level` (Gauge) — macOS thermal pressure (0=nominal, 1=moderate, 2=heavy, 3=trapping, 4=sleeping)
-- `interfere_gpu_memory_bytes` (Gauge) — active and peak Metal memory
-- `interfere_errors_total` (Counter) — error count by type
-- `interfere_cascade_decisions_total` (Counter) — cascade outcomes (accept/escalate/cloud)
-- `interfere_quality_composite` (Gauge) — latest quality composite score
+- `interfer_request_latency_seconds` (Histogram) — per-request, labeled by model
+- `interfer_tokens_generated_total` (Counter) — cumulative tokens produced
+- `interfer_active_requests` (Gauge) — currently in-flight requests
+- `interfer_thermal_level` (Gauge) — macOS thermal pressure (0=nominal, 1=moderate, 2=heavy, 3=trapping, 4=sleeping)
+- `interfer_gpu_memory_bytes` (Gauge) — active and peak Metal memory
+- `interfer_errors_total` (Counter) — error count by type
+- `interfer_cascade_decisions_total` (Counter) — cascade outcomes (accept/escalate/cloud)
+- `interfer_quality_composite` (Gauge) — latest quality composite score
 
 ### F2: Dual-Format /metrics Endpoint
 - `GET /metrics` with `Accept: text/plain` → Prometheus text format

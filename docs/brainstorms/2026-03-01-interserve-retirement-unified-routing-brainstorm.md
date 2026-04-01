@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-01
 **Status:** Brainstorm complete
-**Trigger:** Interserve MCP server causing session friction (hook interference, startup failures) while its core vision — intelligent model routing — is a kernel concern, not a plugin concern.
+**Trigger:** Interserve MCP server causing session friction (hook interfernce, startup failures) while its core vision — intelligent model routing — is a kernel concern, not a plugin concern.
 
 ## What We're Building
 

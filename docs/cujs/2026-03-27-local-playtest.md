@@ -1,17 +1,17 @@
 ---
-title: "Local Game Playtesting via interfere"
+title: "Local Game Playtesting via interfer"
 date: 2026-03-27
 bead: sylveste-86r
 ---
 
-# CUJ: Local Game Playtesting via interfere
+# CUJ: Local Game Playtesting via interfer
 
 ## Persona
 Developer working on Shadow Work who wants continuous emergence testing without API costs.
 
 ## Journey
 
-1. **Start interfere** — `cd interverse/interfere && uv run python -m server.main` (port 8421)
+1. **Start interfer** — `cd interverse/interfer && uv run python -m server.main` (port 8421)
 2. **Start Shadow Work** — `cd ../shadow-work && pnpm dev:tauri` (debug server on 8790)
 3. **Run local playtest** — `python scripts/playtest-bridge.py --campaign climate-cascade`
 4. **Bridge loops:**

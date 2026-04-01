@@ -61,7 +61,7 @@ Build three components that enable interlab to run the autoresearch campaign: a 
 
 ## Dependencies
 
-- MLX and mlx-lm installed (already in interfere's dependencies)
+- MLX and mlx-lm installed (already in interfer's dependencies)
 - interlab MCP tools (init_experiment, run_experiment, log_experiment)
 - Existing ReservoirReadout skeleton in `server/experiments/reservoir_routing.py`
 - py-bench-harness.sh for METRIC line parsing

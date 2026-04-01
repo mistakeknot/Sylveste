@@ -53,7 +53,7 @@
     "name": "fd-coordination-identity",
     "focus": "Agent identity, contact policies, registration lifecycle, and trust boundaries between agents",
     "persona": "A security-oriented systems designer with experience in capability-based security and distributed identity. Examines how agents are named, how they establish trust, and how policies prevent unauthorized coordination.",
-    "decision_lens": "Prioritizes findings where mcp_agent_mail's contact/policy model reveals gaps in Sylveste's agent identity story — specifically Intercore's agent lock/claim model and Interlock's file-reservation ownership. Elevates anything that could prevent agent impersonation or accidental cross-agent interference.",
+    "decision_lens": "Prioritizes findings where mcp_agent_mail's contact/policy model reveals gaps in Sylveste's agent identity story — specifically Intercore's agent lock/claim model and Interlock's file-reservation ownership. Elevates anything that could prevent agent impersonation or accidental cross-agent interfernce.",
     "review_areas": [
       "Agent registration flow: what information is required at register_agent time, whether identities are ephemeral or persistent across restarts, and how identity is proven on each request",
       "Contact policies: what the set_contact_policy tool enforces (allow-list, deny-list, rate-limit?) and whether policies are per-agent or global",

@@ -112,7 +112,7 @@ In reality, agent workflows blur these boundaries:
 **Recommendation:**
 - Document explicit **escalation triggers** (when does a per-turn loop signal escalate to sprint? when does sprint escalation trigger multi-agent coordination?).
 - Specify **wait semantics**: when a per-turn loop discovers it needs multi-agent coordination, what's the blocking behavior? (Pause? Retry? Escalate?)
-- In temporal reasoning, acknowledge the tension: "Four timescales assume independence; in practice, they'll interfere. Design for safe degradation: what's the minimum set of signal each loop needs from others to avoid bad decisions?"
+- In temporal reasoning, acknowledge the tension: "Four timescales assume independence; in practice, they'll interfer. Design for safe degradation: what's the minimum set of signal each loop needs from others to avoid bad decisions?"
 
 ---
 

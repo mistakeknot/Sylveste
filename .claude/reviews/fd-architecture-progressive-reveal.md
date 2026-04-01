@@ -7,7 +7,7 @@
 
 ## Executive Summary
 
-The plan correctly identifies the integration goal — wiring the Coordinator into PollardView for progressive display — but introduces three structural problems that will produce silent runtime failures and state incoherence before the first line of feature logic runs. The core issues are: (1) the Coordinator's message delivery mechanism is never activated in this plan, making all message-based progressive reveal inert; (2) PollardView duplicates status tracking that ResearchOverlay already owns, creating two divergent state machines reading the same event stream; (3) the shared Coordinator instance creates a cross-view interference problem that is not acknowledged or mitigated.
+The plan correctly identifies the integration goal — wiring the Coordinator into PollardView for progressive display — but introduces three structural problems that will produce silent runtime failures and state incoherence before the first line of feature logic runs. The core issues are: (1) the Coordinator's message delivery mechanism is never activated in this plan, making all message-based progressive reveal inert; (2) PollardView duplicates status tracking that ResearchOverlay already owns, creating two divergent state machines reading the same event stream; (3) the shared Coordinator instance creates a cross-view interfernce problem that is not acknowledged or mitigated.
 
 ---
 
@@ -133,7 +133,7 @@ This means: if Gurgeh initiates a research run during onboarding (e.g., for spec
 
 The symmetrical case: a Pollard research run in progress is killed when Gurgeh's onboarding transitions into a spec summary step and calls `StartRun`.
 
-The Coordinator's comment acknowledges this is intentional for project-switching (the field comment: "ensures only one run is active per project"), but the documented use case is same-view navigation, not cross-tab interference.
+The Coordinator's comment acknowledges this is intentional for project-switching (the field comment: "ensures only one run is active per project"), but the documented use case is same-view navigation, not cross-tab interfernce.
 
 **Minimum viable fix:** Give PollardView its own coordinator instance rather than sharing Gurgeh's. The coordinator is cheap to construct (`research.NewCoordinator(nil)` allocates a registry and that's all). There is no shared state or benefit from sharing across unrelated views. The plan's rationale for sharing is not stated; the comment "Extract researchCoord to a local variable so both GurgehConfig and PollardView share the same instance" gives no justification.
 

@@ -254,7 +254,7 @@ Message expiry operating on fast TTL (days to weeks) prunes that evidence before
 - Lifecycle heterogeneous (Project A in execute, Project B in review)
 - Interspect evidence is project-scoped; cross-project falls outside measurement boundary
 
-**Emergent behavior:** Simple rules at within-project scale (any agent can message any) produce interference patterns at cross-project scale. File reservations are project-scoped; cross-project file access has no current primitive. Phase semantics are incompatible.
+**Emergent behavior:** Simple rules at within-project scale (any agent can message any) produce interfernce patterns at cross-project scale. File reservations are project-scoped; cross-project file access has no current primitive. Phase semantics are incompatible.
 
 **Action:** Do not attempt cross-project coordination until Track C design clarifies the system class boundaries and how within-project primitives compose (or don't) across project boundaries.
 

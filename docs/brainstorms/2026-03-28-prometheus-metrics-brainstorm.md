@@ -7,7 +7,7 @@ status: complete
 # Brainstorm: Prometheus /metrics Export for Grafana Monitoring
 
 ## Problem
-interfere's `/metrics` endpoint returns JSON — useful for debugging but not scrapable by Prometheus/Grafana. Overnight playtest sessions need dashboards for thermal pressure, GPU memory, latency percentiles, and cascade routing efficiency.
+interfer's `/metrics` endpoint returns JSON — useful for debugging but not scrapable by Prometheus/Grafana. Overnight playtest sessions need dashboards for thermal pressure, GPU memory, latency percentiles, and cascade routing efficiency.
 
 ## Current State
 - **Framework:** Starlette + Uvicorn (ASGI)
@@ -23,15 +23,15 @@ Add `prometheus_client` dependency. Serve Prometheus text format when `Accept: t
 
 | Metric | Type | Labels | Source |
 |--------|------|--------|--------|
-| `interfere_request_latency_seconds` | Histogram | `model`, `status` | `latency_samples` |
-| `interfere_tokens_generated_total` | Counter | `model` | streaming response |
-| `interfere_active_requests` | Gauge | — | middleware count |
-| `interfere_thermal_level` | Gauge | `level` | `thermal.py` |
-| `interfere_gpu_memory_bytes` | Gauge | `type` (active/peak) | `metal_worker.py` |
-| `interfere_errors_total` | Counter | `type` | error handler |
-| `interfere_cascade_decisions_total` | Counter | `outcome` (accept/escalate/cloud) | `cascade.py` |
-| `interfere_quality_score` | Gauge | `metric` (perplexity/coherence/composite) | `quality.py` |
-| `interfere_request_count_total` | Counter | `model`, `status_code` | request middleware |
+| `interfer_request_latency_seconds` | Histogram | `model`, `status` | `latency_samples` |
+| `interfer_tokens_generated_total` | Counter | `model` | streaming response |
+| `interfer_active_requests` | Gauge | — | middleware count |
+| `interfer_thermal_level` | Gauge | `level` | `thermal.py` |
+| `interfer_gpu_memory_bytes` | Gauge | `type` (active/peak) | `metal_worker.py` |
+| `interfer_errors_total` | Counter | `type` | error handler |
+| `interfer_cascade_decisions_total` | Counter | `outcome` (accept/escalate/cloud) | `cascade.py` |
+| `interfer_quality_score` | Gauge | `metric` (perplexity/coherence/composite) | `quality.py` |
+| `interfer_request_count_total` | Counter | `model`, `status_code` | request middleware |
 
 ### Key Decisions
 1. **Content negotiation vs separate path:** Both — Accept header on `/metrics` + explicit `/metrics/prometheus` path

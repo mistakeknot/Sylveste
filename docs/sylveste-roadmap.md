@@ -100,7 +100,7 @@ Longer-term directions, not yet scoped into specific items. Full inventory: [bac
 | interdeep | interverse/interdeep | 0.1.6 | early | no | n/a |
 | interdev | interverse/interdev | 0.2.0 | active | yes | 4 |
 | interdoc | interverse/interdoc | 5.2.1 | active | yes | 4 |
-| interfere | interverse/interfere | 0.1.0 | early | no | n/a |
+| interfer | interverse/interfer | 0.1.0 | early | no | n/a |
 | interfluence | interverse/interfluence | 0.2.10 | active | yes | 4 |
 | interflux | interverse/interflux | 0.2.52 | active | yes | n/a |
 | interform | interverse/interform | 0.1.0 | active | yes | 4 |

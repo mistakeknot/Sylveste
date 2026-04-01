@@ -21,7 +21,7 @@ These must hold unconditionally across all code paths:
 4. Budget shares sum to 100 after normalization (no share is silently lost)
 5. When min_tokens push uncapped sum above total budget, per-stage allocations scale down proportionally
 6. All gate evaluators (all four types) fail-open on internal errors — return 0, never block
-7. `_SPEC_LIB_SOURCED` double-source guard is separate from and does not interfere with `_SPEC_LOADED` cache state
+7. `_SPEC_LIB_SOURCED` double-source guard is separate from and does not interfer with `_SPEC_LOADED` cache state
 8. `enforce_gate` returns 0 (pass) when `_sprint_resolve_run_id` fails (fail-open for missing sprint)
 
 ---
@@ -392,7 +392,7 @@ On re-reading: `_SPEC_PATH` is actually cleared in `spec_invalidate_cache`. This
 | Budget shares sum to 100 after normalize | CONDITIONAL PASS | Sum is correct for the default spec (shares already sum to 100). Rounding edge cases possible for override specs with unusual share distributions (C2). |
 | Overallocation cap scales down correctly | CONDITIONAL PASS | Logic is correct when `total_budget` is read consistently. Double read of `sprint_read_state` can produce inconsistency (C6). |
 | All gate evaluators fail-open on internal errors | PASS | Unknown gate types hit the `*` case with `continue`, not `any_failed=1`. jq errors in each case guard are caught with `|| continue` or `|| cmd=""` patterns. |
-| `_SPEC_LIB_SOURCED` is separate from `_SPEC_LOADED` | PASS | Sourced once at library load; `_SPEC_LOADED` is separately initialized to `""`. They cannot interfere. |
+| `_SPEC_LIB_SOURCED` is separate from `_SPEC_LOADED` | PASS | Sourced once at library load; `_SPEC_LOADED` is separately initialized to `""`. They cannot interfer. |
 | `enforce_gate` returns 0 when resolve fails | PASS (but undocumented) | Returns 0 via `|| return 0`. Behavior is correct for fail-open intent but produces no warning (C1). |
 
 ---

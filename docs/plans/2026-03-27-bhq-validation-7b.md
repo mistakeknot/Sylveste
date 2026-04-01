@@ -11,7 +11,7 @@ Validate BHQ (TurboQuant v3) on a model with head_dim=128 where the Beta distrib
 ### 1. Select and load model
 - Find a 7B model that fits in 128GB with KV cache headroom
 - Prefer fp16 weights to avoid double-quantization penalty
-- Candidate: `mlx-community/Qwen2.5-7B-Instruct-4bit` (known to work with interfere)
+- Candidate: `mlx-community/Qwen2.5-7B-Instruct-4bit` (known to work with interfer)
 - Alternative: `mlx-community/Qwen2.5-3B-Instruct` (fp16, smaller, head_dim=128)
 
 ### 2. Verify model config

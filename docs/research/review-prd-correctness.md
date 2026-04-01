@@ -16,7 +16,7 @@ Before evaluating individual concerns, these are the invariants the system depen
 3. **Config-absent invariant** — When `routing.yaml` is absent, every resolution path returns an empty string and callers use their existing defaults. No error exit, no warning spam.
 4. **Override priority invariant** — Explicit flags (`--model`, `--tier`) always win over config. Config always wins over hardcoded defaults. This must hold transitively through all resolution levels.
 5. **File-atomicity invariant** — The YAML parser must not read partially-written config. (Applies if routing.yaml is ever updated at runtime, e.g. by `/model-routing`.)
-6. **Concurrent-caller invariant** — Multiple `dispatch.sh` invocations running in parallel (a normal state during parallel agent dispatch) must not interfere with each other's resolution results.
+6. **Concurrent-caller invariant** — Multiple `dispatch.sh` invocations running in parallel (a normal state during parallel agent dispatch) must not interfer with each other's resolution results.
 
 ---
 

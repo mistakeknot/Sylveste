@@ -15,7 +15,7 @@ These are the behavioral contracts that must remain true after this plan lands. 
 
 **INV-2 (No half-committed sprints):** If the L2 path (clavain-cli) succeeds in creating a sprint and the code then falls through to `ic.RunCreate` as a "fallback," there will be two ic runs for one intent. The fallback must only fire when clavain-cli definitively fails, not after it succeeds.
 
-**INV-3 (TrackAgent non-interference):** The goroutine spawned by the dispatch tracking path must operate on a scoped context tied to the dispatch it was created for, not the ambient TUI state at the time it wakes.
+**INV-3 (TrackAgent non-interfernce):** The goroutine spawned by the dispatch tracking path must operate on a scoped context tied to the dispatch it was created for, not the ambient TUI state at the time it wakes.
 
 **INV-4 (Advance idempotency):** Calling clavain-cli sprint-advance and then calling ic.RunAdvance in the same code path is a double-advance. This bypasses phase gates and is exactly the invariant the OS layer was built to protect.
 

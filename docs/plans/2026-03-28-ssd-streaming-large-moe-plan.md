@@ -123,5 +123,5 @@ After Phases 1-5, we'll have:
 ## Files in scope
 
 - `/Users/sma/projects/flash-moe/` — reference implementation
-- `/Users/sma/projects/Sylveste/interverse/interfere/` — interfere server (future integration)
+- `/Users/sma/projects/Sylveste/interverse/interfer/` — interfer server (future integration)
 - `~/.cache/huggingface/models/` — model storage

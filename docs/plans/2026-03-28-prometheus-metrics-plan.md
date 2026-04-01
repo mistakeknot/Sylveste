@@ -8,16 +8,16 @@ status: active
 # Plan: Prometheus /metrics Export
 
 ## Overview
-Add `prometheus_client` to interfere, register instruments that update in the existing request lifecycle, and serve Prometheus text format alongside existing JSON.
+Add `prometheus_client` to interfer, register instruments that update in the existing request lifecycle, and serve Prometheus text format alongside existing JSON.
 
 ## Tasks
 
 ### Task 1: Add `prometheus_client` dependency
-**File:** `interverse/interfere/pyproject.toml`
+**File:** `interverse/interfer/pyproject.toml`
 - Add `prometheus_client>=0.21.0` to `dependencies`
 
 ### Task 2: Create `server/prom.py` — Prometheus instrument registry
-**File:** `interverse/interfere/server/prom.py` (new)
+**File:** `interverse/interfer/server/prom.py` (new)
 - Define all Prometheus instruments in one module:
   - `REQUEST_LATENCY` — Histogram, buckets `.005,.01,.025,.05,.1,.25,.5,1,2.5,5,10`, labels: `model`
   - `TOKENS_GENERATED` — Counter, labels: `model`
@@ -31,7 +31,7 @@ Add `prometheus_client` to interfere, register instruments that update in the ex
 - Export a `generate_metrics_text()` function that calls `prometheus_client.generate_latest()` and returns bytes
 
 ### Task 3: Hook instruments into request lifecycle
-**File:** `interverse/interfere/server/main.py`
+**File:** `interverse/interfer/server/main.py`
 - Import instruments from `server.prom`
 - In `_chat_completions`:
   - `ACTIVE_REQUESTS.inc()` at start, `.dec()` in a `finally` block
@@ -44,7 +44,7 @@ Add `prometheus_client` to interfere, register instruments that update in the ex
   - `CASCADE_DECISIONS.labels(outcome="accept").inc()` etc.
 
 ### Task 4: Dual-format `/metrics` endpoint + `/metrics/prometheus` route
-**File:** `interverse/interfere/server/main.py`
+**File:** `interverse/interfer/server/main.py`
 - Modify `_metrics` to check `Accept` header:
   - If `text/plain` or `text/plain; version=0.0.4` → return Prometheus text
   - Otherwise → return existing JSON (backward compatible default)
@@ -57,7 +57,7 @@ Add `prometheus_client` to interfere, register instruments that update in the ex
 - Return `Response(content=generate_metrics_text(), media_type="text/plain; version=0.0.4; charset=utf-8")`
 
 ### Task 5: Tests
-**File:** `interverse/interfere/tests/test_prometheus.py` (new)
+**File:** `interverse/interfer/tests/test_prometheus.py` (new)
 - Test Prometheus text format at `/metrics/prometheus` endpoint
 - Test content negotiation: `Accept: text/plain` returns Prometheus, `Accept: application/json` returns JSON
 - Test that default `/metrics` (no Accept header) returns JSON (backward compat)

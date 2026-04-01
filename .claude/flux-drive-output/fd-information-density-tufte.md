@@ -48,7 +48,7 @@ Apply the erasure test: remove the glow canvas entirely and ask what information
 
 **Performance cost:** The glow canvas runs `requestAnimationFrame` continuously, compositing 500+ radial gradients per frame. At the target density of 500+ nodes this is a significant GPU burden for information that is either redundant or achievable through cheaper channels.
 
-**Verdict:** At 16 nodes, the glow is atmospheric and harmless. At 500+ nodes, it becomes expensive chartjunk. The overlapping gradients will create a muddy interference pattern that is less readable than the discrete node colors beneath them. The single useful dimension (salience/intensity) should migrate to node opacity or border weight.
+**Verdict:** At 16 nodes, the glow is atmospheric and harmless. At 500+ nodes, it becomes expensive chartjunk. The overlapping gradients will create a muddy interfernce pattern that is less readable than the discrete node colors beneath them. The single useful dimension (salience/intensity) should migrate to node opacity or border weight.
 
 **Exception:** The *project-level aura* (a single large gradient per project cluster, not per node) survives the erasure test if it encodes aggregate health — it is the only visual signal for project-level state. Keep that. Kill per-node glow.
 
@@ -85,7 +85,7 @@ Bertin's threshold for point symbols on a single plane is roughly 200-300 before
 
 3. **Level-of-detail (compromise).** At overview zoom, each project is a single composite glyph (size=bead count, color=aggregate health, small sparkline or bar for status distribution). Zoom into a project to see individual nodes. This is what geographic maps do — it works.
 
-**The brainstorm's "show everything" decision (#5) directly contradicts density best practice.** Rendering 500+ glowing nodes will produce a galaxy aesthetic that looks impressive in screenshots but fails the core task: helping an operator identify which project needs intervention. The glow interference at that density means the ambient layer actively degrades readability.
+**The brainstorm's "show everything" decision (#5) directly contradicts density best practice.** Rendering 500+ glowing nodes will produce a galaxy aesthetic that looks impressive in screenshots but fails the core task: helping an operator identify which project needs intervention. The glow interfernce at that density means the ambient layer actively degrades readability.
 
 **Recommendation:** Default view is small-multiples or aggregated project glyphs (one per project, ~42 glyphs, well within Bertin's threshold). Detail view on click/zoom expands a single project to show individual agents and beads. The brainstorm's tab-to-switch view modes is compatible with this — the "project view" just needs to start aggregated.
 

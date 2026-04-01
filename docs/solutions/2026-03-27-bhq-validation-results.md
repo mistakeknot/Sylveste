@@ -2,7 +2,7 @@
 name: BHQ validation results on Qwen2.5-3B
 description: Lloyd-Max centroid quantization (TurboQuant v3) dramatically outperforms MLX native affine quantization at 4-bit on models with head_dim=128
 type: experiment-result
-tags: [interfere, bhq, turbo-quant, kv-cache, quantization, mlx]
+tags: [interfer, bhq, turbo-quant, kv-cache, quantization, mlx]
 bead: sylveste-d5e
 date: 2026-03-27
 ---

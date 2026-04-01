@@ -293,7 +293,7 @@ func (t *ReadSetTracker) StopTracking(pid int) []string {
 - **Process attribution**: Built-in, traces the specific PID tree
 - **Performance**: Substantial overhead (2-5x slowdown) due to ptrace mechanism. Each syscall requires two context switches.
 - **Go integration**: Launch agent subprocess under strace, parse output
-- **Limitation**: ptrace is heavyweight and can interfere with agent behavior. Some runtimes (Node.js) make many syscalls unrelated to agent logic. Filtering signal from noise is challenging.
+- **Limitation**: ptrace is heavyweight and can interfer with agent behavior. Some runtimes (Node.js) make many syscalls unrelated to agent logic. Filtering signal from noise is challenging.
 
 ### Landlock LSM
 

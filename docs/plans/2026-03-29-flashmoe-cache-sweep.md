@@ -7,10 +7,10 @@
 ## Tasks
 
 ### Task 1: Enhance benchmark script
-**Files:** `interverse/interfere/benchmarks/flashmoe_cache_sweep.sh`
+**Files:** `interverse/interfer/benchmarks/flashmoe_cache_sweep.sh`
 - Add `--cache-telemetry` flag to flash-moe invocation for cold vs eviction miss breakdown
 - Add memory pressure check (vm_stat) between config runs — skip next config if swap > 1GB
-- Ensure results dir is under `interverse/interfere/benchmarks/` not relative `benchmarks/`
+- Ensure results dir is under `interverse/interfer/benchmarks/` not relative `benchmarks/`
 
 ### Task 2: Run benchmark sweep
 **Duration:** ~40 minutes
@@ -19,13 +19,13 @@
 - Monitor via `tail -f /tmp/flashmoe_bench.log` in another terminal if needed
 
 ### Task 3: Analyze results
-**Files:** `interverse/interfere/benchmarks/results_*.tsv`
+**Files:** `interverse/interfer/benchmarks/results_*.tsv`
 - Parse TSV, identify Pareto-optimal configs (cache_gb vs mean_tps)
 - Calculate marginal tok/s per GB for each step up in cache
 - Document findings in analysis section below
 
-### Task 4: Update interfere server with recommended default
-**Files:** `interverse/interfere/server/` (config or docs)
+### Task 4: Update interfer server with recommended default
+**Files:** `interverse/interfer/server/` (config or docs)
 - Set recommended `--malloc-cache` based on Pareto analysis
 - Document in AGENTS.md or server config
 

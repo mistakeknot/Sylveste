@@ -116,7 +116,7 @@ git -C "$root" commit --no-verify -F "$commit_msg_file"
 
 The same pattern is used in `_interspect_apply_override_locked` (line ~870) and the revert path.
 
-**Context:** This is an explicit design decision, noted in the surrounding comment ("Git add + commit"). The reasoning is that Interspect is an internal automation tool, not user-supplied code, and that pre-commit hooks would be triggered recursively or interfere with the automated commit flow.
+**Context:** This is an explicit design decision, noted in the surrounding comment ("Git add + commit"). The reasoning is that Interspect is an internal automation tool, not user-supplied code, and that pre-commit hooks would be triggered recursively or interfer with the automated commit flow.
 
 **Security impact:** Pre-commit hooks in this repo include `hooks/auto-stop-actions.sh`, `hooks/interspect-evidence.sh`, and other Interspect hooks themselves. Bypassing them means:
 1. Interspect's own evidence hooks do not fire on Interspect's own commits — which is correct behavior, avoiding recursive instrumentation.

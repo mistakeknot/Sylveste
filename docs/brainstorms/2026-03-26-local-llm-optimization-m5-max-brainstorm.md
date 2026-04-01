@@ -8,7 +8,7 @@ stage: discover
 
 ## What We're Building
 
-**interfere** — a new interverse companion plugin (`interverse/interfere/`) that provides a custom MLX-LM-based local inference server for Sylveste/Clavain, integrated into Clavain's routing system as Track B5 (local model routing). Each esoteric optimization technique is deployed as a monitored interlab experiment campaign.
+**interfer** — a new interverse companion plugin (`interverse/interfer/`) that provides a custom MLX-LM-based local inference server for Sylveste/Clavain, integrated into Clavain's routing system as Track B5 (local model routing). Each esoteric optimization technique is deployed as a monitored interlab experiment campaign.
 
 The goal is to maximize the efficiency/quality frontier: route 60-70% of Clavain's subagent work to local models (cost dominance), eliminate rate limits for interactive work (latency independence), keep sensitive code off cloud APIs (privacy sovereignty), and progressively integrate cross-disciplinary inference techniques from the research frontier.
 
@@ -39,9 +39,9 @@ Key insight: T1 local (Qwen3-30B) matches Haiku quality at zero marginal cost. T
 
 Rationale:
 1. **Follows established pattern** — interspect, interrank, interlab are all companion plugins that Clavain delegates to. An inference server is a service, not an orchestration concern.
-2. **MCP-native** — Plugin's MCP server exposes tools for model management, health checks, benchmarking. Clavain's dispatch calls interfere via its API, not through plugin MCP.
-3. **Experiment integration** — interlab is already a plugin; interfere experiments use interlab campaigns directly.
-4. **Clavain stays focused** — Clavain dispatches (which model for which task). interfere serves (how to run the model). Clean separation.
+2. **MCP-native** — Plugin's MCP server exposes tools for model management, health checks, benchmarking. Clavain's dispatch calls interfer via its API, not through plugin MCP.
+3. **Experiment integration** — interlab is already a plugin; interfer experiments use interlab campaigns directly.
+4. **Clavain stays focused** — Clavain dispatches (which model for which task). interfer serves (how to run the model). Clean separation.
 
 ### Serving: Custom MLX-LM (not vllm-mlx, not Ollama, not LiteLLM)
 
@@ -107,7 +107,7 @@ With quantized KV cache, this supports ~64-96k context for the primary model.
 
 ## Esoteric Experiment Roadmap
 
-Each is an interlab experiment campaign on interfere:
+Each is an interlab experiment campaign on interfer:
 
 ### Experiment 1: Entropy-Based Early Exit (Near-term)
 - **Source**: BEEM (ICLR 2025), arXiv 2412.01455

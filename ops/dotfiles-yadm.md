@@ -21,7 +21,7 @@ CLAUDE.md contains `@host.md` which Claude Code resolves to the symlinked host-s
 
 | Hostname | `hostname -s` | Role |
 |----------|--------------|------|
-| Clavain.local | `Clavain` | M5 Max laptop — runs interfere inference server |
+| Clavain.local | `Clavain` | M5 Max laptop — runs interfer inference server |
 | sleeper-service | `sleeper-service` | Build/backup server — remote inference client, Oracle |
 
 ## Setup on a new machine

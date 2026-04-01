@@ -70,7 +70,7 @@ A good review from this agent:
 
 ## Decision Lens
 
-Prioritizes findings where mcp_agent_mail's contact/policy model reveals gaps in Sylveste's agent identity story — specifically Intercore's agent lock/claim model and Interlock's file-reservation ownership. Elevates anything that could prevent agent impersonation or accidental cross-agent interference.
+Prioritizes findings where mcp_agent_mail's contact/policy model reveals gaps in Sylveste's agent identity story — specifically Intercore's agent lock/claim model and Interlock's file-reservation ownership. Elevates anything that could prevent agent impersonation or accidental cross-agent interfernce.
 
 ## Prioritization
 

@@ -28,7 +28,7 @@ Build the training data, evaluation harness, and hidden state extraction needed 
 
 ## Prerequisite: Fix MLX imports in reservoir_routing.py
 
-**File:** `interverse/interfere/server/experiments/reservoir_routing.py`
+**File:** `interverse/interfer/server/experiments/reservoir_routing.py`
 
 Move `import mlx.core as mx` and `import mlx.nn as nn` from module level into method bodies (`__init__`, `__call__`, `classify`). This aligns with the design constraint documented in `inference.py` lines 3-6.
 
@@ -36,7 +36,7 @@ Move `import mlx.core as mx` and `import mlx.nn as nn` from module level into me
 
 ### T1: Training data generator (Sylveste-dbc)
 
-**File:** `interverse/interfere/server/experiments/training_data.py`
+**File:** `interverse/interfer/server/experiments/training_data.py`
 
 Create a Python module with:
 - `generate_training_data(num_per_class=200, seed=42, label_scheme: Literal["3class", "4class"] = "3class") -> list[dict]`
@@ -48,7 +48,7 @@ Create a Python module with:
 - `split_data(data, train_ratio=0.8, seed=42) -> tuple[list, list]`
 - `save_jsonl(data, path)` for persistence
 
-**Test:** `interverse/interfere/tests/test_training_data.py`
+**Test:** `interverse/interfer/tests/test_training_data.py`
 - Generates expected count per class
 - Labels are valid and match `CLASS_LABELS` registry
 - Train/test split ratio is ~80/20
@@ -57,7 +57,7 @@ Create a Python module with:
 
 ### T2: Extend ReservoirReadout with configurable activation (Sylveste-dbc)
 
-**File:** `interverse/interfere/server/experiments/reservoir_routing.py`
+**File:** `interverse/interfer/server/experiments/reservoir_routing.py`
 
 - Add `activation` param to `__init__`: supports `"relu"`, `"gelu"`, `"silu"` (default: `"relu"`)
 - Store as `self.activation_fn` (no underscore — matches `fc1`/`fc2` convention) and use in `__call__`
@@ -72,7 +72,7 @@ Create a Python module with:
 
 ### T3: Hidden state extraction (Sylveste-bgu)
 
-**File:** `interverse/interfere/server/inference.py` (as private method `_extract_hidden_state`)
+**File:** `interverse/interfer/server/inference.py` (as private method `_extract_hidden_state`)
 
 The function lives in `inference.py` alongside other mlx-lm internal access (`_ensure_loaded`, `_init_hooks`), not in `reservoir_routing.py`.
 
@@ -106,7 +106,7 @@ Implementation:
 
 ### T4: Wire reservoir hook into InferenceEngine (Sylveste-bgu)
 
-**File:** `interverse/interfere/server/inference.py`
+**File:** `interverse/interfer/server/inference.py`
 
 In `generate()`, before the stream_generate loop:
 1. If `self._reservoir_hook is not None`:
@@ -122,7 +122,7 @@ In `generate()`, before the stream_generate loop:
 
 ### T5: Training script (Sylveste-dp1)
 
-**File:** `interverse/interfere/server/experiments/train_reservoir.py`
+**File:** `interverse/interfer/server/experiments/train_reservoir.py`
 
 Standalone training script (reads config from env vars only — no argparse duplication):
 ```python
@@ -157,7 +157,7 @@ When `output_format == "metric"`, print METRIC lines to stdout and emit `METRIC 
 
 ### T6: Evaluation harness script (Sylveste-dp1)
 
-**File:** `interverse/interfere/scripts/interlab-reservoir-tune.sh` (in `scripts/` not project root)
+**File:** `interverse/interfer/scripts/interlab-reservoir-tune.sh` (in `scripts/` not project root)
 
 ```bash
 #!/usr/bin/env bash
@@ -186,7 +186,7 @@ Python script reads env vars directly via `os.environ.get()` — no CLI arg dupl
 
 ### T7: Integration test (all features)
 
-**File:** `interverse/interfere/tests/test_reservoir_routing.py` (extend)
+**File:** `interverse/interfer/tests/test_reservoir_routing.py` (extend)
 
 End-to-end test:
 1. Generate training data (3-class, small count for speed)

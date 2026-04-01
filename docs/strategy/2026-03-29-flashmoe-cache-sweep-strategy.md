@@ -9,14 +9,14 @@ We need empirical data on the expert cache size vs throughput tradeoff for Qwen3
 
 ## Goal
 
-A TSV dataset and Pareto analysis that definitively answers: "What `--malloc-cache` value should interfere use as default for 128GB systems?"
+A TSV dataset and Pareto analysis that definitively answers: "What `--malloc-cache` value should interfer use as default for 128GB systems?"
 
 ## Approach: Enhanced Benchmark Run
 
 1. **Enhance script** — Add `--cache-telemetry` for cold/eviction breakdown. Add memory pressure check between configs.
 2. **Run sweep** — 5 configs: 0, 2581, 5000, 10000, 15000. ~8 min per config. ~40 min total.
 3. **Analyze** — Compute Pareto frontier from results TSV. Plot cache GB vs tok/s.
-4. **Recommend** — Set default `--malloc-cache` in interfere server config based on results.
+4. **Recommend** — Set default `--malloc-cache` in interfer server config based on results.
 
 ## Non-Goals
 

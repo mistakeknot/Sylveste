@@ -95,7 +95,7 @@ The key change: lock timeouts return 1, forcing the caller to retry later. This 
 
 **Location:** Batch 3, `bead_release()` function definition
 
-**Severity:** CRITICAL — enables cross-session claim interference during handoff
+**Severity:** CRITICAL — enables cross-session claim interfernce during handoff
 
 **The defect:**
 

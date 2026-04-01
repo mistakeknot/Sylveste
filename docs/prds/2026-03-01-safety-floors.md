@@ -40,7 +40,7 @@ Wire `min_model` from `agent-roles.yaml` into `lib-routing.sh` as a hard post-re
 
 **Acceptance criteria:**
 - [ ] When clamping occurs, emit structured log: `[safety-floor] agent=<name> resolved=<model> clamped_to=<min_model> role=<role>`
-- [ ] Log goes to stderr (not stdout) so it doesn't interfere with dispatch output
+- [ ] Log goes to stderr (not stdout) so it doesn't interfer with dispatch output
 - [ ] No direct interspect evidence emission (passive collection via existing hooks)
 
 ## Non-goals
