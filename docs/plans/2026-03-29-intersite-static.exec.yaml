@@ -1,0 +1,65 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 5
+timeout_per_task: 300
+
+stages:
+  - name: "Wave 1 — Foundation"
+    tasks:
+      - id: task-1
+        title: "Scaffold Astro app with deps and config"
+        files: [apps/intersite/package.json, apps/intersite/astro.config.mjs, apps/intersite/tsconfig.json]
+        depends: []
+
+  - name: "Wave 2 — Content schemas"
+    tasks:
+      - id: task-2
+        title: "Content collection schemas + pipeline validation"
+        files: [apps/intersite/src/content/config.ts, apps/intersite/src/lib/content.ts, apps/intersite/src/content/PIPELINE.md]
+        depends: [task-1]
+      - id: task-9
+        title: "intersite Interverse plugin scaffold"
+        files: [interverse/intersite/.claude-plugin/plugin.json, interverse/intersite/CLAUDE.md, interverse/intersite/skills/]
+        depends: []
+      - id: task-10
+        title: "CLAUDE.md + AGENTS.md for intersite app"
+        files: [apps/intersite/CLAUDE.md, apps/intersite/AGENTS.md]
+        depends: [task-1]
+
+  - name: "Wave 3 — Layout + seed content"
+    tasks:
+      - id: task-3
+        title: "Base layout + landing page"
+        files: [apps/intersite/src/layouts/Base.astro, apps/intersite/src/pages/index.astro, apps/intersite/src/components/Footer.astro]
+        depends: [task-2]
+      - id: task-7
+        title: "Seed content — project roster (14 files)"
+        files: [apps/intersite/src/content/projects/]
+        depends: [task-2]
+      - id: task-8
+        title: "Seed content — experiments + plugins"
+        files: [apps/intersite/src/content/experiments/, apps/intersite/src/content/plugins/]
+        depends: [task-2]
+
+  - name: "Wave 4 — Pages (parallel)"
+    tasks:
+      - id: task-4
+        title: "Project pages — index, detail, Sylveste parent"
+        files: [apps/intersite/src/pages/projects/]
+        depends: [task-3, task-7]
+      - id: task-5
+        title: "Experiment pages — index + detail"
+        files: [apps/intersite/src/pages/experiments/]
+        depends: [task-3, task-8]
+      - id: task-6
+        title: "Plugin index page"
+        files: [apps/intersite/src/pages/projects/sylveste/plugins/]
+        depends: [task-3, task-8]
+
+  - name: "Wave 5 — Deploy"
+    tasks:
+      - id: task-11
+        title: "Cloudflare Tunnel deploy to sleeper-service"
+        files: []
+        depends: [task-4, task-5, task-6, task-9, task-10]
