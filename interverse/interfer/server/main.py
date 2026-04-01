@@ -758,6 +758,10 @@ def create_app(
     flashmoe_only: bool = False,
     flashmoe_malloc_cache: int = 0,
     flashmoe_predict: bool = False,
+    flashmoe_q3_experts: bool = False,
+    flashmoe_cache_io_split: int = 0,
+    flashmoe_gguf_embedding: str = "",
+    flashmoe_gguf_lm_head: str = "",
     batch_scheduler: object | None = None,
 ) -> Starlette:
     """Create the interfer Starlette application.
@@ -799,6 +803,10 @@ def create_app(
             extra_args=flashmoe_extra_args,
             malloc_cache=flashmoe_malloc_cache,
             predict=flashmoe_predict,
+            q3_experts=flashmoe_q3_experts,
+            cache_io_split=flashmoe_cache_io_split,
+            gguf_embedding=flashmoe_gguf_embedding,
+            gguf_lm_head=flashmoe_gguf_lm_head,
         )
     _inference_queue = PriorityRequestQueue(max_depth=max_queue_depth)
     _thermal_reject_threshold = THERMAL_LEVEL_MAP.get(thermal_reject_level, 2)

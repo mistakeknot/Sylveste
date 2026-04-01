@@ -11,7 +11,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from server.flashmoe_worker import FlashMoeWorker, _find_free_port
+from server.flashmoe_worker import FlashMoeWorker, _pick_free_port
 
 
 # ---------------------------------------------------------------------------
@@ -94,7 +94,7 @@ class FakeFlashMoeHandler(BaseHTTPRequestHandler):
 @pytest.fixture
 def fake_flashmoe_port():
     """Start a fake flash-moe HTTP server and return its port."""
-    port = _find_free_port()
+    port = _pick_free_port()
     server = HTTPServer(("127.0.0.1", port), FakeFlashMoeHandler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
@@ -103,12 +103,12 @@ def fake_flashmoe_port():
 
 
 # ---------------------------------------------------------------------------
-# Tests: _find_free_port
+# Tests: _pick_free_port
 # ---------------------------------------------------------------------------
 
 
-def test_find_free_port():
-    port = _find_free_port()
+def test_pick_free_port():
+    port = _pick_free_port()
     assert 1024 < port < 65536
     # Port should be bindable
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -365,10 +365,73 @@ class TestFlashMoeCLIArgs:
         args = _parse_args(
             [
                 "--flashmoe-args",
-                "--q3-experts --think-budget 2048",
+                "--think-budget 2048",
             ]
         )
-        assert args.flashmoe_args == "--q3-experts --think-budget 2048"
+        assert args.flashmoe_args == "--think-budget 2048"
         # Verify splitting works
         split = args.flashmoe_args.split()
-        assert split == ["--q3-experts", "--think-budget", "2048"]
+        assert split == ["--think-budget", "2048"]
+
+    def test_flashmoe_q3_experts_arg(self):
+        from server.__main__ import _parse_args
+
+        args = _parse_args(["--flashmoe-q3-experts"])
+        assert args.flashmoe_q3_experts is True
+
+    def test_flashmoe_cache_io_split_arg(self):
+        from server.__main__ import _parse_args
+
+        args = _parse_args(["--flashmoe-cache-io-split", "4"])
+        assert args.flashmoe_cache_io_split == 4
+
+    def test_flashmoe_gguf_paths(self):
+        from server.__main__ import _parse_args
+
+        args = _parse_args(
+            [
+                "--flashmoe-gguf-embedding",
+                "~/Models/gguf/embedding_q8_0.bin",
+                "--flashmoe-gguf-lm-head",
+                "~/Models/gguf/lm_head_q6.bin",
+            ]
+        )
+        assert args.flashmoe_gguf_embedding == "~/Models/gguf/embedding_q8_0.bin"
+        assert args.flashmoe_gguf_lm_head == "~/Models/gguf/lm_head_q6.bin"
+
+    def test_flashmoe_q3_defaults_off(self):
+        from server.__main__ import _parse_args
+
+        args = _parse_args([])
+        assert args.flashmoe_q3_experts is False
+        assert args.flashmoe_cache_io_split == 0
+        assert args.flashmoe_gguf_embedding == ""
+        assert args.flashmoe_gguf_lm_head == ""
+
+
+class TestFlashMoeQ3WorkerFlags:
+    """Test that Q3/GGUF flags are stored on the worker."""
+
+    def test_q3_experts_stored(self):
+        w = FlashMoeWorker(
+            binary_path="/nonexistent",
+            model_path="/nonexistent",
+            q3_experts=True,
+            cache_io_split=4,
+            gguf_embedding="/path/to/embedding.bin",
+            gguf_lm_head="/path/to/lm_head.bin",
+        )
+        assert w._q3_experts is True
+        assert w._cache_io_split == 4
+        assert w._gguf_embedding == "/path/to/embedding.bin"
+        assert w._gguf_lm_head == "/path/to/lm_head.bin"
+
+    def test_q3_defaults(self):
+        w = FlashMoeWorker(
+            binary_path="/nonexistent",
+            model_path="/nonexistent",
+        )
+        assert w._q3_experts is False
+        assert w._cache_io_split == 0
+        assert w._gguf_embedding == ""
+        assert w._gguf_lm_head == ""

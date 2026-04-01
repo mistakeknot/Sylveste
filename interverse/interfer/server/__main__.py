@@ -159,6 +159,29 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="Enable temporal expert prediction (prefetch during GPU compute wait)",
     )
+    fm.add_argument(
+        "--flashmoe-q3-experts",
+        action="store_true",
+        help="Use hybrid Q3 GGUF experts (IQ3_XXS, 23%% smaller, ~36%% faster decode)",
+    )
+    fm.add_argument(
+        "--flashmoe-cache-io-split",
+        type=int,
+        default=0,
+        help="Split expert pread into N page-aligned chunks (0 = disabled, 4 = recommended with Q3)",
+    )
+    fm.add_argument(
+        "--flashmoe-gguf-embedding",
+        type=str,
+        default="",
+        help="Path to extracted GGUF Q8_0 embedding blob (quality boost, negligible cost)",
+    )
+    fm.add_argument(
+        "--flashmoe-gguf-lm-head",
+        type=str,
+        default="",
+        help="Path to extracted GGUF Q6_K LM head blob (quality boost, negligible cost)",
+    )
 
     return parser.parse_args(argv)
 
@@ -177,6 +200,16 @@ def main(argv: list[str] | None = None) -> None:
     )
     flashmoe_model = (
         os.path.expanduser(args.flashmoe_model) if args.flashmoe_model else ""
+    )
+    flashmoe_gguf_embedding = (
+        os.path.expanduser(args.flashmoe_gguf_embedding)
+        if args.flashmoe_gguf_embedding
+        else ""
+    )
+    flashmoe_gguf_lm_head = (
+        os.path.expanduser(args.flashmoe_gguf_lm_head)
+        if args.flashmoe_gguf_lm_head
+        else ""
     )
 
     # Build batch scheduler if enabled
@@ -202,6 +235,10 @@ def main(argv: list[str] | None = None) -> None:
         flashmoe_only=args.flashmoe_only,
         flashmoe_malloc_cache=args.flashmoe_malloc_cache,
         flashmoe_predict=args.flashmoe_predict,
+        flashmoe_q3_experts=args.flashmoe_q3_experts,
+        flashmoe_cache_io_split=args.flashmoe_cache_io_split,
+        flashmoe_gguf_embedding=flashmoe_gguf_embedding,
+        flashmoe_gguf_lm_head=flashmoe_gguf_lm_head,
         batch_scheduler=batch_scheduler,
     )
 

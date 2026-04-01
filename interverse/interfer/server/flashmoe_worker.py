@@ -58,6 +58,10 @@ class FlashMoeWorker:
         extra_args: list[str] | None = None,
         malloc_cache: int = 0,
         predict: bool = False,
+        q3_experts: bool = False,
+        cache_io_split: int = 0,
+        gguf_embedding: str = "",
+        gguf_lm_head: str = "",
     ) -> None:
         self._binary_path = binary_path
         self._model_path = model_path
@@ -65,6 +69,10 @@ class FlashMoeWorker:
         self._extra_args = extra_args or []
         self._malloc_cache = malloc_cache
         self._predict = predict
+        self._q3_experts = q3_experts
+        self._cache_io_split = cache_io_split
+        self._gguf_embedding = gguf_embedding
+        self._gguf_lm_head = gguf_lm_head
 
         self._process: subprocess.Popen | None = None
         self._generate_lock = threading.Lock()
@@ -98,6 +106,18 @@ class FlashMoeWorker:
 
         if self._predict:
             cmd.append("--predict")
+
+        if self._q3_experts:
+            cmd.append("--q3-experts")
+
+        if self._cache_io_split > 0:
+            cmd.extend(["--cache-io-split", str(self._cache_io_split)])
+
+        if self._gguf_embedding:
+            cmd.extend(["--gguf-embedding", self._gguf_embedding])
+
+        if self._gguf_lm_head:
+            cmd.extend(["--gguf-lm-head", self._gguf_lm_head])
 
         cmd.extend(self._extra_args)
 
@@ -137,7 +157,9 @@ class FlashMoeWorker:
 
             # Check if process died during startup
             if self._process is not None and self._process.poll() is not None:
-                stderr = self._process.stderr.read().decode() if self._process.stderr else ""
+                stderr = (
+                    self._process.stderr.read().decode() if self._process.stderr else ""
+                )
                 raise RuntimeError(
                     f"flash-moe exited during startup (code {self._process.returncode}): "
                     f"{stderr[:500]}"

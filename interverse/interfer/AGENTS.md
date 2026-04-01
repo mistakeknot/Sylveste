@@ -125,25 +125,39 @@ Flash-MoE layout (Qwen3.5-397B-A17B via flash-moe binary):
 ~76GB:  Remaining headroom
 ```
 
-### Flash-MoE Expert Cache Tuning
+### Flash-MoE Configuration
 
-**Binary:** upstream 20f8591 + pread fix. Expert size: 7,077,888 bytes (4-bit).
+**Binary:** Anemll/flash-moe m5-nax branch (commit 26cd7f8) + pread zero-init fix.
 
-Preliminary timing (batch mode, `--timing --tokens 10`):
+**Recommended: Q3 GGUF experts + cache-io-split 4** (best speed/quality tradeoff):
 
-| `--malloc-cache` | Cache GB | expert_io ms/layer | total ms/layer | tok/s |
-|------------------|---------|-------------------|----------------|-------|
-| 5000 | 35.4 | 2.410 | 6.526 | 2.5 |
-| 10000 | 70.8 | 3.566 | 7.208 | 2.3 |
+```bash
+uv run python -m server \
+  --flashmoe-binary ~/projects/flash-moe/metal_infer/infer \
+  --flashmoe-model ~/Models/flash_mlx_4bit \
+  --flashmoe-q3-experts \
+  --flashmoe-cache-io-split 4 \
+  --flashmoe-gguf-embedding ~/Models/flash_mlx_4bit/gguf/embedding_q8_0.bin \
+  --flashmoe-gguf-lm-head ~/Models/flash_mlx_4bit/gguf/lm_head_q6.bin \
+  --flashmoe-malloc-cache 5000 \
+  --flashmoe-only
+```
 
-**Recommended: `--flashmoe-malloc-cache 5000`** — 35GB cache gives better throughput
-than 10000 (70GB) due to unified memory contention with Metal GPU buffers. Full sweep pending.
+| Config | Decode | PPL | Expert size | Notes |
+|--------|--------|-----|-------------|-------|
+| Q3 GGUF + cache-io-split 4 | **12.9 tok/s** | 3.81 | 5.44 MB | Recommended |
+| 4-bit MLX (previous) | 9.5 tok/s | 3.64 | 6.75 MB | ~36% slower |
+| 4-bit + malloc-cache 5000 | 2.5 tok/s | 3.64 | 6.75 MB | Old config, obsolete |
+| 2-bit MLX | 14.5 tok/s | 5.71 | 3.75 MB | Fast but PPL degrades |
 
-Previous benchmark (Q3 hybrid, pre-upstream merge) is **invalid** — the Q3 format read
-5.4MB from 7.1MB experts, producing garbage output that inflated hit rates and throughput.
+**New CLI flags (m5-nax upstream):**
+- `--flashmoe-q3-experts` — Use Unsloth IQ3_XXS experts (23% smaller, 36% faster)
+- `--flashmoe-cache-io-split N` — Page-aligned pread fanout (4 recommended)
+- `--flashmoe-gguf-embedding PATH` — Q8_0 embedding overlay (quality boost, free)
+- `--flashmoe-gguf-lm-head PATH` — Q6_K LM head overlay (quality boost, free)
 
-**CLI changes after upstream merge:** `--q3-experts` removed. Use explicit
-`--weights`/`--manifest`/`--vocab` paths (--model alone doesn't resolve them).
+**GGUF overlay setup:** See `~/projects/flash-moe/docs/model-download-and-convert.md`
+for extraction scripts. Q3 experts come pre-packed in `packed_experts_Q3/`.
 
 ## Dependencies
 
