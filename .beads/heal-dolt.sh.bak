@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 # heal-dolt.sh — Fix stale Dolt locks and ensure server is running.
 # Called by SessionStart hook. Safe to run anytime.
-# Guard against infinite recursion: bd auto_heal calls this, and this calls bd
-[[ -n "${BD_HEALING:-}" ]] && exit 0
-export BD_HEALING=1
-
 set -euo pipefail
 
 BEADS_DIR="${1:-.beads}"
