@@ -193,7 +193,14 @@
 {"created_at":"2026-04-01T19:58:34Z","created_by":"Claude Code","depends_on_id":"sylveste-rsj.1.9.2","issue_id":"sylveste-rsj.1.9.2.12","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-01T19:58:58Z","created_by":"Claude Code","depends_on_id":"sylveste-rsj.1.9.2","issue_id":"sylveste-rsj.1.9.2.13","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-01T19:59:16Z","created_by":"Claude Code","depends_on_id":"sylveste-rsj.1.9.2","issue_id":"sylveste-rsj.1.9.2.14","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-01T19:59:33Z","created_by":"Claude Code","depends_on_id":"sylveste-rsj.1.9.2","issue_id":"sylveste-rsj.1.9.2.15","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-01T20:00:23Z","created_by":"Claude Code","depends_on_id":"sylveste-rsj.1.9.2","issue_id":"sylveste-rsj.1.9.2.16","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-01T20:00:39Z","created_by":"Claude Code","depends_on_id":"sylveste-rsj.1.9.2","issue_id":"sylveste-rsj.1.9.2.17","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-01T20:01:40Z","created_by":"Claude Code","depends_on_id":"sylveste-rsj.1.9.2","issue_id":"sylveste-rsj.1.9.2.18","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-01T20:10:45Z","created_by":"Claude Code","depends_on_id":"sylveste-rsj.1.9.2","issue_id":"sylveste-rsj.1.9.2.19","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-01T19:53:42Z","created_by":"Claude Code","depends_on_id":"sylveste-rsj.1.9.2","issue_id":"sylveste-rsj.1.9.2.2","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-01T20:12:47Z","created_by":"Claude Code","depends_on_id":"sylveste-rsj.1.9.2","issue_id":"sylveste-rsj.1.9.2.20","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-01T20:14:21Z","created_by":"Claude Code","depends_on_id":"sylveste-rsj.1.9.2","issue_id":"sylveste-rsj.1.9.2.21","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-01T19:53:43Z","created_by":"Claude Code","depends_on_id":"sylveste-rsj.1.9.2","issue_id":"sylveste-rsj.1.9.2.3","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-01T19:55:00Z","created_by":"Claude Code","depends_on_id":"sylveste-rsj.1.9.2","issue_id":"sylveste-rsj.1.9.2.4","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-01T19:55:49Z","created_by":"Claude Code","depends_on_id":"sylveste-rsj.1.9.2","issue_id":"sylveste-rsj.1.9.2.5","metadata":"{}","type":"parent-child"}
