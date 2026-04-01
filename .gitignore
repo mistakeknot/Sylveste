@@ -62,6 +62,8 @@ research/*
 !research/REPO_INDEX.md
 docs/research/*/
 !docs/research/dialectics/
+!docs/research/flux-drive/
+!docs/research/flux-research/
 
 # Dolt database files (added by bd init)
 .dolt/
