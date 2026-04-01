@@ -121,11 +121,16 @@ class FlashMoeWorker:
 
         cmd.extend(self._extra_args)
 
-        log.info("starting flash-moe: %s", " ".join(cmd))
+        # CWD must be the binary's parent directory so it can find shaders.metal
+        binary_dir = os.path.dirname(
+            os.path.dirname(os.path.abspath(self._binary_path))
+        )
+        log.info("starting flash-moe: %s (cwd=%s)", " ".join(cmd), binary_dir)
         self._process = subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
+            cwd=binary_dir,
         )
 
         # Wait for the HTTP API to become available
