@@ -1,0 +1,140 @@
+[
+  {
+    "name": "fd-go-concurrency-safety",
+    "focus": "Correctness of concurrent tool execution: goroutine lifecycle, shared state protection, and WaitGroup/semaphore usage.",
+    "persona": "Go concurrency engineer with deep experience in goroutine leaks, channel semantics, and sync primitives under load.",
+    "decision_lens": "Does every goroutine have a guaranteed exit path, and is every shared data structure accessed only under the correct lock or through channel ownership?",
+    "review_areas": [
+      "WaitGroup Add/Done/Wait call sites: verify Add is called before goroutine launch, Done is deferred, and Wait is never called concurrently with Add",
+      "Pre-allocated result slot writes: confirm each goroutine writes only to its own index with no aliasing through loop variable capture",
+      "Semaphore channel acquire/release pairing: check that every acquire has a matching release in all exit paths including panics",
+      "Context cancellation propagation: verify goroutines check ctx.Done() and that cancellation drains the semaphore cleanly without deadlock",
+      "toolBridge adapter state: identify any mutable fields on the bridge struct that are read during concurrent tool calls and confirm they are read-only after construction",
+      "Error collection from concurrent slots: confirm the aggregation pass is sequential (after WaitGroup.Wait) and requires no additional synchronization"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P0",
+        "condition": "Loop variable captured by goroutine closure causes all goroutines to execute the same (last) tool"
+      },
+      {
+        "severity": "P0",
+        "condition": "Semaphore channel release omitted on tool error path causes goroutine pool to deadlock"
+      },
+      {
+        "severity": "P1",
+        "condition": "WaitGroup.Add called inside goroutine after a preceding Wait returns, causing a panic"
+      }
+    ],
+    "success_hints": "Every goroutine has a deferred Done, loop variables are captured by value, all semaphore paths release exactly once, and go test -race passes.",
+    "task_context": "The plan adds concurrent tool execution with WaitGroup and semaphore channels. Concurrency bugs produce silent wrong results or deadlocks.",
+    "anti_overlap": "Does NOT review interface design, TUI thread safety, or phase-ordering semantics."
+  },
+  {
+    "name": "fd-interface-contract-integrity",
+    "focus": "Soundness of the ConcurrencyClassifier and PropagatesErrorToSiblings optional interfaces: discovery, fallback defaults, and contract invariants.",
+    "persona": "Go API designer specializing in interface evolution, backward compatibility, and the optional-interface (type-assertion) pattern.",
+    "decision_lens": "Does every caller that discovers an optional interface handle the absent case with the correct safe default?",
+    "review_areas": [
+      "Default classification when ConcurrencyClassifier is absent: confirm the fallback is conservative (serial)",
+      "Classification granularity: verify the classifier returns per-invocation decisions based on argument content",
+      "Interface documentation: check godoc specifies calling goroutine, concurrency requirements, and valid return values",
+      "toolBridge wrapping fidelity: confirm type assertion exposes inner ConcurrencyClassifier correctly without double-wrapping",
+      "PhasedTool interaction: verify documented precedence rule when tool implements both interfaces",
+      "Compile-time interface satisfaction checks: look for var _ ConcurrencyClassifier = (*ConcreteType)(nil) guards"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P0",
+        "condition": "toolBridge double-wraps the tool and the inner ConcurrencyClassifier is unreachable via type assertion"
+      },
+      {
+        "severity": "P1",
+        "condition": "ConcurrencyClassifier contract does not state thread-safety requirements; a tool author writes non-thread-safe classification logic"
+      }
+    ],
+    "success_hints": "Every type assertion has an explicit else branch with safe default; godoc is specific about concurrency guarantees; bridge tests confirm assertion passthrough.",
+    "task_context": "The optional-interface pattern is Skaffen's extension mechanism. A contract gap causes silent misclassification with no compile-time warning.",
+    "anti_overlap": "Does NOT review goroutine lifecycle, TUI threading, or agentloop phase sequencing."
+  },
+  {
+    "name": "fd-tui-event-loop-isolation",
+    "focus": "Preservation of Bubble Tea's single-threaded event loop invariant when concurrent tool goroutines send results back to the TUI.",
+    "persona": "Bubble Tea / Elm-architecture practitioner who has debugged concurrent message send races in terminal UIs.",
+    "decision_lens": "Does any code path allow a goroutine outside the Bubble Tea update loop to mutate model state or call methods that assume single-threaded access?",
+    "review_areas": [
+      "Result delivery mechanism: verify goroutines send results via tea.Cmd or channel, never by directly mutating model struct",
+      "Progress/streaming updates from parallel tools: confirm emissions go through tea.Msg dispatch",
+      "Error surfacing path: check errors from goroutines are collected and delivered as tea.Msg",
+      "Shutdown/cancel interaction: confirm TUI teardown waits for or cleanly abandons in-flight goroutines",
+      "Spinner or progress indicator updates: verify advancement is from Bubble Tea Update function, not from goroutine directly"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P0",
+        "condition": "A tool goroutine writes to a shared model field concurrently with Bubble Tea Update reading it, causing data race"
+      },
+      {
+        "severity": "P1",
+        "condition": "Tool goroutines write to stderr during parallel execution, breaking terminal state"
+      }
+    ],
+    "success_hints": "No goroutine outside tea.Program touches the model struct; all results arrive as typed tea.Msg values; go test -race is clean.",
+    "task_context": "Parallel tool goroutines are the first code in Skaffen to run outside the event loop while results must flow back into it.",
+    "anti_overlap": "Does NOT review goroutine sync primitives, interface contracts, or OODARC phase ordering."
+  },
+  {
+    "name": "fd-oodarc-phase-ordering",
+    "focus": "Preservation of OODARC phase semantics when tool calls execute in parallel within the Act phase.",
+    "persona": "AI agent runtime architect familiar with OODA loop theory and phase-gated execution models.",
+    "decision_lens": "Does parallelizing Act-phase tools ever allow side effects to be observed by Reflect before all Act tools complete?",
+    "review_areas": [
+      "Phase barrier enforcement: confirm agentloop waits for all parallel Act tools before transitioning to Reflect",
+      "Tool classification scope: verify only Act-phase tools are eligible for parallel execution",
+      "Result ordering guarantees: confirm pre-allocated slots preserve invocation order",
+      "Re-entry safety: check parallel Act tools cannot enqueue new Decide actions mid-cycle",
+      "Error handling phase transition: verify tool failure during parallel Act halts the phase correctly",
+      "PhasedTool gate interaction: confirm PhasedTool 'not ready' is handled before parallel dispatch"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P0",
+        "condition": "Reflect phase starts while one Act-phase goroutine is still running, causing decisions based on partial action set"
+      },
+      {
+        "severity": "P1",
+        "condition": "Tool results delivered in completion order rather than invocation order, causing misattribution"
+      }
+    ],
+    "success_hints": "Phase transitions gated on WaitGroup.Wait; Reflect receives complete, ordered result slice; PhasedTool handled before dispatch.",
+    "task_context": "OODARC is Skaffen's architectural invariant. Parallel execution within Act is safe only if phase boundaries remain hard.",
+    "anti_overlap": "Does NOT review goroutine sync, TUI threading, or interface definitions."
+  },
+  {
+    "name": "fd-observability-and-failure-modes",
+    "focus": "Debuggability of parallel tool execution: tracing, error attribution, timeout handling, and partial-failure recovery.",
+    "persona": "SRE who debugs concurrent systems by reading logs and traces under partial failure conditions.",
+    "decision_lens": "When one of N parallel tools fails, can an operator determine exactly which tool failed, why, and what the agent did in response?",
+    "review_areas": [
+      "Per-tool span/trace context: confirm each goroutine carries a labeled logger for error attribution",
+      "Panic recovery in goroutines: verify each goroutine has recover() converting panics to error values in result slots",
+      "Partial failure semantics: determine if plan specifies fail-fast or collect-all and confirm implementation matches",
+      "Timeout per tool vs per batch: check context derivation matches latency requirements",
+      "Log coherence under parallelism: confirm log lines include tool-call ID for parseability",
+      "Metrics instrumentation: verify parallel tool count and per-tool latency are recorded"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P0",
+        "condition": "A tool goroutine panics without recover(), killing the agent process with no error recorded"
+      },
+      {
+        "severity": "P1",
+        "condition": "All parallel tools share batch timeout; one slow tool causes silent cancellation of N-1 others"
+      }
+    ],
+    "success_hints": "Every goroutine has deferred recover(); each error carries tool name and call index; partial failure produces clear aggregate error message.",
+    "task_context": "Parallel execution multiplies failure modes. Without per-goroutine panic recovery, a single misbehaving tool becomes an opaque batch failure.",
+    "anti_overlap": "Does NOT review interface contracts, OODARC semantics, TUI threading, or sync primitive correctness."
+  }
+]
