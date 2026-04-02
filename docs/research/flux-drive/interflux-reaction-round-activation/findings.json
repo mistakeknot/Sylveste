@@ -1,0 +1,341 @@
+{
+  "reviewed": "2026-04-01",
+  "review_round": 2,
+  "input": "docs/plans/2026-04-01-interflux-reaction-round-activation.md",
+  "bead": "sylveste-g3b",
+  "agents": [
+    "fd-architecture",
+    "fd-quality",
+    "fd-systems",
+    "fd-evidence-pipeline-integrity",
+    "fd-japanese-sword-polishing-togishi",
+    "fd-ottoman-waqf-endowment",
+    "fd-tibetan-terma-concealment",
+    "fd-raga-melodic-grammar",
+    "fd-talmudic-machloket-preserved-dissent",
+    "fd-ice-core-multiproxy-reconciliation",
+    "fd-shipibo-kene-synesthetic-convergence",
+    "fd-reaction-prompt-semantics",
+    "fd-synthesis-deduplication"
+  ],
+  "verdict": "needs-changes",
+  "gate": "FAIL",
+  "round_1_findings_count": {
+    "P1": 3,
+    "P2": 6
+  },
+  "round_2_new_findings_count": {
+    "P1": 3,
+    "P2": 3
+  },
+  "consolidated_findings_count": {
+    "P1": 6,
+    "P2": 6,
+    "P3": 2
+  },
+  "findings": [
+    {
+      "id": "EVIDENCE-01",
+      "severity": "P1",
+      "title": "convergence_after has no computation step",
+      "agents": [
+        "fd-evidence-pipeline-integrity"
+      ],
+      "convergence": "1/8",
+      "file": "interverse/interflux/skills/flux-drive/phases/reaction.md",
+      "section": "Step 2.5.5",
+      "description": "Plan Task 5 references convergence_after in Interspect context JSON but no step recomputes overlap_ratio after reactions complete.",
+      "fix": "Add Step 2.5.4b: re-run read-indexes, incorporate reactive additions, store convergence_after."
+    },
+    {
+      "id": "EVIDENCE-02",
+      "severity": "P1",
+      "title": "Sycophancy data unavailable at emission time",
+      "agents": [
+        "fd-evidence-pipeline-integrity",
+        "fd-architecture"
+      ],
+      "convergence": "2/8",
+      "file": "docs/plans/2026-04-01-interflux-reaction-round-activation.md",
+      "section": "Task 5",
+      "description": "Evidence emission at end of Phase 2.5 references sycophancy_flags and discourse_health which are computed in Phase 3 synthesis.",
+      "fix": "Split into two events (Phase 2.5 mechanics + Phase 3 quality) or move all emission to post-Phase 3."
+    },
+    {
+      "id": "ARCH-01",
+      "severity": "P1",
+      "title": "findings-helper.sh read-indexes output format mismatch with convergence gate",
+      "agents": [
+        "fd-architecture",
+        "fd-quality"
+      ],
+      "convergence": "2/8",
+      "file": "interverse/interflux/scripts/findings-helper.sh",
+      "section": "lines 63-79",
+      "description": "read-indexes outputs tab-separated lines, not structured data. Convergence gate requires parsing severity, deduplicating across agents, computing overlap_ratio — all as LLM-interpreted steps with no deterministic implementation.",
+      "fix": "Add convergence-gate subcommand to findings-helper.sh or document LLM-interpreted variance."
+    },
+    {
+      "id": "WAQF-01",
+      "severity": "P2",
+      "title": "No lifecycle management for reaction artifacts",
+      "agents": [
+        "fd-ottoman-waqf-endowment"
+      ],
+      "convergence": "1/8",
+      "file": "interverse/interflux/skills/flux-drive/phases/reaction.md",
+      "section": "Step 2.5.1",
+      "description": "No resume semantics for interrupted reaction rounds. Stale agent outputs from interrupted Phase 2 can mismatch with new reactions.",
+      "fix": "Add timestamp verification in Step 2.5.0.5; consider --retry-reactions flag."
+    },
+    {
+      "id": "QUALITY-01",
+      "severity": "P2",
+      "title": "Plan does not verify reaction file exclusion patterns",
+      "agents": [
+        "fd-quality"
+      ],
+      "convergence": "1/8",
+      "file": "interverse/interflux/scripts/findings-helper.sh",
+      "section": "lines 67-69",
+      "description": "Plan Task 1 validates read-indexes parsing but does not explicitly verify exclusion of *.reactions.md and *.reactions.error.md files.",
+      "fix": "Add exclusion pattern verification to Task 1 test criteria."
+    },
+    {
+      "id": "TOGISHI-01",
+      "severity": "P2",
+      "title": "Missing post-reaction convergence assessment (uchigumori stage)",
+      "agents": [
+        "fd-japanese-sword-polishing-togishi"
+      ],
+      "convergence": "1/8",
+      "file": "interverse/interflux/skills/flux-drive/phases/reaction.md",
+      "section": "Step 2.5.5",
+      "description": "No measurement point after reactions where accumulated evidence crystallizes into a judgment. Convergence degradation after reactions (agents talking past each other) goes undetected.",
+      "fix": "Add convergence re-measurement; flag anomalous reviews where convergence_after < convergence_before - 0.2.",
+      "reactions": [
+        {
+          "from": "fd-architecture",
+          "stance": "agree",
+          "independent_coverage": "partial",
+          "rationale": "Reinforces EVIDENCE-01 from architectural perspective — missing feedback signal."
+        }
+      ]
+    },
+    {
+      "id": "WAQF-02",
+      "severity": "P2",
+      "title": "No external audit of reaction quality (qadi role)",
+      "agents": [
+        "fd-ottoman-waqf-endowment"
+      ],
+      "convergence": "1/8",
+      "file": "docs/plans/2026-04-01-interflux-reaction-round-activation.md",
+      "section": "Task 4",
+      "description": "No separation between reaction producer and reaction quality evaluator. Fabricated evidence (hallucinated file:line refs) passes with full weight in synthesis.",
+      "fix": "Add evidence field validation in Task 4 or Task 6."
+    },
+    {
+      "id": "SYSTEMS-01",
+      "severity": "P2",
+      "title": "Feedback loop delay renders reaction evidence potentially stale",
+      "agents": [
+        "fd-systems"
+      ],
+      "convergence": "1/8",
+      "file": "interverse/interspect/hooks/lib-interspect.sh",
+      "section": "quarantine mechanism",
+      "description": "48h quarantine + counting-rule thresholds + infrequent reaction rounds = weeks before feedback influences routing. Garbage reactions persist undetected.",
+      "fix": "Document expected feedback loop latency; consider shorter quarantine for reaction evidence."
+    },
+    {
+      "id": "TERMA-01",
+      "severity": "P2",
+      "title": "No manifest/catalog of placed reactions",
+      "agents": [
+        "fd-tibetan-terma-concealment"
+      ],
+      "convergence": "1/8",
+      "file": "interverse/interflux/skills/flux-drive/phases/reaction.md",
+      "section": "Step 2.5.5",
+      "description": "No structured index of which agents produced reactions, which were skipped, and which errored. Synthesis must infer state from file presence.",
+      "fix": "Write reactions-manifest.json at end of Step 2.5.4."
+    },
+    {
+      "id": "TALMUDIC-01",
+      "severity": "P1",
+      "title": "Sycophancy detection thresholds inert for typical agent populations",
+      "agents": [
+        "fd-talmudic-machloket-preserved-dissent",
+        "fd-reaction-prompt-semantics"
+      ],
+      "convergence": "2/13",
+      "round": 2,
+      "file": "interverse/interflux/config/flux-drive/reaction.yaml",
+      "section": "lines 18-19",
+      "description": "agreement_threshold: 0.8 with 5-10 agents means even one dissent drops rate below threshold. Sycophancy detected only in trivial unanimous case already caught by convergence gate.",
+      "fix": "Calibrate for actual population (5-10 agents). Consider per-finding sycophancy or lower to 0.6-0.7."
+    },
+    {
+      "id": "TALMUDIC-02",
+      "severity": "P1",
+      "title": "Minority finding preservation not verified in plan",
+      "agents": [
+        "fd-talmudic-machloket-preserved-dissent",
+        "fd-synthesis-deduplication"
+      ],
+      "convergence": "2/13",
+      "round": 2,
+      "file": "interverse/intersynth/agents/synthesize-review.md",
+      "section": "Step 3.7",
+      "description": "Plan Task 4 checks for reaction sections but not for minority finding preservation. No severity floor prevents P0/P1 findings from being suppressed by majority-disagree reactions.",
+      "fix": "Add minority preservation test to Task 6. Verify P0/P1 with net-negative reactions survive as contested."
+    },
+    {
+      "id": "TALMUDIC-03",
+      "severity": "P1",
+      "title": "Lorenzen move taxonomy lacks partial-distinction for partially-agree",
+      "agents": [
+        "fd-talmudic-machloket-preserved-dissent"
+      ],
+      "convergence": "1/13",
+      "round": 2,
+      "file": "interverse/interflux/config/flux-drive/discourse-lorenzen.yaml",
+      "section": "move_types",
+      "description": "partially-agree has no mapping in Move Type Assignment. Agents omit move type, producing null legality scores. Forces binary attack/defense when partial-distinction is more accurate.",
+      "fix": "Add partially-agree mapping to reaction-prompt.md or add distinction move type to discourse-lorenzen.yaml."
+    },
+    {
+      "id": "SHIPIBO-01",
+      "severity": "P2",
+      "title": "Fixative timing not validated — LLM may parallelize dispatch steps",
+      "agents": [
+        "fd-shipibo-kene-synesthetic-convergence",
+        "fd-reaction-prompt-semantics"
+      ],
+      "convergence": "2/13",
+      "round": 2,
+      "file": "interverse/interflux/skills/flux-drive/phases/reaction.md",
+      "section": "Steps 2.5.2b-2.5.4",
+      "description": "reaction.md ordering is correct but interpreted by LLM, not executed as code. Parallelization could dispatch reactions before fixative computes.",
+      "fix": "Add fixative timing test to Task 3. Add explicit sequencing note in reaction.md."
+    },
+    {
+      "id": "ICE-CORE-01",
+      "severity": "P2",
+      "title": "Single-pass enforcement not tested",
+      "agents": [
+        "fd-ice-core-multiproxy-reconciliation"
+      ],
+      "convergence": "1/13",
+      "round": 2,
+      "file": "interverse/interflux/scripts/findings-helper.sh",
+      "section": "line 69",
+      "description": "read-indexes correctly skips *.reactions files, but the plan does not test this property. No negative test for recursive reaction cycles.",
+      "fix": "Add negative test to Task 3: re-run convergence gate after reactions, verify reaction files excluded."
+    },
+    {
+      "id": "ICE-CORE-02",
+      "severity": "P2",
+      "title": "Agent identity in reaction prompts enables reputation-anchoring",
+      "agents": [
+        "fd-ice-core-multiproxy-reconciliation"
+      ],
+      "convergence": "1/13",
+      "round": 2,
+      "file": "interverse/interflux/config/flux-drive/reaction-prompt.md",
+      "section": "lines 1-3",
+      "description": "Peer findings include agent identity, allowing agents to assess authority rather than evidence.",
+      "fix": "Consider stripping agent names from peer findings. Note as future experiment."
+    },
+    {
+      "id": "SYNTHESIS-01",
+      "severity": "P1",
+      "title": "Hearsay weighting may not be enforced in conductor score computation",
+      "agents": [
+        "fd-synthesis-deduplication",
+        "fd-talmudic-machloket-preserved-dissent"
+      ],
+      "convergence": "2/13",
+      "round": 2,
+      "file": "interverse/intersynth/agents/synthesize-review.md",
+      "section": "Steps 3.7, 3.7b",
+      "description": "Convergent threshold (>50% agree) does not specify raw count vs weighted count. Hearsay-tagged agrees may still count toward convergence, making hearsay rule decorative.",
+      "fix": "Add integration test: finding with 2 hearsay-agree + 1 independent-disagree should be contested, not convergent."
+    }
+  ],
+  "improvements": [
+    "Run baseline convergence measurement on existing review outputs before setting the 0.6 threshold",
+    "Fix flux-gen v5 character-per-line corruption in malformed agent files",
+    "Amend execution order to add Agent QA and Baseline steps before Task 1",
+    "Calibrate sycophancy thresholds for actual agent population sizes",
+    "Add minority preservation and hearsay weighting integration tests to Task 6",
+    "Add fixative timing, single-pass, and convergence degradation tests to Task 3",
+    "Split Interspect evidence emission into Phase 2.5 event + Phase 3 event",
+    "Write reactions-manifest.json for structured dispatch metadata",
+    "Document feedback loop latency for reaction evidence in Interspect pipeline"
+  ],
+  "cross_round_convergence": {
+    "cluster_1_matching_algorithm": {
+      "agents": [
+        "fd-architecture",
+        "fd-quality",
+        "fd-ice-core-multiproxy-reconciliation"
+      ],
+      "rounds": [
+        1,
+        2
+      ],
+      "ids": [
+        "ARCH-01",
+        "ICE-CORE-03"
+      ],
+      "confidence": "HIGH"
+    },
+    "cluster_2_post_reaction_measurement": {
+      "agents": [
+        "fd-evidence-pipeline-integrity",
+        "fd-japanese-sword-polishing-togishi",
+        "fd-shipibo-kene-synesthetic-convergence"
+      ],
+      "rounds": [
+        1,
+        2
+      ],
+      "ids": [
+        "EVIDENCE-01",
+        "TOGISHI-01",
+        "SHIPIBO-02"
+      ],
+      "confidence": "HIGH"
+    },
+    "cluster_3_authority_deference": {
+      "agents": [
+        "fd-talmudic-machloket-preserved-dissent",
+        "fd-ice-core-multiproxy-reconciliation"
+      ],
+      "rounds": [
+        2
+      ],
+      "ids": [
+        "TALMUDIC-01",
+        "ICE-CORE-02"
+      ],
+      "novel_to_round_2": true
+    },
+    "cluster_4_minority_preservation": {
+      "agents": [
+        "fd-talmudic-machloket-preserved-dissent",
+        "fd-synthesis-deduplication"
+      ],
+      "rounds": [
+        2
+      ],
+      "ids": [
+        "TALMUDIC-02",
+        "SYNTHESIS-01"
+      ],
+      "novel_to_round_2": true
+    }
+  }
+}
