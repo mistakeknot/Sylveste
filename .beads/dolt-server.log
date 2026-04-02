@@ -33830,6 +33830,7 @@ time="2026-04-01T23:15:34+02:00" level=info msg=NewConnection DisableClientMulti
 time="2026-04-01T23:15:34+02:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=5390
 time="2026-04-01T23:15:34+02:00" level=info msg=ConnectionClosed connectionID=5389
 time="2026-04-01T23:15:34+02:00" level=info msg=ConnectionClosed connectionID=5390
+<<<<<<< Updated upstream
 time="2026-04-01T23:15:55+02:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=5391
 time="2026-04-01T23:15:55+02:00" level=info msg=ConnectionClosed connectionID=5391
 time="2026-04-01T23:15:55+02:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=5392
@@ -35783,3 +35784,27 @@ time="2026-04-02T04:29:17+02:00" level=warning msg="error running query" connect
 time="2026-04-02T04:29:17+02:00" level=info msg=NewConnection DisableClientMultiStatements=false connectionID=6294
 time="2026-04-02T04:29:17+02:00" level=info msg=ConnectionClosed connectionID=6294
 time="2026-04-02T04:29:17+02:00" level=info msg=ConnectionClosed connectionID=6293
+=======
+Starting server with Config HP="127.0.0.1:49651"|T="28800000"|R="false"|L="info"
+error opening table file: table file not found: /Users/sma/projects/Sylveste/.beads/dolt/Sylveste/.dolt/noms/tscjot324lk4n9tdqujvcftrikrosvct
+Starting server with Config HP="127.0.0.1:49692"|T="28800000"|R="false"|L="info"
+error opening table file: table file not found: /Users/sma/projects/Sylveste/.beads/dolt/Sylveste/.dolt/noms/tscjot324lk4n9tdqujvcftrikrosvct
+>>>>>>> Stashed changes
+Starting server with Config HP="127.0.0.1:49794"|T="28800000"|R="false"|L="info"
+corrupt manifest
+Starting server with Config HP="127.0.0.1:49831"|T="28800000"|R="false"|L="info"
+corrupt manifest
+Starting server with Config HP="127.0.0.1:49865"|T="28800000"|R="false"|L="info"
+corrupt manifest
+Starting server with Config HP="127.0.0.1:49901"|T="28800000"|R="false"|L="info"
+corrupt manifest
+Starting server with Config HP="127.0.0.1:49940"|T="28800000"|R="false"|L="info"
+corrupt manifest
+Starting server with Config HP="127.0.0.1:49976"|T="28800000"|R="false"|L="info"
+corrupt manifest
+Starting server with Config HP="127.0.0.1:50006"|T="28800000"|R="false"|L="info"
+corrupt manifest
+Starting server with Config HP="127.0.0.1:50060"|T="28800000"|R="false"|L="info"
+corrupt manifest
+Starting server with Config HP="127.0.0.1:50284"|T="28800000"|R="false"|L="info"
+corrupt manifest
