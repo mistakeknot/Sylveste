@@ -151,3 +151,7 @@
 {"id":"int-c1b055bc","kind":"field_change","created_at":"2026-04-02T02:30:55.734320684Z","actor":"d4d31fd6","issue_id":"sylveste-gk8","extra":{"field":"status","new_value":"closed","old_value":"open","reason":"Closed"}}
 {"id":"int-beda722c","kind":"field_change","created_at":"2026-04-02T02:30:56.160832538Z","actor":"d4d31fd6","issue_id":"sylveste-8h5","extra":{"field":"status","new_value":"closed","old_value":"open","reason":"Closed"}}
 {"id":"int-9c863c0f","kind":"field_change","created_at":"2026-04-02T03:05:42.797468498Z","actor":"d4d31fd6","issue_id":"sylveste-18a.7","extra":{"field":"status","new_value":"closed","old_value":"open","reason":"Closed"}}
+{"id":"int-532e7550","kind":"field_change","created_at":"2026-04-02T03:17:30.125119343Z","actor":"Claude Code","issue_id":"sylveste-18a.8","extra":{"field":"status","new_value":"in_progress","old_value":"open"}}
+{"id":"int-4a655d0e","kind":"field_change","created_at":"2026-04-02T03:17:46.946799411Z","actor":"Claude Code","issue_id":"iv-jq5b","extra":{"field":"status","new_value":"closed","old_value":"in_progress","reason":"Closed"}}
+{"id":"int-8f747b68","kind":"field_change","created_at":"2026-04-02T03:17:51.348234309Z","actor":"Claude Code","issue_id":"iv-8m38","extra":{"field":"status","new_value":"in_progress","old_value":"open"}}
+{"id":"int-15fcc6d0","kind":"field_change","created_at":"2026-04-02T03:23:59.050949606Z","actor":"Claude Code","issue_id":"iv-8m38","extra":{"field":"status","new_value":"closed","old_value":"in_progress","reason":"Closed"}}
