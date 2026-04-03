@@ -1,0 +1,187 @@
+[
+  {
+    "name": "fd-xterm-headless-renderer-architecture",
+    "focus": "Evaluate the TerminalRenderer extension architecture for getAnnotatedText() — whether extending the existing class is the right seam, how xterm.js headless buffer APIs expose the data needed, and whether the proposed ~150-line implementation scope is realistic",
+    "persona": "A TypeScript developer who has built production integrations on top of xterm.js headless mode and node-pty. Understands the xterm.js internal buffer model (IBufferCell, IBuffer, getAttribute(), getCode()), knows which APIs are stable vs internal, and has hit the specific pain points of extracting rich cell-state from headless terminals. Has implemented custom renderers that read cell attributes and knows where the attribute bitfield encoding creates gotchas.",
+    "decision_lens": "Every new method on TerminalRenderer must read from a stable, documented xterm.js API or accept the maintenance risk of coupling to internals. A 150-line implementation that touches 3 internal xterm.js properties is more fragile than a 200-line implementation using only public APIs. Flags any place where the brainstorm's architecture assumes xterm.js exposes something it may not, or where the existing getScreenText() vs getScreenState() division creates duplication risk for getAnnotatedText().",
+    "review_areas": [
+      "Verify that xterm.js headless mode exposes all required cell attributes (foreground color, background color, bold, inverse, underline, dim) through IBufferCell stable APIs — specifically whether cell.getFgColor(), cell.getBgColor(), and attribute bitfields are part of the public ITerminalOptions contract or internal implementation details subject to version breaks",
+      "Assess the code duplication risk in adding getAnnotatedText() alongside getScreenText() and getScreenState(): both iterate the terminal buffer row-by-row, cell-by-cell — identify whether the three methods can share a buffer traversal abstraction or whether each requires a separate pass, and what the performance implication is for large terminals (220x50+)",
+      "Evaluate whether the color quantization helper belongs as a private method on TerminalRenderer or as a standalone pure function in a separate module — TerminalRenderer already has a growing surface and color quantization has no state coupling to the terminal instance, making it a candidate for extraction",
+      "Analyze the xterm.js IBufferCell attribute model for edge cases: wide characters (CJK, emoji) occupy two cells with the second being empty — verify that the annotated format handles wide characters without emitting double markers or splitting a character mid-codepoint",
+      "Check whether the proposed [r]...[/] run-length encoding across adjacent same-styled cells is implementable with a single forward pass through the buffer, or whether look-ahead is required — and whether the existing getScreenState() provides a useful intermediate representation that getAnnotatedText() could build on rather than re-reading the raw buffer"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P0",
+        "scenario": "xterm.js exposes foreground/background colors through IBufferCell.getFgColor() but the return value encoding differs between xterm.js v4 and v5 (palette index vs RGB int vs named color) — if tuivision pins to one encoding assumption and the host environment has a different version, getAnnotatedText() silently emits wrong colors or throws on every cell read.",
+        "condition": "Occurs when the implementation does not check the xterm.js version range in package.json against the API usage, or when the quantization mapper assumes a specific color encoding format without normalizing first."
+      },
+      {
+        "severity": "P1",
+        "scenario": "getAnnotatedText() iterates the terminal buffer independently of getScreenText(), causing two full buffer passes per get_screen call when both formats are requested — for a 220x50 terminal (11,000 cells) this doubles the CPU cost of screen capture, degrading latency for agents that poll frequently.",
+        "condition": "Triggered any time an agent or test calls get_screen with multiple format options, or when the default format change causes callers that previously used full to now also request annotated for comparison."
+      },
+      {
+        "severity": "P2",
+        "scenario": "Wide characters (e.g., Japanese kanji or box-drawing characters) produce a primary cell followed by a zero-width continuation cell — if getAnnotatedText() emits a marker for each cell independently, the annotated output contains doubled markers around single visual characters, inflating token count and confusing the LLM about character boundaries.",
+        "condition": "Occurs in any TUI application that displays CJK text, unicode box-drawing, or emoji in the terminal buffer."
+      }
+    ],
+    "success_hints": [
+      "A mapping from each required attribute (fg color, bg color, bold, inverse, underline) to its specific xterm.js IBufferCell API call, with confirmation that each is in the stable public API contract for the version range tuivision targets",
+      "A concrete design decision on shared buffer traversal: either a unified traversal that feeds getScreenText, getScreenState, and getAnnotatedText from one pass, or an explicit decision that separate passes are acceptable with performance impact quantified",
+      "Confirmation that wide character (cell.getWidth() === 0) is handled correctly in the annotated output, with the specific check identified in pseudocode"
+    ],
+    "task_context": "Tuivision is a TypeScript MCP server that spawns terminal apps via node-pty, captures screen state through xterm.js headless, and exposes get_screen (text/compact/full/annotated formats) and get_screenshot (PNG/SVG) tools. The brainstorm proposes adding getAnnotatedText() to the TerminalRenderer class (~150 new lines) alongside existing getScreenText() and getScreenState() methods. Color quantization is a private helper. screen.ts gets a new 'annotated' format case. The target is ~400-600 tokens per 80x24 screen using [r]...[/] inline markers.",
+    "anti_overlap": "fd-bpe-marker-tokenization covers how [r]...[/] markers tokenize in BPE — this agent focuses on the TypeScript/xterm.js implementation architecture, not the token cost of the chosen format. fd-color-quantization-palette covers the color mapping algorithm — this agent covers where quantization lives in the architecture, not how it maps colors. fd-mcp-tool-api-breaking-change covers the get_screen API surface change — this agent covers the rendering implementation, not the tool interface."
+  },
+  {
+    "name": "fd-bpe-marker-tokenization",
+    "focus": "Validate the specific claim that [r]...[/] markers cost 2-3 tokens per pair and that this beats the alternatives — using real tokenizer behavior, not estimates, against the actual marker syntax chosen for the annotated format",
+    "persona": "An NLP engineer who has built tokenizer-aware systems and has direct experience measuring BPE tokenization behavior for structured text formats. Knows that cl100k_base and o200k_base have different vocabularies and that character sequences that look similar can tokenize very differently. Has specifically studied how bracket-style markers tokenize in Tiktoken and Claude's tokenizer, and knows the difference between what appears compact to a human and what generates fewer tokens.",
+    "decision_lens": "The entire cost argument for the annotated format rests on [r]...[/] being cheaper than alternatives. If the tokenizer cost claim is wrong by 2x, the format delivers 800-1200 tokens per screen instead of 400-600, and the case for implementing it weakens substantially. Every token count in the brainstorm is an estimate — validate the critical ones against the actual tokenizers the format will be consumed by (cl100k_base for GPT-4o, Claude's SentencePiece for Sonnet/Haiku).",
+    "review_areas": [
+      "Tokenize the proposed marker syntax [r], [r fg=red], [r fg=red bg=blue], [r fg=red bold=true inverse=true], and [/] through cl100k_base and estimate Claude's SentencePiece cost — verify the '2-3 tokens per marker pair' claim against actual tokenization, since [r] and [/] may tokenize as 1, 2, or 3 tokens depending on surrounding context",
+      "Benchmark the full marker set against the alternatives the brainstorm rejected: <span class=\"red\">, {r}, Unicode angle markers, and markdown bold — tokenize a representative 80x24 terminal screen in each format and compare actual token counts, not character counts",
+      "Analyze how the BPE tokenizer handles repeated [r] markers in a dense TUI screen: if 60% of cells have a color annotation, a screen with 500 annotations at 2 tokens each adds 1000 tokens just for markers — verify the total annotated output for a realistic vim or htop screen stays within the 400-600 token target",
+      "Evaluate the tokenization behavior of the optional role= attribute extension ([r role=error]): the attribute name 'role' and values 'error', 'success', 'heading' are common English words and may tokenize favorably (single token each) or unfavorably (split) — determine whether role attributes are cost-neutral or expensive relative to the ~100 token premium claimed",
+      "Check whether the [/] closing marker is necessary given that annotations could use a span model where the marker implicitly ends at the next [r] — a single-marker format [r]text[r]next could save half the marker tokens; evaluate whether LLM parsing reliability justifies the two-marker design"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P0",
+        "scenario": "The [r] and [/] markers each tokenize as 2 tokens instead of 1 in cl100k_base (bracket + letter, letter + bracket separately), and a typical htop screen with 300 styled cells generates 1200 marker tokens alone — pushing the annotated format to 1500+ tokens, more expensive than the compact text format it was meant to improve upon.",
+        "condition": "Occurs if the tokenization cost estimate was based on character count or human intuition rather than actual Tiktoken measurement, which is the only ground truth for cl100k_base."
+      },
+      {
+        "severity": "P1",
+        "scenario": "The annotated format performs well for Claude's tokenizer (2 tokens per marker pair) but poorly for cl100k_base (4 tokens per marker pair) — tuivision users calling it from GPT-4o agents get 2x the expected token cost, making the format uncompetitive for the GPT-4o use case without a format redesign.",
+        "condition": "Triggered whenever the format is used with an OpenAI model; the asymmetry is invisible during Anthropic-only testing."
+      },
+      {
+        "severity": "P2",
+        "scenario": "The optional role= attribute adds 40 tokens per screen (not ~100 as estimated) because 'role', 'error', 'success', and 'heading' are each single tokens — the brainstorm's cost premium estimate is 2.5x too high, making the opt-in extension more attractive than documented and potentially underselling the feature.",
+        "condition": "Occurs when role attribute cost is estimated from word length rather than tokenized; incorrect in either direction misleads implementation priorities."
+      }
+    ],
+    "success_hints": [
+      "A tokenization table: 5 marker variants x 2 tokenizers (cl100k_base, estimated Claude SentencePiece), showing token count per marker with surrounding context",
+      "A full-screen token count for a representative screen (80x24 htop, vim with syntax highlighting) in annotated format vs compact text vs SVG, using actual tokenizer counts not estimates",
+      "A concrete recommendation: is [r]...[/] the right choice, or does the data suggest a different marker syntax that tokenizes more favorably?"
+    ],
+    "task_context": "Tuivision's brainstorm benchmarked four encoding formats and chose [r]...[/] as the winner at '2-3 tokens per marker pair'. The annotated format targets 400-600 tokens for an 80x24 screen using inline markers on styled runs. The format will be consumed by Claude models (SentencePiece tokenizer) and potentially GPT-4o (cl100k_base). The token cost claim is the primary justification for implementing the annotated format over alternatives like optimized SVG.",
+    "anti_overlap": "fd-xterm-headless-renderer-architecture covers the TypeScript implementation of the format — this agent validates the token cost claims before implementation commits to the format. fd-color-quantization-palette covers what color data goes into the markers — this agent measures how those color tokens (e.g., 'red', 'blue', 'bright_cyan') tokenize. fd-mcp-tool-api-breaking-change covers API surface — this agent covers the encoding format cost model."
+  },
+  {
+    "name": "fd-color-quantization-palette",
+    "focus": "Evaluate the correctness and completeness of the hex/256/truecolor to 16 named colors quantization strategy: color distance metrics, palette selection, semantic accuracy for common terminal themes, and the truecolor application edge case",
+    "persona": "A color science and graphics engineer who has implemented palette quantization algorithms (median-cut, k-means, octree) and understands the perceptual and semantic dimensions of color mapping in terminal applications. Has worked on terminal theming systems and knows that xterm's 16-color and 256-color palettes are neither perceptually uniform nor standardly defined — the 'red' in Solarized is not the same RGB as the 'red' in Monokai. Knows the difference between nearest-neighbor in RGB space (wrong), nearest-neighbor in CIELAB (perceptually correct), and semantic nearest-neighbor (domain-correct for terminals).",
+    "decision_lens": "Color quantization is correct when the LLM receiving the quantized output makes the same decisions it would make with the original colors. A quantization that maps Solarized yellow (#b58900) to 'yellow' and maps Solarized base1 (#93a1a1) to 'cyan' is semantically wrong even if the nearest-neighbor distance is small. The error criterion is not perceptual fidelity but task decision fidelity — does the LLM still know that a test failed, a menu item is selected, a file is staged?",
+    "review_areas": [
+      "Evaluate the proposed mapping strategy against the xterm default palette: the 16 xterm colors are not standardly defined across terminals, and a color in the xterm-256 palette maps to the 16-color palette via a lookup table that assumes specific RGB values — verify that the quantization uses the xterm default RGB values as centroids, not arbitrary named-color RGBs",
+      "Analyze semantic correctness for the 5 most common terminal color semantic patterns: (1) git diff red/green, (2) test runner red/green/yellow, (3) vim syntax highlighting (many colors), (4) htop color-coded metrics, (5) status line fg/bg — determine whether 16 named colors preserve the semantic distinctions that matter in each pattern",
+      "Assess the truecolor application edge case: terminals displaying image previews, color pickers, or gradient text use truecolor to represent data values, not semantic states — quantizing these to 16 colors produces garbage output. Determine whether the annotated format should detect and preserve exact hex for cells where quantization would be lossy beyond a threshold",
+      "Evaluate the nearest-neighbor algorithm in RGB space vs CIELAB vs palette lookup: for the xterm 256-color palette, a fast lookup table (256 entries) maps exactly and is O(1); for truecolor (16M values), nearest-neighbor in CIELAB is perceptually correct but expensive — assess the performance tradeoff for a 80x24 screen (1920 cells per quantization call)",
+      "Check the 16 named color vocabulary against BPE tokenization: 'bright_cyan', 'bright_magenta', 'dark_gray' each tokenize differently — determine whether compound named colors should be encoded as compound tokens or two-word pairs, and whether the vocabulary aligns with how Claude models recognize color semantics in training data"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P0",
+        "scenario": "A terminal using Solarized theme maps its accent color (yellow, #b58900) to 'yellow' but maps its secondary highlight (base01 dark gray, #586e75) to 'cyan' because nearest-neighbor in RGB space finds a closer match in the cyan bucket — the LLM receives 'cyan' for elements that are visually dark gray, misidentifying selection state in applications that use Solarized base01 as their highlight color.",
+        "condition": "Occurs when quantization uses Euclidean distance in RGB space against terminal-native color centroids that don't match the actual theme's palette distances; Solarized is the most widely used non-default theme and will fail this consistently."
+      },
+      {
+        "severity": "P1",
+        "scenario": "The color quantization is applied inside getAnnotatedText() on a per-call basis, iterating all 1920 cells on every get_screen call — for a CIELAB-based quantizer with RGB-to-LAB conversion, this adds ~5ms per screen capture on a low-power server, degrading throughput for agents that poll frequently in interactive automation mode.",
+        "condition": "Triggered whenever an agent uses the annotated format in interactive automation mode, where get_screen is called after each simulated keystroke."
+      },
+      {
+        "severity": "P2",
+        "scenario": "The named color vocabulary uses underscore compound names ('bright_red', 'dark_gray') but the annotated format documentation uses hyphen variants elsewhere ('fg=bright-red') — the inconsistency causes agents to receive different naming schemes across calls and build incorrect parsing assumptions about the format.",
+        "condition": "Occurs when the palette naming convention is not enforced by a constant enum in the TypeScript implementation, allowing different code paths to use different serialization conventions."
+      }
+    ],
+    "success_hints": [
+      "A palette mapping table: xterm-256 index ranges to named color, with RGB centroids and the decision rationale for each bucket boundary",
+      "Semantic correctness check: for each of the 5 common color semantic patterns, verify that the 16-color output preserves the distinctions an LLM needs (pass/fail, selected/unselected, error/success)",
+      "A performance estimate for the quantization step: cells per millisecond for the chosen algorithm, with the total overhead per 80x24 screen call"
+    ],
+    "task_context": "Tuivision's brainstorm proposes child .3 (color quantization) as the key mechanism to 'eliminate hex strings from output, save 400-600 tokens/screen'. The quantization maps hex/256/truecolor to 16 named colors as a private helper in TerminalRenderer. xterm.js exposes cell colors as palette indices (for 256-color mode) or RGB triples (for truecolor). The brainstorm acknowledges the truecolor edge case ('image viewers, color pickers will lose fidelity') and notes that full/SVG modes retain exact colors.",
+    "anti_overlap": "fd-xterm-headless-renderer-architecture covers where quantization lives in the class structure — this agent covers the algorithm correctness and semantic accuracy of the mapping itself. fd-bpe-marker-tokenization covers how named color strings tokenize — this agent covers whether the mapping produces the semantically correct named color. fd-inverse-video-selection-semantics covers inverse color pre-resolution — this agent covers all other color attributes."
+  },
+  {
+    "name": "fd-inverse-video-selection-semantics",
+    "focus": "Evaluate the correctness of preserving the inverse boolean rather than pre-resolving it at terminal-renderer.ts:220-223, and whether [I] as the selection/focus marker has sufficient semantic grounding across real TUI frameworks",
+    "persona": "A TUI framework developer who has built ncurses, tui-rs/ratatui, bubbletea, and blessed applications and understands how each framework signals selection, focus, and highlighted state. Knows that 'inverse video' is the oldest and most portable selection mechanism in terminals — it predates true color by decades — and that modern frameworks layer higher-level semantics (selected, highlighted, cursor) on top of it. Has debugged the specific failure modes of applications that mix true inverse (SGR 7) with application-level color swapping that visually mimics inverse but does not set the attribute bit.",
+    "decision_lens": "Preserving the inverse boolean is correct if and only if: (1) most TUI frameworks actually set SGR 7 when indicating selection (not swap colors manually), and (2) the LLM receiving [I] in the output reliably interprets it as selection/focus context. If major TUI frameworks simulate inverse by swapping fg/bg colors without setting the inverse bit, the [I] marker will miss real selections. If the LLM treats [I] as visual noise rather than semantic signal, the preservation adds token cost with no behavioral benefit.",
+    "review_areas": [
+      "Survey how major TUI frameworks signal selection state: ncurses A_REVERSE vs wattr, tui-rs/ratatui Modifier::REVERSED vs custom block styles, bubbletea lipgloss Reverse(), blessed reverse option — determine what fraction set xterm SGR 7 vs simulate inverse by swapping fg/bg colors, since only SGR 7 appears as the inverse bit in xterm.js IBufferCell",
+      "Analyze the specific code at terminal-renderer.ts:220-223 that pre-resolves inverse: what is the current behavior (does it swap fg/bg and clear the inverse flag, or only swap?), what state does the output struct carry after pre-resolution, and does the brainstorm's fix correctly restore the inverse boolean without introducing a double-inverse bug when inverse cells are also color-quantized",
+      "Evaluate the semantic ambiguity of [I]: in a vim-style editor, inverse often marks the cursor line (navigation focus) rather than selection; in a file manager it marks the selected file; in a menu it marks the active option — determine whether [I] is specific enough to be useful or whether the LLM needs more context to distinguish these use cases",
+      "Assess the token cost of preserving inverse across a typical screen: a focused cursor line in vim spans 80 cells, each with the inverse attribute — without run-length encoding for inverse, this adds 80 [I] markers; with RLE, it adds one [I] run marker — verify whether the annotated format applies RLE to the inverse attribute consistently with color and bold attributes",
+      "Check whether the inverse preservation interacts correctly with color quantization: if a cell has inverse=true, fg=white, bg=blue, the annotated output should represent the original pre-swap colors with an inverse marker — not the visually resolved post-swap colors. Verify the ordering of quantization and inverse handling in the implementation plan does not inadvertently double-swap colors"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P0",
+        "scenario": "tui-rs/ratatui's default list selection style uses Modifier::REVERSED which sets SGR 7 and is correctly captured as inverse=true in xterm.js — but ratatui's highlight_style override (used by most production apps for custom colors) sets explicit fg/bg colors and does NOT set SGR 7, meaning the selected item has inverse=false in the buffer. The [I] marker is never emitted for selected items in any ratatui app that uses custom highlight styles, which is the majority of real ratatui apps.",
+        "condition": "Occurs whenever a TUI application customizes selection color using explicit fg/bg rather than the default reverse attribute — the inverse preservation feature silently provides no benefit for these apps."
+      },
+      {
+        "severity": "P1",
+        "scenario": "The fix to terminal-renderer.ts:220-223 removes the pre-resolution but the annotated format emits the original fg/bg with an inverse marker — an LLM that reads this may mentally swap the colors for display (correct) and then also read the inverse flag and swap again (incorrect double swap), interpreting the cell as having the original non-inverted colors.",
+        "condition": "Occurs if the output format does not specify whether fg/bg values in an inverse cell represent pre-swap or post-swap colors, and LLM inference fills in the wrong convention."
+      },
+      {
+        "severity": "P2",
+        "scenario": "vim's cursor line uses inverse video for the entire line (80 cells), generating 80 [I] markers without RLE or one [I] run marker with RLE — if the annotated format does not document whether inverse is run-length encoded consistently with other attributes, downstream consumers may emit the unoptimized 80-marker version and add 160 tokens per cursor line.",
+        "condition": "Occurs when the attribute RLE implementation handles fg/bg colors but treats inverse as a separate boolean that is not included in the run-continuation check."
+      }
+    ],
+    "success_hints": [
+      "A survey of at least 4 major TUI frameworks (ncurses, ratatui, bubbletea, blessed) showing whether default selection state sets SGR 7 inverse vs swaps fg/bg — with the fraction of real applications that would benefit from [I] preservation",
+      "The correct ordering of operations: quantize colors first, then apply inverse attribute, with the expected output for a cell where inverse=true, fg=0 (black), bg=7 (white) after quantization",
+      "A concrete recommendation: is inverse boolean preservation worth implementing for MVP given the framework coverage data, or should it be deferred to a follow-up child?"
+    ],
+    "task_context": "Tuivision's brainstorm proposes child .4 (preserve inverse boolean for selection/focus semantics). The current code at terminal-renderer.ts:220-223 swaps fg/bg when inverse=true, destroying the semantic signal. The fix would pass through the original colors and add an [I] marker, letting agents interpret 'inverse = selected/focused'. The brainstorm frames this as a semantic loss fix — agents currently cannot distinguish an inverse cell from a cell with swapped colors.",
+    "anti_overlap": "fd-color-quantization-palette covers the color mapping for non-inverse attributes — this agent covers inverse-specific semantics and the interaction between inverse and the color pipeline. fd-xterm-headless-renderer-architecture covers the xterm.js API for reading inverse from IBufferCell — this agent covers the semantic correctness of what to do with the inverse flag once read. fd-mcp-tool-api-breaking-change covers the API contract changes — this agent covers the rendering semantics."
+  },
+  {
+    "name": "fd-mcp-tool-api-breaking-change",
+    "focus": "Evaluate the default format change (full to compact) as a breaking API change: compatibility risk, migration path, MCP protocol version constraints, and whether the annotated format's get_screen parameter design is complete and forwards-compatible",
+    "persona": "An API design engineer who has managed breaking changes in production systems and understands the specific dynamics of MCP tool API evolution. Knows that MCP tools are consumed by LLM agents whose behavior is specified by system prompts that may not be updated when server-side defaults change. Has experience with the specific failure mode where an API default changes and 80% of consumers silently get worse behavior because they were relying on the old default implicitly. Understands MCP's current versioning and negotiation capabilities and their limits.",
+    "decision_lens": "A default change is a breaking change if any consumer relies on the old default behavior without explicitly setting the parameter. For MCP tools, the consumers are LLM agents whose tool-use patterns are shaped by system prompts — a system prompt that says 'use get_screen to read the terminal' will call get_screen with no format parameter. If that call previously returned full (12K tokens of structured JSON) and now returns compact (plain text), the agent's behavior changes without any code change. The question is not whether the new default is better, but whether the transition is safe.",
+    "review_areas": [
+      "Audit all existing tuivision users and integrations for implicit reliance on the full default: system prompts that call get_screen without a format parameter, test fixtures that compare against full-format output, documentation examples that show full-format responses — determine the actual blast radius of the default change before committing to it",
+      "Evaluate the MCP protocol's capability for communicating default changes: does MCP support tool deprecation notices, parameter default version annotations, or capability negotiation that would allow clients to detect the change? If not, assess whether a transition period (emit a deprecation warning in the response when the old default is implicitly used) is feasible within the MCP response schema",
+      "Analyze the parameter surface design for the new annotated format: the brainstorm mentions include_roles: true as an opt-in parameter — evaluate whether this should be a top-level parameter, a sub-parameter of format: annotated, or a separate role_annotation: boolean — and whether the parameter naming is consistent with existing get_screen parameters",
+      "Assess whether the full format (12K tokens) should be deprecated, removed, or retained indefinitely: removing it eventually would simplify the implementation but breaks any explicit format: full caller; retaining it forever creates a maintenance burden for two formats that serve the same use case. Evaluate a sunset policy and the notification mechanism within MCP.",
+      "Check whether the SVG span-merging change (child .5) changes the get_screenshot SVG output structure in a way that breaks downstream SVG consumers — CSS selectors, SVG-to-image pipelines, or automated tests that parse the SVG structure. The brainstorm proposes replacing per-cell SVG with merged SVG, which is a structural change to existing output."
+    ],
+    "severity_examples": [
+      {
+        "severity": "P0",
+        "scenario": "A production system prompt instructs an agent to 'call get_screen and parse the JSON to extract the cursor position from the structured output' — after the default changes from full (structured JSON with cursor coordinates) to compact (plain text), the agent receives plain text, fails to find the JSON cursor field, and enters an error loop or reports incorrect state to the orchestrator.",
+        "condition": "Occurs in any integration that relies on the full format's structured JSON fields (cursor, dimensions, cells array) without explicitly passing format: full — the default change silently converts structured output to unstructured text."
+      },
+      {
+        "severity": "P1",
+        "scenario": "The get_screenshot SVG output changes from per-cell text elements to merged span elements — an automated visual regression test that parses SVG by counting text elements or selecting by exact x/y coordinates silently passes fewer assertions, masking rendering regressions in subsequent changes.",
+        "condition": "Triggered when the SVG span-merging lands and any test or integration relies on the one-element-per-cell structure of the previous SVG output."
+      },
+      {
+        "severity": "P2",
+        "scenario": "The include_roles: true parameter is added as a top-level get_screen parameter but the MCP tool schema does not mark it as optional with a default — some MCP client implementations treat missing default declarations as required parameters and prompt the LLM to provide a value, creating unexpected tool invocation dialogs for agents that don't know about the new parameter.",
+        "condition": "Occurs when the TypeScript Zod schema for the get_screen tool adds the optional parameter without explicit .default(false) or .optional() annotations that serialize correctly in the MCP JSON Schema output."
+      }
+    ],
+    "success_hints": [
+      "An explicit compatibility matrix: which existing get_screen call patterns break under the default change, with the specific behavioral difference for each pattern",
+      "A concrete migration proposal: either a transition period with old-default warnings, a parameter version flag, or a clearly documented release note that constitutes acceptable notification given tuivision's user base",
+      "A review of the get_screenshot SVG change as a separately versioned breaking change — with a decision on whether it needs its own format version flag or whether a semver minor bump is sufficient"
+    ],
+    "task_context": "Tuivision's brainstorm proposes child .2 (change default format from full to compact) as 'a breaking change for any agent hardcoding expectations about get_screen output shape' with the mitigation that 'full remains available via explicit parameter'. Child .5 (SVG span-merging) changes the SVG output structure from per-cell to merged spans. The brainstorm frames .2 as 'low risk' because the 12K default is 'actively harmful', but the actual risk depends on how many existing callers rely on the default implicitly.",
+    "anti_overlap": "fd-xterm-headless-renderer-architecture covers the rendering implementation of the new format — this agent covers the API contract, parameter design, and breaking-change management. fd-bpe-marker-tokenization covers the token cost of the annotated format encoding — this agent covers whether users can discover, adopt, and safely transition to it. fd-inverse-video-selection-semantics covers the semantic correctness of the annotated output — this agent covers the API surface that exposes that output."
+  }
+]
