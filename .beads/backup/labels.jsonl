@@ -53,7 +53,13 @@
 {"issue_id":"sylveste-18a.8","label":"patterns"}
 {"issue_id":"sylveste-18a.8","label":"research"}
 {"issue_id":"sylveste-18a.8","label":"skaffen"}
+{"issue_id":"sylveste-18a.9","label":"artifact_brainstorm:docs/brainstorms/2026-04-04-post-compact-context-restoration.md"}
+{"issue_id":"sylveste-18a.9","label":"artifact_plan:docs/plans/2026-04-04-post-compact-context-restoration.md"}
+{"issue_id":"sylveste-18a.9","label":"claimed_at:1775257922"}
+{"issue_id":"sylveste-18a.9","label":"claimed_by:unknown"}
+{"issue_id":"sylveste-18a.9","label":"complexity:3"}
 {"issue_id":"sylveste-18a.9","label":"patterns"}
+{"issue_id":"sylveste-18a.9","label":"phase:executing"}
 {"issue_id":"sylveste-18a.9","label":"research"}
 {"issue_id":"sylveste-18a.9","label":"skaffen"}
 {"issue_id":"sylveste-2kw","label":"artifact_implementation:6e77f9cc85dfb10899775fd7eaaaf660d38eca74"}
@@ -103,6 +109,9 @@
 {"issue_id":"sylveste-8h5","label":"skaffen"}
 {"issue_id":"sylveste-8ve","label":"artifact_brainstorm:docs/brainstorms/2026-03-28-confidence-cascade-integration.md"}
 {"issue_id":"sylveste-8ve","label":"artifact_plan:docs/plans/2026-03-28-confidence-cascade-integration.md"}
+{"issue_id":"sylveste-co5","label":"claimed_at:1775257878"}
+{"issue_id":"sylveste-co5","label":"claimed_by:5d2440f9-1f8f-45b5-813e-51e5acd84fce"}
+{"issue_id":"sylveste-co5","label":"complexity:2"}
 {"issue_id":"sylveste-d5e","label":"artifact_plan:docs/plans/2026-03-27-bhq-validation-7b.md"}
 {"issue_id":"sylveste-d5e","label":"artifact_reflection:docs/solutions/2026-03-27-bhq-validation-results.md"}
 {"issue_id":"sylveste-d5e","label":"artifact_test-pass-sha:4c14f568fa6fc9f2a6212ffc434d09f5ef2fd7eb"}
