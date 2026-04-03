@@ -1,0 +1,25 @@
+mode: manual
+autoApplyTo:
+  - '*.md'
+  - CHANGELOG*
+  - docs/**
+exclude:
+  - CLAUDE.md
+  - AGENTS.md
+  - .interfluence/**
+learnFromEdits: true
+voices:
+  - name: blog
+    applyTo:
+      - apps/interblog/**
+  - name: docs
+    applyTo:
+      - docs/**
+      - '**/VISION.md'
+      - '**/PRD.md'
+  - name: gsv-portfolio
+    applyTo:
+      - apps/intersite/src/content/projects/**
+      - apps/intersite/src/content/experiments/**
+  - name: pr-comments
+    applyTo: []
