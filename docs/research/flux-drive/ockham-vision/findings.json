@@ -1,0 +1,746 @@
+{
+  "reviewed_at": "2026-04-03",
+  "mode": "flux-drive",
+  "context": "Multi-track deep review of Ockham vision brainstorm (16 agents across 4 semantic-distance tracks)",
+  "agents": [
+    {
+      "name": "fd-distributed-governance-consensus",
+      "track": "A-adjacent",
+      "verdict": "needs-changes",
+      "findings_count": 5
+    },
+    {
+      "name": "fd-cybernetic-control-feedback",
+      "track": "A-adjacent",
+      "verdict": "needs-changes",
+      "findings_count": 5
+    },
+    {
+      "name": "fd-sre-alerting-escalation",
+      "track": "A-adjacent",
+      "verdict": "needs-changes",
+      "findings_count": 5
+    },
+    {
+      "name": "fd-agent-trust-authority",
+      "track": "A-adjacent",
+      "verdict": "needs-changes",
+      "findings_count": 5
+    },
+    {
+      "name": "fd-dispatch-optimization-fairness",
+      "track": "A-adjacent",
+      "verdict": "needs-changes",
+      "findings_count": 5
+    },
+    {
+      "name": "fd-or-scheduling",
+      "track": "B-orthogonal",
+      "verdict": "needs-changes",
+      "findings_count": 5
+    },
+    {
+      "name": "fd-atc-flow",
+      "track": "B-orthogonal",
+      "verdict": "needs-changes",
+      "findings_count": 5
+    },
+    {
+      "name": "fd-grid-dispatch",
+      "track": "B-orthogonal",
+      "verdict": "risky",
+      "findings_count": 5
+    },
+    {
+      "name": "fd-central-bank",
+      "track": "B-orthogonal",
+      "verdict": "risky",
+      "findings_count": 5
+    },
+    {
+      "name": "fd-venetian-glass-batch-formulation",
+      "track": "C-distant",
+      "verdict": "needs-changes",
+      "findings_count": 4
+    },
+    {
+      "name": "fd-ethiopian-tabot-custody",
+      "track": "C-distant",
+      "verdict": "needs-changes",
+      "findings_count": 5
+    },
+    {
+      "name": "fd-song-dynasty-keju-examination",
+      "track": "C-distant",
+      "verdict": "needs-changes",
+      "findings_count": 5
+    },
+    {
+      "name": "fd-balinese-subak-irrigation",
+      "track": "C-distant",
+      "verdict": "needs-changes",
+      "findings_count": 5
+    },
+    {
+      "name": "fd-carolingian-missi-dominici-governance",
+      "track": "D-esoteric",
+      "verdict": "needs-changes",
+      "findings_count": 5
+    },
+    {
+      "name": "fd-balinese-subak-water-temple-governance",
+      "track": "D-esoteric",
+      "verdict": "needs-changes",
+      "findings_count": 5
+    },
+    {
+      "name": "fd-hadza-camp-fission-fusion-egalitarianism",
+      "track": "D-esoteric",
+      "verdict": "needs-changes",
+      "findings_count": 5
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "title": "Safety invariants are behavioral, not structural -- agents can bypass them",
+      "severity": "P0",
+      "category": "safety",
+      "tracks": [
+        "A-adjacent",
+        "B-orthogonal",
+        "C-distant",
+        "D-esoteric"
+      ],
+      "agents": [
+        "fd-agent-trust-authority",
+        "fd-distributed-governance-consensus",
+        "fd-grid-dispatch",
+        "fd-carolingian-missi-dominici-governance",
+        "fd-hadza-camp-fission-fusion-egalitarianism",
+        "fd-song-dynasty-keju-examination",
+        "fd-ethiopian-tabot-custody",
+        "fd-balinese-subak-water-temple-governance"
+      ],
+      "convergence": "8/16",
+      "convergence_corrected": 4,
+      "stemma_group": "safety-invariant-enforcement",
+      "source_findings": [
+        "ATA-02",
+        "DGC-01",
+        "GRID-1",
+        "CAROL-02",
+        "HADZA-02",
+        "SK-01",
+        "ET-01",
+        "SUBAK-03"
+      ],
+      "fix": "Push invariant enforcement to execution path. bd set-state rejects self-promotion. lib-dispatch.sh validates aggregate authority. Authority writes require signed tokens.",
+      "cross_references": [
+        "F5"
+      ]
+    },
+    {
+      "id": "F2",
+      "title": "Promotion gaming through bead self-selection / difficulty bias",
+      "severity": "P0",
+      "category": "authority",
+      "tracks": [
+        "A-adjacent",
+        "B-orthogonal",
+        "C-distant",
+        "D-esoteric"
+      ],
+      "agents": [
+        "fd-agent-trust-authority",
+        "fd-central-bank",
+        "fd-song-dynasty-keju-examination",
+        "fd-ethiopian-tabot-custody",
+        "fd-balinese-subak-water-temple-governance",
+        "fd-hadza-camp-fission-fusion-egalitarianism"
+      ],
+      "convergence": "6/16",
+      "convergence_corrected": 5,
+      "stemma_group": "autonomy-ratchet-gaming",
+      "source_findings": [
+        "ATA-01",
+        "CB-1",
+        "SK-01",
+        "ET-02",
+        "SUBAK-04",
+        "HADZA-04"
+      ],
+      "fix": "Normalize pass_rate by difficulty. Require minimum bead complexity coverage. Filter weight-skewed evidence. Replace wall-clock windows with evidence-quantity requirements.",
+      "cross_references": [
+        "F7"
+      ]
+    },
+    {
+      "id": "F3",
+      "title": "Low-budget themes permanently starved by multiplicative weight composition",
+      "severity": "P1",
+      "category": "dispatch",
+      "tracks": [
+        "A-adjacent",
+        "B-orthogonal",
+        "C-distant",
+        "D-esoteric"
+      ],
+      "agents": [
+        "fd-dispatch-optimization-fairness",
+        "fd-or-scheduling",
+        "fd-balinese-subak-irrigation",
+        "fd-venetian-glass-batch-formulation",
+        "fd-balinese-subak-water-temple-governance"
+      ],
+      "convergence": "5/16",
+      "convergence_corrected": 4,
+      "stemma_group": "dispatch-weight-composition",
+      "source_findings": [
+        "DOF-02",
+        "OR-1",
+        "BS-01",
+        "VG-02",
+        "SUBAK-05"
+      ],
+      "fix": "Define weight floor (0.6). Add starvation detection with minimum dispatch cadence. Release idle theme capacity to open pool.",
+      "cross_references": [
+        "F6",
+        "F14"
+      ]
+    },
+    {
+      "id": "F4",
+      "title": "Algedonic bypass channel depends on the system it bypasses",
+      "severity": "P0",
+      "category": "safety",
+      "tracks": [
+        "A-adjacent",
+        "B-orthogonal",
+        "D-esoteric"
+      ],
+      "agents": [
+        "fd-cybernetic-control-feedback",
+        "fd-sre-alerting-escalation",
+        "fd-or-scheduling",
+        "fd-central-bank",
+        "fd-carolingian-missi-dominici-governance",
+        "fd-hadza-camp-fission-fusion-egalitarianism"
+      ],
+      "convergence": "6/16",
+      "convergence_corrected": 4,
+      "stemma_group": "algedonic-channel-integrity",
+      "source_findings": [
+        "CCF-01",
+        "SRE-01",
+        "OR-2",
+        "CB-5",
+        "CAROL-03",
+        "HADZA-03"
+      ],
+      "fix": "Tier 3 needs independent notification path. Separate BYPASS request from execution. Define halt semantics.",
+      "cross_references": [
+        "F9"
+      ]
+    },
+    {
+      "id": "F5",
+      "title": "No cross-domain authority resolution rule",
+      "severity": "P0",
+      "category": "authority",
+      "tracks": [
+        "A-adjacent",
+        "B-orthogonal",
+        "C-distant",
+        "D-esoteric"
+      ],
+      "agents": [
+        "fd-agent-trust-authority",
+        "fd-atc-flow",
+        "fd-ethiopian-tabot-custody",
+        "fd-hadza-camp-fission-fusion-egalitarianism"
+      ],
+      "convergence": "4/16",
+      "convergence_corrected": 4,
+      "stemma_group": "safety-invariant-enforcement",
+      "source_findings": [
+        "ATA-05",
+        "ATC-1",
+        "ET-01",
+        "HADZA-01"
+      ],
+      "fix": "Minimum-tier composition: effective_tier = min(tier for each matched domain). Add claimed_by_blocked state. Assert domain-scoping in agent_reliability.",
+      "cross_references": [
+        "F1"
+      ]
+    },
+    {
+      "id": "F6",
+      "title": "Weight composition order undefined -- CONSTRAIN overridden by intent boost",
+      "severity": "P1",
+      "category": "dispatch",
+      "tracks": [
+        "A-adjacent",
+        "C-distant",
+        "D-esoteric"
+      ],
+      "agents": [
+        "fd-distributed-governance-consensus",
+        "fd-venetian-glass-batch-formulation",
+        "fd-balinese-subak-water-temple-governance"
+      ],
+      "convergence": "3/16",
+      "convergence_corrected": 3,
+      "stemma_group": "dispatch-weight-composition",
+      "source_findings": [
+        "DGC-03",
+        "VG-01",
+        "SUBAK-02"
+      ],
+      "fix": "Anomaly gates take precedence. CONSTRAIN/BYPASS produce sentinel weights overriding intent. Separate anomaly from weight arithmetic.",
+      "cross_references": [
+        "F3"
+      ]
+    },
+    {
+      "id": "F7",
+      "title": "Promotion feedback loop open -- no calibration of threshold correctness",
+      "severity": "P1",
+      "category": "authority",
+      "tracks": [
+        "A-adjacent",
+        "B-orthogonal",
+        "D-esoteric"
+      ],
+      "agents": [
+        "fd-cybernetic-control-feedback",
+        "fd-grid-dispatch",
+        "fd-balinese-subak-water-temple-governance"
+      ],
+      "convergence": "3/16",
+      "convergence_corrected": 3,
+      "stemma_group": "autonomy-ratchet-gaming",
+      "source_findings": [
+        "CCF-02",
+        "GRID-3",
+        "SUBAK-04"
+      ],
+      "fix": "Post-promotion audit. Asymmetric thresholds. Minimum beads before demotion. Intercept calibrates for outcomes.",
+      "cross_references": [
+        "F2"
+      ]
+    },
+    {
+      "id": "F8",
+      "title": "Intent YAML has no expiry -- stale policy persists indefinitely",
+      "severity": "P2",
+      "category": "governance",
+      "tracks": [
+        "B-orthogonal",
+        "C-distant",
+        "D-esoteric"
+      ],
+      "agents": [
+        "fd-central-bank",
+        "fd-balinese-subak-irrigation",
+        "fd-carolingian-missi-dominici-governance"
+      ],
+      "convergence": "3/16",
+      "convergence_corrected": 3,
+      "stemma_group": null,
+      "source_findings": [
+        "CB-3",
+        "BS-05",
+        "CAROL-04"
+      ],
+      "fix": "Add valid_until and until_bead_count to intent.yaml schema. Expired directives revert to neutral weight."
+    },
+    {
+      "id": "F9",
+      "title": "1-hour confirmation window creates blind spot for rapid-onset incidents",
+      "severity": "P1",
+      "category": "anomaly-detection",
+      "tracks": [
+        "A-adjacent",
+        "B-orthogonal"
+      ],
+      "agents": [
+        "fd-sre-alerting-escalation",
+        "fd-atc-flow"
+      ],
+      "convergence": "2/16",
+      "convergence_corrected": 2,
+      "stemma_group": "algedonic-channel-integrity",
+      "source_findings": [
+        "SRE-02",
+        "ATC-2"
+      ],
+      "fix": "Add rate-of-change fast path: events exceeding threshold within window escalate immediately.",
+      "cross_references": [
+        "F4"
+      ]
+    },
+    {
+      "id": "F10",
+      "title": "No independent anomaly observation channel",
+      "severity": "P1",
+      "category": "anomaly-detection",
+      "tracks": [
+        "C-distant",
+        "D-esoteric"
+      ],
+      "agents": [
+        "fd-song-dynasty-keju-examination",
+        "fd-carolingian-missi-dominici-governance"
+      ],
+      "convergence": "2/16",
+      "convergence_corrected": 2,
+      "stemma_group": null,
+      "source_findings": [
+        "SK-02",
+        "CAROL-01"
+      ],
+      "fix": "Add independent source (git revert rate). Require interspect corroboration before CONSTRAIN."
+    },
+    {
+      "id": "F11",
+      "title": "Weight provenance lost -- scalar storage prevents calibration",
+      "severity": "P2",
+      "category": "observability",
+      "tracks": [
+        "B-orthogonal",
+        "C-distant"
+      ],
+      "agents": [
+        "fd-or-scheduling",
+        "fd-venetian-glass-batch-formulation"
+      ],
+      "convergence": "2/16",
+      "convergence_corrected": 2,
+      "stemma_group": null,
+      "source_findings": [
+        "OR-4",
+        "VG-03"
+      ],
+      "fix": "Write ockham_weight_provenance companion record with decomposed factors."
+    },
+    {
+      "id": "F12",
+      "title": "Cold-start defaults undefined -- retroactive inference risks granting unearned authority",
+      "severity": "P1",
+      "category": "authority",
+      "tracks": [
+        "A-adjacent",
+        "C-distant",
+        "D-esoteric"
+      ],
+      "agents": [
+        "fd-agent-trust-authority",
+        "fd-ethiopian-tabot-custody",
+        "fd-carolingian-missi-dominici-governance"
+      ],
+      "convergence": "3/16",
+      "convergence_corrected": 3,
+      "stemma_group": null,
+      "source_findings": [
+        "ATA-04",
+        "ET-03",
+        "CAROL-05"
+      ],
+      "fix": "Default all-shadow. ockham init --fast-track proposes promotions for principal approval. Minimum observation floor."
+    },
+    {
+      "id": "F13",
+      "title": "CONSTRAIN freeze not propagated to dependent domains",
+      "severity": "P1",
+      "category": "dispatch",
+      "tracks": [
+        "B-orthogonal"
+      ],
+      "agents": [
+        "fd-grid-dispatch",
+        "fd-atc-flow"
+      ],
+      "convergence": "2/16",
+      "convergence_corrected": 2,
+      "stemma_group": null,
+      "source_findings": [
+        "GRID-2",
+        "ATC-4"
+      ],
+      "fix": "Run dependency-graph lookup on CONSTRAIN. Apply INFORM-tier weight suppression to downstream domains."
+    },
+    {
+      "id": "F14",
+      "title": "No dispatch-to-weight feedback loop (open-loop allocation)",
+      "severity": "P1",
+      "category": "dispatch",
+      "tracks": [
+        "A-adjacent",
+        "B-orthogonal",
+        "D-esoteric"
+      ],
+      "agents": [
+        "fd-dispatch-optimization-fairness",
+        "fd-or-scheduling",
+        "fd-balinese-subak-water-temple-governance"
+      ],
+      "convergence": "3/16",
+      "convergence_corrected": 3,
+      "stemma_group": "dispatch-weight-composition",
+      "source_findings": [
+        "DOF-03",
+        "OR-3",
+        "SUBAK-01"
+      ],
+      "severity_conflict": {
+        "highest": "P0",
+        "agent": "fd-balinese-subak-water-temple-governance",
+        "adopted": "P1",
+        "rationale": "Outcome-validation gap is real and Wave 1 actionable but does not block architecture"
+      },
+      "fix": "Track actual dispatches per theme. Emit INFORM when weight-outcome correlation is negative. Add dispatch fairness index.",
+      "cross_references": [
+        "F3"
+      ]
+    },
+    {
+      "id": "F15",
+      "title": "Signal taxonomy conflates infrastructure and competence failures",
+      "severity": "P2",
+      "category": "anomaly-detection",
+      "tracks": [
+        "A-adjacent",
+        "B-orthogonal"
+      ],
+      "agents": [
+        "fd-sre-alerting-escalation",
+        "fd-central-bank"
+      ],
+      "convergence": "2/16",
+      "convergence_corrected": 2,
+      "stemma_group": null,
+      "source_findings": [
+        "SRE-04",
+        "CB-2"
+      ],
+      "fix": "Tag signals with cause category. Filter demotion logic to competence signals only."
+    }
+  ],
+  "single_agent_findings": [
+    {
+      "id": "CCF-04",
+      "agent": "fd-cybernetic-control-feedback",
+      "title": "Requisite variety: 3 tiers for 5+ failure categories",
+      "severity": "P2"
+    },
+    {
+      "id": "CCF-05",
+      "agent": "fd-cybernetic-control-feedback",
+      "title": "VSM System 4 absent",
+      "severity": "P3"
+    },
+    {
+      "id": "DGC-05",
+      "agent": "fd-distributed-governance-consensus",
+      "title": "No quorum for authority decisions",
+      "severity": "P3"
+    },
+    {
+      "id": "DOF-05",
+      "agent": "fd-dispatch-optimization-fairness",
+      "title": "Perturbation overrides small weight differences",
+      "severity": "P3"
+    },
+    {
+      "id": "OR-5",
+      "agent": "fd-or-scheduling",
+      "title": "Freeze/focus semantics unspecified",
+      "severity": "P3"
+    },
+    {
+      "id": "ATC-3",
+      "agent": "fd-atc-flow",
+      "title": "No intermediate degraded mode",
+      "severity": "P2"
+    },
+    {
+      "id": "ATC-5",
+      "agent": "fd-atc-flow",
+      "title": "Audit trail supports compliance not calibration",
+      "severity": "P3"
+    },
+    {
+      "id": "GRID-4",
+      "agent": "fd-grid-dispatch",
+      "title": "No forecast layer for resource pre-positioning",
+      "severity": "P2"
+    },
+    {
+      "id": "GRID-5",
+      "agent": "fd-grid-dispatch",
+      "title": "Principal unavailability not modeled",
+      "severity": "P3"
+    },
+    {
+      "id": "CB-4",
+      "agent": "fd-central-bank",
+      "title": "Intent expresses stances not reaction functions",
+      "severity": "P2"
+    },
+    {
+      "id": "VG-04",
+      "agent": "fd-venetian-glass-batch-formulation",
+      "title": "Anomaly tiers are phase changes not gradients",
+      "severity": "P3"
+    },
+    {
+      "id": "ET-04",
+      "agent": "fd-ethiopian-tabot-custody",
+      "title": "Audit receipts lack epistemic state",
+      "severity": "P2"
+    },
+    {
+      "id": "ET-05",
+      "agent": "fd-ethiopian-tabot-custody",
+      "title": "Shadow tier has no urgency pathway",
+      "severity": "P3"
+    },
+    {
+      "id": "SK-03",
+      "agent": "fd-song-dynasty-keju-examination",
+      "title": "No temporal decay on authority",
+      "severity": "P2"
+    },
+    {
+      "id": "SK-04",
+      "agent": "fd-song-dynasty-keju-examination",
+      "title": "Evidence reused across ratchet stages",
+      "severity": "P2"
+    },
+    {
+      "id": "SK-05",
+      "agent": "fd-song-dynasty-keju-examination",
+      "title": "Delegation ceiling not revalidated at exercise time",
+      "severity": "P3"
+    },
+    {
+      "id": "BS-04",
+      "agent": "fd-balinese-subak-irrigation",
+      "title": "No cross-theme coordination constraints",
+      "severity": "P3"
+    },
+    {
+      "id": "SUBAK-03",
+      "agent": "fd-balinese-subak-water-temple-governance",
+      "title": "Bead-to-theme mapping is label-based and gameable",
+      "severity": "P1"
+    },
+    {
+      "id": "HADZA-05",
+      "agent": "fd-hadza-camp-fission-fusion-egalitarianism",
+      "title": "Reputation portability unaddressed",
+      "severity": "P3"
+    }
+  ],
+  "improvements": [
+    "Add Consistency Model section defining weight staleness bounds and authority fencing",
+    "Add Dispatch Arithmetic section with worked 3-theme/5-bead numeric example",
+    "Add Threat Model section enumerating adversarial scenarios and enforcement type per invariant",
+    "Add Signal Lifecycle state machine diagram (Created->Qualified->Confirmed/Suppressed->Cleared/Escalated)",
+    "Add Alarm Load Budget per tier (ISA-18.2 Section 6.3)",
+    "Add Setpoints section for Tier 1 homeostatic regulation",
+    "Formalize OODARC feedback closure for each subsystem",
+    "Label VSM system mapping in architecture diagram",
+    "Define halt semantics explicitly (interrupt/wait/soft)",
+    "Specify asymmetry ratio with blast-radius justification",
+    "Add dispatch_fairness_index metric for Meadowsyn",
+    "Define dark-period test for Ockham unavailability"
+  ],
+  "verdict": "risky",
+  "gate": "FAIL",
+  "perspectives": [
+    {
+      "name": "Industrial Control Systems",
+      "agents": [
+        "fd-sre-alerting-escalation",
+        "fd-cybernetic-control-feedback"
+      ],
+      "narrative": "Frame Ockham as an ISA-18.2 alarm system and Beer VSM. Contribute operational specifics: signal flood budgets, response SLAs, homeostatic setpoints.",
+      "quality_score": 0.9
+    },
+    {
+      "name": "Resource Allocation Under Constraints",
+      "agents": [
+        "fd-or-scheduling",
+        "fd-grid-dispatch",
+        "fd-central-bank",
+        "fd-dispatch-optimization-fairness"
+      ],
+      "narrative": "Frame Ockham as scheduling optimization. Unique joint-feasibility analysis: individually valid constraints combine to empty the dispatchable set.",
+      "quality_score": 0.85
+    },
+    {
+      "name": "Credentialing and Authority Legitimacy",
+      "agents": [
+        "fd-ethiopian-tabot-custody",
+        "fd-song-dynasty-keju-examination",
+        "fd-hadza-camp-fission-fusion-egalitarianism",
+        "fd-carolingian-missi-dominici-governance"
+      ],
+      "narrative": "Frame promotion as credentialing. Distinguish rules (require compliance) from mechanisms (work regardless of intent). Provide structural enforcement alternatives from historical governance.",
+      "quality_score": 0.9
+    }
+  ],
+  "dwsq": 0.87,
+  "sycophancy_analysis": null,
+  "hearsay_analysis": null,
+  "stemma_analysis": {
+    "groups": [
+      {
+        "name": "dispatch-weight-composition",
+        "findings": [
+          "F3",
+          "F6",
+          "F14"
+        ],
+        "shared_evidence": "Key Decisions S2 (dispatch integration)",
+        "distinct_frames": 4
+      },
+      {
+        "name": "autonomy-ratchet-gaming",
+        "findings": [
+          "F2",
+          "F7"
+        ],
+        "shared_evidence": "Key Decisions S4 (autonomy ratchet)",
+        "distinct_frames": 5
+      },
+      {
+        "name": "algedonic-channel-integrity",
+        "findings": [
+          "F4",
+          "F9"
+        ],
+        "shared_evidence": "Key Decisions S3 (algedonic signals)",
+        "distinct_frames": 4
+      },
+      {
+        "name": "safety-invariant-enforcement",
+        "findings": [
+          "F1",
+          "F5"
+        ],
+        "shared_evidence": "Key Decisions S5 (safety invariants)",
+        "distinct_frames": 4
+      }
+    ]
+  },
+  "discourse_health": {
+    "flow_state": "healthy",
+    "participation_gini": 0.03,
+    "novelty_rate": 0.24,
+    "response_relevance": 0.94
+  },
+  "discourse_analysis": null
+}

@@ -1,0 +1,11 @@
+{
+  "type": "verdict",
+  "status": "NEEDS_ATTENTION",
+  "model": "haiku",
+  "tokens_spent": 0,
+  "files_changed": [],
+  "findings_count": 0,
+  "summary": "P0x1 P1x2 P2x1 P3x1: no cross-domain resolution, wall-clock not evidence-quantity promotion, retroactive cold-start",
+  "detail_path": "/home/mk/projects/Sylveste/docs/research/flux-drive/ockham-vision/.clavain/verdicts/fd-ethiopian-tabot-custody.md",
+  "timestamp": "2026-04-03T00:47:42Z"
+}

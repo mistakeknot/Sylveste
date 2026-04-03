@@ -1,0 +1,11 @@
+{
+  "type": "verdict",
+  "status": "NEEDS_ATTENTION",
+  "model": "haiku",
+  "tokens_spent": 0,
+  "files_changed": [],
+  "findings_count": 0,
+  "summary": "P1x2 P2x1 P3x2: no fairness floor, invisible cross-theme deps, stale post-bypass weights",
+  "detail_path": "/home/mk/projects/Sylveste/docs/research/flux-drive/ockham-vision/.clavain/verdicts/fd-balinese-subak-irrigation.md",
+  "timestamp": "2026-04-03T00:47:42Z"
+}
