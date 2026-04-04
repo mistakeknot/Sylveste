@@ -185,6 +185,9 @@
 {"issue_id":"sylveste-9lp.8","label":"cost"}
 {"issue_id":"sylveste-9lp.8","label":"interflux"}
 {"issue_id":"sylveste-9lp.9","label":"architecture"}
+{"issue_id":"sylveste-9lp.9","label":"claimed_at:1775339659"}
+{"issue_id":"sylveste-9lp.9","label":"claimed_by:e1407eeb-c44c-42b9-a3ad-78ce7549b6ea"}
+{"issue_id":"sylveste-9lp.9","label":"complexity:3"}
 {"issue_id":"sylveste-9lp.9","label":"interflux"}
 {"issue_id":"sylveste-co5","label":"claimed_at:1775257878"}
 {"issue_id":"sylveste-co5","label":"claimed_by:5d2440f9-1f8f-45b5-813e-51e5acd84fce"}
