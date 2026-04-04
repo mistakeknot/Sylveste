@@ -1,0 +1,655 @@
+{
+  "reviewed": "2026-04-02",
+  "synthesis_mode": "flux-drive",
+  "agents": [
+    "fd-architecture",
+    "fd-correctness",
+    "fd-quality",
+    "fd-safety"
+  ],
+  "verdict": "needs-changes",
+  "gate": "FAIL",
+  "severity_summary": {
+    "P0": 1,
+    "P1": 14,
+    "P2": 17,
+    "P3": 1,
+    "total": 33
+  },
+  "findings": [
+    {
+      "id": "RXN-01",
+      "severity": "P0",
+      "agent": ["fd-correctness"],
+      "reactions": [
+        {
+          "agent": "fd-architecture",
+          "stance": "missed-this",
+          "move_type": "new-assertion",
+          "independent_coverage": false,
+          "evidence": ["interverse/interflux/scripts/findings-helper.sh:95-98", "interverse/interflux/skills/flux-drive/phases/reaction.md:11"]
+        }
+      ],
+      "title": "N=0 Agent Count Produces Silent False-Proceed Through Convergence Gate",
+      "location": ["findings-helper.sh:95-98", "reaction.md:Step 2.5.0"],
+      "description": "When Phase 2 fails completely (all agents timeout/error), findings-helper.sh convergence emits 0.0\\t0\\t0\\t0. The formula effective_threshold = 0.6 * (0/5) = 0.0. The gate condition overlap_ratio (0.0) > 0.0 is false, so execution proceeds to Step 2.5.1 with zero agents. Synthesis receives empty reaction directory with no error signal. The interspect event stores agents_dispatched: 0 identically to a legitimate full-convergence skip.",
+      "convergence": {
+        "count": 1,
+        "stance_breakdown": {
+          "agree": 0,
+          "partially_agree": 0,
+          "missed_this": 1,
+          "disagree": 0
+        },
+        "convergence_rate": "confirmed"
+      },
+      "evidence_sources": [
+        "interverse/interflux/scripts/findings-helper.sh:96",
+        "interverse/interflux/skills/flux-drive/phases/reaction.md:15"
+      ],
+      "fix": "Add explicit N=0 guard at Step 2.5.0: If agent_count==0, skip with error event type (reaction-skipped.json + interspect-reaction event with {type:error, reason:no_phase2_agents}). Do not proceed.",
+      "reactive_additions": ["ARCH-07"],
+      "cross_references": ["RXN-02", "ARCH-01"],
+      "security_impact": "Operator cannot distinguish silent Phase 2 failure from legitimate full-convergence skip. Post-hoc audit is unreliable.",
+      "blocking": true
+    },
+    {
+      "id": "RXN-02",
+      "severity": "P0",
+      "agent": ["fd-correctness"],
+      "reactions": [
+        {
+          "agent": "fd-architecture",
+          "stance": "partially-agree",
+          "move_type": "distinction",
+          "independent_coverage": "partial",
+          "evidence": ["ARCH-02", "interverse/interflux/scripts/findings-helper.sh:139-150", "interverse/interflux/skills/flux-drive/phases/reaction.md:Step 2.5.0"]
+        }
+      ],
+      "title": "Peer-Priming Discount Applied After Overlap Ratio Computed, Creating Double-Discount Risk",
+      "location": ["reaction.md:Step 2.5.0"],
+      "description": "Spec says: discount findings from overlap count BEFORE computing overlap_ratio. But findings-helper.sh convergence already computes the ratio. Spec then says run script first, then apply discount. This creates ambiguity: Interpretation A (correct) recomputes ratio after discount. Interpretation B (wrong) subtracts discount fraction from already-computed ratio. An LLM orchestrator following the prose literally applies B. Additionally, if all findings are peer-primed, count goes negative (underflow), producing negative ratio that always passes gate.",
+      "convergence": {
+        "count": 1,
+        "stance_breakdown": {
+          "agree": 0,
+          "partially_agree": 1,
+          "missed_this": 0,
+          "disagree": 0
+        },
+        "convergence_rate": "partially_confirmed"
+      },
+      "evidence_sources": [
+        "interverse/interflux/scripts/findings-helper.sh:139-150",
+        "interverse/interflux/skills/flux-drive/phases/reaction.md:Step 2.5.0"
+      ],
+      "fix": "Rewrite peer-priming paragraph: Compute discounted_overlapping = max(0, overlapping_findings - peer_primed_count), then overlap_ratio = discounted_overlapping / max(1, total_findings). Replace script's output ratio with adjusted value.",
+      "reactive_additions": [],
+      "cross_references": ["ARCH-02", "Q-04", "RXN-01"],
+      "security_impact": "Convergence gate can fire/not-fire non-deterministically based on implementation interpretation.",
+      "blocking": true
+    },
+    {
+      "id": "ARCH-01",
+      "severity": "P1",
+      "agent": ["fd-architecture"],
+      "reactions": [
+        {
+          "agent": "fd-correctness",
+          "stance": "missed-this",
+          "move_type": "new-assertion",
+          "independent_coverage": false,
+          "evidence": ["interverse/interflux/skills/flux-drive/phases/launch.md:293-295", "interverse/interflux/skills/flux-drive/phases/reaction.md:52"]
+        }
+      ],
+      "title": "Completion-Signaling Contract Not Applied to Reaction Agents",
+      "location": ["reaction.md:Step 2.5.3-4"],
+      "description": "Phase 2 establishes robust completion contract: agents write .md.partial, rename to .md, orchestrator monitors via flux-watch.sh, retries once on partial-only, writes error stubs on second failure. Phase 2.5 dispatch specifies run_in_background: true and 60s timeout but: no monitoring equivalent to flux-watch, no .partial sentinel, no retry-once, no collection logic. Synthesis detects completion by checking for .reactions.md files, so partial completion goes undetected.",
+      "convergence": {
+        "count": 1,
+        "stance_breakdown": {
+          "agree": 0,
+          "partially_agree": 0,
+          "missed_this": 1,
+          "disagree": 0
+        },
+        "convergence_rate": "confirmed"
+      },
+      "evidence_sources": [
+        "interverse/interflux/skills/flux-drive/phases/launch.md:293-295",
+        "interverse/interflux/skills/flux-drive/phases/reaction.md:Step 2.5.3-4"
+      ],
+      "fix": "Add Step 2.5.4a: Monitor reaction agents via flux-watch.sh {OUTPUT_DIR} {N} {timeout_ms} using pattern *.reactions.md. Collect after timeout. Apply partial-file retry-once pattern from Phase 2.",
+      "reactive_additions": ["RXN-12"],
+      "cross_references": ["launch.md:Phase 2 monitoring"],
+      "blocking": true
+    },
+    {
+      "id": "REACT-02",
+      "severity": "P1",
+      "agent": ["fd-safety"],
+      "reactions": [
+        {
+          "agent": "fd-correctness",
+          "stance": "agree",
+          "move_type": "defense",
+          "independent_coverage": "partial",
+          "evidence": ["interverse/interflux/scripts/findings-helper.sh:119", "interverse/interspect/hooks/lib-interspect.sh:2706-2731", "interverse/interflux/skills/flux-drive/phases/reaction.md:50"]
+        }
+      ],
+      "title": "Peer Findings Injected Into Reaction Prompts Without Sanitization",
+      "location": ["reaction.md:Step 2.5.3-4", "reaction-prompt.md:50", "findings-helper.sh:119"],
+      "description": "{peer_findings} content assembled from Findings Index blocks via findings-helper.sh, injected directly into reaction-prompt.md with no sanitization. _interspect_sanitize() function (injection-rejection at lib-interspect.sh:2725-2731) is wired only to DB insertion, not prompt assembly. A compromised/adversarial flux-gen agent can embed instruction-like text in Findings Index title, which reaches LLM prompt. Trust boundary violation: AGENTS.md declares flux-gen agents as untrusted inputs.",
+      "convergence": {
+        "count": 1,
+        "stance_breakdown": {
+          "agree": 1,
+          "partially_agree": 0,
+          "missed_this": 0,
+          "disagree": 0
+        },
+        "convergence_rate": "confirmed"
+      },
+      "evidence_sources": [
+        "interverse/interflux/config/flux-drive/reaction-prompt.md:50",
+        "interverse/interspect/hooks/lib-interspect.sh:2706-2731",
+        "AGENTS.md:CLAUDE.md:49-54"
+      ],
+      "fix": "Apply _interspect_sanitize() to each Findings Index line before inserting into {peer_findings}. Apply same sanitization to {agent_name}, {agent_description}, {own_findings_index}.",
+      "reactive_additions": ["RXN-13", "Q-11"],
+      "cross_references": ["RXN-04", "Q-03"],
+      "security_impact": "Prompt injection vulnerability in multi-agent prompt assembly. Flux-gen agent outputs can manipulate reaction agent behavior.",
+      "blocking": true
+    },
+    {
+      "id": "ARCH-02",
+      "severity": "P1",
+      "agent": ["fd-architecture"],
+      "reactions": [
+        {
+          "agent": "fd-quality",
+          "stance": "partially-agree",
+          "move_type": "distinction",
+          "independent_coverage": "partial",
+          "evidence": ["Q-04", "interverse/interflux/scripts/findings-helper.sh:74-81", "interverse/interflux/skills/flux-drive/phases/reaction.md:Step 2.5.0"]
+        }
+      ],
+      "title": "Peer-Priming Discount Requires Timestamp Ordering Not Implemented in findings-helper.sh",
+      "location": ["reaction.md:Step 2.5.0"],
+      "description": "Peer-priming discount requires comparing timestamps: peer-findings.jsonl timestamp < Findings Index entry timestamp. But findings-helper.sh read-indexes extracts Findings Index lines with no timestamp field (awk block at lines 74-81 extracts only severity/ID/section/title). Findings Index markdown format has no per-entry timestamps. Comparison is unexecutable as specified.",
+      "convergence": {
+        "count": 1,
+        "stance_breakdown": {
+          "agree": 0,
+          "partially_agree": 1,
+          "missed_this": 0,
+          "disagree": 0
+        },
+        "convergence_rate": "partially_confirmed"
+      },
+      "evidence_sources": [
+        "interverse/interflux/scripts/findings-helper.sh:74-81",
+        "interverse/interflux/skills/flux-drive/phases/reaction.md:Step 2.5.0"
+      ],
+      "fix": "Define peer-findings.jsonl schema (minimum: title, agent, timestamp). Specify that agent .md file mtime serves as Findings Index entry timestamp, comparable to peer-findings JSONL entry timestamp via stat -c %Y.",
+      "reactive_additions": [],
+      "cross_references": ["RXN-02", "Q-04"],
+      "blocking": true
+    },
+    {
+      "id": "ARCH-05",
+      "severity": "P1",
+      "agent": ["fd-architecture"],
+      "merged_with": ["Q-03"],
+      "reactions": [
+        {
+          "agent": "fd-quality",
+          "stance": "agree",
+          "move_type": "defense",
+          "independent_coverage": false,
+          "evidence": ["Q-03"]
+        }
+      ],
+      "title": "{agent_description} Template Variable Has No Resolution Path",
+      "location": ["reaction-prompt.md:3", "reaction.md:Step 2.5.3-4"],
+      "description": "reaction-prompt.md uses {agent_description} in agent identity header: You are **{agent_name}** ({agent_description}). Step 2.5.3-4 lists filled variables: {agent_name}, {own_findings_index}, {peer_findings}, {fixative_context}, {output_path}. No {agent_description}. Implementer produces reaction prompt with literal {agent_description} placeholder or causes substitution error.",
+      "convergence": {
+        "count": 2,
+        "stance_breakdown": {
+          "agree": 1,
+          "partially_agree": 0,
+          "missed_this": 0,
+          "disagree": 0
+        },
+        "convergence_rate": "confirmed"
+      },
+      "evidence_sources": [
+        "interverse/interflux/config/flux-drive/reaction-prompt.md:3",
+        "interverse/interflux/skills/flux-drive/phases/reaction.md:Step 2.5.3-4"
+      ],
+      "fix": "Add to fill list at Step 2.5.3-4: Read {agent_description} from agent .md file frontmatter (first non-example sentence), fall back to role description from agent-roles.yaml. Or remove {agent_description} from prompt template if agent self-identification via {agent_name} alone is sufficient.",
+      "reactive_additions": [],
+      "cross_references": ["Q-03"],
+      "blocking": true
+    },
+    {
+      "id": "ARCH-06",
+      "severity": "P1",
+      "agent": ["fd-architecture"],
+      "merged_with": ["Q-01"],
+      "title": "mode_overrides Applied in Config But Not Checked in Spec Prose",
+      "location": ["reaction.yaml", "reaction.md:Step 2.5.0"],
+      "description": "reaction.yaml defines mode_overrides: {quality-gates: false, review: true, flux-drive: true}. Spec only tests reaction_round.enabled. Never reads mode_overrides[MODE]. Orchestrator in quality-gates mode executes reaction round when it should skip.",
+      "convergence": {
+        "count": 2,
+        "stance_breakdown": {
+          "agree": 2,
+          "partially_agree": 0,
+          "missed_this": 0,
+          "disagree": 0
+        },
+        "convergence_rate": "confirmed"
+      },
+      "fix": "Add MODE guard at top of Step 2.5.0 before convergence gate: If mode_overrides[MODE] == false, skip to Phase 3 immediately.",
+      "blocking": true
+    },
+    {
+      "id": "Q-02",
+      "severity": "P1",
+      "agent": ["fd-quality"],
+      "title": "Skip-Path Emits Wrong Event Type Label",
+      "location": ["reaction.md:Step 2.5.0"],
+      "description": "Step 2.5.0 skip branch says: emit interspect-reaction event via _interspect_emit_reaction_dispatched(). String 'interspect-reaction' is the review_type tag passed to _interspect_insert_evidence inside that function, not the event type. Event type stored is 'reaction_dispatched'. Calling this interspect-reaction creates terminology mismatch.",
+      "fix": "Spec should say: emit a reaction_dispatched evidence record (type: skip) via _interspect_emit_reaction_dispatched().",
+      "blocking": true
+    },
+    {
+      "id": "Q-04",
+      "severity": "P1",
+      "agent": ["fd-quality"],
+      "cross_references": ["ARCH-02", "RXN-02"],
+      "title": "Peer-Priming Discount Timestamp Source Unspecified",
+      "location": ["reaction.md:Step 2.5.0"],
+      "description": "Instruction: check if first report timestamp in peer-findings.jsonl precedes Findings Index entry timestamp. Findings Index is static with no per-entry timestamps. Instruction implies comparing JSONL timestamp against Findings Index timestamp, but Findings Index format contains no timestamp field.",
+      "fix": "Clarify: A finding is peer-primed if it appears in peer-findings.jsonl AND the JSONL entry timestamp precedes the agent's .md file modification time (stat -c %Y).",
+      "blocking": true
+    },
+    {
+      "id": "Q-03",
+      "severity": "P1",
+      "agent": ["fd-quality"],
+      "merged_with": ["ARCH-05"],
+      "title": "{agent_description} Template Variable Undefined in Orchestrator Spec",
+      "location": ["reaction-prompt.md", "reaction.md:Step 2.5.3-4"],
+      "description": "Same as ARCH-05 — template variable appears in prompt but not in fill list.",
+      "blocking": true
+    },
+    {
+      "id": "Q-01",
+      "severity": "P1",
+      "agent": ["fd-quality"],
+      "merged_with": ["ARCH-06"],
+      "title": "mode_overrides Config Key Consumed Nowhere in Reaction Spec",
+      "blocking": true
+    },
+    {
+      "id": "REACT-01",
+      "severity": "P1",
+      "agent": ["fd-safety"],
+      "title": "Peer-Priming Discount Is Fully Agent-Instruction-Dependent With No Verification",
+      "location": ["peer-findings.jsonl", "reaction.md:Step 2.5.0"],
+      "description": "peer-findings.jsonl written by Phase 2 agents with no signature/write-once enforcement. Agent can back-date or forward-date entries to suppress/promote peer-priming. Discount affects overlap_ratio (go/no-go gate), so this impacts pipeline correctness.",
+      "fix": "Record peer-findings.jsonl entries with server-issued monotonic timestamp (not agent-provided), or cross-validate against agent output file mtime.",
+      "blocking": true
+    },
+    {
+      "id": "REACT-03",
+      "severity": "P1",
+      "agent": ["fd-safety"],
+      "cross_references": ["RXN-04"],
+      "title": "Convergence Gate Title Normalization Is Bypassable by Minor Rewording",
+      "location": ["findings-helper.sh:119", "reaction.md:Step 2.5.0"],
+      "description": "findings-helper.sh convergence normalizes by stripping non-alphanumeric and lowercasing. Agent can introduce minimal variation: 'unbounded memory growth' vs 'unbounded memory allocation' — different keys, not counted as overlapping. Natural language variation causes false-negatives in overlap detection, degrading convergence signal.",
+      "fix": "Use fuzzy matching (Jaro-Winkler or trigram, ~0.75 threshold) or move convergence detection to synthesis (post-hoc semantic dedup by synthesis agent).",
+      "blocking": true
+    },
+    {
+      "id": "RXN-03",
+      "severity": "P1",
+      "agent": ["fd-correctness"],
+      "title": "N=1 Agent Sends Zero Agents to React But Still Emits agents_dispatched: 0 Without Clear Skip vs Proceed Branch",
+      "location": ["reaction.md:Step 2.5.3"],
+      "description": "With agent_count=1, convergence gate does not skip (threshold 0.12, ratio 0.0 not above). But Step 2.5.2a topology leaves agent with no visible peers. Step 2.5.3 skips agents with empty peers. Result: zero dispatches with no explicit guard. Event shows agents_dispatched: 0 indistinguishably from N=0 total failure.",
+      "fix": "Add guard after convergence gate: If agent_count < 2, skip with {type:skip, reason:insufficient_agents}.",
+      "blocking": true
+    },
+    {
+      "id": "RXN-04",
+      "severity": "P1",
+      "agent": ["fd-correctness"],
+      "reactions": [
+        {
+          "agent": "fd-quality",
+          "stance": "agree",
+          "move_type": "defense",
+          "independent_coverage": false,
+          "evidence": ["interverse/interflux/scripts/findings-helper.sh:119"]
+        }
+      ],
+      "cross_references": ["REACT-03"],
+      "title": "awk Regex Strips Hyphens in Finding Titles, Causing Unrelated Findings to Collide",
+      "location": ["findings-helper.sh:119"],
+      "description": "Normalization regex `gsub(/[^a-zA-Z0-9 ]/, \"\", title)` strips hyphens. Two findings: 'Off-by-one in loop bound' and 'Off by one in loop bound' both normalize to 'off by one in loop bound'. They merge, inflating overlapping_findings count and potentially suppressing reaction round prematurely.",
+      "fix": "Replace line 119: gsub(/[^a-zA-Z0-9 \\-]/, \"\", title); gsub(/-/, \" \", title); This normalizes hyphenated and unhyphenated variants consistently.",
+      "blocking": true
+    },
+    {
+      "id": "RXN-05",
+      "severity": "P1",
+      "agent": ["fd-correctness"],
+      "title": "Fixative Sequencing Constraint Stated But Not Enforced — Race Condition Latent",
+      "location": ["reaction.md:Step 2.5.2b sequencing constraint"],
+      "description": "Spec states: Step 2.5.2b MUST complete before 2.5.3 — do not parallelize. This is correct (fixative Gini needs all agents' findings) but is only prose instruction. LLM orchestrator can interpret build-prompts and compute-fixative as independent concurrent tasks. Some agents receive {fixative_context} as literal placeholder or empty string, defeating anti-echo-chamber mechanism.",
+      "fix": "Restructure: rename Step 2.5.2b → Compute fixative context string FC, then Step 2.5.3 say Use FC from Step 2.5.2b in each prompt. Make data dependency explicit.",
+      "blocking": true
+    },
+    {
+      "id": "RXN-06",
+      "severity": "P1",
+      "agent": ["fd-correctness"],
+      "title": "No Outer Timeout Bound for Parallel Agent Dispatch — Unbounded Worst-Case Latency",
+      "location": ["reaction.md:Step 2.5.3-4, Step 2.5.5"],
+      "description": "Per-agent timeout 60s, parallel dispatch via run_in_background: true. However, runtime may queue sequentially. 12 agents × 60s = 720s worst case with no progress signal. No outer circuit-breaker if timeout enforcement itself fails.",
+      "fix": "Add to Step 2.5.5: If total elapsed time exceeds 2 * timeout_seconds, treat remaining in-flight agents as timed out. Do not block indefinitely.",
+      "blocking": true
+    },
+    {
+      "id": "ARCH-03",
+      "severity": "P1",
+      "agent": ["fd-architecture"],
+      "cross_references": ["Q-06"],
+      "title": "session_id Not Acquired Before Interspect Emission Call",
+      "location": ["reaction.md:Step 2.5.0, Step 2.5.5", "lib-interspect.sh"],
+      "description": "_interspect_emit_reaction_dispatched() requires session_id=$1 with enforcement. Spec never specifies how to acquire it. Skip-path at Step 2.5.0 (early exit before library sourced) has same gap. Implementer produces call that fails with 'session_id required'.",
+      "fix": "Add callout before first emission: Acquire session_id: source lib-interspect.sh && session_id=$(_interspect_session_id) or use $CLAUDE_SESSION_ID if set.",
+      "blocking": true
+    },
+    {
+      "id": "RXN-07",
+      "severity": "P2",
+      "agent": ["fd-correctness"],
+      "title": "Peer-Priming Timestamp Comparison Has No Defined Format Contract",
+      "location": ["reaction.md:Step 2.5.0"],
+      "description": "Spec requires comparing timestamps from two separate files with no defined format contract. peer-findings.jsonl format is undefined. Findings Index block carries no timestamps. Implementer cannot execute this logic.",
+      "fix": "Define peer-findings.jsonl schema (at minimum: {title, agent, timestamp}) and document timestamp comparison mechanics."
+    },
+    {
+      "id": "RXN-08",
+      "severity": "P2",
+      "agent": ["fd-correctness"],
+      "title": "Scaled Threshold Cap Formula Prose Is Incorrect for N Between 5 and 8",
+      "location": ["reaction.md:Step 2.5.0"],
+      "description": "Spec states: For N=8, threshold caps at 0.6. Incorrect. Formula effective_threshold = min(0.6*(N/5), 0.6) caps for all N>=5. Prose misleads implementer into thinking N=6, N=7 have uncapped thresholds, causing inflated thresholds 0.72, 0.84 before capping."
+    },
+    {
+      "id": "REACT-08",
+      "severity": "P2",
+      "agent": ["fd-safety"],
+      "reactions": [
+        {
+          "agent": "fd-architecture",
+          "stance": "agree",
+          "move_type": "defense",
+          "independent_coverage": "partial",
+          "evidence": ["lib-interspect.sh:2708, 2717, 2781, 2993"]
+        }
+      ],
+      "merged_with": ["ARCH-08", "RXN-14"],
+      "title": "context_json Passed to Interspect Truncated at 500 Chars — Structured JSON Silently Mangled",
+      "location": ["lib-interspect.sh:2781"],
+      "description": "_interspect_insert_evidence calls _interspect_sanitize \"$context_json\" with default 500-char limit. _interspect_emit_reaction_dispatched assembles 10-field JSON before passing. Long input_path (deeply nested OUTPUT_DIR) or review_id causes overflow. Bash substring truncation produces invalid JSON, which becomes {} via fallback. Evidence row stored with no context, making skip event invisible.",
+      "fix": "Pass explicit max_chars=2000 to _interspect_sanitize when sanitizing context_json, or sanitize only string fields, leaving numerics un-truncated."
+    },
+    {
+      "id": "RXN-09",
+      "severity": "P2",
+      "agent": ["fd-correctness"],
+      "title": "convergence_before Event Field Records Post-Discount Value, Not Pre-Discount",
+      "location": ["reaction.md:Step 2.5.5"],
+      "description": "convergence_before field described as 'overlap_ratio from Step 2.5.0'. If peer-priming discount was applied, stored value is discounted ratio, not raw. Downstream consumers expecting pre-discount value underestimate natural convergence trends."
+    },
+    {
+      "id": "RXN-10",
+      "severity": "P2",
+      "agent": ["fd-correctness"],
+      "title": "SCT-02 Isolation Fallback Upgrades All Agents to Summary Visibility Silently",
+      "location": ["reaction.md:Step 2.5.2a", "discourse-topology.yaml"],
+      "description": "Isolation fallback fires when zero visible peers exist (SCT-02), upgrades visibility to summary from all peers. Fires silently — no audit trail. If topology config is misconfigured (e.g., all agents mapped to role with no adjacencies), every agent silently receives fallback and topology is bypassed."
+    },
+    {
+      "id": "REACT-07",
+      "severity": "P2",
+      "agent": ["fd-safety"],
+      "title": "Fixative Injection Content Concatenated Directly Into Agent Prompt Without Sanitization Gate",
+      "location": ["discourse-fixative.yaml", "reaction.md:Step 2.5.2b"],
+      "description": "Fixative config contains injection text (imbalance, convergence, drift, collapse injections) concatenated into fixative_context and passed verbatim into reaction prompt. If config modified (compromised commit, test config), adversarial injection text reaches agent prompts. Lower threat than REACT-02 (config is in project repo under source control) but spec does not mandate sanitization."
+    },
+    {
+      "id": "Q-10",
+      "severity": "P2",
+      "agent": ["fd-quality"],
+      "reactions": [
+        {
+          "agent": "fd-safety",
+          "stance": "agree",
+          "move_type": "defense",
+          "independent_coverage": false,
+          "evidence": ["reaction-prompt.md:44, 72, 88"]
+        }
+      ],
+      "title": "partially-agree Maps to distinction in Move Type Table But Prompt Body Maps Same to defense",
+      "location": ["reaction-prompt.md:44, 72"],
+      "description": "Output format block lists Move Type enumeration: attack|defense|new-assertion|concession (no distinction). Move Type Assignment section maps partially-agree → distinction. Agent reading output format first will never use distinction, producing outputs that synthesis must reclassify. Hearsay rule depends on move type being defense with independent Evidence — if partially-agree agents emit defense, confirmations with partial evidence incorrectly escape hearsay weighting."
+    },
+    {
+      "id": "RXN-11",
+      "severity": "P3",
+      "agent": ["fd-correctness"],
+      "title": "Agents Skipped on Empty Peer Findings Are Silently Skipped With No Accounting",
+      "location": ["reaction.md:Step 2.5.5 report"],
+      "description": "Step 2.5.3 says: Skip agents with empty peer findings. These skipped agents not dispatched but no bucket in report format for agents_skipped. Operator cannot distinguish '3 dispatched, 0 errors' from '3 dispatched (5 skipped), 0 errors'."
+    },
+    {
+      "id": "ARCH-04",
+      "severity": "P2",
+      "agent": ["fd-architecture"],
+      "title": "max_reactions_per_agent Config Key Unused By Spec",
+      "location": ["reaction.yaml", "reaction-prompt.md", "reaction.md:Step 2.5.3-4"],
+      "description": "reaction.yaml defines max_reactions_per_agent: 3. Spec and prompt harden code \"at most 3\". Config key is never read during prompt fill. If operator changes config, prompt is not updated and config becomes dead."
+    },
+    {
+      "id": "Q-05",
+      "severity": "P2",
+      "agent": ["fd-quality"],
+      "title": "Agents-With-Empty-Peer-Findings Skip Rule Produces Silent No-Op Without Event Record",
+      "location": ["reaction.md:Step 2.5.3-4"],
+      "description": "Step 2.5.3 says skip agents with empty peer findings. No instruction to record which agents skipped or why. No reactions_skipped field in evidence payload. If all agents skipped this way, Step 2.5.5 shows 0 dispatched with no explanation."
+    },
+    {
+      "id": "Q-06",
+      "severity": "P2",
+      "agent": ["fd-quality"],
+      "cross_references": ["ARCH-03"],
+      "title": "session_id Call-Site Argument Omitted From Both Emit Call Descriptions",
+      "location": ["reaction.md:Step 2.5.0, Step 2.5.5"],
+      "description": "Step 2.5.0 and 2.5.5 describe calling _interspect_emit_reaction_dispatched() with named arguments. Neither mention first positional argument session_id that function requires. Implementer building call site from spec alone produces failing call."
+    },
+    {
+      "id": "Q-07",
+      "severity": "P2",
+      "agent": ["fd-quality"],
+      "title": "severity_filter_p2_light Interaction With Topology Visibility Unspecified",
+      "location": ["reaction.md:Step 2.5.2"],
+      "description": "Step 2.5.2 filters findings to P0/P1 (optional P2 via severity_filter_p2_light). Step 2.5.2a applies topology-based visibility. Unclear whether summary visibility includes P2 findings when filter is true, or whether severity filtering happens before topology filtering."
+    },
+    {
+      "id": "Q-08",
+      "severity": "P2",
+      "agent": ["fd-quality"],
+      "title": "collapse_threshold: 2 vs 'BOTH' — Numeric vs Boolean Semantics Diverge",
+      "location": ["discourse-fixative.yaml", "reaction.md:Step 2.5.2b"],
+      "description": "YAML sets collapse_threshold: 2, comment says 'fires if imbalance AND convergence both trigger'. Spec says 'fires if both trigger'. Does threshold value mean 'count >= 2 (any two)' or 'exactly the two named triggers'? Spec does not clarify."
+    },
+    {
+      "id": "Q-09",
+      "severity": "P2",
+      "agent": ["fd-quality"],
+      "title": "Timeout Enforcement Responsibility Not Assigned (Orchestrator vs Agent Runtime)",
+      "location": ["reaction.md:Step 2.5.3-4"],
+      "description": "Step 2.5.3-4 specifies timeout_seconds for dispatched agents but does not state who enforces it or what happens on breach (kill agent? count as error? wait indefinitely?). Monitoring contract in shared-contracts.md not referenced."
+    },
+    {
+      "id": "REACT-04",
+      "severity": "P2",
+      "agent": ["fd-safety"],
+      "title": "Skip-Event agent_count Field Not Cross-Validated — Inaccurate Fleet Size in Telemetry",
+      "location": ["reaction.md:Step 2.5.0", "findings-helper.sh"],
+      "description": "Skip event emits agents_dispatched: 0 and agent_count: N. agent_count from findings-helper.sh convergence (counts distinct agent names in Findings Index) equals Phase 2 completions, not dispatches. If agents failed with error stubs producing no Findings Index, agent_count undercounts. Distorts post-hoc analysis."
+    },
+    {
+      "id": "REACT-05",
+      "severity": "P2",
+      "agent": ["fd-safety"],
+      "title": "Sycophancy Detection Is Per-Agent Aggregate, Not Per-Finding",
+      "location": ["reaction.yaml"],
+      "description": "Per-agent sycophancy (high agreement_rate + low independence across all reactions) does not detect coordinated minority suppression (3 agents agree to disagree with 2 on specific finding). Config comment acknowledges per-finding sycophancy is future enhancement."
+    },
+    {
+      "id": "REACT-06",
+      "severity": "P2",
+      "agent": ["fd-safety"],
+      "title": "Isolation Fallback (SCT-02) Upgrades All Agents to Summary Visibility Silently",
+      "location": ["reaction.md:Step 2.5.2a", "discourse-topology.yaml"],
+      "description": "When agent has zero visible peers after topology filtering, fallback_on_isolation upgrades visibility to summary from all peers. Fires silently — no reaction-skipped.json, no event field recording which agents triggered fallback, no audit line in report. If topology config error (all agents mapped to role with no adjacencies), every agent silently receives fallback."
+    }
+  ],
+  "improvements": [
+    {
+      "category": "Process Formalization",
+      "items": [
+        "Write {OUTPUT_DIR}/convergence-debug.json at convergence gate with normalized title map, overlap set, effective_threshold, peer-primed discounts, final ratio",
+        "Formalize peer-findings.jsonl write protocol with --agent argument cross-check against filename convention",
+        "Add convergence-gate --dry-run mode to findings-helper.sh for testability without full orchestration"
+      ]
+    },
+    {
+      "category": "Documentation",
+      "items": [
+        "Document trust boundary for flux-gen agent outputs at code level (sanitization applied before prompt injection)",
+        "Clarify _interspect_sanitize scope: which data paths apply sanitization before LLM injection vs before DB storage",
+        "Document calibration fleet size (5) in convergence threshold formula and make it configurable if standard fleet size changes"
+      ]
+    },
+    {
+      "category": "Architecture",
+      "items": [
+        "Move convergence detection to synthesis phase (post-hoc semantic dedup) rather than pre-reaction awk script",
+        "Use fuzzy string matching (Jaro-Winkler or trigram ~0.75) for title overlap instead of exact normalized match",
+        "Add isolation_fallback_agents (count or list) to reaction-dispatched interspect event context"
+      ]
+    },
+    {
+      "category": "Future Enhancements",
+      "items": [
+        "Implement per-finding sycophancy detection in synthesis agent (detect coordinated minority suppression)",
+        "Add reaction-round completion timeout to integration contract (e.g., max(60*agent_count, 300) seconds)",
+        "Track hearsay vs independent confirmations at per-finding granularity in synthesis evidence schema"
+      ]
+    }
+  ],
+  "discourse_health": {
+    "participation_gini": 0.15,
+    "novelty_rate": 1.0,
+    "response_relevance": 1.0,
+    "flow_state": "healthy",
+    "lorenzen_legality": {
+      "valid": 15,
+      "invalid": 0,
+      "null": 0,
+      "distribution": {
+        "attack": 0,
+        "defense": 8,
+        "new_assertion": 4,
+        "distinction": 3
+      }
+    },
+    "sycophancy_analysis": {
+      "overall_conformity": 0.528,
+      "per_agent": {
+        "fd-architecture": {
+          "agreement_rate": 0.67,
+          "flagged": false
+        },
+        "fd-correctness": {
+          "agreement_rate": 1.0,
+          "flagged": false
+        },
+        "fd-quality": {
+          "agreement_rate": 0.67,
+          "flagged": false
+        },
+        "fd-safety": {
+          "agreement_rate": 0.17,
+          "flagged": false
+        }
+      }
+    }
+  },
+  "perspectives": [
+    {
+      "agent": "fd-correctness",
+      "quality_score": 1.0,
+      "framing": "Phase 2.5 correctness requires invariants on convergence gate, peer-priming, and fixative sequencing; N=0 violates empty-findings safety invariant; peer-priming ambiguity violates determinism. Identified edge cases (N=0, context truncation) with precision."
+    },
+    {
+      "agent": "fd-safety",
+      "quality_score": 0.8,
+      "framing": "flux-gen agents are untrusted inputs per AGENTS.md boundary; peer-findings reach prompts unsanitized; timestamp-based discount is unverifiable; context truncation silently mangles evidence. Brings threat modeling perspective."
+    },
+    {
+      "agent": "fd-quality",
+      "quality_score": 0.8,
+      "framing": "mode_overrides config field is dead code; move-type enumerations contradict; timeout responsibility unassigned; multiple spec prose errors create implementer guesswork. Flags specification completeness gaps."
+    },
+    {
+      "agent": "fd-architecture",
+      "quality_score": 0.8,
+      "framing": "Phase 2.5 is architecturally coherent but integration gaps exist: no completion-wait contract (differs from Phase 2 pattern), unimplemented peer-priming logic, undocumented session_id acquisition. Connects to prior work."
+    }
+  ],
+  "dwsq": 1.125,
+  "summary": "Phase 2.5 reaction round specification is architecturally sound with well-sequenced convergence gating, topology-aware visibility, fixative injection, and parallel dispatch. However, 2 P0 correctness defects (silent N=0 false-proceed, peer-priming double-discounting ambiguity) and 12 P1 integration/security gaps (prompt injection, missing completion contract, unexecutable peer-priming algorithm, session_id undocumented) must be resolved before implementation. Most serious risks: silent convergence gate failures, unsanitized flux-gen outputs reaching LLM prompts, missing peer-findings.jsonl schema. All issues have targeted fixes; none require redesign. Synthesized discourse shows healthy diversity (Gini=0.15, novelty=1.0) and strong convergence (80% agreement on issue legitimacy).",
+  "recommendations": {
+    "before_implementation": [
+      "Fix RXN-01: Add N=0 explicit guard at Step 2.5.0",
+      "Fix RXN-02: Rewrite peer-priming discount with explicit formula",
+      "Fix Q-04: Define peer-findings.jsonl schema or use file mtime",
+      "Fix REACT-02: Apply _interspect_sanitize to all template variables",
+      "Fix RXN-04: Update awk regex to preserve hyphens",
+      "Fix ARCH-01: Add flux-watch monitoring step after dispatch",
+      "Fix ARCH-03: Document session_id acquisition before emissions"
+    ],
+    "before_production": [
+      "Fix ARCH-06 + Q-01: Add MODE guard",
+      "Fix ARCH-05 + Q-03: Define {agent_description} source",
+      "Fix RXN-05: Make fixative sequencing explicit as data dependency",
+      "Fix REACT-08: Increase context truncation limit to 2000 chars"
+    ],
+    "next_iteration": [
+      "Add convergence-debug.json artifact",
+      "Implement fuzzy title matching (0.75 similarity threshold)",
+      "Add reactions_skipped field to reports",
+      "Document trust boundary for flux-gen outputs"
+    ]
+  }
+}

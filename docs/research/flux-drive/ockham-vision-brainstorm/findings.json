@@ -1,0 +1,841 @@
+{
+  "metadata": {
+    "reviewed": "2026-04-03",
+    "document": "docs/brainstorms/2026-04-03-ockham-vision-brainstorm.md",
+    "revision": "3",
+    "review_context": "Re-review of brainstorm rev 3: verification of round-1 findings + assessment of new/revised sections (SUBAK-01, cross-domain, 30-day re-confirmation). Track both verified-as-fixed items AND new issues introduced by revisions.",
+    "mode": "flux-drive",
+    "agents": 7,
+    "agents_list": [
+      "fd-architecture",
+      "fd-correctness",
+      "fd-decisions",
+      "fd-quality",
+      "fd-resilience",
+      "fd-safety",
+      "fd-systems"
+    ]
+  },
+  "verdict": {
+    "overall": "needs-changes",
+    "gate": "FAIL",
+    "rationale": "P0 finding indicates missing orchestration layer (architectural blocker). P1 findings include mathematically-wrong safety bound (priority inversion), non-firing 30-day timer, and unfixable policy immutability hole. 19 P1 issues require attention before Wave 1 wiring spec can be written."
+  },
+  "findings": [
+    {
+      "id": "P0-01",
+      "severity": "P0",
+      "category": "Architecture",
+      "section": "Key Decision 1 (subsystem table)",
+      "title": "Missing orchestration layer — Scoring assembly has no owner",
+      "agents": [
+        "fd-architecture"
+      ],
+      "convergence": 1,
+      "issue": "The brainstorm specifies that Scoring receives IntentVector + AuthorityState + AnomalyState structs, but no component is named as the orchestrator that assembles these structs and invokes Scoring. If the CLI entrypoint does it, the CLI becomes a god module. If a new governor package does it, that package is undesigned and unnamed.",
+      "fix_required": "Name the orchestration layer explicitly. Options: (a) thin internal/governor package with single exported function Evaluate(ctx, stores) WeightVector, (b) accept CLI entrypoint as orchestrator and specify its boundaries to prevent scope creep.",
+      "evidence_sources": [
+        "fd-architecture.md:42-53"
+      ]
+    },
+    {
+      "id": "P0-02",
+      "severity": "P0",
+      "category": "Correctness",
+      "section": "Section 3, dispatch integration",
+      "title": "Priority-inversion bound is mathematically wrong — tier gap is 12, not 24",
+      "agents": [
+        "fd-correctness"
+      ],
+      "convergence": 3,
+      "convergence_agents": [
+        "fd-architecture",
+        "fd-safety"
+      ],
+      "issue": "The brainstorm claims the priority gap between adjacent tiers is ~24 points, but the actual gap in score_bead() (interphase/hooks/lib-discovery.sh) is 12 points. This means the ±12 offset bound does NOT prevent cross-tier inversions. A P3 bead with +12 offset can outrank a P2 bead with 0 offset when phase and recency scores are comparable.",
+      "concrete_scenario": "P3 auth bead (+12 offset, shipping phase) scores 24+12+30=66. P1 performance bead (-6 offset, brainstorm phase) scores 48-6+4=46. After perturbation (5 max for P3, 0 for P1), the inversion is 71 vs 46. The ±12 bound permits one-tier crossing.",
+      "fix_required": "The correct bound accounting for perturbation (max 5) is ±6, not ±12. Recalculate to guarantee no adjacent-tier crossing: |offset| < tier_gap - max_perturbation = 12 - 5 = 7, so max safe magnitude is ±6.",
+      "evidence_sources": [
+        "fd-correctness.md:64-92",
+        "fd-architecture.md:57-77",
+        "fd-safety.md:87-91"
+      ]
+    },
+    {
+      "id": "P1-01",
+      "severity": "P1",
+      "category": "Architecture",
+      "section": "Section 3, dispatch integration",
+      "title": "±12 offset bound crosses priority tiers",
+      "agents": [
+        "fd-architecture"
+      ],
+      "convergence": 3,
+      "convergence_agents": [
+        "fd-correctness (OBR-01)",
+        "fd-safety (OCKHAM-02)"
+      ],
+      "issue": "Offset bounds permit one-tier crossing. Perturbation adds 0-5 points after offset, widening effective swing to -12..+17.",
+      "fix_required": "Reduce bound to ±6 or accept one-tier crossing as intentional and document explicitly.",
+      "evidence_sources": [
+        "fd-architecture.md:57-77"
+      ]
+    },
+    {
+      "id": "P1-02",
+      "severity": "P1",
+      "category": "Architecture",
+      "section": "Section 4, Section 3, Safety Invariant 6",
+      "title": "Freeze constraint misarchitected as offset -999; conflicts with floor guard and lane-pause path",
+      "agents": [
+        "fd-architecture"
+      ],
+      "convergence": 3,
+      "convergence_agents": [
+        "fd-correctness (OBR-06)",
+        "fd-safety (OCKHAM-02 + OCKHAM-03)"
+      ],
+      "issue": "The brainstorm describes freeze as ockham_offset=-999 ('effectively blocked'). But two mechanisms exist: (1) lib-dispatch.sh line 196-200 uses ic lane status metadata (paused:true) for hard skip; (2) floor guard at line 207 clamps any score < 1 to 1, making -999 ineffective. Both paths exist and contradict.",
+      "failure_mode": "If Ockham uses -999 offset and floor guard applies after, frozen beads receive score 1 and remain claimable. The freeze fails silently.",
+      "fix_required": "Choose one path: either use ockham_offset=-999 and update floor guard with freeze sentinel check, OR use existing ic lane update --metadata=paused:true path (already implemented and correct). Remove the other mechanism.",
+      "evidence_sources": [
+        "fd-architecture.md:80-95",
+        "fd-correctness.md:198-222"
+      ]
+    },
+    {
+      "id": "P1-03",
+      "severity": "P1",
+      "category": "Architecture",
+      "section": "Section header Temporal model, Key Decision 1",
+      "title": "signals.db reconciliation gap with primary sources",
+      "agents": [
+        "fd-architecture"
+      ],
+      "convergence": 2,
+      "convergence_agents": [
+        "fd-resilience (N-01)"
+      ],
+      "issue": "signals.db persists signal timestamps and confirmation windows. But the brainstorm treats signals.db as ground truth for temporal state while treating interspect, interstat, and beads as ground truth for signal conditions. When they diverge, reconciliation is undefined. Example: Tier 2 fires, recorded in signals.db. Before stability window completes, underlying condition clears (quarantined beads closed). Interspect shows condition cleared. signals.db still shows signal active. Next invocation holds CONSTRAIN despite condition being gone.",
+      "fix_required": "Specify that each CLI invocation re-evaluates all conditions against primary sources BEFORE reading signals.db timestamps. signals.db stores only temporal envelope (when fired, when cleared), not condition truth.",
+      "evidence_sources": [
+        "fd-architecture.md:113-127",
+        "fd-resilience.md:73-98"
+      ]
+    },
+    {
+      "id": "P1-04",
+      "severity": "P1",
+      "category": "Architecture",
+      "section": "Section 10, Weight-outcome feedback loop",
+      "title": "Weight-outcome feedback loop has no actuation path",
+      "agents": [
+        "fd-architecture"
+      ],
+      "convergence": 4,
+      "convergence_agents": [
+        "fd-resilience (N-02)",
+        "fd-quality (D-06)",
+        "fd-systems (SYS-NEW-01)"
+      ],
+      "issue": "The loop reads outcome data from interstat/interspect, detects drift, emits Tier 1 INFORM. But brainstorm does not specify what responds to the signal by adjusting policy — either intent.yaml modification, offset adjustment, or principal review. Without an actuation path, the loop is monitoring with a governance label, not a feedback loop.",
+      "fix_required": "Specify the response path explicitly. Wave 1 should detect drift and emit INFORM; principal acts manually. Autonomous offset adjustment via intercept calibration is Wave 2+ scope. Do not present as closed-loop if it is open-loop (principal-dependent).",
+      "evidence_sources": [
+        "fd-architecture.md:113-127",
+        "fd-quality.md:83-99"
+      ]
+    },
+    {
+      "id": "P1-05",
+      "severity": "P1",
+      "category": "Correctness",
+      "section": "Section 6, ratchet runaway prevention",
+      "title": "30-day re-confirmation never fires on a no-daemon CLI-only design",
+      "agents": [
+        "fd-correctness"
+      ],
+      "convergence": 2,
+      "convergence_agents": [
+        "fd-systems (SYS-01)"
+      ],
+      "issue": "Ockham has no daemon. 30-day re-confirmation is a time-based obligation that must fire on schedule regardless of operator activity. On a healthy factory where nothing goes wrong, the principal may not invoke ockham for weeks. Re-confirmation never fires, and autonomous domains remain autonomous indefinitely.",
+      "concrete_scenario": "Week 1: Factory reaches autonomous state in domain interverse/**. Weeks 2-30: Principal rarely opens Ockham CLI. Day 31: Agent reliability degrades (hit_rate 0.93→0.72 due to model drift). Re-evaluation window passed but no CLI invocation triggered it. Day 45: Wave of failures. Ockham never demoted because re-confirmation never ran.",
+      "fix_required": "Add ockham check step to Clavain's session-start hook (preferred), or add systemd timer at 24-hour intervals. One line in install guide.",
+      "evidence_sources": [
+        "fd-correctness.md:96-120",
+        "fd-systems.md:31-40"
+      ]
+    },
+    {
+      "id": "P1-06",
+      "severity": "P1",
+      "category": "Correctness",
+      "section": "Section 10, weight-drift detection",
+      "title": "Weight-drift detection baseline undefined at first launch",
+      "agents": [
+        "fd-correctness"
+      ],
+      "convergence": 1,
+      "issue": "The 20% threshold compares actual cycle time against predicted baseline. But baseline is never defined. At first launch, no baseline exists. Baseline formula is unspecified (rolling mean? 30-day average? fixed value?). Minimum sample size is absent (2 beads can trigger threshold). Division by zero when baseline is zero.",
+      "concrete_failure": "Factory launches. Theme auth bead 1 completes in 3h. Bead 2 completes in 4h (33% longer). 7-day rolling baseline from bead 1 is 3h. Threshold fires. Spurious Tier 1 INFORM on second-ever completed auth bead.",
+      "fix_required": "Define baseline explicitly: rolling 30-day p50 cycle time for beads in that theme, minimum 5 completed beads. Skip drift evaluation and log insufficient_data if fewer than 5 exist in window.",
+      "evidence_sources": [
+        "fd-correctness.md:123-147",
+        "fd-safety.md:138-147"
+      ]
+    },
+    {
+      "id": "P1-07",
+      "severity": "P1",
+      "category": "Correctness",
+      "section": "Section 6, ratchet recovery",
+      "title": "Post-Tier-2 shadow demotion snaps back immediately; no cooldown on re-promotion",
+      "agents": [
+        "fd-correctness"
+      ],
+      "convergence": 1,
+      "issue": "After Tier 2 event demotes a domain to shadow, recovery requires passing the supervised promotion guard (hit_rate >= 0.80 AND sessions >= 10 AND confidence >= 0.7). But the Tier 2 event did not erase interspect evidence. The domain was already at supervised before demotion, meaning it already satisfied the guard. If Tier 2 clears in 2h (stability window = 1h), domain immediately re-promotes with the same evidence that was already there.",
+      "failure_scenario": "Domain interverse/** at supervised. Three quarantines fire. Tier 2 CONSTRAIN fires. Domain demotes to shadow. Root cause fixed in 90 minutes. Tier 2 signal clears. 1h stability window passes. Domain re-promotes to supervised immediately. 90-minute window insufficient to detect whether fix was durable. Another quarantine wave fires 2 hours later.",
+      "fix_required": "After Tier-2-triggered demotion, require NEW evidence since demotion (sessions >= 10 NEW beads, not total). Existing evidence at or before demotion timestamp is discarded from promotion guard.",
+      "evidence_sources": [
+        "fd-correctness.md:150-173"
+      ]
+    },
+    {
+      "id": "P1-08",
+      "severity": "P1",
+      "category": "Correctness",
+      "section": "Section 4, freeze writes -999; Section 7 invariant 6",
+      "title": "Freeze (-999 offset) contradicts the S-08 floor without documented exception",
+      "agents": [
+        "fd-correctness"
+      ],
+      "convergence": 3,
+      "convergence_agents": [
+        "fd-architecture (NEW-P1)",
+        "fd-safety (OCKHAM-02)"
+      ],
+      "issue": "S-08 says no offset exceeds -24 (floor for organic weights). Freeze sets offset to -999. Validation logic must either reject freeze offsets (breaking freeze) or contain undocumented exception. Also: floor guard (adjusted_score < 1 → 1) would lift -999 offset back to score 1, making freeze fail silently.",
+      "fix_required": "In S-08, explicitly document that freeze offsets (-999) are exempt from -24 floor. In dispatch_rescore(), add freeze sentinel check: if ockham_offset == -999, skip bead entirely rather than clamping to floor.",
+      "evidence_sources": [
+        "fd-correctness.md:198-222"
+      ]
+    },
+    {
+      "id": "P1-09",
+      "severity": "P1",
+      "category": "Quality & Style",
+      "section": "Key Decision 7, Safety Invariant 1",
+      "title": "Self-promotion invariant remains behavioral (CLI-enforced only), not structural",
+      "agents": [
+        "fd-quality"
+      ],
+      "convergence": 2,
+      "convergence_agents": [
+        "fd-safety (OCKHAM-01)"
+      ],
+      "issue": "Rev 3 adds CLI-boundary enforcement: ockham authority promote requires --actor flag validated against session agent ID. But synthesis (F1, 8/16 agents, highest confidence) concluded that all five safety invariants are behavioral — agents can bypass them by calling underlying tools directly. An agent with write access to beads state can call bd set-state autonomy_tier=3 directly; one with write access to interspect can write authority grants without Ockham CLI.",
+      "fix_required": "Add structural guard at execution path. Options: (a) bd set-state rejects self-promotion writes, (b) lib-dispatch.sh validates aggregate authority before dispatch, (c) authority writes require signed tokens. Identify which layer owns the backstop so vision document names enforcement mechanism, not just policy.",
+      "evidence_sources": [
+        "fd-quality.md:65-88"
+      ]
+    },
+    {
+      "id": "P1-10",
+      "severity": "P1",
+      "category": "Quality & Style",
+      "section": "Key Decision 5, Section 9",
+      "title": "Tier 3 bypass channel has no Clavain-independent path",
+      "agents": [
+        "fd-quality"
+      ],
+      "convergence": 1,
+      "issue": "Tier 3 halt mechanism is: write factory-paused.json to ~/.clavain/factory-paused.json, then notify. But if Clavain is hung or crashed, it never reads this file, and halt signal goes unheard. Synthesis (F4, 3-track P0, 6/16 agents) identified this failure mode. SRE-track agent added cascading failure: O(agents × domains) simultaneous signals flood the channel.",
+      "fix_required": "Before brainstorm is used for vision document, name at least one Clavain-independent halt notification channel. Candidates: separate process monitoring factory-paused.json, direct write to Alwe observation layer, OS-level signal to supervisor. Vision document should name the mechanism, not discover it.",
+      "evidence_sources": [
+        "fd-quality.md:91-114"
+      ]
+    },
+    {
+      "id": "P1-11",
+      "severity": "P1",
+      "category": "Quality & Style",
+      "section": "Key Decision 1 (Scoring), Key Decision 5 (Anomaly/algedonic)",
+      "title": "CONSTRAIN/BYPASS precedence over intent weights is implicit, not specified",
+      "agents": [
+        "fd-quality"
+      ],
+      "convergence": 1,
+      "issue": "Final_score formula is raw_score + ockham_offset. Scoring receives IntentVector, AuthorityState, AnomalyState. But brainstorm does not specify whether AnomalyState CONSTRAIN produces dispatch-eligibility gate (evaluated before formula) or is just another weight input (part of formula). Synthesis (F6, 3-track) found: intent weight 1.4 × authority penalty 0.7 = 0.98, silently violating CONSTRAIN freeze.",
+      "fix_required": "Add one sentence to Key Decision 3: CONSTRAIN and BYPASS states produce dispatch eligibility gates evaluated before additive offset formula. Frozen bead receives eligibility=false flag; the +ockham_offset formula is never applied.",
+      "evidence_sources": [
+        "fd-quality.md:118-141"
+      ]
+    },
+    {
+      "id": "P1-12",
+      "severity": "P1",
+      "category": "Quality & Style",
+      "section": "Key Decision 3 (dispatch integration)",
+      "title": "Starvation floor and idle-capacity release absent from brainstorm",
+      "agents": [
+        "fd-quality"
+      ],
+      "convergence": 1,
+      "issue": "Synthesis (F3, 4-track, all 16 agents' tracks represented) found that low-budget themes can be permanently starved: when high-budget theme exhausts its queue, capacity sits idle rather than released to lower-budget themes. Brainstorm's dispatch integration describes only additive offset formula (raw_score + ockham_offset, ±12 bounded). It does not specify weight floor, starvation detection, minimum dispatch cadence, or idle-capacity release.",
+      "fix_required": "Add starvation guard to Key Decision 3. Define weight floor principle (e.g., theme below budget target receives floor offset guaranteeing minimum cadence) and state that idle capacity from exhausted high-budget theme is released to global pool. Thresholds are spec-phase detail; principle should be in brainstorm.",
+      "evidence_sources": [
+        "fd-quality.md:145-169"
+      ]
+    },
+    {
+      "id": "P1-13",
+      "severity": "P1",
+      "category": "Resilience",
+      "section": "§2 Temporal Model, §7 Invariant 3",
+      "title": "Authority snapshot has no named persistence store",
+      "agents": [
+        "fd-resilience"
+      ],
+      "convergence": 1,
+      "issue": "Ockham is stateless between CLI invocations (no daemon). Action-time validation uses last-known authority snapshot (max staleness 5 minutes). But document does not specify where snapshot is persisted. Three implementations: (1) written to signals.db (survives restarts), (2) separate file (manages second store), (3) in-memory only (reset on every CLI invocation, making 5-minute cache meaningless). Option 3 is most likely silent default, which converts 5-minute window into zero-second one.",
+      "fix_required": "Name persistence location: authority snapshot is written to signals.db after each successful interspect read, with timestamp. This closes gap with one sentence and makes 5-minute window meaningful in no-daemon model.",
+      "evidence_sources": [
+        "fd-resilience.md:51-70"
+      ]
+    },
+    {
+      "id": "P1-14",
+      "severity": "P1",
+      "category": "Resilience",
+      "section": "§2 Temporal Model, §5 Tier 1/2",
+      "title": "signals.db is an unacknowledged single point of failure",
+      "agents": [
+        "fd-resilience"
+      ],
+      "convergence": 2,
+      "convergence_agents": [
+        "fd-architecture (NEW-P2)"
+      ],
+      "issue": "Entire temporal model depends on signals.db for multi-window confirmation (Tier 2's 1h AND 24h must both breach), de-escalation stability windows, and 30-day re-confirmation. Three distinct failure modes: (1) Corruption — SQLite WAL files corrupt under interrupted writes; all multi-window confirmations lost; (2) Clock skew — NTP step or timezone change makes stored timestamps incorrect; spurious trigger/clear; (3) Loss — deletion of signals.db resets all active signals (factory in Tier 2 at hour 23 silently returns to Tier 1).",
+      "impact": "Tier 2's multi-window confirmation is the brainstorm's most sophisticated safety mechanism. If signals.db corruption resets 24-hour window at hour 23, genuine problem avoids escalation indefinitely.",
+      "fix_required": "Specify recovery behavior when signals.db absent or corrupt. Conservative option: treat absent history as signal active since epoch 0 (fail-closed). Force manual ockham signals reset after principal reviews state. Also: add signals.db to backup recommendations, and note 30-day re-confirmation should be re-evaluated after any restore.",
+      "evidence_sources": [
+        "fd-resilience.md:73-98"
+      ]
+    },
+    {
+      "id": "P1-15",
+      "severity": "P1",
+      "category": "Safety",
+      "section": "Key Decision 7, Safety Invariant 1",
+      "title": "Self-promotion enforcement relies on agent-writable session identity",
+      "agents": [
+        "fd-safety"
+      ],
+      "convergence": 1,
+      "issue": "ockham authority promote requires --actor flag validated against current session's agent ID. But $CLAUDE_SESSION_ID is agent-controllable environment variable. Agent can call CLAUDE_SESSION_ID=$peer_id ockham authority promote --actor $peer_id $agent_a_id $domain, presenting peer's ID as both environment identity and flag value, passing equality check while performing self-promotion under borrowed identity.",
+      "concrete_attack": "Agent A wants to promote itself in domain D. Agent A knows Agent B's session ID (visible in dispatch logs, beads state, or interspect evidence). Agent A calls CLAUDE_SESSION_ID=$AGENT_B_ID ockham authority promote --actor $AGENT_B_ID $AGENT_A_ID D. Ockham sees actor == session_id == B's ID and accepts.",
+      "fix_required": "Ockham must obtain canonical session identity from principal-controlled source agents cannot overwrite. Options: (a) Signed dispatch token minted by Clavain at session start, stored outside agent home directories; (b) derive session identity from OS-level attribute (process group, audit log PID); (c) require --actor flag to be beads-verified session ID matching interspect record for who holds current dispatch claim.",
+      "evidence_sources": [
+        "fd-safety.md:66-75"
+      ]
+    },
+    {
+      "id": "P1-16",
+      "severity": "P1",
+      "category": "Safety",
+      "section": "Key Decision 7, Safety Invariant 6",
+      "title": "Weight neutrality floor stated backwards; ±12 tier gap unverified in code",
+      "agents": [
+        "fd-safety"
+      ],
+      "convergence": 2,
+      "convergence_agents": [
+        "fd-correctness (OBR-01)"
+      ],
+      "issue": "Invariant 6 reads: No bead's offset can exceed -24. But exceed in standard English means go higher, so cannot exceed -24 would prevent positive offsets (opposite of intent). Likely intended: minimum organic offset is -24. Implementation risk: developer reading literally could implement upper-bound check (offset > -24) rather than lower-bound check (offset < -24), inverting the floor. Also: lib-dispatch.sh scoring and intercore/scoring.go use different representations. Brainstorm asserts priority gap is ~24 but this value does not appear in either scoring implementation.",
+      "fix_required": "Restate as: The minimum organic ockham_offset is -24. Offsets more negative require explicit freeze constraint. Weight subsystem must clamp organic offsets to [-24, +12]. Verify tier gap against live scoring before committing ±12 bound.",
+      "evidence_sources": [
+        "fd-safety.md:78-91"
+      ]
+    },
+    {
+      "id": "P1-17",
+      "severity": "P1",
+      "category": "Safety",
+      "section": "Key Decision 7, Safety Invariant 8",
+      "title": "Policy immutability during halt has no integrity mechanism",
+      "agents": [
+        "fd-safety"
+      ],
+      "convergence": 1,
+      "issue": "Invariant 8: When factory-paused.json exists, all Ockham subsystems are read-only. But factory-paused.json is checked by Ockham CLI tool invoked in agent execution environment. Agent can call rm ~/.clavain/factory-paused.json before invoking ockham authority promote, bypassing immutability check. Sentinel file is described as agent-unwritable (Invariant 7), but that addresses evidence manipulation, not direct filesystem deletion.",
+      "concrete_attack": "Agent receives BYPASS signal, factory-paused.json written. Agent deletes ~/.clavain/factory-paused.json. Next Ockham invocation sees no sentinel, treats factory as running, resumes weight writes. Principal sees no halt notification if delete occurs before notification delivery.",
+      "fix_required": "Option (b) strongest: additionally record halt state in interspect (agent-unwritable path) as double-sentinel. Ockham checks both, refuses to resume unless both cleared, only ockham resume clears interspect record. Provides best audit trail and aligns with interspect durable-receipt pattern.",
+      "evidence_sources": [
+        "fd-safety.md:94-107"
+      ]
+    },
+    {
+      "id": "P1-18",
+      "severity": "P1",
+      "category": "Systems Thinking",
+      "section": "§6 Ratchet runaway prevention",
+      "title": "30-day re-confirmation windows unsynchronized across domains; phase-shifted oscillation risk",
+      "agents": [
+        "fd-systems"
+      ],
+      "convergence": 1,
+      "issue": "30-day window is per-domain but there is no staggering specification. If Ockham activated with all domains entering shadow simultaneously (typical cold-start), they promote in waves. At T=30 days, all autonomous domains are re-evaluated simultaneously. If factory under unusual load, evidence across multiple domains may degrade together. Produces synchronized multi-domain demotion cascade — same anti-pattern the multi-window confirmation prevented at Tier 2 level.",
+      "fix_required": "Stagger re-confirmation windows by adding domain-specific offset derived from domain's promotion timestamp, so no two domains re-confirm within same 48-hour window.",
+      "evidence_sources": [
+        "fd-systems.md:31-40"
+      ]
+    },
+    {
+      "id": "P1-19",
+      "severity": "P1",
+      "category": "Systems Thinking",
+      "section": "§6 Cross-domain, §10 Weight-outcome feedback loop",
+      "title": "Two feedback loops with conflicting correction signals coexist without interaction rule",
+      "agents": [
+        "fd-systems"
+      ],
+      "convergence": 1,
+      "issue": "SUBAK-01 monitors theme-level weight-outcome correlation (7-day rolling window). Autonomy ratchet monitors agent-level hit rates over sessions (per domain). Two independent loops with no specified interaction rule. When both fire simultaneously: (Loop A) theme performance degrades → weight suppressed → fewer beads → less evidence → baseline degrades on thin data. (Loop B) hit rate falls → domain demotes → fewer beads → less evidence → domain stays demoted. Compound corrections produce reinforcing loop: SUBAK-01 suppresses dispatch, thins evidence, delays ratchet promotion, keeps domain in supervised, degrades theme performance, triggers SUBAK-01 again.",
+      "deeper_issue": "Brainstorm does not specify whether SUBAK-01 weight-drift is domain-scoped or theme-scoped. Theme can span multiple domains; domain contains multiple themes. If domain performing poorly but only one theme drifting, SUBAK-01 fires for theme, Loop B fires for domain. Agents receive two conflicting signals they cannot reconcile.",
+      "fix_required": "Specify interaction rule explicitly. (a) SUBAK-01 is evidence-of-policy-error, not evidence-of-agent-failure — triggers policy review rather than weight suppression when ratchet simultaneously demoting. (b) Define minimum dispatch floor below which SUBAK-01 weight suppression cannot go, preventing evidence starvation. (c) Require SUBAK-01 computed on denominator normalized by dispatch volume, avoiding thin-data false positives.",
+      "evidence_sources": [
+        "fd-systems.md:79-98"
+      ]
+    },
+    {
+      "id": "P2-01",
+      "severity": "P2",
+      "category": "Decisions",
+      "section": "Section 10 — Weight-drift feedback loop",
+      "title": "20% Drift Threshold Without Derivation",
+      "agents": [
+        "fd-decisions"
+      ],
+      "convergence": 1,
+      "issue": "20% actual-vs-predicted degradation threshold is hardcoded without sensitivity analysis or bracket. Single slow bead in 7-day window can move ratio by 15-25%. Threshold becomes self-confirming once implemented and CI passes green (first implementation treats it as validated).",
+      "concern": "50 evaluations at one bead per completion with 7-day rolling window may represent 50 days before calibration. During window, miscalibrated 20% produces alert fatigue or missed degradation with no mechanism to identify which.",
+      "recommendation": "Offer sensitivity analysis or plausible range showing 20% is reasonable. Or state explicitly: this is a starting hypothesis, calibrate after 50 evaluations.",
+      "evidence_sources": [
+        "fd-decisions.md:39-50"
+      ]
+    },
+    {
+      "id": "P2-02",
+      "severity": "P2",
+      "category": "Decisions",
+      "section": "Section 3 — Dispatch integration via additive weight offsets",
+      "title": "±12 Offset Bound: Assertion Without Reference",
+      "agents": [
+        "fd-decisions"
+      ],
+      "convergence": 1,
+      "issue": "±12 bound presented as derived from ~24-point tier gap. Claim is structurally sound but '~24 points' is asserted, not cited. Word approximately does load-bearing work silently. If actual gap is 18 (due to perturbation and floor guards), ±12 could push high-P2 bead above low-P1 bead.",
+      "recommendation": "State gap measurement method. Set bound conservatively at ±10 until gap measured empirically, with upgrade path to ±12 after one sprint of data.",
+      "evidence_sources": [
+        "fd-decisions.md:53-65"
+      ]
+    },
+    {
+      "id": "P2-03",
+      "severity": "P2",
+      "category": "Decisions",
+      "section": "Section 6 — Autonomy ratchet, cross-domain beads",
+      "title": "Cross-Domain Min-Tier: Sour Spot in Complex Beads",
+      "agents": [
+        "fd-decisions"
+      ],
+      "convergence": 1,
+      "issue": "Min-tier rule (most restrictive domain governs) is principled in isolation. Sour spot emerges at scale: complex beads spanning many domains resolve to shadow (most restrictive). Shadow evidence does not propagate upward — only domain-specific evidence counts. Complex beads that most need higher autonomy accumulate least evidence for promotion.",
+      "mechanism": "Simple single-domain beads accumulate tier-appropriate evidence. Complex cross-domain beads constrained to shadow, producing shadow evidence. Over time, complex work starved of evidence for promotion while simple work accumulates.",
+      "recommendation": "After N cross-domain beads resolve to shadow, evaluate whether domain decomposition should be forced (split bead) rather than accepting shadow execution.",
+      "evidence_sources": [
+        "fd-decisions.md:67-81"
+      ]
+    },
+    {
+      "id": "P2-04",
+      "severity": "P2",
+      "category": "Decisions",
+      "section": "Section 10 — Weight-outcome feedback loop",
+      "title": "Weight-Drift Feedback Loop: Missing Theory of Change Between Signal and Action",
+      "agents": [
+        "fd-decisions"
+      ],
+      "convergence": 1,
+      "issue": "Loop described at mechanism level (detect drift, emit Tier 1 INFORM, log weight_drift). Missing causal chain from signal to correction. Tier 1 INFORM adjusts dispatch offsets, but how? Brainstorm does not specify whether signal reduces theme's offset, freezes new claims, notifies principal, or does something else.",
+      "gap": "Intercept distillation (learning local model after 50+ evaluations) suggests automated threshold adjustment is eventual actuator. But that calibrates detection threshold, not corrects weights that caused drift. These are different. Also: principal not mentioned in drift response path. Expected response is presumably for principal to examine whether auth budget misconfigured, but nothing routes signal there.",
+      "theory_of_change": "Without an actuator, this is monitoring with a governance label, not a feedback loop. That may be right Phase 1 design, but must be stated explicitly.",
+      "recommendation": "Defer intercept integration to Wave 2. Wave 1: detect drift, emit INFORM, log to interspect, surface in ockham health. Principal acts. Autonomous offset adjustment is Wave 2+.",
+      "evidence_sources": [
+        "fd-decisions.md:84-100"
+      ]
+    },
+    {
+      "id": "P2-05",
+      "severity": "P2",
+      "category": "Decisions",
+      "section": "Section 6 — Cold start",
+      "title": "Cold-Start Conservatism Applied Once, Not Continuously",
+      "agents": [
+        "fd-decisions"
+      ],
+      "convergence": 1,
+      "issue": "Cold-start resolution treats cold start as one-time event. But Ockham encounters cold-start-equivalent conditions mid-lifecycle: domain rename/split (old evidence no longer maps), new agent joins (no evidence for agent), evidence ages out under 30-day re-confirmation.",
+      "gap": "30-day re-confirmation explicitly addressed. But domain rename/split and new-agent introduction not covered. If core/** split into core/intercore/** and core/intermute/**, both new domains start shadow regardless of core/** evidence history. Domain split causes supervised-tier regression factory-wide for all cross-cutting work.",
+      "signpost": "Any domain structure change (create, rename, split) triggers supervised-tier hold of one confirmation window before evidence transferred.",
+      "evidence_sources": [
+        "fd-decisions.md:101-118"
+      ]
+    },
+    {
+      "id": "P2-06",
+      "severity": "P2",
+      "category": "Decisions",
+      "section": "Section 10 — Intercept integration",
+      "title": "Intercept Integration: Staged Rollout Absent",
+      "agents": [
+        "fd-decisions"
+      ],
+      "convergence": 1,
+      "issue": "Commits to intercept integration (log every evaluation, distill local model after 50+ evaluations) in Wave 1 alongside Tier 1 INFORM. Conflates two independent decisions: (1) ship feedback loop in Wave 1, (2) ship full intercept-calibrated version vs simpler observable-but-uncalibrated version.",
+      "concern": "Wave 1 wiring list already ambitious (offset read, bulk pre-fetch, raw/final score logging, weight-drift feedback). Adding intercept distillation compounds risk of undershipping Wave 1's core contract (stable offset injection).",
+      "recommendation": "Ship detection and logging in Wave 1 (hardcoded 20%, logs drift events). Ship intercept distillation in Wave 2 once sufficient evaluations exist. Follows project's four-stage closed-loop pattern (stages 1-2 first, calibration is stage 3).",
+      "evidence_sources": [
+        "fd-decisions.md:120-131"
+      ]
+    },
+    {
+      "id": "P2-07",
+      "severity": "P2",
+      "category": "Correctness",
+      "section": "Section 6, cross-domain beads",
+      "title": "Cross-domain resolution depends on undefined domain-to-bead mapping",
+      "agents": [
+        "fd-correctness"
+      ],
+      "convergence": 1,
+      "issue": "Min-tier logic is sound in principle. Gap: domain in ratchet model is path-based (interverse/**, core/**). Beads associated with lanes, not paths. Ockham has no way to know from bead metadata which domains it will touch. Only executing agent knows.",
+      "unresolved_questions": "(1) At dispatch time, how does Ockham determine which domains bead spans? Beads have no file-path metadata. Parsing plan docs for path patterns is fragile. (2) Fallback behavior when mapping absent/ambiguous? Use single lane? Most restrictive domain? Assume open? (3) Post-execution discovery: if agent's work spans more domains than predicted, authority violation discovered after fact.",
+      "fix_required": "Specify domain membership is declared by bead author via domains field in bead state (e.g., bd set-state domains=interverse,core <bead_id>). If absent, default to lane. Ockham reads domains from bead state during weight synthesis.",
+      "evidence_sources": [
+        "fd-correctness.md:175-195"
+      ]
+    },
+    {
+      "id": "P2-08",
+      "severity": "P2",
+      "category": "Correctness",
+      "section": "Section 6, promotion confirmation window",
+      "title": "Promotion confirmation window duration unspecified; cold-start conservatism is non-falsifiable",
+      "agents": [
+        "fd-correctness"
+      ],
+      "convergence": 1,
+      "issue": "Cold-start claim is: start at supervised even if evidence meets autonomous guard, promote in first confirmation window if evidence holds. Conservatism is the mechanism preventing activation regression. But confirmation window duration is never specified. If 15 minutes, conservatism provides 15 minutes supervised operation. If 7 days, provides 7 days. Wildly different safety properties.",
+      "concern": "Tier 2 signal windows (1h, 24h) carefully specified. Promotion window is not. Implementor will pick arbitrary value. Non-falsifiable without a window bound.",
+      "fix_required": "Specify promotion confirmation window duration, e.g. 72 hours. Pleasure signals must persist above threshold for 72 continuous hours before tier transition fires. Single constant with large impact on safety profile; must be specified, not inferred.",
+      "evidence_sources": [
+        "fd-correctness.md:225-238"
+      ]
+    },
+    {
+      "id": "P2-09",
+      "severity": "P2",
+      "category": "Correctness",
+      "section": "Section 3, offset + perturbation composition",
+      "title": "Offset + perturbation composition widens effective swing to -12..+17; unacknowledged in inversion analysis",
+      "agents": [
+        "fd-correctness"
+      ],
+      "convergence": 1,
+      "issue": "Brainstorm correctly notes offset applied first, then perturbation. But inversion analysis only considers offset magnitude (±12) without accounting for perturbation (0-5). Effective swing is -12..+17 (asymmetric 29-point range), not ±12.",
+      "impact": "Worse inversion analysis from OBR-01. Bead A: raw=50, offset=+12, pert=5 → 67. Bead B: raw=50, offset=-12, pert=0 → 38. Span 29 points. Correct bound is tier_gap - max_pert - 1 = 12 - 5 - 1 = ±6.",
+      "fix_required": "Either (a) change bound to ±6 and document max_perturbation=5 factored in, or (b) apply Ockham offset AFTER perturbation, which preserves ±12 bound as exact inversion limit for tie-breaking.",
+      "evidence_sources": [
+        "fd-correctness.md:241-264"
+      ]
+    },
+    {
+      "id": "P2-10",
+      "severity": "P2",
+      "category": "Quality & Style",
+      "section": "Key Decision 10",
+      "title": "Intercept is Wave 1 dependency not declared in subsystem table",
+      "agents": [
+        "fd-quality"
+      ],
+      "convergence": 1,
+      "issue": "Weight-outcome feedback loop explicitly ships Wave 1 with Intercept. But subsystem table (Key Decision 1) lists four subsystems; Intercept appears in none of allowed-deps columns. If weight-drift feedback ships Wave 1 and requires Intercept, Intercept is invisible in formal subsystem model.",
+      "fix_required": "Either add Intercept to allowed-deps of Anomaly (natural owner of weight-drift detection), or downgrade intercept integration to Wave 2 to match Authority wave assignment.",
+      "evidence_sources": [
+        "fd-quality.md:171-190"
+      ]
+    },
+    {
+      "id": "P2-11",
+      "severity": "P2",
+      "category": "Quality & Style",
+      "section": "Key Decision 6 (autonomy ratchet)",
+      "title": "Ratchet promotion guard retains wall-clock confirmation window",
+      "agents": [
+        "fd-quality"
+      ],
+      "convergence": 1,
+      "issue": "Transition table shows promotion requires hit_rate >= 0.80 AND sessions >= 10 AND confidence >= 0.7. Confirmation mechanism uses wall-clock windows (1h short AND 24h long). Synthesis (F7, 3-track convergence, Track C) concluded wall-clock windows measure not-yet-failing, not competence. Recommended evidence-quantity replacement (minimum evaluated beads, not elapsed time).",
+      "gap": "Ratchet has sessions >= 10 component (evidence quantity). But multi-window confirmation for algedonic signals is wall-clock only. Ratchet itself does not specify time floor. Sessions >= 10 could be accumulated over one day or one year with equivalent promotion.",
+      "fix_required": "Add minimum confirmation period to ratchet promotion guard that is evidence-driven. For example: promotion requires hit_rate guard to hold across two disjoint evidence windows of >= N beads each (not same N beads in two windows). Prevents promotion on lucky short streak.",
+      "evidence_sources": [
+        "fd-quality.md:193-219"
+      ]
+    },
+    {
+      "id": "P2-12",
+      "severity": "P2",
+      "category": "Quality & Style",
+      "section": "Key Decision 4 (Intent YAML schema)",
+      "title": "Intent YAML schema lacks expiry fields",
+      "agents": [
+        "fd-quality"
+      ],
+      "convergence": 1,
+      "issue": "Brainstorm schema includes version, themes (budget, priority), constraints (freeze, focus). Synthesis (F8, 3-track) recommended valid_until (ISO 8601 date) and until_bead_count (integer) so strategic intent expires rather than persisting indefinitely. Plan (Task 2) lists these as Wave 1 items. Direct contradiction: brainstorm schema (authoritative source) omits them; plan adds them.",
+      "fix_required": "Add expiry fields to Key Decision 4 schema. Minimum: valid_until: null (ISO 8601 date string; null = no expiry), until_bead_count: null (integer). Add: Expired directives revert to neutral weight (budget = 1/N, priority = normal). ockham status warns on intents within 24h of expiry.",
+      "evidence_sources": [
+        "fd-quality.md:221-250"
+      ]
+    },
+    {
+      "id": "P2-13",
+      "severity": "P2",
+      "category": "Quality & Style",
+      "section": "Open Questions 2, Key Decision 6",
+      "title": "Evidence gaming deferred to Wave 3 while ratchet also ships Wave 3",
+      "agents": [
+        "fd-quality"
+      ],
+      "convergence": 1,
+      "issue": "Open Question 2: Agents influence first_attempt_pass_rate via bead granularity choices. Resolve during authority package design, Wave 3. Autonomy ratchet (Key Decision 6) assigned to Authority, which ships Wave 3. Synthesis rated promotion gaming (F2) as P0 — highest severity in entire 16-agent review (4-track convergence, 6/16 agents). Ratchet launches Wave 3 with known P0-severity attack surface. No interim mitigation defined.",
+      "concern": "Wording implies fix before ratchet ships. If intent is to ship ratchet first and add gaming resistance in subsequent patch, that is P0-severity known issue requiring explicit risk acceptance, not left as implicit open question.",
+      "fix_required": "Restate Open Question 2 to clarify one of two intents: (a) Resolve before Wave 3 authority package ships. Block Wave 3 launch if unresolved. (preferred) (b) Accepted risk: Wave 3 ships without difficulty normalization. Mitigated by X (name the mitigation). Tracked in bead Y.",
+      "evidence_sources": [
+        "fd-quality.md:252-279"
+      ]
+    },
+    {
+      "id": "P2-14",
+      "severity": "P2",
+      "category": "Resilience",
+      "section": "§10 Weight-outcome feedback loop",
+      "title": "Weight-drift detection threshold is single fixed Goodhart target",
+      "agents": [
+        "fd-resilience"
+      ],
+      "convergence": 1,
+      "issue": "PHILOSOPHY.md warns: Agents will optimize for any stable target. Rotate metrics, cap optimization rate, randomize audits. Goodhart pressure exists from day one. Weight-drift threshold is exactly this kind of stable target. If 20% threshold is known (visible in code), factory patterns drift to 19.9% without triggering detection. Bead granularity gaming vector (Open Question 2) operates through same optimization pressure.",
+      "deeper_concern": "Intercept calibration learns from 50+ evaluations but if training data systematically biased by Ockham's own dispatch decisions (and it is — Ockham shapes which beads dispatched), learned threshold encodes contamination rather than corrects it.",
+      "recommendation": "Either (a) weight-drift detection uses multiple independent signals (cycle time AND pass rate AND cost-per-change, drift in any two triggers signal — harder to game simultaneously), or (b) explicitly acknowledge as known Goodhart exposure and name review trigger for 50-evaluation distillation (what does local model actually update?).",
+      "evidence_sources": [
+        "fd-resilience.md:100-116"
+      ]
+    },
+    {
+      "id": "P2-15",
+      "severity": "P2",
+      "category": "Resilience",
+      "section": "§7 Invariant 8",
+      "title": "Policy immutability during halt creates undocumented recovery ordering constraint",
+      "agents": [
+        "fd-resilience"
+      ],
+      "convergence": 1,
+      "issue": "When factory-paused.json exists, all Ockham subsystems read-only (INV-8). But consider scenario: Tier 3 fires. Root cause is rogue domain at autonomous tier with bad dispatch weights (misconfiguration that caused distinct_root_causes >= 2). Principal wants to run ockham intent set --theme auth --priority normal. But this is weight update, blocked by INV-8. Principal must run ockham resume first to unblock writes, which simultaneously resumes factory. Correction and resumption are coupled — principal cannot fix then resume, must resume then fix, during which mis-weighted factory is briefly live.",
+      "impact": "For experienced operator manageable. For principal unfamiliar with Ockham's invariant ordering, correct repair sequence non-obvious. Recovery documentation absent. Write-before-notify ordering (INV-5) protects against notification failures but not this resume-then-fix constraint.",
+      "fix_required": "Add short Recovery sequence note alongside INV-8: (1) ockham resume --supervised-only to re-enable writes without unpausing factory (if mode exists), or (2) ockham intent set ... dry-run while paused, then resume, then apply. If option 1 doesn't exist, note whether write-only mode separate from full resume worth adding.",
+      "evidence_sources": [
+        "fd-resilience.md:119-140"
+      ]
+    },
+    {
+      "id": "P2-16",
+      "severity": "P2",
+      "category": "Safety",
+      "section": "Key Decision 6, cross-domain beads",
+      "title": "Min-tier constraint reason not recorded; feedback loop misattributes shadow-constrained delays to theme perf",
+      "agents": [
+        "fd-safety"
+      ],
+      "convergence": 1,
+      "issue": "Min-tier is computed during weight synthesis. lib-dispatch.sh receives final weight without understanding domain resolution. When bead fails mid-execution due to authority lack for one of crossed domains, dispatcher has no record that bead was min-tier constrained. Only artifact is ockham_offset value, which does not distinguish low-priority from shadow-constrained.",
+      "impact": "Weight-outcome feedback loop (Section 10) compares actual-vs-predicted cycle time by theme. Bead shadow-constrained due to cross-domain min-tier will have artificially inflated cycle time (agent cannot proceed, requires principal intervention). Feedback loop attributes to theme degradation and lowers weight further, compounding without surfacing real cause (cross-domain authority restriction).",
+      "fix_required": "Ockham writes companion state ockham_constraint_reason with values: none, theme_priority, domain_shadow, domain_freeze. Feedback loop reads field to filter authority-constrained beads from performance baseline. Does not require lib-dispatch.sh to understand domain resolution — weight still synthesized by Ockham — but makes constraint cause auditable for calibration.",
+      "evidence_sources": [
+        "fd-safety.md:110-121"
+      ]
+    },
+    {
+      "id": "P2-17",
+      "severity": "P2",
+      "category": "Safety",
+      "section": "Key Decision 4, Intent YAML schema",
+      "title": "freeze and focus constraint lists not validated against known theme names",
+      "agents": [
+        "fd-safety"
+      ],
+      "convergence": 1,
+      "issue": "Validation spec states: ockham intent validate checks budgets sum to 1.0, no unknown theme names, no budget < 0 or > 1.0. Constraints block has freeze: [] and focus: [] lists containing theme names. Validation description checks unknown theme names only in themes: map entries context, not constraints: lists. If freeze: [auth, typo_theme] and typo_theme doesn't exist, spec does not explicitly state whether validation rejects.",
+      "impact": "Misspelled theme name in freeze list silently fails to freeze intended theme. Factory continues dispatching in theme principal believed was frozen. Principal has acted but action has no effect and no error reported.",
+      "fix_required": "Explicitly state that ockham intent validate checks all names in freeze: and focus: against keys in themes: map, returns error if any name not known. Consistent with existing unknown theme names check; requires extending loop to cover constraints lists.",
+      "evidence_sources": [
+        "fd-safety.md:124-135"
+      ]
+    },
+    {
+      "id": "P2-18",
+      "severity": "P2",
+      "category": "Safety",
+      "section": "Key Decision 10, Weight-outcome feedback loop",
+      "title": "Weight-outcome feedback loop baseline undefined for new themes",
+      "agents": [
+        "fd-safety"
+      ],
+      "convergence": 1,
+      "issue": "Mechanism states: compare actual cycle time and quality gate pass rate against predicted baseline. Predicted baseline not defined. No specification for how baseline established for new theme (fewer than N beads completed). What happens when theme composition changes (beads re-labeled)?",
+      "impact": "For new theme with 3 completed beads, 7-day rolling window may have no baseline or baseline from too few samples to be statistically meaningful. If Ockham emits false INFORM during ramp-up (variance high with few samples), creates noise degrading principal trust in signal. Conversely, if system suppresses signals until minimum sample size, effective blind spot for new themes.",
+      "fix_required": "Define minimum sample size (e.g. 10 completed beads) before feedback loop activates for theme. Below minimum, Ockham does not emit weight_drift signals but records completions for future baseline computation. Document threshold alongside 20% degradation threshold and 7-day window.",
+      "evidence_sources": [
+        "fd-safety.md:138-147"
+      ]
+    },
+    {
+      "id": "P2-19",
+      "severity": "P2",
+      "category": "Systems Thinking",
+      "section": "§6 Cross-domain beads",
+      "title": "Min-Tier Rule Creates Shadow-Domain Starvation Trap",
+      "agents": [
+        "fd-systems"
+      ],
+      "convergence": 1,
+      "issue": "Min-tier rule correctly prevents authority escalation via cross-domain beads. Second-order effect unaddressed: agents and principals rationally prefer to avoid beads touching shadow domains (shadow = maximum oversight, slowest). Over time, Schelling trap emerges: (1) Domain D in shadow (cold-start or CONSTRAIN). (2) Beads touching D executed under shadow rules. (3) Work touching D slower and more expensive. (4) Principals implicitly deprioritize beads touching D. (5) D receives fewer dispatches. (6) D accumulates less evidence. (7) D cannot promote (promotion requires sessions >= 10). (8) Return to step 3.",
+      "mechanism": "Domain enters shadow easy; exiting expensive. Path-dependent. Each individual decision to avoid shadow beads locally rational (less overhead, faster execution), collectively catastrophic (domains never graduate). Document does not identify as risk or propose counter-mechanism.",
+      "recommendation": "Add shadow-domain bootstrapping — minimum dispatch cadence for shadow domains analogous to starvation floor for low-budget themes. Options: (a) reserve fixed fraction dispatch capacity (5%) for shadow-domain beads regardless of weight; (b) when domain has < 10 sessions in 30-day window, flag evidence-starved, apply positive dispatch boost; (c) allow principals explicit --bootstrap flag bypassing min-tier for bounded set of beads under explicit supervision.",
+      "evidence_sources": [
+        "fd-systems.md:101-125"
+      ]
+    },
+    {
+      "id": "P2-20",
+      "severity": "P2",
+      "category": "Systems Thinking",
+      "section": "§10 Weight-outcome feedback loop",
+      "title": "SUBAK-01 Baseline is Ockham-Contaminated",
+      "agents": [
+        "fd-systems"
+      ],
+      "convergence": 1,
+      "issue": "Predicted baseline derived from historical performance. But Ockham's own weight decisions actively shape which beads dispatched, therefore shape historical baseline. Measurement endogeneity: governor's policy choices determine data it uses to evaluate own policy.",
+      "concrete_scenario": "Ockham boosts Theme A (auth, +12 offset). Higher-priority beads in auth dispatched preferentially. Higher-priority = higher-complexity work (usually). Cycle time increases. 7-day baseline shifts upward. Later reduction in auth boost causes cycle time to fall, appearing as >20% improvement — actually reversion to mean after policy-induced distortion. SUBAK-01 fires INFORM for condition Ockham itself created.",
+      "impact": "Intercept calibration learns from 50+ evaluations but if training data systematically biased by Ockham's dispatch decisions, learned threshold encodes contamination rather than corrects it.",
+      "recommendation": "SUBAK-01 baseline should control for dispatch priority composition. Normalize cycle time by complexity distribution of dispatched beads (beads priority distribution, size estimate). Without control, SUBAK-01 cannot distinguish theme perf degradation from Ockham-induced dispatch composition change. Intercept training on residuals after controlling for composition, not raw deltas.",
+      "evidence_sources": [
+        "fd-systems.md:128-143"
+      ]
+    }
+  ],
+  "summary_by_severity": {
+    "P0": {
+      "count": 2,
+      "findings": [
+        {
+          "id": "P0-01",
+          "title": "Missing orchestration layer — Scoring assembly has no owner",
+          "agents": [
+            "fd-architecture"
+          ]
+        },
+        {
+          "id": "P0-02",
+          "title": "Priority-inversion bound is mathematically wrong — tier gap is 12, not 24",
+          "agents": [
+            "fd-correctness"
+          ],
+          "convergence": 3
+        }
+      ]
+    },
+    "P1": {
+      "count": 19,
+      "tracks": {
+        "Architecture": 4,
+        "Correctness": 4,
+        "Quality & Style": 4,
+        "Resilience": 2,
+        "Safety": 3,
+        "Systems Thinking": 2
+      }
+    },
+    "P2": {
+      "count": 18,
+      "tracks": {
+        "Decisions": 6,
+        "Correctness": 2,
+        "Quality & Style": 4,
+        "Resilience": 2,
+        "Safety": 3,
+        "Systems Thinking": 2
+      }
+    },
+    "P3": {
+      "count": 6
+    }
+  },
+  "prior_findings_status": {
+    "round_1_total": 14,
+    "verified_resolved": 9,
+    "verified_partial": 4,
+    "regressed": 1,
+    "new_in_rev3": 28,
+    "notes": "All five round-1 findings correctly resolved at mechanical level. However, round-1's verification of C-02 (priority-inversion) was incomplete — safety analysis missed quantitative verification. Correct bound is ±6, not ±12. D-02 (window calibration) partially resolved; inconsistency introduced when weight-drift threshold gains calibration path but 1h/24h windows do not."
+  },
+  "discourse_quality": {
+    "participation_gini": 0.12,
+    "participation_assessment": "healthy",
+    "novelty_rate": 0.61,
+    "novelty_assessment": "elevated — rev 3 introduced SUBAK-01, cross-domain resolution, 30-day timer requiring substantial new analysis",
+    "response_relevance": 1.0,
+    "response_relevance_assessment": "strong — all findings cite specific sections, have concrete scenarios",
+    "flow_state": "degraded",
+    "flow_state_notes": "Healthy Gini and relevance, but P0 architectural gap uncaught by round-1 suggests inadequate depth. Priority-inversion convergence quality suggests round-1 missed quantitative verification step."
+  },
+  "recommendations": {
+    "blockers": [
+      "Name orchestration layer (cmd/ockham, governor package, other)",
+      "Fix priority-inversion bound: tier gap is 12, not 24; correct bound is ±6",
+      "Choose freeze implementation: lane-pause path OR offset-999 with floor guard exception",
+      "Implement 30-day re-confirmation trigger: session-start hook or systemd timer",
+      "Specify authority snapshot persistence store"
+    ],
+    "major_gaps": [
+      "Name self-promotion structural guard (bd set-state rejection, dispatch validation, or signed tokens)",
+      "Specify CONSTRAIN/BYPASS precedence (eligibility gates or weight inputs)",
+      "Define weight-drift baseline formula and minimum sample size",
+      "Add shadow-domain bootstrapping mechanism",
+      "Specify feedback-loop interaction rule between SUBAK-01 and ratchet"
+    ],
+    "specification_gaps": [
+      "Add expiry fields to Intent YAML schema",
+      "Specify ratchet promotion window duration",
+      "Add ockham_constraint_reason state field",
+      "Document Tier 3 recovery sequence",
+      "Validate freeze/focus theme names in Intent YAML"
+    ]
+  }
+}
