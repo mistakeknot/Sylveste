@@ -79,6 +79,9 @@
 {"issue_id":"sylveste-2l1.5","label":"auraken"}
 {"issue_id":"sylveste-2l1.6","label":"auraken"}
 {"issue_id":"sylveste-2l1.7","label":"auraken"}
+{"issue_id":"sylveste-32p","label":"artifact_prd:docs/prds/2026-04-04-ockham-wave1-foundation.md"}
+{"issue_id":"sylveste-32p","label":"claimed_at:1775342246"}
+{"issue_id":"sylveste-32p","label":"claimed_by:9d5a7266-deda-4e03-bbbd-f8865fc84ef5"}
 {"issue_id":"sylveste-4b7","label":"artifact_brainstorm:docs/brainstorms/2026-03-26-reservoir-routing-autoresearch-brainstorm.md"}
 {"issue_id":"sylveste-4b7","label":"artifact_closed:db41b36f2fc3946fc60d02edf54cdb09535297b3"}
 {"issue_id":"sylveste-4b7","label":"artifact_prd:docs/prds/2026-03-26-reservoir-routing-autoresearch.md"}
@@ -185,10 +188,11 @@
 {"issue_id":"sylveste-9lp.8","label":"cost"}
 {"issue_id":"sylveste-9lp.8","label":"interflux"}
 {"issue_id":"sylveste-9lp.9","label":"architecture"}
-{"issue_id":"sylveste-9lp.9","label":"claimed_at:1775339659"}
-{"issue_id":"sylveste-9lp.9","label":"claimed_by:e1407eeb-c44c-42b9-a3ad-78ce7549b6ea"}
+{"issue_id":"sylveste-9lp.9","label":"artifact_brainstorm:docs/brainstorms/2026-04-04-cross-model-dispatch-brainstorm.md"}
+{"issue_id":"sylveste-9lp.9","label":"claimed_at:1775339934"}
 {"issue_id":"sylveste-9lp.9","label":"complexity:3"}
 {"issue_id":"sylveste-9lp.9","label":"interflux"}
+{"issue_id":"sylveste-9lp.9","label":"phase:brainstorm"}
 {"issue_id":"sylveste-co5","label":"claimed_at:1775257878"}
 {"issue_id":"sylveste-co5","label":"claimed_by:5d2440f9-1f8f-45b5-813e-51e5acd84fce"}
 {"issue_id":"sylveste-co5","label":"complexity:2"}

@@ -124,6 +124,7 @@
 {"created_at":"2026-03-26T12:47:43Z","created_by":"mistakeknot","depends_on_id":"sylveste-1qa","issue_id":"sylveste-308","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-26T12:47:28Z","created_by":"mistakeknot","depends_on_id":"sylveste-4l2","issue_id":"sylveste-308","metadata":"{}","type":"blocks"}
 {"created_at":"2026-04-04T17:57:32Z","created_by":"Claude Code","depends_on_id":"sylveste-8em","issue_id":"sylveste-32p","metadata":"{}","type":"blocks"}
+{"created_at":"2026-04-04T22:35:21Z","created_by":"9d5a7266","depends_on_id":"sylveste-32p","issue_id":"sylveste-32p.1","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-26T12:47:42Z","created_by":"mistakeknot","depends_on_id":"sylveste-1qa","issue_id":"sylveste-3uy","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-26T12:47:27Z","created_by":"mistakeknot","depends_on_id":"sylveste-i8u","issue_id":"sylveste-3uy","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-30T05:40:18Z","created_by":"8e534bf7","depends_on_id":"sylveste-dla","issue_id":"sylveste-3x5","metadata":"{}","type":"child-of"}
@@ -229,6 +230,8 @@
 {"created_at":"2026-04-04T21:54:04Z","created_by":"Claude Code","depends_on_id":"sylveste-9lp.9","issue_id":"sylveste-9lp.9.1","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-04T21:54:19Z","created_by":"Claude Code","depends_on_id":"sylveste-9lp.9","issue_id":"sylveste-9lp.9.2","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-04T21:54:20Z","created_by":"Claude Code","depends_on_id":"sylveste-9lp.9","issue_id":"sylveste-9lp.9.3","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-04T21:58:40Z","created_by":"Claude Code","depends_on_id":"sylveste-9lp.9","issue_id":"sylveste-9lp.9.4","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-04T21:58:40Z","created_by":"Claude Code","depends_on_id":"sylveste-9lp.9","issue_id":"sylveste-9lp.9.5","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-26T12:47:38Z","created_by":"mistakeknot","depends_on_id":"sylveste-1qa","issue_id":"sylveste-9tc","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-26T12:47:24Z","created_by":"mistakeknot","depends_on_id":"sylveste-qbv","issue_id":"sylveste-9tc","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-26T14:07:45Z","created_by":"mistakeknot","depends_on_id":"sylveste-4b7","issue_id":"sylveste-bgu","metadata":"{}","type":"blocks"}
