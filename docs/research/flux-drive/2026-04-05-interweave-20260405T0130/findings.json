@@ -1,0 +1,238 @@
+{
+  "reviewed": "2026-04-05",
+  "input": "docs/prds/2026-04-05-interweave.md",
+  "agents_launched": [
+    "fd-ontology-schema-evolution",
+    "fd-entity-resolution-identity",
+    "fd-graph-query-runtime",
+    "fd-agent-ontology-runtime",
+    "fd-composition-coupling-philosophy"
+  ],
+  "agents_completed": [
+    "fd-ontology-schema-evolution",
+    "fd-entity-resolution-identity",
+    "fd-graph-query-runtime",
+    "fd-agent-ontology-runtime",
+    "fd-composition-coupling-philosophy"
+  ],
+  "findings": [
+    {
+      "id": "ERI-3",
+      "severity": "P0",
+      "agent": "fd-entity-resolution-identity",
+      "section": "F2: Identity Crosswalk",
+      "title": "Body similarity heuristic >80% will produce false positives at scale",
+      "convergence": 1
+    },
+    {
+      "id": "OSE-1",
+      "severity": "P1",
+      "agent": "fd-ontology-schema-evolution",
+      "section": "F1: Plugin Scaffold + Type Family System",
+      "title": "Multi-family membership creates combinatorial rule explosion without resolution strategy",
+      "convergence": 1
+    },
+    {
+      "id": "OSE-2",
+      "severity": "P1",
+      "agent": "fd-ontology-schema-evolution",
+      "section": "F1: Plugin Scaffold + Type Family System",
+      "title": "No schema versioning or migration strategy for type family changes",
+      "convergence": 1
+    },
+    {
+      "id": "OSE-5",
+      "severity": "P1",
+      "agent": "fd-ontology-schema-evolution",
+      "section": "Features (general)",
+      "title": "5x7 rule matrix unspecified — which family pairs produce which rules?",
+      "convergence": 2
+    },
+    {
+      "id": "ERI-1",
+      "severity": "P1",
+      "agent": "fd-entity-resolution-identity",
+      "section": "F2: Identity Crosswalk",
+      "title": "Transitive identity closure not addressed",
+      "convergence": 1
+    },
+    {
+      "id": "ERI-2",
+      "severity": "P1",
+      "agent": "fd-entity-resolution-identity",
+      "section": "F2: Identity Crosswalk",
+      "title": "Function-level identity via tree-sitter brittle across languages and refactoring",
+      "convergence": 2
+    },
+    {
+      "id": "ERI-5",
+      "severity": "P1",
+      "agent": "fd-entity-resolution-identity",
+      "section": "Open Questions",
+      "title": "Entity input parsing harder than prefix-based routing suggests",
+      "convergence": 1
+    },
+    {
+      "id": "GQR-1",
+      "severity": "P1",
+      "agent": "fd-graph-query-runtime",
+      "section": "F5: Named Query Templates",
+      "title": "Token cost <500 target unrealistic for causal-chain (3 hops, max 20)",
+      "convergence": 1
+    },
+    {
+      "id": "GQR-3",
+      "severity": "P1",
+      "agent": "fd-graph-query-runtime",
+      "section": "Non-goals",
+      "title": "SQLite adjacency at multi-hop needs performance contract",
+      "convergence": 1
+    },
+    {
+      "id": "GQR-5",
+      "severity": "P1",
+      "agent": "fd-graph-query-runtime",
+      "section": "F5: Named Query Templates",
+      "title": "causal-chain 3-hop has unbounded intermediate fan-out",
+      "convergence": 2
+    },
+    {
+      "id": "AOR-1",
+      "severity": "P1",
+      "agent": "fd-agent-ontology-runtime",
+      "section": "Features (general)",
+      "title": "No concrete capability delta over existing tools demonstrated",
+      "convergence": 1
+    },
+    {
+      "id": "AOR-2",
+      "severity": "P1",
+      "agent": "fd-agent-ontology-runtime",
+      "section": "F5: Named Query Templates",
+      "title": "Bootstrap problem: agents must know entity types to query the ontology",
+      "convergence": 1
+    },
+    {
+      "id": "AOR-4",
+      "severity": "P1",
+      "agent": "fd-agent-ontology-runtime",
+      "section": "F7: Gravity-Well Safeguards",
+      "title": "Finding-aid test does not cover behavioral dependency (agent fallback)",
+      "convergence": 2
+    },
+    {
+      "id": "CCP-1",
+      "severity": "P1",
+      "agent": "fd-composition-coupling-philosophy",
+      "section": "Solution",
+      "title": "Catalog-of-catalogs needs structural enforcement — F4 provenance may be owned data",
+      "convergence": 1
+    },
+    {
+      "id": "CCP-2",
+      "severity": "P1",
+      "agent": "fd-composition-coupling-philosophy",
+      "section": "F3: Connector Protocol",
+      "title": "Connector registration creates implicit coupling with subsystem plugins",
+      "convergence": 1
+    },
+    {
+      "id": "CCP-4",
+      "severity": "P1",
+      "agent": "fd-composition-coupling-philosophy",
+      "section": "Non-goals",
+      "title": "No graph database non-goal needs explicit rationale",
+      "convergence": 1
+    },
+    {
+      "id": "CCP-6",
+      "severity": "P1",
+      "agent": "fd-composition-coupling-philosophy",
+      "section": "Dependencies",
+      "title": "tree-sitter dependency creates implicit language support boundary",
+      "convergence": 2
+    },
+    {
+      "id": "OSE-3",
+      "severity": "P2",
+      "agent": "fd-ontology-schema-evolution",
+      "section": "F1: Plugin Scaffold + Type Family System",
+      "title": "Unclassified status erodes type discipline over time",
+      "convergence": 1
+    },
+    {
+      "id": "OSE-4",
+      "severity": "P2",
+      "agent": "fd-ontology-schema-evolution",
+      "section": "F3: Connector Protocol",
+      "title": "Observation contract lacks schema evolution guarantees",
+      "convergence": 1
+    },
+    {
+      "id": "ERI-4",
+      "severity": "P2",
+      "agent": "fd-entity-resolution-identity",
+      "section": "F2: Identity Crosswalk",
+      "title": "Granularity mismatch between subsystems creates noisy cross-links",
+      "convergence": 1
+    },
+    {
+      "id": "ERI-6",
+      "severity": "P2",
+      "agent": "fd-entity-resolution-identity",
+      "section": "F4: Confidence Scoring",
+      "title": "Confidence levels conflate match method with match quality",
+      "convergence": 1
+    },
+    {
+      "id": "GQR-2",
+      "severity": "P2",
+      "agent": "fd-graph-query-runtime",
+      "section": "F5: Named Query Templates",
+      "title": "No index strategy specified for SQLite adjacency tables",
+      "convergence": 1
+    },
+    {
+      "id": "GQR-4",
+      "severity": "P2",
+      "agent": "fd-graph-query-runtime",
+      "section": "F3: Connector Protocol",
+      "title": "Harvest model creates consistency window for time-sensitive queries",
+      "convergence": 1
+    },
+    {
+      "id": "AOR-3",
+      "severity": "P2",
+      "agent": "fd-agent-ontology-runtime",
+      "section": "F5: Named Query Templates",
+      "title": "6 MCP tools impose discovery overhead — consider consolidating to 2-3",
+      "convergence": 1
+    },
+    {
+      "id": "AOR-5",
+      "severity": "P2",
+      "agent": "fd-agent-ontology-runtime",
+      "section": "F6: Query-Context Salience",
+      "title": "Context detection requires unreliable agent self-classification",
+      "convergence": 1
+    },
+    {
+      "id": "CCP-3",
+      "severity": "P2",
+      "agent": "fd-composition-coupling-philosophy",
+      "section": "F1: Plugin Scaffold + Type Family System",
+      "title": "5 fixed families risk premature abstraction before query patterns observed",
+      "convergence": 2
+    },
+    {
+      "id": "CCP-5",
+      "severity": "P2",
+      "agent": "fd-composition-coupling-philosophy",
+      "section": "F8: Philosophy Amendment",
+      "title": "PHILOSOPHY.md amendment must explain storage vs. materialization distinction",
+      "convergence": 1
+    }
+  ],
+  "verdict": "needs-changes",
+  "early_stop": false
+}

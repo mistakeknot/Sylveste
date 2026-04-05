@@ -1,0 +1,290 @@
+{
+  "reviewed": "2026-04-05",
+  "input": "docs/prds/2026-04-05-interweave.md",
+  "agents_launched": [
+    "fd-persian-qanat-subterranean-topology",
+    "fd-javanese-gamelan-ensemble-tuning",
+    "fd-heraldic-blazon-compositional-grammar",
+    "fd-polynesian-wayfinding-star-path"
+  ],
+  "agents_completed": [
+    "fd-persian-qanat-subterranean-topology",
+    "fd-javanese-gamelan-ensemble-tuning",
+    "fd-heraldic-blazon-compositional-grammar",
+    "fd-polynesian-wayfinding-star-path"
+  ],
+  "findings": [
+    {
+      "id": "QANAT-1",
+      "severity": "P1",
+      "agent": "fd-persian-qanat-subterranean-topology",
+      "section": "F3: Connector Protocol",
+      "title": "Observation contract specifies entity existence but not operational depth per connector",
+      "convergence": 2,
+      "converging_agents": [
+        "fd-persian-qanat-subterranean-topology",
+        "fd-heraldic-blazon-compositional-grammar"
+      ]
+    },
+    {
+      "id": "QANAT-2",
+      "severity": "P1",
+      "agent": "fd-persian-qanat-subterranean-topology",
+      "section": "F5: Named Query Templates",
+      "title": "causal-chain query traverses subsystems with undefined observation depth",
+      "convergence": 1
+    },
+    {
+      "id": "GAMELAN-1",
+      "severity": "P1",
+      "agent": "fd-javanese-gamelan-ensemble-tuning",
+      "section": "F1: Type Family System",
+      "title": "Multi-family membership exists but source-specific semantics lost",
+      "convergence": 2,
+      "converging_agents": [
+        "fd-javanese-gamelan-ensemble-tuning",
+        "fd-javanese-gamelan-ensemble-tuning"
+      ]
+    },
+    {
+      "id": "GAMELAN-2",
+      "severity": "P1",
+      "agent": "fd-javanese-gamelan-ensemble-tuning",
+      "section": "F6: Query-Context Salience",
+      "title": "Context modes affect ordering but not projection — same properties regardless of context",
+      "convergence": 1
+    },
+    {
+      "id": "BLAZON-1",
+      "severity": "P1",
+      "agent": "fd-heraldic-blazon-compositional-grammar",
+      "section": "F1: Type Family System",
+      "title": "Interaction rules form a catalog (7 enumerated), not a compositional grammar",
+      "convergence": 3,
+      "converging_agents": [
+        "fd-heraldic-blazon-compositional-grammar",
+        "fd-javanese-gamelan-ensemble-tuning",
+        "fd-persian-qanat-subterranean-topology"
+      ]
+    },
+    {
+      "id": "BLAZON-2",
+      "severity": "P1",
+      "agent": "fd-heraldic-blazon-compositional-grammar",
+      "section": "F5: Named Query Templates",
+      "title": "Named queries are fixed templates, not compositions of query primitives",
+      "convergence": 2,
+      "converging_agents": [
+        "fd-heraldic-blazon-compositional-grammar",
+        "fd-polynesian-wayfinding-star-path"
+      ]
+    },
+    {
+      "id": "STARPATH-1",
+      "severity": "P1",
+      "agent": "fd-polynesian-wayfinding-star-path",
+      "section": "F5: Named Query Templates",
+      "title": "Graceful degradation specified but not acceptance-tested — no testable criteria for partial results",
+      "convergence": 1
+    },
+    {
+      "id": "STARPATH-2",
+      "severity": "P1",
+      "agent": "fd-polynesian-wayfinding-star-path",
+      "section": "F4: Confidence Scoring",
+      "title": "No contradiction detection — conflicting cross-source information returned without markers",
+      "convergence": 1
+    },
+    {
+      "id": "QANAT-3",
+      "severity": "P2",
+      "agent": "fd-persian-qanat-subterranean-topology",
+      "section": "F2: Identity Crosswalk",
+      "title": "Identity chain handles renames but not splits or merges",
+      "convergence": 1
+    },
+    {
+      "id": "QANAT-4",
+      "severity": "P2",
+      "agent": "fd-persian-qanat-subterranean-topology",
+      "section": "F4: Confidence Scoring",
+      "title": "Staleness TTL is binary — no entity change velocity signal",
+      "convergence": 1
+    },
+    {
+      "id": "QANAT-5",
+      "severity": "P2",
+      "agent": "fd-persian-qanat-subterranean-topology",
+      "section": "F7: Gravity-Well Safeguards",
+      "title": "Finding-aid audit has visibility gap during rebuild",
+      "convergence": 1
+    },
+    {
+      "id": "GAMELAN-3",
+      "severity": "P2",
+      "agent": "fd-javanese-gamelan-ensemble-tuning",
+      "section": "F3: Connector Protocol",
+      "title": "No schema stability guarantee when adding connectors",
+      "convergence": 2,
+      "converging_agents": [
+        "fd-javanese-gamelan-ensemble-tuning",
+        "fd-heraldic-blazon-compositional-grammar"
+      ]
+    },
+    {
+      "id": "GAMELAN-4",
+      "severity": "P2",
+      "agent": "fd-javanese-gamelan-ensemble-tuning",
+      "section": "F1: Type Family System",
+      "title": "Interaction rules enumerated, not composed from primitives",
+      "convergence": 3,
+      "converging_agents": [
+        "fd-javanese-gamelan-ensemble-tuning",
+        "fd-heraldic-blazon-compositional-grammar",
+        "fd-persian-qanat-subterranean-topology"
+      ]
+    },
+    {
+      "id": "GAMELAN-5",
+      "severity": "P2",
+      "agent": "fd-javanese-gamelan-ensemble-tuning",
+      "section": "F2: Identity Crosswalk",
+      "title": "Crosswalk flattens source-specific role information",
+      "convergence": 2,
+      "converging_agents": [
+        "fd-javanese-gamelan-ensemble-tuning",
+        "fd-heraldic-blazon-compositional-grammar"
+      ]
+    },
+    {
+      "id": "BLAZON-3",
+      "severity": "P2",
+      "agent": "fd-heraldic-blazon-compositional-grammar",
+      "section": "F1: Type Family System",
+      "title": "Entity definitions are referential (pointers to source) not reconstructive",
+      "convergence": 2,
+      "converging_agents": [
+        "fd-heraldic-blazon-compositional-grammar",
+        "fd-polynesian-wayfinding-star-path"
+      ]
+    },
+    {
+      "id": "BLAZON-4",
+      "severity": "P2",
+      "agent": "fd-heraldic-blazon-compositional-grammar",
+      "section": "F3: Connector Protocol",
+      "title": "Minimum discovery threshold too thin for independent agent reasoning",
+      "convergence": 2,
+      "converging_agents": [
+        "fd-heraldic-blazon-compositional-grammar",
+        "fd-polynesian-wayfinding-star-path"
+      ]
+    },
+    {
+      "id": "BLAZON-5",
+      "severity": "P2",
+      "agent": "fd-heraldic-blazon-compositional-grammar",
+      "section": "F1: Type Family System",
+      "title": "No typed constraints on relationship composition — any entity can link to any other",
+      "convergence": 1
+    },
+    {
+      "id": "STARPATH-3",
+      "severity": "P2",
+      "agent": "fd-polynesian-wayfinding-star-path",
+      "section": "F5: Named Query Templates",
+      "title": "No multi-signal synthesis query — agents synthesize manually across templates",
+      "convergence": 2,
+      "converging_agents": [
+        "fd-polynesian-wayfinding-star-path",
+        "fd-heraldic-blazon-compositional-grammar"
+      ]
+    },
+    {
+      "id": "STARPATH-4",
+      "severity": "P2",
+      "agent": "fd-polynesian-wayfinding-star-path",
+      "section": "F5: Named Query Templates",
+      "title": "Entity-centric reference frame correct but temporal-relative queries not supported",
+      "convergence": 1
+    },
+    {
+      "id": "STARPATH-5",
+      "severity": "P2",
+      "agent": "fd-polynesian-wayfinding-star-path",
+      "section": "F8: Philosophy Amendment",
+      "title": "No query reliability documentation for agent developers",
+      "convergence": 1
+    }
+  ],
+  "improvements": [
+    {
+      "id": "IMP-1",
+      "agent": "fd-persian-qanat-subterranean-topology",
+      "section": "F8",
+      "title": "Observation contract visualization table per connector"
+    },
+    {
+      "id": "IMP-2",
+      "agent": "fd-persian-qanat-subterranean-topology",
+      "section": "F3",
+      "title": "Connector observation depth tests"
+    },
+    {
+      "id": "IMP-3",
+      "agent": "fd-javanese-gamelan-ensemble-tuning",
+      "section": "F1",
+      "title": "Ombak test — multi-family entities preserve source-specific properties"
+    },
+    {
+      "id": "IMP-4",
+      "agent": "fd-javanese-gamelan-ensemble-tuning",
+      "section": "F8",
+      "title": "Context projection matrix documentation"
+    },
+    {
+      "id": "IMP-5",
+      "agent": "fd-javanese-gamelan-ensemble-tuning",
+      "section": "F3",
+      "title": "Ensemble integration regression test"
+    },
+    {
+      "id": "IMP-6",
+      "agent": "fd-heraldic-blazon-compositional-grammar",
+      "section": "F1",
+      "title": "Grammar specification test — two implementations produce same relationship matrix"
+    },
+    {
+      "id": "IMP-7",
+      "agent": "fd-heraldic-blazon-compositional-grammar",
+      "section": "F8",
+      "title": "Query composition documentation"
+    },
+    {
+      "id": "IMP-8",
+      "agent": "fd-heraldic-blazon-compositional-grammar",
+      "section": "F2",
+      "title": "Cadency-like versioning for entity modifications"
+    },
+    {
+      "id": "IMP-9",
+      "agent": "fd-polynesian-wayfinding-star-path",
+      "section": "F5",
+      "title": "Source attribution with freshness and confidence per result item"
+    },
+    {
+      "id": "IMP-10",
+      "agent": "fd-polynesian-wayfinding-star-path",
+      "section": "F5",
+      "title": "Per-template timeout budgets"
+    },
+    {
+      "id": "IMP-11",
+      "agent": "fd-polynesian-wayfinding-star-path",
+      "section": "F7",
+      "title": "Persistent connector health dashboard"
+    }
+  ],
+  "verdict": "needs-changes",
+  "early_stop": false
+}

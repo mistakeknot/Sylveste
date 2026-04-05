@@ -24,10 +24,17 @@ A generative ontology layer (interweave) that indexes entity metadata across sub
 - [ ] interweave plugin scaffolded in `interverse/interweave/` with .claude-plugin/plugin.json, CLAUDE.md, AGENTS.md
 - [ ] 5 type families defined as data models with diagnostic properties
 - [ ] 7 interaction rules implemented — given (family_a, family_b), returns valid relationship types
+- [ ] Family-pair interaction matrix documented (appendix) showing which rule governs each of the 15 unordered family pairs
+- [ ] Growth test: adding a new entity type to any family requires zero changes to interaction rules
+- [ ] Compositionality test: "delegation" expressible using existing primitives without adding rule #8
+- [ ] Interaction rules extensible via `{namespace}:{rule-name}` registration (plugins can add domain-specific rules)
 - [ ] New entity types can declare family membership(s) and inherit all family rules
 - [ ] Multi-family membership supported (entity belongs to Process + Evidence simultaneously)
+- [ ] Multi-family resolution strategy: union of valid relationship types from all memberships
+- [ ] Lifecycle transitions: entities gain new family memberships via declared lifecycle events (e.g., Session starts as Process, gains Evidence membership after reflection distillation)
+- [ ] Transition rules declared per entity type; relational calculus immediately applies to expanded family set
 - [ ] Unclassified status: entities without family membership appear in search but don't participate in relational calculus
-- [ ] Unit tests: family declaration, rule inheritance, multi-family, unclassified behavior
+- [ ] Unit tests: family declaration, rule inheritance, multi-family, lifecycle transitions, compositionality, unclassified behavior
 
 ### F2: Identity Crosswalk [P1]
 
@@ -35,10 +42,15 @@ A generative ontology layer (interweave) that indexes entity metadata across sub
 
 **Acceptance criteria:**
 - [ ] Crosswalk storage (SQLite) with (subsystem, subsystem_id, canonical_id, confidence, method) schema
+- [ ] Composite canonical ID format: `{subsystem}:{native_id}` — subsystem prefix routes to connector, native ID is familiar
 - [ ] File-level resolution: path normalization, git SHA matching, git rename detection
 - [ ] Function-level resolution: tree-sitter AST fingerprinting (canonical signature = file_path + function_name + parameter_types + return_type)
-- [ ] Function rename/move detection: body similarity heuristic (>80% match links identities)
-- [ ] Identity chain recording: fn_v1 → renamed_to → fn_v2
+- [ ] Supported languages for function-level resolution declared explicitly; unsupported languages fall back to file-level
+- [ ] Function rename/move detection: body similarity >95% = `confirmed` auto-link; 80-95% = `probable` (excluded from default queries per F4); <80% = no link
+- [ ] Identity links NOT transitively closed by default (A=B and B=C does not imply A=C without explicit evidence)
+- [ ] Identity chain recording: fn_v1 → renamed_to → fn_v2 (history preserved across index rebuilds)
+- [ ] Per-entity-type diagnostic property table documenting the identity anchor for each type (file→path, bead→bead_id, session→session_id, commit→SHA, function→AST fingerprint)
+- [ ] Actor identity table: (subsystem, actor_id, canonical_person_id, confidence, method) — unifies developer identity across git username, session ID, beads claimed_by, PR reviewer name; canonical person ID = git email
 - [ ] O(1) lookup at runtime via materialized index
 - [ ] Incremental updates (don't rebuild entire crosswalk on each change)
 - [ ] Dedup detection (flag when two canonical entities likely refer to the same thing)
@@ -49,25 +61,30 @@ A generative ontology layer (interweave) that indexes entity metadata across sub
 
 **Acceptance criteria:**
 - [ ] Connector interface: register, harvest (pull entity metadata), get_observation_contract
-- [ ] Observation contract format: entities_indexed, granularity, properties (captured/inferred), refresh cadence, freshness_signal
-- [ ] Minimum discovery threshold enforced: entity_type, entity_id, subsystem, created_at
+- [ ] Connectors are interweave-internal: subsystems need not know about interweave; adding a connector does not change the subsystem
+- [ ] Observation contract format: entities_indexed, granularity, properties (captured/inferred), refresh cadence, freshness_signal, observation_depth per entity type, relationship_types discovered, coverage_estimate (indexed_since, approximate_completeness)
+- [ ] Minimum discovery threshold: entity_id + subsystem (2 fields); entity_type and created_at auto-inferred where possible
 - [ ] cass connector: indexes sessions, tool calls (nested), files_touched; refresh via cass index
 - [ ] beads connector: indexes issues, dependencies, sprints; refresh via bd CLI
 - [ ] tldr-code connector: indexes files, functions, classes, imports; refresh via tldr-code extract/structure
-- [ ] Harvest model: interweave crawls connectors (zero effort from producers)
-- [ ] Progressive enhancement: connectors can provide minimal (4-field) or rich metadata
+- [ ] Harvest model: interweave crawls connectors (zero effort from producers); two modes — broad (fast, metadata-only) and deep (slow, on-demand for specific entities)
+- [ ] Progressive enhancement: connectors can provide minimal (2-field) or rich metadata
+- [ ] Adding a new connector does not change existing query results unless a query template explicitly includes the new source
+- [ ] Cold-start: broad harvest completes within 5 minutes for a fresh install; useful queries available immediately after
 
 ### F4: Confidence Scoring + Link Provenance [P2]
 
 **What:** Every cross-system relationship carries provenance metadata — method, confidence level, evidence, and temporal validity.
 
 **Acceptance criteria:**
-- [ ] Link schema: source_entity, target_entity, relationship_type, method, confidence, evidence[], created_at, last_verified_at
+- [ ] Link schema: source_entity, target_entity, relationship_type, method, confidence, evidence[], created_at, last_verified_at, valid_from, valid_until
 - [ ] Methods: explicit-reference, temporal-cooccurrence, identifier-match, embedding-similarity
 - [ ] Confidence levels: confirmed (deterministic match), probable (structural match), speculative (temporal/embedding)
 - [ ] Default query filter excludes "speculative" links
+- [ ] Per-query minimum confidence floor for traversal edges (high-stakes queries can require confirmed/probable only)
 - [ ] Agents can explicitly request speculative links when exploring
 - [ ] Evidence list per link: array of observations supporting the relationship
+- [ ] Cross-source contradiction detection: enumerated patterns (closed-but-active, deleted-but-referenced, conflicting-timestamps) surfaced with source attribution rather than silently resolved
 - [ ] Staleness detection: links not re-verified within TTL flagged as stale
 
 ### F5: Named Query Templates (MCP Tools) [P1]
@@ -75,17 +92,21 @@ A generative ontology layer (interweave) that indexes entity metadata across sub
 **What:** 6 named query commands exposed as MCP tools with bounded traversal and predictable token cost.
 
 **Acceptance criteria:**
-- [ ] MCP server in interweave serving 6 tools:
+- [ ] MCP server in interweave serving 7 tools:
+  - `context-for <entity>`: composite query combining related-work + recent-sessions + who-touched (1 hop, max 10 per source)
   - `related-work <entity>`: beads linked to entity (1 hop, max 10)
   - `recent-sessions <entity>`: sessions that touched entity (1 hop, max 10)
   - `review-findings <entity>`: flux-drive findings mentioning entity (1 hop, max 20)
-  - `causal-chain <entity>`: blocks/caused-by/discovered-from traversal (3 hops, max 20)
+  - `causal-chain <entity>`: blocks/caused-by/discovered-from traversal (3 hops, beam K=50 per intermediate hop, max 20 final results)
   - `who-touched <entity>`: agents/humans that modified entity (1 hop, max 10)
   - `evidence-for <entity>`: interspect evidence, calibration data (1 hop, max 20)
-- [ ] Entity input accepts: file path, bead ID, session ID, function name, or canonical entity ID
-- [ ] Results include source subsystem attribution
-- [ ] Token cost per query < 500 tokens (result formatting)
-- [ ] Graceful degradation: if a connector is unavailable, return partial results with source status
+- [ ] Entity input accepts: file path, bead ID, session ID, function name, or canonical entity ID (composite `{subsystem}:{native_id}` format)
+- [ ] Results include source subsystem attribution and per-connector coverage/freshness metadata
+- [ ] Results distinguish "no data found" vs. "source unavailable" vs. "not yet indexed"
+- [ ] Token cost: <500 tokens for 1-hop queries, <800 tokens for causal-chain (3-hop)
+- [ ] Latency contract: all queries <200ms at 100K entities / 500K links
+- [ ] Graceful degradation: per-source timeout (2s), partial results returned with per-source status indicator
+- [ ] Before/after scenarios documented (3 examples with token counts proving capability delta over cass+beads+grep)
 
 ### F6: Query-Context Salience [P2]
 
@@ -95,8 +116,9 @@ A generative ontology layer (interweave) that indexes entity metadata across sub
 - [ ] 3 context modes: debugging, planning, reviewing
 - [ ] Context detection: explicit parameter (`--context=debugging`) as primary method
 - [ ] Each query template has per-context ordering weights
-- [ ] Default context: "general" (balanced ordering)
-- [ ] Context affects result ordering, not result filtering (all results available regardless of context)
+- [ ] Per-context property projection: debugging surfaces diff stats + test results; planning surfaces bead associations + sprint membership; reviewing surfaces findings + evidence history
+- [ ] Default context: "general" (balanced ordering, full property set)
+- [ ] Context affects both result ordering AND property projection (same data, different modal meaning)
 
 ### F7: Gravity-Well Safeguards [P2]
 
@@ -104,10 +126,14 @@ A generative ontology layer (interweave) that indexes entity metadata across sub
 
 **Acceptance criteria:**
 - [ ] No-write-through: write operations to source subsystems not implemented in any code path
-- [ ] Staleness TTL: entities not refreshed within 30 days automatically excluded from query results
-- [ ] Finding-aid audit script: `interweave audit` deletes the entire index, verifies all subsystems still function, and rebuilds
+- [ ] Staleness TTL: per-type-family configuration (Process entities: short TTL with archive-to-cold-storage; Artifact entities: long TTL or refresh-on-query)
+- [ ] Three-level finding-aid test:
+  - (a) Structural audit: `interweave audit --structural` deletes the entire index, verifies all subsystems still function
+  - (b) Provenance regeneration: `interweave audit --provenance` rebuilds index and verifies link confidence within 10% of pre-delete levels
+  - (c) Behavioral fallback: `interweave audit --behavioral` disables interweave, verifies agents complete queries via direct subsystem access
+- [ ] Identity chain history preserved across audits (not destroyed by index rebuild)
 - [ ] Direct access documentation: agent prompts include fallback instructions for when interweave is unavailable
-- [ ] Health check: `interweave health` reports index freshness, connector status, and staleness counts
+- [ ] Health check: `interweave health` reports index freshness, connector status, staleness counts, and unclassified entity percentage (alert at >30%)
 
 ### F8: Philosophy Amendment + Documentation [P3]
 
@@ -140,6 +166,8 @@ A generative ontology layer (interweave) that indexes entity metadata across sub
 
 2. **Connector refresh scheduling.** Should interweave harvest on-demand (when a query arrives and cache is stale), on a timer (background refresh), or on triggers (hook after git push, bead close)? Likely hybrid: on-demand with background refresh for frequently-queried connectors.
 
-3. **Entity input parsing.** How does interweave disambiguate "src/main.py" (file path) from "Sylveste-abc1" (bead ID) from "a1b2c3d4" (session ID)? Likely: prefix-based routing (paths contain `/`, beads contain `-`, sessions are hex strings) with explicit `--type=` override.
+## Resolved by Flux-Review
 
-4. **Index size management.** With 60+ plugins and years of sessions, the index could grow large. Need a retention policy beyond TTL — archive old entities? Compact the crosswalk?
+3. ~~**Entity input parsing.**~~ **Resolved:** Composite canonical IDs using `{subsystem}:{native_id}` format. Subsystem prefix routes to connector; native ID is familiar. Promoted to F2 acceptance criterion.
+
+4. ~~**Index size management.**~~ **Resolved:** Per-type-family TTLs (Process = short TTL with archive-to-cold-storage; Artifact = long TTL or refresh-on-query) combined with broad/deep harvest modes (broad metadata always retained; deep metadata expires per TTL). Promoted to F7 acceptance criterion.
