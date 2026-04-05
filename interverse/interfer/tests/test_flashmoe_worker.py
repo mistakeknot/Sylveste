@@ -129,7 +129,6 @@ class TestFlashMoeWorkerWithFakeServer:
             binary_path="/nonexistent",
             model_path="/nonexistent",
             port=port,
-            enable_watchdog=False,
         )
         # Fake the process as alive
         w._process = MagicMock()
@@ -187,7 +186,6 @@ class TestFlashMoeWorkerWithFakeServer:
         w = FlashMoeWorker(
             binary_path="/nonexistent",
             model_path="/nonexistent",
-            enable_watchdog=False,
         )
         info = w.health()
         assert info["status"] == "down"
@@ -196,7 +194,6 @@ class TestFlashMoeWorkerWithFakeServer:
         w = FlashMoeWorker(
             binary_path="/nonexistent",
             model_path="/nonexistent",
-            enable_watchdog=False,
         )
         with pytest.raises(RuntimeError, match="not running"):
             list(w.generate(messages=[{"role": "user", "content": "hi"}]))
@@ -212,7 +209,6 @@ class TestFlashMoeWorkerLifecycle:
         w = FlashMoeWorker(
             binary_path="/nonexistent/infer",
             model_path="/some/model",
-            enable_watchdog=False,
         )
         with pytest.raises(FileNotFoundError, match="flash-moe binary not found"):
             w.start()
@@ -224,7 +220,6 @@ class TestFlashMoeWorkerLifecycle:
         w = FlashMoeWorker(
             binary_path=str(binary),
             model_path="",
-            enable_watchdog=False,
         )
         with pytest.raises(ValueError, match="model_path is required"):
             w.start()
@@ -233,7 +228,6 @@ class TestFlashMoeWorkerLifecycle:
         w = FlashMoeWorker(
             binary_path="/nonexistent",
             model_path="/nonexistent",
-            enable_watchdog=False,
         )
         assert w.is_alive() is False
         assert w.is_degraded is False
@@ -246,7 +240,6 @@ class TestFlashMoeWorkerLifecycle:
         w = FlashMoeWorker(
             binary_path="/nonexistent",
             model_path="/nonexistent",
-            enable_watchdog=False,
         )
         # Should not raise
         w.shutdown()
@@ -257,7 +250,6 @@ class TestFlashMoeWorkerLifecycle:
             binary_path="/nonexistent",
             model_path="/nonexistent",
             port=fake_flashmoe_port,
-            enable_watchdog=False,
         )
         w._process = MagicMock()
         w._process.poll.return_value = None
@@ -301,7 +293,6 @@ class TestFlashMoeCacheFlags:
             binary_path=str(binary),
             model_path=str(tmp_path),
             malloc_cache=10000,
-            enable_watchdog=False,
         )
         # We can't actually start (binary will fail), but we can check
         # the command would be constructed correctly by inspecting internals
@@ -313,7 +304,6 @@ class TestFlashMoeCacheFlags:
             binary_path="/nonexistent",
             model_path="/nonexistent",
             predict=True,
-            enable_watchdog=False,
         )
         assert w._predict is True
 
@@ -322,7 +312,6 @@ class TestFlashMoeCacheFlags:
         w = FlashMoeWorker(
             binary_path="/nonexistent",
             model_path="/nonexistent",
-            enable_watchdog=False,
         )
         assert w._malloc_cache == 0
         assert w._predict is False

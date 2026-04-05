@@ -84,6 +84,9 @@ class FlashMoeWorker:
         self._restart_count: int = 0
         self._consecutive_crashes: int = 0
         self._degraded = False
+        self._is_restarting = False
+        self._last_crash_time: float | None = None
+        self._crash_history: list[dict[str, Any]] = []
 
     # -- lifecycle -----------------------------------------------------------
 
@@ -91,6 +94,11 @@ class FlashMoeWorker:
         """Spawn the flash-moe binary subprocess."""
         if self._process is not None and self._process.poll() is None:
             raise RuntimeError("already running")
+
+        if not os.path.isfile(self._binary_path):
+            raise FileNotFoundError(f"flash-moe binary not found: {self._binary_path}")
+        if not self._model_path:
+            raise ValueError("model_path is required")
 
         cmd = [self._binary_path]
 
@@ -201,15 +209,41 @@ class FlashMoeWorker:
         """True when max consecutive restarts exceeded."""
         return self._degraded
 
+    @property
+    def is_restarting(self) -> bool:
+        """True during watchdog restart backoff."""
+        return self._is_restarting
+
+    @property
+    def restart_count(self) -> int:
+        """Total number of successful restarts."""
+        return self._restart_count
+
+    @property
+    def last_crash(self) -> float | None:
+        """Monotonic timestamp of most recent crash, or None."""
+        return self._last_crash_time
+
+    @property
+    def crash_history(self) -> list[dict[str, Any]]:
+        """List of crash records: {time, exit_code, consecutive}."""
+        return list(self._crash_history)
+
     # -- commands ------------------------------------------------------------
 
     def health(self, timeout: float = _HEALTH_TIMEOUT) -> dict[str, Any]:
-        """Query the binary's health endpoint."""
-        import urllib.request
+        """Query the binary's health endpoint.
+
+        Returns a normalized dict with at least: status, backend, port,
+        loaded_models.  Upstream formats are merged under these keys.
+        """
         import urllib.error
+        import urllib.request
+
+        base = {"backend": "flash-moe", "port": self._port, "loaded_models": []}
 
         if not self.is_alive():
-            return {"status": "dead", "port": self._port}
+            return {**base, "status": "down"}
 
         try:
             req = urllib.request.Request(
@@ -218,13 +252,19 @@ class FlashMoeWorker:
             )
             with urllib.request.urlopen(req, timeout=timeout) as resp:
                 data = json.loads(resp.read())
-                return {"status": "ok", "port": self._port, **data}
+                # Upstream may provide model info under various keys
+                data.pop("status", None)  # we set our own status
+                models = data.pop("loaded_models", None)
+                if models is None:
+                    m = data.pop("model", None)
+                    models = [m] if m else []
+                return {**base, "status": "ready", "loaded_models": models, **data}
         except Exception as e:
-            return {"status": "error", "error": str(e), "port": self._port}
+            return {**base, "status": "error", "error": str(e)}
 
     def generate(
         self,
-        model_name: str,
+        model_name: str = "flash-moe",
         messages: list[dict] | None = None,
         prompt: str = "",
         max_tokens: int = 512,
@@ -241,6 +281,9 @@ class FlashMoeWorker:
         with self._generate_lock:
             if not self.is_alive():
                 raise RuntimeError("flash-moe not running")
+
+            if messages is None and not prompt:
+                raise ValueError("messages or prompt required")
 
             body = {
                 "model": model_name,
@@ -261,6 +304,8 @@ class FlashMoeWorker:
             )
 
             self._last_metrics = {}
+            token_count = 0
+            t0 = time.monotonic()
             try:
                 with urllib.request.urlopen(req, timeout=timeout) as resp:
                     for line in resp:
@@ -281,19 +326,32 @@ class FlashMoeWorker:
                             delta = choices[0].get("delta", {})
                             content = delta.get("content", "")
                             if content:
+                                token_count += 1
                                 yield content
 
                             # Capture finish metrics from final chunk
                             usage = chunk.get("usage")
                             if usage:
-                                self._last_metrics = {
-                                    "generation_tps": usage.get("generation_tps", 0),
-                                    "prompt_tps": usage.get("prompt_tps", 0),
-                                    "peak_memory_gb": usage.get("peak_memory_gb", 0),
-                                }
+                                self._last_metrics.update(
+                                    {
+                                        "generation_tps": usage.get(
+                                            "generation_tps", 0
+                                        ),
+                                        "prompt_tps": usage.get("prompt_tps", 0),
+                                        "peak_memory_gb": usage.get(
+                                            "peak_memory_gb", 0
+                                        ),
+                                    }
+                                )
 
             except urllib.error.URLError as e:
                 raise RuntimeError(f"flash-moe request failed: {e}") from e
+            finally:
+                elapsed = time.monotonic() - t0
+                self._last_metrics["tokens_generated"] = token_count
+                self._last_metrics["backend"] = "flash-moe"
+                if "generation_tps" not in self._last_metrics and elapsed > 0:
+                    self._last_metrics["generation_tps"] = token_count / elapsed
 
     @property
     def last_generation_metrics(self) -> dict:
@@ -330,6 +388,15 @@ class FlashMoeWorker:
             if self._process is not None and self._process.poll() is not None:
                 self._consecutive_crashes += 1
                 exit_code = self._process.returncode
+                now = time.monotonic()
+                self._last_crash_time = now
+                self._crash_history.append(
+                    {
+                        "time": now,
+                        "exit_code": exit_code,
+                        "consecutive": self._consecutive_crashes,
+                    }
+                )
                 log.warning(
                     "flash-moe crashed: exit_code=%s (consecutive: %d/%d)",
                     exit_code,
@@ -347,7 +414,9 @@ class FlashMoeWorker:
                     _MAX_BACKOFF_S,
                 )
                 log.info("waiting %.1fs before restart", backoff)
+                self._is_restarting = True
                 self._watchdog_stop.wait(timeout=backoff)
+                self._is_restarting = False
                 if self._watchdog_stop.is_set():
                     break
 
