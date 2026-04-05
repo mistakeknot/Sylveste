@@ -1,12 +1,23 @@
 {
-  "last_dolt_commit": "bi9a4f2c82skaovnb6mfp9uh88kkfunq",
-  "timestamp": "2026-04-05T06:39:29.405135871Z",
+<<<<<<< Updated upstream
+  "last_dolt_commit": "pshpbeg8vi05u6fd9ca830il20g18s6q",
+  "timestamp": "2026-04-05T00:10:08.667281556Z",
   "counts": {
-    "issues": 797,
-    "events": 6713,
+    "issues": 687,
+    "events": 6392,
     "comments": 0,
-    "dependencies": 763,
-    "labels": 469,
+    "dependencies": 653,
+    "labels": 463,
+=======
+  "last_dolt_commit": "brqejp953o66skknkikdlg03fj23m8mt",
+  "timestamp": "2026-04-05T03:34:11.065367Z",
+  "counts": {
+    "issues": 537,
+    "events": 11900,
+    "comments": 0,
+    "dependencies": 494,
+    "labels": 262,
+>>>>>>> Stashed changes
     "config": 11
   }
 }
