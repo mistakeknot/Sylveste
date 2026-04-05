@@ -57,13 +57,17 @@ Track B5 in `os/Clavain/config/routing.yaml`:
 - `mode: shadow` (current) — log what would route locally
 - `mode: enforce` — route eligible tasks to interfer
 
-Complexity-to-model mapping (MoE-first, updated 2026-03-26):
+Complexity-to-model mapping (MoE-first, updated 2026-04-05):
 - C1 (trivial) → `local:qwen3.5-9b-4bit` (~5GB, ~60-80 tok/s)
 - C2 (routine) → `local:qwen3.5-35b-a3b-4bit` (~18GB, MoE 3B active, ~86 tok/s benchmarked)
-- C3 (moderate) → `local:qwen3.5-122b-a10b-4bit` (~65GB, MoE 10B active, pending benchmark)
+- C3 (moderate) → `flash-moe:qwen3.5-397b` (Q3+cis4, ~1 tok/s SSD-streamed) OR cloud escalation
 
 MoE models activate only a fraction of parameters per token (e.g., 3B of 35B), giving
 big-model quality at small-model inference speed.
+
+Note: Qwen3.5-122B-A10B-4bit was benchmarked at 2.99 tok/s (2026-04-05) but
+consumes 69GB RAM, preventing model coexistence. The 397B via flash-moe gives
+equivalent quality at ~6GB RAM. See docs/benchmarks/2026-04-05-qwen35-122b-a10b.md.
 
 Safety floors: fd-safety and fd-correctness always use cloud models.
 

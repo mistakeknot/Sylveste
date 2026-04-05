@@ -107,10 +107,10 @@ class FlashMoeWorker:
         if self._model_path:
             cmd.extend(["--model", self._model_path])
 
-        cmd.extend(["--port", str(self._port)])
+        cmd.extend(["--serve", str(self._port)])
 
         if self._malloc_cache > 0:
-            cmd.extend(["--flashmoe-malloc-cache", str(self._malloc_cache)])
+            cmd.extend(["--malloc-cache", str(self._malloc_cache)])
 
         if self._predict:
             cmd.append("--predict")
