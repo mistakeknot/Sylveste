@@ -211,6 +211,8 @@
 {"issue_id":"sylveste-dui","label":"flux-gen"}
 {"issue_id":"sylveste-dui","label":"interflux"}
 {"issue_id":"sylveste-dui","label":"prompt-engineering"}
+{"issue_id":"sylveste-dvu","label":"artifact_brainstorm:apps/Auraken/docs/brainstorms/2026-04-05-user-identity-onboarding.md"}
+{"issue_id":"sylveste-dvu","label":"artifact_plan:apps/Auraken/docs/plans/2026-04-05-user-identity-onboarding.md"}
 {"issue_id":"sylveste-e8n","label":"artifact_brainstorm:docs/brainstorms/2026-03-28-idea-garden-brainstorm.md"}
 {"issue_id":"sylveste-e8n","label":"artifact_plan:docs/plans/2026-03-28-idea-garden-interseed.md"}
 {"issue_id":"sylveste-e8n","label":"artifact_prd:docs/prds/2026-03-28-idea-garden.md"}
@@ -218,6 +220,18 @@
 {"issue_id":"sylveste-e8n","label":"artifact_reflection:docs/reflections/2026-03-29-idea-garden-interseed-reflect.md"}
 {"issue_id":"sylveste-e8n","label":"claimed_at:1774737889"}
 {"issue_id":"sylveste-e8n","label":"claimed_by:6b85bcd6-53a3-44df-938f-42d1618302e6"}
+{"issue_id":"sylveste-fbz","label":"artifact_brainstorm:docs/brainstorms/2026-04-05-gmail-purchase-import-brainstorm.md"}
+{"issue_id":"sylveste-fbz","label":"artifact_plan:docs/plans/2026-04-05-gmail-purchase-import.md"}
+{"issue_id":"sylveste-fbz","label":"artifact_prd:docs/prds/2026-04-05-gmail-purchase-import.md"}
+{"issue_id":"sylveste-fbz","label":"artifact_prior-art:none-found"}
+{"issue_id":"sylveste-fbz","label":"auraken"}
+{"issue_id":"sylveste-fbz","label":"claimed_at:1775423012"}
+{"issue_id":"sylveste-fbz","label":"claimed_by:20d3481b-0837-4e73-94d2-9f0bb50a8006"}
+{"issue_id":"sylveste-fbz","label":"complexity:3"}
+{"issue_id":"sylveste-fbz","label":"decomp_prediction:{\n  \"epic\": \"sylveste-fbz\",\n  \"session\": \"20d3481b-0837-4e73-94d2-9f0bb50a8006\",\n  \"predicted_children\": 8,\n  \"baseline_typical\": 5,\n  \"ts\": 1775422991,\n  \"original_child_ids\": \"sylveste-pxg,sylveste-mul,sylveste-8z3n,sylveste-nhc1,sylve"}
+{"issue_id":"sylveste-fbz","label":"discovery"}
+{"issue_id":"sylveste-fbz","label":"integration"}
+{"issue_id":"sylveste-fbz","label":"phase:plan-reviewed"}
 {"issue_id":"sylveste-g3b","label":"artifact_brainstorm:docs/brainstorms/2026-04-01-interflux-reaction-round-brainstorm.md"}
 {"issue_id":"sylveste-g3b","label":"artifact_plan:docs/plans/2026-04-01-interflux-reaction-round-activation.md"}
 {"issue_id":"sylveste-g3b","label":"artifact_prd:docs/prds/2026-04-01-interflux-reaction-round-activation.md"}
@@ -228,6 +242,8 @@
 {"issue_id":"sylveste-g78","label":"p1"}
 {"issue_id":"sylveste-g78","label":"promotion"}
 {"issue_id":"sylveste-g78","label":"tuivision"}
+{"issue_id":"sylveste-gfp2","label":"claimed_at:1775426475"}
+{"issue_id":"sylveste-gfp2","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-gk8","label":"patterns"}
 {"issue_id":"sylveste-gk8","label":"skaffen"}
 {"issue_id":"sylveste-ln3","label":"artifact_implementation:dae3106"}
@@ -467,3 +483,5 @@
 {"issue_id":"sylveste-vm4","label":"artifact_plan:docs/plans/2026-03-29-flashmoe-cache-tuning.md"}
 {"issue_id":"sylveste-vr0","label":"patterns"}
 {"issue_id":"sylveste-vr0","label":"skaffen"}
+{"issue_id":"sylveste-xd0n","label":"claimed_at:1775429099"}
+{"issue_id":"sylveste-xd0n","label":"claimed_by:unknown"}

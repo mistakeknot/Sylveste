@@ -53,6 +53,7 @@
 {"created_at":"2026-03-31T07:51:48Z","created_by":"Claude Code","depends_on_id":"sylveste-09h","issue_id":"sylveste-09h.9","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-30T05:40:16Z","created_by":"8e534bf7","depends_on_id":"sylveste-dla","issue_id":"sylveste-0md","metadata":"{}","type":"child-of"}
 {"created_at":"2026-03-30T05:40:20Z","created_by":"8e534bf7","depends_on_id":"sylveste-gta","issue_id":"sylveste-0md","metadata":"{}","type":"depends-on"}
+{"created_at":"2026-04-05T21:02:52Z","created_by":"20d3481b","depends_on_id":"sylveste-fbz","issue_id":"sylveste-0z24","metadata":"{}","type":"blocks"}
 {"created_at":"2026-04-04T17:57:29Z","created_by":"Claude Code","depends_on_id":"sylveste-8em","issue_id":"sylveste-0zr","metadata":"{}","type":"blocks"}
 {"created_at":"2026-04-04T19:10:23Z","created_by":"811384ae","depends_on_id":"sylveste-0zr","issue_id":"sylveste-0zr.1","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-04T19:10:25Z","created_by":"Claude Code","depends_on_id":"sylveste-0zr","issue_id":"sylveste-0zr.2","metadata":"{}","type":"parent-child"}
@@ -125,6 +126,7 @@
 {"created_at":"2026-03-26T12:47:28Z","created_by":"mistakeknot","depends_on_id":"sylveste-4l2","issue_id":"sylveste-308","metadata":"{}","type":"blocks"}
 {"created_at":"2026-04-04T17:57:32Z","created_by":"Claude Code","depends_on_id":"sylveste-8em","issue_id":"sylveste-32p","metadata":"{}","type":"blocks"}
 {"created_at":"2026-04-04T22:35:21Z","created_by":"9d5a7266","depends_on_id":"sylveste-32p","issue_id":"sylveste-32p.1","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:16:25Z","created_by":"Claude Code","depends_on_id":"sylveste-9lp.9","issue_id":"sylveste-3de","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-26T12:47:42Z","created_by":"mistakeknot","depends_on_id":"sylveste-1qa","issue_id":"sylveste-3uy","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-26T12:47:27Z","created_by":"mistakeknot","depends_on_id":"sylveste-i8u","issue_id":"sylveste-3uy","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-30T05:40:18Z","created_by":"8e534bf7","depends_on_id":"sylveste-dla","issue_id":"sylveste-3x5","metadata":"{}","type":"child-of"}
@@ -159,6 +161,7 @@
 {"created_at":"2026-03-31T07:51:47Z","created_by":"Claude Code","depends_on_id":"sylveste-bid","issue_id":"sylveste-5va","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-26T17:03:08Z","created_by":"mistakeknot","depends_on_id":"sylveste-4dy","issue_id":"sylveste-60j","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-26T17:03:11Z","created_by":"mistakeknot","depends_on_id":"sylveste-fsj","issue_id":"sylveste-60j","metadata":"{}","type":"blocks"}
+{"created_at":"2026-04-05T01:16:31Z","created_by":"Claude Code","depends_on_id":"sylveste-9lp.9","issue_id":"sylveste-65l","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-31T07:52:20Z","created_by":"Claude Code","depends_on_id":"sylveste-m5g","issue_id":"sylveste-6zy","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-30T05:40:18Z","created_by":"8e534bf7","depends_on_id":"sylveste-dla","issue_id":"sylveste-73q","metadata":"{}","type":"child-of"}
 {"created_at":"2026-04-01T23:28:31Z","created_by":"d4d31fd6","depends_on_id":"sylveste-18a.1","issue_id":"sylveste-7ck","metadata":"{}","type":"blocks"}
@@ -185,6 +188,7 @@
 {"created_at":"2026-03-28T16:12:53Z","created_by":"mistakeknot","depends_on_id":"sylveste-1ed","issue_id":"sylveste-8ve","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-28T16:54:48Z","created_by":"mistakeknot","depends_on_id":"sylveste-8ve","issue_id":"sylveste-8ve.1","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-28T16:56:22Z","created_by":"mistakeknot","depends_on_id":"sylveste-8ve","issue_id":"sylveste-8ve.2","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T21:02:50Z","created_by":"20d3481b","depends_on_id":"sylveste-fbz","issue_id":"sylveste-8z3n","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-30T05:40:19Z","created_by":"8e534bf7","depends_on_id":"sylveste-4wm","issue_id":"sylveste-99f","metadata":"{}","type":"depends-on"}
 {"created_at":"2026-03-30T05:40:15Z","created_by":"8e534bf7","depends_on_id":"sylveste-dla","issue_id":"sylveste-99f","metadata":"{}","type":"child-of"}
 {"created_at":"2026-04-04T19:05:00Z","created_by":"cbc949bc","depends_on_id":"sylveste-9lp","issue_id":"sylveste-9lp.1","metadata":"{}","type":"parent-child"}
@@ -235,10 +239,18 @@
 {"created_at":"2026-04-04T19:05:20Z","created_by":"cbc949bc","depends_on_id":"sylveste-9lp","issue_id":"sylveste-9lp.9","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-04T19:06:05Z","created_by":"cbc949bc","depends_on_id":"sylveste-9lp.6","issue_id":"sylveste-9lp.9","metadata":"{}","type":"blocks"}
 {"created_at":"2026-04-04T21:54:04Z","created_by":"Claude Code","depends_on_id":"sylveste-9lp.9","issue_id":"sylveste-9lp.9.1","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:23:06Z","created_by":"Claude Code","depends_on_id":"sylveste-9lp.9","issue_id":"sylveste-9lp.9.10","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:33:46Z","created_by":"Claude Code","depends_on_id":"sylveste-9lp.9","issue_id":"sylveste-9lp.9.11","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T02:43:43Z","created_by":"Claude Code","depends_on_id":"sylveste-9lp.9","issue_id":"sylveste-9lp.9.12","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T02:43:43Z","created_by":"Claude Code","depends_on_id":"sylveste-9lp.9","issue_id":"sylveste-9lp.9.13","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-04T21:54:19Z","created_by":"Claude Code","depends_on_id":"sylveste-9lp.9","issue_id":"sylveste-9lp.9.2","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-04T21:54:20Z","created_by":"Claude Code","depends_on_id":"sylveste-9lp.9","issue_id":"sylveste-9lp.9.3","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-04T21:58:40Z","created_by":"Claude Code","depends_on_id":"sylveste-9lp.9","issue_id":"sylveste-9lp.9.4","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-04T21:58:40Z","created_by":"Claude Code","depends_on_id":"sylveste-9lp.9","issue_id":"sylveste-9lp.9.5","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:13:59Z","created_by":"Claude Code","depends_on_id":"sylveste-9lp.9","issue_id":"sylveste-9lp.9.6","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:14:41Z","created_by":"Claude Code","depends_on_id":"sylveste-9lp.9","issue_id":"sylveste-9lp.9.7","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:16:41Z","created_by":"Claude Code","depends_on_id":"sylveste-9lp.9","issue_id":"sylveste-9lp.9.8","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:20:25Z","created_by":"Claude Code","depends_on_id":"sylveste-9lp.9","issue_id":"sylveste-9lp.9.9","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-26T12:47:38Z","created_by":"mistakeknot","depends_on_id":"sylveste-1qa","issue_id":"sylveste-9tc","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-26T12:47:24Z","created_by":"mistakeknot","depends_on_id":"sylveste-qbv","issue_id":"sylveste-9tc","metadata":"{}","type":"blocks"}
 {"created_at":"2026-04-05T00:09:57Z","created_by":"a9d7e5db","depends_on_id":"sylveste-46s","issue_id":"sylveste-ape","metadata":"{}","type":"parent-child"}
@@ -263,6 +275,7 @@
 {"created_at":"2026-03-26T14:07:44Z","created_by":"mistakeknot","depends_on_id":"sylveste-4b7","issue_id":"sylveste-dp1","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-26T14:07:47Z","created_by":"mistakeknot","depends_on_id":"sylveste-bgu","issue_id":"sylveste-dp1","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-26T14:07:46Z","created_by":"mistakeknot","depends_on_id":"sylveste-dbc","issue_id":"sylveste-dp1","metadata":"{}","type":"blocks"}
+{"created_at":"2026-04-05T01:16:17Z","created_by":"Claude Code","depends_on_id":"sylveste-9lp.9","issue_id":"sylveste-dpo","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-29T17:24:21Z","created_by":"33d202fe","depends_on_id":"sylveste-dui","issue_id":"sylveste-dui.1","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-29T17:24:44Z","created_by":"33d202fe","depends_on_id":"sylveste-dui","issue_id":"sylveste-dui.2","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-30T07:32:23Z","created_by":"Claude Code","depends_on_id":"sylveste-dui","issue_id":"sylveste-dui.3","metadata":"{}","type":"parent-child"}
@@ -271,6 +284,8 @@
 {"created_at":"2026-03-30T07:32:47Z","created_by":"Claude Code","depends_on_id":"sylveste-dui","issue_id":"sylveste-dui.6","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-30T07:35:19Z","created_by":"Claude Code","depends_on_id":"sylveste-dui","issue_id":"sylveste-dui.7","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-30T07:35:40Z","created_by":"Claude Code","depends_on_id":"sylveste-dui","issue_id":"sylveste-dui.8","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T20:07:33Z","created_by":"afb399af","depends_on_id":"sylveste-dvu","issue_id":"sylveste-dvu.1","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T20:08:27Z","created_by":"afb399af","depends_on_id":"sylveste-dvu","issue_id":"sylveste-dvu.2","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-31T07:52:21Z","created_by":"Claude Code","depends_on_id":"sylveste-m5g","issue_id":"sylveste-e20","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-28T23:34:06Z","created_by":"6b85bcd6","depends_on_id":"sylveste-e8n","issue_id":"sylveste-e8n.1","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-28T23:34:07Z","created_by":"6b85bcd6","depends_on_id":"sylveste-e8n","issue_id":"sylveste-e8n.2","metadata":"{}","type":"parent-child"}
@@ -278,6 +293,19 @@
 {"created_at":"2026-03-28T23:44:38Z","created_by":"6b85bcd6","depends_on_id":"sylveste-e8n","issue_id":"sylveste-e8n.4","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-29T17:19:22Z","created_by":"6b85bcd6","depends_on_id":"sylveste-e8n","issue_id":"sylveste-e8n.5","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-28T23:39:54Z","created_by":"6b85bcd6","depends_on_id":"sylveste-ec1","issue_id":"sylveste-em9","metadata":"{}","type":"blocks"}
+{"created_at":"2026-04-05T20:03:37Z","created_by":"20d3481b","depends_on_id":"sylveste-fbz","issue_id":"sylveste-fbz.1","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T21:03:11Z","created_by":"20d3481b","depends_on_id":"sylveste-fbz","issue_id":"sylveste-fbz.10","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T21:03:26Z","created_by":"20d3481b","depends_on_id":"sylveste-fbz","issue_id":"sylveste-fbz.11","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T21:07:52Z","created_by":"20d3481b","depends_on_id":"sylveste-fbz","issue_id":"sylveste-fbz.12","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T21:10:56Z","created_by":"20d3481b","depends_on_id":"sylveste-fbz","issue_id":"sylveste-fbz.13","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T21:13:41Z","created_by":"20d3481b","depends_on_id":"sylveste-fbz","issue_id":"sylveste-fbz.14","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T20:03:50Z","created_by":"20d3481b","depends_on_id":"sylveste-fbz","issue_id":"sylveste-fbz.2","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T20:03:50Z","created_by":"20d3481b","depends_on_id":"sylveste-fbz","issue_id":"sylveste-fbz.3","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T20:17:35Z","created_by":"20d3481b","depends_on_id":"sylveste-fbz","issue_id":"sylveste-fbz.4","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T20:17:36Z","created_by":"20d3481b","depends_on_id":"sylveste-fbz","issue_id":"sylveste-fbz.5","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T20:17:47Z","created_by":"20d3481b","depends_on_id":"sylveste-fbz","issue_id":"sylveste-fbz.6","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T21:00:55Z","created_by":"20d3481b","depends_on_id":"sylveste-fbz","issue_id":"sylveste-fbz.7","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T21:03:10Z","created_by":"20d3481b","depends_on_id":"sylveste-fbz","issue_id":"sylveste-fbz.8","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-31T07:52:03Z","created_by":"Claude Code","depends_on_id":"sylveste-pf4","issue_id":"sylveste-fdn","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-28T16:12:54Z","created_by":"mistakeknot","depends_on_id":"sylveste-8ve","issue_id":"sylveste-fnx","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-26T17:03:06Z","created_by":"mistakeknot","depends_on_id":"sylveste-4dy","issue_id":"sylveste-fsj","metadata":"{}","type":"blocks"}
@@ -311,6 +339,16 @@
 {"created_at":"2026-04-01T23:25:51Z","created_by":"Claude Code","depends_on_id":"sylveste-g3b","issue_id":"sylveste-g3b.7","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-01T23:26:07Z","created_by":"Claude Code","depends_on_id":"sylveste-g3b","issue_id":"sylveste-g3b.8","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-01T23:26:51Z","created_by":"Claude Code","depends_on_id":"sylveste-g3b","issue_id":"sylveste-g3b.9","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T21:48:38Z","created_by":"Claude Code","depends_on_id":"sylveste-gfp2","issue_id":"sylveste-gfp2.1","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T22:01:15Z","created_by":"Claude Code","depends_on_id":"sylveste-gfp2","issue_id":"sylveste-gfp2.10","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T21:48:38Z","created_by":"Claude Code","depends_on_id":"sylveste-gfp2","issue_id":"sylveste-gfp2.2","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T21:49:16Z","created_by":"Claude Code","depends_on_id":"sylveste-gfp2","issue_id":"sylveste-gfp2.3","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T21:49:32Z","created_by":"Claude Code","depends_on_id":"sylveste-gfp2","issue_id":"sylveste-gfp2.4","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T21:49:55Z","created_by":"Claude Code","depends_on_id":"sylveste-gfp2","issue_id":"sylveste-gfp2.5","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T21:50:14Z","created_by":"Claude Code","depends_on_id":"sylveste-gfp2","issue_id":"sylveste-gfp2.6","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T21:50:30Z","created_by":"Claude Code","depends_on_id":"sylveste-gfp2","issue_id":"sylveste-gfp2.7","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T21:50:51Z","created_by":"Claude Code","depends_on_id":"sylveste-gfp2","issue_id":"sylveste-gfp2.8","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T21:51:12Z","created_by":"Claude Code","depends_on_id":"sylveste-gfp2","issue_id":"sylveste-gfp2.9","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-01T23:28:31Z","created_by":"d4d31fd6","depends_on_id":"sylveste-18a.1","issue_id":"sylveste-gk8","metadata":"{}","type":"blocks"}
 {"created_at":"2026-04-01T23:28:33Z","created_by":"d4d31fd6","depends_on_id":"sylveste-vr0","issue_id":"sylveste-gk8","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-30T05:40:16Z","created_by":"8e534bf7","depends_on_id":"sylveste-dla","issue_id":"sylveste-gta","metadata":"{}","type":"child-of"}
@@ -318,10 +356,13 @@
 {"created_at":"2026-03-31T07:52:19Z","created_by":"Claude Code","depends_on_id":"sylveste-m5g","issue_id":"sylveste-gw6","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-05T00:09:57Z","created_by":"a9d7e5db","depends_on_id":"sylveste-46s","issue_id":"sylveste-h7t","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-05T00:10:06Z","created_by":"a9d7e5db","depends_on_id":"sylveste-ape","issue_id":"sylveste-h7t","metadata":"{}","type":"blocks"}
+{"created_at":"2026-04-05T21:02:53Z","created_by":"20d3481b","depends_on_id":"sylveste-fbz","issue_id":"sylveste-i207","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-31T07:50:56Z","created_by":"Claude Code","depends_on_id":"sylveste-09h","issue_id":"sylveste-ifw","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-26T17:03:09Z","created_by":"mistakeknot","depends_on_id":"sylveste-4dy","issue_id":"sylveste-ikf","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-26T17:03:13Z","created_by":"mistakeknot","depends_on_id":"sylveste-fsj","issue_id":"sylveste-ikf","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-27T08:38:24Z","created_by":"mistakeknot","depends_on_id":"sylveste-d5e","issue_id":"sylveste-ipu","metadata":"{}","type":"blocks"}
+{"created_at":"2026-04-05T21:02:53Z","created_by":"20d3481b","depends_on_id":"sylveste-fbz","issue_id":"sylveste-isx8","metadata":"{}","type":"blocks"}
+{"created_at":"2026-04-05T01:16:26Z","created_by":"Claude Code","depends_on_id":"sylveste-9lp.9","issue_id":"sylveste-jti","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-26T17:03:10Z","created_by":"mistakeknot","depends_on_id":"sylveste-4dy","issue_id":"sylveste-keo","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-26T17:03:14Z","created_by":"mistakeknot","depends_on_id":"sylveste-ikf","issue_id":"sylveste-keo","metadata":"{}","type":"blocks"}
 {"created_at":"2026-04-03T20:35:03Z","created_by":"Claude Code","depends_on_id":"sylveste-8em","issue_id":"sylveste-lj1","metadata":"{}","type":"blocks"}
@@ -346,12 +387,15 @@
 {"created_at":"2026-03-26T09:16:17Z","created_by":"mistakeknot","depends_on_id":"sylveste-8v3","issue_id":"sylveste-m71","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-26T09:16:16Z","created_by":"mistakeknot","depends_on_id":"sylveste-bpg","issue_id":"sylveste-m71","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-26T09:16:15Z","created_by":"mistakeknot","depends_on_id":"sylveste-uln","issue_id":"sylveste-m71","metadata":"{}","type":"blocks"}
+{"created_at":"2026-04-05T21:02:49Z","created_by":"20d3481b","depends_on_id":"sylveste-fbz","issue_id":"sylveste-mul","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-27T08:48:10Z","created_by":"mistakeknot","depends_on_id":"sylveste-d5e","issue_id":"sylveste-naj","metadata":"{}","type":"blocks"}
+{"created_at":"2026-04-05T21:02:50Z","created_by":"20d3481b","depends_on_id":"sylveste-fbz","issue_id":"sylveste-nhc1","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-31T07:52:52Z","created_by":"Claude Code","depends_on_id":"sylveste-bid","issue_id":"sylveste-nyx","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-30T05:40:19Z","created_by":"8e534bf7","depends_on_id":"sylveste-99f","issue_id":"sylveste-ohh","metadata":"{}","type":"depends-on"}
 {"created_at":"2026-03-30T05:40:01Z","created_by":"8e534bf7","depends_on_id":"sylveste-dla","issue_id":"sylveste-ohh","metadata":"{}","type":"child-of"}
 {"created_at":"2026-03-31T07:51:29Z","created_by":"Claude Code","depends_on_id":"sylveste-09h","issue_id":"sylveste-pf4","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-28T23:39:55Z","created_by":"6b85bcd6","depends_on_id":"sylveste-em9","issue_id":"sylveste-pfi","metadata":"{}","type":"blocks"}
+{"created_at":"2026-04-05T21:02:48Z","created_by":"20d3481b","depends_on_id":"sylveste-fbz","issue_id":"sylveste-pxg","metadata":"{}","type":"blocks"}
 {"created_at":"2026-04-04T17:57:34Z","created_by":"Claude Code","depends_on_id":"sylveste-8em","issue_id":"sylveste-q2k","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-27T19:42:51Z","created_by":"ccb8105c","depends_on_id":"sylveste-4ln","issue_id":"sylveste-q4o","metadata":"{}","type":"blocks"}
 {"created_at":"2026-04-04T17:57:30Z","created_by":"Claude Code","depends_on_id":"sylveste-8em","issue_id":"sylveste-qd1","metadata":"{}","type":"blocks"}
@@ -639,8 +683,106 @@
 {"created_at":"2026-04-02T21:32:16Z","created_by":"Claude Code","depends_on_id":"sylveste-sn7","issue_id":"sylveste-sn7.9","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-30T05:40:19Z","created_by":"8e534bf7","depends_on_id":"sylveste-4wm","issue_id":"sylveste-tuo","metadata":"{}","type":"depends-on"}
 {"created_at":"2026-03-30T05:40:15Z","created_by":"8e534bf7","depends_on_id":"sylveste-dla","issue_id":"sylveste-tuo","metadata":"{}","type":"child-of"}
+{"created_at":"2026-04-05T01:16:07Z","created_by":"Claude Code","depends_on_id":"sylveste-9lp.9","issue_id":"sylveste-ug8","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-26T09:16:09Z","created_by":"mistakeknot","depends_on_id":"sylveste-4l2","issue_id":"sylveste-uln","metadata":"{}","type":"blocks"}
 {"created_at":"2026-04-04T17:57:33Z","created_by":"Claude Code","depends_on_id":"sylveste-8em","issue_id":"sylveste-usj","metadata":"{}","type":"blocks"}
+{"created_at":"2026-04-05T00:50:27Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.1","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T00:58:54Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.10","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T00:59:45Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.11","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:00:10Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.12","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:00:31Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.13","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:01:07Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.14","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:01:53Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.15","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:02:08Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.16","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:02:39Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.17","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:03:08Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.18","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:03:27Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.19","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T00:50:42Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.2","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:03:58Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.20","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:04:15Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.21","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:04:33Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.22","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:04:48Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.23","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:06:38Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.24","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:06:55Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.25","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:07:10Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.26","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:09:08Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.27","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:09:46Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.28","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:10:43Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.29","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T00:50:58Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.3","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:11:53Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.30","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:12:52Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.31","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:13:13Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.32","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:13:47Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.33","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:14:02Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.34","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:14:27Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.35","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:14:42Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.36","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:14:58Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.37","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:15:48Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.38","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:16:08Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.39","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T00:54:56Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.4","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:16:27Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.40","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:16:43Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.41","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:16:59Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.42","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:17:38Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.43","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:19:25Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.44","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:19:56Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.45","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:20:11Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.46","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:20:40Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.47","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:20:58Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.48","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:22:58Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.49","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T00:55:31Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.5","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:23:24Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.50","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:23:47Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.51","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:24:06Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.52","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:24:40Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.53","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:24:58Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.54","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:25:22Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.55","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:25:45Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.56","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:26:01Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.57","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:26:18Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.58","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:26:34Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.59","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T00:56:41Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.6","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:26:52Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.60","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:28:09Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.61","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:28:24Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.62","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:28:45Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.63","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:29:26Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.64","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:29:42Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.65","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:29:57Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.66","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:30:24Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.67","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:30:40Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.68","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:30:54Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.69","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T00:57:33Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.7","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:31:34Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.70","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:32:03Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.71","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:32:34Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.72","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:32:49Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.73","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:33:07Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.74","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:33:22Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.75","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:33:37Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.76","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:33:57Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.77","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:34:13Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.78","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:34:31Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.79","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T00:58:22Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.8","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:34:53Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.80","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:35:11Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.81","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:35:36Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.82","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:36:45Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.83","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:37:18Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.84","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:38:30Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.85","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T01:41:15Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.86","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T02:43:08Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.87","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T02:43:08Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.88","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T02:43:54Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.89","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T00:58:40Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.9","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T02:44:10Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.90","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T02:44:26Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.91","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T02:44:42Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.92","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T02:44:59Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.93","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T02:45:32Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.94","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T02:45:50Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.95","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T02:46:07Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.96","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T02:52:02Z","created_by":"Claude Code","depends_on_id":"sylveste-usj","issue_id":"sylveste-usj.97","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-28T23:50:38Z","created_by":"mistakeknot","depends_on_id":"sylveste-vm4","issue_id":"sylveste-vm4.1","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-28T23:59:27Z","created_by":"mistakeknot","depends_on_id":"sylveste-vm4","issue_id":"sylveste-vm4.2","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-01T23:28:31Z","created_by":"d4d31fd6","depends_on_id":"sylveste-18a.1","issue_id":"sylveste-vr0","metadata":"{}","type":"blocks"}
@@ -650,4 +792,12 @@
 {"created_at":"2026-04-03T20:35:05Z","created_by":"Claude Code","depends_on_id":"sylveste-8em","issue_id":"sylveste-x04","metadata":"{}","type":"blocks"}
 {"created_at":"2026-03-30T05:40:17Z","created_by":"8e534bf7","depends_on_id":"sylveste-dla","issue_id":"sylveste-x91","metadata":"{}","type":"child-of"}
 {"created_at":"2026-03-26T09:24:47Z","created_by":"mistakeknot","depends_on_id":"sylveste-4l2","issue_id":"sylveste-xc8","metadata":"{}","type":"blocks"}
+{"created_at":"2026-04-05T22:01:24Z","created_by":"Claude Code","depends_on_id":"sylveste-xd0n","issue_id":"sylveste-xd0n.1","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T22:01:24Z","created_by":"Claude Code","depends_on_id":"sylveste-xd0n","issue_id":"sylveste-xd0n.2","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T22:01:47Z","created_by":"Claude Code","depends_on_id":"sylveste-xd0n","issue_id":"sylveste-xd0n.3","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T22:02:46Z","created_by":"Claude Code","depends_on_id":"sylveste-xd0n","issue_id":"sylveste-xd0n.4","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T22:03:13Z","created_by":"Claude Code","depends_on_id":"sylveste-xd0n","issue_id":"sylveste-xd0n.5","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T22:41:25Z","created_by":"Claude Code","depends_on_id":"sylveste-xd0n","issue_id":"sylveste-xd0n.6","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-05T22:44:59Z","created_by":"Claude Code","depends_on_id":"sylveste-xd0n","issue_id":"sylveste-xd0n.7","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-03-28T23:39:54Z","created_by":"6b85bcd6","depends_on_id":"sylveste-ec1","issue_id":"sylveste-ya2","metadata":"{}","type":"blocks"}
+{"created_at":"2026-04-05T21:02:51Z","created_by":"20d3481b","depends_on_id":"sylveste-fbz","issue_id":"sylveste-zmqe","metadata":"{}","type":"blocks"}
