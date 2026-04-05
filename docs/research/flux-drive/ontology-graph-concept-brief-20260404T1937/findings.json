@@ -1,0 +1,343 @@
+{
+  "reviewed": "2026-04-04",
+  "input": "docs/brainstorms/2026-04-04-ontology-graph-concept-brief.md",
+  "agents_launched": [
+    "fd-archival-provenance-linkage",
+    "fd-clinical-terminology-harmonization",
+    "fd-spatial-data-infrastructure",
+    "fd-litigation-entity-mapping"
+  ],
+  "agents_completed": [
+    "fd-archival-provenance-linkage",
+    "fd-clinical-terminology-harmonization",
+    "fd-spatial-data-infrastructure",
+    "fd-litigation-entity-mapping"
+  ],
+  "findings": [
+    {
+      "id": "LEM-1",
+      "severity": "P0",
+      "agent": "fd-litigation-entity-mapping",
+      "section": "Three Concrete Capabilities",
+      "title": "Cross-system entity links lack provenance metadata — relationships stored as bare assertions without confidence scores, evidence, or source attribution",
+      "convergence": 1
+    },
+    {
+      "id": "APL-1",
+      "severity": "P1",
+      "agent": "fd-archival-provenance-linkage",
+      "section": "Three Concrete Capabilities",
+      "title": "Flat entity graph loses hierarchical context — no multi-level description preserving contextual nesting",
+      "convergence": 1
+    },
+    {
+      "id": "APL-2",
+      "severity": "P1",
+      "agent": "fd-archival-provenance-linkage",
+      "section": "Three Concrete Capabilities",
+      "title": "Authority control vs. entity resolution conflated — produces either brittleness or false matches",
+      "convergence": 2,
+      "converges_with": [
+        "LEM-3"
+      ]
+    },
+    {
+      "id": "APL-5",
+      "severity": "P1",
+      "agent": "fd-archival-provenance-linkage",
+      "section": "Three Concrete Capabilities",
+      "title": "Typed Schema + Actions creates implicit storage migration — violates respect des fonds and PHILOSOPHY.md",
+      "convergence": 2,
+      "converges_with": [
+        "SDI-1"
+      ]
+    },
+    {
+      "id": "CTH-1",
+      "severity": "P1",
+      "agent": "fd-clinical-terminology-harmonization",
+      "section": "Three Concrete Capabilities",
+      "title": "Pre-coordination trap — combinatorial schema explosion when every entity-relationship-action combination needs a schema entry",
+      "convergence": 2,
+      "converges_with": [
+        "APL-1"
+      ]
+    },
+    {
+      "id": "CTH-2",
+      "severity": "P1",
+      "agent": "fd-clinical-terminology-harmonization",
+      "section": "Three Concrete Capabilities",
+      "title": "No formality gradient — single schema rigor across stable types and inherently fuzzy types",
+      "convergence": 1
+    },
+    {
+      "id": "CTH-3",
+      "severity": "P1",
+      "agent": "fd-clinical-terminology-harmonization",
+      "section": "Design Tensions",
+      "title": "No freshness metadata on graph query results — stale graph indistinguishable from empty graph",
+      "convergence": 2,
+      "converges_with": [
+        "SDI-4"
+      ]
+    },
+    {
+      "id": "SDI-1",
+      "severity": "P1",
+      "agent": "fd-spatial-data-infrastructure",
+      "section": "Three Concrete Capabilities",
+      "title": "Catalog-of-catalogs vs. data warehouse not distinguished — architectural commitment absent",
+      "convergence": 2,
+      "converges_with": [
+        "APL-5"
+      ]
+    },
+    {
+      "id": "SDI-2",
+      "severity": "P1",
+      "agent": "fd-spatial-data-infrastructure",
+      "section": "Three Concrete Capabilities",
+      "title": "No minimum metadata threshold — undefined adoption cost for subsystem participation",
+      "convergence": 2,
+      "converges_with": [
+        "LEM-2"
+      ]
+    },
+    {
+      "id": "SDI-3",
+      "severity": "P1",
+      "agent": "fd-spatial-data-infrastructure",
+      "section": "What Already Exists",
+      "title": "Entity identifier problem — no cross-reference mapping layer across subsystem ID schemes",
+      "convergence": 2,
+      "converges_with": [
+        "LEM-3"
+      ]
+    },
+    {
+      "id": "LEM-2",
+      "severity": "P1",
+      "agent": "fd-litigation-entity-mapping",
+      "section": "Open Questions",
+      "title": "No proportionality analysis — 80/20 query value distribution unquantified",
+      "convergence": 2,
+      "converges_with": [
+        "SDI-2"
+      ]
+    },
+    {
+      "id": "LEM-3",
+      "severity": "P1",
+      "agent": "fd-litigation-entity-mapping",
+      "section": "Agentic Development Context",
+      "title": "Person-entity resolution absent — same developer appears as multiple graph nodes",
+      "convergence": 2,
+      "converges_with": [
+        "APL-2",
+        "SDI-3"
+      ]
+    },
+    {
+      "id": "LEM-4",
+      "severity": "P1",
+      "agent": "fd-litigation-entity-mapping",
+      "section": "Three Concrete Capabilities",
+      "title": "No iterative enrichment model — assumes single comprehensive indexing pass",
+      "convergence": 2,
+      "converges_with": [
+        "SDI-6"
+      ]
+    },
+    {
+      "id": "APL-3",
+      "severity": "P2",
+      "agent": "fd-archival-provenance-linkage",
+      "section": "Design Tensions",
+      "title": "No granularity tiers — uniform description depth assumed across reference and detail entities",
+      "convergence": 1
+    },
+    {
+      "id": "APL-4",
+      "severity": "P2",
+      "agent": "fd-archival-provenance-linkage",
+      "section": "What Already Exists",
+      "title": "Six existing graph structures lack formal crosswalks between subsystem schemas",
+      "convergence": 1
+    },
+    {
+      "id": "APL-6",
+      "severity": "P2",
+      "agent": "fd-archival-provenance-linkage",
+      "section": "Open Questions",
+      "title": "No entity lifecycle model for high-volume dynamic entities (sessions, runs, tool calls)",
+      "convergence": 1
+    },
+    {
+      "id": "CTH-4",
+      "severity": "P2",
+      "agent": "fd-clinical-terminology-harmonization",
+      "section": "What Already Exists",
+      "title": "Relationship types assumed to be a closed set — extending requires cross-consumer coordination",
+      "convergence": 1
+    },
+    {
+      "id": "CTH-5",
+      "severity": "P2",
+      "agent": "fd-clinical-terminology-harmonization",
+      "section": "Design Tensions",
+      "title": "No version management for entity schemas — historical relationships become semantically ambiguous",
+      "convergence": 1
+    },
+    {
+      "id": "CTH-6",
+      "severity": "P2",
+      "agent": "fd-clinical-terminology-harmonization",
+      "section": "Three Concrete Capabilities",
+      "title": "No interface-vs-reference terminology — agents must learn formal vocabulary to query",
+      "convergence": 1
+    },
+    {
+      "id": "SDI-4",
+      "severity": "P2",
+      "agent": "fd-spatial-data-infrastructure",
+      "section": "Design Tensions",
+      "title": "No data currency metadata — agents cannot assess graph staleness per subsystem",
+      "convergence": 2,
+      "converges_with": [
+        "CTH-3"
+      ]
+    },
+    {
+      "id": "SDI-5",
+      "severity": "P2",
+      "agent": "fd-spatial-data-infrastructure",
+      "section": "Three Concrete Capabilities",
+      "title": "Top-down type hierarchy will not accommodate new plugins within 6 months",
+      "convergence": 1
+    },
+    {
+      "id": "SDI-6",
+      "severity": "P2",
+      "agent": "fd-spatial-data-infrastructure",
+      "section": "What Already Exists",
+      "title": "All-or-nothing indexing assumed rather than progressive value delivery",
+      "convergence": 2,
+      "converges_with": [
+        "LEM-4"
+      ]
+    },
+    {
+      "id": "LEM-5",
+      "severity": "P2",
+      "agent": "fd-litigation-entity-mapping",
+      "section": "Open Questions",
+      "title": "Near-duplicate entity detection not addressed across subsystems",
+      "convergence": 1
+    },
+    {
+      "id": "LEM-6",
+      "severity": "P2",
+      "agent": "fd-litigation-entity-mapping",
+      "section": "Design Tensions",
+      "title": "No access control model for relationship traversal",
+      "convergence": 1
+    }
+  ],
+  "improvements": [
+    {
+      "id": "IMP-1",
+      "agent": "fd-archival-provenance-linkage",
+      "title": "Frame the ontology as a finding aid generator — deletion litmus test"
+    },
+    {
+      "id": "IMP-2",
+      "agent": "fd-archival-provenance-linkage",
+      "title": "Authority files as the connective tissue between independent collections"
+    },
+    {
+      "id": "IMP-3",
+      "agent": "fd-archival-provenance-linkage",
+      "title": "Respect des fonds as a design test — subsystem never changes internal model to be discoverable"
+    },
+    {
+      "id": "IMP-4",
+      "agent": "fd-clinical-terminology-harmonization",
+      "title": "FHIR resources-with-references as the design pattern"
+    },
+    {
+      "id": "IMP-5",
+      "agent": "fd-clinical-terminology-harmonization",
+      "title": "Value set expansion as the query model — subsumption queries"
+    },
+    {
+      "id": "IMP-6",
+      "agent": "fd-clinical-terminology-harmonization",
+      "title": "ConceptMap as the crosswalk primitive — versioned directional mappings"
+    },
+    {
+      "id": "IMP-7",
+      "agent": "fd-spatial-data-infrastructure",
+      "title": "Catalog-of-catalogs as the architectural pattern"
+    },
+    {
+      "id": "IMP-8",
+      "agent": "fd-spatial-data-infrastructure",
+      "title": "Metadata quality tiers: Bronze/Silver/Gold instead of uniform requirements"
+    },
+    {
+      "id": "IMP-9",
+      "agent": "fd-spatial-data-infrastructure",
+      "title": "Harvesting alongside registration — zero-effort adoption for queryable subsystems"
+    },
+    {
+      "id": "IMP-10",
+      "agent": "fd-litigation-entity-mapping",
+      "title": "Matter-centric (bead-centric) model as the primary query paradigm"
+    },
+    {
+      "id": "IMP-11",
+      "agent": "fd-litigation-entity-mapping",
+      "title": "Confidence scoring as a first-class query dimension"
+    },
+    {
+      "id": "IMP-12",
+      "agent": "fd-litigation-entity-mapping",
+      "title": "Proportionality-driven phased rollout — instrument demand before building supply"
+    }
+  ],
+  "verdict": "risky",
+  "early_stop": false,
+  "cross_domain_convergence": {
+    "federated_not_centralized": [
+      "archival:respect-des-fonds",
+      "clinical:resources-with-references",
+      "sdi:catalog-of-catalogs",
+      "litigation:matter-centric-per-custodian"
+    ],
+    "typed_but_flexible": [
+      "archival:multi-level-description",
+      "clinical:binding-strength-gradient",
+      "sdi:metadata-quality-tiers",
+      "litigation:iterative-enrichment"
+    ],
+    "identity_resolution": [
+      "archival:authority-files-eac-cpf",
+      "clinical:terminology-binding",
+      "sdi:crs-transformation",
+      "litigation:person-entity-dedup"
+    ],
+    "provenance_on_links": [
+      "archival:provenance-principle",
+      "clinical:conceptmap-versioning",
+      "sdi:data-currency-metadata",
+      "litigation:confidence-scoring"
+    ],
+    "progressive_adoption": [
+      "archival:minimal-processing",
+      "clinical:post-coordination",
+      "sdi:minimum-metadata-threshold",
+      "litigation:proportionality-principle"
+    ]
+  }
+}
