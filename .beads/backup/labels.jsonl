@@ -145,7 +145,7 @@
 {"issue_id":"sylveste-9lp.13","label":"claimed_at:1775506050"}
 {"issue_id":"sylveste-9lp.13","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-9lp.13","label":"interflux"}
-{"issue_id":"sylveste-9lp.14","label":"claimed_at:1775507157"}
+{"issue_id":"sylveste-9lp.14","label":"claimed_at:1775507967"}
 {"issue_id":"sylveste-9lp.14","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-9lp.14","label":"docs"}
 {"issue_id":"sylveste-9lp.14","label":"interflux"}
@@ -271,6 +271,9 @@
 {"issue_id":"sylveste-fbz","label":"integration"}
 {"issue_id":"sylveste-fbz","label":"phase:plan-reviewed"}
 {"issue_id":"sylveste-fzt","label":"artifact_brainstorm:docs/brainstorms/2026-04-06-ockham-f7-health-bypass-brainstorm.md"}
+{"issue_id":"sylveste-fzt","label":"artifact_plan:docs/plans/2026-04-06-ockham-f7-health-bypass.md"}
+{"issue_id":"sylveste-fzt","label":"artifact_prd:docs/prds/2026-04-06-ockham-f7-health-bypass.md"}
+{"issue_id":"sylveste-fzt","label":"artifact_prior-art:none-found"}
 {"issue_id":"sylveste-fzt","label":"claimed_at:1775506135"}
 {"issue_id":"sylveste-fzt","label":"claimed_by:dfb82075-14fa-4155-9cf1-2cbe325a1e76"}
 {"issue_id":"sylveste-g3b","label":"artifact_brainstorm:docs/brainstorms/2026-04-01-interflux-reaction-round-brainstorm.md"}
