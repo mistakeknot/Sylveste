@@ -65,6 +65,12 @@
 {"issue_id":"sylveste-18a.9","label":"phase:executing"}
 {"issue_id":"sylveste-18a.9","label":"research"}
 {"issue_id":"sylveste-18a.9","label":"skaffen"}
+{"issue_id":"sylveste-248r","label":"claimed_at:1775432822"}
+{"issue_id":"sylveste-248r","label":"claimed_by:unknown"}
+{"issue_id":"sylveste-2b4k","label":"artifact_brainstorm:apps/Auraken/docs/brainstorms/2026-04-06-self-modification-bridge.md"}
+{"issue_id":"sylveste-2b4k","label":"artifact_plan:apps/Auraken/docs/plans/2026-04-06-self-modification-bridge.md"}
+{"issue_id":"sylveste-2b4k","label":"claimed_at:1775457738"}
+{"issue_id":"sylveste-2b4k","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-2kw","label":"artifact_implementation:6e77f9cc85dfb10899775fd7eaaaf660d38eca74"}
 {"issue_id":"sylveste-2kw","label":"claimed_at:1774722061"}
 {"issue_id":"sylveste-2kw","label":"claimed_by:46d9cd8d-ab71-4a64-a8c6-2bd319ac253a"}
@@ -197,6 +203,10 @@
 {"issue_id":"sylveste-9lp.9","label":"complexity:3"}
 {"issue_id":"sylveste-9lp.9","label":"interflux"}
 {"issue_id":"sylveste-9lp.9","label":"phase:plan-reviewed"}
+{"issue_id":"sylveste-bcok","label":"artifact_prior-art:none-found"}
+{"issue_id":"sylveste-bcok","label":"epic"}
+{"issue_id":"sylveste-bcok","label":"integration"}
+{"issue_id":"sylveste-bcok","label":"plugin"}
 {"issue_id":"sylveste-co5","label":"claimed_at:1775257878"}
 {"issue_id":"sylveste-co5","label":"claimed_by:5d2440f9-1f8f-45b5-813e-51e5acd84fce"}
 {"issue_id":"sylveste-co5","label":"complexity:2"}
@@ -483,5 +493,5 @@
 {"issue_id":"sylveste-vm4","label":"artifact_plan:docs/plans/2026-03-29-flashmoe-cache-tuning.md"}
 {"issue_id":"sylveste-vr0","label":"patterns"}
 {"issue_id":"sylveste-vr0","label":"skaffen"}
-{"issue_id":"sylveste-xd0n","label":"claimed_at:1775429099"}
+{"issue_id":"sylveste-xd0n","label":"claimed_at:1775429129"}
 {"issue_id":"sylveste-xd0n","label":"claimed_by:unknown"}
