@@ -203,7 +203,10 @@
 {"issue_id":"sylveste-9lp.9","label":"complexity:3"}
 {"issue_id":"sylveste-9lp.9","label":"interflux"}
 {"issue_id":"sylveste-9lp.9","label":"phase:plan-reviewed"}
+{"issue_id":"sylveste-bcok","label":"artifact_brainstorm:docs/brainstorms/2026-04-06-interop-brainstorm.md"}
 {"issue_id":"sylveste-bcok","label":"artifact_prior-art:none-found"}
+{"issue_id":"sylveste-bcok","label":"claimed_at:1775460628"}
+{"issue_id":"sylveste-bcok","label":"claimed_by:02caf4d3-fc97-434b-bbbd-4e9073f66c4f"}
 {"issue_id":"sylveste-bcok","label":"epic"}
 {"issue_id":"sylveste-bcok","label":"integration"}
 {"issue_id":"sylveste-bcok","label":"plugin"}
@@ -228,8 +231,8 @@
 {"issue_id":"sylveste-e8n","label":"artifact_prd:docs/prds/2026-03-28-idea-garden.md"}
 {"issue_id":"sylveste-e8n","label":"artifact_prior-art:none-found"}
 {"issue_id":"sylveste-e8n","label":"artifact_reflection:docs/reflections/2026-03-29-idea-garden-interseed-reflect.md"}
-{"issue_id":"sylveste-e8n","label":"claimed_at:1774737889"}
-{"issue_id":"sylveste-e8n","label":"claimed_by:6b85bcd6-53a3-44df-938f-42d1618302e6"}
+{"issue_id":"sylveste-e8n","label":"claimed_at:0"}
+{"issue_id":"sylveste-e8n","label":"claimed_by:released"}
 {"issue_id":"sylveste-fbz","label":"artifact_brainstorm:docs/brainstorms/2026-04-05-gmail-purchase-import-brainstorm.md"}
 {"issue_id":"sylveste-fbz","label":"artifact_plan:docs/plans/2026-04-05-gmail-purchase-import.md"}
 {"issue_id":"sylveste-fbz","label":"artifact_prd:docs/prds/2026-04-05-gmail-purchase-import.md"}
@@ -256,6 +259,8 @@
 {"issue_id":"sylveste-gfp2","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-gk8","label":"patterns"}
 {"issue_id":"sylveste-gk8","label":"skaffen"}
+{"issue_id":"sylveste-h7t","label":"claimed_at:1775461806"}
+{"issue_id":"sylveste-h7t","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-ln3","label":"artifact_implementation:dae3106"}
 {"issue_id":"sylveste-ln3","label":"claimed_at:1775076291"}
 {"issue_id":"sylveste-ln3","label":"claimed_by:unknown"}
@@ -264,6 +269,12 @@
 {"issue_id":"sylveste-lok","label":"artifact_plan:apps/Auraken/docs/plans/2026-03-31-model-routing.md"}
 {"issue_id":"sylveste-muf","label":"auraken"}
 {"issue_id":"sylveste-muf","label":"productrecs"}
+{"issue_id":"sylveste-nr6x","label":"claimed_at:1775461028"}
+{"issue_id":"sylveste-nr6x","label":"claimed_by:20d3481b-0837-4e73-94d2-9f0bb50a8006"}
+{"issue_id":"sylveste-nr6x","label":"complexity:4"}
+{"issue_id":"sylveste-nr6x.2","label":"claimed_at:1775461028"}
+{"issue_id":"sylveste-nr6x.2","label":"claimed_by:unknown"}
+{"issue_id":"sylveste-nr6x.2","label":"complexity:3"}
 {"issue_id":"sylveste-qd1","label":"artifact_plan:docs/plans/2026-04-04-ockham-f1-f2-intent-scoring.md"}
 {"issue_id":"sylveste-qd1","label":"claimed_at:1775329833"}
 {"issue_id":"sylveste-qd1","label":"claimed_by:811384ae-740f-4104-8c6e-dfed52619110"}
@@ -402,8 +413,8 @@
 {"issue_id":"sylveste-sn7","label":"artifact_prd:docs/prds/2026-04-03-tuivision-token-encoding.md"}
 {"issue_id":"sylveste-sn7","label":"artifact_prior-art:none-found"}
 {"issue_id":"sylveste-sn7","label":"artifact_reflection:docs/reflections/2026-04-03-tuivision-token-encoding.md"}
-{"issue_id":"sylveste-sn7","label":"claimed_at:1775176672"}
-{"issue_id":"sylveste-sn7","label":"claimed_by:491465b5-a127-4174-9d7d-b51e91d709a5"}
+{"issue_id":"sylveste-sn7","label":"claimed_at:0"}
+{"issue_id":"sylveste-sn7","label":"claimed_by:released"}
 {"issue_id":"sylveste-sn7","label":"complexity:5"}
 {"issue_id":"sylveste-sn7","label":"p2"}
 {"issue_id":"sylveste-sn7","label":"phase:done"}
