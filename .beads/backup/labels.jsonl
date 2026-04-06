@@ -81,6 +81,9 @@
 {"issue_id":"sylveste-2l1.1","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-2l1.2","label":"auraken"}
 {"issue_id":"sylveste-2l1.3","label":"auraken"}
+{"issue_id":"sylveste-2l1.3","label":"claimed_at:1775495174"}
+{"issue_id":"sylveste-2l1.3","label":"claimed_by:cd2fc786-ac1f-4c3d-a15a-30ec66894410"}
+{"issue_id":"sylveste-2l1.3","label":"complexity:(no complexity state set)"}
 {"issue_id":"sylveste-2l1.4","label":"auraken"}
 {"issue_id":"sylveste-2l1.5","label":"auraken"}
 {"issue_id":"sylveste-2l1.6","label":"auraken"}
@@ -210,6 +213,10 @@
 {"issue_id":"sylveste-bcok","label":"epic"}
 {"issue_id":"sylveste-bcok","label":"integration"}
 {"issue_id":"sylveste-bcok","label":"plugin"}
+{"issue_id":"sylveste-benl","label":"artifact_prior-art:none-found"}
+{"issue_id":"sylveste-benl","label":"claimed_at:1775495156"}
+{"issue_id":"sylveste-benl","label":"claimed_by:2258b2fd-e9c3-421e-ad45-207b77a24047"}
+{"issue_id":"sylveste-benl","label":"complexity:5"}
 {"issue_id":"sylveste-co5","label":"claimed_at:1775257878"}
 {"issue_id":"sylveste-co5","label":"claimed_by:5d2440f9-1f8f-45b5-813e-51e5acd84fce"}
 {"issue_id":"sylveste-co5","label":"complexity:2"}
@@ -259,7 +266,9 @@
 {"issue_id":"sylveste-gfp2","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-gk8","label":"patterns"}
 {"issue_id":"sylveste-gk8","label":"skaffen"}
+{"issue_id":"sylveste-h7t","label":"claimed_at:0"}
 {"issue_id":"sylveste-h7t","label":"claimed_at:1775461806"}
+{"issue_id":"sylveste-h7t","label":"claimed_by:released"}
 {"issue_id":"sylveste-h7t","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-ln3","label":"artifact_implementation:dae3106"}
 {"issue_id":"sylveste-ln3","label":"claimed_at:1775076291"}
