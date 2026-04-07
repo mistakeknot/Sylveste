@@ -4,7 +4,7 @@ prompt = """
 Generated from Demarch slash-command markdown.
 
 - Source command: /interwatch:watch
-- Source file: /home/mk/projects/Demarch/interverse/interwatch/commands/watch.md
+- Source file: interverse/interwatch/commands/watch.md
 - When instructions mention Gemini elicitation adapter, ask the user one concise question in chat and wait for the answer.
 - When instructions mention activate_skill tool, use Gemini's activate_skill tool.
 

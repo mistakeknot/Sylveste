@@ -4,7 +4,7 @@ prompt = """
 Generated from Demarch slash-command markdown.
 
 - Source command: /clavain:clavain-help
-- Source file: /home/mk/projects/Demarch/os/Clavain/commands/help.md
+- Source file: os/Clavain/commands/help.md
 - When instructions mention Gemini elicitation adapter, ask the user one concise question in chat and wait for the answer.
 - When instructions mention activate_skill tool, use Gemini's activate_skill tool.
 
@@ -76,7 +76,7 @@ Generated from Demarch slash-command markdown.
 | `/clavain:refactor` | Refactors with duplication/risk controls |
 
 ### Meta
-| `/clavain:project-onboard` | Set up project with Demarch automation |
+| `/clavain:project-onboard` | Set up project with Sylveste automation |
 |---|---|
 | `/clavain:setup` | Bootstrap Clavain |
 | `/clavain:help` | This command |

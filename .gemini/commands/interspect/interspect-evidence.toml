@@ -4,7 +4,7 @@ prompt = """
 Generated from Demarch slash-command markdown.
 
 - Source command: /interspect:interspect-evidence
-- Source file: /home/mk/projects/Demarch/interverse/interspect/commands/interspect-evidence.md
+- Source file: interverse/interspect/commands/interspect-evidence.md
 - When instructions mention Gemini elicitation adapter, ask the user one concise question in chat and wait for the answer.
 - When instructions mention activate_skill tool, use Gemini's activate_skill tool.
 
@@ -108,7 +108,9 @@ Week       | Count | Histogram
 
 ```bash
 RECENT=$(sqlite3 -separator ' | ' "$DB" "
-    SELECT ts, event, COALESCE(override_reason, '-'), substr(context, 1, 120)
+    SELECT ts, event, COALESCE(override_reason, '-'),
+        CASE WHEN COALESCE(quarantine_until, 0) > CAST(strftime('%s', 'now') AS INTEGER)
+            THEN '[Q] ' ELSE '' END || substr(context, 1, 120)
     FROM evidence
     WHERE source = '${E_AGENT}'
     ORDER BY ts DESC

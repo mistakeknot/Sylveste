@@ -179,7 +179,7 @@ generate_commands() {
       echo "Generated from Demarch slash-command markdown."
       echo
       echo "- Source command: /$namespace:$command_name"
-      echo "- Source file: $src"
+      echo "- Source file: ${src#"$PROJECT_ROOT"/}"
       echo "- When instructions mention Gemini elicitation adapter, ask the user one concise question in chat and wait for the answer."
       echo "- When instructions mention activate_skill tool, use Gemini's activate_skill tool."
       echo

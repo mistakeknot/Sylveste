@@ -4,7 +4,7 @@ prompt = """
 Generated from Demarch slash-command markdown.
 
 - Source command: /clavain:clavain-doctor
-- Source file: /home/mk/projects/Demarch/os/Clavain/commands/doctor.md
+- Source file: os/Clavain/commands/doctor.md
 - When instructions mention Gemini elicitation adapter, ask the user one concise question in chat and wait for the answer.
 - When instructions mention activate_skill tool, use Gemini's activate_skill tool.
 
@@ -141,6 +141,34 @@ done
 [ "$_warns" -eq 0 ] && echo "plugin caches: PASS"
 ```
 
+### 2h. Marketplace Association
+
+Detects plugins in the interagency-marketplace cache that lack entries in `installed_plugins.json`. These show up in `/plugin/installed` via autodiscovery but not under the marketplace. Auto-fixes by running `modpack-associate.sh`.
+
+```bash
+_associate_script="$(find ~/.gemini/plugins/cache -path '*/clavain/*/scripts/modpack-associate.sh' 2>/dev/null | sort -V | tail -1)"
+if [[ -z "$_associate_script" ]]; then
+  echo "marketplace association: SKIP (modpack-associate.sh not found)"
+else
+  _result=$(bash "$_associate_script" --dry-run --quiet 2>/dev/null) || _result=""
+  if [[ -n "$_result" ]]; then
+    _count=$(echo "$_result" | jq '.would_associate | length' 2>/dev/null) || _count=0
+    if [[ "$_count" -gt 0 ]]; then
+      echo "marketplace association: WARN ($_count plugins in cache but not in installed_plugins.json)"
+      echo "$_result" | jq -r '.would_associate[:5][]' 2>/dev/null | while read -r _n; do echo "  - $_n"; done
+      [[ "$_count" -gt 5 ]] && echo "  ... and $((_count - 5)) more"
+      echo "  Fix: bash $(dirname "$_associate_script")/modpack-associate.sh"
+      # Auto-fix (safe — only adds entries, never removes)
+      bash "$_associate_script" --quiet >/dev/null 2>&1 && echo "  AUTO-FIXED: associated $_count plugins" || echo "  Auto-fix failed — run manually"
+    else
+      echo "marketplace association: PASS"
+    fi
+  else
+    echo "marketplace association: SKIP (dry-run failed)"
+  fi
+fi
+```
+
 ### 3. Beads
 
 ```bash
@@ -197,6 +225,57 @@ if [ -d .beads ] && command -v bd >/dev/null 2>&1; then
   done
 
   [ "$_zc" -eq 0 ] && echo "zombie beads: PASS" || echo "zombie beads: FIXED (auto-closed $_zc)"
+fi
+```
+
+### 3c. Orphan Bead Detection
+
+Open beads whose ID appears in a git commit message — work likely shipped but bead never closed.
+
+```bash
+if [ -d .beads ] && command -v bd >/dev/null 2>&1; then
+  _oc=0; _of=""
+  _open_ids=$( (bd list --status=open --json 2>/dev/null; bd list --status=in_progress --json 2>/dev/null) | jq -r '.[].id' 2>/dev/null | sort -u) || _open_ids=""
+  if [ -n "$_open_ids" ]; then
+    # Build grep pattern from all open IDs
+    _pattern=$(echo "$_open_ids" | tr '\n' '|' | sed 's/|$//')
+    # Search recent commits (90 days) for any open bead ID
+    _hits=$(git log --since="90 days ago" --oneline --grep-reflog="" --all 2>/dev/null | grep -oE "$_pattern" | sort -u) || _hits=""
+    for _bid in $_hits; do
+      # Verify it's still in the open list (not just a substring match)
+      echo "$_open_ids" | grep -qx "$_bid" || continue
+      _commit=$(git log --since="90 days ago" --oneline --all --grep="$_bid" 2>/dev/null | head -1)
+      _of="${_of}  - ${_bid}: ${_commit}\n"
+      _oc=$((_oc+1))
+    done
+  fi
+  [ "$_oc" -eq 0 ] && echo "orphan beads: PASS" || { echo "orphan beads: WARN ($_oc open bead(s) referenced in commits)"; printf "%b" "$_of"; echo "  └─ Review with 'bd show <id>' — if work shipped, close with 'bd close <id> --reason \"Already shipped\"'"; }
+fi
+```
+
+### 3d. Calibration Stage Maturity
+
+```bash
+_stages_file="docs/calibration-stages.yaml"
+if [ -f "$_stages_file" ]; then
+  echo "Calibration Stages (PHILOSOPHY.md closed-loop):"
+  # Parse with awk (no external deps). Extracts domain name + current_stage.
+  awk '
+    /^  [a-z_]+:$/ { domain = $1; sub(/:$/, "", domain) }
+    /current_stage:/ && domain != "" {
+      stage = $NF
+      marker = (stage >= 4) ? "PASS" : (stage >= 3) ? "WARN" : "GAP"
+      printf "  %-20s stage %s/4  %s\n", domain, stage, marker
+      if (stage >= 4) complete++
+      total++
+      domain = ""
+    }
+    END {
+      printf "  Summary: %d/%d domains at stage 4\n", complete, total
+    }
+  ' "$_stages_file"
+else
+  echo "calibration stages: WARN (docs/calibration-stages.yaml not found)"
 fi
 ```
 
@@ -326,5 +405,5 @@ cat ~/.gemini/plugins/cache/interagency-marketplace/clavain/*/plugin.json 2>/dev
 Present results as a compact table: `<check> [PASS|WARN|FAIL] <detail>`. Group by section.
 <!-- agent-rig:end:doctor-output -->
 
-**Recommendations** (only for FAIL/WARN): context7→restart session, qmd→`qmd` install, conflicts→`/clavain:setup`, beads→`bd init` or `.beads/recover.sh`, interlock→`claude plugin install interlock@interagency-marketplace`, intermute→`/clavain:setup --scope interlock`, pyyaml→`pip install pyyaml`, yq→install from github, node→nodejs.org, PATH→add `~/.local/bin`, config FAIL→fix YAML, hooks→check syntax, shadows→`/clavain:bead-sweep`, zombies→review closed, .clavain→`/clavain:init`, skill budget→trim or move to references/, routing shadow→set `mode: enforce`, cache empty→reinstall plugin.
+**Recommendations** (only for FAIL/WARN): context7→restart session, qmd→`qmd` install, conflicts→`/clavain:setup`, beads→`bd init` or `.beads/recover.sh`, interlock→`claude plugin install interlock@interagency-marketplace`, intermute→`/clavain:setup --scope interlock`, pyyaml→`pip install pyyaml`, yq→install from github, node→nodejs.org, PATH→add `~/.local/bin`, config FAIL→fix YAML, hooks→check syntax, shadows→`/clavain:bead-sweep`, zombies→review closed, .clavain→`/clavain:init`, skill budget→trim or move to references/, routing shadow→set `mode: enforce`, cache empty→reinstall plugin, marketplace association→auto-fixed by doctor or run `modpack-associate.sh` manually.
 """

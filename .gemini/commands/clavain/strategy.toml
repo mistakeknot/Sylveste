@@ -4,7 +4,7 @@ prompt = """
 Generated from Demarch slash-command markdown.
 
 - Source command: /clavain:strategy
-- Source file: /home/mk/projects/Demarch/os/Clavain/commands/strategy.md
+- Source file: os/Clavain/commands/strategy.md
 - When instructions mention Gemini elicitation adapter, ask the user one concise question in chat and wait for the answer.
 - When instructions mention activate_skill tool, use Gemini's activate_skill tool.
 
@@ -147,6 +147,82 @@ If `CLAVAIN_BEAD_ID` not set (standalone):
 - `bd create --title="<PRD title>" --type=epic --priority=1`
 - For each feature: `bd create --title="F1: <name>" --type=feature --priority=2` then `bd dep add <feature-id> <epic-id>`
 
+### Phase 3a.1: Epic Definition of Done (rsj.1.6)
+
+After creating epic + children, store outcome-based acceptance criteria. These are distinct from "all children closed" — they express the *measurable outcomes* the epic should achieve.
+
+Extract 2-5 criteria from the PRD's goals/success metrics. Format as JSON array:
+```bash
+epic_dod='[{"criterion":"API p95 latency < 200ms","verification":"Run load test: k6 run tests/load.js","automated":true},{"criterion":"User can complete onboarding in < 3 steps","verification":"Manual walkthrough of onboarding flow","automated":false}]'
+bd set-state "$epic_id" "epic_dod=$epic_dod"
+```
+
+Each criterion has:
+- `criterion`: What success looks like (measurable, specific)
+- `verification`: How to check it (test command, manual check, metric query)
+- `automated`: Whether verification can run without human intervention
+
+If the PRD has no clear success metrics, prompt: "What outcome would tell you this epic succeeded, beyond all children being closed?"
+
+### Phase 3a.2: Decomposition quality check + prediction (rsj.1.9)
+
+After creating children, check decomposition size against calibrated baselines and record the prediction.
+
+```bash
+child_count=$(bd children "$epic_id" --json 2>/dev/null | jq 'length' 2>/dev/null) || child_count=0
+complexity_dist=$(bd children "$epic_id" --json 2>/dev/null | jq '[.[] | .priority // "P2"] | group_by(.) | map({(.[0]): length}) | add' 2>/dev/null) || complexity_dist="{}"
+
+# Check if calibration data is sufficient but uncalibrated (rsj.1.9.1)
+# Source interspect if available to check event count
+if source "${CLAUDE_PLUGIN_ROOT}/hooks/lib.sh" 2>/dev/null; then
+    _isp_root=$(_discover_interspect_plugin 2>/dev/null) || _isp_root=""
+    if [[ -n "$_isp_root" ]]; then
+        source "${_isp_root}/hooks/lib-interspect.sh"
+        _decomp_count=$(_interspect_decomposition_calibration_ready 30 2>/dev/null)
+        _decomp_ready=$?
+        if [[ "$_decomp_ready" -eq 0 ]]; then
+            echo "📊 Decomposition calibration ready: $_decomp_count events. Run calibration to update baselines."
+        fi
+    fi
+fi
+
+# Read calibration (calibrated section takes precedence over defaults)
+calibration_file="${CLAUDE_PLUGIN_ROOT}/config/decomposition-calibration.yaml"
+if [[ -f "$calibration_file" ]]; then
+    over_threshold=$(python3 -c "import yaml; d=yaml.safe_load(open('$calibration_file')); print(d.get('calibrated',d.get('defaults',{})).get('thresholds',{}).get('over_decomposition',15))" 2>/dev/null) || over_threshold=15
+    under_threshold=$(python3 -c "import yaml; d=yaml.safe_load(open('$calibration_file')); print(d.get('calibrated',d.get('defaults',{})).get('thresholds',{}).get('under_decomposition',2))" 2>/dev/null) || under_threshold=2
+    typical_p50=$(python3 -c "import yaml; d=yaml.safe_load(open('$calibration_file')); print(d.get('calibrated',d.get('defaults',{})).get('child_count',{}).get('p50',5))" 2>/dev/null) || typical_p50=5
+else
+    over_threshold=15; under_threshold=2; typical_p50=5
+fi
+
+# Warn on decomposition outliers
+if [[ "$child_count" -gt "$over_threshold" ]]; then
+    echo "⚠ Over-decomposition: $child_count children (baseline p90=$over_threshold). Consider consolidating related features."
+elif [[ "$child_count" -le "$under_threshold" ]]; then
+    echo "⚠ Under-decomposition: $child_count children (baseline minimum=$under_threshold). Consider whether features need further breakdown."
+fi
+```
+
+Record the prediction for later calibration (stage 2 — collect actuals, prediction side):
+```bash
+# Capture original child IDs for intent survival tracking (rsj.1.9.1)
+original_child_ids=$(bd children "$epic_id" --json 2>/dev/null | jq -r '[.[].id] | join(",")' 2>/dev/null) || original_child_ids=""
+
+decomp_prediction=$(jq -n \
+    --arg epic "$epic_id" \
+    --arg session "${CLAUDE_SESSION_ID:-unknown}" \
+    --argjson child_count "$child_count" \
+    --argjson complexity_dist "$complexity_dist" \
+    --argjson typical "$typical_p50" \
+    --arg ts "$(date +%s)" \
+    --arg original_ids "$original_child_ids" \
+    '{epic:$epic, session:$session, predicted_children:$child_count, complexity_dist:$complexity_dist, baseline_typical:$typical, ts:($ts|tonumber), original_child_ids:$original_ids}')
+bd set-state "$epic_id" "decomp_prediction=$decomp_prediction" 2>/dev/null || true
+```
+
+This prediction will be compared against actuals at reflect time (reflect.md Step 9).
+
 ### Phase 3b: Record Phase (Reflect + Compound)
 
 Record the PRD artifact and advance the phase state machine.
@@ -165,7 +241,9 @@ clavain-cli advance-phase "<feature_bead_id>" "strategized" "PRD: <prd_path>" ""
 
 ## Phase 4: Validate
 
-`/interflux:flux-drive docs/prds/YYYY-MM-DD-<topic>.md` — catches scope creep, missing AC, architectural risks.
+**Inside sprint** (`bd state "$CLAVAIN_BEAD_ID" sprint` == `"true"`): **Skip this phase.** The sprint orchestrator runs its own flux-drive review at Step 2b — running it here would duplicate the review (~60-200K tokens wasted). Advance directly to Phase 5.
+
+**Standalone** (no sprint): `/interflux:flux-drive docs/prds/YYYY-MM-DD-<topic>.md` — catches scope creep, missing AC, architectural risks.
 
 ## Phase 5: Handoff (Terminal)
 

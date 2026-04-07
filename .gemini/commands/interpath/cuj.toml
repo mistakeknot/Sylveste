@@ -4,7 +4,7 @@ prompt = """
 Generated from Demarch slash-command markdown.
 
 - Source command: /interpath:cuj
-- Source file: /home/mk/projects/Demarch/interverse/interpath/commands/cuj.md
+- Source file: interverse/interpath/commands/cuj.md
 - When instructions mention Gemini elicitation adapter, ask the user one concise question in chat and wait for the answer.
 - When instructions mention activate_skill tool, use Gemini's activate_skill tool.
 

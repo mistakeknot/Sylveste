@@ -4,7 +4,7 @@ prompt = """
 Generated from Demarch slash-command markdown.
 
 - Source command: /interflux:flux-gen
-- Source file: /home/mk/projects/Demarch/interverse/interflux/commands/flux-gen.md
+- Source file: interverse/interflux/commands/flux-gen.md
 - When instructions mention Gemini elicitation adapter, ask the user one concise question in chat and wait for the answer.
 - When instructions mention activate_skill tool, use Gemini's activate_skill tool.
 
@@ -29,36 +29,9 @@ If `$ARGUMENTS` is empty (flux-gen invoked without arguments), build a default t
 
 ## Step 1: Design Agent Specs
 
-Launch a **Sonnet** subagent (Task tool, `model: sonnet`) with this prompt:
+Launch a **Sonnet** subagent (Task tool, `model: sonnet`) to design 3-5 focused review agents for the task. The subagent outputs a JSON array of objects, each with: `name` (fd-*), `focus`, `persona`, `decision_lens`, `review_areas` (4-6 bullets), `severity_examples` (2-3 P0/P1 scenarios with condition), `success_hints`, `task_context`, `anti_overlap`. Design rules: distinct non-overlapping focus, descriptive names (fd-domain-concern), specific actionable review areas, concrete severity examples (not category restatements). Severity reference: P0=blocks/data loss, P1=blocks quality gate, P2=degrades quality, P3=improvements.
 
-```
-You are an expert at designing specialized code review agents. Given a task
-description, design 3-5 focused review agents that would provide the most
-valuable analysis for this task.
-
-Task: {$ARGUMENTS}
-
-For each agent, output a JSON object with these fields:
-- name: string starting with "fd-" (e.g., "fd-coordination-protocol")
-- focus: one-line description of what this agent reviews
-- persona: 1-2 sentences describing the agent's expertise and approach
-- decision_lens: 1-2 sentences on how this agent prioritizes findings
-- review_areas: array of 4-6 bullet strings, each a specific thing to check
-- success_hints: array of 1-3 bullet strings, domain-specific success criteria
-- task_context: 1-2 sentences of context about the task (shared across agents)
-- anti_overlap: array of 1-3 strings describing what OTHER agents in this batch cover (so this agent avoids duplicating)
-
-Design rules:
-- Each agent should have a DISTINCT, non-overlapping focus area
-- Agent names should be descriptive: fd-<domain>-<concern> (e.g., fd-message-semantics, fd-agent-identity)
-- Review areas should be specific and actionable, not vague
-- Anti-overlap entries should reference the other agents by name
-- Focus on what would be most valuable for the stated task, not generic code quality
-
-Return ONLY a valid JSON array of objects. No markdown, no explanation.
-```
-
-Parse the JSON response. If parsing fails, tell the user and offer to retry.
+Parse the JSON. If parsing fails, offer retry.
 
 ## Step 2: Preview Specs
 
@@ -84,42 +57,24 @@ Use **Gemini elicitation adapter** to confirm:
 
 1. **Save specs** to `{PROJECT_ROOT}/.gemini/flux-gen-specs/{slug}.json` for future regeneration without re-running the LLM design step. Derive `{slug}` from the task prompt (e.g., `mcp-agent-mail-research`, `auth-refactor-review`). Use the Write tool.
 
-2. **Write specs** to a temp file and run the generation script:
+2. **Validate specs** before writing: verify the JSON is a non-empty array where each object has a `name` field starting with `fd-`. If validation fails, show the raw subagent output and offer to retry Step 1.
+
+3. **Write specs** to a temp file using the Write tool (NOT heredoc/echo in Bash) and run the generation script:
 
 ```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/scripts/generate-agents.py {PROJECT_ROOT} --from-specs /tmp/flux-gen-specs.json --mode=skip-existing --json
+python3 ${CLAUDE_PLUGIN_ROOT}/scripts/generate-agents.py {PROJECT_ROOT} --from-specs /tmp/flux-gen-specs.json --mode=skip-existing --json --verbose
 ```
 
-Parse the JSON report and display per-agent results.
+Parse the JSON report. If `generated` is empty and `errors` contains a warning, display it prominently — this means the specs were malformed or all agents already exist.
 
 ## Step 5: Report
 
-```
-Generated {N} task-specific agents in .gemini/agents/:
-
-  - fd-{name1}: {focus} [created]
-  - fd-{name2}: {focus} [created]
-  ...
-
-Specs saved to .gemini/flux-gen-specs/{slug}.json
-Regenerate without LLM: /interflux:flux-gen --from-specs .gemini/flux-gen-specs/{slug}.json
-
-These agents will be included in flux-drive triage as Project Agents
-(+1 category bonus). Customize them by editing the .md files directly.
-
-To use them: /interflux:flux-drive <target>
-To regenerate with different focus: /interflux:flux-gen <new task prompt>
-```
-
----
+Report generated agents (name, focus, status). Note specs path and regeneration command. Agents are available to flux-drive immediately (Project Agents, +1 bonus). Using as direct subagent_types requires session restart.
 
 ## Notes
 
-- Generated agents use `subagent_type: general-purpose` in flux-drive (their full content is pasted as the system prompt)
-- Project Agents get +1 category bonus in triage scoring
-- Multiple domains may generate overlapping agents — flux-drive deduplication handles this (prefer Project > Plugin)
-- Users should customize generated agents for their specific project needs
-- `flux_gen_version: 4` agents have persona, decision lens, anti-overlap clauses, and success criteria; older versions are auto-regenerated by `--mode=regenerate-stale`
-- Specs are saved to `.gemini/flux-gen-specs/{slug}.json` so agents can be regenerated without re-running the LLM design step (~25k tokens saved per regeneration)
-- Agents are tagged `generated_by: flux-gen-prompt` in frontmatter
+- Generated agents use `subagent_type: general-purpose` in flux-drive (content pasted as system prompt)
+- v5 agents have severity calibration; v4 have persona/decision lens/anti-overlap. Older versions auto-regenerated by `--mode=regenerate-stale`
+- Specs saved to `.gemini/flux-gen-specs/{slug}.json` (~25k tokens saved per regeneration)
+- Tagged `generated_by: flux-gen-prompt` in frontmatter
 """

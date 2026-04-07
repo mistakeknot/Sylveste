@@ -3,25 +3,29 @@
     "interserve": {
       "command": "bash",
       "args": [
-        "/home/mk/projects/Sylveste/interverse/interserve/bin/launch-mcp.sh"
+        "-c",
+        "exec \"$(git rev-parse --show-toplevel)/interverse/interserve/bin/launch-mcp.sh\""
       ]
     },
     "intermap": {
       "command": "bash",
       "args": [
-        "/home/mk/projects/Sylveste/interverse/intermap/bin/launch-mcp.sh"
+        "-c",
+        "exec \"$(git rev-parse --show-toplevel)/interverse/intermap/bin/launch-mcp.sh\""
       ]
     },
     "intermux": {
       "command": "bash",
       "args": [
-        "/home/mk/projects/Sylveste/interverse/intermux/bin/launch-mcp.sh"
+        "-c",
+        "exec \"$(git rev-parse --show-toplevel)/interverse/intermux/bin/launch-mcp.sh\""
       ]
     },
     "interlock": {
       "command": "bash",
       "args": [
-        "/home/mk/projects/Sylveste/interverse/interlock/bin/launch-mcp.sh"
+        "-c",
+        "exec \"$(git rev-parse --show-toplevel)/interverse/interlock/bin/launch-mcp.sh\""
       ]
     }
   }

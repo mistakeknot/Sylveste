@@ -4,7 +4,7 @@ prompt = """
 Generated from Demarch slash-command markdown.
 
 - Source command: /interspect:interspect-unblock
-- Source file: /home/mk/projects/Demarch/interverse/interspect/commands/interspect-unblock.md
+- Source file: interverse/interspect/commands/interspect-unblock.md
 - When instructions mention Gemini elicitation adapter, ask the user one concise question in chat and wait for the answer.
 - When instructions mention activate_skill tool, use Gemini's activate_skill tool.
 

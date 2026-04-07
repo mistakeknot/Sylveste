@@ -4,7 +4,7 @@ prompt = """
 Generated from Demarch slash-command markdown.
 
 - Source command: /clavain:sprint
-- Source file: /home/mk/projects/Demarch/os/Clavain/commands/sprint.md
+- Source file: os/Clavain/commands/sprint.md
 - When instructions mention Gemini elicitation adapter, ask the user one concise question in chat and wait for the answer.
 - When instructions mention activate_skill tool, use Gemini's activate_skill tool.
 
@@ -71,9 +71,9 @@ Determine the autonomy tier from complexity (or `--autonomy=<1|2|3>` override, o
 
 | Tier | Complexity | Behavior |
 |------|-----------|----------|
-| **1** | C1-C2 | **Full auto.** Skip brainstorm dialogue, auto-approve plan review if no P0/P1, auto-advance all steps. Only gate: quality-gates FAIL pauses. |
-| **2** | C3 | **One checkpoint.** Auto-advance brainstorm → plan. Pause after plan review for user confirmation. Auto-advance execute → ship. |
-| **3** | C4-C5 | **Interactive.** All Gemini elicitation adapter checkpoints active (current behavior). |
+| **1** | C1-C2 | **Full auto.** All three flux-drive reviews run. Auto-approve all reviews if no P0/P1, auto-advance all steps. Only gate: quality-gates FAIL pauses. |
+| **2** | C3 | **Two checkpoints.** All three flux-drive reviews run. Auto-approve brainstorm/strategy reviews if no P0/P1. Pause after plan review for user confirmation. Auto-advance execute → ship. |
+| **3** | C4-C5 | **Interactive.** All three flux-drive reviews run. All Gemini elicitation adapter checkpoints active at all three review gates. |
 
 ```bash
 autonomy_override=$(bd state "$CLAVAIN_BEAD_ID" autonomy_tier 2>/dev/null) || autonomy_override=""
@@ -90,11 +90,13 @@ fi
 
 Display: `Autonomy: Tier $autonomy_tier`. Pass tier to sub-commands via `CLAVAIN_AUTONOMY_TIER=$autonomy_tier`.
 
-**Tier 1 routing:** Skip brainstorm (Phase 0 detects clear requirements → jump to Step 3). If brainstorm is needed (ambiguous), escalate to Tier 2.
+**Tier 1 routing:** Skip brainstorm (Phase 0 detects clear requirements → jump to Step 3). All flux-drive reviews still run — auto-approve if no P0/P1. If brainstorm is needed (ambiguous), escalate to Tier 2.
 
-**Tier 2 routing:** Standard workflow; auto-advance except pause after Step 4 (plan review).
+**Tier 2 routing:** Standard workflow. All three flux-drive reviews run. Auto-approve brainstorm/strategy reviews if no P0/P1. Pause after plan review (Step 4) for user confirmation. Auto-advance execute → ship.
 
-**Tier 3 routing:** Full workflow with all checkpoints.
+**Tier 3 routing:** Full workflow with all three review gates interactive (Gemini elicitation adapter at each).
+
+**Note:** All tiers run all reviews unconditionally until calibration fires. Each review records a `review_phase_outcome` event to interspect (phase, complexity, severity counts, agent count). When >= 20 events per phase exist, `_interspect_auto_calibrate` writes `review-phase-calibration.yaml` with tier-skip thresholds. The sprint reads this file to decide whether to skip or lighten reviews for low-complexity tiers.
 
 `--from-step` always overrides complexity routing. `--autonomy=<tier>` overrides tier. `bd set-state <bead> manual_pause true` forces pause at next checkpoint regardless of tier.
 
@@ -120,10 +122,11 @@ On non-zero exit, parse `reason_type="${pause_reason%%|*}"`:
 - `manual_pause` → Gemini elicitation adapter: Continue / Stop
 - `stale_phase` → re-read state, route to new phase via `clavain-cli sprint-next-step`
 - `budget_exceeded` → Gemini elicitation adapter: Continue (override) / Stop / Adjust budget
+- `strategic_contradiction` → Gemini elicitation adapter: Revise plan to align / Update lane intent / Override and continue / Stop sprint. Display the contradiction reason and the lane's strategic_intent for context.
 
 Display at each advance: `Phase: <current> → <next> (auto-advancing)`. No "what next?" prompts unless pause triggered, step fails, or tier requires a checkpoint at this step.
 
-**Tier-aware checkpoints:** Tier 1 pauses only on `gate_blocked` (quality-gates FAIL). Tier 2 also pauses after Step 4 (plan review). Tier 3 preserves all existing Gemini elicitation adapter calls in sub-commands.
+**Tier-aware checkpoints:** All tiers run all three flux-drive reviews. Tier 1 auto-approves all reviews if no P0/P1, pauses only on `gate_blocked` (quality-gates FAIL). Tier 2 auto-approves brainstorm/strategy reviews (Steps 1b, 2b) if no P0/P1, pauses after plan review (Step 4). Tier 3 preserves all Gemini elicitation adapter calls at all three review gates.
 
 ## Phase Tracking
 
@@ -136,19 +139,110 @@ Artifact is always recorded even if advance fails. This is intentional — artif
 
 Pass artifact path when one exists; empty string otherwise (quality-gates, ship).
 
+### Provenance Recording (rsj.1.7)
+
+After each artifact write, record its provenance vector via `bd set-state "$CLAVAIN_BEAD_ID" "provenance_<type>=<json>"`. JSON has: session, bead, step, inputs (comma-separated artifact types consumed), output (path), ts (epoch).
+
+**Input map:** brainstorm→"", brainstorm-review→"brainstorm", strategy→"brainstorm", strategy-review→"prd", plan→"brainstorm,prd", review→"plan", execute→"plan", test→"", quality→"test-pass-sha", ship→"test-pass-sha".
+
 ---
 
 ## Step 1: Brainstorm
+
+### 1a: Generate brainstorm
 
 `/clavain:brainstorm $ARGUMENTS`
 
 After doc created: set `phase=brainstorm`; `clavain-cli record-cost-estimate "$CLAVAIN_BEAD_ID" "brainstorm" 2>/dev/null || true`
 
+### 1b: Review brainstorm
+
+**Auto-run — no Gemini elicitation adapter before starting.**
+
+```bash
+brainstorm_path=$(clavain-cli get-artifact "$CLAVAIN_BEAD_ID" "brainstorm" 2>/dev/null) || brainstorm_path=""
+```
+
+If `brainstorm_path` is empty or file missing, skip review (brainstorm may not have produced an artifact for trivial features).
+
+Budget context:
+```bash
+remaining=$(clavain-cli sprint-budget-remaining "$CLAVAIN_BEAD_ID")
+[[ "$remaining" -gt 0 ]] && export FLUX_BUDGET_REMAINING="$remaining"
+```
+
+Display running cost (silent on failure, applies to all subsequent budget context blocks too):
+```bash
+_interstat_cost_script="${INTERSTAT_ROOT:-$HOME/projects/Sylveste/interverse/interstat}/scripts/cost-query.sh"
+if [[ -f "$_interstat_cost_script" ]]; then
+    _scj=$(bash "$_interstat_cost_script" session-cost 2>/dev/null) || _scj=""
+    [[ -n "$_scj" ]] && echo "Session cost so far: \$$(echo "$_scj" | jq -r '.[0].cost_usd // "?"' 2>/dev/null) USD"
+fi
+```
+
+`/interflux:flux-review $brainstorm_path --quality=balanced` — multi-track deep review (4 tracks for brainstorms: adjacent + orthogonal + distant + esoteric). The brainstorm sets the direction for everything downstream — catching scope creep, missing constraints, implicit assumptions, and blind spots here prevents compounding errors in the PRD and plan.
+
+### 1c: Tier-aware checkpoint
+
+- **Tier 1:** Auto-approve if no P0/P1 findings. Proceed to Step 2 immediately.
+- **Tier 2:** Auto-approve if no P0/P1 findings. Proceed to Step 2 immediately.
+- **Tier 3:** Gemini elicitation adapter with findings. Wait for explicit approval.
+
+After passing: set `phase=brainstorm-reviewed`.
+
+Record review outcome for calibration (silent, skip on error):
+```bash
+# Query session token cost for this review (from interstat)
+_review_tokens=0; _review_cost_usd="0"
+_interstat_cost_script="${INTERSTAT_ROOT:-$HOME/projects/Sylveste/interverse/interstat}/scripts/cost-query.sh"
+if [[ -f "$_interstat_cost_script" ]]; then
+    _cost_json=$(bash "$_interstat_cost_script" session-cost --session="${CLAUDE_SESSION_ID:-}" 2>/dev/null) || _cost_json=""
+    if [[ -n "$_cost_json" ]]; then
+        _review_tokens=$(echo "$_cost_json" | jq -r '.[0].total_tokens // 0' 2>/dev/null) || _review_tokens=0
+        _review_cost_usd=$(echo "$_cost_json" | jq -r '.[0].cost_usd // 0' 2>/dev/null) || _review_cost_usd="0"
+    fi
+fi
+_review_outcome='{"phase":"brainstorm","complexity":'$complexity',"review_type":"flux-review","p0":'${p0_count:-0}',"p1":'${p1_count:-0}',"p2":'${p2_count:-0}',"agents":'${agent_count:-0}',"tokens":'${_review_tokens}',"cost_usd":'${_review_cost_usd}'}'
+if type -t _interspect_insert_evidence &>/dev/null; then
+    _interspect_insert_evidence "${CLAUDE_SESSION_ID:-unknown}" "sprint" "review_phase_outcome" "" "$_review_outcome" "sprint-review-calibration" 2>/dev/null || true
+fi
+```
+
 ## Step 2: Strategize
+
+### 2a: Generate strategy
 
 `/clavain:strategy`
 
-Optionally run `/clavain:review-doc` on brainstorm first (set `phase=brainstorm-reviewed` after). After PRD created, run `/interpath:cuj` for each critical user-facing flow — skip only for purely internal changes. After strategy: set `phase=strategized`.
+After PRD created, run `/interpath:cuj` for each critical user-facing flow — skip only for purely internal changes. After strategy: set `phase=strategized`.
+
+### 2b: Review strategy
+
+**Auto-run — no Gemini elicitation adapter before starting.**
+
+```bash
+prd_path=$(clavain-cli get-artifact "$CLAVAIN_BEAD_ID" "prd" 2>/dev/null) || prd_path=""
+```
+
+If `prd_path` is empty or file missing, skip review.
+
+Budget context:
+```bash
+remaining=$(clavain-cli sprint-budget-remaining "$CLAVAIN_BEAD_ID")
+[[ "$remaining" -gt 0 ]] && export FLUX_BUDGET_REMAINING="$remaining"
+```
+
+`/interflux:flux-drive $prd_path` — validates the PRD for feature gaps, decomposition errors, user journey blind spots, and architectural feasibility before planning begins.
+
+### 2c: Tier-aware checkpoint
+
+- **Tier 1:** Auto-approve if no P0/P1 findings. Proceed to Step 3 immediately.
+- **Tier 2:** Auto-approve if no P0/P1 findings. Proceed to Step 3 immediately.
+- **Tier 3:** Gemini elicitation adapter with findings. Wait for explicit approval.
+
+After passing: set `phase=strategy-reviewed`.
+
+Record review outcome (same pattern as Step 1c, with `"phase":"strategy","review_type":"flux-drive"`, including `tokens` and `cost_usd` from session-cost query).
 
 ## Step 3: Write Plan
 
@@ -176,7 +270,7 @@ Cost preview: `clavain-cli sprint-budget-stage "$CLAVAIN_BEAD_ID" plan-review 2>
 plan_path=$(clavain-cli get-artifact "$CLAVAIN_BEAD_ID" "plan" 2>/dev/null) || plan_path=""
 ```
 
-`/interflux:flux-gen` — auto-detect project domains and generate `fd-*` agents in `.gemini/agents/`. Use `skip-existing` mode (no confirmation, no overwrite). If agents already exist, this completes in seconds. If flux-gen fails or no domains detected, proceed — core agents work without domain specialization.
+**Conditional flux-gen:** Check if project agents already exist: `ls .gemini/agents/fd-*.md 2>/dev/null | wc -l`. If >= 3 agents exist, skip flux-gen entirely — agents are already generated and flux-drive will discover them. If < 3, run `/interflux:flux-gen` with `skip-existing` mode. If flux-gen fails or no domains detected, proceed — core agents work without domain specialization.
 
 ### 4b: Run plan review
 
@@ -189,6 +283,26 @@ plan_path=$(clavain-cli get-artifact "$CLAVAIN_BEAD_ID" "plan" 2>/dev/null) || p
 - **Tier 3:** Gemini elicitation adapter with findings. Wait for explicit approval.
 
 After passing: set `phase=plan-reviewed`.
+
+Record review outcome (same pattern as Step 1c, with `"phase":"plan","review_type":"flux-drive"`, including `tokens` and `cost_usd` from session-cost query).
+
+### 4d: Strategic intent validation (rsj.1.5)
+
+If lane intent exists on this bead:
+```bash
+lane_intent=$(bd state "$CLAVAIN_BEAD_ID" lane_intent 2>/dev/null) || lane_intent=""
+```
+
+When `lane_intent` is non-empty, check whether the plan contradicts it. Use a haiku agent (foreground, ~500 tokens):
+- Input: plan summary (first 500 chars), lane intent text
+- Prompt: "Does this plan contradict or undermine the lane's strategic intent? Return JSON: `{\"contradicts\": bool, \"reason\": \"...\"}`"
+- If `contradicts == true`:
+  1. Display: `Strategic contradiction detected: <reason>` + lane intent
+  2. Escalate: `sprint_escalate_strategic_contradiction "$CLAVAIN_BEAD_ID" "$lane_name" "$reason"`
+  3. The escalation pauses the lane and records evidence
+  4. Emit pause: `echo "strategic_contradiction|plan-reviewed|$reason"` → user decision flow
+
+If no lane intent or `contradicts == false`: proceed silently to Step 5.
 
 ## Step 5: Execute
 
@@ -270,11 +384,17 @@ After resolving: if quality-gates found recurring patterns, run `/clavain:compou
 
 ## Step 9: Reflect
 
+### 9a: Decomposition quality actuals (rsj.1.9.1)
+
+If bead has `decomp_prediction` state (epic with children), collect actuals for calibration. Read `bd children` to get actual/closed/deferred counts. Count re-planning events (children created after prediction timestamp). Compute `completion_rate` and `prediction_accuracy`. Store as `decomp_actual` on bead state. Record to interspect evidence (`decomposition_outcome` type) for cross-sprint aggregation. Calibration auto-triggers at >= 30 events.
+
+### 9b: Reflect
+
 **Parallel Window 2 (optional):** If resolve has no blocking findings (all findings are P2+), resolve and reflect can run in parallel. Resolve writes `resolution` artifact; reflect writes `reflection` artifact — no type conflicts. Sprint waits for both artifacts before advancing to Step 10.
 
 `clavain-cli sprint-advance "$CLAVAIN_BEAD_ID" "shipping"`
 
-Note: This advances `shipping → reflect` in the kernel. Step 7's `sprint-advance "shipping"` advanced `executing → shipping`. Both pass `"shipping"` as `currentPhase` which causes `recordPhaseTokens` to double-record under the "shipping" key — this is a known calibration quirk (Demarch-84sv partial fix; full fix requires `recordPhaseTokens` to deduplicate).
+Note: This advances `shipping → reflect` in the kernel. Step 7's `sprint-advance "shipping"` advanced `executing → shipping`. Both pass `"shipping"` as `currentPhase` which causes `recordPhaseTokens` to double-record under the "shipping" key — this is a known calibration quirk (Sylveste-84sv partial fix; full fix requires `recordPhaseTokens` to deduplicate).
 
 `/clavain:reflect`
 
@@ -307,12 +427,26 @@ swept=$(clavain-cli close-children "$CLAVAIN_BEAD_ID" "Shipped with parent epic 
 [[ "$swept" -gt 0 ]] && echo "Auto-closed $swept child beads"
 ```
 
+Session cost (from interstat, silent on failure):
+```bash
+_session_cost=""
+_interstat_cost_script=""
+_c="${CLAUDE_PLUGIN_ROOT}/../interstat/scripts/cost-query.sh"
+[[ -f "$_c" ]] && _interstat_cost_script="$_c"
+[[ -z "$_interstat_cost_script" && -n "${CLAVAIN_SOURCE_DIR:-}" ]] && _c="${CLAVAIN_SOURCE_DIR}/../../interverse/interstat/scripts/cost-query.sh" && [[ -f "$_c" ]] && _interstat_cost_script="$_c"
+if [[ -n "$_interstat_cost_script" ]]; then
+    _scj=$(bash "$_interstat_cost_script" session-cost 2>/dev/null) || _scj=""
+    [[ -n "$_scj" ]] && _session_cost=$(echo "$_scj" | jq -r '.[0].cost_usd // ""' 2>/dev/null) || _session_cost=""
+fi
+```
+
 Sprint summary:
 ```
 Sprint Summary:
 - Bead: <CLAVAIN_BEAD_ID>
 - Steps completed: <n>/10
 - Budget: <tokens_spent>k / <token_budget>k (<percentage>%)
+- Session cost: $<_session_cost> USD (from interstat session-cost)
 - Agents dispatched: <count>
 - Verdicts: <verdict_count_by_status output>
 - Estimated tokens: <verdict_total_tokens output>

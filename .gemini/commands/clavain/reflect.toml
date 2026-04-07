@@ -4,7 +4,7 @@ prompt = """
 Generated from Demarch slash-command markdown.
 
 - Source command: /clavain:reflect
-- Source file: /home/mk/projects/Demarch/os/Clavain/commands/reflect.md
+- Source file: os/Clavain/commands/reflect.md
 - When instructions mention Gemini elicitation adapter, ask the user one concise question in chat and wait for the answer.
 - When instructions mention activate_skill tool, use Gemini's activate_skill tool.
 
@@ -95,13 +95,83 @@ Mark each `[x]` as you complete it. After Step 9, reflect is **done** — no fur
    clavain-cli calibrate-phase-costs 2>/dev/null || true
    ```
 
-9. **Calibrate routing (silent).**
+9. **Calibrate routing + decomposition (silent).**
    ```bash
    if source "${CLAUDE_PLUGIN_ROOT}/hooks/lib.sh" 2>/dev/null; then
        interspect_root=$(_discover_interspect_plugin 2>/dev/null)
        if [[ -n "$interspect_root" ]]; then
            source "${interspect_root}/hooks/lib-interspect.sh"
            _interspect_write_routing_calibration 2>/dev/null || true
+
+           # Decomposition quality collection (rsj.1.9.1)
+           # If this sprint worked on an epic that has a decomp_prediction,
+           # emit the actuals for calibration.
+           _sprint_id="<sprint_id>"
+           _session_id=$(cat /tmp/interstat-session-id 2>/dev/null || echo "${CLAUDE_SESSION_ID:-unknown}")
+           _decomp_raw=$(bd state "$_sprint_id" decomp_prediction 2>/dev/null) || _decomp_raw=""
+           if [[ -n "$_decomp_raw" ]] && [[ "$_decomp_raw" != *"no decomp_prediction"* ]]; then
+               _epic_id=$(echo "$_decomp_raw" | jq -r '.epic // empty' 2>/dev/null) || _epic_id=""
+               if [[ -n "$_epic_id" ]]; then
+                   _predicted=$(echo "$_decomp_raw" | jq -r '.predicted_children // 0' 2>/dev/null)
+                   _baseline=$(echo "$_decomp_raw" | jq -r '.baseline_typical // 5' 2>/dev/null)
+
+                   # Compute actuals from current bead state
+                   _children_json=$(bd children "$_epic_id" --json 2>/dev/null) || _children_json="[]"
+                   _actual=$(echo "$_children_json" | jq 'length' 2>/dev/null) || _actual=0
+                   _closed=$(echo "$_children_json" | jq '[.[] | select(.status == "closed")] | length' 2>/dev/null) || _closed=0
+                   if [[ "$_actual" -gt 0 ]]; then
+                       _completion=$(python3 -c "print(round($_closed / $_actual, 3))" 2>/dev/null) || _completion=0
+                   else
+                       _completion=0
+                   fi
+
+                   # Re-plan count: difference between current and predicted child count
+                   _replan=$(( _actual > _predicted ? _actual - _predicted : _predicted - _actual ))
+
+                   # Intent survival: fraction of original children still present
+                   _original_ids=$(echo "$_decomp_raw" | jq -r '.original_child_ids // empty' 2>/dev/null) || _original_ids=""
+                   if [[ -n "$_original_ids" ]]; then
+                       # Precise: check which original IDs still exist as children
+                       _current_ids=$(echo "$_children_json" | jq -r '[.[].id] | join(",")' 2>/dev/null) || _current_ids=""
+                       _orig_count=0; _survived=0
+                       IFS=',' read -ra _orig_arr <<< "$_original_ids"
+                       for _oid in "${_orig_arr[@]}"; do
+                           [[ -z "$_oid" ]] && continue
+                           _orig_count=$((_orig_count + 1))
+                           [[ ",$_current_ids," == *",$_oid,"* ]] && _survived=$((_survived + 1))
+                       done
+                       if [[ "$_orig_count" -gt 0 ]]; then
+                           _survival=$(python3 -c "print(round($_survived / $_orig_count, 3))" 2>/dev/null) || _survival=1.0
+                       else
+                           _survival=1.0
+                       fi
+                   elif [[ "$_predicted" -gt 0 ]]; then
+                       # Fallback approximation for predictions without original_child_ids
+                       _survival=$(python3 -c "print(round(min($_actual, $_predicted) / $_predicted, 3))" 2>/dev/null) || _survival=1.0
+                   else
+                       _survival=1.0
+                   fi
+
+                   _complexity=$(bd state "$_epic_id" complexity 2>/dev/null) || _complexity=3
+                   [[ "$_complexity" == *"no complexity"* ]] && _complexity=3
+
+                   _interspect_emit_decomposition_outcome \
+                       "$_session_id" "$_epic_id" "$_predicted" "$_actual" \
+                       "$_completion" "$_replan" "$_survival" "$_complexity" "$_baseline"
+
+                   # Check calibration readiness and trigger if ready (rsj.1.9.3)
+                   _count=$(_interspect_decomposition_calibration_ready 30 2>/dev/null)
+                   if [[ $? -eq 0 && -n "$_count" && "$_count" -ge 30 ]] 2>/dev/null; then
+                       _cal_script="${CLAUDE_PLUGIN_ROOT}/scripts/calibrate-decomposition.py"
+                       _cal_config="${CLAUDE_PLUGIN_ROOT}/config/decomposition-calibration.yaml"
+                       _cal_db=$(_interspect_db_path 2>/dev/null) || _cal_db=""
+                       if [[ -f "$_cal_script" && -f "$_cal_config" && -n "$_cal_db" ]]; then
+                           python3 "$_cal_script" --db "$_cal_db" --config "$_cal_config" 2>/dev/null && \
+                               echo "Decomposition calibrated from $_count events" || true
+                       fi
+                   fi
+               fi
+           fi
        fi
    fi
    ```
