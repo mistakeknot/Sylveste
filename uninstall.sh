@@ -11,27 +11,12 @@
 
 set -euo pipefail
 
-# --- Colors (TTY-aware) ---
-if [ -t 1 ]; then
-    RED='\033[0;31m'
-    GREEN='\033[0;32m'
-    YELLOW='\033[0;33m'
-    BLUE='\033[0;34m'
-    BOLD='\033[1m'
-    DIM='\033[2m'
-    RESET='\033[0m'
-else
-    RED=''
-    GREEN=''
-    YELLOW=''
-    BLUE=''
-    BOLD=''
-    DIM=''
-    RESET=''
-fi
+# --- Shared helpers ---
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DRY_RUN=false  # must be set before sourcing (run() depends on it)
+source "$SCRIPT_DIR/lib/installer-common.sh"
 
 # --- State ---
-DRY_RUN=false
 KEEP_MARKETPLACE=false
 CACHE_DIR="${HOME}/.claude/plugins/cache/interagency-marketplace"
 
@@ -61,20 +46,6 @@ USAGE
             ;;
     esac
 done
-
-# --- Logging ---
-log() { printf "%b\n" "$*"; }
-success() { printf "${GREEN}  ✓ %s${RESET}\n" "$*"; }
-warn() { printf "${YELLOW}  ! %s${RESET}\n" "$*"; }
-fail() { printf "${RED}  ✗ %s${RESET}\n" "$*"; }
-
-run() {
-    if [[ "$DRY_RUN" == true ]]; then
-        printf "${DIM}  [DRY RUN] %s${RESET}\n" "$*"
-        return 0
-    fi
-    "$@"
-}
 
 # --- Preflight ---
 log ""
