@@ -18,6 +18,14 @@ sdk/*
 .claude/*.log
 .claude/worktrees/
 
+# ── Flux agent registry ──
+# Generated agents are gitignored by default. Promoted agents (used/proven)
+# are force-added with `git add -f`. The index is always a rebuildable cache.
+.claude/agents/fd-*.md
+.claude/agents/.index.yaml
+# Flux-gen spec files (generated per-review, not tracked)
+.claude/flux-gen-specs/
+
 # ── Local tool caches ──
 .tmp/
 
