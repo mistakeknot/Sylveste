@@ -178,14 +178,14 @@ If plan mode gating is implemented by filtering inside `buildLoopRegistry` (as s
 
 ## Files Reviewed
 
-- `/home/mk/projects/Sylveste/os/Skaffen/internal/agent/gated_registry.go`
-- `/home/mk/projects/Sylveste/os/Skaffen/internal/agent/agent.go`
-- `/home/mk/projects/Sylveste/os/Skaffen/internal/agent/deps.go`
-- `/home/mk/projects/Sylveste/os/Skaffen/internal/agent/phase.go`
-- `/home/mk/projects/Sylveste/os/Skaffen/internal/agent/loop.go`
-- `/home/mk/projects/Sylveste/os/Skaffen/internal/agent/gated_registry_test.go`
-- `/home/mk/projects/Sylveste/os/Skaffen/internal/agent/agent_test.go`
-- `/home/mk/projects/Sylveste/os/Skaffen/internal/tool/registry.go`
-- `/home/mk/projects/Sylveste/os/Skaffen/internal/tui/settings.go`
-- `/home/mk/projects/Sylveste/os/Skaffen/AGENTS.md`
-- `/home/mk/projects/Sylveste/os/Skaffen/CLAUDE.md`
+- `os/Skaffen/internal/agent/gated_registry.go`
+- `os/Skaffen/internal/agent/agent.go`
+- `os/Skaffen/internal/agent/deps.go`
+- `os/Skaffen/internal/agent/phase.go`
+- `os/Skaffen/internal/agent/loop.go`
+- `os/Skaffen/internal/agent/gated_registry_test.go`
+- `os/Skaffen/internal/agent/agent_test.go`
+- `os/Skaffen/internal/tool/registry.go`
+- `os/Skaffen/internal/tui/settings.go`
+- `os/Skaffen/AGENTS.md`
+- `os/Skaffen/CLAUDE.md`

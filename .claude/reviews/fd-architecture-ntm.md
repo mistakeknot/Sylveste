@@ -2,7 +2,7 @@
 
 **Reviewer:** Flux-drive Architecture & Design Reviewer
 **Date:** 2026-02-22
-**Target:** `/home/mk/projects/Sylveste/research/ntm` (Go CLI/TUI, 1,442 files, ~256k LOC)
+**Target:** `research/ntm` (Go CLI/TUI, 1,442 files, ~256k LOC)
 **Purpose:** Competitive analysis for Sylveste/Autarch. Identify patterns worth adopting,
 patterns to avoid, and structural observations relevant to building similar Go/Bubble Tea
 multi-agent TUI tooling.
@@ -460,21 +460,21 @@ early constrains the delivery surfaces to stay consistent across CLI, TUI, MCP, 
 
 The following ntm files are worth studying directly when implementing the adopted patterns:
 
-- `/home/mk/projects/Sylveste/research/ntm/internal/kernel/types.go` — Command registry type
-- `/home/mk/projects/Sylveste/research/ntm/internal/kernel/registry.go` — Registry implementation
-- `/home/mk/projects/Sylveste/research/ntm/internal/swarm/types.go` — SwarmPlan, SessionSpec, PaneSpec
-- `/home/mk/projects/Sylveste/research/ntm/internal/swarm/orchestrator.go` — Plan execution
-- `/home/mk/projects/Sylveste/research/ntm/internal/swarm/auto_respawner.go` — Crash recovery
-- `/home/mk/projects/Sylveste/research/ntm/internal/swarm/account_rotator.go` — Account rotation
-- `/home/mk/projects/Sylveste/research/ntm/internal/tui/dashboard/panels/panel.go` — Panel interface
-- `/home/mk/projects/Sylveste/research/ntm/internal/tui/layout/layout.go` — Width tier system
-- `/home/mk/projects/Sylveste/research/ntm/internal/tui/theme/theme.go` — Theme struct
-- `/home/mk/projects/Sylveste/research/ntm/internal/tui/theme/semantic.go` — Semantic roles
-- `/home/mk/projects/Sylveste/research/ntm/internal/workflow/loader.go` — Precedence loading
-- `/home/mk/projects/Sylveste/research/ntm/internal/workflow/template.go` — WorkflowTemplate type
-- `/home/mk/projects/Sylveste/research/ntm/internal/tools/registry.go` — Tool adapter registry
-- `/home/mk/projects/Sylveste/research/ntm/internal/handoff/types.go` — Handoff format
-- `/home/mk/projects/Sylveste/research/ntm/internal/checkpoint/types.go` — Checkpoint format
-- `/home/mk/projects/Sylveste/research/ntm/internal/events/bus.go` — EventBus pub/sub
-- `/home/mk/projects/Sylveste/research/ntm/docs/ORCHESTRATION_FEATURES.md` — Design intent
-- `/home/mk/projects/Sylveste/research/ntm/docs/robot-api-design.md` — API design principles
+- `research/ntm/internal/kernel/types.go` — Command registry type
+- `research/ntm/internal/kernel/registry.go` — Registry implementation
+- `research/ntm/internal/swarm/types.go` — SwarmPlan, SessionSpec, PaneSpec
+- `research/ntm/internal/swarm/orchestrator.go` — Plan execution
+- `research/ntm/internal/swarm/auto_respawner.go` — Crash recovery
+- `research/ntm/internal/swarm/account_rotator.go` — Account rotation
+- `research/ntm/internal/tui/dashboard/panels/panel.go` — Panel interface
+- `research/ntm/internal/tui/layout/layout.go` — Width tier system
+- `research/ntm/internal/tui/theme/theme.go` — Theme struct
+- `research/ntm/internal/tui/theme/semantic.go` — Semantic roles
+- `research/ntm/internal/workflow/loader.go` — Precedence loading
+- `research/ntm/internal/workflow/template.go` — WorkflowTemplate type
+- `research/ntm/internal/tools/registry.go` — Tool adapter registry
+- `research/ntm/internal/handoff/types.go` — Handoff format
+- `research/ntm/internal/checkpoint/types.go` — Checkpoint format
+- `research/ntm/internal/events/bus.go` — EventBus pub/sub
+- `research/ntm/docs/ORCHESTRATION_FEATURES.md` — Design intent
+- `research/ntm/docs/robot-api-design.md` — API design principles

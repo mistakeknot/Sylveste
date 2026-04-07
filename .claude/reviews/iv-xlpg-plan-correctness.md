@@ -1,7 +1,7 @@
 # Correctness Review: iv-xlpg Pollard Hunter Resilience Plan
 **Reviewer:** Julik (Flux-drive Correctness Reviewer)
 **Date:** 2026-02-23
-**Plan:** `/home/mk/projects/Sylveste/docs/plans/2026-02-23-pollard-hunter-resilience.md`
+**Plan:** `docs/plans/2026-02-23-pollard-hunter-resilience.md`
 
 ---
 

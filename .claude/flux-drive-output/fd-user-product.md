@@ -182,9 +182,9 @@ The smallest change set with the highest user outcome impact:
 
 ## Relevant File Paths
 
-- `/home/mk/projects/Sylveste/docs/cujs/first-install.md`
-- `/home/mk/projects/Sylveste/docs/cujs/running-a-sprint.md`
-- `/home/mk/projects/Sylveste/docs/cujs/code-review.md`
-- `/home/mk/projects/Sylveste/docs/cujs/README.md`
-- `/home/mk/projects/Sylveste/PHILOSOPHY.md`
-- `/home/mk/projects/Sylveste/docs/research/user-product-opportunity-review.md`
+- `docs/cujs/first-install.md`
+- `docs/cujs/running-a-sprint.md`
+- `docs/cujs/code-review.md`
+- `docs/cujs/README.md`
+- `PHILOSOPHY.md`
+- `docs/research/user-product-opportunity-review.md`

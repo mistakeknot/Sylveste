@@ -212,9 +212,9 @@
 
 ## Files for Correction
 
-- `/home/mk/projects/Sylveste/docs/cujs/first-install.md` (7 issues)
-- `/home/mk/projects/Sylveste/docs/cujs/running-a-sprint.md` (8 issues)
-- `/home/mk/projects/Sylveste/docs/cujs/code-review.md` (9 issues)
+- `docs/cujs/first-install.md` (7 issues)
+- `docs/cujs/running-a-sprint.md` (8 issues)
+- `docs/cujs/code-review.md` (9 issues)
 
 ---
 

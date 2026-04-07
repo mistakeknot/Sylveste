@@ -1,7 +1,7 @@
 # fd-token-schema-integrity — Token Schema Review
 
 > Reviewer: protocol specification engineer (token schema integrity)
-> Source: `/home/mk/projects/Sylveste/docs/brainstorms/2026-03-19-attp-interweave-brainstorm.md`
+> Source: `docs/brainstorms/2026-03-19-attp-interweave-brainstorm.md`
 > Comparison: Intercom `handoff.json` schema, Clavain `handoff.md` format
 > Date: 2026-03-19
 

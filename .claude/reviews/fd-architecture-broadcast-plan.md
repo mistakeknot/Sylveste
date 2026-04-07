@@ -1,6 +1,6 @@
 # Architecture Review: Broadcast Confirmation Flow Plan
 **Date:** 2026-02-23
-**Plan:** `/home/mk/projects/Sylveste/apps/autarch/docs/plans/2026-02-23-broadcast-confirmation-flow.md`
+**Plan:** `apps/autarch/docs/plans/2026-02-23-broadcast-confirmation-flow.md`
 **Reviewer:** fd-architecture (Flux-drive Architecture & Design Reviewer)
 
 ---

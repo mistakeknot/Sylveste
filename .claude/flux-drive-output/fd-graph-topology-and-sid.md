@@ -25,7 +25,7 @@ Currently:
 
 The ontology matching stage (Stage 2) maps forecast concepts to ontology entities, but the plan does not describe how `CausalClaim` endpoints are re-expressed in ontology terms before graph comparison. Without this, SID computation operates on disjoint node sets.
 
-**Where in code:** `CausalClaim` in `/home/mk/projects/shadow-work/docs/plans/2026-03-18-khouri-and-system-tracer-plan.md` (Task 2, line ~174-179), `CascadeEdge` (Task 3, line ~311-315).
+**Where in code:** `CausalClaim` in `~/projects/shadow-work/docs/plans/2026-03-18-khouri-and-system-tracer-plan.md` (Task 2, line ~174-179), `CascadeEdge` (Task 3, line ~311-315).
 
 **Recommendation:** Add a `resolved_cause: str | None` and `resolved_effect: str | None` field to `CausalClaim` that Stage 2 populates with ontology-mapped identifiers. SID computation should only use resolved endpoints. Unresolved claims become gap candidates directly (they represent causal relationships the ontology cannot express).
 

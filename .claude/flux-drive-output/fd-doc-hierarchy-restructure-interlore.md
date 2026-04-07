@@ -44,7 +44,7 @@ The PRD introduces MISSION.md as a new root document and promotes VISION.md alon
 
 ### P0: plugin-standard.md Canonical Boilerplate Must Be Updated
 
-**Location:** `/home/mk/projects/Sylveste/docs/canon/plugin-standard.md` lines 122-145 (AGENTS.md Standard Header)
+**Location:** `docs/canon/plugin-standard.md` lines 122-145 (AGENTS.md Standard Header)
 
 **Issue:** `plugin-standard.md` defines the exact AGENTS.md header that every plugin is expected to copy. This header is:
 

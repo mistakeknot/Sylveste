@@ -2,7 +2,7 @@
 
 **Reviewer:** Flux-drive User & Product Reviewer
 **Date:** 2026-02-22
-**Subject:** NTM (Named Tmux Manager) at `/home/mk/projects/Sylveste/research/ntm`
+**Subject:** NTM (Named Tmux Manager) at `research/ntm`
 **Purpose:** Competitive analysis for Autarch TUI apps (Bigend, Gurgeh, Coldwine, Pollard) and broader Sylveste platform design
 
 ---
@@ -387,27 +387,27 @@ Listed by priority:
 
 ## Files Referenced
 
-- `/home/mk/projects/Sylveste/research/ntm/cmd/ntm/main.go` — entry point
-- `/home/mk/projects/Sylveste/research/ntm/internal/palette/model.go` — palette UX model (2017 lines)
-- `/home/mk/projects/Sylveste/research/ntm/internal/palette/selector.go` — session selector component
-- `/home/mk/projects/Sylveste/research/ntm/internal/robot/robot.go` — robot mode implementation
-- `/home/mk/projects/Sylveste/research/ntm/internal/robot/schema.go` — JSON Schema generation
-- `/home/mk/projects/Sylveste/research/ntm/internal/robot/robot_dashboard.go` — fleet dashboard output
-- `/home/mk/projects/Sylveste/research/ntm/internal/ensemble/types.go` — mode/category type system
-- `/home/mk/projects/Sylveste/research/ntm/internal/ensemble/modes.go` — 80-mode taxonomy
-- `/home/mk/projects/Sylveste/research/ntm/internal/ensemble/ensembles.go` — 9 built-in presets
-- `/home/mk/projects/Sylveste/research/ntm/internal/ensemble/strategy.go` — 6 synthesis strategies
-- `/home/mk/projects/Sylveste/research/ntm/internal/ensemble/synthesizer.go` — streaming synthesis
-- `/home/mk/projects/Sylveste/research/ntm/internal/ensemble/manager.go` — ensemble lifecycle
-- `/home/mk/projects/Sylveste/research/ntm/internal/ensemble/state.go` — SQLite persistence
-- `/home/mk/projects/Sylveste/research/ntm/internal/tui/dashboard/dashboard.go` — dashboard model
-- `/home/mk/projects/Sylveste/research/ntm/internal/tui/dashboard/layout.go` — responsive layout
-- `/home/mk/projects/Sylveste/research/ntm/internal/tui/dashboard/commands.go` — async commands
-- `/home/mk/projects/Sylveste/research/ntm/internal/approval/engine.go` — approval workflow
-- `/home/mk/projects/Sylveste/research/ntm/internal/handoff/types.go` — handoff document structure
-- `/home/mk/projects/Sylveste/research/ntm/internal/handoff/generator.go` — output-to-handoff extraction
-- `/home/mk/projects/Sylveste/research/ntm/internal/handoff/transfer.go` — reservation transfer
-- `/home/mk/projects/Sylveste/research/ntm/internal/redaction/redaction.go` — output redaction
-- `/home/mk/projects/Sylveste/research/ntm/internal/swarm/orchestrator.go` — session orchestration
-- `/home/mk/projects/Sylveste/research/ntm/command_palette.md` — user-configurable palette commands
-- `/home/mk/projects/Sylveste/research/ntm/README.md` — product overview
+- `research/ntm/cmd/ntm/main.go` — entry point
+- `research/ntm/internal/palette/model.go` — palette UX model (2017 lines)
+- `research/ntm/internal/palette/selector.go` — session selector component
+- `research/ntm/internal/robot/robot.go` — robot mode implementation
+- `research/ntm/internal/robot/schema.go` — JSON Schema generation
+- `research/ntm/internal/robot/robot_dashboard.go` — fleet dashboard output
+- `research/ntm/internal/ensemble/types.go` — mode/category type system
+- `research/ntm/internal/ensemble/modes.go` — 80-mode taxonomy
+- `research/ntm/internal/ensemble/ensembles.go` — 9 built-in presets
+- `research/ntm/internal/ensemble/strategy.go` — 6 synthesis strategies
+- `research/ntm/internal/ensemble/synthesizer.go` — streaming synthesis
+- `research/ntm/internal/ensemble/manager.go` — ensemble lifecycle
+- `research/ntm/internal/ensemble/state.go` — SQLite persistence
+- `research/ntm/internal/tui/dashboard/dashboard.go` — dashboard model
+- `research/ntm/internal/tui/dashboard/layout.go` — responsive layout
+- `research/ntm/internal/tui/dashboard/commands.go` — async commands
+- `research/ntm/internal/approval/engine.go` — approval workflow
+- `research/ntm/internal/handoff/types.go` — handoff document structure
+- `research/ntm/internal/handoff/generator.go` — output-to-handoff extraction
+- `research/ntm/internal/handoff/transfer.go` — reservation transfer
+- `research/ntm/internal/redaction/redaction.go` — output redaction
+- `research/ntm/internal/swarm/orchestrator.go` — session orchestration
+- `research/ntm/command_palette.md` — user-configurable palette commands
+- `research/ntm/README.md` — product overview

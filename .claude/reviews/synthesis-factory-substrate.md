@@ -260,16 +260,16 @@ This gives each sprint a clear done-state and measured exit condition. Keep the 
 
 ## Files Referenced
 
-- Synthesis: `/home/mk/projects/Sylveste/.claude/reviews/synthesis-factory-substrate.md` ← you are here
+- Synthesis: `.claude/reviews/synthesis-factory-substrate.md` ← you are here
 - Agent reports:
-  - `/home/mk/projects/Sylveste/.claude/reviews/fd-dependency-risk-factory-substrate.md`
-  - `/home/mk/projects/Sylveste/.claude/reviews/fd-evidence-pipeline-factory-substrate.md`
-  - `/home/mk/projects/Sylveste/.claude/reviews/fd-scenario-validation-factory-substrate.md`
-  - `/home/mk/projects/Sylveste/.claude/reviews/fd-llm-judge-gates-factory-substrate.md`
-  - `/home/mk/projects/Sylveste/.claude/reviews/fd-capability-policy-factory-substrate.md`
-  - `/home/mk/projects/Sylveste/.claude/reviews/fd-architecture-factory-substrate.md`
-  - `/home/mk/projects/Sylveste/.claude/reviews/fd-systems-factory-substrate.md`
-  - `/home/mk/projects/Sylveste/.claude/reviews/fd-user-product-factory-substrate.md`
+  - `.claude/reviews/fd-dependency-risk-factory-substrate.md`
+  - `.claude/reviews/fd-evidence-pipeline-factory-substrate.md`
+  - `.claude/reviews/fd-scenario-validation-factory-substrate.md`
+  - `.claude/reviews/fd-llm-judge-gates-factory-substrate.md`
+  - `.claude/reviews/fd-capability-policy-factory-substrate.md`
+  - `.claude/reviews/fd-architecture-factory-substrate.md`
+  - `.claude/reviews/fd-systems-factory-substrate.md`
+  - `.claude/reviews/fd-user-product-factory-substrate.md`
 
 ---
 

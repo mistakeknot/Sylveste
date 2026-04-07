@@ -148,11 +148,11 @@ The plan notes "plan mode context in system prompt" via `session/session.go`. Ev
 
 ## Relevant Files
 
-- `/home/mk/projects/Sylveste/os/Skaffen/internal/tool/registry.go` — canonical gate matrix; plan mode gates belong here
-- `/home/mk/projects/Sylveste/os/Skaffen/internal/agent/agent.go` — buildLoopRegistry uses tool.Registry directly; SetPlanMode delegator goes here
-- `/home/mk/projects/Sylveste/os/Skaffen/internal/agent/gated_registry.go` — GatedRegistry wraps agentloop.Registry; not the runtime path for plan mode gates
-- `/home/mk/projects/Sylveste/os/Skaffen/internal/agent/deps.go` — PromptHints lives in agentloop but flows through sessionAdapter here; add PlanMode bool if prompt injection is kept
-- `/home/mk/projects/Sylveste/os/Skaffen/internal/tui/app.go` — gate Shift+Tab on `!m.running` (line 268 establishes the pattern)
-- `/home/mk/projects/Sylveste/os/Skaffen/internal/tui/status.go` — PLAN badge stays local to View(); no new parameters
-- `/home/mk/projects/Sylveste/os/Skaffen/internal/session/session.go` — SystemPrompt ignores phase/budget today; avoid storing plan mode here
-- `/home/mk/projects/Sylveste/os/Skaffen/cmd/skaffen/main.go` — wire SetPlanMode after agent.New; no constructor option needed
+- `os/Skaffen/internal/tool/registry.go` — canonical gate matrix; plan mode gates belong here
+- `os/Skaffen/internal/agent/agent.go` — buildLoopRegistry uses tool.Registry directly; SetPlanMode delegator goes here
+- `os/Skaffen/internal/agent/gated_registry.go` — GatedRegistry wraps agentloop.Registry; not the runtime path for plan mode gates
+- `os/Skaffen/internal/agent/deps.go` — PromptHints lives in agentloop but flows through sessionAdapter here; add PlanMode bool if prompt injection is kept
+- `os/Skaffen/internal/tui/app.go` — gate Shift+Tab on `!m.running` (line 268 establishes the pattern)
+- `os/Skaffen/internal/tui/status.go` — PLAN badge stays local to View(); no new parameters
+- `os/Skaffen/internal/session/session.go` — SystemPrompt ignores phase/budget today; avoid storing plan mode here
+- `os/Skaffen/cmd/skaffen/main.go` — wire SetPlanMode after agent.New; no constructor option needed

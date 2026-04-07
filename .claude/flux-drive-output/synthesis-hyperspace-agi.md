@@ -754,28 +754,28 @@ Sylveste already produces structured JSON from interstat, cass, interlab, and be
 ## Key Codebase Locations
 
 ### Coordination & Orchestration
-- Interlock MCP tools: `/home/mk/projects/Sylveste/interverse/interlock/internal/tools/tools.go`
-- Intermute storage: `/home/mk/projects/Sylveste/core/intermute/internal/storage/sqlite/`
-- Clavain sprint/claim logic: `/home/mk/projects/Sylveste/os/Clavain/cmd/clavain-cli/{claim,sprint}.go`
-- Clavain routing: `/home/mk/projects/Sylveste/os/Clavain/scripts/lib-routing.sh`
+- Interlock MCP tools: `interverse/interlock/internal/tools/tools.go`
+- Intermute storage: `core/intermute/internal/storage/sqlite/`
+- Clavain sprint/claim logic: `os/Clavain/cmd/clavain-cli/{claim,sprint}.go`
+- Clavain routing: `os/Clavain/scripts/lib-routing.sh`
 
 ### Work Loop & Compounding
-- Skaffen OODARC FSM: `/home/mk/projects/Sylveste/os/Skaffen/internal/agent/phase.go`
-- Skaffen evidence: `/home/mk/projects/Sylveste/os/Skaffen/internal/evidence/emitter.go`
-- Interlab state model: `/home/mk/projects/Sylveste/interverse/interlab/internal/experiment/state.go`
-- Session prompt: `/home/mk/projects/Sylveste/os/Skaffen/internal/session/prompt_session.go`
+- Skaffen OODARC FSM: `os/Skaffen/internal/agent/phase.go`
+- Skaffen evidence: `os/Skaffen/internal/evidence/emitter.go`
+- Interlab state model: `interverse/interlab/internal/experiment/state.go`
+- Session prompt: `os/Skaffen/internal/session/prompt_session.go`
 
 ### Observability
 - Fleet registry: `core/fleet-registry/` (schema location)
-- Beads backup: `/home/mk/projects/Sylveste/.beads/backup/`
-- Interstat: `/home/mk/projects/Sylveste/interverse/interstat/scripts/cost-query.sh`
+- Beads backup: `.beads/backup/`
+- Interstat: `interverse/interstat/scripts/cost-query.sh`
 - Cass: `~/.local/bin/cass` (v0.2.0+)
 
 ### Plugin Evolution
-- Interlab `/autoresearch`: `/home/mk/projects/Sylveste/interverse/interlab/skills/autoresearch/SKILL.md`
-- Interskill audit: `/home/mk/projects/Sylveste/interverse/interskill/skills/audit/SKILL.md`
-- Intertrust: `/home/mk/projects/Sylveste/interverse/intertrust/`
-- Interpub pipeline: `/home/mk/projects/Sylveste/interverse/interpub/`
+- Interlab `/autoresearch`: `interverse/interlab/skills/autoresearch/SKILL.md`
+- Interskill audit: `interverse/interskill/skills/audit/SKILL.md`
+- Intertrust: `interverse/intertrust/`
+- Interpub pipeline: `interverse/interpub/`
 - Structural tests: `tests/structural/test_structure.py` per plugin
 
 ---

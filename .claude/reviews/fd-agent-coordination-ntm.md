@@ -1,7 +1,7 @@
 # NTM Agent Coordination: Competitive Analysis for Sylveste
 
 **Date:** 2026-02-22
-**Scope:** `/home/mk/projects/Sylveste/research/ntm/internal/` -- coordinator, swarm, ensemble, supervisor, agentmail, handoff, scheduler, assignment, pipeline, workflow, approval, policy modules
+**Scope:** `research/ntm/internal/` -- coordinator, swarm, ensemble, supervisor, agentmail, handoff, scheduler, assignment, pipeline, workflow, approval, policy modules
 **Purpose:** Identify coordination patterns worth adopting to strengthen Sylveste's Intercore kernel, interlock, intermux, and agent-mail systems.
 
 ---

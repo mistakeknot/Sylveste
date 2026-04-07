@@ -295,21 +295,21 @@ This data feeds the intertrust scoring system -- agents that produce quality imp
 
 | File | Relevance |
 |------|-----------|
-| `/home/mk/projects/Sylveste/interverse/interlab/internal/experiment/state.go` | Campaign state model, circuit breaker, JSONL persistence |
-| `/home/mk/projects/Sylveste/interverse/interlab/internal/orchestration/plan.go` | Multi-campaign planning, file conflict detection |
-| `/home/mk/projects/Sylveste/interverse/interlab/skills/autoresearch/SKILL.md` | Single-campaign experiment loop protocol |
-| `/home/mk/projects/Sylveste/interverse/interlab/skills/autoresearch-multi/SKILL.md` | Multi-campaign orchestration protocol |
-| `/home/mk/projects/Sylveste/interverse/interlab/docs/interlab-vision.md` | Interlab roadmap -- agent self-improvement is v0.5-0.6 target |
-| `/home/mk/projects/Sylveste/interverse/interskill/skills/audit/SKILL.md` | 19-point skill quality audit checklist |
-| `/home/mk/projects/Sylveste/interverse/intertrust/CLAUDE.md` | Agent trust scoring (severity-weighted, time-decayed) |
-| `/home/mk/projects/Sylveste/interverse/intercheck/CLAUDE.md` | PostToolUse syntax and format checks |
-| `/home/mk/projects/Sylveste/interverse/interpub/CLAUDE.md` | Publish pipeline (`ic publish`) |
-| `/home/mk/projects/Sylveste/agents/plugin-publishing.md` | Publish gate, version bumping, ecosystem diagram |
-| `/home/mk/projects/Sylveste/interverse/interlab/tests/structural/test_structure.py` | Example structural test suite (13 tests) |
-| `/home/mk/projects/Sylveste/interverse/intercheck/tests/structural/test_structure.py` | Example structural test suite (6 tests) |
-| `/home/mk/projects/Sylveste/PHILOSOPHY.md` | Trust ladder, Goodhart resistance, Gridfire vision, anti-gaming |
-| `/home/mk/projects/Sylveste/CLAUDE.md` | Trust boundary security section |
-| `/home/mk/projects/Sylveste/interverse/interlock/.claude-plugin/plugin.json` | Example plugin manifest (MCP server, skills, commands) |
+| `interverse/interlab/internal/experiment/state.go` | Campaign state model, circuit breaker, JSONL persistence |
+| `interverse/interlab/internal/orchestration/plan.go` | Multi-campaign planning, file conflict detection |
+| `interverse/interlab/skills/autoresearch/SKILL.md` | Single-campaign experiment loop protocol |
+| `interverse/interlab/skills/autoresearch-multi/SKILL.md` | Multi-campaign orchestration protocol |
+| `interverse/interlab/docs/interlab-vision.md` | Interlab roadmap -- agent self-improvement is v0.5-0.6 target |
+| `interverse/interskill/skills/audit/SKILL.md` | 19-point skill quality audit checklist |
+| `interverse/intertrust/CLAUDE.md` | Agent trust scoring (severity-weighted, time-decayed) |
+| `interverse/intercheck/CLAUDE.md` | PostToolUse syntax and format checks |
+| `interverse/interpub/CLAUDE.md` | Publish pipeline (`ic publish`) |
+| `agents/plugin-publishing.md` | Publish gate, version bumping, ecosystem diagram |
+| `interverse/interlab/tests/structural/test_structure.py` | Example structural test suite (13 tests) |
+| `interverse/intercheck/tests/structural/test_structure.py` | Example structural test suite (6 tests) |
+| `PHILOSOPHY.md` | Trust ladder, Goodhart resistance, Gridfire vision, anti-gaming |
+| `CLAUDE.md` | Trust boundary security section |
+| `interverse/interlock/.claude-plugin/plugin.json` | Example plugin manifest (MCP server, skills, commands) |
 
 ---
 

@@ -1,12 +1,12 @@
 # fd-doc-hierarchy-blast-radius-interlore
 
-Review of Task 1 (doc hierarchy migration) from `/home/mk/projects/Sylveste/docs/plans/2026-03-21-interlore.md`.
+Review of Task 1 (doc hierarchy migration) from `docs/plans/2026-03-21-interlore.md`.
 
 ---
 
 ## P0: MISSION.md in plugin-standard.md makes 48 plugins non-conformant
 
-**File:** `/home/mk/projects/Sylveste/docs/canon/plugin-standard.md` (line 118-145, AGENTS.md Standard Header)
+**File:** `docs/canon/plugin-standard.md` (line 118-145, AGENTS.md Standard Header)
 
 **What the plan says:** Step 4 instructs "add MISSION.md alongside PHILOSOPHY.md in the canonical references" in the AGENTS.md Standard Header section of plugin-standard.md.
 
@@ -22,7 +22,7 @@ Review of Task 1 (doc hierarchy migration) from `/home/mk/projects/Sylveste/docs
 
 ## P1: PHILOSOPHY.md "trim" is underspecified -- duplication risk
 
-**Files:** `/home/mk/projects/Sylveste/PHILOSOPHY.md` (lines 1-5), `/home/mk/projects/Sylveste/MISSION.md` (to be created)
+**Files:** `PHILOSOPHY.md` (lines 1-5), `MISSION.md` (to be created)
 
 **What the plan says:** Step 2 replaces PHILOSOPHY.md's opening with: "The design bets, tradeoffs, and principles that guide how we build. See MISSION.md for why this project exists."
 
@@ -43,7 +43,7 @@ CLAUDE.md says *how to work here*. AGENTS.md says *what to build and how*. This 
 
 ## P1: VISION.md is a dangling reference in the hierarchy diagram
 
-**File:** `/home/mk/projects/Sylveste/docs/canon/doc-structure.md` (proposed new content, plan lines 78-110)
+**File:** `docs/canon/doc-structure.md` (proposed new content, plan lines 78-110)
 
 **What the plan says:** The new hierarchy diagram (plan line 85) shows:
 ```
@@ -54,7 +54,7 @@ MISSION.md       -- why the project exists (rarely changes)
 
 And the table (plan line 93) says: "VISION.md | Quarterly | Human, interpath drafts".
 
-**Actual state:** There is no `VISION.md` at the project root. The existing document is at `/home/mk/projects/Sylveste/docs/sylveste-vision.md`. The parenthetical "(existing: docs/sylveste-vision.md)" is documentation, not a task step. No step in Task 1 (or any other task) creates `VISION.md` or creates a symlink/alias from `VISION.md` to `docs/sylveste-vision.md`.
+**Actual state:** There is no `VISION.md` at the project root. The existing document is at `docs/sylveste-vision.md`. The parenthetical "(existing: docs/sylveste-vision.md)" is documentation, not a task step. No step in Task 1 (or any other task) creates `VISION.md` or creates a symlink/alias from `VISION.md` to `docs/sylveste-vision.md`.
 
 **Failure scenario:** After Task 1, doc-structure.md declares VISION.md as part of the root hierarchy. Any agent reading the hierarchy and trying to `Read VISION.md` at the project root will get a file-not-found error. The conflict resolution rule (plan line 96: "MISSION.md takes precedence when VISION and PHILOSOPHY conflict") references a document that does not exist at the declared path.
 
@@ -64,7 +64,7 @@ And the table (plan line 93) says: "VISION.md | Quarterly | Human, interpath dra
 
 ## P2: doc-structure.md line numbers are correct but replacement scope is ambiguous
 
-**File:** `/home/mk/projects/Sylveste/docs/canon/doc-structure.md`
+**File:** `docs/canon/doc-structure.md`
 
 **Current lines 76-87:**
 ```

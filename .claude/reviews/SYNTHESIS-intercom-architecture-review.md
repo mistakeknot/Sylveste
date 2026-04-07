@@ -53,11 +53,11 @@ The architecture exhibits **high structural fragmentation**: dual database write
 **Convergence:** 2/5 agents, acknowledged by both as same root cause
 
 **Files:**
-- `/home/mk/projects/Sylveste/apps/intercom/src/index.ts:67-89` (registerGroup)
-- `/home/mk/projects/Sylveste/apps/intercom/src/db.ts:686-703` (setRegisteredGroup — SQLite only)
-- `/home/mk/projects/Sylveste/apps/intercom/src/ipc.ts:400-431` (register_group IPC handler)
-- `/home/mk/projects/Sylveste/apps/intercom/rust/intercomd/src/main.rs:253-277` (Rust loads from Postgres at startup)
-- `/home/mk/projects/Sylveste/apps/intercom/rust/intercomd/src/process_group.rs:98-104` (group lookup)
+- `apps/intercom/src/index.ts:67-89` (registerGroup)
+- `apps/intercom/src/db.ts:686-703` (setRegisteredGroup — SQLite only)
+- `apps/intercom/src/ipc.ts:400-431` (register_group IPC handler)
+- `apps/intercom/rust/intercomd/src/main.rs:253-277` (Rust loads from Postgres at startup)
+- `apps/intercom/rust/intercomd/src/process_group.rs:98-104` (group lookup)
 
 **Issue:**
 
@@ -85,8 +85,8 @@ The Rust daemon loads groups from Postgres at startup and caches them in `Arc<Rw
 **Convergence:** 2/5 agents, identical findings
 
 **Files:**
-- `/home/mk/projects/Sylveste/apps/intercom/rust/intercomd/src/queue.rs:424-441` (deferred retry task)
-- `/home/mk/projects/Sylveste/apps/intercom/src/group-queue.ts:287-291` (Node implementation for comparison)
+- `apps/intercom/rust/intercomd/src/queue.rs:424-441` (deferred retry task)
+- `apps/intercom/src/group-queue.ts:287-291` (Node implementation for comparison)
 
 **Issue:**
 
@@ -123,8 +123,8 @@ The `reset_group` and `drain_pending` calls at lines 454-455 execute **immediate
 **Convergence:** 2/5 agents, convergence on root cause
 
 **Files:**
-- `/home/mk/projects/Sylveste/apps/intercom/rust/intercomd/src/queue.rs:459-503` (drain_pending)
-- `/home/mk/projects/Sylveste/apps/intercom/src/group-queue.ts:294-318` (Node's drainGroup for comparison)
+- `apps/intercom/rust/intercomd/src/queue.rs:459-503` (drain_pending)
+- `apps/intercom/src/group-queue.ts:294-318` (Node's drainGroup for comparison)
 
 **Issue:**
 
@@ -157,10 +157,10 @@ The Node version (`drainGroup` line 294-318) explicitly checks `pendingTasks.len
 **Convergence:** 1/5 agents, but affects 5 critical methods
 
 **Files:**
-- `/home/mk/projects/Sylveste/apps/intercom/rust/intercomd/src/queue.rs:236` (register_process definition)
-- `/home/mk/projects/Sylveste/apps/intercom/rust/intercomd/src/process_group.rs` (message path, never calls register_process)
-- `/home/mk/projects/Sylveste/apps/intercom/rust/intercomd/src/scheduler_wiring.rs` (task path, never calls register_process)
-- `/home/mk/projects/Sylveste/apps/intercom/src/container-runner.ts:356` (Node calls onProcess)
+- `apps/intercom/rust/intercomd/src/queue.rs:236` (register_process definition)
+- `apps/intercom/rust/intercomd/src/process_group.rs` (message path, never calls register_process)
+- `apps/intercom/rust/intercomd/src/scheduler_wiring.rs` (task path, never calls register_process)
+- `apps/intercom/src/container-runner.ts:356` (Node calls onProcess)
 
 **Issue:**
 
@@ -190,10 +190,10 @@ Result: Every container spawned by Rust has:
 **Convergence:** 1/5 agents, but affects security model
 
 **Files:**
-- `/home/mk/projects/Sylveste/apps/intercom/src/ipc.ts:45-198` (Node IPC watcher)
-- `/home/mk/projects/Sylveste/apps/intercom/rust/intercomd/src/ipc.rs:234-258` (Rust IPC watcher)
-- `/home/mk/projects/Sylveste/apps/intercom/src/ipc.ts:79-82` (Node message authorization)
-- `/home/mk/projects/Sylveste/apps/intercom/rust/intercomd/src/ipc.rs:279` (Rust message authorization)
+- `apps/intercom/src/ipc.ts:45-198` (Node IPC watcher)
+- `apps/intercom/rust/intercomd/src/ipc.rs:234-258` (Rust IPC watcher)
+- `apps/intercom/src/ipc.ts:79-82` (Node message authorization)
+- `apps/intercom/rust/intercomd/src/ipc.rs:279` (Rust message authorization)
 
 **Issue:**
 
@@ -227,8 +227,8 @@ A file could be processed by either poller depending on timing, and different au
 **Convergence:** 1/5 agents, critical security gap
 
 **Files:**
-- `/home/mk/projects/Sylveste/apps/intercom/rust/intercomd/src/ipc.rs:308-329` (process_tasks)
-- `/home/mk/projects/Sylveste/apps/intercom/rust/intercomd/src/ipc.rs:66` (IpcDelegate trait)
+- `apps/intercom/rust/intercomd/src/ipc.rs:308-329` (process_tasks)
+- `apps/intercom/rust/intercomd/src/ipc.rs:66` (IpcDelegate trait)
 
 **Issue:**
 
@@ -253,8 +253,8 @@ A non-main container could execute all task operations against any group.
 **Convergence:** 1/5 agents, but affects durability
 
 **Files:**
-- `/home/mk/projects/Sylveste/apps/intercom/rust/intercom-core/src/persistence.rs:1241` (claim_outbox_rows)
-- `/home/mk/projects/Sylveste/apps/intercom/rust/intercom-core/src/persistence.rs:1296-1311` (mark_outbox_retry)
+- `apps/intercom/rust/intercom-core/src/persistence.rs:1241` (claim_outbox_rows)
+- `apps/intercom/rust/intercom-core/src/persistence.rs:1296-1311` (mark_outbox_retry)
 
 **Issue:**
 
@@ -286,8 +286,8 @@ The row is now:
 **Convergence:** 1/5 agents
 
 **Files:**
-- `/home/mk/projects/Sylveste/apps/intercom/rust/intercomd/src/ipc.rs:694-750` (sync_registry_loop)
-- `/home/mk/projects/Sylveste/apps/intercom/rust/intercomd/src/ipc.rs:578-583` (is_authorized_target)
+- `apps/intercom/rust/intercomd/src/ipc.rs:694-750` (sync_registry_loop)
+- `apps/intercom/rust/intercomd/src/ipc.rs:578-583` (is_authorized_target)
 
 **Issue:**
 
@@ -321,8 +321,8 @@ If Rust's IPC poller picks up a message from the new group before the next 10-se
 **Convergence:** 1/5 agents, shared by both Node and Rust
 
 **Files:**
-- `/home/mk/projects/Sylveste/apps/intercom/src/container-runner.ts:291-293` (Node)
-- `/home/mk/projects/Sylveste/apps/intercom/rust/intercomd/src/container/secrets.rs:153-159` (Rust)
+- `apps/intercom/src/container-runner.ts:291-293` (Node)
+- `apps/intercom/rust/intercomd/src/container/secrets.rs:153-159` (Rust)
 
 **Issue:**
 
@@ -360,8 +360,8 @@ Results in: `--mount type=tmpfs,destination=/workspace/extra/foo/../../etc` → 
 **Convergence:** 1/5 agents, but affects both implementations
 
 **Files:**
-- `/home/mk/projects/Sylveste/apps/intercom/rust/intercomd/src/container/runner.rs:33,145-147` (Rust: DEFAULT_TIMEOUT_MS=300s, idle=1800s)
-- `/home/mk/projects/Sylveste/apps/intercom/src/config.ts:118` (Node: CONTAINER_TIMEOUT=1800s)
+- `apps/intercom/rust/intercomd/src/container/runner.rs:33,145-147` (Rust: DEFAULT_TIMEOUT_MS=300s, idle=1800s)
+- `apps/intercom/src/config.ts:118` (Node: CONTAINER_TIMEOUT=1800s)
 
 **Issue:**
 
@@ -390,8 +390,8 @@ If someone reduces `idle_timeout_ms` for testing (e.g., to 60 seconds), the hard
 **Convergence:** 1/5 agents, divergent behavior
 
 **Files:**
-- `/home/mk/projects/Sylveste/apps/intercom/rust/intercomd/src/container/mounts.rs:169-189` (Rust)
-- `/home/mk/projects/Sylveste/apps/intercom/src/mount-security.ts:249-257` (Node)
+- `apps/intercom/rust/intercomd/src/container/mounts.rs:169-189` (Rust)
+- `apps/intercom/src/mount-security.ts:249-257` (Node)
 
 **Issue:**
 
@@ -413,7 +413,7 @@ An operator cannot tell which specific mounts were dropped in Rust, making troub
 **Convergence:** 1/5 agent
 
 **Files:**
-- `/home/mk/projects/Sylveste/apps/intercom/src/mount-security.ts:22-24,62-65` (module-level cache)
+- `apps/intercom/src/mount-security.ts:22-24,62-65` (module-level cache)
 
 **Issue:**
 
@@ -440,8 +440,8 @@ If an operator creates the allowlist file after Node starts, mounts remain block
 **Convergence:** 1/5 agents
 
 **Files:**
-- `/home/mk/projects/Sylveste/apps/intercom/src/db.ts:621-625` (setSession)
-- `/home/mk/projects/Sylveste/apps/intercom/src/index.ts:128-151` (clearGroupSession)
+- `apps/intercom/src/db.ts:621-625` (setSession)
+- `apps/intercom/src/index.ts:128-151` (clearGroupSession)
 
 **Issue:**
 
@@ -469,8 +469,8 @@ If Node clears a session, Postgres and Rust's in-memory cache retain the old ses
 **Convergence:** 1/5 agents, but critical for P0 fix
 
 **Files:**
-- `/home/mk/projects/Sylveste/apps/intercom/rust/intercomd/src/db.rs:524-536` (set_registered_group handler)
-- `/home/mk/projects/Sylveste/apps/intercom/rust/intercomd/src/main.rs:494` (db_routes use Option<PgPool>, not AppState)
+- `apps/intercom/rust/intercomd/src/db.rs:524-536` (set_registered_group handler)
+- `apps/intercom/rust/intercomd/src/main.rs:494` (db_routes use Option<PgPool>, not AppState)
 
 **Issue:**
 
@@ -496,8 +496,8 @@ The DB routes nest uses `Option<PgPool>` as state, not the full `AppState`. When
 **Convergence:** 1/5 agent
 
 **Files:**
-- `/home/mk/projects/Sylveste/apps/intercom/src/ipc.ts:322-374` (pause_task, resume_task, cancel_task handlers)
-- `/home/mk/projects/Sylveste/apps/intercom/src/db.ts:506-551` (updateTask, deleteTask)
+- `apps/intercom/src/ipc.ts:322-374` (pause_task, resume_task, cancel_task handlers)
+- `apps/intercom/src/db.ts:506-551` (updateTask, deleteTask)
 
 **Issue:**
 
@@ -523,7 +523,7 @@ Task status changes (pause, resume, cancel) via Node IPC write only to SQLite. T
 **Convergence:** 1/5 agent
 
 **Files:**
-- `/home/mk/projects/Sylveste/apps/intercom/rust/intercom-core/src/persistence.rs:1296-1311` (mark_outbox_retry)
+- `apps/intercom/rust/intercom-core/src/persistence.rs:1296-1311` (mark_outbox_retry)
 
 **Issue:**
 
@@ -688,30 +688,30 @@ Both Node and Rust poll `data/ipc/` on 1-second intervals. For messages, they ap
 
 ### Must-Fix (Tier 1 + P1-E, P1-G)
 
-1. `/home/mk/projects/Sylveste/apps/intercom/rust/intercomd/src/queue.rs`
+1. `apps/intercom/rust/intercomd/src/queue.rs`
    - Lines 424-441: Fix retry deferred flag (P0-B)
    - Lines 459-503: Fix drain_pending task dispatch (P1-A)
 
-2. `/home/mk/projects/Sylveste/apps/intercom/src/index.ts`
+2. `apps/intercom/src/index.ts`
    - Lines 67-89: Add dual-write to registerGroup (P0-A)
    - Lines 260-266: Add dual-write to /model command (P0-A)
 
-3. `/home/mk/projects/Sylveste/apps/intercom/rust/intercomd/src/process_group.rs`
+3. `apps/intercom/rust/intercomd/src/process_group.rs`
    - Before run_container_agent: Call register_process (P1-B)
 
-4. `/home/mk/projects/Sylveste/apps/intercom/rust/intercomd/src/scheduler_wiring.rs`
+4. `apps/intercom/rust/intercomd/src/scheduler_wiring.rs`
    - Before run_container_agent: Call register_process (P1-B)
 
-5. `/home/mk/projects/Sylveste/apps/intercom/rust/intercom-core/src/persistence.rs`
+5. `apps/intercom/rust/intercom-core/src/persistence.rs`
    - Lines 1296-1311: Check attempts >= 5 in mark_outbox_retry (P1-E)
    - Lines 1241: Consider transient failure handling for zombie rows
 
-6. `/home/mk/projects/Sylveste/apps/intercom/src/container-runner.ts` & `/home/mk/projects/Sylveste/apps/intercom/rust/intercomd/src/container/secrets.rs`
+6. `apps/intercom/src/container-runner.ts` & `apps/intercom/rust/intercomd/src/container/secrets.rs`
    - Validate exclude values (P1-G)
 
 ### Should-Fix (Tier 2 Architecture)
 
-7. `/home/mk/projects/Sylveste/apps/intercom/rust/intercomd/src/ipc.rs`
+7. `apps/intercom/rust/intercomd/src/ipc.rs`
    - Add task authorization (P1-D)
    - Reduce registry staleness (P1-F)
    - Architectural decision: exclusive poller vs. separate directories (P1-C)

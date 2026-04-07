@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-19
 **Reviewers:** 6 agents (token-schema-integrity, mcp-tool-surface, merkle-exclusion-strategy, multiparty-topology, conflict-resolution-boundary, safety-attp)
-**Source:** `/home/mk/projects/Sylveste/docs/brainstorms/2026-03-19-attp-interweave-brainstorm.md`
+**Source:** `docs/brainstorms/2026-03-19-attp-interweave-brainstorm.md`
 
 ---
 

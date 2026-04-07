@@ -1,6 +1,6 @@
 # NTM Safety & Observability Patterns - Analysis for Sylveste
 
-**Source:** `/home/mk/projects/Sylveste/research/ntm/internal/`
+**Source:** `research/ntm/internal/`
 **Date:** 2026-02-22
 **Scope:** Safety, observability, cost tracking, audit, privacy, context management, resilience
 

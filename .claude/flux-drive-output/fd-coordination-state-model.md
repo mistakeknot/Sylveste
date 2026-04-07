@@ -17,9 +17,9 @@ The ANALYSIS.md proposes replacing interlock's file-based reservation system wit
 
 Interlock is NOT file-based. It is an HTTP API backed by SQLite:
 
-- `/home/mk/projects/Sylveste/core/intermute/internal/storage/sqlite/sqlite.go` — SQLite with pure Go driver (no CGO), embedded schema, migration chain
-- `/home/mk/projects/Sylveste/core/intermute/internal/storage/sqlite/resilient.go` — `ResilientStore` wrapping every operation with `CircuitBreaker + RetryOnDBLock`
-- `/home/mk/projects/Sylveste/interverse/interlock/internal/client/client.go` — HTTP client connecting to intermute at `127.0.0.1:7338` or via Unix socket
+- `core/intermute/internal/storage/sqlite/sqlite.go` — SQLite with pure Go driver (no CGO), embedded schema, migration chain
+- `core/intermute/internal/storage/sqlite/resilient.go` — `ResilientStore` wrapping every operation with `CircuitBreaker + RetryOnDBLock`
+- `interverse/interlock/internal/client/client.go` — HTTP client connecting to intermute at `127.0.0.1:7338` or via Unix socket
 
 The reservation model (`Reserve`, `CheckConflicts`, `ReleaseReservation`, `SweepExpired`) is a centralized lock manager with TTL-based expiration. This is fundamentally a single-writer problem on a single machine. CRDTs solve multi-writer convergence across network partitions — a problem Sylveste does not have.
 
@@ -33,7 +33,7 @@ The only documented failure in interlock is intermute being unavailable (`"inter
 
 ### The Real Problem
 
-The sweeper in `/home/mk/projects/Sylveste/core/intermute/internal/storage/sqlite/sweeper.go` runs a background goroutine with TTL-based cleanup. If intermute crashes and restarts, reservations survive in SQLite and the sweeper resumes cleanup. This is correct behavior. The issue is when intermute is not running at all — then interlock falls back to polling an unreachable HTTP server. This is a process supervision problem, not a CRDT problem.
+The sweeper in `core/intermute/internal/storage/sqlite/sweeper.go` runs a background goroutine with TTL-based cleanup. If intermute crashes and restarts, reservations survive in SQLite and the sweeper resumes cleanup. This is correct behavior. The issue is when intermute is not running at all — then interlock falls back to polling an unreachable HTTP server. This is a process supervision problem, not a CRDT problem.
 
 ---
 
@@ -62,7 +62,7 @@ The problem chain is:
 3. `bd` commands hang trying to connect to the zombie server
 4. Recovery requires: kill zombie, kill dolt servers, re-init from JSONL backup
 
-This is documented in `/home/mk/projects/Sylveste/.beads/recover.sh` (lines 12-21):
+This is documented in `.beads/recover.sh` (lines 12-21):
 ```bash
 # 1. Kill all idle-monitors across all projects
 ps aux | grep "bd dolt idle-monitor" | grep -v grep | awk '{print $2}' | xargs -r kill
@@ -77,11 +77,11 @@ The zombie problem is in the Dolt process manager, not in the state model. Repla
 
 Instead of CRDTs, consider:
 
-1. **Make beads state queryable without a running server.** The JSONL backup (`/home/mk/projects/Sylveste/.beads/backup/issues.jsonl`) is already the recovery fallback. Make it the primary read path for `bd state` and `bd show`. Reserve the Dolt server for writes only. This eliminates the "query hangs on zombie" failure mode.
+1. **Make beads state queryable without a running server.** The JSONL backup (`.beads/backup/issues.jsonl`) is already the recovery fallback. Make it the primary read path for `bd state` and `bd show`. Reserve the Dolt server for writes only. This eliminates the "query hangs on zombie" failure mode.
 
 2. **Add a health-check wrapper to `bd` invocations.** In `clavain-cli` (`claim.go` lines 214-215), the `runBD("state", beadID, "claimed_by")` call can hang if the Dolt server is zombied. Add a 2-second timeout and fall back to JSONL parsing.
 
-3. **Make claim state dual-write.** Write `claimed_by` and `claimed_at` to both Dolt and a flat file (e.g., `.beads/claims/<bead_id>.json`). The flat file survives Dolt crashes. The close-and-sync script (`/home/mk/projects/Sylveste/.beads/close-and-sync.sh`) already does dual-write to JSONL — extend this pattern to claims.
+3. **Make claim state dual-write.** Write `claimed_by` and `claimed_at` to both Dolt and a flat file (e.g., `.beads/claims/<bead_id>.json`). The flat file survives Dolt crashes. The close-and-sync script (`.beads/close-and-sync.sh`) already does dual-write to JSONL — extend this pattern to claims.
 
 ---
 
@@ -104,7 +104,7 @@ intermute WebSocket  ->  SQLite (intermute)    ->  git (beads JSONL + code)
   real-time               immediate                 ~manual push
 ```
 
-The architecture at `/home/mk/projects/Sylveste/core/intermute/internal/ws/gateway.go` shows intermute already has a WebSocket gateway (`Broadcaster` interface used by the sweeper). This is the equivalent of GossipSub for a single machine — agents can subscribe to reservation events in real time.
+The architecture at `core/intermute/internal/ws/gateway.go` shows intermute already has a WebSocket gateway (`Broadcaster` interface used by the sweeper). This is the equivalent of GossipSub for a single machine — agents can subscribe to reservation events in real time.
 
 **What Sylveste is missing vs. Hyperspace:**
 
@@ -130,7 +130,7 @@ The architecture at `/home/mk/projects/Sylveste/core/intermute/internal/ws/gatew
 
 Loro's "no cold start" means: a new node reads the full CRDT state on connect. In Sylveste, the equivalent is:
 
-1. `cmdSprintFindActive` in `/home/mk/projects/Sylveste/os/Clavain/cmd/clavain-cli/sprint.go` (line 228) queries intercore for active runs
+1. `cmdSprintFindActive` in `os/Clavain/cmd/clavain-cli/sprint.go` (line 228) queries intercore for active runs
 2. For each run, it checks `isBeadClosed` and auto-cancels stale runs (line 261-263)
 3. It resolves titles from `bd show` (line 271)
 
@@ -232,7 +232,7 @@ For non-code artifacts that Sylveste agents produce (experiment results, brainst
 
 ### Analysis
 
-The negotiation protocol in `/home/mk/projects/Sylveste/interverse/interlock/internal/tools/tools.go` implements a 4-phase protocol:
+The negotiation protocol in `interverse/interlock/internal/tools/tools.go` implements a 4-phase protocol:
 
 1. **negotiate_release** (line 448): Send release request with urgency + optional blocking wait
 2. **respond_to_release** (line 607): Holder acknowledges (release) or defers with ETA
@@ -284,16 +284,16 @@ This avoids the 10-minute normal timeout for agents that have already crashed. T
 
 ## Key Codebase References
 
-- Interlock MCP tools: `/home/mk/projects/Sylveste/interverse/interlock/internal/tools/tools.go`
-- Interlock HTTP client: `/home/mk/projects/Sylveste/interverse/interlock/internal/client/client.go`
-- Intermute SQLite storage: `/home/mk/projects/Sylveste/core/intermute/internal/storage/sqlite/sqlite.go`
-- Intermute resilience layer: `/home/mk/projects/Sylveste/core/intermute/internal/storage/sqlite/resilient.go`
-- Intermute sweeper (TTL cleanup): `/home/mk/projects/Sylveste/core/intermute/internal/storage/sqlite/sweeper.go`
-- Clavain claim logic: `/home/mk/projects/Sylveste/os/Clavain/cmd/clavain-cli/claim.go`
-- Clavain sprint management: `/home/mk/projects/Sylveste/os/Clavain/cmd/clavain-cli/sprint.go`
-- Clavain routing: `/home/mk/projects/Sylveste/os/Clavain/scripts/lib-routing.sh`
-- Beads recovery script: `/home/mk/projects/Sylveste/.beads/recover.sh`
-- Beads close-and-sync: `/home/mk/projects/Sylveste/.beads/close-and-sync.sh`
-- Beads push (Dolt): `/home/mk/projects/Sylveste/.beads/push.sh`
-- Hyperspace analysis: `/home/mk/projects/Sylveste/research/agi-hyperspace/ANALYSIS.md`
-- Hyperspace README: `/home/mk/projects/Sylveste/research/agi-hyperspace/README.md`
+- Interlock MCP tools: `interverse/interlock/internal/tools/tools.go`
+- Interlock HTTP client: `interverse/interlock/internal/client/client.go`
+- Intermute SQLite storage: `core/intermute/internal/storage/sqlite/sqlite.go`
+- Intermute resilience layer: `core/intermute/internal/storage/sqlite/resilient.go`
+- Intermute sweeper (TTL cleanup): `core/intermute/internal/storage/sqlite/sweeper.go`
+- Clavain claim logic: `os/Clavain/cmd/clavain-cli/claim.go`
+- Clavain sprint management: `os/Clavain/cmd/clavain-cli/sprint.go`
+- Clavain routing: `os/Clavain/scripts/lib-routing.sh`
+- Beads recovery script: `.beads/recover.sh`
+- Beads close-and-sync: `.beads/close-and-sync.sh`
+- Beads push (Dolt): `.beads/push.sh`
+- Hyperspace analysis: `research/agi-hyperspace/ANALYSIS.md`
+- Hyperspace README: `research/agi-hyperspace/README.md`

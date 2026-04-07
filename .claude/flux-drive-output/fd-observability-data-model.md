@@ -112,7 +112,7 @@ Every hour, a node publishes `snapshots/latest.json` -- the full CRDT leaderboar
 
 ### What Sylveste Already Has
 
-Beads backup (`/home/mk/projects/Sylveste/.beads/backup/`) produces JSONL exports of issues (952 records, 1.1MB), events (2007 records, 512KB), dependencies (514 records), and labels (302 records). The `backup_state.json` records the last Dolt commit hash, event ID, timestamp, and counts.
+Beads backup (`.beads/backup/`) produces JSONL exports of issues (952 records, 1.1MB), events (2007 records, 512KB), dependencies (514 records), and labels (302 records). The `backup_state.json` records the last Dolt commit hash, event ID, timestamp, and counts.
 
 Interstat's `cost-query.sh baseline` produces a structured JSON snapshot:
 ```json

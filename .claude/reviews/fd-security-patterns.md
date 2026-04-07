@@ -1,7 +1,7 @@
 # Security Patterns: Hermes Agent Analysis for Sylveste Adaptation
 
 **Reviewer:** fd-security-patterns
-**Source:** `/home/mk/projects/Sylveste/research/hermes_agent/`
+**Source:** `research/hermes_agent/`
 **Date:** 2026-03-02
 **Decision lens:** Patterns that plug specific gaps not already covered by existing safety floors (lib-routing.sh) or interspect (hook_id allowlist, review_events schema).
 

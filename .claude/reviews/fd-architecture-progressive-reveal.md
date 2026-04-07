@@ -1,5 +1,5 @@
 # Architecture Review: Pollard Progressive Result Reveal
-**Plan:** `/home/mk/projects/Sylveste/docs/plans/2026-02-23-pollard-progressive-reveal.md`
+**Plan:** `docs/plans/2026-02-23-pollard-progressive-reveal.md`
 **Date:** 2026-02-23
 **Reviewer:** fd-architecture
 

@@ -122,7 +122,7 @@ func (a *AuditLog) VerifyIntegrity() error {
 - Intercheck code quality guards (redact before reporting)
 - Intermux activity feeds (redact before display)
 
-**Reference implementation exists:** Port `/home/mk/projects/Sylveste/research/ntm/internal/redaction/` directly as `core/redaction/` Go package.
+**Reference implementation exists:** Port `research/ntm/internal/redaction/` directly as `core/redaction/` Go package.
 
 ---
 
@@ -228,7 +228,7 @@ type Detector interface {
 
 **Why now:** Currently Autarch hardcodes colors. This pattern enables theme swapping without code changes.
 
-**Reference implementation:** Port `/home/mk/projects/Sylveste/research/ntm/internal/tui/theme/` to Autarch as `pkg/tui/theme/`.
+**Reference implementation:** Port `research/ntm/internal/tui/theme/` to Autarch as `pkg/tui/theme/`.
 
 ---
 
@@ -618,27 +618,27 @@ Clean step-by-step progress with automatic color/no-color fallback.
 **Files worth studying in ntm:** (Absolute paths)
 
 ### Coordination Infrastructure
-- `/home/mk/projects/Sylveste/research/ntm/internal/coordinator/assign.go` — Multi-factor scoring
-- `/home/mk/projects/Sylveste/research/ntm/internal/coordinator/coordinator.go` — Agent state machine
-- `/home/mk/projects/Sylveste/research/ntm/internal/handoff/transfer.go` — Reservation transfer
-- `/home/mk/projects/Sylveste/research/ntm/internal/approval/engine.go` — Approval workflow
-- `/home/mk/projects/Sylveste/research/ntm/internal/audit/logger.go` — Audit trail
-- `/home/mk/projects/Sylveste/research/ntm/internal/redaction/redaction.go` — Redaction engine
+- `research/ntm/internal/coordinator/assign.go` — Multi-factor scoring
+- `research/ntm/internal/coordinator/coordinator.go` — Agent state machine
+- `research/ntm/internal/handoff/transfer.go` — Reservation transfer
+- `research/ntm/internal/approval/engine.go` — Approval workflow
+- `research/ntm/internal/audit/logger.go` — Audit trail
+- `research/ntm/internal/redaction/redaction.go` — Redaction engine
 
 ### TUI Infrastructure
-- `/home/mk/projects/Sylveste/research/ntm/internal/tui/theme/theme.go` — Theme system
-- `/home/mk/projects/Sylveste/research/ntm/internal/tui/theme/semantic.go` — Semantic palette
-- `/home/mk/projects/Sylveste/research/ntm/internal/tui/layout/layout.go` — Layout tiers + hysteresis
-- `/home/mk/projects/Sylveste/research/ntm/internal/tui/styles/tokens.go` — Design tokens
-- `/home/mk/projects/Sylveste/research/ntm/internal/tui/styles/styles.go` — Shimmer/gradient rendering
-- `/home/mk/projects/Sylveste/research/ntm/internal/tui/icons/icons.go` — Icon fallback chain
+- `research/ntm/internal/tui/theme/theme.go` — Theme system
+- `research/ntm/internal/tui/theme/semantic.go` — Semantic palette
+- `research/ntm/internal/tui/layout/layout.go` — Layout tiers + hysteresis
+- `research/ntm/internal/tui/styles/tokens.go` — Design tokens
+- `research/ntm/internal/tui/styles/styles.go` — Shimmer/gradient rendering
+- `research/ntm/internal/tui/icons/icons.go` — Icon fallback chain
 
 ### Orchestration
-- `/home/mk/projects/Sylveste/research/ntm/internal/swarm/types.go` — SwarmPlan
-- `/home/mk/projects/Sylveste/research/ntm/internal/swarm/orchestrator.go` — Session creation
-- `/home/mk/projects/Sylveste/research/ntm/internal/swarm/auto_respawner.go` — Crash recovery
-- `/home/mk/projects/Sylveste/research/ntm/internal/context/monitor.go` — Context estimation
-- `/home/mk/projects/Sylveste/research/ntm/internal/context/predictor.go` — Exhaustion prediction
+- `research/ntm/internal/swarm/types.go` — SwarmPlan
+- `research/ntm/internal/swarm/orchestrator.go` — Session creation
+- `research/ntm/internal/swarm/auto_respawner.go` — Crash recovery
+- `research/ntm/internal/context/monitor.go` — Context estimation
+- `research/ntm/internal/context/predictor.go` — Exhaustion prediction
 
 ---
 

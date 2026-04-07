@@ -1,6 +1,6 @@
 # Quality & Style Review: Broadcast Confirmation Flow Plan
 **Date:** 2026-02-23
-**Plan:** `/home/mk/projects/Sylveste/apps/autarch/docs/plans/2026-02-23-broadcast-confirmation-flow.md`
+**Plan:** `apps/autarch/docs/plans/2026-02-23-broadcast-confirmation-flow.md`
 **Reviewer:** fd-quality (Flux-drive Quality & Style)
 **Scope:** Go, Bubble Tea TUI, internal/tui, internal/bigend/tmux
 
@@ -28,7 +28,7 @@ type mockRunner struct {
 }
 ```
 
-The existing test file in the same package is `/home/mk/projects/Sylveste/apps/autarch/internal/bigend/tmux/client_actions_test.go`, which defines:
+The existing test file in the same package is `apps/autarch/internal/bigend/tmux/client_actions_test.go`, which defines:
 
 ```go
 type fakeRunner struct {
