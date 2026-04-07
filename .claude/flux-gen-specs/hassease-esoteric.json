@@ -1,0 +1,112 @@
+[
+  {
+    "name": "fd-polynesian-wayfinding-star-compass-routing",
+    "focus": "Evaluate Hassease's multi-model routing strategy through the star compass (kaveinga) of Polynesian open-ocean wayfinding — navigating vast distances by continuously selecting from a repertoire of weak, shifting reference signals (star arcs, swell patterns, phosphorescence, bird flight lines) rather than relying on any single precise instrument.",
+    "persona": "A tautai (master navigator) in the Tongan kalia double-hull tradition, trained in the full kaveinga star compass system — routing voyages across 3000+ km of open Pacific by reading which celestial and oceanic signal is most reliable at this moment and switching to the next when it degrades.",
+    "decision_lens": "Kaveinga signal-switching — the navigator never commits to one reference system. Stars rotate out of useful arcs; swells shift with weather; clouds occlude. The art is continuously re-evaluating which available signal is cheapest-to-read while still adequate for the current leg, and switching without losing course memory.",
+    "review_areas": [
+      "Does Hassease's cost router continuously re-evaluate model selection per-turn, or does it lock a model at task start and ride it even when evidence suggests degradation (like navigating by a star that has rotated past its useful arc)?",
+      "Is there a concept of 'signal adequacy threshold' — the minimum model capability needed for the current specific subtask — distinct from general task complexity classification?",
+      "How does the router handle the dead-reckoning gap — when the cheap model's output cannot be verified until several turns later, how does it maintain course confidence without eagerly escalating?",
+      "Does the system preserve 'course memory' across model switches — when escalating from GLM to Claude mid-task, does Claude receive the full navigational context or just the current position?",
+      "Is there a concept of complementary signal integration — using one model's strength to verify another's output (like cross-referencing star bearing against swell direction) rather than treating models as interchangeable?"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P0",
+        "scenario": "Model lock-in during degradation",
+        "condition": "Router selects GLM at task start based on initial complexity assessment, then the task reveals cross-module dependencies mid-execution — but the router has no per-turn re-evaluation, so GLM produces cascading incorrect edits (like continuing to navigate by a star that has set below the horizon)"
+      },
+      {
+        "severity": "P1",
+        "scenario": "Course memory lost on model switch",
+        "condition": "When escalating from Qwen to Claude Sonnet mid-refactor, the context window only includes the current file state — Claude lacks the reasoning chain that led to earlier decisions, producing inconsistent edits (like a relief navigator who knows the destination but not the route taken so far)"
+      },
+      {
+        "severity": "P2",
+        "scenario": "No cross-model verification",
+        "condition": "GLM's edits are accepted or rejected in isolation — there is no mechanism for using a second model to spot-check the first model's output on uncertain turns (like navigating by stars alone without cross-referencing against swell patterns)"
+      }
+    ],
+    "success_hints": "The cost router should operate per-turn, not per-task. Each turn should re-assess which model is cheapest-adequate for the specific subtask at hand, with smooth context handoff on switches and optional cross-model verification for uncertain outputs.",
+    "task_context": "Hassease routes ~80% of work to cheap models (GLM 5.1, Qwen 3.6) and escalates to Claude for planning/review/complex work. The router's escalation triggers include low confidence, large edits, and multi-file dependencies. The kaveinga lens tests whether this routing is truly continuous and adaptive or merely a one-shot classification at task start.",
+    "anti_overlap": "Focuses on the continuous model-switching decision mechanism and context handoff — not on approval flow (Cham), not on intermediary trust architecture (Sogdian).",
+    "source_domain": "Polynesian celestial navigation (Tongan kaveinga star compass, pre-contact Pacific, 3000+ years of open-ocean voyaging tradition)",
+    "distance_rationale": "Pre-industrial non-Western navigation epistemology from the Pacific — a system that solved the exact problem of routing decisions across degrading, heterogeneous signal sources without instruments. No software architect would consult Polynesian wayfinding for model routing design.",
+    "expected_isomorphisms": "Star arc rotation maps to model capability degradation on specific subtasks. Swell cross-referencing maps to cross-model verification. Dead-reckoning legs map to multi-turn sequences between verifiable checkpoints. The kaveinga's continuous signal-switching maps directly to per-turn model re-selection. Course memory across navigator handoffs maps to context preservation across model escalation."
+  },
+  {
+    "name": "fd-cham-po-nagar-temple-intermediary-petition",
+    "focus": "Evaluate Hassease's human approval flow and intermediary architecture through the Po Nagar temple petition system of medieval Champa — where worshippers could not address the goddess directly but operated through a layered hierarchy of priestly intermediaries who filtered, translated, and batched petitions based on ritual category and urgency.",
+    "persona": "A senior halau jia (ritual intermediary priest) of the Po Nagar temple complex at Nha Trang, Champa kingdom (11th century CE), trained in the Shaivite-Austronesian syncretic tradition — managing the flow of petitions between worshippers and the divine through category-specific approval gates, ritual batching, and urgency triage.",
+    "decision_lens": "Intermediary petition triage — every request passes through a classification gate (what category of divine attention does this need?), an urgency gate (does this warrant interrupting the current ritual cycle or can it batch with the next scheduled ceremony?), and a translation gate (rewriting the petitioner's words into the ritual register the goddess accepts).",
+    "review_areas": [
+      "Does Hassease's approval flow classify tool calls by semantic category (read/search vs. edit vs. create vs. destroy) with different approval paths per category, or is it a flat approve/deny binary for all gated actions?",
+      "Is there a batching mechanism for approval requests — can multiple low-risk edits be grouped into a single human review rather than interrupting the builder for each individual change?",
+      "How does the system handle the 'translation fidelity' problem — when Hassease summarizes a proposed edit for Signal approval, does the summary faithfully represent what will actually happen, or can the translation lose critical details?",
+      "Is there an urgency triage mechanism — can the system distinguish between edits that need immediate human attention (touching auth code) vs. those that can queue until the next review batch?",
+      "Does the intermediary architecture preserve the petitioner's intent through the proxy chain — when GLM proposes an edit, Hassease translates it for Signal, human approves, and Hassease executes, does the executed action match what the human thought they were approving?",
+      "How does the system handle the 'closed temple' problem — when the human is unavailable for approval, does work queue gracefully or does the entire pipeline stall?"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P0",
+        "scenario": "Translation infidelity in approval summary",
+        "condition": "Hassease's Signal message says 'edit auth.py to add token refresh' but the actual proposed edit also removes an existing validation check — human approves based on incomplete translation, and the intermediary executes something the petitioner did not actually sanction"
+      },
+      {
+        "severity": "P1",
+        "scenario": "No approval batching — notification fatigue",
+        "condition": "Every single file edit sends a separate Signal message, even when 15 test file edits are part of one logical change — builder either rubber-stamps everything (defeating the approval purpose) or abandons the flow (like a worshipper who stops coming to temple because every minor request requires a full ritual)"
+      },
+      {
+        "severity": "P2",
+        "scenario": "No unavailability handling",
+        "condition": "When the builder doesn't respond to Signal for 30 minutes, the daemon has no queue/timeout/fallback — approved reads continue but the edit pipeline freezes entirely, with no way to batch pending approvals for when the builder returns"
+      }
+    ],
+    "success_hints": "The approval flow should have semantic categorization (not just tool-type gating), batching for related low-risk actions, faithful preview generation that a human can actually evaluate, urgency triage, and graceful degradation when the approver is unavailable.",
+    "task_context": "Hassease sends proposed edits to the builder via Signal for approval before execution. Auto-approve rules gate by tool type (reads always pass, edits require approval, bash always requires approval). The Po Nagar lens tests whether this intermediary layer is rich enough to handle real petition flow — batching, urgency, translation fidelity, and unavailability — or just a crude binary gate.",
+    "anti_overlap": "Focuses on the approval/intermediary/petition architecture — not on model routing decisions (Polynesian), not on trust boundary negotiation between intermediary networks (Sogdian).",
+    "source_domain": "Cham temple petition system (Po Nagar complex, Champa kingdom, 7th-15th century CE, Shaivite-Austronesian syncretic tradition)",
+    "distance_rationale": "A medieval Southeast Asian religious intermediary system from a civilization most software engineers have never heard of — Champa was destroyed by Dai Viet expansion and survives only in temple ruins and epigraphy. The petition-through-intermediary architecture maps to human-in-the-loop approval flow but from a completely alien cultural frame.",
+    "expected_isomorphisms": "Priestly intermediary hierarchy maps to the daemon-as-proxy between model and human. Petition categorization maps to tool-call classification. Ritual batching maps to approval request grouping. Translation between petitioner's vernacular and ritual register maps to edit-summary generation fidelity. Temple scheduling (ceremonies at fixed times) maps to approval availability windows. The closed-temple problem maps directly to human unavailability handling."
+  },
+  {
+    "name": "fd-sogdian-caravan-relay-trust-delegation",
+    "focus": "Evaluate Hassease's trust delegation and shared-package architecture through the Sogdian caravan relay network — a pre-Islamic Central Asian trading system where goods passed through dozens of independent intermediary merchants across the Silk Road, each operating under negotiated trust agreements with no central authority, using factoring houses to manage risk across the relay chain.",
+    "persona": "A sartpao (caravan master) of the Sogdian merchant diaspora network, operating from a factoring house in Samarkand (6th century CE), coordinating trade relays between Chang'an and Constantinople — managing trust delegation across independent agents who share common protocols but serve different masters and optimize for different margins.",
+    "decision_lens": "Relay trust factoring — goods (capabilities) pass through multiple independent intermediaries (shared packages), each of whom must be trusted with exactly the right scope of authority. Trust is not binary (trusted/untrusted) but graduated: this intermediary can repackage but not open, this one can inspect but not reroute, this one can hold but must forward within 3 days.",
+    "review_areas": [
+      "Does Hassease's trust evaluator support graduated trust levels per tool per context, or is it binary (auto-approve vs. require-human-approval) with no intermediate states?",
+      "When Hassease imports Skaffen's internal packages (OODARC, tool registry, trust evaluator), is the trust boundary well-defined — can Hassease use Skaffen's trust evaluator without inheriting Skaffen's autonomous trust level (like a relay merchant who borrows another's warehouse but not their trade agreements)?",
+      "Is there a concept of trust scope — can the same tool be trusted at different levels depending on the target (test files vs. auth files, like how the same merchant might be trusted with silk but not with gold)?",
+      "How does the system handle trust chain verification — when GLM proposes an edit that Hassease routes through Skaffen's tool registry for execution, does each link in the chain enforce its own trust constraints or does approval at one level bypass downstream checks?",
+      "Does the architecture account for trust renegotiation — can trust levels be adjusted at runtime based on accumulated evidence (successful edits increase trust, failed edits decrease it) without restarting the daemon?",
+      "Is there a factoring mechanism for risk — when a task spans multiple trust boundaries (read from one repo, edit another), does the system decompose the risk or evaluate it monolithically?"
+    ],
+    "severity_examples": [
+      {
+        "severity": "P0",
+        "scenario": "Trust inheritance from shared packages",
+        "condition": "Hassease imports Skaffen's trust evaluator configured for autonomous operation — Skaffen auto-approves edits because it is a sovereign agent, and Hassease inherits this trust level instead of enforcing its own human-directed approval gates (like a relay merchant inheriting another's trade agreements and accidentally committing to terms beyond their authority)"
+      },
+      {
+        "severity": "P1",
+        "scenario": "Binary trust with no contextual graduation",
+        "condition": "The trust evaluator classifies tools as either auto-approve or require-approval with no file-path or content-based modulation — editing a README and editing a cryptographic key handler require the same approval ceremony (like treating a shipment of cotton and a shipment of imperial silk with identical security protocols)"
+      },
+      {
+        "severity": "P2",
+        "scenario": "No trust evidence accumulation",
+        "condition": "GLM has successfully edited 50 test files without error, but every 51st test file edit still requires full human approval — the system has no mechanism for building trust based on track record (like requiring full cargo inspection at every relay station regardless of the merchant's 20-year perfect record)"
+      }
+    ],
+    "success_hints": "Trust should be graduated (not binary), context-sensitive (file path, content sensitivity), evidence-accumulating (track record matters), and explicitly scoped when importing shared packages — Hassease must override Skaffen's autonomous trust defaults with its own human-directed trust model.",
+    "task_context": "Hassease imports 8 shared packages from Skaffen (OODARC, tool registry, trust evaluator, provider interface, router, session persistence, MCP client, evidence). Skaffen is a sovereign agent that acts autonomously; Hassease is human-directed. The Sogdian lens tests whether the shared-package boundary properly scopes trust — whether Hassease can reuse Skaffen's machinery without inheriting Skaffen's authority level — and whether the trust evaluator itself is sophisticated enough for graduated, contextual, evidence-based trust decisions.",
+    "anti_overlap": "Focuses on trust delegation, shared-package boundaries, and graduated authority — not on model routing (Polynesian), not on approval flow mechanics (Cham).",
+    "source_domain": "Sogdian merchant relay network (Central Asian Silk Road trade, 4th-8th century CE, pre-Islamic Samarkand factoring house system)",
+    "distance_rationale": "A pre-Islamic Central Asian commercial trust system from a civilization that left almost no literary record — known primarily from Dunhuang letters, Mug Mountain documents, and numismatic evidence. The Sogdians invented relay-based trust delegation for long-distance trade centuries before banking or contract law. No software architect designing Go module boundaries would consult Silk Road merchant networks.",
+    "expected_isomorphisms": "Sogdian factoring houses map to Go package interfaces — shared infrastructure with scoped trust. Relay merchant chain maps to the GLM→Hassease→Skaffen-tools→execution pipeline. Graduated cargo trust (silk vs. gold) maps to file-sensitivity-based approval levels. Trust renegotiation based on merchant track record maps to evidence-based trust adjustment. The critical insight that borrowing someone's warehouse does not mean borrowing their trade agreements maps directly to the Skaffen shared-package trust boundary problem."
+  }
+]

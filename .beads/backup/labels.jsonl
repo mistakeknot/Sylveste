@@ -145,7 +145,7 @@
 {"issue_id":"sylveste-9lp.13","label":"claimed_at:1775506050"}
 {"issue_id":"sylveste-9lp.13","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-9lp.13","label":"interflux"}
-{"issue_id":"sylveste-9lp.14","label":"claimed_at:1775507967"}
+{"issue_id":"sylveste-9lp.14","label":"claimed_at:1775511735"}
 {"issue_id":"sylveste-9lp.14","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-9lp.14","label":"docs"}
 {"issue_id":"sylveste-9lp.14","label":"interflux"}
@@ -446,6 +446,12 @@
 {"issue_id":"sylveste-rsj.9","label":"artifact_reflection:docs/reflections/2026-03-31-discourse-fixative-reflect.md"}
 {"issue_id":"sylveste-rsj.9","label":"claimed_at:1774964896"}
 {"issue_id":"sylveste-rsj.9","label":"claimed_by:unknown"}
+{"issue_id":"sylveste-s3z6","label":"agmodb"}
+{"issue_id":"sylveste-s3z6","label":"claimed_at:1775525663"}
+{"issue_id":"sylveste-s3z6","label":"claimed_by:cbc949bc-2d46-4208-aa25-3f4ceaf5960c"}
+{"issue_id":"sylveste-s3z6","label":"complexity:4"}
+{"issue_id":"sylveste-s3z6","label":"interflux"}
+{"issue_id":"sylveste-s3z6","label":"interrank"}
 {"issue_id":"sylveste-sn7","label":"artifact_brainstorm:docs/brainstorms/2026-04-03-tuivision-token-encoding-brainstorm.md"}
 {"issue_id":"sylveste-sn7","label":"artifact_closed:7ddd6bf958535285a943eada7e34bf67bcc17527"}
 {"issue_id":"sylveste-sn7","label":"artifact_plan:docs/plans/2026-04-03-tuivision-token-encoding.md"}
@@ -546,3 +552,4 @@
 {"issue_id":"sylveste-vr0","label":"skaffen"}
 {"issue_id":"sylveste-xd0n","label":"claimed_at:1775429129"}
 {"issue_id":"sylveste-xd0n","label":"claimed_by:unknown"}
+{"issue_id":"sylveste-xefe","label":"artifact_brainstorm:docs/brainstorms/2026-04-07-ockham-alwe-observation-bridge.md"}
