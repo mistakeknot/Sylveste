@@ -235,6 +235,7 @@
 {"issue_id":"sylveste-bcok","label":"integration"}
 {"issue_id":"sylveste-bcok","label":"plugin"}
 {"issue_id":"sylveste-benl","label":"artifact_brainstorm:docs/brainstorms/2026-04-06-auraken-skaffen-migration-brainstorm.md"}
+{"issue_id":"sylveste-benl","label":"artifact_plan:docs/plans/2026-04-07-auraken-skaffen-migration.md"}
 {"issue_id":"sylveste-benl","label":"artifact_prd:docs/prds/2026-04-06-auraken-skaffen-migration.md"}
 {"issue_id":"sylveste-benl","label":"artifact_prior-art:none-found"}
 {"issue_id":"sylveste-benl","label":"claimed_at:1775530498"}
@@ -242,7 +243,12 @@
 {"issue_id":"sylveste-benl","label":"complexity:5"}
 {"issue_id":"sylveste-benl","label":"decomp_prediction:{\"epic\":\"sylveste-benl\",\"predicted_children\":12,\"baseline_typical\":5,\"ts\":1775530482}"}
 {"issue_id":"sylveste-benl","label":"epic_dod:parity-tests,shadow-mode-30d,migration-checksums,transport-e2e,decommission-90d"}
-{"issue_id":"sylveste-benl","label":"phase:brainstorm-reviewed"}
+{"issue_id":"sylveste-benl","label":"phase:strategy-reviewed"}
+{"issue_id":"sylveste-cnxf","label":"artifact_brainstorm:/home/mk/projects/gsvdotcom/REDESIGN.md"}
+{"issue_id":"sylveste-cnxf","label":"artifact_plan:/home/mk/projects/gsvdotcom/docs/plans/2026-04-07-redesign-technical-document.md"}
+{"issue_id":"sylveste-cnxf","label":"artifact_prd:/home/mk/projects/gsvdotcom/REDESIGN.md"}
+{"issue_id":"sylveste-cnxf","label":"design"}
+{"issue_id":"sylveste-cnxf","label":"frontend"}
 {"issue_id":"sylveste-co5","label":"claimed_at:1775257878"}
 {"issue_id":"sylveste-co5","label":"claimed_by:5d2440f9-1f8f-45b5-813e-51e5acd84fce"}
 {"issue_id":"sylveste-co5","label":"complexity:2"}
@@ -467,6 +473,7 @@
 {"issue_id":"sylveste-s3z6","label":"complexity:4"}
 {"issue_id":"sylveste-s3z6","label":"interflux"}
 {"issue_id":"sylveste-s3z6","label":"interrank"}
+{"issue_id":"sylveste-s3z6","label":"phase:brainstorm-reviewed"}
 {"issue_id":"sylveste-sn7","label":"artifact_brainstorm:docs/brainstorms/2026-04-03-tuivision-token-encoding-brainstorm.md"}
 {"issue_id":"sylveste-sn7","label":"artifact_closed:7ddd6bf958535285a943eada7e34bf67bcc17527"}
 {"issue_id":"sylveste-sn7","label":"artifact_plan:docs/plans/2026-04-03-tuivision-token-encoding.md"}
@@ -559,9 +566,12 @@
 {"issue_id":"sylveste-sn7.9","label":"research"}
 {"issue_id":"sylveste-sn7.9","label":"tuivision"}
 {"issue_id":"sylveste-uais","label":"artifact_brainstorm:docs/brainstorms/2026-04-06-progressive-discrimination-curriculum-brainstorm.md"}
+{"issue_id":"sylveste-uais","label":"artifact_plan:docs/plans/2026-04-07-progressive-discrimination-curriculum.md"}
 {"issue_id":"sylveste-uais","label":"artifact_prd:docs/prds/2026-04-06-progressive-discrimination-curriculum.md"}
 {"issue_id":"sylveste-uais","label":"artifact_prior-art:none-found"}
 {"issue_id":"sylveste-uais","label":"auraken"}
+{"issue_id":"sylveste-uais","label":"claimed_at:1775537582"}
+{"issue_id":"sylveste-uais","label":"complexity:4"}
 {"issue_id":"sylveste-usj","label":"claimed_at:1775357521"}
 {"issue_id":"sylveste-usj","label":"claimed_by:released"}
 {"issue_id":"sylveste-vm4","label":"artifact_closed:d956378518bbef3e4da65d30672671bbd7936a44"}
