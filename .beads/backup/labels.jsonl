@@ -300,6 +300,9 @@
 {"issue_id":"sylveste-h7t","label":"claimed_at:1775461806"}
 {"issue_id":"sylveste-h7t","label":"claimed_by:released"}
 {"issue_id":"sylveste-h7t","label":"claimed_by:unknown"}
+{"issue_id":"sylveste-j2xi","label":"claimed_at:1775529629"}
+{"issue_id":"sylveste-j2xi","label":"claimed_by:dfb82075-14fa-4155-9cf1-2cbe325a1e76"}
+{"issue_id":"sylveste-j2xi","label":"complexity:1"}
 {"issue_id":"sylveste-ln3","label":"artifact_implementation:dae3106"}
 {"issue_id":"sylveste-ln3","label":"claimed_at:1775076291"}
 {"issue_id":"sylveste-ln3","label":"claimed_by:unknown"}
@@ -453,6 +456,7 @@
 {"issue_id":"sylveste-rsj.9","label":"claimed_at:1774964896"}
 {"issue_id":"sylveste-rsj.9","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-s3z6","label":"agmodb"}
+{"issue_id":"sylveste-s3z6","label":"artifact_brainstorm:docs/brainstorms/2026-04-07-fluxbench-closed-loop-model-discovery-brainstorm.md"}
 {"issue_id":"sylveste-s3z6","label":"artifact_prior-art:none-found"}
 {"issue_id":"sylveste-s3z6","label":"claimed_at:1775525663"}
 {"issue_id":"sylveste-s3z6","label":"claimed_by:cbc949bc-2d46-4208-aa25-3f4ceaf5960c"}

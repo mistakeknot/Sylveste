@@ -1,0 +1,183 @@
+{
+  "reviewed": "2026-04-06",
+  "input": "docs/research/flux-review/interflux-insight-efficiency-openrouter/input.md",
+  "track": "C",
+  "track_focus": "Structural isomorphisms from distant knowledge domains",
+  "agents_launched": [
+    "fd-murano-furnace-workshop-allocation",
+    "fd-javanese-gamelan-tuning-interference",
+    "fd-korean-onggi-microbial-terroir",
+    "fd-assay-master-multi-method-verification"
+  ],
+  "agents_completed": [
+    "fd-murano-furnace-workshop-allocation",
+    "fd-javanese-gamelan-tuning-interference",
+    "fd-korean-onggi-microbial-terroir",
+    "fd-assay-master-multi-method-verification"
+  ],
+  "findings": [
+    {
+      "id": "P1-A",
+      "severity": "P1",
+      "agents": [
+        "fd-murano-furnace-workshop-allocation"
+      ],
+      "agent_ids": [
+        "MUR-1",
+        "MUR-2"
+      ],
+      "section": "Current Cost Model / Tiered dispatch",
+      "title": "No task-criticality taxonomy protecting judgment-critical agents from cost-driven model reassignment",
+      "convergence": 1,
+      "cross_family_convergence": null,
+      "domain": "routing",
+      "fix_scope": "new config file agent-tiers.yaml + safety floor in expansion.md Step 2.2c"
+    },
+    {
+      "id": "P1-B",
+      "severity": "P1",
+      "agents": [
+        "fd-javanese-gamelan-tuning-interference",
+        "fd-assay-master-multi-method-verification"
+      ],
+      "agent_ids": [
+        "GAM-1",
+        "ASY-3"
+      ],
+      "section": "Current Architecture / Synthesize",
+      "title": "Synthesis destroys model provenance — cross-model corroboration and disagreement are untracked",
+      "convergence": 2,
+      "cross_family_convergence": null,
+      "domain": "synthesis",
+      "fix_scope": "2-line schema addition to findings.json + Rule 1 dedup clause in synthesize.md"
+    },
+    {
+      "id": "P1-C",
+      "severity": "P1",
+      "agents": [
+        "fd-assay-master-multi-method-verification"
+      ],
+      "agent_ids": [
+        "ASY-1"
+      ],
+      "section": "Current Architecture / Synthesize",
+      "title": "Synthesis makes no judgment call on cross-model conflicts — hallmark left unstamped",
+      "convergence": 1,
+      "cross_family_convergence": null,
+      "domain": "synthesis",
+      "fix_scope": "judgment mandate addition to intersynth:synthesize-review prompt"
+    },
+    {
+      "id": "P1-D",
+      "severity": "P1",
+      "agents": [
+        "fd-korean-onggi-microbial-terroir"
+      ],
+      "agent_ids": [
+        "ONG-1"
+      ],
+      "section": "OpenRouter integration / Constraints",
+      "title": "No failure isolation for Bash-dispatched OpenRouter agents — API timeout stalls flux-watch.sh",
+      "convergence": 1,
+      "cross_family_convergence": null,
+      "domain": "infrastructure",
+      "fix_scope": "timeout + error-stub wrapper in OpenRouter dispatch Bash script"
+    },
+    {
+      "id": "P1-E",
+      "severity": "P1",
+      "agents": [
+        "fd-korean-onggi-microbial-terroir",
+        "fd-javanese-gamelan-tuning-interference"
+      ],
+      "agent_ids": [
+        "ONG-2",
+        "GAM-3"
+      ],
+      "section": "OpenRouter integration / Prompt design",
+      "title": "Uniform Claude-designed prompt templates will produce prompt monoculture in non-Claude models",
+      "convergence": 2,
+      "cross_family_convergence": null,
+      "domain": "infrastructure",
+      "fix_scope": "config/flux-drive/model-prompts/ directory with per-family variants"
+    },
+    {
+      "id": "P1-F",
+      "severity": "P1",
+      "agents": [
+        "fd-assay-master-multi-method-verification"
+      ],
+      "agent_ids": [
+        "ASY-2"
+      ],
+      "section": "Cross-model dispatch / Budget system",
+      "title": "All model tiers dispatch simultaneously — no cost-ordered staging where cheap models inform expensive dispatch",
+      "convergence": 1,
+      "cross_family_convergence": null,
+      "domain": "dispatch",
+      "fix_scope": "cheap_first mode in budget.yaml + 60s wait window in Stage 2 dispatch"
+    }
+  ],
+  "improvements": [
+    {
+      "id": "IMP-1",
+      "agents": [
+        "fd-assay-master-multi-method-verification",
+        "fd-javanese-gamelan-tuning-interference"
+      ],
+      "section": "Model diversity as a signal",
+      "title": "Model blind-spot profiles accumulated empirically per model family"
+    },
+    {
+      "id": "IMP-2",
+      "agents": [
+        "fd-javanese-gamelan-tuning-interference"
+      ],
+      "section": "Cross-model dispatch",
+      "title": "Baseline disagreement profiles for model pairs to distinguish ombak from noise"
+    },
+    {
+      "id": "IMP-3",
+      "agents": [
+        "fd-murano-furnace-workshop-allocation"
+      ],
+      "section": "Budget system",
+      "title": "Finding density tracking per model tier to detect cheap-model underperformance"
+    },
+    {
+      "id": "IMP-4",
+      "agents": [
+        "fd-korean-onggi-microbial-terroir"
+      ],
+      "section": "OpenRouter infrastructure",
+      "title": "Context budget check against model context window before OpenRouter dispatch"
+    },
+    {
+      "id": "IMP-5",
+      "agents": [
+        "fd-korean-onggi-microbial-terroir"
+      ],
+      "section": "OpenRouter infrastructure",
+      "title": "Model version pinning in routing config + periodic capability probe"
+    }
+  ],
+  "convergence_map": {
+    "P1-B": {
+      "agents": [
+        "fd-javanese-gamelan-tuning-interference",
+        "fd-assay-master-multi-method-verification"
+      ],
+      "note": "Cross-domain convergence on synthesis provenance gap"
+    },
+    "P1-E": {
+      "agents": [
+        "fd-korean-onggi-microbial-terroir",
+        "fd-javanese-gamelan-tuning-interference"
+      ],
+      "note": "Cross-domain convergence on prompt monoculture risk"
+    }
+  },
+  "meta_pattern": "Diversity-capture problem: heterogeneous participant value is only realized if the system explicitly preserves and amplifies heterogeneity rather than standardizing inputs, aggregating outputs without provenance, or routing by the wrong signal.",
+  "verdict": "needs-changes",
+  "early_stop": false
+}

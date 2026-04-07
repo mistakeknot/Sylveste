@@ -1,0 +1,251 @@
+{
+  "reviewed": "2026-04-06",
+  "input": "/home/mk/projects/Sylveste/docs/research/flux-review/interflux-insight-efficiency-openrouter/input.md",
+  "input_type": "document",
+  "track": "D",
+  "track_focus": "frontier patterns from maximally unexpected domains",
+  "agents_launched": [
+    "fd-javanese-gamelan-colotomic-interlocking",
+    "fd-persian-qanat-gradient-cascade",
+    "fd-tswana-kgotla-consensus-synthesis"
+  ],
+  "agents_completed": [
+    "fd-javanese-gamelan-colotomic-interlocking",
+    "fd-persian-qanat-gradient-cascade",
+    "fd-tswana-kgotla-consensus-synthesis"
+  ],
+  "agents_failed": [],
+  "findings": [
+    {
+      "id": "P0-1",
+      "severity": "P0",
+      "agents": [
+        "fd-persian-qanat-gradient-cascade"
+      ],
+      "section": "Constraints / Agent tool",
+      "title": "No gradient calibration between prompt complexity and model capability",
+      "convergence": 1,
+      "confidence": "low",
+      "co_located": false,
+      "cross_references": [
+        "P1-1"
+      ],
+      "note": "Single-agent finding — verify independently. Adjacent to JGC-1 density taxonomy."
+    },
+    {
+      "id": "P0-2",
+      "severity": "P0",
+      "agents": [
+        "fd-tswana-kgotla-consensus-synthesis"
+      ],
+      "section": "Current Architecture / Synthesis",
+      "title": "Synthesis barrier semantics undocumented — incremental reading biases verdict toward fast-model framing",
+      "convergence": 1,
+      "confidence": "low",
+      "co_located": false,
+      "cross_references": [
+        "P1-4"
+      ],
+      "note": "Single-agent finding. High confidence in the structural concern; implementation state uncertain (streaming vs barrier)."
+    },
+    {
+      "id": "P1-1",
+      "severity": "P1",
+      "agents": [
+        "fd-javanese-gamelan-colotomic-interlocking"
+      ],
+      "section": "Current Cost Model",
+      "title": "All agents run at uniform model tier — colotomic density structure absent",
+      "convergence": 1,
+      "confidence": "low",
+      "co_located": false,
+      "cross_references": [
+        "P2-2",
+        "P0-1"
+      ]
+    },
+    {
+      "id": "P1-2",
+      "severity": "P1",
+      "agents": [
+        "fd-javanese-gamelan-colotomic-interlocking"
+      ],
+      "section": "Cross-model dispatch",
+      "title": "Irama tier shift is partial — no cross-family coordination under budget pressure",
+      "convergence": 1,
+      "confidence": "low",
+      "co_located": false,
+      "cross_references": [
+        "P1-3"
+      ]
+    },
+    {
+      "id": "P1-3",
+      "severity": "P1",
+      "agents": [
+        "fd-persian-qanat-gradient-cascade"
+      ],
+      "section": "Current Cost Model",
+      "title": "Mother well has no physical weirs — one model family can drain the entire token budget",
+      "convergence": 1,
+      "confidence": "low",
+      "co_located": false,
+      "cross_references": [
+        "P1-2"
+      ]
+    },
+    {
+      "id": "P1-4",
+      "severity": "P1",
+      "agents": [
+        "fd-tswana-kgotla-consensus-synthesis"
+      ],
+      "section": "Deduplication / Rule 1",
+      "title": "Dedup Rule 1 silences cross-model minority findings without inline attribution",
+      "convergence": 1,
+      "confidence": "low",
+      "co_located": false,
+      "cross_references": [
+        "P0-2",
+        "P2-3"
+      ]
+    },
+    {
+      "id": "P1-5",
+      "severity": "P1",
+      "agents": [
+        "fd-tswana-kgotla-consensus-synthesis"
+      ],
+      "section": "Question / Model diversity as a signal",
+      "title": "Reading order is fast-model-first — fast models frame synthesis before senior architectural judgment arrives",
+      "convergence": 1,
+      "confidence": "low",
+      "co_located": true,
+      "co_located_with": [
+        "P0-2"
+      ]
+    }
+  ],
+  "improvements": [
+    {
+      "id": "P2-1",
+      "severity": "P2",
+      "agents": [
+        "fd-javanese-gamelan-colotomic-interlocking"
+      ],
+      "section": "Current Architecture",
+      "title": "Balungan dispatched identically — no garap differentiation by density layer",
+      "convergence": 1
+    },
+    {
+      "id": "P2-2",
+      "severity": "P2",
+      "agents": [
+        "fd-javanese-gamelan-colotomic-interlocking"
+      ],
+      "section": "Question / Model diversity as a signal",
+      "title": "Kotekan principle named but not operationalized — cross-family divergence not distinguished from within-family agreement",
+      "convergence": 2,
+      "note": "Converges with TKC-2 (inline dissent attribution) from different angles"
+    },
+    {
+      "id": "P2-3",
+      "severity": "P2",
+      "agents": [
+        "fd-persian-qanat-gradient-cascade"
+      ],
+      "section": "Question / OpenRouter integration",
+      "title": "Irreversible flow not acknowledged — OpenRouter token spend needs fail-fast retry policy",
+      "convergence": 1
+    },
+    {
+      "id": "P2-4",
+      "severity": "P2",
+      "agents": [
+        "fd-persian-qanat-gradient-cascade"
+      ],
+      "section": "Question / Chinese models on OpenRouter",
+      "title": "Multi-aquifer sourcing unspecified — DeepSeek R1, Qwen-Coder, Yi have distinct capability profiles",
+      "convergence": 1
+    },
+    {
+      "id": "P2-5",
+      "severity": "P2",
+      "agents": [
+        "fd-tswana-kgotla-consensus-synthesis"
+      ],
+      "section": "Synthesis / Verdict Computation",
+      "title": "Verdict uses unanimity not consensus — single gambang-layer P0 produces risky without legitimacy bar",
+      "convergence": 1
+    },
+    {
+      "id": "P3-1",
+      "severity": "P3",
+      "agents": [
+        "fd-javanese-gamelan-colotomic-interlocking"
+      ],
+      "section": "Question / Tiered dispatch",
+      "title": "No density-layer taxonomy for agent type assignment in frontmatter",
+      "convergence": 1
+    },
+    {
+      "id": "P3-2",
+      "severity": "P3",
+      "agents": [
+        "fd-tswana-kgotla-consensus-synthesis"
+      ],
+      "section": "Reaction round",
+      "title": "Reaction round creates asymmetric sycophancy pressure toward Claude Opus from cheaper models",
+      "convergence": 1
+    }
+  ],
+  "cross_convergence": [
+    {
+      "theme": "Synthesis phase lacks structural protection for multi-model case",
+      "agents": [
+        "fd-javanese-gamelan-colotomic-interlocking",
+        "fd-persian-qanat-gradient-cascade",
+        "fd-tswana-kgotla-consensus-synthesis"
+      ],
+      "convergence": 3,
+      "confidence": "high",
+      "findings": [
+        "P0-2",
+        "P1-2",
+        "P1-3",
+        "P1-4",
+        "P1-5"
+      ]
+    },
+    {
+      "theme": "Budget/flow requires hard partitioning between model families",
+      "agents": [
+        "fd-javanese-gamelan-colotomic-interlocking",
+        "fd-persian-qanat-gradient-cascade"
+      ],
+      "convergence": 2,
+      "confidence": "medium",
+      "findings": [
+        "P1-2",
+        "P1-3"
+      ]
+    },
+    {
+      "theme": "Cross-family divergence is higher-signal than within-family convergence",
+      "agents": [
+        "fd-javanese-gamelan-colotomic-interlocking",
+        "fd-tswana-kgotla-consensus-synthesis"
+      ],
+      "convergence": 2,
+      "confidence": "medium",
+      "findings": [
+        "P2-2",
+        "P1-4"
+      ]
+    }
+  ],
+  "verdict": "risky",
+  "early_stop": false,
+  "content_routing_active": false,
+  "synthesis_timestamp": "2026-04-06"
+}

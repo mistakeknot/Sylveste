@@ -1,0 +1,272 @@
+{
+  "run": {
+    "input": "/home/mk/projects/Sylveste/docs/research/flux-review/interflux-insight-efficiency-openrouter/input.md",
+    "output_dir": "/home/mk/projects/Sylveste/docs/research/flux-review/interflux-insight-efficiency-openrouter/track-b",
+    "track": "b",
+    "focus": "operational patterns from parallel professional disciplines",
+    "input_type": "file",
+    "document_type": "brainstorm/design-exploration",
+    "agents_launched": [
+      "fd-trading-desk-order-routing",
+      "fd-supply-chain-multi-sourcing",
+      "fd-broadcast-signal-routing",
+      "fd-news-desk-source-triage",
+      "fd-systems"
+    ],
+    "stages": {
+      "stage1": [
+        "fd-trading-desk-order-routing",
+        "fd-supply-chain-multi-sourcing",
+        "fd-broadcast-signal-routing",
+        "fd-news-desk-source-triage"
+      ],
+      "stage2": [
+        "fd-systems"
+      ]
+    },
+    "verdict": "needs-changes"
+  },
+  "findings": [
+    {
+      "id": "TRACK-B-01",
+      "severity": "P0",
+      "section": "OpenRouter Integration",
+      "title": "Silent partial review: provider outage looks identical to complete review",
+      "source_agents": [
+        "fd-supply-chain-multi-sourcing"
+      ],
+      "source_ids": [
+        "SCM-01"
+      ],
+      "convergence": "primary",
+      "fix": "Add explicit fallback routing: if OpenRouter backend fails for an agent, re-route to Claude haiku and surface provider_fallback warning to user. Must never be silent."
+    },
+    {
+      "id": "TRACK-B-02",
+      "severity": "P0",
+      "section": "Quality Monitoring",
+      "title": "No signal quality monitoring: shallow cheap-model output indistinguishable from thorough review",
+      "source_agents": [
+        "fd-broadcast-signal-routing"
+      ],
+      "source_ids": [
+        "BSR-01"
+      ],
+      "convergence": "primary",
+      "fix": "In synthesis, compute findings-density check per cheap-model agent: if finding count >50% below historical median for that agent type, flag low_signal_confidence and weight findings lower in convergence scoring."
+    },
+    {
+      "id": "TRACK-B-03",
+      "severity": "P0",
+      "section": "Synthesis",
+      "title": "Single-source P0 findings from cheap models accepted without verification escalation",
+      "source_agents": [
+        "fd-news-desk-source-triage"
+      ],
+      "source_ids": [
+        "NDT-01"
+      ],
+      "convergence": "primary",
+      "fix": "In synthesis, flag any P0/P1 finding that is single-source AND from a provider below top quality tier. Surface verification_recommended prominently. Optionally auto-escalate to Claude verification agent."
+    },
+    {
+      "id": "TRACK-B-04",
+      "severity": "P1",
+      "section": "Cost Model",
+      "title": "No post-routing analysis: efficiency gains unverifiable after shipping",
+      "source_agents": [
+        "fd-trading-desk-order-routing"
+      ],
+      "source_ids": [
+        "TCA-01"
+      ],
+      "convergence": "primary",
+      "fix": "Add routing_report block to synthesis output: per-provider {model, tokens, cost, findings_count, severity_distribution}. Data already flows through synthesis — one additional output block."
+    },
+    {
+      "id": "TRACK-B-05",
+      "severity": "P1",
+      "section": "Model Roster",
+      "title": "No model qualification process: cheap models added without quality baseline",
+      "source_agents": [
+        "fd-supply-chain-multi-sourcing"
+      ],
+      "source_ids": [
+        "SCM-02"
+      ],
+      "convergence": "primary",
+      "fix": "Define qualification checklist: 3 synthetic review tasks with known findings, measure format compliance + precision/recall vs Claude baseline. Store in config/flux-drive/model-registry.yaml. Requalify on major model updates."
+    },
+    {
+      "id": "TRACK-B-06",
+      "severity": "P1",
+      "section": "Convergence Scoring",
+      "title": "Convergence scoring treats all providers equally: cross-family agreement not distinguished from same-family",
+      "source_agents": [
+        "fd-news-desk-source-triage"
+      ],
+      "source_ids": [
+        "NDT-02"
+      ],
+      "convergence": "primary",
+      "fix": "Add provider_family field to findings. Weight convergence scores by provider diversity: cross-family agreement scores 1.5x vs same-family agreement."
+    },
+    {
+      "id": "TRACK-B-07",
+      "severity": "P1",
+      "section": "Dispatch Architecture",
+      "title": "Provider failover is manual: no automatic switching on API failure",
+      "source_agents": [
+        "fd-broadcast-signal-routing"
+      ],
+      "source_ids": [
+        "BSR-02"
+      ],
+      "convergence": "primary",
+      "fix": "Add retry-with-escalation in OpenRouter dispatch wrapper: 2 retries with backoff, then re-dispatch to Claude haiku. Log provider_fallback: true."
+    },
+    {
+      "id": "TRACK-B-08",
+      "severity": "P1",
+      "section": "Architecture",
+      "title": "Quality feedback loop absent: routing system cannot learn from outcomes",
+      "source_agents": [
+        "fd-systems"
+      ],
+      "source_ids": [
+        "SYS-01"
+      ],
+      "convergence": "corroborates TRACK-B-04",
+      "fix": "Design feedback loop architecture before shipping: even manual reporting loop closes the gap. estimate-costs.sh --routing-report output per-provider quality/cost metrics."
+    },
+    {
+      "id": "TRACK-B-09",
+      "severity": "P2",
+      "section": "Cost Model",
+      "title": "Total cost of ownership ignores hidden costs: retry overhead, validation, synthesis rework",
+      "source_agents": [
+        "fd-supply-chain-multi-sourcing"
+      ],
+      "source_ids": [
+        "SCM-03"
+      ],
+      "convergence": "primary",
+      "fix": "Add TCO fields to budget.yaml documentation: retry_cost_multiplier, validation_overhead_tokens, expected_quality_discount."
+    },
+    {
+      "id": "TRACK-B-10",
+      "severity": "P2",
+      "section": "Format Normalization",
+      "title": "Format conversion artifacts: different model families use different severity label conventions",
+      "source_agents": [
+        "fd-broadcast-signal-routing"
+      ],
+      "source_ids": [
+        "BSR-03"
+      ],
+      "convergence": "primary",
+      "fix": "Add findings format normalizer in post-processing before synthesis ingestion. Map severity label variants (CRITICAL→P0, HIGH→P1, etc.) to canonical format. Log normalization events."
+    },
+    {
+      "id": "TRACK-B-11",
+      "severity": "P2",
+      "section": "Editorial Allocation",
+      "title": "Claude verification applied uniformly: not concentrated on high-uncertainty findings",
+      "source_agents": [
+        "fd-news-desk-source-triage"
+      ],
+      "source_ids": [
+        "NDT-03"
+      ],
+      "convergence": "primary",
+      "fix": "Add uncertainty escalation to synthesis: high-uncertainty findings (single-source P0, cross-provider divergence) routed to Claude verification agent as Stage 2 expansion. Pre-allocate 20% of budget for escalation pool."
+    },
+    {
+      "id": "TRACK-B-12",
+      "severity": "P2",
+      "section": "Architecture",
+      "title": "Cost-quality coupling unacknowledged: no explicit break-even threshold for routing eligibility",
+      "source_agents": [
+        "fd-systems"
+      ],
+      "source_ids": [
+        "SYS-02"
+      ],
+      "convergence": "primary",
+      "fix": "Define explicit routing eligibility threshold: agent type X routes to cheap model only if historical finding density on cheap model is within N% of Claude baseline. Without this, optimization has no stopping condition."
+    },
+    {
+      "id": "TRACK-B-13",
+      "severity": "P3",
+      "section": "Architecture",
+      "title": "Order splitting ignores workload divisibility: routing by agent type is a proxy for a better signal",
+      "source_agents": [
+        "fd-trading-desk-order-routing"
+      ],
+      "source_ids": [
+        "TCA-04"
+      ],
+      "convergence": "primary",
+      "fix": "Extend triage complexity signal (already exists) to gate model tier selection: large complexity + cross-cutting agent → Claude required."
+    },
+    {
+      "id": "TRACK-B-14",
+      "severity": "P3",
+      "section": "Architecture",
+      "title": "Cross-provider convergence is emergent: diversity conditions not designed for",
+      "source_agents": [
+        "fd-systems"
+      ],
+      "source_ids": [
+        "SYS-03"
+      ],
+      "convergence": "primary",
+      "fix": "Add independence validation to model qualification: measure Claude vs cheap model agreement rate per finding type. If >90% agreement, models are not independent for that type — no diversity benefit."
+    }
+  ],
+  "convergence_summary": {
+    "total_findings": 14,
+    "p0": 3,
+    "p1": 5,
+    "p2": 4,
+    "p3": 2,
+    "cross_agent_convergences": [
+      {
+        "theme": "Provider outage / quality degradation silent failure",
+        "agents": [
+          "fd-supply-chain-multi-sourcing",
+          "fd-broadcast-signal-routing"
+        ],
+        "findings": [
+          "TRACK-B-01",
+          "TRACK-B-02"
+        ],
+        "note": "Same underlying gap (no monitoring), different failure modes (outage vs degradation)"
+      },
+      {
+        "theme": "Feedback loop absence",
+        "agents": [
+          "fd-trading-desk-order-routing",
+          "fd-systems"
+        ],
+        "findings": [
+          "TRACK-B-04",
+          "TRACK-B-08"
+        ],
+        "note": "TCA-01 (no post-routing analysis) + SYS-01 (no quality feedback loop) are two expressions of the same gap"
+      },
+      {
+        "theme": "Cross-provider convergence as stronger signal",
+        "agents": [
+          "fd-news-desk-source-triage",
+          "fd-systems"
+        ],
+        "findings": [
+          "TRACK-B-06",
+          "TRACK-B-14"
+        ],
+        "note": "NDT-02 (convergence weighting) + SYS-03 (emergence conditions) frame the same insight from different directions"
+      }
+    ]
+  }
+}

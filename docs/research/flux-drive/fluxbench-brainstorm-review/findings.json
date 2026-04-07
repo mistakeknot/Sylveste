@@ -1,0 +1,358 @@
+{
+  "reviewed": "2026-04-07",
+  "input": "/home/mk/projects/Sylveste/docs/brainstorms/2026-04-07-fluxbench-closed-loop-model-discovery-brainstorm.md",
+  "agents_launched": [
+    "fd-architecture",
+    "fd-systems",
+    "fd-decisions",
+    "fd-resilience",
+    "fd-feedback-loop-closure",
+    "fd-perception"
+  ],
+  "agents_completed": [
+    "fd-architecture",
+    "fd-systems",
+    "fd-decisions",
+    "fd-resilience",
+    "fd-feedback-loop-closure",
+    "fd-perception"
+  ],
+  "findings": [
+    {
+      "id": "P1-1",
+      "severity": "P1",
+      "agents": [
+        "fd-architecture",
+        "fd-systems",
+        "fd-resilience",
+        "fd-feedback-loop-closure",
+        "fd-perception"
+      ],
+      "section": "FluxBench Metrics",
+      "title": "Claude baseline as single reference creates circular dependency, monoculture, and single point of failure",
+      "convergence": 5,
+      "provider": "claude",
+      "model_family": "claude"
+    },
+    {
+      "id": "P1-2",
+      "severity": "P1",
+      "agents": [
+        "fd-architecture"
+      ],
+      "section": "Write-Back Mechanism",
+      "title": "AgMoDB has no write API — entire design depends on unbuilt infrastructure",
+      "convergence": 2,
+      "provider": "claude",
+      "model_family": "claude"
+    },
+    {
+      "id": "P1-3",
+      "severity": "P1",
+      "agents": [
+        "fd-decisions",
+        "fd-feedback-loop-closure"
+      ],
+      "section": "FluxBench Metrics / Drift Detection",
+      "title": "Threshold values (90%, 60%, 70%, 0.6, 15%) lack empirical grounding and calibration plan",
+      "convergence": 3,
+      "provider": "claude",
+      "model_family": "claude"
+    },
+    {
+      "id": "P1-4",
+      "severity": "P1",
+      "agents": [
+        "fd-decisions"
+      ],
+      "section": "Key Decisions",
+      "title": "Over-commitment: 3 capabilities designed simultaneously without MVP validation",
+      "convergence": 2,
+      "provider": "claude",
+      "model_family": "claude"
+    },
+    {
+      "id": "P1-5",
+      "severity": "P1",
+      "agents": [
+        "fd-systems"
+      ],
+      "section": "Drift Detection",
+      "title": "Unbounded detection latency — 1-in-10 sampling has no worst-case guarantee",
+      "convergence": 2,
+      "provider": "claude",
+      "model_family": "claude"
+    },
+    {
+      "id": "P1-6",
+      "severity": "P1",
+      "agents": [
+        "fd-feedback-loop-closure"
+      ],
+      "section": "Drift Detection",
+      "title": "No hysteresis band — drift threshold fires but no corresponding clear threshold causes oscillation",
+      "convergence": 2,
+      "provider": "claude",
+      "model_family": "claude"
+    },
+    {
+      "id": "P1-7",
+      "severity": "P1",
+      "agents": [
+        "fd-feedback-loop-closure"
+      ],
+      "section": "FluxBench Metrics",
+      "title": "Loop is closed at model-selection level but open at review-quality level — no outcome sensor",
+      "convergence": 1,
+      "provider": "claude",
+      "model_family": "claude"
+    },
+    {
+      "id": "P1-8",
+      "severity": "P1",
+      "agents": [
+        "fd-perception"
+      ],
+      "section": "FluxBench Metrics",
+      "title": "Format compliance measures form not substance — high format score does not imply review quality",
+      "convergence": 2,
+      "provider": "claude",
+      "model_family": "claude"
+    },
+    {
+      "id": "P1-9",
+      "severity": "P1",
+      "agents": [
+        "fd-architecture"
+      ],
+      "section": "Write-Back / Drift Detection",
+      "title": "Dual source of truth — model-registry.yaml and AgMoDB with no reconciliation strategy",
+      "convergence": 1,
+      "provider": "claude",
+      "model_family": "claude"
+    },
+    {
+      "id": "P2-1",
+      "severity": "P2",
+      "agents": [
+        "fd-systems",
+        "fd-perception"
+      ],
+      "section": "FluxBench Metrics",
+      "title": "Goodhart's Law — fixed 8-metric set becomes optimization target for model providers",
+      "convergence": 2,
+      "provider": "claude",
+      "model_family": "claude"
+    },
+    {
+      "id": "P2-2",
+      "severity": "P2",
+      "agents": [
+        "fd-perception"
+      ],
+      "section": "FluxBench Metrics",
+      "title": "Missing metrics: false positive rate, actionability, and context utilization not measured",
+      "convergence": 1,
+      "provider": "claude",
+      "model_family": "claude"
+    },
+    {
+      "id": "P2-3",
+      "severity": "P2",
+      "agents": [
+        "fd-resilience"
+      ],
+      "section": "Proactive Surfacing",
+      "title": "Weekly qualification cost is unbounded — scales linearly with model count",
+      "convergence": 1,
+      "provider": "claude",
+      "model_family": "claude"
+    },
+    {
+      "id": "P2-4",
+      "severity": "P2",
+      "agents": [
+        "fd-systems"
+      ],
+      "section": "Proactive Surfacing",
+      "title": "Preferential attachment: early-qualified models accumulate more data, reinforcing their position",
+      "convergence": 1,
+      "provider": "claude",
+      "model_family": "claude"
+    },
+    {
+      "id": "P2-5",
+      "severity": "P2",
+      "agents": [
+        "fd-systems"
+      ],
+      "section": "Write-Back Mechanism",
+      "title": "No staleness decay — FluxBench scores persist indefinitely without re-confirmation",
+      "convergence": 1,
+      "provider": "claude",
+      "model_family": "claude"
+    },
+    {
+      "id": "P2-6",
+      "severity": "P2",
+      "agents": [
+        "fd-perception"
+      ],
+      "section": "FluxBench Metrics",
+      "title": "Persona adherence via LLM-as-judge is circular — LLM evaluating LLM persona performance",
+      "convergence": 1,
+      "provider": "claude",
+      "model_family": "claude"
+    },
+    {
+      "id": "P2-7",
+      "severity": "P2",
+      "agents": [
+        "fd-resilience"
+      ],
+      "section": "Drift Detection",
+      "title": "Recovery path from qualifying back to qualified is unspecified — no SLA or timeout",
+      "convergence": 2,
+      "provider": "claude",
+      "model_family": "claude"
+    },
+    {
+      "id": "P2-8",
+      "severity": "P2",
+      "agents": [
+        "fd-architecture"
+      ],
+      "section": "Write-Back Mechanism",
+      "title": "API endpoint should be generic external benchmark ingest, not interflux-specific",
+      "convergence": 1,
+      "provider": "claude",
+      "model_family": "claude"
+    },
+    {
+      "id": "P2-9",
+      "severity": "P2",
+      "agents": [
+        "fd-feedback-loop-closure"
+      ],
+      "section": "Drift Detection",
+      "title": "Integral windup risk — repeated failed requalifications have no backoff or suspension",
+      "convergence": 1,
+      "provider": "claude",
+      "model_family": "claude"
+    },
+    {
+      "id": "P2-10",
+      "severity": "P2",
+      "agents": [
+        "fd-perception"
+      ],
+      "section": "Write-Back Mechanism",
+      "title": "Reification risk — 8 numeric scores presented without confidence intervals or measurement uncertainty",
+      "convergence": 1,
+      "provider": "claude",
+      "model_family": "claude"
+    }
+  ],
+  "improvements": [
+    {
+      "id": "IMP-1",
+      "agents": [
+        "fd-decisions"
+      ],
+      "section": "Key Decisions",
+      "title": "Define an MVP scope — FluxBench scoring only, local JSON, validate metrics before building integration"
+    },
+    {
+      "id": "IMP-2",
+      "agents": [
+        "fd-decisions",
+        "fd-feedback-loop-closure"
+      ],
+      "section": "FluxBench Metrics",
+      "title": "Add a calibration phase — run FluxBench on 5-10 existing models, set thresholds empirically from distributions"
+    },
+    {
+      "id": "IMP-3",
+      "agents": [
+        "fd-architecture",
+        "fd-resilience"
+      ],
+      "section": "Write-Back Mechanism",
+      "title": "Store-and-forward pattern — persist results locally first, forward to AgMoDB asynchronously"
+    },
+    {
+      "id": "IMP-4",
+      "agents": [
+        "fd-decisions"
+      ],
+      "section": "FluxBench Metrics",
+      "title": "Weight finding recall by severity — P0 misses should count more than P2 misses"
+    },
+    {
+      "id": "IMP-5",
+      "agents": [
+        "fd-perception"
+      ],
+      "section": "FluxBench Metrics",
+      "title": "Add false positive rate as a core gate metric"
+    },
+    {
+      "id": "IMP-6",
+      "agents": [
+        "fd-feedback-loop-closure"
+      ],
+      "section": "Drift Detection",
+      "title": "Add hysteresis — flag at >15% drop, clear only when recovered to within 5% of baseline"
+    },
+    {
+      "id": "IMP-7",
+      "agents": [
+        "fd-feedback-loop-closure"
+      ],
+      "section": "FluxBench Metrics",
+      "title": "Add an outcome sensor — track finding survival rate per model to close the loop at the quality level"
+    },
+    {
+      "id": "IMP-8",
+      "agents": [
+        "fd-systems"
+      ],
+      "section": "Drift Detection",
+      "title": "Add sampling guarantee — force shadow run if model not sampled in 2*N reviews"
+    },
+    {
+      "id": "IMP-9",
+      "agents": [
+        "fd-systems"
+      ],
+      "section": "FluxBench Metrics",
+      "title": "Challenger slot — always reserve one agent slot for highest-scoring unqualified candidate"
+    },
+    {
+      "id": "IMP-10",
+      "agents": [
+        "fd-architecture"
+      ],
+      "section": "Write-Back Mechanism",
+      "title": "Define single source of truth — either model-registry.yaml or AgMoDB, not both"
+    },
+    {
+      "id": "IMP-11",
+      "agents": [
+        "fd-resilience"
+      ],
+      "section": "Drift Detection",
+      "title": "Model status state machine with explicit transitions and timeouts"
+    },
+    {
+      "id": "IMP-12",
+      "agents": [
+        "fd-perception"
+      ],
+      "section": "FluxBench Metrics",
+      "title": "Human-validated calibration set — 5-10 review tasks with ground truth findings as Goodhart-resistant anchor"
+    }
+  ],
+  "verdict": "needs-changes",
+  "early_stop": false
+}
