@@ -7,56 +7,6 @@ import pytest
 
 from server.cascade import CascadeConfig
 from server.main import create_app
-from server.prom import (
-    ACTIVE_REQUESTS,
-    CASCADE_DECISIONS,
-    ERRORS_TOTAL,
-    QUALITY_HISTOGRAM,
-    QUALITY_PERPLEXITY,
-    REQUEST_COUNT,
-    REQUEST_LATENCY,
-    TOKENS_GENERATED,
-)
-
-
-@pytest.fixture(autouse=True)
-def _reset_prom_metrics():
-    """Reset all Prometheus collectors between tests.
-
-    prometheus_client instruments are module-level singletons — without
-    resetting, counters and histograms accumulate across tests.
-    """
-    from prometheus_client import REGISTRY
-
-    # Collect metric names before the test so we can identify ours
-    yield
-    # Reset all our custom metrics by clearing their children/samples
-    for collector in [
-        REQUEST_LATENCY,
-        TOKENS_GENERATED,
-        ACTIVE_REQUESTS,
-        ERRORS_TOTAL,
-        CASCADE_DECISIONS,
-        REQUEST_COUNT,
-        QUALITY_HISTOGRAM,
-        QUALITY_PERPLEXITY,
-    ]:
-        # _metrics is the internal dict for labeled metrics; _value for unlabeled
-        if hasattr(collector, "_metrics"):
-            collector._metrics.clear()
-        if hasattr(collector, "_value"):
-            collector._value.set(0)
-
-
-@pytest.fixture
-def app():
-    return create_app(dry_run=True, thermal_reject_level="sleeping")
-
-
-@pytest.fixture
-def client(app):
-    transport = httpx.ASGITransport(app=app)
-    return httpx.AsyncClient(transport=transport, base_url="http://testserver")
 
 
 @pytest.mark.asyncio

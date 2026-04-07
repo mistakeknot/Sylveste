@@ -13,11 +13,6 @@ from server.main import create_app
 
 
 @pytest.fixture
-def app():
-    return create_app(dry_run=True, thermal_reject_level="sleeping")
-
-
-@pytest.fixture
 def cascade_app():
     """App with cascade enabled and model tiers (still dry-run)."""
     return create_app(
@@ -26,12 +21,6 @@ def cascade_app():
         cascade_config=CascadeConfig(enabled=True),
         thermal_reject_level="sleeping",
     )
-
-
-@pytest.fixture
-def client(app):
-    transport = httpx.ASGITransport(app=app)
-    return httpx.AsyncClient(transport=transport, base_url="http://testserver")
 
 
 @pytest.mark.asyncio

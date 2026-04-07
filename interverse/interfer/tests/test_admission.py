@@ -8,32 +8,6 @@ import httpx
 import pytest
 
 from server.main import create_app
-from server.prom import QUEUE_DEPTH, QUEUE_WAIT_SECONDS, REJECTED_TOTAL
-
-
-@pytest.fixture(autouse=True)
-def _reset_prom_metrics():
-    """Reset admission-related Prometheus collectors between tests."""
-    yield
-    for collector in [QUEUE_DEPTH, REJECTED_TOTAL]:
-        if hasattr(collector, "_metrics"):
-            collector._metrics.clear()
-        if hasattr(collector, "_value"):
-            collector._value.set(0)
-    if hasattr(QUEUE_WAIT_SECONDS, "_metrics"):
-        QUEUE_WAIT_SECONDS._metrics.clear()
-
-
-@pytest.fixture
-def app():
-    # Use 'sleeping' threshold so real thermal state doesn't trip the gate in tests
-    return create_app(dry_run=True, max_queue_depth=2, thermal_reject_level="sleeping")
-
-
-@pytest.fixture
-def client(app):
-    transport = httpx.ASGITransport(app=app)
-    return httpx.AsyncClient(transport=transport, base_url="http://testserver")
 
 
 @pytest.mark.asyncio

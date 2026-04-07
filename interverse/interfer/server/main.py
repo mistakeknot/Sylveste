@@ -344,19 +344,13 @@ async def _generate_with_probe_prefix(
         yield "data: [DONE]\n\n"
 
 
-async def _chat_completions(request: Request) -> JSONResponse | StreamingResponse:
-    """POST /v1/chat/completions — streaming chat completion.
+def _check_thermal_admission(request: Request) -> JSONResponse | None:
+    """Reject if thermal level is at or above the configured threshold.
 
-    When cascade is enabled and the worker is available, probes the model
-    for confidence before committing to full generation. If confidence is
-    too low, escalates to a larger model or signals cloud fallback.
+    Returns a 503 JSONResponse if the request should be rejected,
+    or None if admission is allowed.
     """
-    t0 = time.monotonic()
-    worker: MetalWorker | None = request.app.state.worker
-    inference_queue: PriorityRequestQueue = request.app.state.inference_queue
     thermal_reject_threshold: int = request.app.state.thermal_reject_threshold
-
-    # -- Admission control: thermal gate --
     t_mon: ThermalMonitor | None = request.app.state.thermal
     if t_mon is not None:
         try:
@@ -376,8 +370,16 @@ async def _chat_completions(request: Request) -> JSONResponse | StreamingRespons
                 )
         except Exception:
             pass  # Thermal read failure — allow request through
+    return None
 
-    # -- Admission control: queue depth gate --
+
+def _check_queue_admission(request: Request) -> JSONResponse | None:
+    """Reject if the inference queue is at capacity.
+
+    Returns a 503 JSONResponse if the request should be rejected,
+    or None if admission is allowed.
+    """
+    inference_queue: PriorityRequestQueue = request.app.state.inference_queue
     QUEUE_DEPTH.set(inference_queue.depth)
     if inference_queue.depth >= inference_queue.max_depth:
         REJECTED_TOTAL.labels(reason="queue_full").inc()
@@ -391,8 +393,16 @@ async def _chat_completions(request: Request) -> JSONResponse | StreamingRespons
             status_code=503,
             headers={"Retry-After": "10"},
         )
+    return None
 
-    # -- Admission control: worker health gate --
+
+def _check_worker_health(request: Request) -> JSONResponse | None:
+    """Reject if the Metal worker is degraded or restarting.
+
+    Returns a 503 JSONResponse if the request should be rejected,
+    or None if admission is allowed.
+    """
+    worker: MetalWorker | None = request.app.state.worker
     if worker is not None and worker.is_degraded:
         REJECTED_TOTAL.labels(reason="degraded").inc()
         return JSONResponse(
@@ -417,6 +427,32 @@ async def _chat_completions(request: Request) -> JSONResponse | StreamingRespons
             status_code=503,
             headers={"Retry-After": "5"},
         )
+    return None
+
+
+async def _chat_completions(request: Request) -> JSONResponse | StreamingResponse:
+    """POST /v1/chat/completions — streaming chat completion.
+
+    When cascade is enabled and the worker is available, probes the model
+    for confidence before committing to full generation. If confidence is
+    too low, escalates to a larger model or signals cloud fallback.
+    """
+    t0 = time.monotonic()
+    worker: MetalWorker | None = request.app.state.worker
+    inference_queue: PriorityRequestQueue = request.app.state.inference_queue
+
+    # -- Admission control gates --
+    rejection = _check_thermal_admission(request)
+    if rejection is not None:
+        return rejection
+
+    rejection = _check_queue_admission(request)
+    if rejection is not None:
+        return rejection
+
+    rejection = _check_worker_health(request)
+    if rejection is not None:
+        return rejection
 
     request_count: dict = request.app.state.request_count
     latency_samples: list = request.app.state.latency_samples
