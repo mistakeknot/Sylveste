@@ -235,9 +235,13 @@
 {"issue_id":"sylveste-bcok","label":"integration"}
 {"issue_id":"sylveste-bcok","label":"plugin"}
 {"issue_id":"sylveste-benl","label":"artifact_brainstorm:docs/brainstorms/2026-04-06-auraken-skaffen-migration-brainstorm.md"}
+{"issue_id":"sylveste-benl","label":"artifact_prd:docs/prds/2026-04-06-auraken-skaffen-migration.md"}
 {"issue_id":"sylveste-benl","label":"artifact_prior-art:none-found"}
-{"issue_id":"sylveste-benl","label":"claimed_at:1775501401"}
+{"issue_id":"sylveste-benl","label":"claimed_at:1775530498"}
+{"issue_id":"sylveste-benl","label":"claimed_by:2258b2fd-e9c3-421e-ad45-207b77a24047"}
 {"issue_id":"sylveste-benl","label":"complexity:5"}
+{"issue_id":"sylveste-benl","label":"decomp_prediction:{\"epic\":\"sylveste-benl\",\"predicted_children\":12,\"baseline_typical\":5,\"ts\":1775530482}"}
+{"issue_id":"sylveste-benl","label":"epic_dod:parity-tests,shadow-mode-30d,migration-checksums,transport-e2e,decommission-90d"}
 {"issue_id":"sylveste-benl","label":"phase:brainstorm-reviewed"}
 {"issue_id":"sylveste-co5","label":"claimed_at:1775257878"}
 {"issue_id":"sylveste-co5","label":"claimed_by:5d2440f9-1f8f-45b5-813e-51e5acd84fce"}
