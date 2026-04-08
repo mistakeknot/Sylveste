@@ -110,9 +110,9 @@
 {"issue_id":"sylveste-58i","label":"artifact_plan:docs/plans/2026-03-31-intercom-integration-spike.md"}
 {"issue_id":"sylveste-58i","label":"artifact_prd:docs/prds/2026-03-31-intercom-integration-decision.md"}
 {"issue_id":"sylveste-5b7","label":"artifact_brainstorm:docs/brainstorms/2026-04-07-interweave-f5-named-query-templates-brainstorm.md"}
+{"issue_id":"sylveste-5b7","label":"artifact_prd:docs/prds/2026-04-07-interweave-f5-named-query-templates.md"}
 {"issue_id":"sylveste-5b7","label":"artifact_prior-art:none-found"}
-{"issue_id":"sylveste-5b7","label":"claimed_at:1775543397"}
-{"issue_id":"sylveste-5b7","label":"claimed_by:d7018ea6-e706-40f9-a674-530779ba2670"}
+{"issue_id":"sylveste-5b7","label":"claimed_at:1775588333"}
 {"issue_id":"sylveste-5ca9","label":"auraken"}
 {"issue_id":"sylveste-7ck","label":"patterns"}
 {"issue_id":"sylveste-7ck","label":"skaffen"}
@@ -247,7 +247,7 @@
 {"issue_id":"sylveste-benl","label":"complexity:5"}
 {"issue_id":"sylveste-benl","label":"decomp_prediction:{\"epic\":\"sylveste-benl\",\"predicted_children\":12,\"baseline_typical\":5,\"ts\":1775530482}"}
 {"issue_id":"sylveste-benl","label":"epic_dod:parity-tests,shadow-mode-30d,migration-checksums,transport-e2e,decommission-90d"}
-{"issue_id":"sylveste-benl","label":"phase:strategy-reviewed"}
+{"issue_id":"sylveste-benl","label":"phase:plan-reviewed"}
 {"issue_id":"sylveste-cnxf","label":"artifact_brainstorm:/home/mk/projects/gsvdotcom/REDESIGN.md"}
 {"issue_id":"sylveste-cnxf","label":"artifact_plan:/home/mk/projects/gsvdotcom/docs/plans/2026-04-07-redesign-technical-document.md"}
 {"issue_id":"sylveste-cnxf","label":"artifact_prd:/home/mk/projects/gsvdotcom/REDESIGN.md"}
@@ -341,6 +341,9 @@
 {"issue_id":"sylveste-nr6x.2","label":"claimed_at:1775461028"}
 {"issue_id":"sylveste-nr6x.2","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-nr6x.2","label":"complexity:3"}
+{"issue_id":"sylveste-nr6x.3","label":"claimed_at:1775614046"}
+{"issue_id":"sylveste-nr6x.3","label":"claimed_by:485a7db0-b994-4f92-a29a-8e6792325d4f"}
+{"issue_id":"sylveste-nr6x.3","label":"complexity:2"}
 {"issue_id":"sylveste-qd1","label":"artifact_plan:docs/plans/2026-04-04-ockham-f1-f2-intent-scoring.md"}
 {"issue_id":"sylveste-qd1","label":"claimed_at:1775329833"}
 {"issue_id":"sylveste-qd1","label":"claimed_by:811384ae-740f-4104-8c6e-dfed52619110"}
@@ -482,6 +485,7 @@
 {"issue_id":"sylveste-s3z6","label":"artifact_plan:docs/plans/2026-04-07-fluxbench-closed-loop-model-discovery.md"}
 {"issue_id":"sylveste-s3z6","label":"artifact_prd:docs/prds/2026-04-07-fluxbench-closed-loop-model-discovery.md"}
 {"issue_id":"sylveste-s3z6","label":"artifact_prior-art:none-found"}
+{"issue_id":"sylveste-s3z6","label":"artifact_test-pass-sha:09d541e8271e346d19f643deb81c248b62566f56"}
 {"issue_id":"sylveste-s3z6","label":"claimed_at:1775525663"}
 {"issue_id":"sylveste-s3z6","label":"claimed_by:cbc949bc-2d46-4208-aa25-3f4ceaf5960c"}
 {"issue_id":"sylveste-s3z6","label":"complexity:4"}
