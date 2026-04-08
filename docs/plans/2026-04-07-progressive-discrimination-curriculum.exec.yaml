@@ -1,0 +1,43 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 5
+timeout_per_task: 300
+
+stages:
+  - name: "Wave 1 — mechanical data processing (parallel)"
+    tasks:
+      - id: task-1
+        title: "F1: Difficulty ladder — order 30 near-miss pairs by tier"
+        files: [apps/Auraken/data/calibration/build_difficulty_ladder.py, apps/Auraken/data/calibration/difficulty_ladder.json, apps/Auraken/tests/test_difficulty_ladder.py]
+        depends: []
+      - id: task-2
+        title: "F2: Judicial holdings — restructure 60 DQs with condition/rationale/scope"
+        files: [apps/Auraken/data/calibration/restructure_holdings.py, apps/Auraken/data/calibration/near_miss_forge_ready.json, apps/Auraken/src/auraken/lenses.py, apps/Auraken/tests/test_holdings.py]
+        depends: []
+
+  - name: "Wave 2 — design spec (depends on data formats from Wave 1)"
+    tasks:
+      - id: task-3
+        title: "F3: Conversation integration spec — wax-and-gold + correctness signal + friction mechanism"
+        files: [apps/Auraken/docs/specs/conversation-integration-wax-and-gold.md]
+        depends: [task-1, task-2]
+        tier: fast
+
+  - name: "Wave 3 — runtime code (parallel, depends on spec)"
+    tasks:
+      - id: task-4
+        title: "F4: Discrimination tracker — events table + tier advancement + stagnation detection"
+        files: [apps/Auraken/src/auraken/discrimination.py, apps/Auraken/src/auraken/models.py, apps/Auraken/tests/test_discrimination.py]
+        depends: [task-3]
+      - id: task-5
+        title: "F5: Lens stack transitions — session-persistent orchestrator + JSON patterns"
+        files: [apps/Auraken/src/auraken/lens_stacks.py, apps/Auraken/data/calibration/stack_patterns.json, apps/Auraken/tests/test_lens_stacks.py]
+        depends: [task-3]
+
+  - name: "Wave 4 — integration (depends on all)"
+    tasks:
+      - id: task-6
+        title: "Integration: wire curriculum into agent.py conversation handler"
+        files: [apps/Auraken/src/auraken/curriculum.py, apps/Auraken/src/auraken/agent.py, apps/Auraken/tests/test_curriculum.py]
+        depends: [task-1, task-2, task-4, task-5]
