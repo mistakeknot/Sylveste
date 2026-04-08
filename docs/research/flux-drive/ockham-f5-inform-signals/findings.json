@@ -1,0 +1,152 @@
+{
+  "reviewed": "2026-04-05",
+  "input": "docs/brainstorms/2026-04-05-ockham-f5-inform-signals-brainstorm.md",
+  "agents_launched": [
+    "fd-statistical-process-control",
+    "fd-feedback-loop-closure",
+    "fd-data-pipeline-reliability",
+    "fd-go-metrics-implementation",
+    "fd-sqlite-rolling-window",
+    "fd-sake-toji-moromi-fermentation",
+    "fd-carillon-bell-tuning",
+    "fd-persian-qanat-hydrology",
+    "fd-tibetan-sand-mandala-dissolution",
+    "fd-ottoman-waqf-endowment"
+  ],
+  "agents_completed": [
+    "fd-statistical-process-control",
+    "fd-feedback-loop-closure",
+    "fd-data-pipeline-reliability",
+    "fd-go-metrics-implementation",
+    "fd-sqlite-rolling-window",
+    "fd-sake-toji-moromi-fermentation",
+    "fd-carillon-bell-tuning",
+    "fd-persian-qanat-hydrology",
+    "fd-tibetan-sand-mandala-dissolution",
+    "fd-ottoman-waqf-endowment"
+  ],
+  "findings": [
+    {
+      "id": "P0-1",
+      "severity": "P0",
+      "agent": "fd-data-pipeline-reliability",
+      "section": "Pleasure signals",
+      "title": "first_attempt_pass_rate may violate Signal Independence if sourced from agent-writable interspect evidence",
+      "convergence": 1
+    },
+    {
+      "id": "P1-1",
+      "severity": "P1",
+      "agent": "fd-statistical-process-control",
+      "section": "Weight-drift detection",
+      "title": "10-bead minimum window has insufficient statistical power for 20% drift detection",
+      "convergence": 2
+    },
+    {
+      "id": "P1-2",
+      "severity": "P1",
+      "agent": "fd-feedback-loop-closure",
+      "section": "Weight-drift detection",
+      "title": "No signal-clear condition defined — INFORM signals persist indefinitely",
+      "convergence": 3
+    },
+    {
+      "id": "P1-3",
+      "severity": "P1",
+      "agent": "fd-carillon-bell-tuning",
+      "section": "Weight-drift detection",
+      "title": "No hysteresis between fire and clear thresholds — oscillation risk",
+      "convergence": 2
+    },
+    {
+      "id": "P1-4",
+      "severity": "P1",
+      "agent": "fd-feedback-loop-closure",
+      "section": "Weight-drift detection",
+      "title": "Simultaneous INFORM signals on multiple themes can drive all offsets to OffsetMin (-6) — integral windup",
+      "convergence": 1
+    },
+    {
+      "id": "P2-1",
+      "severity": "P2",
+      "agent": "fd-sake-toji-moromi-fermentation",
+      "section": "Pleasure signals",
+      "title": "Independent pleasure signals miss compensatory gaming between metrics",
+      "convergence": 1
+    },
+    {
+      "id": "P2-2",
+      "severity": "P2",
+      "agent": "fd-sqlite-rolling-window",
+      "section": "Storage",
+      "title": "Rolling window data has no retention policy — unbounded table growth",
+      "convergence": 2
+    },
+    {
+      "id": "P2-3",
+      "severity": "P2",
+      "agent": "fd-tibetan-sand-mandala-dissolution",
+      "section": "Weight-drift detection",
+      "title": "Stale signal state on dormant themes biases dispatch on resume",
+      "convergence": 2
+    },
+    {
+      "id": "P2-4",
+      "severity": "P2",
+      "agent": "fd-data-pipeline-reliability",
+      "section": "Pleasure signals",
+      "title": "Missing data source (cost-query.sh, interspect) produces silent all-clear",
+      "convergence": 1
+    },
+    {
+      "id": "P2-5",
+      "severity": "P2",
+      "agent": "fd-persian-qanat-hydrology",
+      "section": "Weight-drift detection",
+      "title": "ockham check re-evaluates stale windows when no new beads arrived",
+      "convergence": 1
+    },
+    {
+      "id": "P2-6",
+      "severity": "P2",
+      "agent": "fd-tibetan-sand-mandala-dissolution",
+      "section": "Weight-drift detection",
+      "title": "Signal clear events not recorded to interspect — asymmetric audit trail",
+      "convergence": 1
+    }
+  ],
+  "improvements": [
+    {
+      "id": "IMP-1",
+      "agent": "fd-carillon-bell-tuning",
+      "section": "Pleasure signals",
+      "title": "Factory-level aggregate pleasure check across themes"
+    },
+    {
+      "id": "IMP-2",
+      "agent": "fd-statistical-process-control",
+      "section": "Pleasure signals",
+      "title": "Per-signal minimum window sizes based on variance characteristics"
+    },
+    {
+      "id": "IMP-3",
+      "agent": "fd-tibetan-sand-mandala-dissolution",
+      "section": "Storage",
+      "title": "Cold-start sentinel for recovered DB"
+    },
+    {
+      "id": "IMP-4",
+      "agent": "fd-sake-toji-moromi-fermentation",
+      "section": "Weight-drift detection",
+      "title": "Graduated advisory response proportional to drift magnitude"
+    },
+    {
+      "id": "IMP-5",
+      "agent": "fd-persian-qanat-hydrology",
+      "section": "Weight-drift detection",
+      "title": "Advisory offset audit trail showing cascade rebalancing effects"
+    }
+  ],
+  "verdict": "needs-changes",
+  "early_stop": false
+}

@@ -1,0 +1,314 @@
+{
+  "reviewed": "2026-04-07",
+  "input": "docs/prds/2026-04-06-auraken-skaffen-migration.md",
+  "prior_review": "docs/research/flux-drive/2026-04-06-auraken-skaffen-migration-brainstorm-20260406T1911/summary.md",
+  "agents_available": 16,
+  "agents_triaged": 16,
+  "agents_launched": [
+    "fd-data-migration-identity",
+    "fd-python-go-migration-fidelity",
+    "fd-go-package-api-design",
+    "fd-persona-prompt-architecture",
+    "fd-analysis-mode-design",
+    "fd-broadcast-signal-migration",
+    "fd-clinical-trial-site-transfer",
+    "fd-archival-records-schema-migration",
+    "fd-intelligence-analysis-source-migration",
+    "fd-togishi-sword-polishing-sequencing",
+    "fd-ethiopian-jebena-buna-identity-transformation",
+    "fd-orgelbau-tonal-transplantation",
+    "fd-thangka-iconometric-proportion",
+    "fd-ethiopian-gult-tenure-layering",
+    "fd-muisca-tumbaga-depletion-gilding",
+    "fd-noh-kata-hana-emergence"
+  ],
+  "agents_completed": [
+    "fd-data-migration-identity",
+    "fd-python-go-migration-fidelity",
+    "fd-go-package-api-design",
+    "fd-persona-prompt-architecture",
+    "fd-analysis-mode-design",
+    "fd-broadcast-signal-migration",
+    "fd-clinical-trial-site-transfer",
+    "fd-archival-records-schema-migration",
+    "fd-intelligence-analysis-source-migration",
+    "fd-togishi-sword-polishing-sequencing",
+    "fd-ethiopian-jebena-buna-identity-transformation",
+    "fd-orgelbau-tonal-transplantation",
+    "fd-thangka-iconometric-proportion",
+    "fd-ethiopian-gult-tenure-layering",
+    "fd-muisca-tumbaga-depletion-gilding",
+    "fd-noh-kata-hana-emergence"
+  ],
+  "track_distribution": {
+    "A-Adjacent": 5,
+    "B-Orthogonal": 4,
+    "C-Distant": 4,
+    "D-Esoteric": 3
+  },
+  "brainstorm_finding_disposition": [
+    {
+      "brainstorm_id": "P0-1",
+      "title": "Identity fracture — no transport-agnostic primary key",
+      "prd_status": "fixed",
+      "prd_location": "F11 acceptance criteria",
+      "notes": "PRD specifies user_id UUID PRIMARY KEY + transport_identities join table + dry-run crosswalk with diff report. Fully addressed."
+    },
+    {
+      "brainstorm_id": "P0-2",
+      "title": "Bi-temporal timestamp loss during migration",
+      "prd_status": "fixed",
+      "prd_location": "F11 acceptance criteria",
+      "notes": "PRD specifies UTC normalization, microsecond precision, bi-temporal fields. Fully addressed."
+    },
+    {
+      "brainstorm_id": "P0-3",
+      "title": "Concurrent dual-write without arbitration",
+      "prd_status": "fixed",
+      "prd_location": "F11 acceptance criteria",
+      "notes": "PRD specifies single-writer-per-user with routing table. Fully addressed."
+    },
+    {
+      "brainstorm_id": "P1-1",
+      "title": "No phase boundary validation gates",
+      "prd_status": "fixed",
+      "prd_location": "Phase Boundary Gates table",
+      "notes": "PRD has explicit gate criteria for all 4 transitions. Fully addressed."
+    },
+    {
+      "brainstorm_id": "P1-2",
+      "title": "Missing relational invariant spec for lens graph",
+      "prd_status": "fixed",
+      "prd_location": "F1 acceptance criteria",
+      "notes": "PRD specifies relational invariant spec, property-based parity tests, JSON canonical source via Go embed, sort stability. Fully addressed."
+    },
+    {
+      "brainstorm_id": "P1-3",
+      "title": "Persona config decomposes emergent personality",
+      "prd_status": "fixed",
+      "prd_location": "F6 acceptance criteria",
+      "notes": "PRD specifies conditions for emergence, post-integration voicing/calibration phase. Fully addressed."
+    },
+    {
+      "brainstorm_id": "P1-4",
+      "title": "Python-shaped Go risk",
+      "prd_status": "fixed",
+      "prd_location": "Cross-Cutting Concerns",
+      "notes": "PRD specifies Python-to-Go idiom audit with documented equivalents and Go expert review. Fully addressed."
+    },
+    {
+      "brainstorm_id": "P1-5",
+      "title": "No rollback path after decommission",
+      "prd_status": "fixed",
+      "prd_location": "F12 acceptance criteria",
+      "notes": "PRD specifies 30-day Skaffen-only, 90-day cold standby, explicit rollback triggers, final builder confirmation. Fully addressed."
+    },
+    {
+      "brainstorm_id": "P1-6",
+      "title": "Haiku call routing undecided",
+      "prd_status": "fixed",
+      "prd_location": "Cross-Cutting Concerns + F3/F4 acceptance criteria",
+      "notes": "PRD specifies routing through Skaffen's provider abstraction for budget tracking, rate limiting, evidence emission. Fully addressed."
+    },
+    {
+      "brainstorm_id": "P1-7",
+      "title": "Evidence chain breakage risk",
+      "prd_status": "fixed",
+      "prd_location": "F11 acceptance criteria + Cross-Cutting Concerns",
+      "notes": "PRD specifies migration order (entities/episodes first, regenerate working_profiles as validation), provenance columns. Fully addressed."
+    }
+  ],
+  "brainstorm_improvement_disposition": [
+    {
+      "brainstorm_id": "IMP-1",
+      "title": "Migration provenance columns",
+      "prd_status": "fixed",
+      "prd_location": "F11 acceptance criteria",
+      "notes": "PRD specifies source_system, migrated_at, original_id provenance on all migrated records."
+    },
+    {
+      "brainstorm_id": "IMP-2",
+      "title": "Design concurrent operation as legitimate state",
+      "prd_status": "fixed",
+      "prd_location": "F11 acceptance criteria",
+      "notes": "PRD specifies single-writer-per-user routing table — legitimate transition, not hack."
+    },
+    {
+      "brainstorm_id": "IMP-3",
+      "title": "Post-migration identity enrichment",
+      "prd_status": "not-addressed",
+      "notes": "PRD does not specify additive cross-transport capabilities after migration completes. The identity model supports it structurally but no enrichment features are scoped."
+    },
+    {
+      "brainstorm_id": "IMP-4",
+      "title": "Data cleaning step before migration",
+      "prd_status": "not-addressed",
+      "notes": "PRD specifies dry-run crosswalk and reconciliation but no explicit data cleaning/validation step before migration begins."
+    },
+    {
+      "brainstorm_id": "IMP-5",
+      "title": "pkg/extraction hidden dependency on pkg/fingerprint",
+      "prd_status": "fixed",
+      "prd_location": "F1 + F3 acceptance criteria",
+      "notes": "Both F1 and F3 specify 'zero imports from sibling packages' and 'no import of sibling packages'. Fully addressed."
+    },
+    {
+      "brainstorm_id": "IMP-6",
+      "title": "Canonical source declaration for lens data",
+      "prd_status": "fixed",
+      "prd_location": "F1 acceptance criteria",
+      "notes": "PRD specifies JSON canonical source via Go embed, Go structs derived."
+    },
+    {
+      "brainstorm_id": "IMP-7",
+      "title": "Context provider composition not concatenation",
+      "prd_status": "fixed",
+      "prd_location": "F5 acceptance criteria",
+      "notes": "PRD specifies 'context providers compose their outputs (not concatenate)'."
+    },
+    {
+      "brainstorm_id": "IMP-8",
+      "title": "Reconciliation script with checksums",
+      "prd_status": "fixed",
+      "prd_location": "F11 acceptance criteria",
+      "notes": "PRD specifies reconciliation script with row counts + content checksums."
+    }
+  ],
+  "new_findings": [
+    {
+      "id": "PRD-P1-1",
+      "severity": "P1",
+      "agents": [
+        "fd-persona-prompt-architecture",
+        "fd-noh-kata-hana-emergence"
+      ],
+      "section": "F5: OODARC Prompt Builder",
+      "title": "Async pre-turn hook caching strategy lacks invalidation criteria",
+      "description": "F5 specifies 'async pre-turn hooks with caching (don't re-call Haiku if context unchanged)' but does not define what constitutes 'context unchanged'. Is it message hash? Entity count? Fingerprint state hash? Without explicit cache invalidation criteria, stale context will be served to the LLM, producing personality drift that is invisible to the user and hard to debug.",
+      "fix": "Add cache key definition to F5: specify which inputs constitute the cache key for each context provider (e.g., lens cache key = message + last N history hashes; fingerprint cache key = entity count + last update timestamp)."
+    },
+    {
+      "id": "PRD-P1-2",
+      "severity": "P1",
+      "agents": [
+        "fd-go-package-api-design",
+        "fd-python-go-migration-fidelity"
+      ],
+      "section": "F1-F4: Go Packages",
+      "title": "No context.Context threading specified in package APIs",
+      "description": "F3 and F4 route Haiku calls through Skaffen's provider abstraction, but the acceptance criteria for Extractor.Extract() and profilegen do not mention context.Context as a parameter. Without context threading, cancellation and timeout propagation from the parent agent is impossible. A hung Haiku call inside pkg/extraction will block the conversation indefinitely.",
+      "fix": "Add to F3 acceptance criteria: 'Extractor.Extract(ctx context.Context, ...) — context propagated to all LLM calls'. Same for F4 profilegen. F1/F2 don't make LLM calls so this is less critical there."
+    },
+    {
+      "id": "PRD-P1-3",
+      "severity": "P1",
+      "agents": [
+        "fd-broadcast-signal-migration",
+        "fd-clinical-trial-site-transfer"
+      ],
+      "section": "F9: Signal Transport",
+      "title": "Signal sealed sender handling acceptance criteria too vague",
+      "description": "F9 lists 'sealed sender handling' as an acceptance criterion but does not specify what handling means. Signal's sealed sender mode hides the sender identity from the server — if Intercom relies on sender ID for user routing, sealed sender messages will fail to route. The brainstorm's WebSocket/json-rpc connection to signal-cli-rest-api exposes sender via the API, but the PRD should specify whether sealed sender is supported, degraded, or rejected.",
+      "fix": "Expand F9 acceptance criterion: 'Sealed sender messages: sender identity extracted from signal-cli-rest-api envelope (not raw Signal protocol). If signal-cli does not expose sender for sealed messages, document the limitation and degrade gracefully.'"
+    },
+    {
+      "id": "PRD-P1-4",
+      "severity": "P1",
+      "agents": [
+        "fd-analysis-mode-design"
+      ],
+      "section": "F7: Analysis Mode",
+      "title": "Analysis evidence separation lacks schema specification",
+      "description": "F7 states 'analysis evidence logged separately from normal conversation evidence' but does not specify how. Is it a separate table? A tag column? A separate database? Without this, analysis replay turns could pollute the user's real evidence chain, causing preference extraction to learn from synthetic/debug interactions.",
+      "fix": "Add to F7 acceptance criteria: 'Analysis evidence stored with evidence_type=analysis tag (or separate evidence_analysis table). Query filters in pkg/extraction and pkg/profilegen exclude evidence_type=analysis by default.'"
+    },
+    {
+      "id": "PRD-P2-1",
+      "severity": "P2",
+      "agents": [
+        "fd-broadcast-signal-migration"
+      ],
+      "section": "F9: Signal Transport",
+      "title": "Hot-standby fallback mechanism unspecified",
+      "description": "F9 specifies 'hot-standby fallback to Auraken Signal transport during transition' but does not define the trigger conditions or switchover mechanism. Is it manual? Health-check driven? Timeout-based? Without criteria, hot-standby is aspirational not implementable.",
+      "fix": "Add trigger criteria: 'Fallback triggered when Intercom Signal adapter fails N consecutive health checks (default 3, 30s interval). Switchover is automatic via routing table update. Alert emitted on fallback activation.'"
+    },
+    {
+      "id": "PRD-P2-2",
+      "severity": "P2",
+      "agents": [
+        "fd-data-migration-identity",
+        "fd-ethiopian-gult-tenure-layering"
+      ],
+      "section": "F11: Identity DB",
+      "title": "Namespace registry collision prevention lacks specification",
+      "description": "F8 specifies 'namespace registry for ChatID prefixes with collision prevention' but F11's transport_identities table does not reference this registry. If a future transport (e.g., WhatsApp) uses a prefix that collides with an existing one, the identity layer silently corrupts. The PRD should specify how the namespace registry prevents this.",
+      "fix": "Add to F8 or F11: 'ChatID prefix registry as a DB table or config file with UNIQUE constraint on prefix. Transport registration validates prefix uniqueness at startup.'"
+    },
+    {
+      "id": "PRD-P2-3",
+      "severity": "P2",
+      "agents": [
+        "fd-togishi-sword-polishing-sequencing",
+        "fd-orgelbau-tonal-transplantation"
+      ],
+      "section": "F6: Persona Config",
+      "title": "Voicing/calibration phase not a discrete feature or bead",
+      "description": "F6 mentions 'post-integration voicing/calibration phase' in acceptance criteria, and Phase 2->3 gate requires 'voicing/calibration session completed', but this is not a distinct feature with its own acceptance criteria. It exists only as a gating condition. Without explicit scope, the calibration will be ad hoc and its completeness criteria will be subjective.",
+      "fix": "Either: (a) add F6a as a sub-feature with acceptance criteria (N real conversations tested, behavior-parity score threshold, parameter adjustment log), or (b) expand the Phase 2->3 gate with measurable calibration criteria."
+    },
+    {
+      "id": "PRD-P2-4",
+      "severity": "P2",
+      "agents": [
+        "fd-python-go-migration-fidelity",
+        "fd-thangka-iconometric-proportion"
+      ],
+      "section": "F2: Style Fingerprinting",
+      "title": "EMA cold-start handling unspecified in acceptance criteria",
+      "description": "F2 lists 'configurable alpha and cold-start handling' but does not specify what cold-start handling means. In Auraken's Python, cold-start uses a different alpha value for the first N observations. The Go port needs to define: what is the cold-start threshold? What alpha is used? What happens when a user switches modes after cold-start?",
+      "fix": "Add to F2 acceptance criteria: 'Cold-start: first N observations (configurable, default 5) use alpha_cold (default 0.5) instead of alpha_steady (default 0.1). Mode switch resets cold-start counter for the new mode. Parity test against Python cold-start behavior.'"
+    },
+    {
+      "id": "PRD-P2-5",
+      "severity": "P2",
+      "agents": [
+        "fd-muisca-tumbaga-depletion-gilding"
+      ],
+      "section": "Cross-Cutting",
+      "title": "Behavioral baseline capture not a feature or prerequisite",
+      "description": "Cross-Cutting Concerns mentions 'Capture Auraken's current behavior as test fixtures before any migration begins' but this is not tracked as a prerequisite for Phase 1 or as a distinct work item. If the baseline is not captured before Go development starts, parity tests have nothing to compare against.",
+      "fix": "Add as explicit Phase 0 prerequisite or F0: 'Capture Auraken behavioral baseline — N representative conversations as test fixtures with expected lens selections, fingerprint states, and preference extractions. Must complete before Phase 1 begins.'"
+    },
+    {
+      "id": "PRD-P3-1",
+      "severity": "P3",
+      "agents": [
+        "fd-ethiopian-jebena-buna-identity-transformation"
+      ],
+      "section": "F10: Telegram Migration",
+      "title": "Voice transcription fallback chain unspecified",
+      "description": "F10 lists 'Voice transcription (Deepgram + Whisper fallback) ported or delegated' but 'ported or delegated' is ambiguous. Is Deepgram called directly from Intercom? Through Skaffen's provider abstraction? Is Whisper a local model or API? The brainstorm does not clarify this either.",
+      "fix": "Clarify F10: specify whether voice transcription is a pkg/ library, a Skaffen service, or an external API call. Define the fallback chain explicitly."
+    },
+    {
+      "id": "PRD-P3-2",
+      "severity": "P3",
+      "agents": [
+        "fd-go-package-api-design"
+      ],
+      "section": "F1: Lens Library",
+      "title": "Community detection algorithm not specified",
+      "description": "F1 requires 'community detection and bridge scoring' but does not name the algorithm. The Python implementation likely uses a specific algorithm (Louvain, label propagation, etc.). The Go port needs to match the algorithm, not just the concept, or the community structure will differ.",
+      "fix": "Add to F1: specify the community detection algorithm used in Auraken's Python (e.g., Louvain) and require the Go implementation to use the same algorithm or prove equivalent output via parity tests."
+    }
+  ],
+  "verdict": "pass-with-findings",
+  "early_stop": false,
+  "severity_summary": {
+    "P0": 0,
+    "P1": 4,
+    "P2": 5,
+    "P3": 2
+  }
+}

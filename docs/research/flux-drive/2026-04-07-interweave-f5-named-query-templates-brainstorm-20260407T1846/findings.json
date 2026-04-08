@@ -1,0 +1,358 @@
+{
+  "reviewed": "2026-04-07",
+  "input": "docs/brainstorms/2026-04-07-interweave-f5-named-query-templates-brainstorm.md",
+  "agents_launched": [
+    "fd-bi-report-template-registry",
+    "fd-reference-service-strategy",
+    "fd-regulatory-reporting-pipeline",
+    "fd-clinical-decision-support"
+  ],
+  "agents_completed": [
+    "fd-bi-report-template-registry",
+    "fd-reference-service-strategy",
+    "fd-regulatory-reporting-pipeline",
+    "fd-clinical-decision-support"
+  ],
+  "findings": [
+    {
+      "id": "BI-1",
+      "severity": "P1",
+      "agent": "fd-bi-report-template-registry",
+      "section": "What We're Building",
+      "title": "QueryResult lacks connector status enumeration — empty result indistinguishable from error-absent",
+      "convergence": 3,
+      "co_located": [
+        "REG-1",
+        "REG-3"
+      ],
+      "provider": "claude",
+      "model_family": "claude",
+      "model_id": "claude-sonnet-4-6"
+    },
+    {
+      "id": "BI-2",
+      "severity": "P1",
+      "agent": "fd-bi-report-template-registry",
+      "section": "Key Decisions",
+      "title": "No versioning mechanism for QueryTemplate result schema — MCP tool schema changes break agent consumers silently",
+      "convergence": 1,
+      "provider": "claude",
+      "model_family": "claude",
+      "model_id": "claude-sonnet-4-6"
+    },
+    {
+      "id": "BI-3",
+      "severity": "P1",
+      "agent": "fd-bi-report-template-registry",
+      "section": "Key Decisions",
+      "title": "Result entity identifiers unspecified — subsystem-native IDs in QueryResult will break cross-template query chaining",
+      "convergence": 1,
+      "provider": "claude",
+      "model_family": "claude",
+      "model_id": "claude-sonnet-4-6"
+    },
+    {
+      "id": "REF-1",
+      "severity": "P1",
+      "agent": "fd-reference-service-strategy",
+      "section": "What We're Building",
+      "title": "Template scope boundaries undocumented — who_touched_file implies all-time all-actors but cass coverage has temporal gaps",
+      "convergence": 1,
+      "provider": "claude",
+      "model_family": "claude",
+      "model_id": "claude-sonnet-4-6"
+    },
+    {
+      "id": "REF-2",
+      "severity": "P1",
+      "agent": "fd-reference-service-strategy",
+      "section": "What We're Building",
+      "title": "entity_relationships has no entity-family scope validation — silently empty results for out-of-scope entity types",
+      "convergence": 1,
+      "provider": "claude",
+      "model_family": "claude",
+      "model_id": "claude-sonnet-4-6"
+    },
+    {
+      "id": "REG-1",
+      "severity": "P1",
+      "agent": "fd-regulatory-reporting-pipeline",
+      "section": "Key Decisions",
+      "title": "Exception handlers in execute() will convert connector errors to empty results — no error taxonomy defined",
+      "convergence": 3,
+      "co_located": [
+        "BI-1",
+        "REG-3"
+      ],
+      "provider": "claude",
+      "model_family": "claude",
+      "model_id": "claude-sonnet-4-6"
+    },
+    {
+      "id": "REG-2",
+      "severity": "P1",
+      "agent": "fd-regulatory-reporting-pipeline",
+      "section": "What We're Building",
+      "title": "session_entities crosswalk resolution silently drops unresolved entities — no resolution_status field specified",
+      "convergence": 1,
+      "provider": "claude",
+      "model_family": "claude",
+      "model_id": "claude-sonnet-4-6"
+    },
+    {
+      "id": "CDS-1",
+      "severity": "P1",
+      "agent": "fd-clinical-decision-support",
+      "section": "What We're Building",
+      "title": "related_artifacts has no result limit or relevance ranking — high-degree nodes return unbounded result sets that exhaust agent context budgets",
+      "convergence": 1,
+      "provider": "claude",
+      "model_family": "claude",
+      "model_id": "claude-sonnet-4-6"
+    },
+    {
+      "id": "CDS-2",
+      "severity": "P1",
+      "agent": "fd-clinical-decision-support",
+      "section": "Key Decisions",
+      "title": "QueryResult.metadata has no per-source freshness timestamps — agents act on stale crosswalk data without knowing it",
+      "convergence": 2,
+      "co_located": [
+        "REG-4"
+      ],
+      "provider": "claude",
+      "model_family": "claude",
+      "model_id": "claude-sonnet-4-6"
+    },
+    {
+      "id": "BI-4",
+      "severity": "P2",
+      "agent": "fd-bi-report-template-registry",
+      "section": "What We're Building",
+      "title": "TemplateRegistry population not auto-discovered — manual __init__.py imports create silent registration gaps",
+      "convergence": 1,
+      "provider": "claude",
+      "model_family": "claude",
+      "model_id": "claude-sonnet-4-6"
+    },
+    {
+      "id": "BI-5",
+      "severity": "P2",
+      "agent": "fd-bi-report-template-registry",
+      "section": "Open Questions",
+      "title": "Execution timeout allocation across subsystem calls not addressed — slow cass connector can time out entire multi-join template",
+      "convergence": 2,
+      "co_located": [
+        "REG-5"
+      ],
+      "provider": "claude",
+      "model_family": "claude",
+      "model_id": "claude-sonnet-4-6"
+    },
+    {
+      "id": "REF-3",
+      "severity": "P2",
+      "agent": "fd-reference-service-strategy",
+      "section": "Open Questions",
+      "title": "No mechanism to detect connector schema/coverage changes that affect template recall — templates become silently stale",
+      "convergence": 1,
+      "provider": "claude",
+      "model_family": "claude",
+      "model_id": "claude-sonnet-4-6"
+    },
+    {
+      "id": "REF-4",
+      "severity": "P2",
+      "agent": "fd-reference-service-strategy",
+      "section": "What We're Building",
+      "title": "Template descriptions insufficient for agent self-directed selection — adjacent templates undifferentiated",
+      "convergence": 2,
+      "co_located": [
+        "CDS-4"
+      ],
+      "provider": "claude",
+      "model_family": "claude",
+      "model_id": "claude-sonnet-4-6"
+    },
+    {
+      "id": "REG-3",
+      "severity": "P2",
+      "agent": "fd-regulatory-reporting-pipeline",
+      "section": "Key Decisions",
+      "title": "QueryResult.metadata is a free-form dict — inconsistent key naming across templates breaks monitoring consumers",
+      "convergence": 3,
+      "co_located": [
+        "BI-1",
+        "REG-1"
+      ],
+      "provider": "claude",
+      "model_family": "claude",
+      "model_id": "claude-sonnet-4-6"
+    },
+    {
+      "id": "REG-4",
+      "severity": "P2",
+      "agent": "fd-regulatory-reporting-pipeline",
+      "section": "What We're Building",
+      "title": "No audit trail from query invocation to result — connector versions, crosswalk state, inference rules applied are unrecorded",
+      "convergence": 2,
+      "co_located": [
+        "CDS-2"
+      ],
+      "provider": "claude",
+      "model_family": "claude",
+      "model_id": "claude-sonnet-4-6"
+    },
+    {
+      "id": "REG-5",
+      "severity": "P2",
+      "agent": "fd-regulatory-reporting-pipeline",
+      "section": "Open Questions",
+      "title": "No declared latency SLAs per template — agents cannot make informed decisions between high-latency and low-latency alternatives",
+      "convergence": 2,
+      "co_located": [
+        "BI-5"
+      ],
+      "provider": "claude",
+      "model_family": "claude",
+      "model_id": "claude-sonnet-4-6"
+    },
+    {
+      "id": "CDS-3",
+      "severity": "P2",
+      "agent": "fd-clinical-decision-support",
+      "section": "Open Questions",
+      "title": "No template overlap governance mechanism — registry will accumulate redundant templates as it grows, causing agent confusion",
+      "convergence": 1,
+      "provider": "claude",
+      "model_family": "claude",
+      "model_id": "claude-sonnet-4-6"
+    },
+    {
+      "id": "CDS-4",
+      "severity": "P2",
+      "agent": "fd-clinical-decision-support",
+      "section": "What We're Building",
+      "title": "Template invocation contexts undocumented — agents cannot determine which templates are appropriate for action-oriented vs. exploratory queries",
+      "convergence": 2,
+      "co_located": [
+        "REF-4"
+      ],
+      "provider": "claude",
+      "model_family": "claude",
+      "model_id": "claude-sonnet-4-6"
+    },
+    {
+      "id": "BI-6",
+      "severity": "P3",
+      "agent": "fd-bi-report-template-registry",
+      "section": "What We're Building",
+      "title": "8-template initial set derived from ontology coverage, not observed agent query patterns — risk of gaps causing ad-hoc queries",
+      "convergence": 1,
+      "provider": "claude",
+      "model_family": "claude",
+      "model_id": "claude-sonnet-4-6"
+    },
+    {
+      "id": "REF-5",
+      "severity": "P3",
+      "agent": "fd-reference-service-strategy",
+      "section": "Key Decisions",
+      "title": "Recall/precision posture undeclared per template — agents cannot reason about false-negative risk",
+      "convergence": 1,
+      "provider": "claude",
+      "model_family": "claude",
+      "model_id": "claude-sonnet-4-6"
+    },
+    {
+      "id": "REG-6",
+      "severity": "P3",
+      "agent": "fd-regulatory-reporting-pipeline",
+      "section": "Key Decisions",
+      "title": "execute() determinism not specified — re-runs with same parameters can produce different relationship graphs",
+      "convergence": 1,
+      "provider": "claude",
+      "model_family": "claude",
+      "model_id": "claude-sonnet-4-6"
+    },
+    {
+      "id": "CDS-5",
+      "severity": "P3",
+      "agent": "fd-clinical-decision-support",
+      "section": "Key Decisions",
+      "title": "No usage tracking or feedback loop — TemplateRegistry has no mechanism to detect stale, misused, or noisy templates over time",
+      "convergence": 1,
+      "provider": "claude",
+      "model_family": "claude",
+      "model_id": "claude-sonnet-4-6"
+    }
+  ],
+  "improvements": [
+    {
+      "id": "IMP-1",
+      "agent": "fd-bi-report-template-registry",
+      "section": "Key Decisions",
+      "title": "Add QueryResult.metadata typed dataclass spec — free-form dict leads to inconsistent key naming"
+    },
+    {
+      "id": "IMP-2",
+      "agent": "fd-bi-report-template-registry",
+      "section": "What We're Building",
+      "title": "Document ConnectorRegistry pattern comparison — note whether F5 should improve on existing manual-import pattern"
+    },
+    {
+      "id": "IMP-3",
+      "agent": "fd-bi-report-template-registry",
+      "section": "Open Questions",
+      "title": "Note stderr/stdout separation requirement for Go↔Python subprocess bridge"
+    },
+    {
+      "id": "IMP-4",
+      "agent": "fd-reference-service-strategy",
+      "section": "What We're Building",
+      "title": "Add structured scope section to each template description: entity families, subsystem coverage, temporal limits, canonical question form"
+    },
+    {
+      "id": "IMP-5",
+      "agent": "fd-reference-service-strategy",
+      "section": "Open Questions",
+      "title": "Consider a meta-template or discovery tool for agent-to-template routing"
+    },
+    {
+      "id": "IMP-6",
+      "agent": "fd-regulatory-reporting-pipeline",
+      "section": "What We're Building",
+      "title": "Add QueryResult.is_complete() convenience method — boolean completeness check without full metadata inspection"
+    },
+    {
+      "id": "IMP-7",
+      "agent": "fd-clinical-decision-support",
+      "section": "Key Decisions",
+      "title": "Document max_results and relationship_strength as first-class protocol concerns exposed in MCP tool schema"
+    },
+    {
+      "id": "IMP-8",
+      "agent": "fd-clinical-decision-support",
+      "section": "Open Questions",
+      "title": "Resolve Open Question 4 (pagination) with cursor-based pagination rather than limit/offset — fragile against insertions"
+    }
+  ],
+  "verdict": "needs-changes",
+  "early_stop": false,
+  "severity_counts": {
+    "P0": 0,
+    "P1": 9,
+    "P2": 9,
+    "P3": 4
+  },
+  "total_findings": 22,
+  "cost_report": {
+    "budget": 80000,
+    "budget_type": "brainstorm",
+    "cost_basis": "billing",
+    "estimated_total": 160000,
+    "actual_billing": null,
+    "actual_total": null,
+    "note": "Actual tokens pending backfill — inline synthesis mode used"
+  }
+}

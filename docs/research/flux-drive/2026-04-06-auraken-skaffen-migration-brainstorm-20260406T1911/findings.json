@@ -1,0 +1,247 @@
+{
+  "reviewed": "2026-04-06",
+  "input": "docs/brainstorms/2026-04-06-auraken-skaffen-migration-brainstorm.md",
+  "agents_launched": [
+    "fd-python-go-migration-fidelity",
+    "fd-go-package-api-design",
+    "fd-persona-prompt-architecture",
+    "fd-data-migration-identity",
+    "fd-analysis-mode-design",
+    "fd-broadcast-signal-migration",
+    "fd-archival-records-schema-migration",
+    "fd-clinical-trial-site-transfer",
+    "fd-intelligence-analysis-source-migration",
+    "fd-togishi-sword-polishing-sequencing",
+    "fd-ethiopian-jebena-buna-identity-transformation",
+    "fd-orgelbau-tonal-transplantation",
+    "fd-thangka-iconometric-proportion",
+    "fd-ethiopian-gult-tenure-layering",
+    "fd-muisca-tumbaga-depletion-gilding",
+    "fd-noh-kata-hana-emergence"
+  ],
+  "agents_completed": [
+    "fd-python-go-migration-fidelity",
+    "fd-go-package-api-design",
+    "fd-persona-prompt-architecture",
+    "fd-data-migration-identity",
+    "fd-analysis-mode-design",
+    "fd-broadcast-signal-migration",
+    "fd-archival-records-schema-migration",
+    "fd-clinical-trial-site-transfer",
+    "fd-intelligence-analysis-source-migration",
+    "fd-togishi-sword-polishing-sequencing",
+    "fd-ethiopian-jebena-buna-identity-transformation",
+    "fd-orgelbau-tonal-transplantation",
+    "fd-thangka-iconometric-proportion",
+    "fd-ethiopian-gult-tenure-layering",
+    "fd-muisca-tumbaga-depletion-gilding",
+    "fd-noh-kata-hana-emergence"
+  ],
+  "track_distribution": {
+    "A-Adjacent": 5,
+    "B-Orthogonal": 4,
+    "C-Distant": 4,
+    "D-Esoteric": 3
+  },
+  "findings": [
+    {
+      "id": "P0-1",
+      "severity": "P0",
+      "agents": [
+        "fd-data-migration-identity",
+        "fd-ethiopian-jebena-buna-identity-transformation",
+        "fd-ethiopian-gult-tenure-layering",
+        "fd-clinical-trial-site-transfer"
+      ],
+      "section": "User Identity / Transport",
+      "title": "Identity fracture during transport migration — no transport-agnostic primary key, no dry-run validation",
+      "convergence": 4
+    },
+    {
+      "id": "P0-2",
+      "severity": "P0",
+      "agents": [
+        "fd-data-migration-identity",
+        "fd-archival-records-schema-migration",
+        "fd-ethiopian-gult-tenure-layering"
+      ],
+      "section": "Data Migration / Schema",
+      "title": "Bi-temporal timestamp loss during migration — timezone/precision unspecified",
+      "convergence": 3
+    },
+    {
+      "id": "P0-3",
+      "severity": "P0",
+      "agents": [
+        "fd-clinical-trial-site-transfer",
+        "fd-ethiopian-jebena-buna-identity-transformation",
+        "fd-broadcast-signal-migration",
+        "fd-ethiopian-gult-tenure-layering"
+      ],
+      "section": "Concurrent Operation",
+      "title": "Concurrent dual-write without arbitration — no single-writer-per-user protocol",
+      "convergence": 4
+    },
+    {
+      "id": "P1-1",
+      "severity": "P1",
+      "agents": [
+        "fd-togishi-sword-polishing-sequencing",
+        "fd-orgelbau-tonal-transplantation",
+        "fd-thangka-iconometric-proportion",
+        "fd-python-go-migration-fidelity",
+        "fd-go-package-api-design"
+      ],
+      "section": "Phase Sequencing",
+      "title": "No phase boundary validation gates — Phase 1 exit criteria absent",
+      "convergence": 5
+    },
+    {
+      "id": "P1-2",
+      "severity": "P1",
+      "agents": [
+        "fd-thangka-iconometric-proportion",
+        "fd-python-go-migration-fidelity",
+        "fd-muisca-tumbaga-depletion-gilding"
+      ],
+      "section": "Go Package Redesign",
+      "title": "Missing relational invariant spec for 291-lens + 1779-edge graph",
+      "convergence": 3
+    },
+    {
+      "id": "P1-3",
+      "severity": "P1",
+      "agents": [
+        "fd-noh-kata-hana-emergence",
+        "fd-persona-prompt-architecture",
+        "fd-orgelbau-tonal-transplantation"
+      ],
+      "section": "Persona / Prompt Architecture",
+      "title": "Persona TOML decomposes emergent personality into static declarative rules",
+      "convergence": 3
+    },
+    {
+      "id": "P1-4",
+      "severity": "P1",
+      "agents": [
+        "fd-orgelbau-tonal-transplantation",
+        "fd-muisca-tumbaga-depletion-gilding",
+        "fd-go-package-api-design"
+      ],
+      "section": "Go Package Redesign",
+      "title": "Python-shaped Go risk — redesign may replicate async patterns rather than Go-native equivalents",
+      "convergence": 3
+    },
+    {
+      "id": "P1-5",
+      "severity": "P1",
+      "agents": [
+        "fd-togishi-sword-polishing-sequencing",
+        "fd-clinical-trial-site-transfer",
+        "fd-broadcast-signal-migration"
+      ],
+      "section": "Phase Sequencing",
+      "title": "No rollback path after Phase 4 Python decommission — irreversible without criteria",
+      "convergence": 3
+    },
+    {
+      "id": "P1-6",
+      "severity": "P1",
+      "agents": [
+        "fd-go-package-api-design",
+        "fd-persona-prompt-architecture"
+      ],
+      "section": "Go Package Redesign",
+      "title": "Haiku call routing undecided — provider abstraction vs direct API calls",
+      "convergence": 2
+    },
+    {
+      "id": "P1-7",
+      "severity": "P1",
+      "agents": [
+        "fd-intelligence-analysis-source-migration",
+        "fd-archival-records-schema-migration"
+      ],
+      "section": "Data Migration / Schema",
+      "title": "Evidence chain breakage — working profiles may lose links to source entities",
+      "convergence": 2
+    }
+  ],
+  "improvements": [
+    {
+      "id": "IMP-1",
+      "agents": [
+        "fd-archival-records-schema-migration",
+        "fd-intelligence-analysis-source-migration"
+      ],
+      "section": "Data Migration / Schema",
+      "title": "Add migration provenance columns (source_system, migrated_at, original_id)"
+    },
+    {
+      "id": "IMP-2",
+      "agents": [
+        "fd-ethiopian-jebena-buna-identity-transformation"
+      ],
+      "section": "Concurrent Operation",
+      "title": "Design concurrent operation as legitimate transitional state with authority rules"
+    },
+    {
+      "id": "IMP-3",
+      "agents": [
+        "fd-ethiopian-jebena-buna-identity-transformation",
+        "fd-ethiopian-gult-tenure-layering"
+      ],
+      "section": "User Identity / Transport",
+      "title": "Post-migration identity enrichment — additive value from cross-transport unification"
+    },
+    {
+      "id": "IMP-4",
+      "agents": [
+        "fd-ethiopian-jebena-buna-identity-transformation"
+      ],
+      "section": "Data Migration / Schema",
+      "title": "Data cleaning/validation step before migration"
+    },
+    {
+      "id": "IMP-5",
+      "agents": [
+        "fd-go-package-api-design",
+        "fd-togishi-sword-polishing-sequencing"
+      ],
+      "section": "Go Package Redesign",
+      "title": "Check pkg/extraction dependency on pkg/fingerprint — hidden sequential ordering"
+    },
+    {
+      "id": "IMP-6",
+      "agents": [
+        "fd-thangka-iconometric-proportion"
+      ],
+      "section": "Go Package Redesign",
+      "title": "Declare canonical source for lens data (JSON vs Go struct)"
+    },
+    {
+      "id": "IMP-7",
+      "agents": [
+        "fd-noh-kata-hana-emergence"
+      ],
+      "section": "Persona / Prompt Architecture",
+      "title": "Context provider composition step — weave outputs, don't concatenate"
+    },
+    {
+      "id": "IMP-8",
+      "agents": [
+        "fd-clinical-trial-site-transfer"
+      ],
+      "section": "Data Migration / Schema",
+      "title": "Reconciliation script with row counts + checksums before declaring complete"
+    }
+  ],
+  "verdict": "needs-changes",
+  "early_stop": false,
+  "severity_summary": {
+    "P0": 3,
+    "P1": 7,
+    "P2": 0,
+    "P3": 0
+  }
+}

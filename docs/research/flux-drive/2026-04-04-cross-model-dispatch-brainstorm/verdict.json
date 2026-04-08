@@ -1,0 +1,81 @@
+{
+  "reviewed": "2026-04-04",
+  "document": "docs/brainstorms/2026-04-04-cross-model-dispatch-brainstorm.md",
+  "track": "C",
+  "track_name": "Distant domain structural isomorphisms",
+  "verdict": "proceed-with-changes",
+  "severity": "moderate",
+  "agents_launched": [
+    "fd-venetian-glass-grading",
+    "fd-han-salt-monopoly",
+    "fd-polynesian-wayfinding",
+    "fd-japanese-sword-testing"
+  ],
+  "agents_completed": [
+    "fd-venetian-glass-grading",
+    "fd-han-salt-monopoly",
+    "fd-polynesian-wayfinding",
+    "fd-japanese-sword-testing"
+  ],
+  "agents_failed": [],
+  "summary": {
+    "core_design_validity": "sound",
+    "expansion_score_as_signal": "requires_independence_check",
+    "tier_decision_dimensionality": "one_axis_of_two_present",
+    "centralized_function_resilience": "missing_fallback_guard",
+    "synthesis_feedback": "tier_metadata_absent"
+  },
+  "findings": {
+    "p1_critical": 3,
+    "p2_moderate": 4,
+    "p3_polish": 4,
+    "total": 11
+  },
+  "key_changes_required": [
+    "Deduplication of correlated expansion score contributions (trigger_source_id) in Step 2.2b (P1)",
+    "Fallback guard in routing_adjust_expansion_tier for empty/invalid return values (P1)",
+    "Adjacency transfer domain-intersection check before score→tier mapping (P1)",
+    "domain_complexity and max_model fields in agent-roles.yaml for two-axis tier decision (P2)",
+    "tier field in per-finding log output for future weighted synthesis (P2)",
+    "Upgrade pass recycling token savings into borderline-score agent upgrades (P2)"
+  ],
+  "convergence": {
+    "on_two_axis_tier_decision": "3 of 4 agents (tameshigiri primary, wayfinding + glassblowing reinforce)",
+    "on_core_design_soundness": "4 of 4 agents",
+    "on_safety_floor_correctness": "4 of 4 agents",
+    "on_synthesis_gap": "1 of 4 agents (glassblowing; others deferred per anti_overlap)"
+  },
+  "recommendation": "Proceed to implementation with three pre-land changes: add trigger_source_id deduplication in expansion scoring, add fallback guard to routing_adjust_expansion_tier, add adjacency domain-intersection check. In first iteration: add domain_complexity + max_model to agent-roles.yaml, emit tier in finding log, add upgrade pass for token savings recycling. The A+C hybrid design is validated across all four distant domains.",
+  "gates": {
+    "can_proceed_to_implementation": true,
+    "can_land_without_changes": false,
+    "p1_changes_required_before_land": true,
+    "p2_changes_deferred_to_first_iteration": true
+  },
+  "agent_verdicts": {
+    "fd-venetian-glass-grading": {
+      "status": "proceed-with-changes",
+      "severity": "moderate",
+      "findings_count": 4,
+      "key_concern": "Expansion score adjacency transfer unvalidated; synthesis has no tier-weighted findings"
+    },
+    "fd-han-salt-monopoly": {
+      "status": "proceed-with-changes",
+      "severity": "moderate",
+      "findings_count": 4,
+      "key_concern": "routing_adjust_expansion_tier is single point of failure with no fallback guard; savings not recycled"
+    },
+    "fd-polynesian-wayfinding": {
+      "status": "needs-revision",
+      "severity": "moderate",
+      "findings_count": 4,
+      "key_concern": "Correlated signals inflate expansion score; score=1 downgrade inverts correct response for complex domains"
+    },
+    "fd-japanese-sword-testing": {
+      "status": "proceed-with-changes",
+      "severity": "low",
+      "findings_count": 3,
+      "key_concern": "Two-axis tier decision (evidence strength × domain complexity) missing; no max_model ceiling"
+    }
+  }
+}

@@ -66,6 +66,8 @@
 {"issue_id":"sylveste-18a.9","label":"research"}
 {"issue_id":"sylveste-18a.9","label":"skaffen"}
 {"issue_id":"sylveste-1zei","label":"auraken"}
+{"issue_id":"sylveste-2131","label":"claimed_at:1775615368"}
+{"issue_id":"sylveste-2131","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-248r","label":"claimed_at:1775432822"}
 {"issue_id":"sylveste-248r","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-2b4k","label":"artifact_brainstorm:apps/Auraken/docs/brainstorms/2026-04-06-self-modification-bridge.md"}
@@ -239,9 +241,11 @@
 {"issue_id":"sylveste-bcok","label":"integration"}
 {"issue_id":"sylveste-bcok","label":"plugin"}
 {"issue_id":"sylveste-benl","label":"artifact_brainstorm:docs/brainstorms/2026-04-06-auraken-skaffen-migration-brainstorm.md"}
+{"issue_id":"sylveste-benl","label":"artifact_cuj:docs/cujs/auraken-skaffen-migration.md"}
 {"issue_id":"sylveste-benl","label":"artifact_plan:docs/plans/2026-04-07-auraken-skaffen-migration.md"}
 {"issue_id":"sylveste-benl","label":"artifact_prd:docs/prds/2026-04-06-auraken-skaffen-migration.md"}
 {"issue_id":"sylveste-benl","label":"artifact_prior-art:none-found"}
+{"issue_id":"sylveste-benl","label":"artifact_reflection:docs/reflections/2026-04-08-auraken-skaffen-sprint-reflect.md"}
 {"issue_id":"sylveste-benl","label":"claimed_at:1775530498"}
 {"issue_id":"sylveste-benl","label":"claimed_by:2258b2fd-e9c3-421e-ad45-207b77a24047"}
 {"issue_id":"sylveste-benl","label":"complexity:5"}
@@ -592,6 +596,7 @@
 {"issue_id":"sylveste-uais","label":"auraken"}
 {"issue_id":"sylveste-uais","label":"claimed_at:1775537582"}
 {"issue_id":"sylveste-uais","label":"complexity:4"}
+{"issue_id":"sylveste-uais","label":"phase:executing"}
 {"issue_id":"sylveste-usj","label":"claimed_at:1775357521"}
 {"issue_id":"sylveste-usj","label":"claimed_by:released"}
 {"issue_id":"sylveste-vm4","label":"artifact_closed:d956378518bbef3e4da65d30672671bbd7936a44"}
