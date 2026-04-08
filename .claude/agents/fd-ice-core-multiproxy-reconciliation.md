@@ -3,6 +3,11 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-04-02T05:33:01+00:00'
 flux_gen_version: 5
+tier: used
+domains:
+- uncategorized
+use_count: 1
+source_spec: reaction-round-activation-esoteric.json
 ---
 # fd-ice-core-multiproxy-reconciliation — Task-Specific Reviewer
 

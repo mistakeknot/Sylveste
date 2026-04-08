@@ -3,6 +3,12 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-03-30T03:41:35+00:00'
 flux_gen_version: 5
+tier: used
+domains:
+- esoteric-lens
+- navigation
+use_count: 1
+source_spec: reflect-compound-durable-changes-distant.json
 ---
 # fd-wayfinding-polynesian-navigation — Task-Specific Reviewer
 

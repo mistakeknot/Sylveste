@@ -3,6 +3,12 @@ name: fd-multi-model-orchestration
 subagent_type: general-purpose
 generated_by: flux-gen-prompt
 flux_gen_version: 4
+tier: stub
+domains:
+- ml-inference
+- orchestration
+use_count: 0
+source_spec: local-llm-optimization-m5-max.json
 ---
 
 # fd-multi-model-orchestration

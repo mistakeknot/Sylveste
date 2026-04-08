@@ -2,6 +2,11 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-03-19T07:19:39+00:00'
 flux_gen_version: 4
+tier: stub
+domains:
+- uncategorized
+use_count: 0
+source_spec: attp-interweave-design-questions.json
 ---
 # fd-mcp-tool-surface — Task-Specific Reviewer
 

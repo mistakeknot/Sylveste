@@ -2,6 +2,11 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-02-24T18:26:03+00:00'
 flux_gen_version: 4
+tier: stub
+domains:
+- uncategorized
+use_count: 0
+source_spec: mcp-agent-mail-research.json
 ---
 # fd-tool-surface — Task-Specific Reviewer
 

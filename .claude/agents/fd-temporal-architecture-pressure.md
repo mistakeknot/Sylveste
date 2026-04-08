@@ -2,6 +2,11 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-03-22T15:24:11+00:00'
 flux_gen_version: 4
+tier: stub
+domains:
+- architecture
+use_count: 0
+source_spec: esoteric-cross-cutting-analysis.json
 ---
 # fd-temporal-architecture-pressure — Task-Specific Reviewer
 

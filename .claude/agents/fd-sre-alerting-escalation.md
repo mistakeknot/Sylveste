@@ -3,6 +3,11 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-04-03T00:35:07+00:00'
 flux_gen_version: 5
+tier: used
+domains:
+- uncategorized
+use_count: 1
+source_spec: ockham-vision-adjacent.json
 ---
 # fd-sre-alerting-escalation — Task-Specific Reviewer
 

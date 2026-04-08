@@ -14,6 +14,13 @@ on:
     - cron: "0 7 * * 1"  # Weekly Monday 7am UTC
   workflow_dispatch:
 
+permissions:
+  contents: read
+  issues: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   check-drift:
     runs-on: ubuntu-latest
@@ -25,8 +32,6 @@ jobs:
           egress-policy: audit
 
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
 
       - uses: actions/setup-python@v5
         with:
@@ -34,3 +39,16 @@ jobs:
 
       - name: Check rig drift
         run: bash scripts/check-rig-drift.sh --verbose
+
+      - name: Create issue on scheduled failure
+        if: failure() && github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --label "ci-drift" --state open --limit 1 --json number --jq '.[0].number // empty')
+          if [ -z "$existing" ]; then
+            gh issue create --repo "$GITHUB_REPOSITORY" \
+              --title "Rig drift check failing (scheduled)" \
+              --label "ci-drift" \
+              --body "The weekly rig-drift check failed. [Run log]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)."
+          fi

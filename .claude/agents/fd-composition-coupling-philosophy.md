@@ -3,6 +3,11 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-04-04T19:23:04+00:00'
 flux_gen_version: 5
+tier: used
+domains:
+- uncategorized
+use_count: 2
+source_spec: ontology-graph-agentic-platforms-adjacent.json
 ---
 # fd-composition-coupling-philosophy — Task-Specific Reviewer
 

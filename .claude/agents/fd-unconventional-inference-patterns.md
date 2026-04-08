@@ -3,6 +3,11 @@ name: fd-unconventional-inference-patterns
 subagent_type: general-purpose
 generated_by: flux-gen-prompt
 flux_gen_version: 4
+tier: stub
+domains:
+- ml-inference
+use_count: 0
+source_spec: local-llm-optimization-m5-max.json
 ---
 
 # fd-unconventional-inference-patterns

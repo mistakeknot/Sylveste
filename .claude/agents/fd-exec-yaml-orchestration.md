@@ -2,6 +2,11 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-03-21T19:21:56+00:00'
 flux_gen_version: 4
+tier: stub
+domains:
+- orchestration
+use_count: 0
+source_spec: interlore-plan-review.json
 ---
 # fd-exec-yaml-orchestration — Task-Specific Reviewer
 

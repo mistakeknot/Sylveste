@@ -37,7 +37,13 @@
       "Write(.claude/agents/**)",
       "Write(.claude/flux-gen-specs/**)",
       "Write(docs/research/flux-drive/**)",
-      "Write(docs/research/flux-research/**)"
+      "Write(docs/research/flux-research/**)",
+      "Write(**/.claude/agents/**)",
+      "Write(**/.claude/flux-gen-specs/**)",
+      "Write(**/docs/research/flux-drive/**)",
+      "Write(**/docs/research/flux-research/**)",
+      "Bash(python3 */generate-agents.py*)",
+      "Bash(python3 */flux-agent.py*)"
     ]
   }
 }

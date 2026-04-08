@@ -6,19 +6,6 @@ Agent-as-operator runtime diagnostics — teaches agents to observe and control 
 1. `PHILOSOPHY.md` — direction for ideation and planning decisions.
 2. `CLAUDE.md` — implementation details, architecture, testing, and release workflow.
 
-## Philosophy Alignment Protocol
-Review `PHILOSOPHY.md` during:
-- Intake/scoping
-- Brainstorming
-- Planning
-- Execution kickoff
-- Review/gates
-- Handoff/retrospective
-
-For brainstorming/planning outputs, add two short lines:
-- `Alignment:` one sentence on how the proposal supports the module north star.
-- `Conflict/Risk:` one sentence on any tension with philosophy (or `none`).
-
 ## Execution Rules
 - Keep changes small, testable, and reversible.
 - Run validation commands from `CLAUDE.md` before completion.

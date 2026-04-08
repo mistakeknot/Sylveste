@@ -3,6 +3,11 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-04-02T05:33:01+00:00'
 flux_gen_version: 5
+tier: used
+domains:
+- esoteric-lens
+use_count: 1
+source_spec: reflect-compound-durable-changes-distant.json
 ---
 # fd-liturgical-calendar-ritual-memory — Task-Specific Reviewer
 

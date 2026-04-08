@@ -3,6 +3,11 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-03-30T17:53:15+00:00'
 flux_gen_version: 5
+tier: used
+domains:
+- uncategorized
+use_count: 1
+source_spec: auraken-use-case-landscape-orthogonal.json
 ---
 # fd-intelligence-analysis-structured-sensemaking — Task-Specific Reviewer
 

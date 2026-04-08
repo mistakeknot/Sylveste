@@ -2,6 +2,12 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-03-19T04:57:05+00:00'
 flux_gen_version: 4
+tier: stub
+domains:
+- economics
+- ml-inference
+use_count: 0
+source_spec: cuj-gating-model-research.json
 ---
 # fd-false-block-cost-modeling — Task-Specific Reviewer
 

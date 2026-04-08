@@ -2,6 +2,11 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-03-01T20:13:30+00:00'
 flux_gen_version: 4
+tier: used
+domains:
+- uncategorized
+use_count: 1
+source_spec: insights-suggestions-evaluation.json
 ---
 # fd-autonomy-risk — Task-Specific Reviewer
 

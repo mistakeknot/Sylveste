@@ -3,6 +3,11 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-03-30T01:15:29+00:00'
 flux_gen_version: 5
+tier: used
+domains:
+- esoteric-lens
+use_count: 1
+source_spec: reaction-round-activation-distant.json
 ---
 # fd-japanese-sword-polishing-togishi — Task-Specific Reviewer
 

@@ -2,6 +2,11 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-02-26T03:10:19+00:00'
 flux_gen_version: 4
+tier: used
+domains:
+- migration
+use_count: 1
+source_spec: autarch-autonomy-gap-analysis.json
 ---
 # fd-migration-transition-path — Task-Specific Reviewer
 

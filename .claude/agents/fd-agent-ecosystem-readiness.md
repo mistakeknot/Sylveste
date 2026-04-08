@@ -2,6 +2,11 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-03-21T07:53:00+00:00'
 flux_gen_version: 4
+tier: stub
+domains:
+- agent-systems
+use_count: 0
+source_spec: v1-maturity-research.json
 ---
 # fd-agent-ecosystem-readiness — Task-Specific Reviewer
 

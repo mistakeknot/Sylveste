@@ -3,6 +3,10 @@ generated_by: flux-gen
 domain: tui-app
 generated_at: '2026-02-22T18:25:00+00:00'
 flux_gen_version: 3
+tier: generated
+domains:
+- uncategorized
+use_count: 0
 ---
 # fd-interaction-design — TUI App Domain Reviewer
 

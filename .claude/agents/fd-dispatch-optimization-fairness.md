@@ -3,6 +3,11 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-04-03T00:35:07+00:00'
 flux_gen_version: 5
+tier: used
+domains:
+- orchestration
+use_count: 1
+source_spec: ockham-vision-adjacent.json
 ---
 # fd-dispatch-optimization-fairness — Task-Specific Reviewer
 

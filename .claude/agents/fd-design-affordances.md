@@ -2,6 +2,11 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-03-27T21:25:21+00:00'
 flux_gen_version: 4
+tier: stub
+domains:
+- uncategorized
+use_count: 0
+source_spec: garden-salon-reframing-review.json
 ---
 # fd-design-affordances — Task-Specific Reviewer
 

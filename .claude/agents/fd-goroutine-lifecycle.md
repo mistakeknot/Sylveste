@@ -3,6 +3,11 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-03-29T15:45:03+00:00'
 flux_gen_version: 5
+tier: used
+domains:
+- uncategorized
+use_count: 2
+source_spec: go-migration-severity-validation.json
 ---
 # fd-goroutine-lifecycle — Task-Specific Reviewer
 

@@ -2,6 +2,12 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-03-15T15:15:53+00:00'
 flux_gen_version: 4
+tier: stub
+domains:
+- agent-systems
+- testing
+use_count: 0
+source_spec: swebench-competitive-strategy.json
 ---
 # fd-test-validation-loop — Task-Specific Reviewer
 

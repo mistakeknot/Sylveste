@@ -3,6 +3,12 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-04-04T19:23:04+00:00'
 flux_gen_version: 5
+tier: used
+domains:
+- agent-systems
+- data-modeling
+use_count: 2
+source_spec: ontology-graph-agentic-platforms-adjacent.json
 ---
 # fd-agent-ontology-runtime — Task-Specific Reviewer
 

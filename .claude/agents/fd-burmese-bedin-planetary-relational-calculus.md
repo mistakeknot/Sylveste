@@ -3,6 +3,11 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-04-04T19:30:26+00:00'
 flux_gen_version: 5
+tier: generated
+domains:
+- uncategorized
+use_count: 0
+source_spec: ontology-graph-agentic-platforms-esoteric.json
 ---
 # fd-burmese-bedin-planetary-relational-calculus — Task-Specific Reviewer
 

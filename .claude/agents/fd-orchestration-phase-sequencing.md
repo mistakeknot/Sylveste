@@ -3,6 +3,11 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-03-29T20:44:46+00:00'
 flux_gen_version: 5
+tier: generated
+domains:
+- orchestration
+use_count: 0
+source_spec: reaction-round-phase-2-5.json
 ---
 # fd-orchestration-phase-sequencing — Task-Specific Reviewer
 

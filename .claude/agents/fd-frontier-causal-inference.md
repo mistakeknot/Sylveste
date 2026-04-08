@@ -2,6 +2,11 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-03-20T03:42:02+00:00'
 flux_gen_version: 4
+tier: stub
+domains:
+- ml-inference
+use_count: 0
+source_spec: khouri-architecture-hybrid-review.json
 ---
 # fd-frontier-causal-inference — Task-Specific Reviewer
 

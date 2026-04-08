@@ -2,6 +2,12 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-03-19T15:41:26+00:00'
 flux_gen_version: 4
+tier: stub
+domains:
+- agent-systems
+- security
+use_count: 0
+source_spec: authority-tier-research.json
 ---
 # fd-multiagent-trust — Task-Specific Reviewer
 

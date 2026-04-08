@@ -2,6 +2,11 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-03-12T20:03:12+00:00'
 flux_gen_version: 4
+tier: stub
+domains:
+- agent-systems
+use_count: 0
+source_spec: mycroft-fleet-orchestrator.json
 ---
 # fd-agent-identity — Task-Specific Reviewer
 

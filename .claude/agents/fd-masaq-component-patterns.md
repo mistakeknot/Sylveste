@@ -2,6 +2,11 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-03-12T20:25:37+00:00'
 flux_gen_version: 4
+tier: generated
+domains:
+- uncategorized
+use_count: 0
+source_spec: agent-ui-explorations-research.json
 ---
 # fd-masaq-component-patterns — Task-Specific Reviewer
 

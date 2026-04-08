@@ -3,6 +3,12 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-04-04T19:34:47+00:00'
 flux_gen_version: 5
+tier: used
+domains:
+- esoteric-lens
+- navigation
+use_count: 2
+source_spec: ontology-graph-agentic-platforms-distant.json
 ---
 # fd-polynesian-wayfinding-star-path — Task-Specific Reviewer
 

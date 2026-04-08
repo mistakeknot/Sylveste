@@ -2,6 +2,11 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-03-21T08:18:43+00:00'
 flux_gen_version: 4
+tier: used
+domains:
+- uncategorized
+use_count: 1
+source_spec: meadowsyn-plan-review.json
 ---
 # fd-scope-containment — Task-Specific Reviewer
 

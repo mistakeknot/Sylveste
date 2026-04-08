@@ -4,6 +4,10 @@ domain: claude-code-plugin
 generated_at: '2026-02-21T20:00:00+00:00'
 flux_gen_version: 3
 custom: true
+tier: generated
+domains:
+- uncategorized
+use_count: 0
 ---
 # fd-leverage-analysis — High-Leverage Token Savings Reviewer
 

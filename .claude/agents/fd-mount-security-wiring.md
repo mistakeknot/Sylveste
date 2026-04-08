@@ -2,6 +2,11 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-03-04T20:56:27+00:00'
 flux_gen_version: 4
+tier: stub
+domains:
+- security
+use_count: 0
+source_spec: intercom-architecture-review.json
 ---
 # fd-mount-security-wiring — Task-Specific Reviewer
 

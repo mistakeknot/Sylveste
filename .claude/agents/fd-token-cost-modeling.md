@@ -3,6 +3,12 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-03-29T20:44:46+00:00'
 flux_gen_version: 5
+tier: generated
+domains:
+- economics
+- ml-inference
+use_count: 0
+source_spec: reaction-round-phase-2-5.json
 ---
 # fd-token-cost-modeling — Task-Specific Reviewer
 

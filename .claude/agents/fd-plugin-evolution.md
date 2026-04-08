@@ -2,6 +2,11 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-03-15T01:02:01+00:00'
 flux_gen_version: 4
+tier: stub
+domains:
+- uncategorized
+use_count: 0
+source_spec: hyperspace-agi-research.json
 ---
 # fd-plugin-evolution — Task-Specific Reviewer
 

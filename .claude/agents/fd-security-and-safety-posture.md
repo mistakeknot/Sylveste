@@ -2,6 +2,12 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-03-01T08:30:58+00:00'
 flux_gen_version: 4
+tier: stub
+domains:
+- safety
+- security
+use_count: 0
+source_spec: research-repo-assessor.json
 ---
 # fd-security-and-safety-posture — Task-Specific Reviewer
 

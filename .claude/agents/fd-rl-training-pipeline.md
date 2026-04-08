@@ -2,6 +2,11 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-03-02T18:44:17+00:00'
 flux_gen_version: 4
+tier: stub
+domains:
+- pipeline
+use_count: 0
+source_spec: hermes-agent-research.json
 ---
 # fd-rl-training-pipeline — Task-Specific Reviewer
 

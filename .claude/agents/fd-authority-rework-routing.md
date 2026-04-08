@@ -2,6 +2,13 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-03-19T16:34:13+00:00'
 flux_gen_version: 4
+tier: used
+domains:
+- governance
+- routing
+- security
+use_count: 1
+source_spec: rework-model-research.json
 ---
 # fd-authority-rework-routing — Task-Specific Reviewer
 

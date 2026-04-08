@@ -236,9 +236,12 @@
 {"issue_id":"sylveste-bcok","label":"artifact_plan:docs/plans/2026-04-07-interop.md"}
 {"issue_id":"sylveste-bcok","label":"artifact_prd:docs/prds/2026-04-06-interop.md"}
 {"issue_id":"sylveste-bcok","label":"artifact_prior-art:none-found"}
-{"issue_id":"sylveste-bcok","label":"claimed_at:1775525847"}
+{"issue_id":"sylveste-bcok","label":"claimed_at:0"}
+{"issue_id":"sylveste-bcok","label":"claimed_by:released"}
+{"issue_id":"sylveste-bcok","label":"complexity:3"}
 {"issue_id":"sylveste-bcok","label":"epic"}
 {"issue_id":"sylveste-bcok","label":"integration"}
+{"issue_id":"sylveste-bcok","label":"phase:executing"}
 {"issue_id":"sylveste-bcok","label":"plugin"}
 {"issue_id":"sylveste-benl","label":"artifact_brainstorm:docs/brainstorms/2026-04-06-auraken-skaffen-migration-brainstorm.md"}
 {"issue_id":"sylveste-benl","label":"artifact_cuj:docs/cujs/auraken-skaffen-migration.md"}
@@ -252,6 +255,12 @@
 {"issue_id":"sylveste-benl","label":"decomp_prediction:{\"epic\":\"sylveste-benl\",\"predicted_children\":12,\"baseline_typical\":5,\"ts\":1775530482}"}
 {"issue_id":"sylveste-benl","label":"epic_dod:parity-tests,shadow-mode-30d,migration-checksums,transport-e2e,decommission-90d"}
 {"issue_id":"sylveste-benl","label":"phase:plan-reviewed"}
+{"issue_id":"sylveste-benl.1","label":"artifact_brainstorm:docs/brainstorms/2026-04-08-lens-go-package-brainstorm.md"}
+{"issue_id":"sylveste-benl.1","label":"artifact_prior-art:none-found"}
+{"issue_id":"sylveste-benl.1","label":"claimed_at:1775632188"}
+{"issue_id":"sylveste-bt82","label":"claimed_at:1775632150"}
+{"issue_id":"sylveste-bt82","label":"claimed_by:ece9b344-5e8c-4e3f-bbf7-105df6208652"}
+{"issue_id":"sylveste-bt82","label":"complexity:2"}
 {"issue_id":"sylveste-cnxf","label":"artifact_brainstorm:/home/mk/projects/gsvdotcom/REDESIGN.md"}
 {"issue_id":"sylveste-cnxf","label":"artifact_plan:/home/mk/projects/gsvdotcom/docs/plans/2026-04-07-redesign-technical-document.md"}
 {"issue_id":"sylveste-cnxf","label":"artifact_prd:/home/mk/projects/gsvdotcom/REDESIGN.md"}
@@ -321,6 +330,9 @@
 {"issue_id":"sylveste-j2xi","label":"claimed_at:1775529629"}
 {"issue_id":"sylveste-j2xi","label":"claimed_by:dfb82075-14fa-4155-9cf1-2cbe325a1e76"}
 {"issue_id":"sylveste-j2xi","label":"complexity:1"}
+{"issue_id":"sylveste-jkkn","label":"claimed_at:1775634525"}
+{"issue_id":"sylveste-jkkn","label":"claimed_by:ece9b344-5e8c-4e3f-bbf7-105df6208652"}
+{"issue_id":"sylveste-jkkn","label":"complexity:1"}
 {"issue_id":"sylveste-jrua","label":"artifact_brainstorm:docs/brainstorms/2026-04-07-ecosystem-simplify-brainstorm.md"}
 {"issue_id":"sylveste-jrua","label":"artifact_plan:docs/plans/2026-04-07-ecosystem-simplify-phase2.md"}
 {"issue_id":"sylveste-jrua","label":"artifact_prd:docs/prds/2026-04-07-ecosystem-simplify.md"}
@@ -590,13 +602,17 @@
 {"issue_id":"sylveste-sn7.9","label":"research"}
 {"issue_id":"sylveste-sn7.9","label":"tuivision"}
 {"issue_id":"sylveste-uais","label":"artifact_brainstorm:docs/brainstorms/2026-04-06-progressive-discrimination-curriculum-brainstorm.md"}
+{"issue_id":"sylveste-uais","label":"artifact_closed:c8668bae52390f68ef330ec2140c76bf15989d9f"}
 {"issue_id":"sylveste-uais","label":"artifact_plan:docs/plans/2026-04-07-progressive-discrimination-curriculum.md"}
 {"issue_id":"sylveste-uais","label":"artifact_prd:docs/prds/2026-04-06-progressive-discrimination-curriculum.md"}
 {"issue_id":"sylveste-uais","label":"artifact_prior-art:none-found"}
+{"issue_id":"sylveste-uais","label":"artifact_quality-verdict:PASS — 1 P0 fixed (migration), 2 P1s fixed (sanitize, logging), 3 P1s deferred"}
+{"issue_id":"sylveste-uais","label":"artifact_reflection:apps/Auraken/docs/sprints/sylveste-uais-reflection.md"}
+{"issue_id":"sylveste-uais","label":"artifact_test-pass-sha:ce737d3871660fd3108e0ef88964afa2f17c3957"}
 {"issue_id":"sylveste-uais","label":"auraken"}
 {"issue_id":"sylveste-uais","label":"claimed_at:1775537582"}
 {"issue_id":"sylveste-uais","label":"complexity:4"}
-{"issue_id":"sylveste-uais","label":"phase:executing"}
+{"issue_id":"sylveste-uais","label":"phase:done"}
 {"issue_id":"sylveste-usj","label":"claimed_at:1775357521"}
 {"issue_id":"sylveste-usj","label":"claimed_by:released"}
 {"issue_id":"sylveste-vm4","label":"artifact_closed:d956378518bbef3e4da65d30672671bbd7936a44"}

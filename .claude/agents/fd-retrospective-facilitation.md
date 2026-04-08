@@ -3,6 +3,11 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-03-31T04:42:36+00:00'
 flux_gen_version: 5
+tier: used
+domains:
+- uncategorized
+use_count: 2
+source_spec: forge-mode-reflexive-self-improvement-orthogonal.json
 ---
 # fd-retrospective-facilitation — Task-Specific Reviewer
 

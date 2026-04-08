@@ -2,6 +2,11 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-03-23T17:12:30+00:00'
 flux_gen_version: 4
+tier: stub
+domains:
+- agent-systems
+use_count: 0
+source_spec: flux-pipeline-optimization.json
 ---
 # fd-agentdropout-and-expansion — Task-Specific Reviewer
 

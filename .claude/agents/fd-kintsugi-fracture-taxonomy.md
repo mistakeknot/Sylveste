@@ -3,6 +3,11 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-03-31T04:42:33+00:00'
 flux_gen_version: 5
+tier: used
+domains:
+- uncategorized
+use_count: 1
+source_spec: forge-mode-reflexive-self-improvement-distant.json
 ---
 # fd-kintsugi-fracture-taxonomy — Task-Specific Reviewer
 

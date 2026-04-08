@@ -3,6 +3,11 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-03-30T03:41:33+00:00'
 flux_gen_version: 5
+tier: used
+domains:
+- uncategorized
+use_count: 1
+source_spec: reflect-compound-durable-changes-adjacent.json
 ---
 # fd-workflow-automation-idempotency — Task-Specific Reviewer
 

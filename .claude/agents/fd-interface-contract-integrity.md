@@ -3,6 +3,11 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-04-01T22:05:41+00:00'
 flux_gen_version: 5
+tier: generated
+domains:
+- uncategorized
+use_count: 0
+source_spec: skaffen-tool-concurrency.json
 ---
 # fd-interface-contract-integrity — Task-Specific Reviewer
 

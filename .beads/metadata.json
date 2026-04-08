@@ -1,7 +1,7 @@
 {
   "database": "dolt",
   "backend": "dolt",
-  "dolt_mode": "embedded",
+  "dolt_mode": "server",
   "dolt_database": "Sylveste",
   "project_id": "07e89680-8485-4489-a63a-9105595860b2"
 }

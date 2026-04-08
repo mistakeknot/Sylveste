@@ -3,6 +3,11 @@ name: fd-apple-silicon-scheduler
 subagent_type: general-purpose
 generated_by: flux-gen-prompt
 flux_gen_version: 4
+tier: stub
+domains:
+- orchestration
+use_count: 0
+source_spec: interfer-implementation.json
 ---
 
 # fd-apple-silicon-scheduler

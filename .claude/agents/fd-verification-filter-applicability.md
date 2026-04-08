@@ -2,6 +2,11 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-02-28T00:00:00+00:00'
 flux_gen_version: 4
+tier: generated
+domains:
+- uncategorized
+use_count: 0
+source_spec: darwinian-evolver-integration.json
 ---
 # fd-verification-filter-applicability — Task-Specific Reviewer
 

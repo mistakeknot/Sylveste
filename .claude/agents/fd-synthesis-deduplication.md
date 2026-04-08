@@ -3,6 +3,11 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-03-29T20:44:46+00:00'
 flux_gen_version: 5
+tier: used
+domains:
+- uncategorized
+use_count: 1
+source_spec: reaction-round-phase-2-5.json
 ---
 # fd-synthesis-deduplication — Task-Specific Reviewer
 

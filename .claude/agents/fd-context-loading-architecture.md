@@ -2,6 +2,11 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-03-16T09:37:04+00:00'
 flux_gen_version: 4
+tier: stub
+domains:
+- architecture
+use_count: 0
+source_spec: clavain-optimization-research.json
 ---
 # fd-context-loading-architecture — Task-Specific Reviewer
 

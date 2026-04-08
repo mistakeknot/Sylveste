@@ -3,6 +3,10 @@ generated_by: flux-gen
 domain: cli-tool
 generated_at: '2026-02-22T18:25:00+00:00'
 flux_gen_version: 3
+tier: generated
+domains:
+- user-interface
+use_count: 0
 ---
 # fd-cli-ux — CLI Tool Domain Reviewer
 

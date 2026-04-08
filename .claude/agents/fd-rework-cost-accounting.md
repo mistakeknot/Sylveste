@@ -2,6 +2,11 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-03-19T16:34:13+00:00'
 flux_gen_version: 4
+tier: stub
+domains:
+- economics
+use_count: 0
+source_spec: rework-model-research.json
 ---
 # fd-rework-cost-accounting — Task-Specific Reviewer
 

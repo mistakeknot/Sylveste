@@ -2,6 +2,11 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-03-05T17:23:20+00:00'
 flux_gen_version: 4
+tier: stub
+domains:
+- pipeline
+use_count: 0
+source_spec: factory-substrate-review.json
 ---
 # fd-evidence-pipeline — Task-Specific Reviewer
 

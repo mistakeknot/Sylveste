@@ -3,6 +3,11 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-03-31T04:41:56+00:00'
 flux_gen_version: 5
+tier: used
+domains:
+- uncategorized
+use_count: 1
+source_spec: forge-mode-reflexive-self-improvement-adjacent.json
 ---
 # fd-simulation-profile-dynamics — Task-Specific Reviewer
 

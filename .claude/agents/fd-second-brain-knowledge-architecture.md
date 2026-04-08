@@ -3,6 +3,11 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-03-30T17:48:17+00:00'
 flux_gen_version: 5
+tier: used
+domains:
+- architecture
+use_count: 1
+source_spec: auraken-use-case-landscape-adjacent.json
 ---
 # fd-second-brain-knowledge-architecture — Task-Specific Reviewer
 

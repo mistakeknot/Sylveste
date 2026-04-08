@@ -4,6 +4,10 @@ domain: claude-code-plugin
 generated_at: '2026-02-21T20:00:00+00:00'
 flux_gen_version: 3
 custom: true
+tier: generated
+domains:
+- orchestration
+use_count: 0
 ---
 # fd-plugin-orchestration — Claude Code Plugin Domain Reviewer
 

@@ -3,6 +3,11 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-03-30T03:41:35+00:00'
 flux_gen_version: 5
+tier: used
+domains:
+- data-modeling
+use_count: 1
+source_spec: reflect-compound-durable-changes-distant.json
 ---
 # fd-typographic-marginalia-annotation — Task-Specific Reviewer
 

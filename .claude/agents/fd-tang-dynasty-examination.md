@@ -3,6 +3,10 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-04-02T05:33:01+00:00'
 flux_gen_version: 5
+tier: generated
+domains:
+- uncategorized
+use_count: 0
 ---
 # fd-tang-dynasty-examination — Task-Specific Reviewer
 

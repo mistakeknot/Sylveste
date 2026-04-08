@@ -3,6 +3,11 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-03-30T01:15:29+00:00'
 flux_gen_version: 5
+tier: used
+domains:
+- uncategorized
+use_count: 1
+source_spec: reflect-compound-durable-changes-distant.json
 ---
 # fd-venetian-glassmaking-tacit-knowledge — Task-Specific Reviewer
 

@@ -64,6 +64,9 @@ docs/docs
 docs/reports/security/secret-scan-backfill-*/
 docs/reports/security/secret-scan-backfill-*.md
 
+# ── Nested repos (own remotes, not submodules) ──
+masaq/
+
 # ── Research clones (not part of monorepo) ──
 research/*
 !research/AGENTS.md

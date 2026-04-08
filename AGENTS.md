@@ -29,6 +29,18 @@ bd close <id> && git push                 # Complete work (`bd sync` first only 
 | Operational Guides | [agents/operational-guides.md](agents/operational-guides.md) | Guide index, prior solutions search, prior art pipeline, operational notes |
 | v1.0 Roadmap | [docs/roadmap-v1.md](docs/roadmap-v1.md) | Parallel track model (Autonomy, Safety, Adoption), version gates, milestone exit criteria |
 
+## Conventions
+
+**Naming:** All module names are lowercase (`interflux`, `intermute`). Exceptions (proper nouns): Clavain, Interverse, Sylveste, Autarch, Interspect, Intercore, Skaffen, Zaka, Alwe, Ockham. GitHub repos: `github.com/mistakeknot/<name>`. Pillar directories use proper casing (`os/Clavain/`, `apps/Autarch/`). Never create lowercase duplicates — causes triple-loading. See also [CONVENTIONS.md](CONVENTIONS.md) for artifact paths.
+
+**Plugin collisions:** Claude Code autodiscovers all `.claude-plugin/plugin.json` in the monorepo. One canonical owner per command/skill — when extracted from Clavain, remove from Clavain's plugin.json. Extracted plugins own their domain. Delegation facades (namespaced commands like `interkasten:doctor`) are safe.
+
+**Work tracking:** Beads (`bd create/close`) is the single source of truth. Never create TODO files, markdown checklists, or pending-beads lists. See [agents/beads-workflow.md](agents/beads-workflow.md).
+
+**Git workflow:** Owner/agents commit directly to `main` (trunk-based). External contributors: Fork + PR (branch protection enabled). See [docs/guide-contributing.md](docs/guide-contributing.md).
+
+**Philosophy alignment:** When planning, brainstorming, or reviewing changes in any module, read that module's `PHILOSOPHY.md`. Add two short lines to planning outputs: **Alignment** (how it supports the module's purpose) and **Conflict/Risk** (any tension, or 'none'). If a high-value change conflicts, either adjust the plan or create follow-up to update the module's `PHILOSOPHY.md`.
+
 ## Recent Changes
 
 **interlab v0.4.2 — Mutation store and provenance tracking.** The `internal/mutation/` package adds a SQLite-backed mutation history store at `~/.local/share/interlab/mutations.db` with three new MCP tools:

@@ -3,6 +3,11 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-03-31T04:42:36+00:00'
 flux_gen_version: 5
+tier: used
+domains:
+- safety
+use_count: 2
+source_spec: forge-mode-reflexive-self-improvement-orthogonal.json
 ---
 # fd-aviation-safety-crm — Task-Specific Reviewer
 

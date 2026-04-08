@@ -2,6 +2,11 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-03-02T00:25:37+00:00'
 flux_gen_version: 4
+tier: stub
+domains:
+- security
+use_count: 0
+source_spec: when-claudes-meet-patterns.json
 ---
 # fd-trust-evidence-chain — Task-Specific Reviewer
 

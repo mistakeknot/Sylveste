@@ -3,6 +3,11 @@ model: sonnet
 generated_by: flux-gen-prompt
 generated_at: '2026-03-31T04:42:44+00:00'
 flux_gen_version: 5
+tier: used
+domains:
+- esoteric-lens
+use_count: 1
+source_spec: forge-mode-reflexive-self-improvement-esoteric.json
 ---
 # fd-byzantine-iconoclasm-representation — Task-Specific Reviewer
 

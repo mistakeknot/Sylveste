@@ -2,6 +2,12 @@
 generated_by: flux-gen-prompt
 generated_at: '2026-03-13T22:50:51+00:00'
 flux_gen_version: 4
+tier: stub
+domains:
+- safety
+- security
+use_count: 0
+source_spec: cuj-interview-review.json
 ---
 # fd-trust-and-safety — Task-Specific Reviewer
 
