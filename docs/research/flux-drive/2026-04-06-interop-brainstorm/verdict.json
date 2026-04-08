@@ -1,0 +1,28 @@
+{
+  "reviewed_at": "2026-04-06",
+  "document": "docs/brainstorms/2026-04-06-interop-brainstorm.md",
+  "bead": "sylveste-bcok",
+  "track": "D",
+  "track_name": "esoteric",
+  "agents": [
+    "fd-zoroastrian-yasna-liturgical-relay",
+    "fd-dogon-hogon-granary-arbitration",
+    "fd-song-yizhan-postal-relay-routing"
+  ],
+  "verdict": "NEEDS-REVISION",
+  "p0_count": 3,
+  "p1_count": 6,
+  "p2_count": 5,
+  "p3_count": 0,
+  "convergent_insight": "The brainstorm specifies isolation mechanisms (goroutine pools, circuit breakers, panic recovery, bidirectional sync) but not integration mechanisms (rollback contracts, collision detection, priority routing, audit trails). An integration fabric without integration mechanisms is a collection of isolated adapters, not a fabric.",
+  "minimal_remediation": [
+    "EventBus.Emit() validation method (contamination barrier for pre-panic invalid events)",
+    "SyncJournal persistent cross-adapter operation log (atomic rollback, neutral ledger, audit trail)",
+    "CollisionWindow in event bus dispatch (bidirectional collision detection, pairs to ConflictResolver)"
+  ],
+  "p0_findings": [
+    {"id": "ZYL-01", "agent": "zoroastrian-yasna", "summary": "Pre-panic emit of semantically invalid events reaches other adapters — no contamination-isolation boundary on shared event bus"},
+    {"id": "DHG-01", "agent": "dogon-hogon", "summary": "No bulu (atomic rollback) — cross-adapter partial failure produces permanent split state with no recovery path"},
+    {"id": "SYP-01", "agent": "song-yizhan", "summary": "No bingjuan (collision detection) — simultaneous opposing events on same entity silently discard one side"}
+  ]
+}

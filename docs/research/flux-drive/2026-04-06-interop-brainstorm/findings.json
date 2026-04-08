@@ -1,0 +1,304 @@
+{
+  "reviewed": "2026-04-06",
+  "input": "docs/brainstorms/2026-04-06-interop-brainstorm.md",
+  "agents_launched": [
+    "fd-go-goroutine-isolation",
+    "fd-webhook-delivery-semantics",
+    "fd-bidirectional-sync-conflicts",
+    "fd-adapter-interface-contracts",
+    "fd-daemon-operational-reliability",
+    "fd-atc-flow-management",
+    "fd-laboratory-middleware",
+    "fd-scada-energy-management",
+    "fd-supply-chain-control-tower"
+  ],
+  "agents_completed": [
+    "fd-go-goroutine-isolation",
+    "fd-webhook-delivery-semantics",
+    "fd-bidirectional-sync-conflicts",
+    "fd-adapter-interface-contracts",
+    "fd-daemon-operational-reliability",
+    "fd-atc-flow-management",
+    "fd-laboratory-middleware",
+    "fd-scada-energy-management",
+    "fd-supply-chain-control-tower"
+  ],
+  "findings": [
+    {
+      "id": "P0-1",
+      "severity": "P0",
+      "title": "Webhook signature verification absent — unauthenticated attack surface",
+      "agents": [
+        "fd-webhook-delivery-semantics"
+      ],
+      "convergence": 1,
+      "section": "Key Decisions",
+      "description": "No HMAC verification for GitHub X-Hub-Signature-256 or Notion webhooks. Internet-facing endpoint can receive forged payloads that manipulate beads (single source of truth)."
+    },
+    {
+      "id": "P0-2",
+      "severity": "P0",
+      "title": "Common ancestor store persistence unspecified — silent data loss on restart",
+      "agents": [
+        "fd-bidirectional-sync-conflicts",
+        "fd-scada-energy-management"
+      ],
+      "convergence": 2,
+      "section": "Key Decisions",
+      "description": "Three-way merge requires a persisted common ancestor. If in-memory only, daemon restart resets sync state causing silent data loss or false conflicts on every entity."
+    },
+    {
+      "id": "P0-3",
+      "severity": "P0",
+      "title": "No graceful shutdown — SIGTERM loses in-flight events permanently",
+      "agents": [
+        "fd-daemon-operational-reliability",
+        "fd-scada-energy-management",
+        "fd-atc-flow-management"
+      ],
+      "convergence": 3,
+      "section": "Key Decisions",
+      "description": "Docker SIGTERM kills goroutines immediately. Events in the bus channel are lost. GitHub already ACKed the webhooks and will not retry. Permanent invisible sync divergence on every deploy."
+    },
+    {
+      "id": "P0-4",
+      "severity": "P0",
+      "title": "No per-entity serialization — concurrent updates resolved by goroutine scheduling",
+      "agents": [
+        "fd-atc-flow-management"
+      ],
+      "convergence": 1,
+      "section": "Architecture Sketch",
+      "description": "Two adapters updating the same entity without per-entity lock or logical clock results in nondeterministic outcomes."
+    },
+    {
+      "id": "P0-5",
+      "severity": "P0",
+      "title": "Event lacks routing context — FS adapter silently drops unresolvable events",
+      "agents": [
+        "fd-laboratory-middleware"
+      ],
+      "convergence": 1,
+      "section": "Key Decisions",
+      "description": "Canonical Event has no RoutingHints map. Events without cross-system IDs cause nil return in FS adapter, not dead-letter."
+    },
+    {
+      "id": "P1-1",
+      "severity": "P1",
+      "title": "No panic recovery contract for adapter goroutine pools",
+      "agents": [
+        "fd-go-goroutine-isolation",
+        "fd-scada-energy-management"
+      ],
+      "convergence": 2,
+      "section": "Architecture Sketch",
+      "description": "Brainstorm assumes panic recovery exists but does not require recover() wrappers. A nil pointer dereference kills the entire daemon."
+    },
+    {
+      "id": "P1-2",
+      "severity": "P1",
+      "title": "Event bus backpressure unspecified — slow adapter blocks webhook handler",
+      "agents": [
+        "fd-go-goroutine-isolation",
+        "fd-atc-flow-management"
+      ],
+      "convergence": 2,
+      "section": "Architecture Sketch",
+      "description": "Shared channel with synchronous sends means a slow Notion adapter blocks GitHub webhook processing, causing delivery timeouts."
+    },
+    {
+      "id": "P1-3",
+      "severity": "P1",
+      "title": "No async webhook processing contract — synchronous handler timeout risk",
+      "agents": [
+        "fd-webhook-delivery-semantics"
+      ],
+      "convergence": 1,
+      "section": "Day-1 Adapters",
+      "description": "Webhook handlers must return 2xx within 100ms. Synchronous processing causes GitHub to disable the endpoint."
+    },
+    {
+      "id": "P1-4",
+      "severity": "P1",
+      "title": "No delivery ID deduplication — at-least-once creates duplicate beads",
+      "agents": [
+        "fd-webhook-delivery-semantics"
+      ],
+      "convergence": 1,
+      "section": "Why This Approach",
+      "description": "GitHub retries with same delivery ID. Without dedup store, retries create duplicate beads issues."
+    },
+    {
+      "id": "P1-5",
+      "severity": "P1",
+      "title": "LWW clock source unspecified — external timestamp skew causes silent overwrites",
+      "agents": [
+        "fd-bidirectional-sync-conflicts"
+      ],
+      "convergence": 1,
+      "section": "Key Decisions",
+      "description": "Using GitHub/Notion server timestamps for LWW instead of interop receive-time means clock skew silently discards valid writes."
+    },
+    {
+      "id": "P1-6",
+      "severity": "P1",
+      "title": "Conflict resolution policy is global, not per-adapter-pair",
+      "agents": [
+        "fd-bidirectional-sync-conflicts",
+        "fd-supply-chain-control-tower"
+      ],
+      "convergence": 2,
+      "section": "Key Decisions",
+      "description": "Beads-authoritative vs Notion-authoritative requires directional policies. A single global strategy is wrong for at least one pair."
+    },
+    {
+      "id": "P1-7",
+      "severity": "P1",
+      "title": "No structured conflict record — silent tiebreaking",
+      "agents": [
+        "fd-bidirectional-sync-conflicts"
+      ],
+      "convergence": 1,
+      "section": "Key Decisions",
+      "description": "Unresolvable conflicts resolved silently without audit trail. User never knows data was overwritten."
+    },
+    {
+      "id": "P1-8",
+      "severity": "P1",
+      "title": "Adapter interface lacks behavioral contracts",
+      "agents": [
+        "fd-adapter-interface-contracts"
+      ],
+      "convergence": 1,
+      "section": "Key Decisions",
+      "description": "Start/Stop/HandleEvent/Emit specify type signatures only. No timeout, blocking, or lifecycle contracts."
+    },
+    {
+      "id": "P1-9",
+      "severity": "P1",
+      "title": "Identity mapping deferred — will require painful retrofit",
+      "agents": [
+        "fd-adapter-interface-contracts"
+      ],
+      "convergence": 1,
+      "section": "Open Questions",
+      "description": "Using display names for identity causes silent splits on rename. Stable system-native IDs (GitHub numeric ID, Notion UUID) needed from day 1."
+    },
+    {
+      "id": "P1-10",
+      "severity": "P1",
+      "title": "No HandleEvent error taxonomy — hub cannot distinguish retry-safe from fatal",
+      "agents": [
+        "fd-adapter-interface-contracts",
+        "fd-laboratory-middleware"
+      ],
+      "convergence": 2,
+      "section": "Key Decisions",
+      "description": "Without typed errors (malformed vs transient vs conflict), the hub either retries forever or drops permanently."
+    },
+    {
+      "id": "P1-11",
+      "severity": "P1",
+      "title": "No health vs readiness distinction — crashed adapters invisible to Docker",
+      "agents": [
+        "fd-daemon-operational-reliability",
+        "fd-scada-energy-management"
+      ],
+      "convergence": 2,
+      "section": "Key Decisions",
+      "description": "HTTP server stays alive while all adapters are dead. Docker sees healthy; webhooks are silently dropped."
+    },
+    {
+      "id": "P1-12",
+      "severity": "P1",
+      "title": "No recovery checkpoint — crash causes full re-processing",
+      "agents": [
+        "fd-daemon-operational-reliability"
+      ],
+      "convergence": 1,
+      "section": "Key Decisions",
+      "description": "Without per-adapter last-processed-event checkpoints, crash restart re-applies all recent syncs."
+    },
+    {
+      "id": "P1-13",
+      "severity": "P1",
+      "title": "MCP and webhook server lifecycle not coupled",
+      "agents": [
+        "fd-daemon-operational-reliability"
+      ],
+      "convergence": 1,
+      "section": "Key Decisions",
+      "description": "If webhook server crashes but MCP stays alive, Claude Code sessions see stale state with no indication of failure."
+    },
+    {
+      "id": "P1-14",
+      "severity": "P1",
+      "title": "Goroutine pool worker count unbounded",
+      "agents": [
+        "fd-go-goroutine-isolation"
+      ],
+      "convergence": 1,
+      "section": "Key Decisions",
+      "description": "Without worker pool caps, a webhook burst spawns unbounded goroutines, exhausting file descriptors and memory."
+    },
+    {
+      "id": "P1-15",
+      "severity": "P1",
+      "title": "Notion webhook reliability undocumented — no polling fallback",
+      "agents": [
+        "fd-webhook-delivery-semantics",
+        "fd-supply-chain-control-tower"
+      ],
+      "convergence": 2,
+      "section": "Day-1 Adapters",
+      "description": "Notion webhook delivery is less reliable than GitHub. Without periodic reconciliation poll, sync silently lags during Notion outages."
+    }
+  ],
+  "improvements": [
+    {
+      "id": "IMP-1",
+      "agents": [
+        "fd-go-goroutine-isolation",
+        "fd-scada-energy-management"
+      ],
+      "title": "Document goroutine lifecycle state machine (Starting -> Running -> Draining -> Stopped)"
+    },
+    {
+      "id": "IMP-2",
+      "agents": [
+        "fd-adapter-interface-contracts"
+      ],
+      "title": "Add adapter compliance test suite validating behavioral contracts"
+    },
+    {
+      "id": "IMP-3",
+      "agents": [
+        "fd-daemon-operational-reliability"
+      ],
+      "title": "Add Prometheus-compatible metrics endpoint (/metrics) for alerting"
+    },
+    {
+      "id": "IMP-4",
+      "agents": [
+        "fd-bidirectional-sync-conflicts"
+      ],
+      "title": "Add sync state visualization MCP tool for debugging divergence"
+    },
+    {
+      "id": "IMP-5",
+      "agents": [
+        "fd-webhook-delivery-semantics"
+      ],
+      "title": "Add dead letter queue for events that pass signature but fail processing"
+    },
+    {
+      "id": "IMP-6",
+      "agents": [
+        "fd-adapter-interface-contracts"
+      ],
+      "title": "Version the Adapter interface explicitly with compatibility checks"
+    }
+  ],
+  "verdict": "risky",
+  "early_stop": false
+}
