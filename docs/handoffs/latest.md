@@ -1,1 +1,1 @@
-2026-04-06-auraken-discrimination-curriculum.md
+2026-04-09-auraken-discrimination-curriculum.md
