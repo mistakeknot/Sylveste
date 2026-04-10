@@ -1,0 +1,68 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 300
+
+stages:
+  - name: "Wave 0 — Prerequisites"
+    tasks:
+      - id: task-0
+        title: "Capture golden fixtures from Python Auraken"
+        files: [apps/Auraken/scripts/capture_golden.py, os/Skaffen/pkg/lens/testdata/]
+        depends: []
+
+  - name: "Wave 1 — Foundation"
+    tasks:
+      - id: task-1
+        title: "Copy data files + scaffold package"
+        files: [os/Skaffen/pkg/lens/data/, os/Skaffen/pkg/lens/doc.go]
+        depends: [task-0]
+      - id: task-2
+        title: "Define types (Lens, Edge, LensRef, Community)"
+        files: [os/Skaffen/pkg/lens/types.go, os/Skaffen/pkg/lens/types_test.go]
+        depends: [task-1]
+      - id: task-3
+        title: "Data loader with retry-capable init"
+        files: [os/Skaffen/pkg/lens/loader.go, os/Skaffen/pkg/lens/loader_test.go]
+        depends: [task-2]
+
+  - name: "Wave 2 — Graph + Independent Features (parallel)"
+    tasks:
+      - id: task-4
+        title: "Graph interface + adjacency list"
+        files: [os/Skaffen/pkg/lens/graph.go, os/Skaffen/pkg/lens/graph_test.go]
+        depends: [task-3]
+      - id: task-8
+        title: "Evolution tracker (EMA, Store interface)"
+        files: [os/Skaffen/pkg/lens/evolution.go, os/Skaffen/pkg/lens/evolution_test.go]
+        depends: [task-2]
+      - id: task-9
+        title: "Stack orchestrator (state machine)"
+        files: [os/Skaffen/pkg/lens/stacks.go, os/Skaffen/pkg/lens/stacks_test.go]
+        depends: [task-2]
+
+  - name: "Wave 3 — Graph Algorithms"
+    tasks:
+      - id: task-5
+        title: "Louvain community detection"
+        files: [os/Skaffen/pkg/lens/louvain.go, os/Skaffen/pkg/lens/louvain_test.go]
+        depends: [task-4]
+      - id: task-6
+        title: "Brandes betweenness centrality"
+        files: [os/Skaffen/pkg/lens/betweenness.go, os/Skaffen/pkg/lens/betweenness_test.go]
+        depends: [task-5]
+
+  - name: "Wave 4 — LLM Integration"
+    tasks:
+      - id: task-7
+        title: "LLM selector (provider-based, typed errors)"
+        files: [os/Skaffen/pkg/lens/selector.go, os/Skaffen/pkg/lens/selector_test.go]
+        depends: [task-4]
+
+  - name: "Wave 5 — Integration"
+    tasks:
+      - id: task-10
+        title: "Integration test + final verification"
+        files: [os/Skaffen/pkg/lens/integration_test.go]
+        depends: [task-5, task-6, task-7, task-8, task-9]
