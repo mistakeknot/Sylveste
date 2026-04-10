@@ -117,9 +117,13 @@
 {"issue_id":"sylveste-5b7","label":"claimed_at:1775588333"}
 {"issue_id":"sylveste-5ca9","label":"auraken"}
 {"issue_id":"sylveste-7505","label":"artifact_brainstorm:docs/brainstorms/2026-04-08-interserve-consolidated-mcp-brainstorm.md"}
+{"issue_id":"sylveste-7505","label":"artifact_degradation:flux-review:subagent-write-permission-denied"}
 {"issue_id":"sylveste-7505","label":"artifact_prior-art:none-found"}
+{"issue_id":"sylveste-7505","label":"claimed_at:1775778498"}
+{"issue_id":"sylveste-7505","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-7505","label":"infrastructure"}
 {"issue_id":"sylveste-7505","label":"performance"}
+{"issue_id":"sylveste-7505","label":"phase:brainstorm-reviewed"}
 {"issue_id":"sylveste-7ck","label":"patterns"}
 {"issue_id":"sylveste-7ck","label":"skaffen"}
 {"issue_id":"sylveste-8em","label":"artifact_brainstorm:docs/brainstorms/2026-04-03-ockham-vision-brainstorm.md"}
