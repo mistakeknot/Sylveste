@@ -94,6 +94,7 @@
 {"issue_id":"sylveste-32p","label":"artifact_prd:docs/prds/2026-04-04-ockham-wave1-foundation.md"}
 {"issue_id":"sylveste-32p","label":"claimed_at:1775342246"}
 {"issue_id":"sylveste-32p","label":"claimed_by:9d5a7266-deda-4e03-bbbd-f8865fc84ef5"}
+{"issue_id":"sylveste-39p5","label":"phase:strategized"}
 {"issue_id":"sylveste-4b7","label":"artifact_brainstorm:docs/brainstorms/2026-03-26-reservoir-routing-autoresearch-brainstorm.md"}
 {"issue_id":"sylveste-4b7","label":"artifact_closed:db41b36f2fc3946fc60d02edf54cdb09535297b3"}
 {"issue_id":"sylveste-4b7","label":"artifact_prd:docs/prds/2026-03-26-reservoir-routing-autoresearch.md"}
@@ -116,14 +117,26 @@
 {"issue_id":"sylveste-5b7","label":"artifact_prior-art:none-found"}
 {"issue_id":"sylveste-5b7","label":"claimed_at:1775588333"}
 {"issue_id":"sylveste-5ca9","label":"auraken"}
+{"issue_id":"sylveste-5qv9","label":"artifact_brainstorm:docs/brainstorms/2026-03-05-factory-substrate-brainstorm.md"}
+{"issue_id":"sylveste-5qv9","label":"artifact_plan:docs/plans/2026-03-05-factory-substrate.md"}
+{"issue_id":"sylveste-5qv9","label":"artifact_prd:docs/prds/2026-03-05-factory-substrate.md"}
+{"issue_id":"sylveste-5qv9","label":"phase:plan-reviewed"}
+{"issue_id":"sylveste-5qv9","label":"predecessor:iv-ho3"}
+{"issue_id":"sylveste-6m1k","label":"phase:strategized"}
 {"issue_id":"sylveste-7505","label":"artifact_brainstorm:docs/brainstorms/2026-04-08-interserve-consolidated-mcp-brainstorm.md"}
 {"issue_id":"sylveste-7505","label":"artifact_degradation:flux-review:subagent-write-permission-denied"}
+{"issue_id":"sylveste-7505","label":"artifact_prd:docs/prds/2026-04-10-interserve-consolidated-mcp.md"}
 {"issue_id":"sylveste-7505","label":"artifact_prior-art:none-found"}
-{"issue_id":"sylveste-7505","label":"claimed_at:1775778498"}
-{"issue_id":"sylveste-7505","label":"claimed_by:unknown"}
+{"issue_id":"sylveste-7505","label":"artifact_strategy-review:docs/research/flux-drive/2026-04-10-interserve-consolidated-mcp/synthesis.md"}
+{"issue_id":"sylveste-7505","label":"claimed_at:1775793029"}
+{"issue_id":"sylveste-7505","label":"decomp_prediction:{\n  \"epic\": \"sylveste-7505\",\n  \"session\": \"unknown\",\n  \"predicted_children\": 6,\n  \"complexity_dist\": {\n    \"P2\": 6\n  },\n  \"baseline_typical\": 5,\n  \"ts\": 1775792923,\n  \"original_child_ids\": \"sylveste-h4mw,sylveste-amcz,sylveste-6m1k,sylve"}
+{"issue_id":"sylveste-7505","label":"epic_dod:[{\"criterion\":\"MCP subprocess count drops ~19→~11\",\"verification\":\"ps -ef|grep mcp pre/post\",\"automated\":true},{\"criterion\":\"Zero tool loss\",\"verification\":\"diff tools/list pre/post\",\"automated\":true},{\"criterion\":\"Single git revert restores al"}
 {"issue_id":"sylveste-7505","label":"infrastructure"}
 {"issue_id":"sylveste-7505","label":"performance"}
-{"issue_id":"sylveste-7505","label":"phase:brainstorm-reviewed"}
+{"issue_id":"sylveste-7505","label":"phase:strategized"}
+{"issue_id":"sylveste-7505","label":"provenance_prd:{\"session\":\"unknown\",\"bead\":\"sylveste-7505\",\"step\":\"strategy\",\"inputs\":\"brainstorm\",\"output\":\"docs/prds/2026-04-10-interserve-consolidated-mcp.md\",\"ts\":1775792981}"}
+{"issue_id":"sylveste-7505","label":"provenance_strategy-review:{\"session\":\"unknown\",\"bead\":\"sylveste-7505\",\"step\":\"strategy-review\",\"inputs\":\"prd\",\"output\":\"docs/research/flux-drive/2026-04-10-interserve-consolidated-mcp/synthesis.md\",\"ts\":1775793559}"}
+{"issue_id":"sylveste-7505","label":"review_strategy_outcome:{\"phase\":\"strategy\",\"complexity\":3,\"review_type\":\"flux-drive\",\"p0\":12,\"p1\":14,\"p2\":4,\"agents\":4,\"tokens\":233593,\"cost_usd\":0,\"verdict\":\"REVISE_PRD\"}"}
 {"issue_id":"sylveste-7ck","label":"patterns"}
 {"issue_id":"sylveste-7ck","label":"skaffen"}
 {"issue_id":"sylveste-8em","label":"artifact_brainstorm:docs/brainstorms/2026-04-03-ockham-vision-brainstorm.md"}
@@ -240,6 +253,7 @@
 {"issue_id":"sylveste-9lp.9","label":"interflux"}
 {"issue_id":"sylveste-9lp.9","label":"phase:plan-reviewed"}
 {"issue_id":"sylveste-9owj","label":"auraken"}
+{"issue_id":"sylveste-amcz","label":"phase:strategized"}
 {"issue_id":"sylveste-bcok","label":"artifact_brainstorm:docs/brainstorms/2026-04-06-interop-brainstorm.md"}
 {"issue_id":"sylveste-bcok","label":"artifact_plan:docs/plans/2026-04-07-interop.md"}
 {"issue_id":"sylveste-bcok","label":"artifact_prd:docs/prds/2026-04-06-interop.md"}
@@ -315,6 +329,7 @@
 {"issue_id":"sylveste-fbz","label":"integration"}
 {"issue_id":"sylveste-fbz","label":"phase:plan-reviewed"}
 {"issue_id":"sylveste-fyo3","label":"agents"}
+{"issue_id":"sylveste-fyo3","label":"artifact_brainstorm:docs/brainstorms/2026-04-09-multi-model-activation-brainstorm.md"}
 {"issue_id":"sylveste-fyo3","label":"artifact_prior-art:none-found"}
 {"issue_id":"sylveste-fyo3","label":"claimed_at:1775703327"}
 {"issue_id":"sylveste-fyo3","label":"claimed_by:37f53668-3555-49b5-a499-1892edc43622"}
@@ -379,6 +394,7 @@
 {"issue_id":"sylveste-gfp2","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-gk8","label":"patterns"}
 {"issue_id":"sylveste-gk8","label":"skaffen"}
+{"issue_id":"sylveste-h4mw","label":"phase:strategized"}
 {"issue_id":"sylveste-h7t","label":"claimed_at:0"}
 {"issue_id":"sylveste-h7t","label":"claimed_at:1775461806"}
 {"issue_id":"sylveste-h7t","label":"claimed_by:released"}
@@ -397,6 +413,8 @@
 {"issue_id":"sylveste-jrua","label":"artifact_test-pass-sha:0e147837ef243cd8f827c65f92767c584b01a7fa"}
 {"issue_id":"sylveste-jrua","label":"claimed_at:1775545336"}
 {"issue_id":"sylveste-jrua","label":"claimed_by:unknown"}
+{"issue_id":"sylveste-jsyc","label":"phase:strategized"}
+{"issue_id":"sylveste-lbvq","label":"phase:strategized"}
 {"issue_id":"sylveste-ln3","label":"artifact_implementation:dae3106"}
 {"issue_id":"sylveste-ln3","label":"claimed_at:1775076291"}
 {"issue_id":"sylveste-ln3","label":"claimed_by:unknown"}
