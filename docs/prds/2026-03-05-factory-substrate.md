@@ -1,6 +1,6 @@
 ---
 artifact_type: prd
-bead: iv-ho3
+bead: sylveste-5qv9
 stage: design
 version: 2
 ---

@@ -1,7 +1,7 @@
 ---
 title: Factory Substrate Implementation Plan
 artifact_type: plan
-bead: iv-ho3
+bead: sylveste-5qv9
 prd: docs/prds/2026-03-05-factory-substrate.md
 stage: plan
 version: 1
