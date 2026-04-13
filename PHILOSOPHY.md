@@ -104,7 +104,9 @@ Progressive trust ladder:
 
 Currently operating at Level 1-2. Each level requires demonstrated safety at the previous level. No shortcuts. The kernel boundary (L1 cannot be modified by agents) is a trust threshold, not an architectural invariant — it softens as trust is earned, but through gated processes, not direct modification.
 
-Note: this is the *human delegation* ladder — how much authority the human delegates. The vision doc's autonomy ladder (L0-L4: Record → Enforce → React → Auto-remediate → Auto-ship) tracks *system capability* — what the platform can do. The two are orthogonal and advance independently.
+Note: this is the *human delegation* ladder — how much authority the human delegates. The vision doc's capability mesh (10 subsystems, M0-M4 maturity) tracks *system capability* per subsystem. The two are orthogonal and advance independently.
+
+**Graduated authority as mechanism.** Trust levels are tracked per-subsystem using an ordinal maturity scale (M0: Planned → M1: Built → M2: Operational → M3: Calibrated → M4: Adaptive). Promotion requires pre-specified evidence thresholds. Demotion is triggered by sustained regression indicators exceeding threshold for a defined observation window. Evidence epochs reset trust when environmental conditions shift (major model changes, architecture migrations, subsystem replacements). The principle (evidence earns authority) is permanent. The mechanism (specific thresholds, epoch triggers, demotion criteria) is revisable by human authority regardless of accumulated evidence — the right to redefine trust criteria remains with humans.
 
 **Safety.** Structural, not moral. Sylveste enforces structural constraints (bounded blast radius, auditable decisions, revocable authority) through architecture, not ethical reasoning. More autonomy means more responsibility to get safety right. The blast radius is scoped to the actual risk domain: wrong code committed, bad PRs merged, wasted tokens.
 
@@ -121,6 +123,8 @@ Note: this is the *human delegation* ladder — how much authority the human del
 **Unix heritage.** Sylveste is a spiritual successor to Unix. Keep: small tools, explicit interfaces, mechanism/policy separation. Replace: untyped streams, ambient authority, text-as-control, hidden state. The problems are fundamentally different (stochastic actors, partial state, trust boundaries everywhere), but composition beating capability is permanent.
 
 **Agent architecture.** Many small agents with explicit scope over monolithic generalists. Route to the best model for the job — automated measurement determines which. Multi-model diversity is an epistemic hedge: different models have different blind spots, and disagreement is signal. Routing evolves from static tiers through complexity-aware to fully adaptive, where selection becomes empirical.
+
+**Sparse topology in multi-agent collaboration.** Fully-connected agent networks converge faster but to worse answers (Zollman effect — epistemic network theory). Default to sparse or ring topologies for multi-agent review and discourse. The diversity cost of full connectivity is real: agents anchored on each other's output collapse to consensus before exploring the solution space. Shift to full connectivity only when rapid convergence is explicitly worth the diversity cost, or when subsystem maturity is low enough (M0-M1) that information sharing matters more than independent exploration.
 
 **Plugin ecosystem.** Keep splitting. Each plugin does one thing well. The right count is however many single-responsibility units exist. Growth is a feature. Plugins declare capabilities; the platform composes them. Plugins are Actions with declared effects; the platform is the RunGraph.
 
@@ -140,7 +144,7 @@ The bar is high — kernel-native is earned by architectural role, not convenien
 
 **Complexity.** The problem IS complex. The goal isn't simplicity — it's managing essential complexity through boundaries, contracts, and composition. Accidental complexity is the enemy. Every addition draws from a complexity budget. Gridfire is the long-term paydown: replace many ad-hoc mechanisms with a few powerful primitives.
 
-**Architecture.** The current decomposition (5 pillars, 3 layers) reflects where we are, not a permanent structure. The principles behind pillar boundaries are stable: separation of mechanism and policy, independence of UI from logic, pluggable capability ecosystem, closed-loop learning. The number of pillars is empirical. Gridfire may become a pillar. The principles decide, not tradition.
+**Architecture.** The current decomposition (6 pillars, 3 layers) reflects where we are, not a permanent structure. The principles behind pillar boundaries are stable: separation of mechanism and policy, independence of UI from logic, pluggable capability ecosystem, closed-loop learning. The number of pillars is empirical. Gridfire may become a pillar. The principles decide, not tradition.
 
 ---
 
