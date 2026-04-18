@@ -1,0 +1,58 @@
+# bash-noop: bash -c exit 0
+# python-noop: python3 -c pass
+# node-noop: node -e 0
+# uv-help: uv --help
+# uv-run-python-noop: uv run --quiet python -c pass
+# npx-help: npx --help
+# npx-tsx-noop: npx tsx --version
+{
+  "bash-noop": {
+    "cmd": "bash -c exit 0",
+    "min_ms": 1.08,
+    "med_ms": 1.15,
+    "max_ms": 1.19,
+    "trials": 3
+  },
+  "python-noop": {
+    "cmd": "python3 -c pass",
+    "min_ms": 14.37,
+    "med_ms": 14.94,
+    "max_ms": 15.19,
+    "trials": 3
+  },
+  "node-noop": {
+    "cmd": "node -e 0",
+    "min_ms": 18.8,
+    "med_ms": 20.23,
+    "max_ms": 20.58,
+    "trials": 3
+  },
+  "uv-help": {
+    "cmd": "uv --help",
+    "min_ms": 4.91,
+    "med_ms": 5.21,
+    "max_ms": 5.5,
+    "trials": 3
+  },
+  "uv-run-python-noop": {
+    "cmd": "uv run --quiet python -c pass",
+    "min_ms": 50.7,
+    "med_ms": 51.01,
+    "max_ms": 53.8,
+    "trials": 3
+  },
+  "npx-help": {
+    "cmd": "npx --help",
+    "min_ms": 176.0,
+    "med_ms": 176.7,
+    "max_ms": 189.32,
+    "trials": 3
+  },
+  "npx-tsx-noop": {
+    "cmd": "npx tsx --version",
+    "min_ms": 563.33,
+    "med_ms": 569.67,
+    "max_ms": 596.89,
+    "trials": 3
+  }
+}
