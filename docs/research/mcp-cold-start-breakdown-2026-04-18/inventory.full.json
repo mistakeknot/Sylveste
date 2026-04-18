@@ -1,6 +1,114 @@
 {
   "servers": [
     {
+      "marketplace": "interagency-marketplace",
+      "plugin": "intermux",
+      "version": "0.1.7",
+      "source": "/home/mk/.claude/plugins/cache/interagency-marketplace/intermux/0.1.7/.claude-plugin/plugin.json",
+      "server_name": "intermux",
+      "type": "stdio",
+      "command": "${CLAUDE_PLUGIN_ROOT}/bin/launch-mcp.sh",
+      "args": [],
+      "url": null,
+      "env": {
+        "INTERMUTE_URL": "http://127.0.0.1:7338"
+      },
+      "headers": {}
+    },
+    {
+      "marketplace": "claude-plugins-official",
+      "plugin": "vercel",
+      "version": "0.40.0",
+      "source": "/home/mk/.claude/plugins/cache/claude-plugins-official/vercel/0.40.0/.mcp.json",
+      "server_name": "vercel",
+      "type": "http",
+      "command": null,
+      "args": [],
+      "url": "https://mcp.vercel.com",
+      "env": {},
+      "headers": {}
+    },
+    {
+      "marketplace": "claude-plugins-official",
+      "plugin": "notion",
+      "version": "0.1.0",
+      "source": "/home/mk/.claude/plugins/cache/claude-plugins-official/notion/0.1.0/.mcp.json",
+      "server_name": "notion",
+      "type": "http",
+      "command": null,
+      "args": [],
+      "url": "https://mcp.notion.com/mcp",
+      "env": {},
+      "headers": {}
+    },
+    {
+      "marketplace": "interjawn-local",
+      "plugin": "interjawn",
+      "version": "0.5.0",
+      "source": "/home/mk/.claude/plugins/cache/interjawn-local/interjawn/0.5.0/.claude-plugin/plugin.json",
+      "server_name": "interjawn",
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "tsx",
+        "${CLAUDE_PLUGIN_ROOT}/src/index.ts"
+      ],
+      "url": null,
+      "env": {
+        "DATABASE_URL": "postgresql://postgres.mtysgdlsacoaluifrbzu:P%40id.t8Ue8f!YZM@aws-1-us-east-1.pooler.supabase.com:5432/postgres",
+        "EXA_API_KEY": "68e687cd-3d1d-4a53-b394-33488b88bb76"
+      },
+      "headers": {}
+    },
+    {
+      "marketplace": "interjawn-local",
+      "plugin": "interjawn",
+      "version": "0.5.0",
+      "source": "/home/mk/.claude/plugins/cache/interjawn-local/interjawn/0.5.0/.mcp.json",
+      "server_name": "interjawn",
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "tsx",
+        "${CLAUDE_PLUGIN_ROOT}/src/index.ts"
+      ],
+      "url": null,
+      "env": {
+        "DATABASE_URL": "${DATABASE_URL}",
+        "EXA_API_KEY": "${EXA_API_KEY}"
+      },
+      "headers": {}
+    },
+    {
+      "marketplace": "interagency-marketplace",
+      "plugin": "interlock",
+      "version": "0.2.11",
+      "source": "/home/mk/.claude/plugins/cache/interagency-marketplace/interlock/0.2.11/.claude-plugin/plugin.json",
+      "server_name": "interlock",
+      "type": "stdio",
+      "command": "${CLAUDE_PLUGIN_ROOT}/bin/launch-mcp.sh",
+      "args": [],
+      "url": null,
+      "env": {
+        "INTERMUTE_SOCKET": "/var/run/intermute.sock",
+        "INTERMUTE_URL": "http://127.0.0.1:7338"
+      },
+      "headers": {}
+    },
+    {
+      "marketplace": "interagency-marketplace",
+      "plugin": "interlab",
+      "version": "0.4.7",
+      "source": "/home/mk/.claude/plugins/cache/interagency-marketplace/interlab/0.4.7/.claude-plugin/plugin.json",
+      "server_name": "interlab",
+      "type": "stdio",
+      "command": "${CLAUDE_PLUGIN_ROOT}/bin/launch-mcp.sh",
+      "args": [],
+      "url": null,
+      "env": {},
+      "headers": {}
+    },
+    {
       "marketplace": "claude-plugins-official",
       "plugin": "context7",
       "version": "unknown",
@@ -17,6 +125,23 @@
       "headers": {}
     },
     {
+      "marketplace": "interagency-marketplace",
+      "plugin": "intermap",
+      "version": "0.1.7",
+      "source": "/home/mk/.claude/plugins/cache/interagency-marketplace/intermap/0.1.7/.claude-plugin/plugin.json",
+      "server_name": "intermap",
+      "type": "stdio",
+      "command": "${CLAUDE_PLUGIN_ROOT}/bin/launch-mcp.sh",
+      "args": [],
+      "url": null,
+      "env": {
+        "INTERMUTE_URL": "http://127.0.0.1:7338",
+        "PYTHONPATH": "${CLAUDE_PLUGIN_ROOT}/python",
+        "MCP_TOOL_PROFILE": "core"
+      },
+      "headers": {}
+    },
+    {
       "marketplace": "claude-plugins-official",
       "plugin": "github",
       "version": "unknown",
@@ -30,49 +155,6 @@
       "headers": {
         "Authorization": "Bearer ${GITHUB_PERSONAL_ACCESS_TOKEN}"
       }
-    },
-    {
-      "marketplace": "interagency-marketplace",
-      "plugin": "intercache",
-      "version": "0.2.0",
-      "source": "/home/mk/.claude/plugins/cache/interagency-marketplace/intercache/0.2.0/.claude-plugin/plugin.json",
-      "server_name": "intercache",
-      "type": "stdio",
-      "command": "bash",
-      "args": [
-        "${CLAUDE_PLUGIN_ROOT}/scripts/launch-intercache.sh"
-      ],
-      "url": null,
-      "env": {},
-      "headers": {}
-    },
-    {
-      "marketplace": "interagency-marketplace",
-      "plugin": "interdeep",
-      "version": "0.1.6",
-      "source": "/home/mk/.claude/plugins/cache/interagency-marketplace/interdeep/0.1.6/.claude-plugin/plugin.json",
-      "server_name": "interdeep",
-      "type": "stdio",
-      "command": "${CLAUDE_PLUGIN_ROOT}/scripts/launch-mcp.sh",
-      "args": [],
-      "url": null,
-      "env": {},
-      "headers": {}
-    },
-    {
-      "marketplace": "interagency-marketplace",
-      "plugin": "interfluence",
-      "version": "0.2.10",
-      "source": "/home/mk/.claude/plugins/cache/interagency-marketplace/interfluence/0.2.10/.claude-plugin/plugin.json",
-      "server_name": "interfluence",
-      "type": "stdio",
-      "command": "node",
-      "args": [
-        "${CLAUDE_PLUGIN_ROOT}/server/dist/bundle.js"
-      ],
-      "url": null,
-      "env": {},
-      "headers": {}
     },
     {
       "marketplace": "interagency-marketplace",
@@ -104,296 +186,6 @@
         "OPENROUTER_RATE_LIMIT": "20",
         "OPENROUTER_SPEND_CEILING_USD": "1.00"
       },
-      "headers": {}
-    },
-    {
-      "marketplace": "interjawn-local",
-      "plugin": "interjawn",
-      "version": "0.5.0",
-      "source": "/home/mk/.claude/plugins/cache/interjawn-local/interjawn/0.5.0/.claude-plugin/plugin.json",
-      "server_name": "interjawn",
-      "type": "stdio",
-      "command": "npx",
-      "args": [
-        "tsx",
-        "${CLAUDE_PLUGIN_ROOT}/src/index.ts"
-      ],
-      "url": null,
-      "env": {
-        "DATABASE_URL": "postgresql://postgres.mtysgdlsacoaluifrbzu:P%40id.t8Ue8f!YZM@aws-1-us-east-1.pooler.supabase.com:5432/postgres",
-        "EXA_API_KEY": "68e687cd-3d1d-4a53-b394-33488b88bb76"
-      },
-      "headers": {}
-    },
-    {
-      "marketplace": "interagency-marketplace",
-      "plugin": "interject",
-      "version": "0.1.14",
-      "source": "/home/mk/.claude/plugins/cache/interagency-marketplace/interject/0.1.14/.claude-plugin/plugin.json",
-      "server_name": "interject",
-      "type": "stdio",
-      "command": "${CLAUDE_PLUGIN_ROOT}/bin/launch-mcp.sh",
-      "args": [],
-      "url": null,
-      "env": {
-        "EXA_API_KEY": "${EXA_API_KEY}",
-        "TAVILY_API_KEY": "${TAVILY_API_KEY}",
-        "BRAVE_API_KEY": "${BRAVE_API_KEY}",
-        "SEARXNG_URL": "${SEARXNG_URL}"
-      },
-      "headers": {}
-    },
-    {
-      "marketplace": "interagency-marketplace",
-      "plugin": "interkasten",
-      "version": "0.4.25",
-      "source": "/home/mk/.claude/plugins/cache/interagency-marketplace/interkasten/0.4.25/.claude-plugin/plugin.json",
-      "server_name": "interkasten",
-      "type": "stdio",
-      "command": "bash",
-      "args": [
-        "${CLAUDE_PLUGIN_ROOT}/scripts/start-mcp.sh"
-      ],
-      "url": null,
-      "env": {},
-      "headers": {}
-    },
-    {
-      "marketplace": "interagency-marketplace",
-      "plugin": "interknow",
-      "version": "0.1.5",
-      "source": "/home/mk/.claude/plugins/cache/interagency-marketplace/interknow/0.1.5/.claude-plugin/plugin.json",
-      "server_name": "qmd",
-      "type": "stdio",
-      "command": "${CLAUDE_PLUGIN_ROOT}/scripts/launch-qmd.sh",
-      "args": [
-        "mcp"
-      ],
-      "url": null,
-      "env": {},
-      "headers": {}
-    },
-    {
-      "marketplace": "interagency-marketplace",
-      "plugin": "interlab",
-      "version": "0.4.6",
-      "source": "/home/mk/.claude/plugins/cache/interagency-marketplace/interlab/0.4.6/.claude-plugin/plugin.json",
-      "server_name": "interlab",
-      "type": "stdio",
-      "command": "${CLAUDE_PLUGIN_ROOT}/bin/launch-mcp.sh",
-      "args": [],
-      "url": null,
-      "env": {},
-      "headers": {}
-    },
-    {
-      "marketplace": "interagency-marketplace",
-      "plugin": "interlens",
-      "version": "2.2.4",
-      "source": "/home/mk/.claude/plugins/cache/interagency-marketplace/interlens/2.2.4/.claude-plugin/plugin.json",
-      "server_name": "interlens",
-      "type": "stdio",
-      "command": "node",
-      "args": [
-        "${CLAUDE_PLUGIN_ROOT}/packages/mcp/dist/bundle.mjs"
-      ],
-      "url": null,
-      "env": {},
-      "headers": {}
-    },
-    {
-      "marketplace": "interagency-marketplace",
-      "plugin": "interlock",
-      "version": "0.2.10",
-      "source": "/home/mk/.claude/plugins/cache/interagency-marketplace/interlock/0.2.10/.claude-plugin/plugin.json",
-      "server_name": "interlock",
-      "type": "stdio",
-      "command": "${CLAUDE_PLUGIN_ROOT}/bin/launch-mcp.sh",
-      "args": [],
-      "url": null,
-      "env": {
-        "INTERMUTE_SOCKET": "/var/run/intermute.sock",
-        "INTERMUTE_URL": "http://127.0.0.1:7338"
-      },
-      "headers": {}
-    },
-    {
-      "marketplace": "interagency-marketplace",
-      "plugin": "intermap",
-      "version": "0.1.6",
-      "source": "/home/mk/.claude/plugins/cache/interagency-marketplace/intermap/0.1.6/.claude-plugin/plugin.json",
-      "server_name": "intermap",
-      "type": "stdio",
-      "command": "${CLAUDE_PLUGIN_ROOT}/bin/launch-mcp.sh",
-      "args": [],
-      "url": null,
-      "env": {
-        "INTERMUTE_URL": "http://127.0.0.1:7338",
-        "PYTHONPATH": "${CLAUDE_PLUGIN_ROOT}/python",
-        "MCP_TOOL_PROFILE": "core"
-      },
-      "headers": {}
-    },
-    {
-      "marketplace": "interagency-marketplace",
-      "plugin": "intermux",
-      "version": "0.1.6",
-      "source": "/home/mk/.claude/plugins/cache/interagency-marketplace/intermux/0.1.6/.claude-plugin/plugin.json",
-      "server_name": "intermux",
-      "type": "stdio",
-      "command": "${CLAUDE_PLUGIN_ROOT}/bin/launch-mcp.sh",
-      "args": [],
-      "url": null,
-      "env": {
-        "INTERMUTE_URL": "http://127.0.0.1:7338"
-      },
-      "headers": {}
-    },
-    {
-      "marketplace": "interagency-marketplace",
-      "plugin": "interrank",
-      "version": "0.3.0",
-      "source": "/home/mk/.claude/plugins/cache/interagency-marketplace/interrank/0.3.0/.claude-plugin/plugin.json",
-      "server_name": "interrank",
-      "type": "stdio",
-      "command": "bash",
-      "args": [
-        "${CLAUDE_PLUGIN_ROOT}/scripts/launch-interrank.sh"
-      ],
-      "url": null,
-      "env": {
-        "AGMODB_SNAPSHOT_REPOSITORY": "mistakeknot/agmodb",
-        "AGMODB_SNAPSHOT_TAG": "data-snapshot-latest",
-        "AGMODB_SNAPSHOT_ASSET": "agmodb-snapshot.json.gz",
-        "AGMODB_SNAPSHOT_REFRESH_MS": "300000"
-      },
-      "headers": {}
-    },
-    {
-      "marketplace": "interagency-marketplace",
-      "plugin": "intersearch",
-      "version": "0.2.1",
-      "source": "/home/mk/.claude/plugins/cache/interagency-marketplace/intersearch/0.2.1/.claude-plugin/plugin.json",
-      "server_name": "intersearch",
-      "type": "stdio",
-      "command": "uv",
-      "args": [
-        "--directory",
-        "${CLAUDE_PLUGIN_ROOT}",
-        "run",
-        "intersearch-mcp"
-      ],
-      "url": null,
-      "env": {},
-      "headers": {}
-    },
-    {
-      "marketplace": "claude-plugins-official",
-      "plugin": "notion",
-      "version": "0.1.0",
-      "source": "/home/mk/.claude/plugins/cache/claude-plugins-official/notion/0.1.0/.mcp.json",
-      "server_name": "notion",
-      "type": "http",
-      "command": null,
-      "args": [],
-      "url": "https://mcp.notion.com/mcp",
-      "env": {},
-      "headers": {}
-    },
-    {
-      "marketplace": "interagency-marketplace",
-      "plugin": "tldr-swinton",
-      "version": "0.7.17",
-      "source": "/home/mk/.claude/plugins/cache/interagency-marketplace/tldr-swinton/0.7.17/.claude-plugin/plugin.json",
-      "server_name": "tldr-code",
-      "type": "stdio",
-      "command": "${CLAUDE_PLUGIN_ROOT}/bin/launch-mcp.sh",
-      "args": [
-        "--project",
-        "."
-      ],
-      "url": null,
-      "env": {},
-      "headers": {}
-    },
-    {
-      "marketplace": "interagency-marketplace",
-      "plugin": "tuivision",
-      "version": "0.2.1",
-      "source": "/home/mk/.claude/plugins/cache/interagency-marketplace/tuivision/0.2.1/.claude-plugin/plugin.json",
-      "server_name": "tuivision",
-      "type": "stdio",
-      "command": "bash",
-      "args": [
-        "${CLAUDE_PLUGIN_ROOT}/scripts/start.sh"
-      ],
-      "url": null,
-      "env": {},
-      "headers": {}
-    },
-    {
-      "marketplace": "claude-plugins-official",
-      "plugin": "vercel",
-      "version": "0.40.0",
-      "source": "/home/mk/.claude/plugins/cache/claude-plugins-official/vercel/0.40.0/.mcp.json",
-      "server_name": "vercel",
-      "type": "http",
-      "command": null,
-      "args": [],
-      "url": "https://mcp.vercel.com",
-      "env": {},
-      "headers": {}
-    },
-    {
-      "marketplace": "source-tree",
-      "plugin": "interlab",
-      "version": "source",
-      "source": "/home/mk/projects/Sylveste/interverse/interlab/bin/interlab-mcp",
-      "server_name": "interlab-mcp-src",
-      "type": "stdio",
-      "command": "/home/mk/projects/Sylveste/interverse/interlab/bin/interlab-mcp",
-      "args": [],
-      "url": null,
-      "env": {},
-      "headers": {}
-    },
-    {
-      "marketplace": "source-tree",
-      "plugin": "interlock",
-      "version": "source",
-      "source": "/home/mk/projects/Sylveste/interverse/interlock/bin/interlock-mcp",
-      "server_name": "interlock-mcp-src",
-      "type": "stdio",
-      "command": "/home/mk/projects/Sylveste/interverse/interlock/bin/interlock-mcp",
-      "args": [],
-      "url": null,
-      "env": {},
-      "headers": {}
-    },
-    {
-      "marketplace": "source-tree",
-      "plugin": "intermap",
-      "version": "source",
-      "source": "/home/mk/projects/Sylveste/interverse/intermap/bin/intermap-mcp",
-      "server_name": "intermap-mcp-src",
-      "type": "stdio",
-      "command": "/home/mk/projects/Sylveste/interverse/intermap/bin/intermap-mcp",
-      "args": [],
-      "url": null,
-      "env": {},
-      "headers": {}
-    },
-    {
-      "marketplace": "source-tree",
-      "plugin": "intermux",
-      "version": "source",
-      "source": "/home/mk/projects/Sylveste/interverse/intermux/bin/intermux-mcp",
-      "server_name": "intermux-mcp-src",
-      "type": "stdio",
-      "command": "/home/mk/projects/Sylveste/interverse/intermux/bin/intermux-mcp",
-      "args": [],
-      "url": null,
-      "env": {},
       "headers": {}
     }
   ]
