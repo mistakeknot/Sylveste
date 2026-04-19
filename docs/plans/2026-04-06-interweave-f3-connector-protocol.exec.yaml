@@ -1,0 +1,42 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 5
+timeout_per_task: 300
+
+stages:
+  - name: "Wave 1 — Protocol foundation"
+    tasks:
+      - id: task-1
+        title: "Connector protocol and registry"
+        files: [src/interweave/connector.py, tests/test_connector.py]
+        depends: []
+
+  - name: "Wave 2 — Three connectors (parallel)"
+    tasks:
+      - id: task-2
+        title: "Cass connector (sessions)"
+        files: [src/interweave/connectors/__init__.py, src/interweave/connectors/cass.py, tests/test_connector_cass.py]
+        depends: [task-1]
+      - id: task-3
+        title: "Beads connector (issues, dependencies)"
+        files: [src/interweave/connectors/beads.py, tests/test_connector_beads.py]
+        depends: [task-1]
+      - id: task-4
+        title: "Tldr-code connector (files, symbols)"
+        files: [src/interweave/connectors/tldr_code.py, tests/test_connector_tldr_code.py]
+        depends: [task-1]
+
+  - name: "Wave 3 — Orchestration"
+    tasks:
+      - id: task-5
+        title: "Harvest orchestrator"
+        files: [src/interweave/harvest.py, tests/test_harvest.py]
+        depends: [task-2, task-3, task-4]
+
+  - name: "Wave 4 — Integration"
+    tasks:
+      - id: task-6
+        title: "Integration test + public API update"
+        files: [tests/test_integration_connectors.py, src/interweave/__init__.py]
+        depends: [task-5]

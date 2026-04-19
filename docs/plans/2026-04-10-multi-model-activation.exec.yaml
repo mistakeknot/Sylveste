@@ -1,0 +1,64 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 300
+
+stages:
+  - name: "Wave 1 — Foundation (parallel)"
+    tasks:
+      - id: task-1
+        title: "OpenRouter MCP server scaffold"
+        files: [interverse/interflux/mcp-servers/openrouter-dispatch/index.ts, interverse/interflux/mcp-servers/openrouter-dispatch/package.json, interverse/interflux/mcp-servers/openrouter-dispatch/tsconfig.json]
+        depends: []
+      - id: task-3
+        title: "Registry fields: qualified_via, content_policy, openrouter provider"
+        files: [interverse/interflux/config/flux-drive/model-registry.yaml, interverse/interflux/.gitignore]
+        depends: []
+      - id: task-7
+        title: "Discovery merge script"
+        files: [interverse/interflux/scripts/discover-merge.sh]
+        depends: []
+
+  - name: "Wave 2 — Launcher + Registration"
+    tasks:
+      - id: task-2
+        title: "Launcher script + plugin.json registration"
+        files: [interverse/interflux/scripts/launch-openrouter.sh, interverse/interflux/.claude-plugin/plugin.json]
+        depends: [task-1]
+
+  - name: "Wave 3 — Calibration Pipeline"
+    tasks:
+      - id: task-4
+        title: "Add real mode to fluxbench-calibrate.sh"
+        files: [interverse/interflux/scripts/fluxbench-calibrate.sh]
+        depends: [task-2]
+      - id: task-6
+        title: "Add orchestrator mode to fluxbench-qualify.sh"
+        files: [interverse/interflux/scripts/fluxbench-qualify.sh]
+        depends: [task-2]
+
+  - name: "Wave 4 — Calibration Execution"
+    tasks:
+      - id: task-5
+        title: "Run Claude calibration and write thresholds"
+        files: [interverse/interflux/config/flux-drive/fluxbench-thresholds.yaml]
+        depends: [task-4]
+
+  - name: "Wave 5 — Gates + Wiring"
+    tasks:
+      - id: task-8
+        title: "Enforce pre-flight gate script"
+        files: [interverse/interflux/scripts/validate-enforce.sh, interverse/interflux/config/flux-drive/budget.yaml]
+        depends: [task-5, task-6]
+      - id: task-9
+        title: "Challenger qualified_via filter"
+        files: [interverse/interflux/scripts/fluxbench-challenger.sh]
+        depends: [task-6]
+
+  - name: "Wave 6 — Integration Test"
+    tasks:
+      - id: task-10
+        title: "End-to-end mock qualification with new fields"
+        files: [interverse/interflux/tests/shell/test_qualify_mock_fields.bats]
+        depends: [task-8, task-9]
