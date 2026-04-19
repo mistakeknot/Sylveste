@@ -158,6 +158,26 @@
     },
     {
       "marketplace": "interagency-marketplace",
+      "plugin": "interrank",
+      "version": "0.3.1",
+      "source": "/home/mk/.claude/plugins/cache/interagency-marketplace/interrank/0.3.1/.claude-plugin/plugin.json",
+      "server_name": "interrank",
+      "type": "stdio",
+      "command": "bash",
+      "args": [
+        "${CLAUDE_PLUGIN_ROOT}/scripts/launch-interrank.sh"
+      ],
+      "url": null,
+      "env": {
+        "AGMODB_SNAPSHOT_REPOSITORY": "mistakeknot/agmodb",
+        "AGMODB_SNAPSHOT_TAG": "data-snapshot-latest",
+        "AGMODB_SNAPSHOT_ASSET": "agmodb-snapshot.json.gz",
+        "AGMODB_SNAPSHOT_REFRESH_MS": "300000"
+      },
+      "headers": {}
+    },
+    {
+      "marketplace": "interagency-marketplace",
       "plugin": "interflux",
       "version": "0.2.64",
       "source": "/home/mk/.claude/plugins/cache/interagency-marketplace/interflux/0.2.64/.claude-plugin/plugin.json",

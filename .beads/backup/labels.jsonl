@@ -306,6 +306,7 @@
 {"issue_id":"sylveste-9lp.9","label":"complexity:3"}
 {"issue_id":"sylveste-9lp.9","label":"interflux"}
 {"issue_id":"sylveste-9lp.9","label":"phase:plan-reviewed"}
+{"issue_id":"sylveste-9mix","label":"artifact_implementation:177f088d29215a21ea09f83afbed6322eee67e8d"}
 {"issue_id":"sylveste-9mix","label":"claimed_at:1776545868"}
 {"issue_id":"sylveste-9mix","label":"complexity:2"}
 {"issue_id":"sylveste-9owj","label":"auraken"}
@@ -548,6 +549,9 @@
 {"issue_id":"sylveste-lok","label":"artifact_plan:apps/Auraken/docs/plans/2026-03-31-model-routing.md"}
 {"issue_id":"sylveste-lon1","label":"predecessor:sylveste-9lp.9"}
 {"issue_id":"sylveste-lpnd","label":"predecessor:Sylveste-e1mi"}
+{"issue_id":"sylveste-mb72","label":"claimed_at:1776557844"}
+{"issue_id":"sylveste-mb72","label":"claimed_by:4059d2e5-2096-48f4-8434-25c7b354ffd7"}
+{"issue_id":"sylveste-mb72","label":"complexity:2"}
 {"issue_id":"sylveste-mdvx","label":"campaign_epic:sylveste-qv33"}
 {"issue_id":"sylveste-mdvx","label":"campaign_phase:0"}
 {"issue_id":"sylveste-mdvx","label":"claimed_at:1776387857"}
@@ -563,6 +567,7 @@
 {"issue_id":"sylveste-myyw.10","label":"claimed_at:0"}
 {"issue_id":"sylveste-myyw.10","label":"claimed_by:released"}
 {"issue_id":"sylveste-myyw.7","label":"artifact_brainstorm:docs/brainstorms/2026-04-18-gate-threshold-calibration-v2-brainstorm.md"}
+{"issue_id":"sylveste-myyw.7","label":"artifact_plan:docs/plans/2026-04-18-gate-threshold-calibration-v2.md"}
 {"issue_id":"sylveste-myyw.7","label":"artifact_prd:docs/prds/2026-04-18-gate-threshold-calibration-v2.md"}
 {"issue_id":"sylveste-myyw.7","label":"artifact_prior-art:docs/research/assess-identification-as-calibration.md"}
 {"issue_id":"sylveste-myyw.7","label":"claimed_at:1776543276"}
