@@ -1,0 +1,87 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 600
+
+stages:
+  - name: "Wave 1 — Spec-lock + namespace rename (independent)"
+    tasks:
+      - id: task-1
+        title: "Spec-lock round (canon docs for merge + cross-project consistency)"
+        files:
+          - docs/canon/policy-merge.md
+          - docs/canon/authz-cross-project-consistency.md
+        depends: []
+        tier: fast
+      - id: task-2
+        title: "Rename policy-check/show → scenario-policy-* (free namespace)"
+        files:
+          - os/Clavain/cmd/clavain-cli/main.go
+          - os/Clavain/cmd/clavain-cli/policy.go
+          - os/Clavain/cmd/clavain-cli/policy_test.go
+        depends: []
+      - id: task-3
+        title: "Migration 032 — authorizations table"
+        files:
+          - core/intercore/internal/db/migrations/032_authorizations.sql
+          - core/intercore/internal/db/db_test.go
+        depends: []
+
+  - name: "Wave 2 — Engine and CLI (depends on schema + canon)"
+    tasks:
+      - id: task-4
+        title: "Policy engine package (loader, merge, evaluator, record)"
+        files:
+          - core/intercore/internal/authz/policy.go
+          - core/intercore/internal/authz/merge.go
+          - core/intercore/internal/authz/evaluator.go
+          - core/intercore/internal/authz/record.go
+          - core/intercore/internal/authz/policy_test.go
+          - core/intercore/internal/authz/merge_test.go
+          - core/intercore/internal/authz/evaluator_test.go
+        depends: [task-1, task-3]
+      - id: task-5
+        title: "clavain-cli policy subcommand group"
+        files:
+          - os/Clavain/cmd/clavain-cli/authz.go
+          - os/Clavain/cmd/clavain-cli/authz_test.go
+          - os/Clavain/cmd/clavain-cli/main.go
+          - os/Clavain/config/policy.yaml.example
+        depends: [task-2, task-4]
+
+  - name: "Wave 3 — Gates + vetting writes (depends on CLI + engine)"
+    tasks:
+      - id: task-6
+        title: "Gate wrappers + .clavain/gates/ registry"
+        files:
+          - os/Clavain/scripts/gates/bead-close.sh
+          - os/Clavain/scripts/gates/git-push-main.sh
+          - os/Clavain/scripts/gates/bd-push-dolt.sh
+          - os/Clavain/scripts/gates/ic-publish-patch.sh
+          - .clavain/gates/bead-close.gate
+          - .clavain/gates/git-push-main.gate
+          - .clavain/gates/bd-push-dolt.gate
+          - .clavain/gates/ic-publish-patch.gate
+          - .beads/push.sh
+          - os/Clavain/cmd/clavain-cli/authz.go
+          - os/Clavain/cmd/clavain-cli/gates_integration_test.go
+        depends: [task-5]
+      - id: task-7
+        title: "Vetting-signal writes in /work Phase 3 + /sprint Steps 6-7"
+        files:
+          - os/Clavain/commands/work.md
+          - os/Clavain/commands/sprint.md
+          - os/Clavain/skills/executing-plans/SKILL.md
+          - os/Clavain/tests/vetting-writes_test.sh
+        depends: [task-5]
+
+  - name: "Wave 4 — End-to-end verification"
+    tasks:
+      - id: task-8
+        title: "E2E integration test + README quickstart"
+        files:
+          - os/Clavain/tests/authz-e2e_test.sh
+          - os/Clavain/README.md
+        depends: [task-6, task-7]
+        tier: fast
