@@ -1,0 +1,85 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 600
+
+stages:
+  - name: "Wave 1 — skeleton"
+    tasks:
+      - id: task-1
+        title: "gatecal package skeleton + schema (tier_state, drain_log, signals_cache)"
+        files:
+          - os/Clavain/cmd/clavain-cli/gatecal/gatecal.go
+          - os/Clavain/cmd/clavain-cli/gatecal/gatecal_test.go
+        depends: []
+
+  - name: "Wave 2 — independent helpers"
+    tasks:
+      - id: task-2
+        title: "Theme derivation (labeled > inferred > default)"
+        files:
+          - os/Clavain/cmd/clavain-cli/gatecal/theme.go
+          - os/Clavain/cmd/clavain-cli/gatecal/theme_test.go
+        depends: [task-1]
+      - id: task-3
+        title: "v1 -> v2 idempotent migration with .bak archive"
+        files:
+          - os/Clavain/cmd/clavain-cli/gatecal/migrate.go
+          - os/Clavain/cmd/clavain-cli/gatecal/migrate_test.go
+        depends: [task-1]
+
+  - name: "Wave 3 — drain algorithm"
+    tasks:
+      - id: task-4
+        title: "Drain: weighted-decay + consecutive-stable + small-n safety"
+        files:
+          - os/Clavain/cmd/clavain-cli/gatecal/drain.go
+          - os/Clavain/cmd/clavain-cli/gatecal/drain_test.go
+        depends: [task-1, task-2]
+
+  - name: "Wave 4 — backward-compat export"
+    tasks:
+      - id: task-5
+        title: "v1 JSON export (worst-case tier wins)"
+        files:
+          - os/Clavain/cmd/clavain-cli/gatecal/export.go
+          - os/Clavain/cmd/clavain-cli/gatecal/export_test.go
+        depends: [task-4]
+
+  - name: "Wave 5 — subcommand wire"
+    tasks:
+      - id: task-6
+        title: "Refactor calibrate-gate-tiers to use gatecal v2 (drain + migrate + export)"
+        files:
+          - os/Clavain/cmd/clavain-cli/gate_calibration.go
+          - os/Clavain/cmd/clavain-cli/gate_calibration_v2_test.go
+          - os/Clavain/cmd/clavain-cli/main.go
+        depends: [task-2, task-3, task-4, task-5]
+
+  - name: "Wave 6 — hook"
+    tasks:
+      - id: task-7
+        title: "SessionEnd hook + hooks.json registration"
+        files:
+          - os/Clavain/hooks/gate-calibration-session-end.sh
+          - os/Clavain/hooks/hooks.json
+        depends: [task-6]
+
+  - name: "Wave 7 — integration"
+    tasks:
+      - id: task-8
+        title: "Full-flow integration test (migrate -> 3 drains -> export)"
+        files:
+          - os/Clavain/cmd/clavain-cli/gatecal/integration_test.go
+        depends: [task-1, task-2, task-3, task-4, task-5, task-6, task-7]
+
+  - name: "Wave 8 — docs"
+    tasks:
+      - id: task-9
+        title: "Changelog + gate-calibration.md"
+        files:
+          - os/Clavain/CHANGELOG.md
+          - os/Clavain/docs/gate-calibration.md
+        depends: [task-8]
+        tier: fast
