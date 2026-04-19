@@ -1,0 +1,3 @@
+op=bead-close
+script=os/Clavain/scripts/gates/bead-close.sh
+registered_at=2026-04-19
