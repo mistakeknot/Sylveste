@@ -1,1 +1,1 @@
-2026-04-14-vision-v5-ockham-bridge.md
+2026-04-18-spike-c-shipped-r1-ready.md

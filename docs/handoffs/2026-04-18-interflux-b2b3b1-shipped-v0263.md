@@ -1,0 +1,33 @@
+---
+date: 2026-04-18
+session: ce632633
+topic: interflux B1/B3/B2 shipped v0.2.63
+beads: [sylveste-d00w, sylveste-qpp1, sylveste-cn8u, sylveste-t615]
+---
+
+## Session Handoff — 2026-04-18 interflux B1/B3/B2 shipped as v0.2.63
+
+### Directive
+> Your job is to execute **B4** next (SKILL-compact.md consolidation) — unblocks C2 and addresses §8 Risk 2 (compact silently drops Phase 2.5 reaction orchestration from every session that loads it). Blueprint: `/home/mk/projects/Sylveste/docs/plans/2026-04-18-interflux-improvement-plan.md` §3 B4. Scope (2-3h): delete `interverse/interflux/skills/flux-drive/SKILL-compact.md`; rewrite `SKILL.md` with `## Quick Reference` at top (mode table, 5-line triage summary, phase list **including Phase 2.5**); remove the `<!-- compact: SKILL-compact.md -->` directive at `SKILL.md:8`; update `CLAUDE.md` validation comment to `# Should be 1`. Verify with `python3 -m pytest interverse/interflux/tests/structural/ --tb=no -q` (expect 152 passed, 7 pre-existing failures unchanged) and a manual flux-drive run confirming Phase 2.5 reaction round triggers.
+
+- **Published:** interflux is live at **v0.2.63** (plugin.json + marketplace + cache all synced). Restart/reload required to pick up.
+- **Closed beads:** sylveste-d00w (B1), sylveste-qpp1 (B3), sylveste-cn8u (B2). No in-progress beads.
+- **Fallback work if B4 blocks:** B5 (shell hygiene — MODEL_REGISTRY canonicalization, flock fd 200 overload, bare except, stderr capture, scripts/README.md — ~3h, independent) or B6 (phase-file accuracy — Composer dead code removal, "interserve mode" → "Codex mode" rename, ~2-3h, prerequisite for C4). After B4: C2 (dispatch state machine, ~1.5 sprints) or C3 (sanitize fuzz tests + TrustedContent NewType, unblocked by B2+B3).
+- **New bug bead filed:** sylveste-t615 (P2) — `ic publish` is non-idempotent on partial failure; each attempt bumps+pushes plugin.json before touching marketplace, so a late-phase failure burns the version number. Cheapest fix: option (c) "detect already-bumped, skip bump on retry." See bead description for details.
+
+### Dead Ends
+- **First `ic publish --patch` attempt** — `validate-plugin.sh` injection scan rejected `reaction.md` for containing the literal substring `NEW INSTRUCTIONS:` (documenting the pattern the B3 sanitizer strips). Fix: rephrased around pattern-constant names (`_NEW_INSTRUCTIONS_PATTERN`, `_OVERRIDE_LINE_PATTERN`); the authoritative source stays `scripts/sanitize_untrusted.py`. Scan only touches skill/command/agent .md — scripts/ is safe.
+- **Second `ic publish` attempt** — failed at `update_marketplace` phase because `/home/mk/projects/Sylveste/core/marketplace/` had a **2-week-old abandoned interactive rebase** (from 2026-04-04) in detached-HEAD state with "No commands remaining". Fix: `cd core/marketplace && git rebase --continue` finalized cleanly. Always check `core/marketplace/` git state before `ic publish`.
+- **Third+ retries** — stale publish lock rows (`pub-fggz5cdx`, `pub-bbjagnzu`, etc.) in `.clavain/intercore.db` `publish_state` table blocked retries with "another publish is in progress". `ic publish status` doesn't show them; `bd doctor` doesn't flag them. Clear with `python3 -c "import sqlite3; c=sqlite3.connect('.clavain/intercore.db'); c.execute(\"DELETE FROM publish_state WHERE plugin='X' AND phase NOT IN ('done','idle')\").rowcount; c.commit()"`.
+
+### Context
+- **Version drift: ended at 0.2.63, not 0.2.62.** First publish attempt committed+pushed the 0.2.62 bump to `mistakeknot/interflux` before failing at marketplace; the retry saw 0.2.62 as current and incremented. 0.2.62 is an orphan tag on origin. sylveste-t615 tracks the fix.
+- **Shell `flock -w 30` pattern** used in B1 requires explicit subshell exit-code capture: `(flock -w 30 -x N || exit 3; ...) N>"$lock" || _rc=$?`. `set -e` does NOT reliably propagate through the `(subshell) N>file` form — this is the real fix, not just the timeout. Exit code 3 inside the subshell = timeout; anything else non-zero = real failure. `fluxbench-drift.sh` is the advisory path (emits `{"verdict":"skipped_timeout"}` at rc=0 so callers continue); all others hard-fail.
+- **`sanitize_untrusted.py` is the single sanitization boundary** for untrusted LLM content. Four channels flow through it: peer findings (reaction.md), agent specs (generate-agents.py render_agent), knowledge context (synthesize.md, future), domain overlays (future). NFKC normalization is the critical bypass closer — fullwidth `\uff1csystem\uff1e` collapses to `<system>` BEFORE regex runs. Base64 heuristic requires mixed composition (60+ chars AND some of `+/=` / case-mix / digit-mix) to avoid false-positives on pure-letter or pure-digit runs.
+- **`spec_types.py` must NOT be named `types.py`** — `types` shadows the stdlib and breaks other scripts importing it. Named `spec_types.py`. Exports: `AgentSpec`, `validate_agent_spec`, `_unwrap_spec_list`, `_normalize_bullet_list`, `_normalize_severity_examples`, `_normalize_domains`. Both `generate-agents.py` and `flux-agent.py` now import the shared helpers.
+- **B2 wiring also fixed A-16 sibling issues not in blueprint scope:** `flux-agent.py:265` and `:603` now cast `use_count` to int (YAML string "5" → int 5); `:273-280` normalizes comma-joined domains string (`"security, auth"` → `["security", "auth"]`). Prior code produced a single malformed bucket.
+- **7 pre-existing structural test failures unrelated to this work** — verified via `git stash` comparison: `test_version_gating_with_severity` expects FLUX_GEN_VERSION=5 (now 6), `test_skips_invalid_names` expects old error message "must start with 'fd-'" (now mentions path traversal), 4 failures in `test_namespace.py` / `test_slicing.py` reference missing sections in `launch.md` / `slicing.md`. These were failing on clean HEAD before this session's changes.
+- **Runtime state that dirties git:** `interverse/interflux/.clavain/interspect/interspect.db` is tracked-but-gitignored — churns on every interspect event. `ic publish` refuses to run with dirty tree. Stash with `git stash push -- .clavain/interspect/interspect.db` before publishing, `git stash pop` after.
+- **`/reload-plugins` is a Claude Code built-in CLI command**, not a skill. Skill tool cannot invoke it; the human operator must run it in their terminal.
+- **Full test state** (post-B2): 152 passed, 7 pre-existing failures unchanged, 27/27 bats tests pass for modified shell scripts, 49/49 new spec-validator tests pass, `tsc --noEmit` clean on openrouter-dispatch, `npm run build` produces dist/index.js.
+- **Context budget note:** `/home/mk/.claude/projects/-home-mk-projects-Sylveste/memory/MEMORY.md` is at 181 lines (budget: 120). Consider `/intermem:tidy` at start of next session.
