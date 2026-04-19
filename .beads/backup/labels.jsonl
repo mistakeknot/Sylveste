@@ -571,6 +571,7 @@
 {"issue_id":"sylveste-myyw.7","label":"artifact_plan:docs/plans/2026-04-19-gate-threshold-calibration-v2.md"}
 {"issue_id":"sylveste-myyw.7","label":"artifact_prd:docs/prds/2026-04-18-gate-threshold-calibration-v2.md"}
 {"issue_id":"sylveste-myyw.7","label":"artifact_prior-art:docs/research/assess-identification-as-calibration.md"}
+{"issue_id":"sylveste-myyw.7","label":"artifact_test-pass-sha:feb5b82d7b12cd970c1b64de4a16f17c6f16c573"}
 {"issue_id":"sylveste-myyw.7","label":"claimed_at:1776560165"}
 {"issue_id":"sylveste-myyw.7","label":"claimed_by:de7ca07b-1bc2-419e-833d-f8abdec52f11"}
 {"issue_id":"sylveste-myyw.7","label":"complexity:3"}
@@ -580,6 +581,10 @@
 {"issue_id":"sylveste-myyw.8","label":"claimed_by:8fbc124c-af47-48fb-99fe-179a4598097b"}
 {"issue_id":"sylveste-n6zw","label":"claimed_at:0"}
 {"issue_id":"sylveste-n6zw","label":"claimed_by:released"}
+{"issue_id":"sylveste-nfqo","label":"artifact_prior-art:docs/research/assess-agent-farm-safety-repos.md"}
+{"issue_id":"sylveste-nfqo","label":"claimed_at:1776617377"}
+{"issue_id":"sylveste-nfqo","label":"claimed_by:b8c3c8ae-79ec-41fc-b641-e296623bd8cf"}
+{"issue_id":"sylveste-nfqo","label":"complexity:3"}
 {"issue_id":"sylveste-nr6x","label":"artifact_brainstorm:docs/brainstorms/2026-04-06-hassease-multi-model-forge-agent.md"}
 {"issue_id":"sylveste-nr6x","label":"claimed_at:0"}
 {"issue_id":"sylveste-nr6x","label":"claimed_by:released"}
@@ -616,6 +621,8 @@
 {"issue_id":"sylveste-qdo8","label":"claimed_by:aba963a5-a727-429a-8597-9ac1093fcca2"}
 {"issue_id":"sylveste-qdqr","label":"artifact_brainstorm:docs/brainstorms/2026-04-19-auto-proceed-authz-design.md"}
 {"issue_id":"sylveste-qdqr","label":"artifact_plan:/home/mk/projects/Sylveste/docs/plans/2026-04-19-auto-proceed-authz-v1.md"}
+{"issue_id":"sylveste-qdqr","label":"claimed_at:1776616800"}
+{"issue_id":"sylveste-qdqr","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-qdqr","label":"complexity:4"}
 {"issue_id":"sylveste-qdqr","label":"phase:planned"}
 {"issue_id":"sylveste-qdqr","label":"primary_file:docs/brainstorms/2026-04-19-auto-proceed-authz-design.md"}
