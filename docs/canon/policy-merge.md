@@ -93,6 +93,16 @@ If project intends to lower this requirement, parent must set:
 allow_override: true
 ```
 
+With `allow_override: true` on the base rule, a successful child drop
+results in `tests_passed` being **absent** from the merged requires map —
+not present as `false`. ("requires X=false" has no meaningful authorization
+semantics; a dropped requirement is an absent requirement.)
+
+An explicit `tests_passed: false` in the child, paired with
+`allow_override: true` on the base, is normalized to the same outcome:
+the key is removed from the merged requires map. Without
+`allow_override`, either form (drop or explicit `false`) is a merge error.
+
 ### Example 3 — Catchall floor is not removable (`mode:*`)
 
 Global policy:
