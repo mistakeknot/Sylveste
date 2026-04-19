@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
-# Push beads dolt database to filesystem remote.
-# Workaround for `bd dolt push` "no store available" error (bd v0.56.1).
-# Uses dolt sql with --data-dir to target the global beads database.
+# Push per-project beads Dolt DB to the filesystem remote.
+# Updated 2026-04-16 for the per-project Dolt layout (migrated 2026-03-15);
+# the pre-migration global DB at ~/.local/share/beads-dolt no longer exists.
 set -euo pipefail
 
 DOLT="/home/mk/.local/bin/dolt"
-DATA_DIR="/home/mk/.local/share/beads-dolt"
+DB_DIR="/home/mk/projects/Sylveste/.beads/dolt/Sylveste"
 
-output=$("$DOLT" --data-dir "$DATA_DIR" --use-db beads sql -q "CALL dolt_push('origin', 'main')" 2>&1)
-status=$(echo "$output" | grep -oP '(?<=\| )\d+(?= +\|)' | head -1)
+cd "$DB_DIR"
+
+output=$("$DOLT" push origin main 2>&1)
+status=$?
 
 if [[ "$status" == "0" ]]; then
     echo "beads push: ok"
