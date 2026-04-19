@@ -84,3 +84,12 @@ docs/research/*/
 # Beads / Dolt files (added by bd init)
 .beads-credential-key
 .beads/dolt/
+
+# Per-machine tool state (added 2026-04-19)
+.beads/remote/
+.claude/projects/
+.claude/scheduled_tasks.lock
+.clavain/cxdb/
+.clavain/intercept/
+.codex
+data/
