@@ -410,3 +410,5 @@
 {"id":"int-1b048cca","kind":"field_change","created_at":"2026-04-19T16:25:55.879549858Z","actor":"Claude Code","issue_id":"sylveste-myyw.7","extra":{"field":"status","new_value":"closed","old_value":"open","reason":"Closed"}}
 {"id":"int-5ba01d78","kind":"field_change","created_at":"2026-04-19T16:25:56.204056821Z","actor":"Claude Code","issue_id":"sylveste-61bm","extra":{"field":"status","new_value":"closed","old_value":"open","reason":"Closed"}}
 {"id":"int-575f975f","kind":"field_change","created_at":"2026-04-19T16:39:45.065425305Z","actor":"Claude Code","issue_id":"sylveste-qdqr","extra":{"field":"status","new_value":"open","old_value":"in_progress"}}
+{"id":"int-65090dbd","kind":"field_change","created_at":"2026-04-19T16:58:50.054744745Z","actor":"Claude Code","issue_id":"sylveste-khb8","extra":{"field":"priority","new_value":"1","old_value":"3"}}
+{"id":"int-fbf5dcac","kind":"field_change","created_at":"2026-04-19T16:59:00.869381699Z","actor":"Claude Code","issue_id":"sylveste-dws5","extra":{"field":"status","new_value":"in_progress","old_value":"open"}}
