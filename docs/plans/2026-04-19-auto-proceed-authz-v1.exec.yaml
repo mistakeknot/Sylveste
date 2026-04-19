@@ -1,7 +1,7 @@
 version: 1
 mode: dependency-driven
 tier: deep
-max_parallel: 3
+max_parallel: 1
 timeout_per_task: 600
 
 stages:
