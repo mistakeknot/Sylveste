@@ -1,0 +1,40 @@
+### Findings Index
+- P0 | CTP-1 | "Capability Mesh" | No pre-specified endpoints for trust promotion — evidence signals lack pass/fail thresholds
+- P0 | CTP-2 | "The Flywheel" | No stopping rules — authority ratchet lacks mandatory demotion triggers when evidence shows harm
+- P1 | CTP-3 | "The Flywheel" | Evidence quality tiers absent — all evidence treated as fungible regardless of rigor level
+- P1 | CTP-4 | "Capability Mesh" | No Data Safety Monitoring Board equivalent for identifying the constraining subsystem
+- P2 | CTP-5 | "Key Decisions" | Leading vs lagging indicators conflated — evidence signals mix predictive and outcome measures
+Verdict: needs-changes
+
+### Summary
+
+The brainstorm articulates a compelling thesis — trust earned through observable evidence that compounds over time — but reads like a Phase 0 protocol: aspirational endpoints without operational criteria. Clinical trial methodology requires pre-specified primary endpoints, sample size calculations, and mandatory stopping rules before a trial begins enrollment. The v5.0 capability mesh defines evidence signals per subsystem but never specifies what values constitute sufficient evidence for trust promotion, how much evidence is needed, or under what conditions trust must be revoked. The flywheel assumes evidence compounds monotonically, which no clinical system accepts — evidence can degrade, contradict, or become irrelevant.
+
+### Issues Found
+
+CTP-1. P0: **No pre-specified endpoints for trust promotion.** The capability mesh (Section: Key Decisions, Decision 2) lists 10 subsystems with evidence signals (e.g., "gate pass rate" for Routing, "query hit rate" for Ontology) but never defines what threshold on any signal constitutes sufficient evidence to promote trust. In clinical trials, the primary endpoint and success criterion are defined before the trial starts — "50% reduction in tumor volume at 12 weeks" not "we'll measure tumor volume and see." Without pre-specified thresholds, the authority ratchet is subjective: who decides that a 73% gate pass rate is "good enough"? The PHILOSOPHY.md principle "Evidence earns authority" (line 9) says "each level requires proof from the previous level" but the brainstorm never operationalizes "proof." Failure scenario: A subsystem claims maturity based on whichever metric looks best post-hoc (p-hacking equivalent), and the authority ratchet promotes trust based on favorable evidence selection rather than pre-registered criteria.
+
+CTP-2. P0: **No mandatory stopping rules for demotion.** The brainstorm proposes an "authority ratchet" (Section: Key Decisions, Decision 5) that implies one-directional movement. Clinical trials have mandatory stopping rules: if interim analysis shows the treatment is harmful, futile, or overwhelmingly effective, the trial stops — it does not wait for the planned endpoint. The brainstorm says "trust ratchets" (line 29) but never specifies conditions under which trust must be revoked. The PHILOSOPHY.md principle "Earned Authority" (line 93-107) defines a trust ladder (L0-L5) but says "each level requires demonstrated safety at the previous level" without specifying what happens when safety evidence degrades. Failure scenario: A subsystem that earned trust during a period of low load or simple tasks retains that trust when conditions change (higher load, harder tasks), and the ratchet mechanism has no trigger to force re-evaluation. This is the clinical equivalent of not monitoring for adverse events post-approval.
+
+CTP-3. P1: **Evidence quality tiers absent.** The flywheel (Section: Why This Approach, The Flywheel) treats all four upstream evidence sources (Interweave, Ockham, Interop, FluxBench) as equivalent inputs. In clinical methodology, evidence has a hierarchy: randomized controlled trials > cohort studies > case series > expert opinion. The brainstorm's evidence signals range from controlled experiments (FluxBench model qualification with 8 scores/model) to observational data (Interject promotion rate). The flywheel compounds them without weighting for rigor. Failure scenario: 100 anecdotal observations from Interject (ambient scanning) outweigh 3 controlled FluxBench experiments in the aggregate evidence score, because the compounding mechanism counts volume not quality. This is the evidence-based medicine mistake that systematic reviews were designed to prevent.
+
+CTP-4. P1: **No DSMB equivalent for bottleneck identification.** The brainstorm claims "the system's overall autonomy is the minimum of its subsystem maturities — the weakest link constrains the whole" (line 98) but provides no mechanism for identifying which subsystem is actually the bottleneck in real-time. Clinical trials use Data Safety Monitoring Boards (DSMBs) — independent bodies that review accumulating evidence at planned intervals and can halt or modify the trial. The brainstorm has no equivalent body or automated process that periodically evaluates subsystem maturity across the mesh and identifies the constraining link. Failure scenario: The system stalls and operators cannot determine which of 10 subsystems is the weakest link because there is no cross-subsystem monitoring dashboard or periodic review mechanism. The "minimum maturity" rule only works if you can actually compute the minimum.
+
+CTP-5. P2: **Leading and lagging indicators conflated.** The evidence signals in the capability mesh (Section: Key Decisions, Decision 2) mix leading indicators (query hit rate, sync latency) with lagging indicators (conflict resolution rate, finding precision). Clinical trials distinguish rigorously: a biomarker (leading) predicts an outcome; a survival rate (lagging) IS the outcome. The brainstorm doesn't classify which signals are predictive early-warning measures and which are definitive outcome measures. This matters because leading indicators should trigger investigation when they deteriorate, while lagging indicators should trigger authority changes. Treating them identically either over-reacts to noise (if leading indicators trigger demotions) or under-reacts to deterioration (if lagging indicators are required before action).
+
+### Improvements
+
+IMP-1. Define a "trust protocol" per capability mesh cell that specifies: (a) the primary endpoint (which evidence signal is the gating criterion), (b) the success threshold (what value constitutes sufficient evidence), (c) the required sample size (how many observations before evaluation), and (d) the evaluation schedule (when to assess). Map each cell to a clinical trial phase equivalent: Phase I = safety (does the subsystem cause harm?), Phase II = efficacy (does it produce the intended evidence?), Phase III = effectiveness (does it work at scale?), Phase IV = post-market surveillance (does it maintain quality over time).
+
+IMP-2. Add explicit demotion triggers to the authority ratchet mechanism. For each trust level, define: (a) monitoring frequency (how often evidence is reviewed), (b) demotion criteria (what evidence pattern triggers rollback), (c) investigation triggers (what anomalies require human review before automated demotion). Reference the PHILOSOPHY.md "Failure" principle (line 81) which already says "every failure produces a receipt" — connect this to the demotion mechanism.
+
+IMP-3. Introduce an evidence quality taxonomy that assigns weight tiers to different evidence sources. Proposed: Tier 1 (controlled) = FluxBench closed-loop experiments, cross-model review disagreements resolved by human. Tier 2 (observational) = Interspect gate pass rates, Interop sync metrics. Tier 3 (anecdotal) = Interject promotions, ambient scanning signals. The flywheel should compound tier-weighted evidence, not raw volume.
+
+<!-- flux-drive:complete -->
+
+--- VERDICT ---
+STATUS: warn
+FILES: 0 changed
+FINDINGS: 5 (P0: 2, P1: 2, P2: 1)
+SUMMARY: Evidence compounding thesis is aspirational without operational criteria — needs pre-specified endpoints, stopping rules, and evidence quality tiers to move from Phase 0 to Phase I.
+---

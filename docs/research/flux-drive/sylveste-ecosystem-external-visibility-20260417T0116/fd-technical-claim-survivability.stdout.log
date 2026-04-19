@@ -1,0 +1,13 @@
+Review written. Key findings:
+
+**Two P0 cuts:**
+- "Wired or it doesn't exist" — fails its own test. PHILOSOPHY.md is not wired.
+- "Sparse topology (Zollman)" — research folder is not implementation. Delete it before any skeptic finds it.
+
+**One P1 fix:**
+- Self-building (#10) is the clear lead claim with the only publicly auditable receipt (git log, $2.93 number). The README currently buries it behind architecture tables.
+
+**The one sentence that earns the second click:**
+> "Sylveste builds itself. Every task is tracked as a bead. Every commit is made by an agent. The current cost is $2.93 per landable change across 785 sessions."
+
+Everything else is either polish (OODARC, M0–M4) or should be hidden until implemented. Seven SF proper nouns before any claim lands is a naming tax that should be deferred to parentheticals until there's an audience to amortize it.

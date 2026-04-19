@@ -1,0 +1,267 @@
+{
+  "metadata": {
+    "document": "docs/brainstorms/2026-04-08-lens-go-package-brainstorm.md",
+    "bead": "sylveste-benl.1",
+    "review_date": "2026-04-08",
+    "agents_launched": [
+      "fd-graph-algorithm-determinism",
+      "fd-embed-data-integrity",
+      "fd-llm-provider-interface",
+      "fd-evolution-tracking-semantics",
+      "fd-stack-orchestration-state-machine",
+      "fd-go-package-api-design",
+      "fd-python-go-migration-fidelity"
+    ],
+    "total_findings": 19,
+    "by_severity": {
+      "P0": 3,
+      "P1": 7,
+      "P2": 6,
+      "P3": 3
+    }
+  },
+  "findings": [
+    {
+      "id": "GAD-1",
+      "agent": "fd-graph-algorithm-determinism",
+      "severity": "P0",
+      "title": "Louvain node traversal order divergence between Python random.seed(42) and Go math/rand seed=42",
+      "description": "Python's networkx.community.louvain_communities uses Python's random.shuffle (seeded by random.seed(42)) to randomize node visit order during the local modularity optimization phase. Go's math/rand with seed=42 produces a completely different pseudorandom sequence. Even with identical resolution=1.0, different traversal orders during the greedy local move step will produce different community assignments on graphs with modularity-equivalent moves (ties). The lens graph has 291 nodes and 1,779 edges — tie-breaking situations are near-certain.",
+      "failure_scenario": "Go Louvain produces 8 or 9 communities instead of 7. Embedded lens_communities.json (generated from Python) disagrees with runtime computation. If the plan recomputes communities in Go rather than reading the embedded file, bridge lens identification changes silently.",
+      "recommendation": "Do NOT recompute Louvain in Go at runtime. Treat lens_communities.json as the authoritative community assignment. Go code should read and validate the embedded community data, not recompute it. If recomputation is ever needed, generate from Python and re-embed. Add a test that asserts exactly 7 communities with known member counts.",
+      "files": [
+        "os/Skaffen/pkg/lens/louvain.go",
+        "os/Skaffen/pkg/lens/data/lens_communities.json"
+      ],
+      "source_reference": "apps/Auraken/src/auraken/lens_graph.py:71-81 (detect_communities)"
+    },
+    {
+      "id": "GAD-2",
+      "agent": "fd-graph-algorithm-determinism",
+      "severity": "P1",
+      "title": "Betweenness centrality BFS order non-determinism from Go map iteration",
+      "description": "Brandes' algorithm for betweenness centrality visits all nodes as BFS sources. In Python (networkx), node iteration order is insertion order (dict). In Go, map iteration order is randomized per runtime invocation. If the Go adjacency list uses map[string][]TypedEdge, iterating over it in Brandes' algorithm produces different accumulation orders. While final centrality values converge for large graphs, rank order of nodes with close scores can flip, changing which 15 nodes are selected as bridge lenses.",
+      "failure_scenario": "Bridge lens set changes between Go binary restarts. Run 1 selects lens A as bridge #15; run 2 selects lens B instead. Stack orchestration receives inconsistent bridge suggestions across sessions.",
+      "recommendation": "Sort node keys before iterating in the betweenness centrality computation. Alternatively, precompute bridge scores in Python and embed them in lens_communities.json (the Python code already does this via compute_and_cache which writes bridge_score to each lens). The brainstorm mentions 15 bridge lenses — embed that list rather than recomputing.",
+      "files": [
+        "os/Skaffen/pkg/lens/betweenness.go"
+      ],
+      "source_reference": "apps/Auraken/src/auraken/lens_graph.py:63-67 (compute_bridge_scores)"
+    },
+    {
+      "id": "GAD-3",
+      "agent": "fd-graph-algorithm-determinism",
+      "severity": "P2",
+      "title": "Multi-typed edges between same node pair: adjacency list deduplication risk",
+      "description": "The Python code (lens_graph.py:43-53) handles multiple edge types between the same node pair by appending to a 'types' list attribute on a single networkx edge. The brainstorm proposes map[string][]TypedEdge which could create duplicate adjacency entries. If the Go implementation adds two TypedEdge entries for the same (A,B) pair with different types, neighbor count is inflated and betweenness centrality weights are wrong.",
+      "failure_scenario": "A lens pair connected by both 'complements' and 'contrasts' appears as two separate edges in the adjacency list, doubling their contribution to centrality scores. Bridge lens ranking is skewed toward multi-typed pairs.",
+      "recommendation": "Match Python's pattern: single adjacency entry per node pair with a []string types field. Validate at load time that no (source, target) pair appears more than once in the adjacency list.",
+      "files": [
+        "os/Skaffen/pkg/lens/graph.go"
+      ],
+      "source_reference": "apps/Auraken/src/auraken/lens_graph.py:37-53"
+    },
+    {
+      "id": "GAD-4",
+      "agent": "fd-graph-algorithm-determinism",
+      "severity": "P2",
+      "title": "Floating-point tolerance for centrality score comparison not specified",
+      "description": "The brainstorm does not specify whether betweenness centrality tests should use exact float64 equality or epsilon tolerance. Python float and Go float64 are both IEEE 754 double precision, but accumulation order differences produce epsilon divergence. Without a documented tolerance, tests will be brittle or silently wrong.",
+      "failure_scenario": "Tests pass on one platform, fail on another due to FP accumulation differences. Or tests use exact equality and are permanently flaky.",
+      "recommendation": "Define tolerance constant (e.g., 1e-10) in the test file. Document that centrality scores are compared with tolerance but rank order of top-15 bridge lenses must be exact (or embed the bridge list from Python).",
+      "files": [
+        "os/Skaffen/pkg/lens/betweenness_test.go"
+      ]
+    },
+    {
+      "id": "EDI-1",
+      "agent": "fd-embed-data-integrity",
+      "severity": "P0",
+      "title": "sync.Once permanently caches initialization errors — no retry possible",
+      "description": "The brainstorm specifies Load() using sync.Once for one-time initialization. Go's sync.Once.Do() marks the function as done regardless of whether it returns an error. If the embedded JSON is malformed or the embed directive path is wrong, Load() will fail once and all subsequent calls will see the cached nil data without an error (since sync.Once only runs the function once). The brainstorm's 'Reset() for testing' partially addresses this, but the production path has no recovery.",
+      "failure_scenario": "A build with a corrupted lens_library_v2.json embed produces a binary where every Load() call after the first returns the cached zero-value LensLibrary. All lens selection returns empty results for the lifetime of the process with no error logged after the first call.",
+      "recommendation": "Use sync.Once paired with a separate package-level error variable: `var loadOnce sync.Once; var loadErr error; var library *LensLibrary`. Load() calls loadOnce.Do(func() { library, loadErr = parseEmbedded() }). Every Load() caller checks loadErr. For Reset(), replace the sync.Once pointer via atomic.Value or use a mutex-guarded flag pattern instead of sync.Once.",
+      "files": [
+        "os/Skaffen/pkg/lens/loader.go"
+      ],
+      "source_reference": "apps/Auraken/src/auraken/lenses.py:214-241 (_load_library)"
+    },
+    {
+      "id": "EDI-2",
+      "agent": "fd-embed-data-integrity",
+      "severity": "P1",
+      "title": "Reset() cannot reinitialize sync.Once — tests run against stale data",
+      "description": "Go's sync.Once has no Reset method. The brainstorm says Reset() matches Python's reset_library(). Python simply sets _LENSES = []. In Go, if Reset() nils out the cached data but does not replace the sync.Once value, subsequent Load() calls are no-ops because Once already fired. The next test that calls Load() gets nil data.",
+      "failure_scenario": "First test loads lenses, modifies them, calls Reset(). Second test calls Load() — sync.Once does not refire, returns nil. Test panics on nil pointer or passes with empty data.",
+      "recommendation": "Store the sync.Once as a pointer in a struct, and have Reset() create a new sync.Once. Or use atomic.Value to store the loaded library and a mutex-guarded init flag: `var mu sync.Mutex; var lib atomic.Value; var initialized bool`. Reset() sets initialized=false under the mutex.",
+      "files": [
+        "os/Skaffen/pkg/lens/loader.go"
+      ]
+    },
+    {
+      "id": "EDI-3",
+      "agent": "fd-embed-data-integrity",
+      "severity": "P1",
+      "title": "Cross-file referential integrity not validated at load time",
+      "description": "Three JSON files reference each other: lens_edges.json references lens IDs from lens_library_v2.json; lens_communities.json maps lens IDs to community IDs. The brainstorm does not mention validation of cross-file references at Load() time. A stale edge file could reference deleted lenses, creating dangling nodes in the graph with no metadata.",
+      "failure_scenario": "Lens library is updated (lens removed), but lens_edges.json still references the old lens ID. Graph contains a node with no name/definition. Bridge lens computation promotes a phantom node. Selector returns a lens with empty name to the user.",
+      "recommendation": "At Load() time, validate: (1) every edge source_id and target_id exists in the lens library, (2) every community lens_id exists in the lens library. Return a typed error listing all dangling references. This is a 15-line validation function.",
+      "files": [
+        "os/Skaffen/pkg/lens/loader.go"
+      ]
+    },
+    {
+      "id": "EDI-4",
+      "agent": "fd-embed-data-integrity",
+      "severity": "P2",
+      "title": "//go:embed directive path must be relative to the Go source file, not the package",
+      "description": "The brainstorm places data files in pkg/lens/data/ and references them via //go:embed. The embed directive must appear in a .go file within pkg/lens/ (e.g., loader.go) and the path 'data/*.json' is relative to that file's directory. This works. However, if any Go file outside pkg/lens/ tries to reference these embedded files, it will fail at compile time. This is a documentation clarity issue, not a bug, but should be explicitly stated.",
+      "failure_scenario": "Developer adds a test helper in a parent package that tries to reference the embedded data — compile error.",
+      "recommendation": "Document in loader.go that embedded data is only accessible within the lens package. Export a DataVersion() or similar function if external packages need to verify data provenance.",
+      "files": [
+        "os/Skaffen/pkg/lens/loader.go"
+      ]
+    },
+    {
+      "id": "LPI-1",
+      "agent": "fd-llm-provider-interface",
+      "severity": "P0",
+      "title": "Provider.Stream() returns a streaming response — HaikuSelector needs non-streaming completion",
+      "description": "Skaffen's provider.Provider interface has exactly one method: Stream(ctx, messages, tools, config) -> (*StreamResponse, error). It returns a streaming response (channel of events). The brainstorm says HaikuSelector wraps provider.Provider for lens selection — but lens selection needs a simple request/response (send prompt, get JSON array back). HaikuSelector must consume the entire stream, concatenate text deltas, then parse JSON. This is not called out in the brainstorm.",
+      "failure_scenario": "HaikuSelector implementation is more complex than anticipated. Developer may introduce a helper that consumes the stream into a string, but if the stream errors mid-response, the partial concatenation may contain invalid JSON. The regex-based JSON array extractor (from Python) applied to a truncated stream could match a partial array.",
+      "recommendation": "Add a helper function (or method on StreamResponse) like CollectText(ctx) (string, *Usage, error) that consumes all EventTextDelta events and returns the full text plus usage stats. This is reusable beyond HaikuSelector. Check if StreamResponse already has such a method.",
+      "files": [
+        "os/Skaffen/pkg/lens/selector.go",
+        "os/Skaffen/internal/provider/stream.go"
+      ],
+      "source_reference": "os/Skaffen/internal/provider/provider.go:29-35"
+    },
+    {
+      "id": "LPI-2",
+      "agent": "fd-llm-provider-interface",
+      "severity": "P1",
+      "title": "Off-by-one risk: Python uses 1-indexed, LLM may return 0-indexed, Go slices are 0-indexed",
+      "description": "Python's select_lenses() (lenses.py:258-259) creates a 1-indexed lens index ('1. [macro] Name'). The LLM returns 1-indexed integers. Python validates `1 <= idx <= len(lenses)` and accesses `lenses[idx - 1]`. The brainstorm mentions '1-indexed lens index' but the Go implementation must perform the same -1 adjustment. If the LLM returns 0 (which Haiku sometimes does when confused), Python silently drops it (fails the `1 <= idx` check). Go must replicate this guard.",
+      "failure_scenario": "LLM returns [0, 3, 7]. Go code does not check lower bound, accesses lenses[-1] which in Go is a panic (index out of range). Or Go code accepts 0 and maps to lenses[0-1] = lenses[-1] which wraps to the last element in some array implementations but panics in Go.",
+      "recommendation": "Validate each index: `if idx < 1 || idx > len(candidates) { continue }`. Log a warning for out-of-bounds indices to track LLM hallucination rate. Write a test case with input [0, -1, 999, 3] to verify bounds checking.",
+      "files": [
+        "os/Skaffen/pkg/lens/selector.go"
+      ],
+      "source_reference": "apps/Auraken/src/auraken/lenses.py:379-382"
+    },
+    {
+      "id": "LPI-3",
+      "agent": "fd-llm-provider-interface",
+      "severity": "P1",
+      "title": "Timeout composition: Select() context timeout vs provider transport timeout",
+      "description": "The brainstorm specifies a 15-second context timeout. Python achieves this via asyncio.wait_for(proc.communicate(), timeout=15.0). In Go, Select() will presumably use context.WithTimeout(ctx, 15*time.Second) and pass the child context to provider.Stream(). If the Anthropic provider has its own HTTP client timeout (e.g., 30s), the contexts compose correctly (Go's net/http respects context cancellation). But if a provider does NOT respect context cancellation (e.g., a subprocess provider), the 15s timeout is not enforced.",
+      "failure_scenario": "Using claude-code subprocess provider (Skaffen's default), which spawns a process. If the subprocess provider does not kill the child process on context cancellation, Select() blocks beyond 15 seconds. The agent loop stalls.",
+      "recommendation": "Verify that all providers in the registry honor context cancellation. For subprocess-based providers (claudecode), verify that context.Done() triggers process.Kill(). Add a test: create a context with 100ms timeout, call Stream() with a provider that blocks for 5s, assert that Stream returns within 200ms.",
+      "files": [
+        "os/Skaffen/pkg/lens/selector.go",
+        "os/Skaffen/internal/provider/claudecode/claudecode.go"
+      ]
+    },
+    {
+      "id": "LPI-4",
+      "agent": "fd-llm-provider-interface",
+      "severity": "P2",
+      "title": "GLM 5.1 via z.ai may return differently-structured JSON than Haiku",
+      "description": "The brainstorm mentions GLM 5.1 as an alternative provider for lens selection. Different models have different tendencies for JSON formatting: some wrap in objects, some add explanation text before/after the array, some use different whitespace. The Python regex `re.search(r'\\[\\d,\\s]*\\]', raw)` is model-agnostic because it extracts the first array-like pattern. The Go implementation should use the same pattern.",
+      "failure_scenario": "GLM 5.1 returns '{\"selected\": [1, 3, 5]}' and the regex fails to match because it's looking for a bare array. Lens selection returns empty for all GLM calls.",
+      "recommendation": "Port the Python regex pattern exactly: `regexp.MustCompile(`\\[\\[\\d,\\s*\\]*\\]`)`. Consider also supporting JSON object responses with a fallback: try unmarshal as []int first, then try unmarshal as map with known keys.",
+      "files": [
+        "os/Skaffen/pkg/lens/selector.go"
+      ]
+    },
+    {
+      "id": "ETS-1",
+      "agent": "fd-evolution-tracking-semantics",
+      "severity": "P1",
+      "title": "Floor application order: Python applies floor AFTER delta, Go must match exactly",
+      "description": "Python's apply_effectiveness_update() (lens_evolution.py:143-159) computes new_score = current_score + delta, then applies max(_CONFIDENCE_FLOOR, min(1.0, new_score)). Floor is applied AFTER the delta addition. If Go applies the floor before the delta (clamping current_score to 0.1 before adding the delta), pushed_back events on a score of 0.1 would produce 0.1 + (-0.1) = 0.0, then floor to 0.1 — same result. But for ignored events: Python: max(0.1, 0.1 + (-0.05)) = max(0.1, 0.05) = 0.1. If Go floors first then adds: floor(0.1) + (-0.05) = 0.05, then a second floor gives 0.1. Same result in this case, but the order matters for exploration bonus interactions.",
+      "failure_scenario": "If floor is applied before delta + exploration bonus: floor(0.08) = 0.1, then 0.1 + (-0.05) + 0.15 = 0.2. Python: 0.08 + (-0.05) + 0.15 = 0.18, then max(0.1, 0.18) = 0.18. Different scores accumulate over time, causing drift in effectiveness rankings.",
+      "recommendation": "Copy the exact Python formula as a named function with a comment citing the Python source line: `func applyEMA(current float64, event string, usageCount int) float64`. Add property-based tests that feed the same sequence of events to both Python and Go and compare final scores.",
+      "files": [
+        "os/Skaffen/pkg/lens/evolution.go"
+      ],
+      "source_reference": "apps/Auraken/src/auraken/lens_evolution.py:143-159"
+    },
+    {
+      "id": "ETS-2",
+      "agent": "fd-evolution-tracking-semantics",
+      "severity": "P1",
+      "title": "Store interface lacks session lifecycle contract — in-memory state is silently stateless",
+      "description": "The brainstorm defines a Store interface for persistence but does not specify when Store.Load() is called or when in-memory state is flushed. Python uses SQLAlchemy's async_session for each event (lens_evolution.py:97-109) — every event is immediately persisted. The Go Tracker with in-memory EMA state could accumulate an entire session's worth of effectiveness updates and lose them all on crash.",
+      "failure_scenario": "User has a 30-turn conversation. Effectiveness scores are updated in-memory for 30 lens events. Process crashes. Next session starts with stale Store data. 30 turns of preference signal lost.",
+      "recommendation": "Define explicit lifecycle in the Store interface: `Load(ctx, userID) (map[string]EMAState, error)` called at Tracker construction, `Flush(ctx, userID, state map[string]EMAState) error` called after each RecordEvent or at session close. Document that callers must call Flush. Consider a write-through pattern where RecordEvent both updates in-memory state and writes to Store.",
+      "files": [
+        "os/Skaffen/pkg/lens/evolution.go"
+      ],
+      "source_reference": "apps/Auraken/src/auraken/lens_evolution.py:89-109"
+    },
+    {
+      "id": "ETS-3",
+      "agent": "fd-evolution-tracking-semantics",
+      "severity": "P2",
+      "title": "usage_count scope ambiguity: per-user-per-lens or global-per-lens",
+      "description": "The brainstorm says 'exploration bonus +0.15 for usage_count < 3' but does not specify the scope. Python's apply_effectiveness_update takes usage_count as a parameter — the caller (agent.py) must track this. If the Go Tracker tracks usage_count internally, it must decide: is it per-user (each user gets 3 exploration turns per lens) or global (once 3 users have seen a lens, no more exploration bonus for anyone)?",
+      "failure_scenario": "If global: a lens used by 3 different users loses exploration bonus for all future users. New users receive stale lenses and no exploration of fresh ones.",
+      "recommendation": "Explicitly scope as per-user-per-lens in the EMAState struct: `type EMAState struct { Score float64; UsageCount int }`. Store this per (userID, lensID) pair. Document in the Tracker interface godoc.",
+      "files": [
+        "os/Skaffen/pkg/lens/evolution.go"
+      ]
+    },
+    {
+      "id": "SOS-1",
+      "agent": "fd-stack-orchestration-state-machine",
+      "severity": "P1",
+      "title": "Python StackOrchestrator.phase_index is mutable state that must be exported for JSON serialization",
+      "description": "Python's StackOrchestrator.to_dict() serializes phase_index (lens_stacks.py:90-96). In Go, struct fields must be exported (capitalized) to be included in JSON marshalling. If the Go StackOrchestrator uses a lowercase 'phaseIndex' field, json.Marshal silently omits it. Deserialization produces phaseIndex=0, restarting the stack from the beginning.",
+      "failure_scenario": "Session persists StackOrchestrator mid-stack (phase 3 of 5). On restore, phaseIndex is 0. User experiences the same first three lenses again. Stack progression is broken across sessions.",
+      "recommendation": "All fields that affect NextPhase() output must be exported with json tags: `PhaseIndex int \\`json:\"phase_index\"\\`; Lenses []string \\`json:\"lenses\"\\`; Depth string \\`json:\"depth\"\\`; AnnealingSeconds int \\`json:\"annealing_seconds\"\\``. Write a round-trip test: create orchestrator, advance 2 phases, marshal, unmarshal, verify NextPhase produces identical output.",
+      "files": [
+        "os/Skaffen/pkg/lens/stacks.go"
+      ],
+      "source_reference": "apps/Auraken/src/auraken/lens_stacks.py:86-105"
+    },
+    {
+      "id": "SOS-2",
+      "agent": "fd-stack-orchestration-state-machine",
+      "severity": "P1",
+      "title": "NextPhase() does not return an error for out-of-bounds phase access",
+      "description": "Python's next_phase() (lens_stacks.py:51-73) uses min(idx, len(self.lenses) - 1) to clamp the index, then unconditionally increments phase_index. If called after is_complete is True, it returns the last lens repeatedly with ever-increasing phase_index. The Go version should either return an error when the stack is exhausted or document the clamping behavior explicitly.",
+      "failure_scenario": "Caller does not check is_complete before calling NextPhase(). Receives the same last lens indefinitely. No error, no indication that the stack is done. Agent keeps applying the same lens turn after turn.",
+      "recommendation": "Return (Phase, error) from NextPhase(). Return a sentinel error (e.g., ErrStackExhausted) when phase_index >= len(lenses). This is a behavioral change from Python but prevents silent degradation in the Go agent loop.",
+      "files": [
+        "os/Skaffen/pkg/lens/stacks.go"
+      ],
+      "source_reference": "apps/Auraken/src/auraken/lens_stacks.py:51-53"
+    },
+    {
+      "id": "PKG-1",
+      "agent": "fd-go-package-api-design",
+      "severity": "P2",
+      "title": "Open question 4 unresolved: cross-package types create import coupling",
+      "description": "The brainstorm's open question 4 asks whether Lens/Edge/Community types live in pkg/lens or pkg/types. The migration plan (Task 1.1) suggests pkg/types for shared types (Message, Entity, StyleProfile, Delta) but does not decide for Lens. If pkg/fingerprint and pkg/extraction need to reference Lens, they must import pkg/lens — creating a dependency on the full graph and embed machinery.",
+      "failure_scenario": "pkg/extraction imports pkg/lens for the Lens type. pkg/extraction tests now transitively load the 291-lens embedded JSON, adding latency and coupling to every extraction test run. Changing lens JSON schema requires updating extraction tests.",
+      "recommendation": "Define minimal shared types in pkg/types (LensID as string type alias, LensSummary with only id/name/scale). Packages that need full Lens data import pkg/lens; packages that only need identity import pkg/types. This matches the 'accept interfaces, return structs' principle from fd-go-package-api-design.",
+      "files": [
+        "os/Skaffen/pkg/types/",
+        "os/Skaffen/pkg/lens/types.go"
+      ]
+    },
+    {
+      "id": "MIG-1",
+      "agent": "fd-python-go-migration-fidelity",
+      "severity": "P3",
+      "title": "Python engagement classification uses string matching — Go should not change thresholds",
+      "description": "classify_engagement() in lens_evolution.py uses hardcoded phrase lists for pushback and engagement detection. The Go port should use identical phrase lists, not 'improved' ones. Any change to classification thresholds changes EMA trajectories for all users.",
+      "recommendation": "Embed the exact phrase lists as constants in evolution.go with a comment citing the Python source. Add a test that classifies the same 10 test messages in both Python and Go and compares results.",
+      "files": [
+        "os/Skaffen/pkg/lens/evolution.go"
+      ],
+      "source_reference": "apps/Auraken/src/auraken/lens_evolution.py:48-86"
+    }
+  ]
+}

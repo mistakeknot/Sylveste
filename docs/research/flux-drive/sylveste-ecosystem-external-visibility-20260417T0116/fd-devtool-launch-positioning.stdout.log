@@ -1,0 +1,12 @@
+`★ Insight ─────────────────────────────────────`
+The review applies the "one-frame claim" test from Docker/Rails/Astro pivots: the tagline's subject+verb ("monorepo for building software with agents") activates the "we built a platform" pattern before the reader reaches the actual wedge in the subordinate clause. The two strongest primitives (OODARC, "wired or it doesn't exist") are buried three clicks deep — the Astro "islands" parallel shows concept-coining in a blog post can precede adoption-curve maturity.
+`─────────────────────────────────────────────────`
+
+Review written to `docs/research/flux-drive/sylveste-ecosystem-external-visibility-20260417T0116/fd-devtool-launch-positioning.md`.
+
+**Five findings:**
+- **P0 (×2):** README tagline buries the claim behind "monorepo"; architecture table is the first structural signal a reader hits
+- **P1 (×2):** Dual-brand framing (Garden Salon + Meadowsyn) in MISSION.md before the wedge earns trust; OODARC + "wired or it doesn't exist" are the strongest exportable primitives but live invisibly in PHILOSOPHY.md
+- **P2:** 64-plugin inventory surfaced via interchart/marketplace — complexity tax before any claim is established
+
+**Single highest-leverage move:** Write the OODARC blog post, rewrite the README tagline to match it, post both to HN in the same week — concept coinage plus working system, zero additional build.
