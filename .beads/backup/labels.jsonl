@@ -87,6 +87,8 @@
 {"issue_id":"sylveste-1t3u","label":"claimed_at:1776024325"}
 {"issue_id":"sylveste-1t3u","label":"claimed_by:aba963a5-a727-429a-8597-9ac1093fcca2"}
 {"issue_id":"sylveste-1t3u","label":"complexity:(no complexity state set)"}
+{"issue_id":"sylveste-1x15","label":"claimed_at:1776626926"}
+{"issue_id":"sylveste-1x15","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-1zei","label":"auraken"}
 {"issue_id":"sylveste-2131","label":"claimed_at:1775615368"}
 {"issue_id":"sylveste-2131","label":"claimed_by:unknown"}
@@ -393,7 +395,7 @@
 {"issue_id":"sylveste-dui","label":"prompt-engineering"}
 {"issue_id":"sylveste-dvu","label":"artifact_brainstorm:apps/Auraken/docs/brainstorms/2026-04-05-user-identity-onboarding.md"}
 {"issue_id":"sylveste-dvu","label":"artifact_plan:apps/Auraken/docs/plans/2026-04-05-user-identity-onboarding.md"}
-{"issue_id":"sylveste-dws5","label":"claimed_at:1776617941"}
+{"issue_id":"sylveste-dws5","label":"claimed_at:1776626813"}
 {"issue_id":"sylveste-dws5","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-e34c","label":"campaign_phase:3"}
 {"issue_id":"sylveste-e8n","label":"artifact_brainstorm:docs/brainstorms/2026-03-28-idea-garden-brainstorm.md"}
@@ -584,9 +586,14 @@
 {"issue_id":"sylveste-n6zw","label":"claimed_at:0"}
 {"issue_id":"sylveste-n6zw","label":"claimed_by:released"}
 {"issue_id":"sylveste-nfqo","label":"artifact_brainstorm:docs/brainstorms/2026-04-19-intermute-live-tmux-transport-brainstorm.md"}
+{"issue_id":"sylveste-nfqo","label":"artifact_plan:docs/plans/2026-04-19-intermute-live-tmux-transport.md"}
 {"issue_id":"sylveste-nfqo","label":"artifact_prior-art:docs/research/assess-agent-farm-safety-repos.md"}
-{"issue_id":"sylveste-nfqo","label":"claimed_at:1776617377"}
-{"issue_id":"sylveste-nfqo","label":"claimed_by:b8c3c8ae-79ec-41fc-b641-e296623bd8cf"}
+{"issue_id":"sylveste-nfqo","label":"artifact_quality-verdict:.clavain/quality-gates/synthesis.md"}
+{"issue_id":"sylveste-nfqo","label":"artifact_reflection:docs/reflections/2026-04-19-intermute-live-tmux-transport-reflect.md"}
+{"issue_id":"sylveste-nfqo","label":"artifact_resolution:.clavain/quality-gates/synthesis.md"}
+{"issue_id":"sylveste-nfqo","label":"artifact_review-verdict:docs/flux-review/2026-04-19-intermute-live-tmux-transport-plan-review.md"}
+{"issue_id":"sylveste-nfqo","label":"artifact_test-pass-sha:bc9bcf1990b04007e8b848479497cab4fe4ef867"}
+{"issue_id":"sylveste-nfqo","label":"claimed_at:1776619077"}
 {"issue_id":"sylveste-nfqo","label":"complexity:3"}
 {"issue_id":"sylveste-nr6x","label":"artifact_brainstorm:docs/brainstorms/2026-04-06-hassease-multi-model-forge-agent.md"}
 {"issue_id":"sylveste-nr6x","label":"claimed_at:0"}
