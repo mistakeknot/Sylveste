@@ -187,3 +187,25 @@ Against the stale $2.93/landable-change baseline, a 32% prefix cut weighted by t
 - `core/intercore/config/costs.yaml` (pricing, via published rates at time of writing)
 - `interverse/interstat/scripts/cost-query.sh` (blocked — see Gap #1)
 - MEMORY.md topic files: [2026-03-08] CASS is the session intelligence backend; [2026-03-18] cost baseline.
+
+---
+
+## Post-implementation update (sylveste-ynh7) — 2026-04-21
+
+Skill-listing compact + deferred-tool trim pass landed.
+
+- Target-metric savings: **−8,684 bytes / −2,285 tokens per session**
+  - `skill_listing`: 39,436 → 34,879 (−1,199 tok)
+  - `deferred_tools_delta`: 17,184 → 13,752 (−903 tok)
+  - `mcp_instructions_delta`: 2,411 → 1,716 (−183 tok)
+- Bead acceptance floor (≥ 2,000 tokens) met. TIER: ACCEPTABLE.
+- Total preamble grew (+5,239 bytes) on out-of-scope attachments:
+  SessionStart hooks (+647 tok), async_hook_response (+738 tok), a new
+  `command_permissions` harness attachment (+107 tok), and a
+  measurement artifact from the `/clavain:route` skill body inlined
+  into the user-prompt portion. SessionStart + async-hook bloat
+  deserves its own bead.
+- Full results: [docs/research/2026-04-21-sylveste-ynh7-results.md](./2026-04-21-sylveste-ynh7-results.md)
+
+Gap #1 (cost-query.sh dependency on missing `subagent_type` column)
+unaffected by this pass.
