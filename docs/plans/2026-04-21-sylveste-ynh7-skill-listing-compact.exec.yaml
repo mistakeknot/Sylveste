@@ -1,0 +1,60 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 600
+
+stages:
+  - name: "Wave 1 — measurement + audit (independent)"
+    tasks:
+      - id: task-1
+        title: "Baseline measurement script + capture baseline jsonl numbers"
+        files:
+          - scripts/perf/measure-preamble.sh
+          - scripts/perf/measure-preamble.sh.test.sh
+          - docs/research/2026-04-21-preamble-baseline.json
+        depends: []
+      - id: task-2
+        title: "Per-plugin contribution + cold-plugin audit"
+        files:
+          - scripts/perf/audit-skill-contributions.py
+          - docs/research/2026-04-21-skill-listing-audit.md
+          - docs/research/2026-04-21-skill-listing-audit.json
+        depends: []
+
+  - name: "Wave 2 — edits that depend on audit output"
+    tasks:
+      - id: task-3
+        title: "Trim top-10 verbose Sylveste skill descriptions"
+        files:
+          - interverse/*/skills/*/SKILL.md
+        depends: [task-2]
+      - id: task-4
+        title: "External-plugin disable decision + disablement (user-approved)"
+        files:
+          - docs/research/2026-04-21-plugin-disable-log.md
+        depends: [task-2]
+        tier: deep
+      - id: task-5
+        title: "SKILL-compact.md coverage sweep (secondary lever)"
+        files:
+          - interverse/*/skills/*/SKILL-compact.md
+        depends: [task-2]
+        tier: fast
+
+  - name: "Wave 3 — re-measure in fresh session"
+    tasks:
+      - id: task-6
+        title: "Re-measure + verify >=2000 token savings"
+        files:
+          - docs/research/2026-04-21-sylveste-ynh7-results.md
+        depends: [task-1, task-3, task-4, task-5]
+
+  - name: "Wave 4 — document + close"
+    tasks:
+      - id: task-7
+        title: "Update sylveste-8lsf findings doc + MEMORY.md"
+        files:
+          - docs/research/2026-04-21-sylveste-cost-breakdown.md
+        depends: [task-6]
+        tier: fast
