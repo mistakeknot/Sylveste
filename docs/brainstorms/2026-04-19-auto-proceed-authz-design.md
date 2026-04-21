@@ -277,6 +277,12 @@ CLI:
 
 **Delegation chains** let Claude issue a token to codex for a specific sub-op, codex consumes it, audit records the full chain via `root_token` + `parent_token`. Revocation of Claude's root token invalidates all descendants before their consume lands.
 
+> **Canon docs (added 2026-04-21 by sylveste-qdqr.28 plan Task 1):**
+> - `docs/canon/authz-token-model.md` — normative v2 semantics (lifecycle, scope, delegation, consume, revoke, threat model, env-var hygiene, marker-deprecation gate).
+> - `docs/canon/authz-token-payload.md` — canonical byte sequence for `sig_version=2` (12-field list, encoding rules, 3 worked examples).
+> - Implementation plan: `docs/plans/2026-04-21-auto-proceed-authz-v2.md`.
+> The canon docs supersede any textual spec in this brainstorm for normative purposes. Some details from this section have been refined during planning — check canon first.
+
 ## Open questions — resolved post-review (2026-04-19)
 
 Full per-agent reasoning in `docs/research/flux-drive/2026-04-19-auto-proceed-authz-design-20260419T0239/SYNTHESIS.md`. Dispositions folded into the specs above; the question + resolution summary stays here for history.
