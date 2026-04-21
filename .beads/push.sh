@@ -8,9 +8,20 @@
 # environments without the gate layer keep working unchanged.
 set -euo pipefail
 
-DOLT="/home/mk/.local/bin/dolt"
-DB_DIR="/home/mk/projects/Sylveste/.beads/dolt/Sylveste"
-GATE_SCRIPT="$(dirname "$0")/../os/Clavain/scripts/gates/bd-push-dolt.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DB_DIR="${BEADS_DOLT_DB:-$SCRIPT_DIR/dolt/Sylveste}"
+DOLT="${BEADS_DOLT_BIN:-$(command -v dolt || true)}"
+GATE_SCRIPT="$SCRIPT_DIR/../os/Clavain/scripts/gates/bd-push-dolt.sh"
+
+if [[ -z "$DOLT" ]]; then
+  echo "beads push: failed — dolt binary not found on PATH (set BEADS_DOLT_BIN to override)" >&2
+  exit 1
+fi
+
+if [[ ! -d "$DB_DIR" ]]; then
+  echo "beads push: failed — DB dir not found: $DB_DIR (set BEADS_DOLT_DB to override)" >&2
+  exit 1
+fi
 
 if command -v clavain-cli >/dev/null 2>&1 && [[ -x "$GATE_SCRIPT" ]]; then
   exec bash "$GATE_SCRIPT" "$DB_DIR"
