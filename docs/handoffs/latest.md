@@ -1,1 +1,1 @@
-2026-04-21-authz-v2-tasks-1-2-shipped.md
+2026-04-21-authz-v2-task-3-shipped.md
