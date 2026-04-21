@@ -1,0 +1,43 @@
+# Plugin disable decisions for sylveste-ynh7 (Task 4)
+# Applied to: ~/.claude/settings.json (user-local, not version-controlled)
+# Reproducible via: bash scripts/perf/apply-plugin-disables.sh
+# Reversible via:   bash scripts/perf/rollback-plugins.sh <plugin-name>
+#
+# Selection criteria: >=500 bytes of description contribution AND <5 MCP calls
+# in last 30 days AND not hard-excluded (workflow-critical) AND approved by
+# user in sylveste-ynh7 Task 4 multiSelect prompt.
+#
+# Evidence source: docs/research/2026-04-21-skill-listing-audit.md
+
+decided_at: 2026-04-21
+bead: sylveste-ynh7
+
+decisions:
+  - plugin: vercel
+    marketplace: claude-plugins-official
+    key: vercel@claude-plugins-official
+    action: disable
+    reason: "0 MCP calls / 30d; no hook reference; user not actively doing Vercel-hosted web-dev in Sylveste"
+    usage_last_30d:
+      mcp_calls: 0
+      skill_invocations_estimate: 0
+    desc_bytes_saved: 5661
+    skills_hidden: 26
+    disabled_at: 2026-04-21
+
+  - plugin: plugin-dev
+    marketplace: claude-plugins-official
+    key: plugin-dev@claude-plugins-official
+    action: disable
+    reason: "0 MCP calls / 30d; no hook reference; interskill + interplug (Sylveste-owned) cover plugin-authoring guidance"
+    usage_last_30d:
+      mcp_calls: 0
+      skill_invocations_estimate: 0
+    desc_bytes_saved: 2939
+    skills_hidden: 7
+    disabled_at: 2026-04-21
+
+# Considered but NOT disabled (user kept enabled):
+#   - interbrowse (1,215 bytes, 5 skills) — user opted to keep on-demand
+#   - interplug (596 bytes, 3 skills) — user opted to keep on-demand
+# These can be disabled later with the same apply-plugin-disables.sh flow.
