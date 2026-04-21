@@ -10,7 +10,14 @@ supersedes: 2026-04-21-sylveste-ynh7-post-task4.md
 
 ## Directive for next session
 
-Resume `/clavain:sprint sylveste-ynh7 --from-step execute`. Task 6 re-measurement requires a fresh `/clear` AND cache-visible trim changes. Cache visibility is blocked on sylveste-txky (9 plugin publishes). Two valid paths below.
+**Path X chosen (2026-04-21 by arouth1).** Sequence:
+
+1. `/clavain:route sylveste-txky` — execute the 9 plugin publishes (patch version bumps) so the Task 3 trims reach `~/.claude/plugins/cache/`.
+2. Close sylveste-txky when all 9 plugins are published and cache-refreshed.
+3. Resume `/clavain:sprint sylveste-ynh7 --from-step execute` to run Task 6 (re-measurement in this same fresh session — no second `/clear` needed, since SessionStart already loaded the new cache contents on session spawn).
+4. Write results doc (`docs/research/2026-04-21-sylveste-ynh7-results.md`), do Task 7, close sylveste-ynh7.
+
+Rationale: single clean measurement captures Task 3 + Task 4 combined, one results doc, one bead close. See "Remaining work" below for per-task detail.
 
 ## State at handoff
 
@@ -63,24 +70,34 @@ But `interverse/` is in the monorepo `.gitignore`; each plugin is its own git re
 
 ## Remaining work
 
-### Option X (fastest path to a clean Task 6 number)
+### sylveste-txky — 9 plugin publishes (do FIRST, before Task 6)
 
-1. Execute sylveste-txky first — 9 `interpub:release --patch` cycles in each plugin repo.
-2. Then `/clear` + Task 6 measure-preamble.sh.
-3. Write results doc, close sylveste-ynh7.
+For each plugin listed under "State at handoff", run the plugin's publish flow from its own directory. Canonical path per MEMORY: `/interpub:release --patch` (or the per-plugin `scripts/bump-version.sh patch`). The interpub:sweep command may be faster if it handles the batch.
 
-### Option Y (close sylveste-ynh7 partial, defer the publish delta)
+Per-plugin checklist:
+  - `cd interverse/<plugin> && git log origin/main..HEAD` — confirm only the trim commit is unpushed (no surprise sibling commits).
+  - Run the patch release flow; let the plugin bump its own version.
+  - Verify `~/.claude/plugins/cache/interagency-marketplace/<plugin>/<new-version>/skills/<skill>/SKILL.md` reflects the trim.
 
-1. `/clear` now; Task 6 measures with Task 4 savings only.
-2. Expect TIER: PARTIAL (~595 tokens ≥ 500 floor on Task 4 alone).
-3. Close sylveste-ynh7 as partial-success, pointing to sylveste-txky as the publish follow-up.
-4. When sylveste-txky completes, run a delta re-measurement and file a supplemental addendum.
+Close sylveste-txky when all 9 are shipped.
 
-### Task 7 (applies to either option)
+### Task 6 — re-measurement (requires a fresh session, but the same session that ran the publishes works)
 
-- Append "Post-implementation update" section to `docs/research/2026-04-21-sylveste-cost-breakdown.md`.
-- Add one line to `MEMORY.md` under cost baseline.
-- Close `sylveste-ynh7` with rationale matching chosen option.
+Do this in the **same fresh session** that ran txky, AFTER the last publish lands. The SessionStart attachment is captured once at session spawn, so you cannot re-measure inside the same session as the publishes — either `/clear` once more after txky completes, OR hand off to yet another fresh session. Cleanest: `/clear` after txky close, then:
+
+```bash
+NEW_SID=<id of that fresh session>
+bash scripts/perf/measure-preamble.sh --session-id=$NEW_SID > /tmp/post.json
+# then the Step-4 tiered verifier from the plan (TIER: ACCEPTABLE / PARTIAL / BELOW-FLOOR)
+```
+
+Write `docs/research/2026-04-21-sylveste-ynh7-results.md` with pre/post/delta JSON triples + which levers hit.
+
+### Task 7 — document + close sylveste-ynh7
+
+- Append "Post-implementation update" section to `docs/research/2026-04-21-sylveste-cost-breakdown.md` with the combined Task 3 + Task 4 delta.
+- Add one line to `MEMORY.md` under cost baseline pointing to the results doc.
+- Close `sylveste-ynh7` as complete (not partial — path X aims for full success) with `bd close sylveste-ynh7 --reason="..."`.
 - `bd backup` → `bash .beads/push.sh` (with `CLAVAIN_SPRINT_OR_WORK=1`) → `git push`.
 
 ## Gotchas for the next session
