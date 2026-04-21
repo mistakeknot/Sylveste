@@ -60,9 +60,15 @@ After whichever fix: rename `/Users/sma/projects/Sylveste/.git-autosync.disabled
 - zklw is source of truth (113 repos cleaned + pushed today, autosync only on Mac).
 - HTTPS→SSH migration: Mac child repo origins still HTTPS; switch to SSH before pushing from Mac.
 - Tarball backup of Mac pre-rename state: `/tmp/sylveste-mac-git-backup-2026-04-18.tar.gz` (289 MB).
-- Genuinely corrupt repos (separate from autosync issue, defer):
-  - `interverse/interfer` — missing object `ae02e04b…` (handoff said this; this session did NOT verify, only addressed the autosync class).
-  - `research/pi_agent_rust` — missing object `2ebead7c…`, `git pull` blocked. zklw copy fine; re-clone is cleanest.
+
+### CORRECTION — "genuinely corrupt" repos are not actually corrupt (verified 2026-04-21)
+
+The prior handoff flagged two repos as corrupt. Re-inspection shows both are healthy:
+
+- `interverse/interfer` — `fsck --full` returns only a cosmetic dangling commit (`550cdcf…`, harmless). `git status` / `log` / `cat-file HEAD` all work. The "missing `ae02e04b…`" object is unreachable from any branch, so nothing references it. Repo has 2 local unpushed commits and 5 modified tracked files from prior work, which may have been mistaken for corruption.
+- `research/pi_agent_rust` — `fsck --full` clean, zero output. `git fetch` works. 150 commits behind `origin/main` (upstream is `Dicklesworthstone/pi_agent_rust`, which has been pushed to since). No missing objects, no blocked operations.
+
+No repair needed for either. Delete this sub-section once confirmed stable.
 
 ### Important shell hygiene
 
