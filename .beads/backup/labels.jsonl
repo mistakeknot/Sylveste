@@ -198,6 +198,8 @@
 {"issue_id":"sylveste-8em","label":"lane:sota"}
 {"issue_id":"sylveste-8h5","label":"patterns"}
 {"issue_id":"sylveste-8h5","label":"skaffen"}
+{"issue_id":"sylveste-8lsf","label":"claimed_at:1776754801"}
+{"issue_id":"sylveste-8lsf","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-8mbr","label":"predecessor:sylveste-jrua"}
 {"issue_id":"sylveste-8ve","label":"artifact_brainstorm:docs/brainstorms/2026-03-28-confidence-cascade-integration.md"}
 {"issue_id":"sylveste-8ve","label":"artifact_plan:docs/plans/2026-03-28-confidence-cascade-integration.md"}
@@ -320,6 +322,7 @@
 {"issue_id":"sylveste-axo3","label":"artifact_test-pass-sha:5caffb148b218f9ba73f563b77434be952d1baf4"}
 {"issue_id":"sylveste-axo3","label":"claimed_at:1776705295"}
 {"issue_id":"sylveste-axo3","label":"claimed_by:9a4d062b-791b-4a93-97c9-9fabc61d09d1"}
+{"issue_id":"sylveste-axo3","label":"sprint:false"}
 {"issue_id":"sylveste-axo3","label":"sprint_or_work_flow:true"}
 {"issue_id":"sylveste-axo3","label":"tests_passed:true"}
 {"issue_id":"sylveste-axo3","label":"vetted_at:1776729258"}
@@ -646,6 +649,15 @@
 {"issue_id":"sylveste-qdqr","label":"complexity:4"}
 {"issue_id":"sylveste-qdqr","label":"phase:planned"}
 {"issue_id":"sylveste-qdqr","label":"primary_file:docs/brainstorms/2026-04-19-auto-proceed-authz-design.md"}
+{"issue_id":"sylveste-qdqr.28","label":"artifact_brainstorm:docs/brainstorms/2026-04-19-auto-proceed-authz-design.md"}
+{"issue_id":"sylveste-qdqr.28","label":"artifact_plan:/home/mk/projects/Sylveste/docs/plans/2026-04-21-auto-proceed-authz-v2.md"}
+{"issue_id":"sylveste-qdqr.28","label":"claimed_at:1776743368"}
+{"issue_id":"sylveste-qdqr.28","label":"claimed_by:unknown"}
+{"issue_id":"sylveste-qdqr.28","label":"complexity:4"}
+{"issue_id":"sylveste-qdqr.28","label":"phase:planned"}
+{"issue_id":"sylveste-qdqr.28","label":"primary_file:docs/brainstorms/2026-04-19-auto-proceed-authz-design.md"}
+{"issue_id":"sylveste-qdqr.28","label":"provenance_plan:{\"session\":\"f8c560dc\",\"bead\":\"sylveste-qdqr.28\",\"step\":\"plan\",\"inputs\":\"brainstorm,handoff\",\"output\":\"docs/plans/2026-04-21-auto-proceed-authz-v2.md\",\"ts\":1776743231}"}
+{"issue_id":"sylveste-qdqr.28","label":"sprint:true"}
 {"issue_id":"sylveste-qo8","label":"artifact_plan:docs/plans/2026-04-06-interweave-f3-connector-protocol.md"}
 {"issue_id":"sylveste-qo8","label":"claimed_at:1775497497"}
 {"issue_id":"sylveste-qo8","label":"claimed_by:a9d7e5db-e863-4f29-a645-803ea5c4c693"}
