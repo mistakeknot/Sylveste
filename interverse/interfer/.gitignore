@@ -9,3 +9,5 @@ build/
 .env
 .env.local
 benchmarks/logs/
+benchmarks/datasets_cache/
+benchmarks/code_correctness_results/
