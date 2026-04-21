@@ -198,7 +198,7 @@
 {"issue_id":"sylveste-8em","label":"lane:sota"}
 {"issue_id":"sylveste-8h5","label":"patterns"}
 {"issue_id":"sylveste-8h5","label":"skaffen"}
-{"issue_id":"sylveste-8lsf","label":"claimed_at:1776754801"}
+{"issue_id":"sylveste-8lsf","label":"claimed_at:1776782371"}
 {"issue_id":"sylveste-8lsf","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-8mbr","label":"predecessor:sylveste-jrua"}
 {"issue_id":"sylveste-8ve","label":"artifact_brainstorm:docs/brainstorms/2026-03-28-confidence-cascade-integration.md"}
@@ -327,6 +327,13 @@
 {"issue_id":"sylveste-axo3","label":"tests_passed:true"}
 {"issue_id":"sylveste-axo3","label":"vetted_at:1776729258"}
 {"issue_id":"sylveste-axo3","label":"vetted_sha:84ace8333b3cdc37d83987f23caf7c420f1b58f1"}
+{"issue_id":"sylveste-b1ha","label":"artifact_brainstorm:docs/brainstorms/2026-04-21-persona-lens-ontology-brainstorm.md"}
+{"issue_id":"sylveste-b1ha","label":"artifact_prd:docs/prds/2026-04-21-persona-lens-ontology.md"}
+{"issue_id":"sylveste-b1ha","label":"artifact_prior-art:docs/research/assess-ontology-stores-2026-04-21.md"}
+{"issue_id":"sylveste-b1ha","label":"claimed_at:0"}
+{"issue_id":"sylveste-b1ha","label":"claimed_by:released"}
+{"issue_id":"sylveste-b1ha","label":"decomp_prediction:{\"epic\":\"sylveste-b1ha\",\"predicted\":7,\"baseline_p50\":5,\"ts\":1776800766,\"original\":\"sylveste-b1ha.19,sylveste-b1ha.16,sylveste-b1ha.15,sylveste-b1ha.14,sylveste-b1ha.13,sylveste-b1ha.12,sylveste-b1ha.11,sylveste-b1ha.10,sylveste-b1ha.9,sy"}
+{"issue_id":"sylveste-b1ha","label":"epic_dod:[{\"c\":\"F6 lift ≥15% at ≤cost\",\"auto\":true},{\"c\":\"1239 ingested, idempotent\",\"auto\":true},{\"c\":\"interlens via ontology-queries\",\"auto\":true},{\"c\":\"Graph audit clean\",\"auto\":true},{\"c\":\"11 gate artifacts committed\",\"auto\":false}]"}
 {"issue_id":"sylveste-bcok","label":"artifact_brainstorm:docs/brainstorms/2026-04-06-interop-brainstorm.md"}
 {"issue_id":"sylveste-bcok","label":"artifact_plan:docs/plans/2026-04-07-interop.md"}
 {"issue_id":"sylveste-bcok","label":"artifact_prd:docs/prds/2026-04-06-interop.md"}
@@ -654,9 +661,10 @@
 {"issue_id":"sylveste-qdqr.28","label":"claimed_at:1776743368"}
 {"issue_id":"sylveste-qdqr.28","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-qdqr.28","label":"complexity:4"}
-{"issue_id":"sylveste-qdqr.28","label":"phase:planned"}
+{"issue_id":"sylveste-qdqr.28","label":"phase:executing"}
 {"issue_id":"sylveste-qdqr.28","label":"primary_file:docs/brainstorms/2026-04-19-auto-proceed-authz-design.md"}
 {"issue_id":"sylveste-qdqr.28","label":"provenance_plan:{\"session\":\"f8c560dc\",\"bead\":\"sylveste-qdqr.28\",\"step\":\"plan\",\"inputs\":\"brainstorm,handoff\",\"output\":\"docs/plans/2026-04-21-auto-proceed-authz-v2.md\",\"ts\":1776743231}"}
+{"issue_id":"sylveste-qdqr.28","label":"provenance_plan_review:{\"session\":\"f8c560dc\",\"bead\":\"sylveste-qdqr.28\",\"step\":\"plan-reviewed\",\"inputs\":\"plan,r1-findings,r2-findings\",\"output\":\"docs/plans/2026-04-21-auto-proceed-authz-v2.md\",\"revisions\":\"r1-r2-r3\",\"agents_r1\":5,\"agents_r2\":3,\"ts\":1776756"}
 {"issue_id":"sylveste-qdqr.28","label":"sprint:true"}
 {"issue_id":"sylveste-qo8","label":"artifact_plan:docs/plans/2026-04-06-interweave-f3-connector-protocol.md"}
 {"issue_id":"sylveste-qo8","label":"claimed_at:1775497497"}
@@ -912,6 +920,8 @@
 {"issue_id":"sylveste-t021","label":"claimed_at:1775867648"}
 {"issue_id":"sylveste-t021","label":"claimed_by:unknown"}
 {"issue_id":"sylveste-t8rn","label":"predecessor:sylveste-fzt"}
+{"issue_id":"sylveste-txky","label":"claimed_at:0"}
+{"issue_id":"sylveste-txky","label":"claimed_by:released"}
 {"issue_id":"sylveste-u28h","label":"predecessor:sylveste-rsj.4"}
 {"issue_id":"sylveste-uais","label":"artifact_brainstorm:docs/brainstorms/2026-04-06-progressive-discrimination-curriculum-brainstorm.md"}
 {"issue_id":"sylveste-uais","label":"artifact_closed:c8668bae52390f68ef330ec2140c76bf15989d9f"}
@@ -959,3 +969,7 @@
 {"issue_id":"sylveste-ykow","label":"campaign_phase:1"}
 {"issue_id":"sylveste-ykow","label":"claimed_at:1776462379"}
 {"issue_id":"sylveste-ykow","label":"claimed_by:unknown"}
+{"issue_id":"sylveste-ynh7","label":"artifact_plan:docs/plans/2026-04-21-sylveste-ynh7-skill-listing-compact.md"}
+{"issue_id":"sylveste-ynh7","label":"artifact_prd:docs/research/2026-04-21-sylveste-cost-breakdown.md"}
+{"issue_id":"sylveste-ynh7","label":"claimed_at:1776795343"}
+{"issue_id":"sylveste-ynh7","label":"claimed_by:unknown"}
