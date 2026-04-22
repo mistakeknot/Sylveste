@@ -87,7 +87,7 @@ Additional infrastructure: [Intermute](https://github.com/mistakeknot/intermute)
 
 ### Plugin ecosystem
 
-[Interactive ecosystem diagram](https://mistakeknot.github.io/interchart/): explore how all plugins, skills, agents, and services connect.
+[Interactive ecosystem diagram](https://generalsystemsventures.com/interchart/): explore how all plugins, skills, agents, and services connect.
 
 All plugins are installed from the [interagency-marketplace](https://github.com/mistakeknot/interagency-marketplace).
 
