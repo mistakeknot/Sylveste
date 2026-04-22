@@ -1,6 +1,6 @@
 ---
 name: diagnostic-maturation
-description: "Use when you have a basic diagnostic server scaffold and need to evolve it into a production-grade operator toolkit. Guides through 6 maturation levels (domain health → smoke tests → assert language → CLI formatting → diff engine → REPL+watch) with verification gates at each level. Also provides conformance audit mode to evaluate existing diagnostic servers against the maturation ladder."
+description: "Use when evolving a basic diagnostic server scaffold into a production-grade operator toolkit. Guides 6 maturation levels (domain health → smoke tests → assert language → CLI formatting → diff engine → REPL+watch) with verification gates, and supports audit/assessment mode for existing diagnostic servers."
 ---
 
 # interhelm:diagnostic-maturation — Diagnostic Server Maturation Guide

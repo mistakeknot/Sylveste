@@ -32,6 +32,7 @@ The skills guide agents to scaffold a diagnostic server and CLI for your project
 1. **`runtime-diagnostics`** — Scaffolds the full diagnostic HTTP server with all patterns
 2. **`smoke-test-design`** — Designs executable contracts between server and client
 3. **`cuj-verification`** — Validates user journeys via structured state queries
+4. **`diagnostic-maturation`** — Evolves a basic diagnostic server into a production-grade operator toolkit and audits existing servers against the maturation ladder
 
 ## Templates
 
@@ -42,11 +43,12 @@ The skills guide agents to scaffold a diagnostic server and CLI for your project
 
 ```
 interhelm/
-├── .claude-plugin/plugin.json   # Plugin manifest (3 skills, 1 agent)
+├── .claude-plugin/plugin.json   # Plugin manifest (4 skills, 1 agent)
 ├── skills/
 │   ├── runtime-diagnostics/     # Main skill — 4 patterns + UI state
 │   ├── smoke-test-design/       # Executable contract pattern
-│   └── cuj-verification/        # Screenshot-free CUJ validation
+│   ├── cuj-verification/        # Screenshot-free CUJ validation
+│   └── diagnostic-maturation/   # Mature and audit diagnostic servers
 ├── agents/review/
 │   └── runtime-reviewer.md      # Operational review agent
 ├── hooks/

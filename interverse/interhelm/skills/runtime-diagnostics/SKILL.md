@@ -1,6 +1,6 @@
 ---
 name: runtime-diagnostics
-description: "Use when you need to verify a running native app works correctly after code changes, can't use browser DevTools, need to check runtime state without screenshots, or want to confirm a Tauri/Electron app's simulation or UI didn't break. Guides scaffolding of a diagnostic HTTP server with Health, Diff, Assert, Smoke Test patterns plus semantic UI state endpoint."
+description: "Use when verifying a running native app works after code changes, you cannot use browser DevTools, or need to check runtime state without screenshots. Guides scaffolding a diagnostic HTTP server with Health, Diff, Assert, and Smoke Test patterns for Tauri/Electron apps."
 ---
 
 # interhelm:runtime-diagnostics — Runtime Diagnostic Server Scaffolding

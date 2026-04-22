@@ -17,7 +17,7 @@ Agent-as-operator runtime diagnostics — teaches agents to observe and control 
 |-------|-------|
 | Namespace | `interhelm:` |
 | Manifest | `.claude-plugin/plugin.json` |
-| Components | 3 skills, 1 agent, 3 hooks |
+| Components | 4 skills, 1 agent, 3 hooks |
 | Templates | `templates/rust-hyper/`, `templates/cli/` |
 
 ## Skills
@@ -27,6 +27,7 @@ Agent-as-operator runtime diagnostics — teaches agents to observe and control 
 | `runtime-diagnostics` | Guides scaffolding of diagnostic HTTP server with Health, Diff, Assert, Smoke Test patterns + UI state |
 | `smoke-test-design` | Teaches executable contract pattern — smoke tests as agreement between server and client |
 | `cuj-verification` | Screenshot-free CUJ validation via structured `/diag/ui/state` queries |
+| `diagnostic-maturation` | Evolves scaffolded diagnostic servers into production-grade operator toolkits and supports audit/assessment mode |
 
 ## Core Patterns
 
