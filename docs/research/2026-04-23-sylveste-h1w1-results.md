@@ -3,7 +3,7 @@ artifact_type: research
 bead: sylveste-h1w1
 depends_on: sylveste-ynh7
 date: 2026-04-23
-stage: awaiting_remeasurement
+stage: complete
 ---
 
 # sylveste-h1w1 Results — SessionStart Hook Output Audit
@@ -122,8 +122,33 @@ Expected `bd prime` entry: ~3,500 bytes (down from 8,515). Expected SessionStart
 - **Sylveste low-priority**: tool-time SessionStart registration could be removed if the analytics.db's session count is reconstructable from PostToolUse events alone. Saves 786 wrapper bytes per session. P4.
 - **Measurement hygiene (already filed under ynh7 follow-ups)**: `measure-preamble.sh` currently conflates user-prompt body into total_preamble_bytes. Split it out.
 
+## Post-remeasurement (2026-04-24, fresh session `ff08ad22`)
+
+Projections held. Single fresh-session measurement:
+
+| hook source                        | line bytes | stdout bytes | vs pre  |
+|-----------------------------------:|-----------:|-------------:|--------:|
+| beads `bd prime`                   |      3,537 |        1,375 | −4,978  |
+| explanatory-mode `hooks-handlers/` |      1,758 |        1,129 |      0  |
+| interkasten `hooks/setup.sh`       |      1,022 |          201 |      0  |
+| intership `hooks/session-start.sh` |        807 |           96 |      0  |
+| tool-time `hooks/hook.sh`          |        786 |            0 |      0  |
+| intermem `hooks/session-start.sh`  |        771 |           78 |      0  |
+| intermux/interstat `session-start` |        741 |           63 |     −1  |
+| interflux `hooks/session-start.sh` |        732 |            0 |      0  |
+| interknow `hooks/session-start.sh` |        726 |          105 |      0  |
+| intertrack `hooks/session-start.sh`|        709 |           47 |     +2  |
+| **TOTAL**                          | **11,589** |    **3,094** | **−4,977** |
+
+Actual delta: **−4,977 bytes / ≈ −1,310 tokens per session** (÷ 3.8).
+
+Projection variance: −5,017 projected vs −4,977 measured = 40 bytes / 0.8 %. Per-hook: `bd prime` landed at 3,537 vs projected ~3,500 (within 37 bytes). Other 9 entries unchanged (±2 bytes noise on two status-ping hooks).
+
+**TIER: ACCEPTABLE** — 2.6× headroom over the 500-token floor. Combined bucket (SessionStart + async_hook_response) now 16,458 bytes vs 21,435 pre.
+
 ## Files
 
 - Modified: `.beads/PRIME.md` (86 → 29 lines)
 - Created: this doc
 - Implementation commit: `7d2a39b7` perf(beads): trim PRIME.md
+- Remeasurement session: `ff08ad22-cd9e-4bb6-b854-8bd7ffdfa0fa`
