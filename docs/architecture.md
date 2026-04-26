@@ -1,16 +1,17 @@
 # Sylveste Architecture
 
-> **Version:** 1.2 | **Last updated:** 2026-02-22
+> **Version:** 1.3 | **Last updated:** 2026-04-26
 
-## Five Pillars
+## Six Pillars
 
-Sylveste is built from five pillars — major components that together form the platform:
+Sylveste is built from six pillars — major components that together form the platform:
 
 | Pillar | Role |
 |--------|------|
 | **Intercore** | Orchestration kernel — the durable system of record |
 | **Clavain** | Agent OS — workflow policy and the reference agency |
-| **Interverse** | Companion plugins, each independently valuable (`ls interverse/ \| wc -l`) |
+| **Skaffen** | Sovereign agent runtime — provider/tool loop and standalone execution |
+| **Interverse** | Companion plugins, each independently valuable. Count plugin manifests with `find interverse -maxdepth 3 -path '*/.claude-plugin/plugin.json' \| wc -l` |
 | **Autarch** | Application layer — TUI surfaces for kernel state |
 | **Interspect** | Adaptive profiler — the learning loop |
 
@@ -33,6 +34,7 @@ Pillars describe *what* makes up Sylveste. The three-layer model below describes
                         ┌──────────▼───────────────────┐
                         │         L2: OS               │
                         │   Clavain (agent agency)     │
+                        │   Skaffen (agent runtime)    │
                         │   + Drivers (plugins)        │
                         │                              │
                         │   Maps domain concepts to    │
@@ -66,7 +68,7 @@ Pillars describe *what* makes up Sylveste. The three-layer model below describes
 | Layer | Component | Owns | Communicates via |
 |-------|-----------|------|------------------|
 | L1 Kernel | Intercore | Runs, phases, gates, events, dispatches, state, locks, sentinels, artifacts | CLI (`ic`) commands, exit codes |
-| L2 OS | Clavain + Drivers | Workflow semantics, sprint lifecycle, agent supervision, brainstorm-to-ship pipeline | Calls L1 via `ic` CLI; consumes the generic bus plus typed evidence queries while the measurement read model is still converging |
+| L2 OS | Clavain + Skaffen + Drivers | Workflow semantics, sprint lifecycle, agent supervision, provider/tool runtime, brainstorm-to-ship pipeline | Calls L1 via `ic` CLI; consumes the generic bus plus typed evidence queries while the measurement read model is still converging |
 | L3 Apps | Autarch (TUIs) | User-facing dashboards, visualizations | Reads L1 state via `ic` queries; sends intents to L2 |
 | Cross-cutting | Interspect | Observability, profiling, pattern detection | Consumes L1 event surfaces; today this includes `ic events tail`, `ic events list-review`, and `ic interspect query` rather than one fully unified stream. Writes only to L2 (OS config). Kernel boundary softens as trust is earned. |
 

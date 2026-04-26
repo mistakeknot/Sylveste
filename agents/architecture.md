@@ -37,7 +37,7 @@ Each subproject has its own CLAUDE.md and AGENTS.md — read those before editin
 | `core/agent-rig/` | Intercore | Agent rig configuration (TypeScript/Node) |
 | `core/interband/` | Intercore | Sideband communication protocol (Go) |
 | `core/interbench/` | Intercore | Plugin benchmarking harness (Go) |
-| `interverse/` | Interverse | Companion plugins — each has own docs (`ls interverse/ | wc -l`) |
+| `interverse/` | Interverse | Companion plugins — each has own docs; count plugin manifests with `find interverse -maxdepth 3 -path '*/.claude-plugin/plugin.json' \| wc -l` |
 | `sdk/interbase/` | — | Shared integration SDK (Bash/Go/Python) |
 | `masaq/` | — | Shared Bubble Tea component library (Go) — themes, keys, viewport, priompt |
 | `docs/` | — | Platform-level docs only (brainstorms, research, solutions) |

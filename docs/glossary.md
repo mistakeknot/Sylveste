@@ -4,13 +4,14 @@
 
 ## Pillars
 
-Sylveste has five pillars — the major components that make up the platform:
+Sylveste has six pillars — the major components that make up the platform:
 
 | Pillar | What it is | Layer |
 |--------|-----------|-------|
 | **Intercore** | Orchestration kernel — runs, phases, gates, dispatches, events. The durable system of record. | L1 (Kernel) |
 | **Clavain** | Agent OS — workflow policy, sprint lifecycle, model routing, agent dispatch. The reference agency. | L2 (OS) |
-| **Interverse** | Companion plugins, each wrapping one capability. Independently installable. (`ls interverse/ \| wc -l`) | L2 (Drivers) |
+| **Skaffen** | Sovereign agent runtime — standalone provider/tool loop and execution substrate. | L2 (OS) |
+| **Interverse** | Companion plugins, each wrapping one capability. Independently installable. Count plugin manifests with `find interverse -maxdepth 3 -path '*/.claude-plugin/plugin.json' \| wc -l`. | L2 (Drivers) |
 | **Autarch** | Application layer — TUI tools (Bigend, Gurgeh, Coldwine, Pollard). | L3 (Apps) |
 | **Interspect** | Adaptive profiler — reads kernel events, proposes OS configuration changes. The learning loop. | Cross-cutting |
 
