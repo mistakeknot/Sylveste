@@ -914,6 +914,8 @@
 {"created_at":"2026-04-21T14:39:40Z","created_by":"Claude Code","depends_on_id":"sylveste-b1ha","issue_id":"sylveste-b1ha.2","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-21T19:46:07Z","created_by":"Claude Code","depends_on_id":"sylveste-b1ha","issue_id":"sylveste-b1ha.20","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-21T19:46:19Z","created_by":"Claude Code","depends_on_id":"sylveste-b1ha","issue_id":"sylveste-b1ha.21","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-21T21:45:27Z","created_by":"Claude Code","depends_on_id":"sylveste-b1ha","issue_id":"sylveste-b1ha.22","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-21T22:07:54Z","created_by":"Claude Code","depends_on_id":"sylveste-b1ha","issue_id":"sylveste-b1ha.23","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-21T14:40:01Z","created_by":"Claude Code","depends_on_id":"sylveste-b1ha","issue_id":"sylveste-b1ha.3","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-21T14:40:17Z","created_by":"Claude Code","depends_on_id":"sylveste-b1ha","issue_id":"sylveste-b1ha.4","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-21T14:40:47Z","created_by":"Claude Code","depends_on_id":"sylveste-b1ha","issue_id":"sylveste-b1ha.5","metadata":"{}","type":"parent-child"}
@@ -1382,6 +1384,7 @@
 {"created_at":"2026-03-30T05:40:16Z","created_by":"8e534bf7","depends_on_id":"sylveste-dla","issue_id":"sylveste-gta","metadata":"{}","type":"child-of"}
 {"created_at":"2026-03-30T05:40:20Z","created_by":"8e534bf7","depends_on_id":"sylveste-tuo","issue_id":"sylveste-gta","metadata":"{}","type":"depends-on"}
 {"created_at":"2026-03-31T07:52:19Z","created_by":"Claude Code","depends_on_id":"sylveste-m5g","issue_id":"sylveste-gw6","metadata":"{}","type":"parent-child"}
+{"created_at":"2026-04-21T21:47:36Z","created_by":"Claude Code","depends_on_id":"sylveste-ynh7","issue_id":"sylveste-h1w1","metadata":"{}","type":"blocks"}
 {"created_at":"2026-04-10T03:48:14Z","created_by":"Claude Code","depends_on_id":"sylveste-7505","issue_id":"sylveste-h4mw","metadata":"{}","type":"blocks"}
 {"created_at":"2026-04-10T03:49:38Z","created_by":"Claude Code","depends_on_id":"sylveste-h4mw","issue_id":"sylveste-h4mw.1","metadata":"{}","type":"parent-child"}
 {"created_at":"2026-04-05T00:09:57Z","created_by":"a9d7e5db","depends_on_id":"sylveste-46s","issue_id":"sylveste-h7t","metadata":"{}","type":"parent-child"}
