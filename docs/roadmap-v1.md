@@ -1,6 +1,6 @@
 # Sylveste v1.0 Roadmap
 
-> Living document. Last updated: 2026-03-23. Current version: v0.6.229.
+> Living document. Last audited: 2026-04-27. Runtime evidence may move faster than this roadmap; treat code receipts and bead closures as source of truth for shipped wiring.
 
 ## Model
 
@@ -24,14 +24,14 @@ Version gates:
 
 Three calibration loops must close: routing, gate thresholds, and phase-cost estimation. Each loop follows the 4-stage pattern from PHILOSOPHY.md: hardcoded defaults → collect actuals → calibrate from history → defaults become fallback.
 
-### A:L1 — Manual Calibration (current baseline)
+### A:L1 — Manual Calibration (historical baseline)
 
 Calibration tools exist but require human invocation.
 
 | Loop | Code | Location | Trigger |
 |------|------|----------|---------|
-| Routing | `_interspect_auto_calibrate()` | `interverse/interspect/hooks/lib-interspect.sh:3027` | Manual: `/interspect:calibrate` |
-| Gate threshold | `EvaluateGate()` | `core/intercore/cmd/ic/gate.go` | Runs on transitions, but thresholds are hardcoded constants |
+| Routing | `_interspect_write_routing_calibration()` | `interverse/interspect/hooks/lib-interspect.sh` | Manual: `/interspect:calibrate` |
+| Gate threshold | `calibrate-gate-tiers` | `os/Clavain/cmd/clavain-cli/gate_calibration.go` | Manual: `clavain-cli calibrate-gate-tiers` |
 | Phase-cost | `cmdCalibratePhaseCosts()` | `os/Clavain/cmd/clavain-cli/budget.go` | Manual: `clavain-cli calibrate-phase-costs` |
 
 ### A:L2 — Semi-Automatic
@@ -40,8 +40,9 @@ Calibration fires at natural lifecycle points (sprint end, session end) but may 
 
 | Loop | What changes | Current gap |
 |------|-------------|-------------|
-| Routing | Verdict recording wired into quality-gates runtime (not fallback sweep) | Signal path broken: quality-gates never calls `_interspect_record_verdict()` |
-| Phase-cost | Triggered by `/reflect` command at sprint end | Works but only fires if human runs reflect phase |
+| Routing | Verdict recording wired into quality-gates runtime and fallback sweep exists | Operational proof across sessions; routing calibration file must be refreshed by lifecycle hook |
+| Gate threshold | `ic gate signals` feeds `calibrate-gate-tiers`; SessionEnd hook runs the drain | Operational proof and no-touch streak receipts |
+| Phase-cost | Triggered by `/reflect` command at sprint end | SessionEnd trigger shipped 2026-04-27; anomaly flagging still pending |
 
 ### A:L3 — Fully Autonomous Loops
 
@@ -49,9 +50,9 @@ All three loops fire without human intervention. The system predicts, observes o
 
 | Loop | What changes | Gap from L2 |
 |------|-------------|-------------|
-| Routing | SessionEnd hook triggers calibration. Override proposals generated with canary windows. | Scheduling + auto-trigger |
-| Gate threshold | Outcomes recorded → calibration file written → thresholds auto-adjusted | **New design work**: schema, algorithm, feedback loop |
-| Phase-cost | SessionEnd hook triggers calibration. Anomaly flagging for >2x estimates. | Move trigger from /reflect to SessionEnd |
+| Routing | Session-end lifecycle triggers calibration. Override proposals generated with canary windows. | Prove `routing-calibration.json` updates over multiple natural sessions |
+| Gate threshold | Outcomes recorded -> calibration file written -> thresholds auto-adjusted | Prove gate-tier calibration changes over multiple natural sessions |
+| Phase-cost | SessionEnd hook triggers calibration. Anomaly flagging for >2x estimates. | Add durable anomaly receipts for >2x estimate drift |
 
 **Exit criterion:** 10 consecutive sprints with no manual calibration intervention across all three loops.
 
@@ -68,9 +69,9 @@ Auto-remediation: system retries failed gates, substitutes agents, adjusts param
 ### B:L1 — Gates Exist (current baseline)
 
 Phase gates run on every transition via `ic gate check`. They block on failure. But:
-- Thresholds are hardcoded constants in `gate.go`
-- No learning from gate outcomes
-- No feedback loop from "this gate decision was correct/wrong"
+- Threshold learning now exists but still needs operational proof
+- Gate outcome signal quality still needs a no-touch validation window
+- The feedback loop from "this gate decision was correct/wrong" must remain observable
 - `bd doctor` exists but requires manual invocation
 
 ### B:L2 — Gates Learn
@@ -79,9 +80,9 @@ Gate thresholds adjust from historical pass/fail data.
 
 | Component | What's needed | Effort |
 |-----------|--------------|--------|
-| `gate-calibration.json` schema | Per-phase threshold overrides with confidence intervals | Medium |
-| Outcome recording | Record gate result + post-phase actual quality | Medium |
-| Threshold adjustment | Algorithm: historical rates → adjusted thresholds | Medium |
+| `gate-tier-calibration.json` schema | Shipped; exported from Clavain gatecal state | Done |
+| Outcome recording | `ic gate signals` extracts TP/FP/TN/FN from phase events | Done |
+| Threshold adjustment | `calibrate-gate-tiers` drains historical signals and adjusts tiers | Done |
 | `bd doctor` auto-run | SessionStart hook, block sprint on corruption | Small |
 
 **Bead:** Sylveste-0rgc (gate calibration), Sylveste-py89 (bd doctor auto-run)
@@ -144,11 +145,12 @@ The three calibration loops operate autonomously. Gates learn from their own out
 
 **Exit criteria:**
 - [ ] 10 consecutive sprints with no manual calibration intervention
-- [ ] `gate-calibration.json` populated from ≥10 gate outcomes
-- [ ] `routing-calibration.json` updated automatically per session
-- [ ] `phase-cost-calibration.json` updated automatically per session
+- [x] `gate-tier-calibration.json` can be populated from gate outcomes
+- [x] `routing-calibration.json` has a session-end lifecycle writer
+- [x] `phase-cost-calibration.json` has a SessionEnd trigger
 - [ ] `bd doctor --deep` runs on SessionStart, blocks on corruption
 - [ ] Anomaly detection flags >2x cost/duration deviations
+- [ ] 10-sprint no-touch evidence confirms the hooks actually fire in natural sessions
 
 **Beads:**
 - Sylveste-enxv.2: Wire calibration loops (routing, phase-cost)
@@ -200,18 +202,24 @@ No new features compared to v0.9.x. This is a stability commitment, not a featur
 
 ---
 
-## Current State (2026-03-23)
+## Current State (2026-04-27 Audit)
 
 ```
-Track A (Autonomy):  ████░░░░░░░░░░░░ L1.5  Phase-cost semi-wired. Routing broken. Gates static.
-Track B (Safety):    ████░░░░░░░░░░░░ L1    Gates run but never learn.
+Track A (Autonomy):  ████████░░░░░░░░ L2.5  Runtime loops wired; proof window and anomaly receipts pending.
+Track B (Safety):    ███████░░░░░░░░░ L2    Gate learning code exists; operational streak still unproven.
 Track C (Adoption):  ████░░░░░░░░░░░░ L1    Self-building only. 800+ sessions.
 
 Next gate: v0.7 (A:L3 + B:L2 + C:L1)
-  Track A gap: Fix routing signal path → auto-trigger → gate calibration design
-  Track B gap: Gate outcome recording → calibration schema → bd doctor auto-run
+  Track A gap: 10-sprint no-touch proof + phase-cost anomaly receipts
+  Track B gap: bd doctor auto-run + gate-learning receipts from natural sessions
   Track C gap: None (already at L1)
 ```
+
+2026-04-27 evidence:
+- Quality-gates records verdict outcomes via `_interspect_record_verdict()` in `os/Clavain/commands/quality-gates.md`.
+- Routing calibration writes during Interspect session-end auto-calibration; Clavain accepts schema v1 and v2 calibration files.
+- Clavain SessionEnd calibration hook runs both `calibrate-gate-tiers --auto` and `calibrate-phase-costs` in bounded fail-open mode.
+- Gate calibration has a schema, drain algorithm, `ic gate signals` source, and SessionEnd hook. What remains is operational proof, not greenfield design.
 
 ## Bead Mapping
 
@@ -220,9 +228,10 @@ Next gate: v0.7 (A:L3 + B:L2 + C:L1)
 | Sylveste-enxv.1 | Meta | Stability contract | ✓ Closed |
 | Sylveste-enxv.2 | A | L1.5 → L3 | Open (P2) |
 | Sylveste-enxv.3 | Cross | Deletion-recovery test | Open (P2) |
-| Sylveste-0rgc | A+B | A:L3 + B:L2 (gate calibration) | Open (P2) |
+| Sylveste-0rgc | A+B | A:L3 + B:L2 (gate calibration) | Code shipped; proof window pending |
 | Sylveste-py89 | B | B:L2 (bd doctor auto-run) | Open (P2) |
 | Sylveste-c44z | Meta | This roadmap artifact | Open (P1) |
+| sylveste-fd7x.6 | A+B | Audit remediation for closed-loop autonomy | Open |
 
 ## Progress Tracking
 
