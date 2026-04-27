@@ -6,7 +6,7 @@
 2. Run `bd ready` to see available work.
 3. Before editing any module, read its local `AGENTS.md` (or `CLAUDE.md` as fallback).
 4. Verify which repo you're in: `git rev-parse --show-toplevel`.
-5. When done: `bd close <id>`, commit, run `bd sync` if your local `bd` build supports it, then push.
+5. When done: run the Session Close Protocol below: `bd backup`, commit, `bd orphans`, `bd backup`, `bash .beads/push.sh`, then `git push`.
 
 ## Git Autosync
 
@@ -44,18 +44,20 @@ Use nearest, task-scoped instruction loading instead of reading every instructio
 
 1. **File beads for remaining work** - `bd create` for anything that needs follow-up
 2. **Run quality gates** (if code changed) - Tests, linters, builds
-3. **Update issue status** - Close finished work, update in-progress items
-4. **PUSH TO REMOTE** - This is MANDATORY:
+3. **Stage only intentional files** - `git add <files>`; never `git add .`
+4. **Flush Beads to JSONL** - `bd backup`
+5. **Commit** - Use a meaningful message that references the bead
+6. **Update issue status** - Run `bd orphans`, then close or update finished work
+7. **Flush Beads again** - `bd backup`
+8. **PUSH TO REMOTE** - This is MANDATORY:
    ```bash
-   git pull --rebase
-   # If your local bd build exposes it:
-   bd sync
+   bash .beads/push.sh
    git push
    git status  # MUST show "up to date with origin"
    ```
-5. **Clean up** - Clear stashes, prune remote branches
-6. **Verify** - All changes committed AND pushed
-7. **Hand off** - Provide context for next session
+9. **Clean up** - Clear stashes, prune remote branches
+10. **Verify** - All changes committed AND pushed
+11. **Hand off** - Provide context for next session
 
 **CRITICAL RULES:**
 - Work is NOT complete until `git push` succeeds
