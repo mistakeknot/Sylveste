@@ -5,9 +5,36 @@ stage: design
 brainstorm: docs/brainstorms/2026-04-21-persona-lens-ontology-brainstorm.md
 prior_art: docs/research/assess-ontology-stores-2026-04-21.md
 review_synthesis: docs/research/flux-review/persona-lens-ontology-brainstorm/2026-04-21-synthesis.md
+errata: docs/research/2026-04-27-lattice-reconciliation.md
+reconciliation_bead: sylveste-9gn9
 ---
 
 # PRD: Persona/Lens Ontology Unification (V1)
+
+## ERRATA — 2026-04-27 Lattice Reconciliation
+
+**This PRD was authored without reconciling against `interweave` (epic `sylveste-46s`), an 87%-shipped catalog-of-catalogs ontology layer that already implements the architecture this PRD proposed to build.** Per reconciliation bead `sylveste-9gn9` and diff doc `docs/research/2026-04-27-lattice-reconciliation.md`, the verdict is **SUBSUME**: persona/lens unification becomes type-family extensions to interweave, the unified system is renamed **lattice**, and Apache AGE / Postgres / Cypher are dropped from the architecture in favor of interweave's existing SQLite + named-template engine.
+
+**Superseded sections (read the lattice reconciliation doc for current intent):**
+- §Solution paragraph 1 (AGE/Postgres/Cypher framing) — lattice extends interweave's SQLite engine. The seven entity types map onto interweave's five generative type families (Artifact, Process, Actor, Relationship, Evidence). The "ontology-queries module" is replaced by registering new templates in lattice's existing template registry.
+- §Success Metrics #1, #3, #4 file paths — `packages/ontology-queries/` paths become `interverse/lattice/` paths.
+- §Success Metrics #2 entry count (660 + 291 + 288 = 1239) — actual fd-agent count is 781, not 660. Audit (F2) will produce the corrected total.
+- **F1 (Cypher Benchmark Spike)** — already shipped as research per commit `492f1ddf` with verdict AGE-viable. Removed from epic critical path. Artifact retained at `docs/research/f1-cypher-benchmark/`.
+- **F2 acceptance criteria** — workstream (a) audit unchanged in spirit; workstream (b) "scaffold ontology-queries package" replaced by "register persona/lens entity-type extensions in lattice's `families.py` + add relationship metadata fields to existing rules."
+- **F3 acceptance criteria** — AGE migration 001 replaced by SQLite migration extending lattice's `storage.py`. Most AGE-specific clauses (Cypher, vertex labels, partial indexes on AGE) are dropped or simplified; gate-honored fields (G3 source_independence, G4 bridges metadata, G6 schema_version, G7 strength_grade, G8 lens_identity_uuid + supersedes via Lifecycle rule, G9 transmission chain) survive as relational columns + relationship metadata.
+- **F4 acceptance criteria** — three importers become three new `Connector` implementations in lattice (`fd_agents.py`, `auraken_lenses.py`, `interlens.py`), following the existing connector protocol exemplified by beads/cass/tldr_code. Idempotence keys, manifest log, dry-run are connector-framework features lattice already ships.
+- **F6b acceptance criteria** — flux-drive backend swap targets lattice's named templates (e.g., a new `select_personae_for_task` template), not a new ontology-queries module.
+- **F7 acceptance criteria** — interlens MCP dispatches through lattice's existing template registry. interlens becomes lattice's first external consumer, validating the catalog-of-catalogs pattern.
+- **§Dependencies** — drop "Apache AGE extension" and "Auraken Postgres schema stability." Add "lattice rename from interweave (low-risk — no external consumers in tree as of 2026-04-27)."
+- **§Open Questions / Plugin home** — answered: lattice plugin replaces interweave at `interverse/lattice/`. No new top-level `packages/` directory is created.
+
+**Effort delta:** ~10.5w (PRD original) → ~6w (lattice reframing). F1 + F3 collapse account for most of the savings; F5/F6a are unchanged because calibration discipline doesn't care about storage engine.
+
+**The eleven gates G1-G11 remain non-negotiable.** They survive the storage change unchanged in intent — only the implementation surface migrates from AGE/Cypher to lattice's SQLite + named templates.
+
+The remainder of this document below is preserved as-authored for historical context. **Read the errata first; treat the original §Solution as superseded.**
+
+---
 
 ## Problem
 
