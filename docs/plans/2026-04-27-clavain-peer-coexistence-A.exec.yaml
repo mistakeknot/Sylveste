@@ -1,0 +1,74 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 4
+timeout_per_task: 600
+
+# Wave structure (after PRD review fixes):
+# Wave 1: task-1 (full test harness, owns test-peer-coexistence.sh) + task-7 (F5 AGENTS.md)
+# Wave 2: task-2 (F1 — gates F2 + F4)
+# Wave 3: task-3 (F2 modpack-install.sh) + task-4 (F3 bridge skills) + task-6 (F6 telemetry hook)
+#         No write contention — task-1 owns the harness; tasks here only read it.
+# Wave 4: task-5 (F4 /clavain:peers — needs F1 schema AND F2 peers category)
+# Wave 5: task-8 (end-to-end verify)
+
+stages:
+  - name: "Wave 1 — test harness + independent docs"
+    tasks:
+      - id: task-1
+        title: "Write COMPLETE acceptance harness for F1-F6 (single owner of test-peer-coexistence.sh)"
+        files: [os/Clavain/scripts/test-peer-coexistence.sh]
+        depends: []
+      - id: task-7
+        title: "F5 (bonus): AGENTS.md beads-softening"
+        files: [AGENTS.md]
+        depends: []
+
+  - name: "Wave 2 — F1 reclassification (gates F2 + F4)"
+    tasks:
+      - id: task-2
+        title: "F1: agent-rig.json + verify-config.sh + doctor.md + setup.md fallback"
+        files:
+          - os/Clavain/agent-rig.json
+          - os/Clavain/scripts/verify-config.sh
+          - os/Clavain/commands/doctor.md
+          - os/Clavain/commands/setup.md
+        depends: [task-1]
+
+  - name: "Wave 3 — parallel implementation"
+    tasks:
+      - id: task-3
+        title: "F2: modpack-install.sh process_peers() + setup.md Step 7 count"
+        files:
+          - os/Clavain/scripts/modpack-install.sh
+          - os/Clavain/commands/setup.md
+        depends: [task-2]
+      - id: task-4
+        title: "F3: bridge skills (interop-with-superpowers + interop-with-gsd)"
+        files:
+          - os/Clavain/skills/interop-with-superpowers/SKILL.md
+          - os/Clavain/skills/interop-with-gsd/SKILL.md
+        depends: [task-1]
+      - id: task-6
+        title: "F6: peer-telemetry hook + hooks.json registration + CLAUDE.md docs"
+        files:
+          - os/Clavain/hooks/peer-telemetry.sh
+          - os/Clavain/hooks/hooks.json
+          - os/Clavain/CLAUDE.md
+        depends: [task-1]
+
+  - name: "Wave 4 — F4 viewer (needs F1 schema + F2 peers category)"
+    tasks:
+      - id: task-5
+        title: "F4: /clavain:peers viewer command"
+        files:
+          - os/Clavain/commands/peers.md
+        depends: [task-2, task-3]
+
+  - name: "Wave 5 — end-to-end verification"
+    tasks:
+      - id: task-8
+        title: "Run full acceptance harness + manual CUJ smoke test"
+        files: []
+        depends: [task-3, task-4, task-5, task-6, task-7]
+        tier: fast
