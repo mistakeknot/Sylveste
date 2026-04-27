@@ -35,7 +35,7 @@ bd backup && bash .beads/push.sh && git push  # Complete work after commit
 
 **Plugin collisions:** Claude Code autodiscovers all `.claude-plugin/plugin.json` in the monorepo. One canonical owner per command/skill — when extracted from Clavain, remove from Clavain's plugin.json. Extracted plugins own their domain. Delegation facades (namespaced commands like `interkasten:doctor`) are safe.
 
-**Work tracking:** Beads (`bd create/close`) is the single source of truth. Never create TODO files, markdown checklists, or pending-beads lists. See [agents/beads-workflow.md](agents/beads-workflow.md).
+**Work tracking:** Beads (`bd create/close`) is the canonical tracker for Sylveste-internal work. All Sylveste agents and contributors track work in beads inside this repo — do not duplicate it via TODO files or markdown checklists. External rigs (superpowers, GSD, compound-engineering) ship their own task surfaces; that tracking belongs to those rigs and is not displaced by this rule. See [agents/beads-workflow.md](agents/beads-workflow.md).
 
 **Git workflow:** Owner/agents commit directly to `main` (trunk-based). External contributors: Fork + PR (branch protection enabled). See [docs/guide-contributing.md](docs/guide-contributing.md).
 
@@ -86,7 +86,7 @@ bd close <id>         # Complete work
 
 ### Rules
 
-- Use `bd` for ALL task tracking — do NOT use TodoWrite, TaskCreate, or markdown TODO lists
+- Use `bd` for Sylveste-internal task tracking — do not duplicate it via TodoWrite, TaskCreate, or markdown TODO lists. External rigs with their own task surfaces (superpowers, GSD, compound-engineering) are unaffected.
 - Run `bd prime` for detailed command reference and session close protocol
 - Use `bd remember` for persistent knowledge — do NOT use MEMORY.md files
 
