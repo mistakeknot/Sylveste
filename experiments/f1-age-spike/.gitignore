@@ -1,0 +1,6 @@
+# scratch — never commit volume contents or local results-in-progress
+agedata/
+*.local.sql
+.venv/
+__pycache__/
+smoke_plan.txt

@@ -1,0 +1,132 @@
+Limit  (cost=154.62..154.63 rows=1 width=160) (actual time=186.481..186.488 rows=3 loops=1)
+  Buffers: shared hit=307984
+  ->  Sort  (cost=154.62..154.63 rows=1 width=160) (actual time=186.481..186.486 rows=3 loops=1)
+        Sort Key: (agtype_access_operator(VARIADIC ARRAY[_age_default_alias_previous_cypher_clause.l, '"effectiveness_score"'::agtype])) DESC
+        Sort Method: quicksort  Memory: 25kB
+        Buffers: shared hit=307984
+        ->  Subquery Scan on _age_default_alias_previous_cypher_clause  (cost=154.52..154.61 rows=1 width=160) (actual time=178.406..186.481 rows=3 loops=1)
+              Buffers: shared hit=307984
+              ->  GroupAggregate  (cost=154.52..154.60 rows=1 width=128) (actual time=178.397..186.466 rows=3 loops=1)
+                    Group Key: (_agtype_build_vertex(p.id, _label_name('16985'::oid, p.id), p.properties)), (_agtype_build_vertex(l.id, _label_name('16985'::oid, l.id), l.properties)), (age_collect(DISTINCT (agtype_access_operator(VARIADIC ARRAY[(_agtype_build_vertex(neighbor.id, _label_name('16985'::oid, neighbor.id), neighbor.properties)), '"id"'::agtype]))))
+                    Buffers: shared hit=307984
+                    ->  Incremental Sort  (cost=154.52..154.56 rows=2 width=128) (actual time=178.375..186.413 rows=51 loops=1)
+                          Sort Key: (_agtype_build_vertex(p.id, _label_name('16985'::oid, p.id), p.properties)), (_agtype_build_vertex(l.id, _label_name('16985'::oid, l.id), l.properties)), (age_collect(DISTINCT (agtype_access_operator(VARIADIC ARRAY[(_agtype_build_vertex(neighbor.id, _label_name('16985'::oid, neighbor.id), neighbor.properties)), '"id"'::agtype])))), (agtype_access_operator(VARIADIC ARRAY[(_agtype_build_vertex(hop2.id, _label_name('16985'::oid, hop2.id), hop2.properties)), '"id"'::agtype]))
+                          Presorted Key: (_agtype_build_vertex(p.id, _label_name('16985'::oid, p.id), p.properties)), (_agtype_build_vertex(l.id, _label_name('16985'::oid, l.id), l.properties))
+                          Full-sort Groups: 2  Sort Method: quicksort  Average Memory: 45kB  Peak Memory: 45kB
+                          Buffers: shared hit=307984
+                          ->  Nested Loop Left Join  (cost=115.92..154.51 rows=1 width=128) (actual time=161.886..185.658 rows=51 loops=1)
+                                Buffers: shared hit=307984
+                                ->  GroupAggregate  (cost=99.66..99.69 rows=1 width=96) (actual time=161.769..161.799 rows=3 loops=1)
+                                      Group Key: (_agtype_build_vertex(p.id, _label_name('16985'::oid, p.id), p.properties)), (_agtype_build_vertex(l.id, _label_name('16985'::oid, l.id), l.properties))
+                                      Buffers: shared hit=307231
+                                      ->  Sort  (cost=99.66..99.66 rows=1 width=96) (actual time=161.749..161.754 rows=36 loops=1)
+                                            Sort Key: (_agtype_build_vertex(p.id, _label_name('16985'::oid, p.id), p.properties)), (_agtype_build_vertex(l.id, _label_name('16985'::oid, l.id), l.properties)), (agtype_access_operator(VARIADIC ARRAY[(_agtype_build_vertex(neighbor.id, _label_name('16985'::oid, neighbor.id), neighbor.properties)), '"id"'::agtype]))
+                                            Sort Method: quicksort  Memory: 43kB
+                                            Buffers: shared hit=307231
+                                            ->  Nested Loop Left Join  (cost=13.63..99.65 rows=1 width=96) (actual time=131.951..161.397 rows=36 loops=1)
+                                                  Buffers: shared hit=307231
+                                                  ->  Nested Loop  (cost=0.83..65.07 rows=1 width=159) (actual time=131.849..159.954 rows=3 loops=1)
+                                                        Join Filter: (_age_default_alias_2.end_id = disc.id)
+                                                        Rows Removed by Join Filter: 230
+                                                        Buffers: shared hit=307099
+                                                        ->  Seq Scan on "Discipline" disc  (cost=0.00..1.62 rows=1 width=8) (actual time=0.010..0.013 rows=1 loops=1)
+                                                              Filter: (properties @> '{"id": "disc38"}'::agtype)
+                                                              Rows Removed by Filter: 49
+                                                              Buffers: shared hit=1
+                                                        ->  Nested Loop  (cost=0.83..63.42 rows=2 width=167) (actual time=18.835..159.927 rows=233 loops=1)
+                                                              Buffers: shared hit=307098
+                                                              ->  Nested Loop  (cost=0.56..63.07 rows=1 width=175) (actual time=18.814..159.746 rows=126 loops=1)
+                                                                    Join Filter: (_age_default_alias_1.end_id = d.id)
+                                                                    Rows Removed by Join Filter: 3307
+                                                                    Buffers: shared hit=306623
+                                                                    ->  Nested Loop  (cost=0.56..61.69 rows=1 width=183) (actual time=0.660..142.176 rows=3433 loops=1)
+                                                                          Buffers: shared hit=303190
+                                                                          ->  Nested Loop  (cost=0.28..61.35 rows=1 width=175) (actual time=0.086..138.830 rows=1896 loops=1)
+                                                                                Buffers: shared hit=296182
+                                                                                ->  Seq Scan on "Lens" l  (cost=0.00..20.13 rows=1 width=100) (actual time=0.006..0.361 rows=274 loops=1)
+                                                                                      Filter: ((agtype_access_operator(VARIADIC ARRAY[properties, '"valid_to"'::agtype]) IS NULL) AND (agtype_access_operator(VARIADIC ARRAY[properties, '"effectiveness_score"'::agtype]) >= '0.6'::agtype))
+                                                                                      Rows Removed by Filter: 305
+                                                                                      Buffers: shared hit=10
+                                                                                ->  Nested Loop  (cost=0.28..41.19 rows=3 width=75) (actual time=0.078..0.504 rows=7 loops=274)
+                                                                                      Buffers: shared hit=296172
+                                                                                      ->  Seq Scan on "Persona" p  (cost=0.00..16.25 rows=3 width=59) (actual time=0.001..0.176 rows=533 loops=274)
+                                                                                            Filter: (agtype_access_operator(VARIADIC ARRAY[properties, '"valid_to"'::agtype]) IS NULL)
+                                                                                            Rows Removed by Filter: 127
+                                                                                            Buffers: shared hit=2192
+                                                                                      ->  Index Scan using idx_wields_endpoints on wields _age_default_alias_0  (cost=0.28..8.30 rows=1 width=24) (actual time=0.001..0.001 rows=0 loops=146042)
+                                                                                            Index Cond: ((start_id = p.id) AND (end_id = l.id))
+                                                                                            Buffers: shared hit=293980
+                                                                          ->  Index Scan using idx_in_domain_endpoints on in_domain _age_default_alias_1  (cost=0.28..0.33 rows=1 width=24) (actual time=0.001..0.001 rows=2 loops=1896)
+                                                                                Index Cond: (start_id = _age_default_alias_0.end_id)
+                                                                                Filter: _ag_enforce_edge_uniqueness(_age_default_alias_0.id, id)
+                                                                                Buffers: shared hit=7008
+                                                                    ->  Seq Scan on "Domain" d  (cost=0.00..1.38 rows=1 width=8) (actual time=0.003..0.005 rows=1 loops=3433)
+                                                                          Filter: (properties @> '{"id": "d14"}'::agtype)
+                                                                          Rows Removed by Filter: 29
+                                                                          Buffers: shared hit=3433
+                                                              ->  Index Only Scan using idx_in_discipline_endpoints on in_discipline _age_default_alias_2  (cost=0.28..0.32 rows=2 width=16) (actual time=0.001..0.001 rows=2 loops=126)
+                                                                    Index Cond: (start_id = _age_default_alias_0.end_id)
+                                                                    Heap Fetches: 233
+                                                                    Buffers: shared hit=475
+                                                  ->  Nested Loop  (cost=12.80..34.56 rows=1 width=40) (actual time=0.053..0.465 rows=12 loops=3)
+                                                        Join Filter: (_age_default_alias_3.end_id = c.id)
+                                                        Rows Removed by Join Filter: 288
+                                                        Buffers: shared hit=132
+                                                        ->  Hash Join  (cost=12.80..33.00 rows=1 width=56) (actual time=0.050..0.432 rows=12 loops=3)
+                                                              Hash Cond: (neighbor.id = _age_default_alias_4.start_id)
+                                                              Buffers: shared hit=96
+                                                              ->  Seq Scan on "Lens" neighbor  (cost=0.00..20.16 rows=6 width=40) (actual time=0.006..0.372 rows=476 loops=3)
+                                                                    Filter: ((_agtype_build_vertex(id, _label_name('16985'::oid, id), properties) IS NULL) OR (agtype_access_operator(VARIADIC ARRAY[properties, '"valid_to"'::agtype]) IS NULL))
+                                                                    Rows Removed by Filter: 103
+                                                                    Buffers: shared hit=30
+                                                              ->  Hash  (cost=12.71..12.71 rows=7 width=32) (actual time=0.034..0.034 rows=17 loops=3)
+                                                                    Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                                                                    Buffers: shared hit=66
+                                                                    ->  Nested Loop  (cost=0.55..12.71 rows=7 width=32) (actual time=0.013..0.029 rows=17 loops=3)
+                                                                          Buffers: shared hit=66
+                                                                          ->  Index Scan using idx_member_of_endpoints on member_of _age_default_alias_3  (cost=0.28..8.30 rows=1 width=24) (actual time=0.004..0.004 rows=1 loops=3)
+                                                                                Index Cond: (start_id = (age_id(_agtype_build_vertex(l.id, _label_name('16985'::oid, l.id), l.properties)))::graphid)
+                                                                                Buffers: shared hit=9
+                                                                          ->  Index Scan using idx_member_of_endpoints on member_of _age_default_alias_4  (cost=0.27..4.34 rows=7 width=24) (actual time=0.006..0.021 rows=17 loops=3)
+                                                                                Index Cond: (end_id = _age_default_alias_3.end_id)
+                                                                                Filter: _ag_enforce_edge_uniqueness(_age_default_alias_3.id, id)
+                                                                                Rows Removed by Filter: 1
+                                                                                Buffers: shared hit=57
+                                                        ->  Seq Scan on "Community" c  (cost=0.00..1.25 rows=25 width=8) (actual time=0.000..0.001 rows=25 loops=36)
+                                                              Buffers: shared hit=36
+                                ->  Nested Loop  (cost=16.26..54.80 rows=1 width=40) (actual time=0.088..7.939 rows=17 loops=3)
+                                      Join Filter: (b2.end_id = hop2.id)
+                                      Rows Removed by Join Filter: 9503
+                                      Buffers: shared hit=753
+                                      ->  Nested Loop  (cost=16.26..34.57 rows=1 width=16) (actual time=0.039..0.137 rows=20 loops=3)
+                                            Buffers: shared hit=153
+                                            ->  Hash Join  (cost=15.98..33.95 rows=1 width=32) (actual time=0.031..0.080 rows=4 loops=3)
+                                                  Hash Cond: (hop1.id = b1.end_id)
+                                                  Buffers: shared hit=51
+                                                  ->  Seq Scan on "Lens" hop1  (cost=0.00..15.79 rows=579 width=8) (actual time=0.001..0.024 rows=579 loops=3)
+                                                        Buffers: shared hit=30
+                                                  ->  Hash  (cost=15.97..15.97 rows=1 width=24) (actual time=0.022..0.022 rows=4 loops=3)
+                                                        Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                                        Buffers: shared hit=21
+                                                        ->  Bitmap Heap Scan on bridges b1  (cost=4.32..15.97 rows=1 width=24) (actual time=0.011..0.018 rows=4 loops=3)
+                                                              Recheck Cond: (start_id = (age_id((_agtype_build_vertex(l.id, _label_name('16985'::oid, l.id), l.properties))))::graphid)
+                                                              Filter: ((_agtype_build_edge(id, start_id, end_id, _label_name('16985'::oid, id), properties) IS NULL) OR (agtype_access_operator(VARIADIC ARRAY[properties, '"strength"'::agtype]) >= '0.4'::agtype))
+                                                              Rows Removed by Filter: 2
+                                                              Heap Blocks: exact=15
+                                                              Buffers: shared hit=21
+                                                              ->  Bitmap Index Scan on idx_bridges_endpoints  (cost=0.00..4.32 rows=4 width=0) (actual time=0.005..0.005 rows=6 loops=3)
+                                                                    Index Cond: (start_id = (age_id((_agtype_build_vertex(l.id, _label_name('16985'::oid, l.id), l.properties))))::graphid)
+                                                                    Buffers: shared hit=6
+                                            ->  Index Scan using idx_bridges_endpoints on bridges b2  (cost=0.28..0.60 rows=1 width=24) (actual time=0.005..0.013 rows=5 loops=12)
+                                                  Index Cond: (start_id = b1.end_id)
+                                                  Filter: (_ag_enforce_edge_uniqueness(b1.id, id) AND ((_agtype_build_edge(id, start_id, end_id, _label_name('16985'::oid, id), properties) IS NULL) OR (agtype_access_operator(VARIADIC ARRAY[properties, '"strength"'::agtype]) >= '0.4'::agtype)))
+                                                  Rows Removed by Filter: 2
+                                                  Buffers: shared hit=102
+                                      ->  Seq Scan on "Lens" hop2  (cost=0.00..20.16 rows=6 width=40) (actual time=0.001..0.372 rows=476 loops=60)
+                                            Filter: ((_agtype_build_vertex(id, _label_name('16985'::oid, id), properties) IS NULL) OR (agtype_access_operator(VARIADIC ARRAY[properties, '"valid_to"'::agtype]) IS NULL))
+                                            Rows Removed by Filter: 103
+                                            Buffers: shared hit=600
+Planning:
+  Buffers: shared hit=62
+Planning Time: 2.546 ms
+Execution Time: 186.622 ms
