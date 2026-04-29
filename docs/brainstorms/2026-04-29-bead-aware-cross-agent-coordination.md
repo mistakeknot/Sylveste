@@ -56,7 +56,8 @@ Every agent body should be representable by this record, whether it is Hermes, C
   "surface": "tmux:zklw:session.window.pane|discord:thread|telegram|cli",
   "repo": "/home/mk/projects/Sylveste",
   "beads_authority": "/home/mk/projects/Sylveste/.beads",
-  "bead_id": "sylveste-kgfi",
+  "active_bead_id": "sylveste-kgfi",
+  "active_bead_confidence": "reported|observed|inferred|stale|unknown",
   "thread_id": "sylveste-kgfi",
   "objective": "short sentence",
   "status": "starting|working|blocked|reviewing|idle|stuck|complete|unknown",
@@ -75,11 +76,12 @@ Every agent body should be representable by this record, whether it is Hermes, C
 
 Rules:
 
-1. `bead_id` is the join key across systems.
-2. `thread_id` defaults to `bead_id`.
-3. Presence may be stale or inferred; task state still comes from Beads.
-4. File intent should come from reservations when available, otherwise from observed touched files or declared planned files.
-5. Any exact external platform IDs, Discord snowflakes, or auth tokens must remain out of public docs and be stored only in appropriate local metadata if needed.
+1. `active_bead_id` is the join key across systems when present with sufficient confidence.
+2. `thread_id` defaults to `active_bead_id`.
+3. Presence may be stale, inferred, unknown, or ambiguous; task state still comes from Beads.
+4. Ambiguous bead candidates must remain candidates, not guessed facts; merge-only metadata surfaces should receive an empty `active_bead_id`/`thread_id` plus `active_bead_confidence = unknown` to clear stale singular values.
+5. File intent should come from reservations when available, otherwise from observed touched files or declared planned files.
+6. Any exact external platform IDs, Discord snowflakes, or auth tokens must remain out of public docs and be stored only in appropriate local metadata if needed.
 
 ## Expected operator queries
 
@@ -100,7 +102,7 @@ These commands are illustrative, not committed first-party Hermes commands. The 
 ### Wave 0 — conventions only
 
 - Add this design note.
-- Use `bead_id` as the shared thread handle in Hermes, Claude Code, and Codex prompts.
+- Use `active_bead_id` as the shared presence handle in Hermes, Claude Code, and Codex prompts when the current active bead is known.
 - When launching a coding agent, include: objective, bead, repo/path, planned files, and expected closeout.
 
 ### Wave 1 — `intermux` metadata enrichment
@@ -109,9 +111,9 @@ Goal: observe live sessions and publish a presence record when possible.
 
 Likely changes:
 
-- Parse active bead IDs from tmux pane content, prompts, environment variables, and Beads commands in recent output.
+- Parse active bead IDs from tmux pane content, prompts, environment-backed SessionStart mapping metadata, and Beads commands in recent output.
 - Track cwd, branch, touched files, and status.
-- Emit confidence: `reported`, `observed`, `inferred`, `stale`.
+- Emit confidence: `reported`, `observed`, `inferred`, `stale`, or `unknown`.
 - Push metadata into `intermute` under a stable agent/session key.
 
 ### Wave 2 — `intermute` read model
@@ -123,8 +125,8 @@ Likely changes:
 - Store/merge agent metadata fields needed for presence.
 - Add or document query paths for:
   - agents by `project` / `repo`
-  - agents by `bead_id`
-  - messages by `thread_id == bead_id`
+  - agents by `active_bead_id`
+  - messages by `thread_id == active_bead_id`
   - stale ack / blocked thread summaries
 - Preserve cursor-based pagination and existing ack/read semantics.
 
