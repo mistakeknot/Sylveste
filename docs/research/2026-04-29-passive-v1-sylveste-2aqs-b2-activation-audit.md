@@ -110,7 +110,7 @@ This may be intentional for review quality, but passive-v1 should not count it a
 | `/interflux:flux-drive` Task launch | `activation_gap_likely` | `CLAVAIN_COMPOSE_PLAN` and review-signal export exist on interflux `origin/main`, but installed cache/local HEAD are stale at `78b1c2d`; live users invoke stale launch instructions. |
 | Clavain `compose_dispatch` / `clavain-cli compose` | `activation_gap_likely` | `complexity_tier`, `b2_shadow`, and shell forwarding exist on Clavain `origin/main`, but the installed/local code lacks those fields and forwards no review signals. |
 | Claude Code review users | `activation_gap_likely` | Claude Code installed plugin records point to stale commits at the same versions (`clavain@0.6.250` -> `222616c`, `interflux@0.2.67` -> `78b1c2d`). Same-version cache means an ordinary user may not get the remote commits. |
-| interflux Codex dispatch | `insufficient_evidence` / `activation_gap_likely` | Even `origin/main` still dispatches Codex with fixed `--tier deep`. That might be a deliberate exception, but it is not a B2-consumer path until documented/tested or routed. |
+| interflux Codex dispatch | `documented_fixed_tier_exception` | `sylveste-8r5h.19.2` keeps Codex review on fixed `--tier deep` by explicit exception rather than treating it as a B2/Composer-routed consumer path; the exception is structural-test covered. |
 
 ## Follow-up beads created
 
@@ -121,25 +121,30 @@ This may be intentional for review quality, but passive-v1 should not count it a
 2. `sylveste-8r5h.19.2` — **Route interflux Codex dispatch through B2 complexity tier or record fixed-tier exception**
    - P2 because Codex fixed deep routing may be acceptable, but it must be explicit and tested.
 
+## 2026-04-30 addendum: Codex fixed-tier exception (`sylveste-8r5h.19.2`)
+
+Decision: record and test a fixed-tier exception rather than introducing per-agent B2/Composer complexity routing into Codex review dispatch.
+
+`launch-codex.md` now makes the exception explicit:
+
+- preserves `CLAVAIN_DISPATCH_PROFILE=clavain` for Clavain-in-Codex policy selection;
+- preserves fixed `--tier deep` for stable cross-agent review depth;
+- adds/preserves `--phase=flux-review` as audit context and a future phase-aware dispatch hook, not a current tier selector;
+- points dispatch policy readers at `config/routing.yaml` instead of the non-existent `config/dispatch/tiers.yaml`.
+
+Passive-v1 interpretation: Codex review dispatch is no longer a silent B2 activation gap, but it also should not be counted as a B2/Composer-routed consumer path. The routed compose path remains `phases/launch.md`; Codex mode is an explicit, tested exception.
+
+Structural coverage: `interverse/interflux/tests/structural/test_skills.py::test_flux_drive_codex_launch_records_fixed_tier_exception` asserts the fixed-tier exception language, `--tier deep`, `--phase=flux-review`, `CLAVAIN_DISPATCH_PROFILE=clavain`, and `config/routing.yaml` reference.
+
 ## Passive-v1 finding
 
 This is exactly the class of gap passive-v1 is meant to catch: Beads and upstream commits say “done,” but the live user-facing surface still invokes stale plugin content. The most valuable next work is not more routing sophistication; it is publishing/installation activation proof.
 
 ## Recommended next action
 
-Pick up `sylveste-8r5h.19.1` first.
+Follow-up status as of 2026-04-30:
 
-Minimum closeout proof for that bead:
+1. `sylveste-8r5h.19.1` fixed the static installed-plugin path ambiguity with patch versions and installed-cache marker smoke proof.
+2. `sylveste-8r5h.19.2` resolved the Codex dispatch ambiguity as an explicit tested exception, not a B2/Composer-routed consumer path.
 
-1. Clavain installed cache (or newly installed version) contains:
-   - `CLAVAIN_REVIEW_*` in `quality-gates.md`
-   - `/interflux:flux-drive ... --phase=quality-gates`
-   - lib-compose review signal forwarding
-   - compose JSON with `complexity_tier` / `b2_shadow`
-2. interflux installed cache (or newly installed version) contains:
-   - `CLAVAIN_COMPOSE_PLAN`
-   - exported review signals
-3. Version/release path avoids stale same-version cache ambiguity.
-4. A static smoke report records installed paths, versions, and commit SHAs.
-
-Only after that should we claim B2 caller activation is delivering value to Claude Code users.
+Next passive-v1 work should measure live usage/value evidence from user-facing plugin invocations rather than treating static source/installed markers as final activation telemetry.
