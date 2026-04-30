@@ -2,7 +2,7 @@
 artifact_type: brainstorm
 bead: sylveste-kgfi
 date: 2026-04-29
-status: draft
+status: shipped
 thread: GSV Discord #agent-ops / Hermes Agents aware of other agents' beads
 ---
 
@@ -164,7 +164,34 @@ Athenmesh v0 should be a skill/adapter, not a dispatching controller:
 - Does not claim canonical task state.
 - Does not create or close beads unless explicitly asked as part of backlog management.
 
-### Wave 5 — only then consider `Intermesh`
+### Wave 5 — Hermes command-surface evaluation
+
+Goal: decide whether Athenmesh should become a first-party Hermes command surface.
+
+Status (2026-04-30): evaluated under `sylveste-kgfi.5`. Verdict: **no first-party command yet**.
+
+Evidence:
+
+- Athenmesh v0.1 dogfood held for `sylveste-kgfi.4`, but the run was still mostly Beads + repo + stale/fallback CASS evidence. It did not capture fresh Intermute/Intermux live presence or Interlock reservation summaries.
+- Hermes already exposes prompt-style command seams (`/pickup`, `/prepare`, `/route`, `/reintegrate`), so `/presence` would be technically feasible, but adding it now would promote a thin adapter before enough operator demand is proven.
+- The live Hermes Agent repo is not the right place for opportunistic implementation in this evaluation slice; command implementation should start from a separate Hermes bead, clean file scope, RED boundary tests, and normal review/deploy gates.
+
+Recommendation:
+
+- Decline `/mesh` for v1. The name implies a broader coordination substrate and risks confusing the Athenverse operator view with a future `Intermesh`/`Interlink` substrate.
+- Do not add `/presence` in this slice. Continue using Athenmesh as a mounted Hermes skill/operator workflow.
+- If repeated dogfood proves that a native command materially lowers operator friction, create a separate Hermes implementation bead and prefer `/presence` as a prompt-style, read-only command that invokes Athenmesh and cannot dispatch, reserve files, or mutate Beads.
+
+Operator workflow without a command:
+
+1. Ask Hermes for an Athenmesh card by bead, repo, or file area.
+2. Hermes loads Athenmesh and returns a compact `Bead + Repo + Workers + Presence + Collision risk + Next action` card.
+3. The card may read Beads, Intermute/Intermux presence, Interlock reservations, CASS freshness, and repo state, but it does not mutate any of them.
+4. Beads remains canonical task state; Interlock remains the hard-blocker/reservation lane; Intermute/Intermux presence remains advisory/read-model state.
+
+Revisit trigger: implement `/presence` only after at least two more real coordination dogfoods show repeated command-shaped demand or fresh live presence/reservation evidence that the skill-only path is too slow.
+
+### Future substrate — only then consider `Intermesh`
 
 Mint a new `Inter*` plugin only if at least two of these become true:
 
@@ -197,8 +224,10 @@ Until then, `Intermesh` / `Interlink` remains a reserved future name, not a repo
    - Blocked by `sylveste-kgfi.2` and `sylveste-kgfi.3`.
 
 5. **`sylveste-kgfi.5` — `[Hermes] Evaluate prompt-style /presence command after Athenmesh dogfood`**
-   - Only after Athenmesh dogfood.
-   - Prompt-style read/summarize behavior first; no direct dispatch in v1.
+   - Status: evaluated 2026-04-30. Verdict: no first-party command yet; keep Athenmesh as the mounted skill/operator workflow.
+   - `/mesh` declined for v1 because it implies substrate ownership.
+   - `/presence` remains the preferred future command name if repeated dogfood proves native command demand.
+   - Prompt-style read/summarize behavior only; no direct dispatch in v1.
    - Blocked by `sylveste-kgfi.4`.
 
 ## Non-goals
@@ -216,4 +245,4 @@ Until then, `Intermesh` / `Interlink` remains a reserved future name, not a repo
 2. Should presence records live as `intermute` agent metadata or as first-class records?
    - Recommendation: metadata in v0; first-class table only if query pressure justifies it.
 3. Should Athenmesh expose `/mesh`, `/presence`, or no command initially?
-   - Recommendation: no first-party command until skill dogfood. If later needed, prefer `/presence` for read-only clarity.
+   - Resolved 2026-04-30: no first-party command initially. Keep Athenmesh as the skill/operator workflow. If repeated dogfood later proves native command demand, prefer `/presence` for read-only clarity and keep `/mesh` reserved/declined to avoid substrate confusion.
