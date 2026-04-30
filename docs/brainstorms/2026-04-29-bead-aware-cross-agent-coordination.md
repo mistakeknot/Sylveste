@@ -153,6 +153,9 @@ MCP Agent Mail may be used as prior art or an isolated bridge, but do not run it
 
 Goal: give Hermes a compact operator surface over the substrate.
 
+Status (2026-04-30): shipped in Athenverse commit `46a8da9ceb5e89d3774c6c46ea90f3b25159ab50`.
+Athenmesh v0.1 is a Hermes-facing Athenverse skill/adapter and coordination-card contract. It produces compact, read-only `Bead + Repo + Workers + Collision risk` cards from Beads, Intermute/Intermux presence, Interlock reservation summaries, CASS continuity evidence, and repo state. It remains operator-facing: no dispatch/controller behavior, no first-party Hermes command, and no mutation of Beads, reservations, presence, CASS, or repo state.
+
 Athenmesh v0 should be a skill/adapter, not a dispatching controller:
 
 - Inputs: bead ID, repo path, path patterns, or vague user prompt.
@@ -188,8 +191,9 @@ Until then, `Intermesh` / `Interlink` remains a reserved future name, not a repo
    - Add an agent-readable collision card.
 
 4. **`sylveste-kgfi.4` — `[Athenverse] Bootstrap Athenmesh Hermes coordination adapter`**
+   - Status: shipped in Athenverse commit `46a8da9ceb5e89d3774c6c46ea90f3b25159ab50` with local bead `Athenverse-4gj` closed.
    - Hermes-facing coordination card: workers, collisions, stale/stuck signals, suggested next action.
-   - Dogfood on a real Sylveste bead before any first-party Hermes slash command.
+   - Dogfood record: `docs/cujs/athenmesh-v0.1-sylveste-kgfi4-dogfood.md` in Athenverse.
    - Blocked by `sylveste-kgfi.2` and `sylveste-kgfi.3`.
 
 5. **`sylveste-kgfi.5` — `[Hermes] Evaluate prompt-style /presence command after Athenmesh dogfood`**
