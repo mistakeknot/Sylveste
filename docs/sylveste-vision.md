@@ -330,12 +330,15 @@ The metric where all three outcome axes collapse into a single number. A low cos
 | **Efficiency** | Model routing accuracy | % of model selections matching the outcome-optimal model |
 | **Quality** | Defect escape rate | Bugs found after Ship that were present during Build |
 | **Quality** | Cost per actionable finding | Token cost of findings that aren't false positives |
+| **Quality** | Activation rate | % of merged subsystems with telemetry-confirmed invocation within 14 days, counted only after ≥3 distinct sessions show activation |
 | **Autonomy** | Sprint completion rate | % of sprints reaching Ship without abandonment |
 | **Autonomy** | Gate pass rate | % of phase transitions passing on first attempt |
 | **Learning** | Self-improvement rate | Interspect proposals that improve metrics when applied |
 | **Trust** | Maturity advancement rate | Mesh cells advancing to the next maturity level per quarter |
 
 **Goodhart caveat:** Any stable metric becomes a target, and any target becomes gamed. Rotate emphasis, diversify evaluation dimensions, and watch for agents optimizing the metric at the expense of actual quality. (See PHILOSOPHY.md § Receipts Close Loops, Measurement.)
+
+**Activation-rate baseline.** Passive v1 measures whether a merged subsystem is actually invoked within 14 days by combining existing telemetry-adjacent receipts — CASS traces, git history, closeout artifacts, and route/phase evidence — before explicit subsystem-event emits are required. A subsystem counts as activated only when evidence spans at least three distinct sessions. The first three weeks are baseline observation and report-only: findings should produce follow-up beads or patches, not hard gates. Any v2 soft-block must wait for explicit calibration approval and a documented Goodhart review. Because the Phase 0 spike recorded `passive_spike_recall:3/3` and `next_phase:passive-v1`, explicit emit infrastructure remains deferred until passive reporting misses a confirmed activation gap.
 
 The cost-per-landable-change baseline was established on 2026-02-28 at $1.17 (Opus 95% of cost). As of 2026-03-18, the figure is $2.93 — the increase reflects expanded review scope (multi-agent review, reaction rounds) rather than efficiency regression. The trajectory is expected to improve as model routing matures.
 
