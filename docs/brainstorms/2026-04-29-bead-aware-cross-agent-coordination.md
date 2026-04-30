@@ -138,6 +138,9 @@ Likely changes:
 
 Goal: make collision checks path-aware.
 
+Status (2026-04-30): shipped in Interlock commit `7c1daf7cc1a82d1fd3537e5b0cc030e9665a5d5a`.
+The v0 reservation convention keeps Intermute-compatible reason metadata (`active_bead_id=...`, optional `bead_id=...` and `thread_id=...`) until reservations grow a first-class metadata column. `check_conflicts` now returns bead-aware collision cards with holder, project/path, reservation state, confidence, bead/thread correlation, `suggested_action`, and `hard_blocker`. Hard blockers come from Intermute's reservation conflict endpoint; list-derived reservation overlaps are advisory context only, so stale/ambiguous/same-bead evidence is surfaced without becoming canonical task state.
+
 Likely changes:
 
 - Standardize reservation `reason = <bead_id>`.
