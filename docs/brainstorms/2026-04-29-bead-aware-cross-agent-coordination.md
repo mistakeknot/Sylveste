@@ -120,6 +120,10 @@ Likely changes:
 
 Goal: make presence and bead-thread messages queryable.
 
+Status (2026-04-30): shipped in Intermute commit `0db673603ac83da377399a6121d84a8402300ff2`.
+The v0 read model exposes `GET /api/agents/presence`, filtering by `project`, `repo`, and `active_bead_id`, and projects agent metadata into `agent_id`, `kind`, `status`, `last_seen`, `repo`, `files`, `objective`, `confidence`, `active_bead_id`, and `thread_id`.
+Message-thread queries remain future work; bead-thread correlation is preserved by using `thread_id == active_bead_id` when present.
+
 Likely changes:
 
 - Store/merge agent metadata fields needed for presence.
