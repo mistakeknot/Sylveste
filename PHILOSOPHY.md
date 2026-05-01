@@ -12,7 +12,11 @@ The cycle: authority enables actions → actions produce evidence → evidence e
 
 ---
 
-## The Core Bet
+## Operational Philosophy
+
+These sections govern current build, review, routing, evidence, and authority behavior. They are the rules active agents should apply today.
+
+### The Core Bet
 
 Four claims, all of which must be true for Sylveste to be right:
 
@@ -23,7 +27,7 @@ Four claims, all of which must be true for Sylveste to be right:
 
 If any of these claims is wrong, the project is misguided.
 
-### The OODARC Lens
+#### The OODARC Lens
 
 The flywheel (authority → actions → evidence → authority) is an instance of **OODARC** — Observe, Orient, Decide, Act, Reflect, Compound — operating at nested timescales:
 
@@ -42,7 +46,7 @@ Situation assessments are prompt aids, not ground truth. Always verify recent ev
 
 ---
 
-## Receipts Close Loops
+### Receipts Close Loops
 
 *Principle 1 applied everywhere: every action produces evidence, and that evidence feeds back into the system.*
 
@@ -88,7 +92,7 @@ The fleet enrichment pipeline is the existence proof: `estimate-costs.sh` reads 
 
 ---
 
-## Earned Authority
+### Earned Authority
 
 *Principle 2 applied everywhere: trust is progressive, evidence-based, and never assumed.*
 
@@ -116,7 +120,7 @@ Note: this is the *human delegation* ladder — how much authority the human del
 
 ---
 
-## Composition Over Capability
+### Composition Over Capability
 
 *Principle 3 applied everywhere: small, scoped, composed units beat large integrated ones.*
 
@@ -148,13 +152,17 @@ The bar is high — kernel-native is earned by architectural role, not convenien
 
 ---
 
-## Memory Architecture
+## Roadmap Philosophy
+
+These sections describe longer-horizon doctrine and roadmap-shaping decisions. They guide direction without overriding the operational rules above.
+
+### Memory Architecture
 
 *Composition applied to knowledge: many scoped stores with explicit boundaries, unified through retrieval, not migration.*
 
 Sylveste has 10 memory-shaped systems across 3 layers. Each was built to solve a specific problem. The taxonomy below prevents future systems from creating yet another knowledge store without checking if an existing category fits.
 
-### Five Categories
+#### Five Categories
 
 | Category | Name | What it holds | Owner | Decay model |
 |----------|------|---------------|-------|-------------|
@@ -164,7 +172,7 @@ Sylveste has 10 memory-shaped systems across 3 layers. Each was built to solve a
 | C4 | Curated Knowledge | Human-validated patterns, solutions, reference material | docs/solutions/ | Provenance-based (10-review + 180d staleness) |
 | C5 | Ephemeral Context | Per-session working memory, auto-memory, cache blobs | Plugin-local filesystem | Intermem promotion model (14d grace + decay) |
 
-### Decision Rule
+#### Decision Rule
 
 When a new piece of memory needs a home:
 
@@ -174,7 +182,7 @@ When a new piece of memory needs a home:
 - Is it a human-validated pattern or solution? → **C4** (docs/solutions/)
 - Is it a working note that might become permanent? → **C5** (auto-memory → intermem promotion)
 
-### Design Decisions
+#### Design Decisions
 
 **Unify retrieval, not storage.** The real problem is fragmented read paths, not fragmented stores. A thin retrieval layer that queries across systems and returns ranked, deduplicated results solves discoverability without migration risk. Each system keeps its storage.
 
@@ -188,7 +196,7 @@ See `docs/prds/2026-03-07-memory-architecture-convergence.md` for the full syste
 
 ---
 
-## Strong Defaults, Replaceable Policy
+### Strong Defaults, Replaceable Policy
 
 *Mechanism/policy separation applied to the product itself.*
 
@@ -202,7 +210,7 @@ See `docs/prds/2026-03-07-memory-architecture-convergence.md` for the full syste
 
 ---
 
-## Naming
+### Naming
 
 Names are compressed design arguments, not decoration.
 
@@ -212,17 +220,10 @@ Two syllables. Feels right in your hands. You learn what they mean once; you fee
 
 See [docs/guides/naming-conventions.md](docs/guides/naming-conventions.md) for the practical guide.
 
-### Brand Registers
+#### Brand Architecture
 
-Two brands, one architecture. The layer boundary is the brand boundary:
+The launch-facing Sylveste surface stays in the SF/infrastructure register: Clavain, Skaffen, Intercore, Interspect, Autarch, Interverse, and the `inter-*` capability layer. Internal product-family boundaries and launch-suppression rules live in [docs/canon/brand-architecture.md](docs/canon/brand-architecture.md). Do not reintroduce Garden Salon or Meadowsyn into public Sylveste launch copy until their own surfaces are ready.
 
-- **Sylveste** (SF register) — infrastructure: kernel, OS, profiler, plugins, CLI. For developers and platform builders.
-- **Garden Salon** (organic register) — experience: multiplayer workspace, CRDT shared state, agent-as-participant. For everyone.
-- **Meadowsyn** (bridge) — visualization: real-time systems dashboards connecting infrastructure to experience.
-- **inter-\*** (neutral register) — the ~60 companion plugins. Coexists with both brands.
-
-**Enforcement:** Garden-salon language (organic metaphors, cultivation, tending, blooming) does NOT appear in kernel docs (Intercore), OS docs (Clavain), profiler docs (Interspect), plugin docs (interverse), CLAUDE.md, AGENTS.md, or PHILOSOPHY.md. These stay in the SF register. The organic register is reserved for Garden Salon product surfaces and Meadowsyn. This is a brand decision, not a technical one — mixing registers dilutes both.
-
-## End State
+### End State
 
 There is no "done." The flywheel doesn't converge — it compounds. There is no end state for learning.
