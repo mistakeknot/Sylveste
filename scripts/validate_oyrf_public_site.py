@@ -47,8 +47,8 @@ def validate_source(failures: list[str]) -> None:
 
     if LOCKED_HERO not in index:
         fail("landing page must include the locked Sylveste hero claim", failures)
-    if "mailto:mk@generalsystemsventures.com?subject=Sylveste%20launch%20list" not in index:
-        fail("landing page must expose the temporary public-safe launch-list capture path", failures)
+    if "Sylveste%20launch%20list" in index or "Launch list" in index:
+        fail("landing page must not expose the removed launch-list capture path", failures)
     if "https://github.com/mistakeknot/Sylveste" not in index:
         fail("landing page must link to the public Sylveste source", failures)
     if "/live/" not in index:
@@ -61,8 +61,8 @@ def validate_source(failures: list[str]) -> None:
         fail("docs/CNAME must be exactly sylvst.com", failures)
     if "Sitemap: https://sylvst.com/sitemap.xml" not in robots:
         fail("robots.txt should declare the sylvst.com sitemap location", failures)
-    if "Before closing the bead as fully complete" not in runbook:
-        fail("deployment runbook must preserve the durable email-provider closeout blocker", failures)
+    if "launch list" in runbook.lower() or "subscriber test" in runbook.lower():
+        fail("deployment runbook must not preserve the removed launch-list/email-provider blocker", failures)
 
     public_text = "\n".join([index, live])
     for term in FORBIDDEN_PUBLIC_TERMS:

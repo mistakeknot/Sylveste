@@ -46,9 +46,3 @@ curl -I https://sylvst.com
 curl -fsSL https://sylvst.com/ | grep -F 'Sylveste orchestrates agents by human/machine comparative advantage.'
 curl -fsSL https://sylvst.com/live/ | grep -F 'Closed-loop telemetry'
 ```
-
-## Email capture
-
-The current landing page uses a temporary `mailto:` capture path to `mk@generalsystemsventures.com`. That is intentionally public-safe and dependency-free, but it is not a durable mailing-list provider.
-
-Before closing the bead as fully complete, choose and wire the durable list target, then perform one subscriber test and record the provider in the bead closeout.
