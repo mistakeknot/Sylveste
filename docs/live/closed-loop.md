@@ -2,7 +2,7 @@
 
 Bead: `sylveste-oyrf.1`
 
-This page is the `/live/closed-loop.md` source template for the public closed-loop cost-calibration view. It is intentionally safe to render on `sylvst.com/live`: it links only to the repository/public CSV and never exposes private Interstat session logs, local databases, prompts, or credentials.
+This page is the `/live/closed-loop.md` source template for the public closed-loop cost-calibration view. It is intentionally safe to render on `sylvst.com/live`: it links only to the repository/public CSV and never exposes private Interstat session logs, local databases, prompts, Beads state, or credentials.
 
 ## Public data contract
 
@@ -28,6 +28,6 @@ The live page should render these fields from the newest rows in `cost-trajector
 ## Operator notes
 
 - Treat the public chart as a feedback loop, not as accounting truth.
-- Use sustained slope changes to decide whether the Mythos launch plan needs smaller session batches, cheaper review paths, or delayed cadence dial-up.
-- If `source=interstat-empty` persists for more than one day, repair the Interstat collection path before using the chart for Mythos readiness decisions.
+- Use sustained slope changes to decide whether agent-routing, review, or session-cadence policy needs adjustment.
+- If `source=interstat-empty` persists for more than one day, repair the Interstat collection path before using the chart for public calibration decisions.
 - Link this template from the `sylvst.com/live` index as the closed-loop cost-calibration panel once the site renderer consumes `docs/live/*.md`.

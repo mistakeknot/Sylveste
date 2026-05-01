@@ -18,9 +18,16 @@ CNAME = DOCS / "CNAME"
 NOJEKYLL = DOCS / ".nojekyll"
 ROBOTS = DOCS / "robots.txt"
 RUNBOOK = DOCS / "deploy" / "sylvst-com.md"
-REQUIRED = [INDEX, LIVE, CNAME, NOJEKYLL, ROBOTS, RUNBOOK]
-LOCKED_HERO = "Sylveste orchestrates agents by human/machine comparative advantage."
-FORBIDDEN_PUBLIC_TERMS = ["Garden Salon", "Meadowsyn"]
+CLOSED_LOOP = DOCS / "live" / "closed-loop.md"
+FONT_DIR = DOCS / "fonts"
+FONT_FILES = [
+    FONT_DIR / "IoskeleyMono-Light.woff2",
+    FONT_DIR / "IoskeleyMono-Regular.woff2",
+    FONT_DIR / "IoskeleyMono-Bold.woff2",
+]
+REQUIRED = [INDEX, LIVE, CNAME, NOJEKYLL, ROBOTS, RUNBOOK, CLOSED_LOOP, *FONT_FILES]
+LOCKED_HERO = "Sylveste coordinates software-development agents."
+FORBIDDEN_PUBLIC_TERMS = ["Garden Salon", "Meadowsyn", "Mythos"]
 
 
 def fail(message: str, failures: list[str]) -> None:
@@ -41,6 +48,7 @@ def validate_source(failures: list[str]) -> None:
 
     index = read(INDEX, failures)
     live = read(LIVE, failures)
+    closed_loop = read(CLOSED_LOOP, failures)
     cname = read(CNAME, failures).strip()
     robots = read(ROBOTS, failures)
     runbook = read(RUNBOOK, failures)
@@ -61,17 +69,19 @@ def validate_source(failures: list[str]) -> None:
         fail("docs/CNAME must be exactly sylvst.com", failures)
     if "Sitemap: https://sylvst.com/sitemap.xml" not in robots:
         fail("robots.txt should declare the sylvst.com sitemap location", failures)
+    if "sylveste.pages.dev" not in runbook or "Proxied" not in runbook:
+        fail("deployment runbook must preserve the Cloudflare Pages DNS target", failures)
     if "launch list" in runbook.lower() or "subscriber test" in runbook.lower():
         fail("deployment runbook must not preserve the removed launch-list/email-provider blocker", failures)
 
-    public_text = "\n".join([index, live])
+    public_text = "\n".join([index, live, closed_loop, runbook])
     for term in FORBIDDEN_PUBLIC_TERMS:
-        if term in public_text:
-            fail(f"public landing/live HTML must not mention held brand: {term}", failures)
+        if re.search(rf"\b{re.escape(term)}\b", public_text, flags=re.IGNORECASE):
+            fail(f"public site source must not mention held/private term: {term}", failures)
 
 
 def validate_git_visibility(failures: list[str]) -> None:
-    for rel in ["docs/index.html", "docs/live/index.html", "docs/CNAME", "docs/.nojekyll", "docs/robots.txt", "docs/deploy/sylvst-com.md"]:
+    for rel in ["docs/index.html", "docs/live/index.html", "docs/live/closed-loop.md", "docs/CNAME", "docs/.nojekyll", "docs/robots.txt", "docs/deploy/sylvst-com.md", "docs/fonts/IoskeleyMono-Light.woff2", "docs/fonts/IoskeleyMono-Regular.woff2", "docs/fonts/IoskeleyMono-Bold.woff2"]:
         result = subprocess.run(
             ["git", "check-ignore", "-q", "--", rel],
             cwd=ROOT,

@@ -2,16 +2,18 @@
 
 Bead: `sylveste-oyrf.2`
 
-This page records the public launch deployment seam for `sylvst.com`.
+This page records the public deployment seam for `sylvst.com`.
 
 ## Source
 
-The static public surface is intentionally small and lives under `docs/` so GitHub Pages can serve it without exposing private runtime state:
+The static public surface is intentionally small and lives under `docs/` so Cloudflare Pages can serve it without exposing private runtime state:
 
 - `docs/index.html` — landing page
 - `docs/live/index.html` — public closed-loop telemetry view
+- `docs/live/closed-loop.md` — source template linked from the public telemetry page
+- `docs/fonts/` — Ioskeley Mono font files copied from the GSV site source
 - `docs/CNAME` — custom-domain declaration for `sylvst.com`
-- `docs/.nojekyll` — serve static files directly
+- `docs/.nojekyll` — static compatibility marker
 - `docs/robots.txt` — public indexing posture
 
 The live view reads the public CSV from the repository raw URL:
@@ -20,29 +22,36 @@ The live view reads the public CSV from the repository raw URL:
 https://raw.githubusercontent.com/mistakeknot/Sylveste/main/data/cost-trajectory.csv
 ```
 
-It does not read private Interstat data, prompts, local session logs, Dolt state, or credentials.
+It does not read private Interstat data, prompts, local session logs, Beads state, Dolt state, or credentials.
 
-## GitHub Pages
+## Cloudflare Pages
 
-Configure Pages for the `mistakeknot/Sylveste` repository:
+Cloudflare Pages project:
 
-- branch: `main`
-- path: `/docs`
+- project: `sylveste`
+- production branch: `main`
+- public preview host: `sylveste.pages.dev`
 - custom domain: `sylvst.com`
 
-If configuring through the GitHub API, use a GitHub token with repository administration rights. Do not commit the token or write it into this repository.
+Deploy from a staged subset of `docs/` rather than the whole directory, because `docs/` also contains internal planning artifacts and symlinks that are not part of the public site.
 
 ## Cloudflare DNS
 
-`docs/CNAME` only tells GitHub Pages what custom domain to expect. Cloudflare still needs DNS records for `sylvst.com`.
+The apex DNS record should be:
 
-Use the Cloudflare zone for `sylvst.com` and GitHub Pages' current apex-domain guidance. At the time of writing, GitHub Pages supports apex domains through A/AAAA records and recommends verifying the domain before relying on it.
+```text
+Type:   CNAME
+Name:   sylvst.com
+Target: sylveste.pages.dev
+Proxy:  Proxied
+TTL:    Auto
+```
 
-After DNS is configured, verify:
+Cloudflare flattens the proxied apex CNAME. After DNS is configured, verify:
 
 ```bash
 dig +short sylvst.com
 curl -I https://sylvst.com
-curl -fsSL https://sylvst.com/ | grep -F 'Sylveste orchestrates agents by human/machine comparative advantage.'
-curl -fsSL https://sylvst.com/live/ | grep -F 'Closed-loop telemetry'
+curl -fsSL https://sylvst.com/ | grep -F 'Sylveste coordinates software-development agents.'
+curl -fsSL https://sylvst.com/live/ | grep -F 'Public cost and session trajectory.'
 ```
