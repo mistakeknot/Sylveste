@@ -26,7 +26,7 @@ FONT_FILES = [
     FONT_DIR / "IoskeleyMono-Bold.woff2",
 ]
 REQUIRED = [INDEX, LIVE, CNAME, NOJEKYLL, ROBOTS, RUNBOOK, CLOSED_LOOP, *FONT_FILES]
-LOCKED_HERO = "Sylveste coordinates software-development agents."
+LOCKED_HERO = "Sylveste coordinates agents."
 FORBIDDEN_PUBLIC_TERMS = ["Garden Salon", "Meadowsyn", "Mythos"]
 
 

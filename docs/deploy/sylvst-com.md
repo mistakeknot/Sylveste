@@ -52,6 +52,6 @@ Cloudflare flattens the proxied apex CNAME. After DNS is configured, verify:
 ```bash
 dig +short sylvst.com
 curl -I https://sylvst.com
-curl -fsSL https://sylvst.com/ | grep -F 'Sylveste coordinates software-development agents.'
+curl -fsSL https://sylvst.com/ | grep -F 'Sylveste coordinates agents.'
 curl -fsSL https://sylvst.com/live/ | grep -F 'Public cost and session trajectory.'
 ```
