@@ -98,4 +98,7 @@ docs/research/*/
 .clavain/cxdb/
 .clavain/intercept/
 .codex
-data/
+
+# Keep local Interstat/session data ignored while publishing OYRF's public CSV.
+data/*
+!data/cost-trajectory.csv

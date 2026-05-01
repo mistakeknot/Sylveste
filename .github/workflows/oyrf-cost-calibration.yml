@@ -1,0 +1,39 @@
+name: OYRF cost calibration
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: oyrf-cost-calibration-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  estimate-costs:
+    name: Export longitudinal cost trajectory
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Append cost trajectory sample
+        run: bash estimate-costs.sh
+
+      - name: Validate OYRF cost-calibration artifacts
+        run: python3 scripts/validate_oyrf_cost_infra.py --run-dry-run
+
+      - name: Commit updated cost-trajectory.csv
+        run: |
+          if git diff --quiet -- data/cost-trajectory.csv; then
+            echo "No cost-trajectory.csv changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/cost-trajectory.csv
+          git commit -m "data: update OYRF cost trajectory"
+          git push
