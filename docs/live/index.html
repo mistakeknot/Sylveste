@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Sylveste closed-loop cost trajectory and Mythos readiness telemetry." />
+  <title>Sylveste / Live</title>
+  <style>
+    :root { color-scheme: dark; --bg:#050506; --panel:#0c0d0f; --line:#25272c; --text:#f2f2ef; --muted:#9a9b9f; --accent:#d8d1bd; --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace; --sans:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:#050506; color:var(--text); font-family:var(--sans); }
+    main { max-width:1040px; margin:0 auto; padding:44px 24px 72px; }
+    a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+    .eyebrow { color:var(--muted); font:12px var(--mono); text-transform:uppercase; letter-spacing:.16em; }
+    h1 { font-size:clamp(34px,6vw,76px); line-height:.96; letter-spacing:-.06em; font-weight:500; margin:20px 0; }
+    .lede { max-width:720px; color:#c9c9c4; line-height:1.55; font-size:18px; }
+    .panel { border:1px solid var(--line); background:var(--panel); padding:20px; margin-top:24px; }
+    .grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-top:24px; }
+    .metric { border:1px solid var(--line); background:#090a0c; padding:16px; }
+    .metric dt { color:var(--muted); font:11px var(--mono); text-transform:uppercase; letter-spacing:.12em; margin-bottom:9px; }
+    .metric dd { margin:0; font:24px var(--mono); }
+    table { width:100%; border-collapse:collapse; margin-top:18px; font:13px var(--mono); }
+    th, td { border-bottom:1px solid var(--line); padding:10px 8px; text-align:left; vertical-align:top; }
+    th { color:var(--muted); font-weight:400; }
+    code { font-family:var(--mono); color:var(--accent); }
+    .note { color:var(--muted); font-size:14px; line-height:1.55; }
+    @media (max-width:780px){ .grid{grid-template-columns:1fr 1fr;} }
+    @media (max-width:520px){ .grid{grid-template-columns:1fr;} }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow"><a href="/">Sylveste</a> / live closed loop</div>
+    <h1>Closed-loop telemetry for the Mythos runway.</h1>
+    <p class="lede">This page renders only public calibration data. It never reads private Interstat databases, prompts, local session logs, or credentials.</p>
+
+    <dl class="grid" id="metrics" aria-label="Latest public metrics">
+      <div class="metric"><dt>Source</dt><dd id="source">loading</dd></div>
+      <div class="metric"><dt>Sessions</dt><dd id="sessions">—</dd></div>
+      <div class="metric"><dt>Total tokens</dt><dd id="tokens">—</dd></div>
+      <div class="metric"><dt>Cost / session</dt><dd id="cost-session">—</dd></div>
+    </dl>
+
+    <section class="panel" aria-labelledby="trajectory-heading">
+      <h2 id="trajectory-heading">Cost trajectory</h2>
+      <p class="note">Data source: <a href="https://github.com/mistakeknot/Sylveste/blob/main/data/cost-trajectory.csv">repo CSV</a>. The six-hour exporter writes safe aggregate rows only.</p>
+      <div id="table-wrap"><p class="note">Loading public CSV…</p></div>
+    </section>
+
+    <section class="panel" aria-labelledby="contract-heading">
+      <h2 id="contract-heading">Public data contract</h2>
+      <p class="note">The CSV columns are <code>captured_at</code>, <code>window_days</code>, <code>session_count</code>, <code>total_tokens</code>, <code>input_tokens</code>, <code>output_tokens</code>, <code>total_cost_usd</code>, <code>cost_per_session_usd</code>, and <code>source</code>. Valid sources are <code>interstat</code>, <code>interstat-empty</code>, and <code>dry-run-fixture</code>.</p>
+      <p class="note">Template source: <a href="https://github.com/mistakeknot/Sylveste/blob/main/docs/live/closed-loop.md">docs/live/closed-loop.md</a>.</p>
+    </section>
+  </main>
+
+  <script>
+    const CSV_URL = 'https://raw.githubusercontent.com/mistakeknot/Sylveste/main/data/cost-trajectory.csv';
+    function parseCsv(text) {
+      const lines = text.trim().split(/\r?\n/).filter(Boolean);
+      const headers = lines.shift().split(',');
+      return lines.map(line => Object.fromEntries(line.split(',').map((value, index) => [headers[index], value])));
+    }
+    function fmtInt(value) {
+      const n = Number(value || 0);
+      return Number.isFinite(n) ? n.toLocaleString() : '0';
+    }
+    function fmtUsd(value) {
+      const n = Number(value || 0);
+      return Number.isFinite(n) ? `$${n.toFixed(6)}` : '$0.000000';
+    }
+    fetch(CSV_URL, { cache: 'no-store' })
+      .then(response => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.text();
+      })
+      .then(text => {
+        const rows = parseCsv(text);
+        const latest = rows[rows.length - 1] || {};
+        document.getElementById('source').textContent = latest.source || 'none';
+        document.getElementById('sessions').textContent = fmtInt(latest.session_count);
+        document.getElementById('tokens').textContent = fmtInt(latest.total_tokens);
+        document.getElementById('cost-session').textContent = fmtUsd(latest.cost_per_session_usd);
+        document.getElementById('table-wrap').innerHTML = `<table><thead><tr><th>Captured</th><th>Window</th><th>Sessions</th><th>Tokens</th><th>Cost</th><th>Source</th></tr></thead><tbody>${rows.slice(-8).reverse().map(row => `<tr><td>${row.captured_at}</td><td>${row.window_days}d</td><td>${fmtInt(row.session_count)}</td><td>${fmtInt(row.total_tokens)}</td><td>${fmtUsd(row.total_cost_usd)}</td><td>${row.source}</td></tr>`).join('')}</tbody></table>`;
+      })
+      .catch(error => {
+        document.getElementById('source').textContent = 'unavailable';
+        document.getElementById('table-wrap').innerHTML = `<p class="note">Could not load public CSV: ${error.message}. Use the repo CSV link above as fallback.</p>`;
+      });
+  </script>
+</body>
+</html>

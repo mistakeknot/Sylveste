@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Sylveste orchestrates agents by human/machine comparative advantage." />
+  <title>Sylveste</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #050506;
+      --panel: #0c0d0f;
+      --line: #25272c;
+      --text: #f2f2ef;
+      --muted: #9a9b9f;
+      --accent: #d8d1bd;
+      --warn: #a98455;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 20% 0%, #17191d 0, #050506 36rem);
+      color: var(--text);
+      font-family: var(--sans);
+      letter-spacing: -0.01em;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    main { max-width: 1080px; margin: 0 auto; padding: 56px 24px 72px; }
+    .eyebrow { color: var(--muted); font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.16em; }
+    h1 { margin: 22px 0 0; max-width: 900px; font-size: clamp(46px, 8vw, 104px); line-height: 0.93; font-weight: 500; letter-spacing: -0.07em; }
+    .lede { max-width: 740px; margin: 28px 0 0; color: #c9c9c4; font-size: clamp(18px, 2vw, 23px); line-height: 1.45; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
+    .button { border: 1px solid var(--line); background: #111216; color: var(--text); padding: 12px 16px; font-family: var(--mono); font-size: 13px; }
+    .button.primary { background: var(--accent); color: #080808; border-color: var(--accent); }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 58px; }
+    .card { border: 1px solid var(--line); background: rgba(12, 13, 15, 0.86); padding: 20px; min-height: 180px; }
+    .card h2 { margin: 0 0 14px; font-size: 14px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); }
+    .card p, .card li { color: #c7c7c2; line-height: 1.55; font-size: 15px; }
+    .card ul { padding-left: 18px; margin: 0; }
+    .metric { font-family: var(--mono); color: var(--muted); font-size: 12px; border-top: 1px solid var(--line); padding-top: 14px; margin-top: 18px; }
+    .capture { margin-top: 46px; border: 1px solid var(--line); background: #0b0c0e; padding: 22px; display: grid; grid-template-columns: 1.1fr 1fr; gap: 18px; align-items: end; }
+    .capture h2 { margin: 0 0 10px; font-size: 20px; }
+    .capture p { margin: 0; color: var(--muted); line-height: 1.5; }
+    form { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
+    input { width: 100%; border: 1px solid var(--line); background: #050506; color: var(--text); padding: 12px; font: 14px var(--mono); }
+    button { border: 1px solid var(--accent); background: var(--accent); color: #080808; padding: 12px 14px; font: 13px var(--mono); cursor: pointer; }
+    footer { margin-top: 60px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font: 12px var(--mono); display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
+    @media (max-width: 760px) {
+      main { padding-top: 36px; }
+      .grid, .capture { grid-template-columns: 1fr; }
+      form { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow">Sylveste / pre-Mythos public surface</div>
+    <h1>Sylveste orchestrates agents by human/machine comparative advantage.</h1>
+    <p class="lede">Agents run what is algorithmic. Humans stay in the loop for judgment, taste, and preference. Every correction becomes evidence for the next routing decision.</p>
+    <div class="actions" aria-label="Primary links">
+      <a class="button primary" href="/live/">View closed-loop telemetry</a>
+      <a class="button" href="https://github.com/mistakeknot/Sylveste">Source</a>
+      <a class="button" href="https://github.com/mistakeknot/Clavain">Clavain</a>
+      <a class="button" href="https://github.com/mistakeknot/Skaffen">Skaffen</a>
+    </div>
+
+    <section class="grid" aria-label="System summary">
+      <article class="card">
+        <h2>Human</h2>
+        <p>Humans set intent, resolve ambiguity, judge taste, and decide where authority can safely expand.</p>
+        <div class="metric">authority remains explicit</div>
+      </article>
+      <article class="card">
+        <h2>Machine</h2>
+        <p>Agents execute bounded work, preserve receipts, run review lanes, and expose when their confidence should not be trusted.</p>
+        <div class="metric">actions produce evidence</div>
+      </article>
+      <article class="card">
+        <h2>Loop</h2>
+        <p>Receipts feed cost, quality, and routing calibration so the system improves by running real work instead of claiming capability.</p>
+        <div class="metric">evidence earns authority</div>
+      </article>
+    </section>
+
+    <section class="grid" aria-label="Current artifacts">
+      <article class="card">
+        <h2>Live line</h2>
+        <p>The closed-loop view exposes the public cost trajectory and readiness notes without publishing private Interstat logs.</p>
+        <p><a href="/live/">Open /live</a></p>
+      </article>
+      <article class="card">
+        <h2>Reference rig</h2>
+        <p>Clavain is the Claude Code rig that makes brainstorm, strategy, planning, execution, review, and ship discipline concrete.</p>
+        <p><a href="https://github.com/mistakeknot/Clavain">Open Clavain</a></p>
+      </article>
+      <article class="card">
+        <h2>Runtime path</h2>
+        <p>Skaffen is the Go runtime path for host-independent agents that need their own OODARC loop.</p>
+        <p><a href="https://github.com/mistakeknot/Skaffen">Open Skaffen</a></p>
+      </article>
+    </section>
+
+    <section class="capture" aria-labelledby="launch-list-heading">
+      <div>
+        <h2 id="launch-list-heading">Launch list</h2>
+        <p>For Mythos-drop updates, send an email to join the public launch list. This temporary capture path avoids adding a third-party list provider before the first public surface is live.</p>
+      </div>
+      <form action="mailto:mk@generalsystemsventures.com?subject=Sylveste%20launch%20list" method="post" enctype="text/plain">
+        <label class="visually-hidden" for="email" style="position:absolute;left:-9999px;">Email address</label>
+        <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required />
+        <button type="submit">Request updates</button>
+      </form>
+    </section>
+
+    <footer>
+      <span>© 2026 Sylveste</span>
+      <span><a href="mailto:mk@generalsystemsventures.com">mk@generalsystemsventures.com</a></span>
+    </footer>
+  </main>
+</body>
+</html>
