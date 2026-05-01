@@ -2,8 +2,11 @@
 """Validate sylveste-oyrf.1 longitudinal cost-calibration infra artifacts.
 
 This is intentionally structural: it proves the public/repo CSV, scheduled
-estimator, live template, Mythos transition harness, and cadence plan are wired
+estimator, public live template, transition harness, and cadence plan are wired
 well enough for automation and review without requiring private interstat data.
+The public live template must stay launch-safe and no longer names held/private
+Mythos terminology; the internal transition harness remains the Mythos-specific
+measurement artifact.
 """
 
 from __future__ import annotations
@@ -245,7 +248,7 @@ def validate_workflow(failures: list[str]) -> None:
 def validate_docs(failures: list[str]) -> None:
     live = read_text(LIVE_TEMPLATE, failures)
     if live:
-        for needle in ["cost-trajectory.csv", "closed-loop", "Mythos", "sylveste-oyrf.1"]:
+        for needle in ["cost-trajectory.csv", "closed-loop", "sylveste-oyrf.1"]:
             if needle not in live:
                 fail(f"closed-loop template must mention {needle!r}", failures)
 
