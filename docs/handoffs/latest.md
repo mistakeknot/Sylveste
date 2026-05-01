@@ -1,1 +1,1 @@
-2026-04-27-clavain-peer-coexistence-shipped.md
+2026-04-27-lcb-v6-matrix-shipped.md
