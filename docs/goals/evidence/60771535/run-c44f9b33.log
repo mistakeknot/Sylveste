@@ -1,0 +1,13 @@
+Pattern F run c44f9b33: 1 item(s), repo /Users/sma/projects/Sylveste/os/Clavain, run dir /Users/sma/projects/Sylveste/os/Clavain/.clavain/orchestrate-runs/c44f9b33
+
+[pf] item b7e0: exact-b7e0.md (exact)
+  [pf] b7e0: gauge clean
+  [pf] b7e0: worktree /Users/sma/projects/Sylveste/os/Clavain/.clavain/orchestrate-runs/c44f9b33/wt/b7e0 on pf/c44f9b33/b7e0
+  [pf] b7e0: register executor replay PASS commit=ba5d94fcd2dc83c90fb4a2dc9da1f73778652dab
+  [pf] b7e0: executor PASS commit=ba5d94fcd2dc83c90fb4a2dc9da1f73778652dab
+  [pf] b7e0: register validator replay PASS commit=ba5d94fcd2dc83c90fb4a2dc9da1f73778652dab
+  [pf] b7e0: register validator independent FAIL commit=ba5d94fcd2dc83c90fb4a2dc9da1f73778652dab
+  [pf] b7e0: validator PASS; 1 beyond-the-gauge finding(s)
+  [pf] b7e0: merged -> d11873fe266114ba47251d4be1789e6cdd37293c
+
+Pattern F run c44f9b33 finished: merged=1; register rows read back for the session: 42
