@@ -12,7 +12,11 @@ The cycle: authority enables actions → actions produce evidence → evidence e
 
 ---
 
-## The Core Bet
+## Operational Philosophy
+
+These sections govern current build, review, routing, evidence, and authority behavior. They are the rules active agents should apply today.
+
+### The Core Bet
 
 Four claims, all of which must be true for Sylveste to be right:
 
@@ -23,26 +27,49 @@ Four claims, all of which must be true for Sylveste to be right:
 
 If any of these claims is wrong, the project is misguided.
 
-### The OODARC Lens
+<a id="the-oodarc-lens"></a>
+#### The OODARCS Lens
 
-The flywheel (authority → actions → evidence → authority) is an instance of **OODARC** — Observe, Orient, Decide, Act, Reflect, Compound — operating at nested timescales:
+The flywheel (authority → actions → evidence → authority) is an instance of
+**OODARCS** — Observe, Orient, Decide, Act, Reflect, Compound, Synthesize —
+operating at nested timescales across coding, research, planning, and documentation.
+Observe actual evidence; Orient against the goal and constraints; Decide the next
+proportionate action and verification; Act within the existing scope and authority.
 
-- **Per-turn:** Agent observes tool results, orients on context, decides next action, acts, reflects on the outcome, and compounds by updating working memory.
-- **Per-sprint:** Phase gates observe artifacts, orient on sprint state, decide phase transitions, advance phases, reflect at sprint end, and compound by calibrating estimates and persisting learnings.
-- **Cross-session:** Interspect observes evidence, orients via pattern classification, decides routing proposals, acts via override application, reflects via canary monitoring, and compounds by writing routing overrides that change future behavior.
+- **Reflect** identifies what the outcome taught us: what happened, what was
+  expected, and what differed.
+- **Compound** preserves a useful improvement in an authorized artifact: a fix,
+  test, requested document, calibration, or project tracker record. Memory writes
+  remain subject to separate authorization.
+- **Synthesize** reconciles that learning with existing evidence and goals,
+  updating the working understanding and next priorities within the agreed scope.
+  Contradictory evidence can change a conclusion or priority; make that revision
+  explicit rather than retaining incompatible claims or silently expanding scope.
 
-OODARC extends Boyd's OODA loop with two phases, not one:
+At task scale, use real results to revise the next action. At sprint scale,
+reconcile verification and review outcomes with acceptance criteria. Across
+sessions, compare retained lessons with new evidence before applying them again.
+A saved lesson is evidence to assess, not an automatic authority grant.
 
-- **Reflect** extracts the lesson: what happened, what was expected, what differed. This is observation of one's own process — per-sprint, ephemeral until captured.
-- **Compound** persists the lesson in a form that changes future behavior: calibration files that adjust estimates, routing overrides that reclassify agents, solution docs that prevent repeated mistakes. This is what closes the loop — without it, Reflect is journaling.
+Apply the loop proportionally. Trivial requests need no skill ceremony; substantive
+work does not require seven response headings, an invented lesson, an automatic
+memory write, or unrelated follow-up work. If there is no worthwhile authorized
+artifact to improve, retain the learning in the response or current working
+understanding. Review, release, and model-routing authority remain unchanged.
 
-The distinction matters because Reflect without Compound is write-only learning (OODA with a diary). Compound without Reflect is cargo-culting (copying patterns without understanding why). The **Closed-loop by default** principle (below) is the operational implementation of Compound: the 4-stage calibration pattern (defaults → collect → calibrate → fallback) is how the C in OODARC feeds back into O (Orient) for the next cycle.
+This is an operating-contract clarification. Existing **OODARC** telemetry names,
+event identifiers, database schemas, and execution phases remain compatible;
+there is no execution-phase or telemetry migration. The existing OODARC section
+anchor is retained for incoming links.
 
-Situation assessments are prompt aids, not ground truth. Always verify recent evidence against cached assessments.
+The **Closed-loop by default** principle below implements calibration; Synthesize
+asks whether the accumulated results still support the current understanding and
+goals. Situation assessments are prompt aids, not ground truth. Verify recent
+evidence against cached assessments.
 
 ---
 
-## Receipts Close Loops
+### Receipts Close Loops
 
 *Principle 1 applied everywhere: every action produces evidence, and that evidence feeds back into the system.*
 
@@ -88,23 +115,17 @@ The fleet enrichment pipeline is the existence proof: `estimate-costs.sh` reads 
 
 ---
 
-## Earned Authority
+### Earned Authority
 
 *Principle 2 applied everywhere: trust is progressive, evidence-based, and never assumed.*
 
-**Autonomy.** A dial, not a binary. The goal is human-above-the-loop — humans govern outcomes via receipts, not step-by-step supervision.
+**Autonomy.** A dial, not a binary. The goal is human-above-the-loop — humans govern outcomes via receipts, not step-by-step supervision. Authority is delegated progressively along the L0–L5 trust ladder, and each level requires demonstrated safety at the previous one. No shortcuts.
 
-Progressive trust ladder:
-- Level 0: Human approves every action.
-- Level 1: Human approves at phase gates.
-- Level 2: Human reviews evidence post-hoc.
-- Level 3: Human sets policy, agent executes.
-- Level 4: Agent proposes policy changes.
-- Level 5: Agent proposes mechanism changes.
+The kernel boundary (L1 cannot be modified by agents) is a trust threshold, not an architectural invariant — it softens as trust is earned, but through gated processes, not direct modification.
 
-Currently operating at Level 1-2. Each level requires demonstrated safety at the previous level. No shortcuts. The kernel boundary (L1 cannot be modified by agents) is a trust threshold, not an architectural invariant — it softens as trust is earned, but through gated processes, not direct modification.
+> **Definitions live in [`docs/canon/autonomy.md`](docs/canon/autonomy.md)** — the L0–L5 delegation ladder and the current position on it, the M0–M4 capability mesh, phase chains, and discovery confidence tiers. That page also records why these four scales are orthogonal, and which terms only look like levels. Cite it rather than restating any of them here.
 
-Note: this is the *human delegation* ladder — how much authority the human delegates. The vision doc's autonomy ladder (L0-L4: Record → Enforce → React → Auto-remediate → Auto-ship) tracks *system capability* — what the platform can do. The two are orthogonal and advance independently.
+**Graduated authority as mechanism.** Capability is tracked per subsystem on an ordinal maturity scale (M0–M4). Promotion requires pre-specified evidence thresholds. Demotion is triggered by sustained regression indicators exceeding threshold for a defined observation window. Evidence epochs reset trust when environmental conditions shift (major model changes, architecture migrations, subsystem replacements). The principle (evidence earns authority) is permanent. The mechanism (specific thresholds, epoch triggers, demotion criteria) is revisable by human authority regardless of accumulated evidence — the right to redefine trust criteria remains with humans.
 
 **Safety.** Structural, not moral. Sylveste enforces structural constraints (bounded blast radius, auditable decisions, revocable authority) through architecture, not ethical reasoning. More autonomy means more responsibility to get safety right. The blast radius is scoped to the actual risk domain: wrong code committed, bad PRs merged, wasted tokens.
 
@@ -114,13 +135,15 @@ Note: this is the *human delegation* ladder — how much authority the human del
 
 ---
 
-## Composition Over Capability
+### Composition Over Capability
 
 *Principle 3 applied everywhere: small, scoped, composed units beat large integrated ones.*
 
 **Unix heritage.** Sylveste is a spiritual successor to Unix. Keep: small tools, explicit interfaces, mechanism/policy separation. Replace: untyped streams, ambient authority, text-as-control, hidden state. The problems are fundamentally different (stochastic actors, partial state, trust boundaries everywhere), but composition beating capability is permanent.
 
 **Agent architecture.** Many small agents with explicit scope over monolithic generalists. Route to the best model for the job — automated measurement determines which. Multi-model diversity is an epistemic hedge: different models have different blind spots, and disagreement is signal. Routing evolves from static tiers through complexity-aware to fully adaptive, where selection becomes empirical.
+
+**Sparse topology in multi-agent collaboration.** Fully-connected agent networks converge faster but to worse answers (Zollman effect — epistemic network theory). Default to sparse or ring topologies for multi-agent review and discourse. The diversity cost of full connectivity is real: agents anchored on each other's output collapse to consensus before exploring the solution space. Shift to full connectivity only when rapid convergence is explicitly worth the diversity cost, or when subsystem maturity is low enough (M0-M1) that information sharing matters more than independent exploration.
 
 **Plugin ecosystem.** Keep splitting. Each plugin does one thing well. The right count is however many single-responsibility units exist. Growth is a feature. Plugins declare capabilities; the platform composes them. Plugins are Actions with declared effects; the platform is the RunGraph.
 
@@ -140,17 +163,21 @@ The bar is high — kernel-native is earned by architectural role, not convenien
 
 **Complexity.** The problem IS complex. The goal isn't simplicity — it's managing essential complexity through boundaries, contracts, and composition. Accidental complexity is the enemy. Every addition draws from a complexity budget. Gridfire is the long-term paydown: replace many ad-hoc mechanisms with a few powerful primitives.
 
-**Architecture.** The current decomposition (5 pillars, 3 layers) reflects where we are, not a permanent structure. The principles behind pillar boundaries are stable: separation of mechanism and policy, independence of UI from logic, pluggable capability ecosystem, closed-loop learning. The number of pillars is empirical. Gridfire may become a pillar. The principles decide, not tradition.
+**Architecture.** The current decomposition (6 pillars, 3 layers) reflects where we are, not a permanent structure. The principles behind pillar boundaries are stable: separation of mechanism and policy, independence of UI from logic, pluggable capability ecosystem, closed-loop learning. The number of pillars is empirical. Gridfire may become a pillar. The principles decide, not tradition.
 
 ---
 
-## Memory Architecture
+## Roadmap Philosophy
+
+These sections describe longer-horizon doctrine and roadmap-shaping decisions. They guide direction without overriding the operational rules above.
+
+### Memory Architecture
 
 *Composition applied to knowledge: many scoped stores with explicit boundaries, unified through retrieval, not migration.*
 
 Sylveste has 10 memory-shaped systems across 3 layers. Each was built to solve a specific problem. The taxonomy below prevents future systems from creating yet another knowledge store without checking if an existing category fits.
 
-### Five Categories
+#### Five Categories
 
 | Category | Name | What it holds | Owner | Decay model |
 |----------|------|---------------|-------|-------------|
@@ -160,7 +187,7 @@ Sylveste has 10 memory-shaped systems across 3 layers. Each was built to solve a
 | C4 | Curated Knowledge | Human-validated patterns, solutions, reference material | docs/solutions/ | Provenance-based (10-review + 180d staleness) |
 | C5 | Ephemeral Context | Per-session working memory, auto-memory, cache blobs | Plugin-local filesystem | Intermem promotion model (14d grace + decay) |
 
-### Decision Rule
+#### Decision Rule
 
 When a new piece of memory needs a home:
 
@@ -170,7 +197,7 @@ When a new piece of memory needs a home:
 - Is it a human-validated pattern or solution? → **C4** (docs/solutions/)
 - Is it a working note that might become permanent? → **C5** (auto-memory → intermem promotion)
 
-### Design Decisions
+#### Design Decisions
 
 **Unify retrieval, not storage.** The real problem is fragmented read paths, not fragmented stores. A thin retrieval layer that queries across systems and returns ranked, deduplicated results solves discoverability without migration risk. Each system keeps its storage.
 
@@ -184,7 +211,7 @@ See `docs/prds/2026-03-07-memory-architecture-convergence.md` for the full syste
 
 ---
 
-## Strong Defaults, Replaceable Policy
+### Strong Defaults, Replaceable Policy
 
 *Mechanism/policy separation applied to the product itself.*
 
@@ -198,7 +225,7 @@ See `docs/prds/2026-03-07-memory-architecture-convergence.md` for the full syste
 
 ---
 
-## Naming
+### Naming
 
 Names are compressed design arguments, not decoration.
 
@@ -208,17 +235,10 @@ Two syllables. Feels right in your hands. You learn what they mean once; you fee
 
 See [docs/guides/naming-conventions.md](docs/guides/naming-conventions.md) for the practical guide.
 
-### Brand Registers
+#### Brand Architecture
 
-Two brands, one architecture. The layer boundary is the brand boundary:
+The launch-facing Sylveste surface stays in the SF/infrastructure register: Clavain, Skaffen, Intercore, Interspect, Autarch, Interverse, and the `inter-*` capability layer. Internal product-family boundaries and launch-suppression rules live in [docs/canon/brand-architecture.md](docs/canon/brand-architecture.md). Do not reintroduce Garden Salon or Meadowsyn into public Sylveste launch copy until their own surfaces are ready.
 
-- **Sylveste** (SF register) — infrastructure: kernel, OS, profiler, plugins, CLI. For developers and platform builders.
-- **Garden Salon** (organic register) — experience: multiplayer workspace, CRDT shared state, agent-as-participant. For everyone.
-- **Meadowsyn** (bridge) — visualization: real-time systems dashboards connecting infrastructure to experience.
-- **inter-\*** (neutral register) — the ~60 companion plugins. Coexists with both brands.
-
-**Enforcement:** Garden-salon language (organic metaphors, cultivation, tending, blooming) does NOT appear in kernel docs (Intercore), OS docs (Clavain), profiler docs (Interspect), plugin docs (interverse), CLAUDE.md, AGENTS.md, or PHILOSOPHY.md. These stay in the SF register. The organic register is reserved for Garden Salon product surfaces and Meadowsyn. This is a brand decision, not a technical one — mixing registers dilutes both.
-
-## End State
+### End State
 
 There is no "done." The flywheel doesn't converge — it compounds. There is no end state for learning.

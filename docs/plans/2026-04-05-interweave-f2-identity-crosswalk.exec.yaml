@@ -1,0 +1,53 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 5
+timeout_per_task: 300
+
+stages:
+  - name: "Wave 1 — Storage foundation"
+    tasks:
+      - id: task-1
+        title: "SQLite storage layer (CrosswalkDB)"
+        files: [src/interweave/storage.py, tests/test_storage.py]
+        depends: []
+
+  - name: "Wave 2 — Crosswalk API"
+    tasks:
+      - id: task-2
+        title: "Canonical ID format and Crosswalk API"
+        files: [src/interweave/crosswalk.py, tests/test_crosswalk.py]
+        depends: [task-1]
+
+  - name: "Wave 3 — Resolution engines (parallel)"
+    tasks:
+      - id: task-3
+        title: "File-level identity resolution"
+        files: [src/interweave/resolve_file.py, tests/test_resolve_file.py]
+        depends: [task-2]
+      - id: task-4
+        title: "Function-level identity resolution (tree-sitter)"
+        files: [src/interweave/resolve_function.py, tests/test_resolve_function.py, pyproject.toml]
+        depends: [task-2]
+      - id: task-6
+        title: "Actor identity resolution"
+        files: [src/interweave/resolve_actor.py, tests/test_resolve_actor.py]
+        depends: [task-2]
+
+  - name: "Wave 4 — Rename detection"
+    tasks:
+      - id: task-5
+        title: "Function rename/move detection with confidence"
+        files: [src/interweave/detect_renames.py, tests/test_detect_renames.py]
+        depends: [task-4]
+
+  - name: "Wave 5 — Diagnostics + integration"
+    tasks:
+      - id: task-7
+        title: "Diagnostic property table and public API"
+        files: [src/interweave/diagnostics.py, src/interweave/__init__.py, tests/test_diagnostics.py]
+        depends: [task-3, task-4, task-6]
+      - id: task-8
+        title: "Integration test — full crosswalk workflow"
+        files: [tests/test_integration_crosswalk.py]
+        depends: [task-5, task-7]

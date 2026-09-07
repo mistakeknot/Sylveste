@@ -1,0 +1,7 @@
+STEP 1: denied=no stdout=probe-ok
+STEP 2: denied=no stdout=touch: inside-marker.txt: Operation not permitted\nrc=1
+STEP 3: denied=no stdout=rc=0
+STEP 4: denied=no stdout=ok 9 mismatched --kind gate with --role validator exits 2 and writes nothing\nok 10 a note with backslashes lists verbatim\nok 11 an injection note with a long criterion writes no orphan row\nrc=
+STEP 5: denied=no stdout=error: failed to open file `/Users/sma/.cache/uv/sdists-v9/.git`: Operation not permitted (os error 1)
+STEP 6: denied=no stdout=/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python: can't open file '/private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/probe/clavain/tests/scripts/plan-gauge-lint.py': [Errno 2] No such file or directory
+STEP 7: denied=no stdout=The outside file says: nonce-028e7f9c

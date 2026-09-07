@@ -1,0 +1,3 @@
+=== plan-gauge-lint: /private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/demo2/brief-n8jf.md ===
+  note: contract=brief; verification syntax-checked, not executed
+  no gauge defects found

@@ -1,6 +1,6 @@
 # Sylveste — Agent Development Guide
 
-Open-source autonomous software development agency platform. Six pillars (Intercore, Clavain, Skaffen, Interverse, Autarch, Interspect) across three layers (L1 kernel, L2 OS, L3 apps). 58 Interverse plugins, 18 with MCP servers.
+Open-source autonomous software development agency platform. Six pillars (Intercore, Clavain, Skaffen, Interverse, Autarch, Interspect) across three layers (L1 kernel, L2 OS, L3 apps). 66 Interverse plugin manifests, 19 with MCP servers.
 
 ## Quick Reference
 
@@ -11,7 +11,7 @@ cd interverse/<name> && uv run pytest tests/structural/ -v  # Plugin tests
 cd core/intercore && go test ./...        # Kernel tests
 ic publish --patch                        # Publish plugin (Go CLI)
 scripts/bump-version.sh <ver>             # Publish plugin (shell)
-bd close <id> && git push                 # Complete work (`bd sync` first only if your local bd build supports it)
+bd backup && bash .beads/push.sh && git push  # Complete work after commit
 ```
 
 ## Topic Guides
@@ -27,6 +27,7 @@ bd close <id> && git push                 # Complete work (`bd sync` first only 
 | Critical Patterns | [agents/critical-patterns.md](agents/critical-patterns.md) | Six must-know patterns from production failures |
 | Prerequisites | [agents/prerequisites.md](agents/prerequisites.md) | Required tools, secrets, Go module path convention |
 | Operational Guides | [agents/operational-guides.md](agents/operational-guides.md) | Guide index, prior solutions search, prior art pipeline, operational notes |
+| Worktree-first Coordination | [docs/guide-worktree-first-coordination.md](docs/guide-worktree-first-coordination.md) | When worktrees are required, native isolation vs interlock coordination, beads-from-worktrees, nested-repo rule, doctor checks |
 | v1.0 Roadmap | [docs/roadmap-v1.md](docs/roadmap-v1.md) | Parallel track model (Autonomy, Safety, Adoption), version gates, milestone exit criteria |
 
 ## Conventions
@@ -35,13 +36,17 @@ bd close <id> && git push                 # Complete work (`bd sync` first only 
 
 **Plugin collisions:** Claude Code autodiscovers all `.claude-plugin/plugin.json` in the monorepo. One canonical owner per command/skill — when extracted from Clavain, remove from Clavain's plugin.json. Extracted plugins own their domain. Delegation facades (namespaced commands like `interkasten:doctor`) are safe.
 
-**Work tracking:** Beads (`bd create/close`) is the single source of truth. Never create TODO files, markdown checklists, or pending-beads lists. See [agents/beads-workflow.md](agents/beads-workflow.md).
+**Work tracking:** Beads (`bd create/close`) is the canonical tracker for Sylveste-internal work. All Sylveste agents and contributors track work in beads inside this repo — do not duplicate it via TODO files or markdown checklists. External rigs (superpowers, GSD, compound-engineering) ship their own task surfaces; that tracking belongs to those rigs and is not displaced by this rule. See [agents/beads-workflow.md](agents/beads-workflow.md).
 
 **Git workflow:** Owner/agents commit directly to `main` (trunk-based). External contributors: Fork + PR (branch protection enabled). See [docs/guide-contributing.md](docs/guide-contributing.md).
+
+**Worktrees:** Native Claude Code worktrees isolate file edits; interlock coordinates agents that share a tree. Mutating agent/workflow fan-outs default to `isolation: worktree`, **per nested repo** — a root-repo worktree materializes almost none of the nested plugins, so root operations that touch nested repos (publish waves, cross-repo sweeps) run against the main checkout. See [docs/guide-worktree-first-coordination.md](docs/guide-worktree-first-coordination.md).
 
 **Philosophy alignment:** When planning, brainstorming, or reviewing changes in any module, read that module's `PHILOSOPHY.md`. Add two short lines to planning outputs: **Alignment** (how it supports the module's purpose) and **Conflict/Risk** (any tension, or 'none'). If a high-value change conflicts, either adjust the plan or create follow-up to update the module's `PHILOSOPHY.md`.
 
 ## Recent Changes
+
+**Kimi Code host support.** Kimi Code CLI is now a fourth supported host alongside Claude Code, Codex, and Gemini. `scripts/gen-kimi-manifests.py` translates every `.claude-plugin/plugin.json` into a native `kimi.plugin.json` (skills/commands paths, MCP `${CLAUDE_PLUGIN_ROOT}` resolution, hook flattening with tool-matcher mapping); `scripts/kimi-hook-bridge.sh` lets Claude-format hook scripts run under Kimi's hook protocol; `os/Clavain/scripts/install-kimi.sh` (mirroring `install-codex.sh`) handles skills symlinks into `~/.agents/skills/`, MCP merge into `~/.kimi-code/mcp.json`, managed hooks block in `config.toml`, doctor, and uninstall. Top-level `install.sh`/`uninstall.sh` gained `command -v kimi`-gated blocks. User guide: [docs/guide-kimi-host.md](docs/guide-kimi-host.md). Known gap: Claude-format custom subagent definitions (`agents/*.md`) have no Kimi equivalent.
 
 **interlab v0.4.2 — Mutation store and provenance tracking.** The `internal/mutation/` package adds a SQLite-backed mutation history store at `~/.local/share/interlab/mutations.db` with three new MCP tools:
 - `mutation_record` — Persist an approach attempt with hypothesis, quality signal, and provenance (inspired_by, session_id, campaign_id). Returns `is_new_best` status.
@@ -58,9 +63,13 @@ bd close <id> && git push                 # Complete work (`bd sync` first only 
 
 1. File beads for remaining work (`bd create`)
 2. Run quality gates (tests, linters, builds)
-3. Close/update beads (`bd close <id>`)
-4. **Push** — `git pull --rebase`, run `bd sync` if your local bd build supports it, then `git push`
-5. Verify `git status` shows "up to date with origin"
+3. Stage only intentional files (`git add <files>`; never `git add .`)
+4. Run `bd backup`
+5. Commit
+6. Run `bd orphans` and close/update beads that are truly complete
+7. Run `bd backup` again
+8. Push Beads with `bash .beads/push.sh`, then push Git with `git push`
+9. Verify `git status` shows "up to date with origin"
 
 Work is NOT complete until `git push` succeeds. See [agents/session-protocol.md](agents/session-protocol.md) for full details.
 
@@ -82,33 +91,24 @@ bd close <id>         # Complete work
 
 ### Rules
 
-- Use `bd` for ALL task tracking — do NOT use TodoWrite, TaskCreate, or markdown TODO lists
+- Use `bd` for Sylveste-internal task tracking — do not duplicate it via TodoWrite, TaskCreate, or markdown TODO lists. External rigs with their own task surfaces (superpowers, GSD, compound-engineering) are unaffected.
 - Run `bd prime` for detailed command reference and session close protocol
-- Use `bd remember` for persistent knowledge — do NOT use MEMORY.md files
 
 ## Session Completion
 
-**When ending a work session**, you MUST complete ALL steps below. Work is NOT complete until `git push` succeeds.
-
-**MANDATORY WORKFLOW:**
+When ending a work session, work through the steps below before handing off — the change isn't landed until `git push` succeeds.
 
 1. **File issues for remaining work** - Create issues for anything that needs follow-up
 2. **Run quality gates** (if code changed) - Tests, linters, builds
 3. **Update issue status** - Close finished work, update in-progress items
-4. **PUSH TO REMOTE** - This is MANDATORY:
+4. **Push to remote**:
    ```bash
-   git pull --rebase
-   bd dolt push
+   bd backup
+   bash .beads/push.sh
    git push
    git status  # MUST show "up to date with origin"
    ```
 5. **Clean up** - Clear stashes, prune remote branches
 6. **Verify** - All changes committed AND pushed
 7. **Hand off** - Provide context for next session
-
-**CRITICAL RULES:**
-- Work is NOT complete until `git push` succeeds
-- NEVER stop before pushing - that leaves work stranded locally
-- NEVER say "ready to push when you are" - YOU must push
-- If push fails, resolve and retry until it succeeds
 <!-- END BEADS INTEGRATION -->

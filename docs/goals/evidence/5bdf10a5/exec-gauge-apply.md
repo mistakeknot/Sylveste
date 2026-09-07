@@ -1,0 +1,13 @@
+- Commit: `c03442c8fde4432bc151f3baa485c2275095987f`
+- Checks:
+  - `py_compile`: passed
+  - Structural tests: `30 passed`
+  - Self-test: `SELF-TEST PASSED`
+  - Bats gate: `8 passed`
+  - Frozen acceptance file: `frozen-intact`
+  - Commit scope: only `scripts/plan-gauge-lint.py`
+- Failures:
+  - Expected pre-implementation red: `10 failed, 2 passed`; `--apply` was unrecognized.
+  - Initial sandboxed uv/commit attempts lacked cache/git-index access; authorized retries succeeded.
+- Unresolved questions: none.
+- Push/deploy: not performed.

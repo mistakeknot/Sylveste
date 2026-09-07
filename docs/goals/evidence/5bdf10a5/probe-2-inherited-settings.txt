@@ -1,0 +1,4 @@
+STEP 1: denied=no stdout=rc=0
+STEP 2: denied=no stdout=..................                                                       [100%] 18 passed in 5.61s
+STEP 3: denied=no stdout=/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python: can't open file '/private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/probe/clavain/tests/scripts/plan-gauge-lint.py': [Errno 2] No such file or directory
+STEP 4: denied=no stdout=/opt/homebrew/Cellar/bats-core/1.13.0/libexec/bats-core/bats: line 105: cd: tests/shell: No such file or directory

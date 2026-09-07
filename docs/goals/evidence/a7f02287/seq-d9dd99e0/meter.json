@@ -1,0 +1,105 @@
+{
+  "run": "d9dd99e0",
+  "session": "aa2bb078-ee16-4c32-9f97-01ef7dbdec61",
+  "goal": "a7f02287",
+  "started": "2026-09-07T10:40:26Z",
+  "finished": "2026-09-07T11:07:53Z",
+  "wall_s": 1646.8,
+  "max_parallel": 1,
+  "dispatches": [
+    {
+      "item": "9hqr",
+      "role": "validation",
+      "model": "gpt-5.6-sol",
+      "started": "2026-09-07T10:40:26Z",
+      "finished": "2026-09-07T10:41:38Z",
+      "rc": null,
+      "timed_out": false,
+      "output": null,
+      "note": "reconstructed from the packet: item-level times"
+    },
+    {
+      "item": "n8jf",
+      "role": "routine-execution",
+      "model": "gpt-5.6-sol",
+      "started": "2026-09-07T10:41:38Z",
+      "finished": "2026-09-07T10:52:02Z",
+      "rc": null,
+      "timed_out": false,
+      "output": null,
+      "note": "reconstructed from the packet: item-level times"
+    },
+    {
+      "item": "n8jf",
+      "role": "validation",
+      "model": "claude-fable-5-1",
+      "started": "2026-09-07T10:41:38Z",
+      "finished": "2026-09-07T10:52:02Z",
+      "rc": null,
+      "timed_out": false,
+      "output": null,
+      "note": "reconstructed from the packet: item-level times"
+    },
+    {
+      "item": "ihnv",
+      "role": "routine-execution",
+      "model": "gpt-5.6-sol",
+      "started": "2026-09-07T10:52:02Z",
+      "finished": "2026-09-07T11:07:53Z",
+      "rc": null,
+      "timed_out": false,
+      "output": null,
+      "note": "reconstructed from the packet: item-level times"
+    },
+    {
+      "item": "ihnv",
+      "role": "validation",
+      "model": "claude-fable-5-1",
+      "started": "2026-09-07T10:52:02Z",
+      "finished": "2026-09-07T11:07:53Z",
+      "rc": null,
+      "timed_out": false,
+      "output": null,
+      "note": "reconstructed from the packet: item-level times"
+    }
+  ],
+  "items": [
+    {
+      "id": "9hqr",
+      "status": "validator_unrun",
+      "wait_s": 0.0,
+      "run_s": 72.1,
+      "merge_outcome": "not_attempted",
+      "files": [
+        "scripts/orchestrate.py",
+        "tests/structural/test_orchestrate_fresh_output.py"
+      ],
+      "blocked_by": null
+    },
+    {
+      "id": "n8jf",
+      "status": "merged",
+      "wait_s": 0.0,
+      "run_s": 623.8,
+      "merge_outcome": "merged",
+      "files": [
+        "scripts/dispatch.sh",
+        "tests/shell/dispatch_claude_settings.bats"
+      ],
+      "blocked_by": null
+    },
+    {
+      "id": "ihnv",
+      "status": "merged",
+      "wait_s": 0.0,
+      "run_s": 950.9,
+      "merge_outcome": "merged",
+      "files": [
+        "scripts/plan-gauge-lint.py",
+        "tests/structural/test_plan_gauge_apply.py"
+      ],
+      "blocked_by": null
+    }
+  ],
+  "note": "meter.json reconstructed from the closing packet; the run directory was removed with its clone before the copy"
+}

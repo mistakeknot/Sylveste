@@ -1,0 +1,47 @@
+{
+  "summary": {
+    "main_output_share": 0.997,
+    "main_cost_share": 0.943,
+    "main_integrator_context_per_turn": 184708,
+    "completed_tasks": null,
+    "absolute_cost_per_completed_task": null,
+    "total_output_tokens": 98573,
+    "total_cost": 15.18,
+    "known_cost_subtotal": 15.18,
+    "cost_estimate_complete": true,
+    "pricing_lower_bound": false,
+    "files_scanned": 4051
+  },
+  "rows": [
+    {
+      "lane": "main-integrator",
+      "model": "claude-fable-5-1",
+      "msgs": 79,
+      "output_tokens": 98263,
+      "cache_read_tokens": 14292183,
+      "cache_creation_tokens": 284018,
+      "ttl_unreported_msgs": 0,
+      "input_tokens": 15734,
+      "context_tokens": 14591935,
+      "ctx_per_msg": 184708,
+      "cost": 14.32,
+      "pricing_status": "priced",
+      "pricing_basis": "API-equivalent"
+    },
+    {
+      "lane": "subagent",
+      "model": "claude-sonnet-5",
+      "msgs": 39,
+      "output_tokens": 310,
+      "cache_read_tokens": 2912139,
+      "cache_creation_tokens": 110886,
+      "ttl_unreported_msgs": 0,
+      "input_tokens": 78,
+      "context_tokens": 3023103,
+      "ctx_per_msg": 77515,
+      "cost": 0.86,
+      "pricing_status": "priced",
+      "pricing_basis": "API-equivalent"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "run": "838742fd",
+  "session": "aa2bb078-ee16-4c32-9f97-01ef7dbdec61",
+  "goal": "a7f02287",
+  "started": "2026-09-07T12:07:16Z",
+  "finished": "2026-09-07T12:09:07Z",
+  "wall_s": 111.3,
+  "max_parallel": 1,
+  "dispatches": [
+    {
+      "item": "9hqr",
+      "role": "validation",
+      "model": "gpt-5.6-sol",
+      "started": "2026-09-07T12:07:28Z",
+      "finished": "2026-09-07T12:09:06Z",
+      "rc": 0,
+      "timed_out": false,
+      "output": "/Users/sma/projects/Sylveste/os/Clavain/.clavain/orchestrate-runs/838742fd/9hqr/validator.md"
+    }
+  ],
+  "items": [
+    {
+      "id": "9hqr",
+      "status": "merged",
+      "wait_s": 0.1,
+      "run_s": 111.2,
+      "merge_outcome": "merged",
+      "files": [
+        "scripts/orchestrate.py",
+        "tests/structural/test_orchestrate_fresh_output.py"
+      ],
+      "blocked_by": null
+    }
+  ]
+}

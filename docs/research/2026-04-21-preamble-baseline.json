@@ -1,0 +1,16 @@
+{
+  "skill_listing_bytes": 39436,
+  "deferred_tools_delta_bytes": 17184,
+  "mcp_instructions_bytes": 2411,
+  "sessionstart_bytes": 14109,
+  "total_preamble_bytes": 83259,
+  "sampled_session_id": "a910fc63-b3c0-4031-81ff-20fa71dbbc56",
+  "attachment_types_seen": [
+    "hook_success",
+    "hook_additional_context",
+    "deferred_tools_delta",
+    "mcp_instructions_delta",
+    "skill_listing",
+    "async_hook_response"
+  ]
+}

@@ -1,0 +1,135 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 4
+timeout_per_task: 600
+
+stages:
+  - name: "Wave 0 — interface prerequisite (BLOCKS everything)"
+    tasks:
+      - id: task-0
+        title: "Extend storage.Store interface + InMemory stubs (no behavior change)"
+        files:
+          - core/intermute/internal/storage/storage.go
+          - core/intermute/internal/storage/storage_test.go
+        depends: []
+
+  - name: "Wave 1 — core model foundation (independent, parallel-safe)"
+    tasks:
+      - id: task-1
+        title: "Add Transport field + validator to Message (named type, not alias)"
+        files:
+          - core/intermute/internal/core/models.go
+          - core/intermute/internal/core/domain.go
+          - core/intermute/internal/core/domain_test.go
+        depends: [task-0]
+      - id: task-2
+        title: "Add TmuxTarget to WindowIdentity with migration"
+        files:
+          - core/intermute/internal/core/models.go
+          - core/intermute/internal/storage/sqlite/schema.sql
+          - core/intermute/internal/storage/sqlite/sqlite.go
+          - core/intermute/internal/storage/sqlite/sqlite_test.go
+        depends: [task-0]
+      - id: task-4
+        title: "Add focus_state + live_contact_policy to Agent; staleness inside GetAgentFocusState"
+        files:
+          - core/intermute/internal/core/models.go
+          - core/intermute/internal/core/domain.go
+          - core/intermute/internal/storage/sqlite/schema.sql
+          - core/intermute/internal/storage/sqlite/sqlite.go
+          - core/intermute/internal/storage/sqlite/sqlite_test.go
+        depends: [task-0]
+      - id: task-6
+        title: "livetransport package — LiveDelivery interface + Injector + sanitizing WrapEnvelope + mutex fakeTmux"
+        files:
+          - core/intermute/internal/livetransport/transport.go
+          - core/intermute/internal/livetransport/envelope.go
+          - core/intermute/internal/livetransport/transport_test.go
+          - core/intermute/internal/livetransport/envelope_test.go
+        depends: [task-0]
+
+  - name: "Wave 2 — event types + pending_pokes + config + HTTP endpoints (depends on W1)"
+    tasks:
+      - id: task-5
+        title: "Single EventPeerWindowPoke w/ result; atomic pending_pokes staging via AppendEvents; config table; INSERT OR IGNORE"
+        files:
+          - core/intermute/internal/core/domain.go
+          - core/intermute/internal/storage/storage.go
+          - core/intermute/internal/storage/sqlite/schema.sql
+          - core/intermute/internal/storage/sqlite/sqlite.go
+          - core/intermute/internal/storage/sqlite/sqlite_test.go
+        depends: [task-1, task-2, task-4]
+      - id: task-3
+        title: "upsertWindow accepts tmux_target + registration_token ownership check"
+        files:
+          - core/intermute/internal/http/handlers_window_identity.go
+          - core/intermute/internal/http/handlers_window_identity_test.go
+          - core/intermute/internal/storage/sqlite/sqlite.go
+        depends: [task-2, task-4]
+      - id: task-7
+        title: "Heartbeat accepts focus_state; policy accepts live_contact_policy; extract shared checkPolicy helper"
+        files:
+          - core/intermute/internal/http/handlers_agents.go
+          - core/intermute/internal/http/handlers_agents_test.go
+          - core/intermute/internal/http/handlers_messages.go
+        depends: [task-4]
+
+  - name: "Wave 3 — send-path wiring + rate limiter + inbox endpoint"
+    tasks:
+      - id: task-8
+        title: "Transport-aware handleSendMessage: resolveRecipientPlans + deliverLive + AppendEvents atomic commit; LiveDelivery interface on Service"
+        files:
+          - core/intermute/internal/http/handlers_messages.go
+          - core/intermute/internal/http/service.go
+          - core/intermute/cmd/intermute/main.go
+          - core/intermute/internal/http/handlers_messages_test.go
+        depends: [task-3, task-5, task-6, task-7]
+      - id: task-9
+        title: "Rate limiter for live transport 10/min per (sender,recipient)"
+        files:
+          - core/intermute/internal/http/live_ratelimit.go
+          - core/intermute/internal/http/live_ratelimit_test.go
+          - core/intermute/internal/http/service.go
+          - core/intermute/internal/http/handlers_messages.go
+        depends: [task-8]
+      - id: task-10
+        title: "Inbox-pokes HTTP endpoint + intermute inbox cobra subcommand"
+        files:
+          - core/intermute/internal/http/handlers_inbox_pokes.go
+          - core/intermute/internal/http/handlers_inbox_pokes_test.go
+          - core/intermute/internal/http/router.go
+          - core/intermute/internal/http/router_domain.go
+          - core/intermute/cmd/intermute/main.go
+        depends: [task-5]
+
+  - name: "Wave 4 — hooks + integration"
+    tasks:
+      - id: task-11
+        title: "PreToolUse + SessionStart hook scripts (jq JSON, registration token, stderr logging)"
+        files:
+          - core/intermute/hooks/intermute-peer-inbox.sh
+          - core/intermute/hooks/intermute-session-start.sh
+          - core/intermute/hooks/intermute-peer-inbox_test.sh
+          - core/intermute/hooks/README.md
+        depends: [task-10]
+      - id: task-12
+        title: "Tmux-backed integration test (build-tagged)"
+        files:
+          - core/intermute/internal/livetransport/integration_test.go
+        depends: [task-6]
+      - id: task-13
+        title: "E2E HTTP live transport round-trip test"
+        files:
+          - core/intermute/internal/http/e2e_live_test.go
+        depends: [task-8, task-11, task-12]
+
+  - name: "Wave 5 — docs"
+    tasks:
+      - id: task-14
+        title: "Live transport reference documentation (includes residual-risk section + feature-flag rollback procedure)"
+        files:
+          - core/intermute/docs/live-transport.md
+          - core/intermute/AGENTS.md
+        depends: [task-13]
+        tier: fast

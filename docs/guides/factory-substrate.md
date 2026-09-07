@@ -197,16 +197,20 @@ Policies restrict what agents can access during different sprint phases. The pri
 ### How It Works
 
 ```bash
-# Check if an action is allowed
-clavain-cli policy-check build-agent read --path=.clavain/scenarios/holdout/test.yaml
+# Check if an action is allowed (scenario-phase policy, holdout guardrails)
+clavain-cli scenario-policy-check build-agent read --path=.clavain/scenarios/holdout/test.yaml
 # {"allowed":false,"reason":"path denied by pattern in phase executing"}
 
 # Same check during shipping phase (quality gates)
-CLAVAIN_PHASE=shipping clavain-cli policy-check validator read --path=.clavain/scenarios/holdout/test.yaml
+CLAVAIN_PHASE=shipping clavain-cli scenario-policy-check validator read --path=.clavain/scenarios/holdout/test.yaml
 # {"allowed":true,"reason":"allowed by policy"}
 
 # Display current policy table
-clavain-cli policy-show
+clavain-cli scenario-policy-show
+
+# Note: the authz `policy` subcommand group (for irreversible ops) is separate —
+# see docs/canon/policy-merge.md. Old `policy-check` / `policy-show` names kept
+# as deprecation aliases until v0.7.
 ```
 
 ### Default Policy

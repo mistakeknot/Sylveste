@@ -1,0 +1,34 @@
+{
+  "run": "prior-7be37994",
+  "goal": "7be37994",
+  "session": "aa2bb078-ee16-4c32-9f97-01ef7dbdec61",
+  "window": {
+    "since": "2026-09-07T04:08:35Z",
+    "until": "2026-09-07T04:22:58Z"
+  },
+  "profile_py": "/Users/sma/.claude/plugins/cache/interagency-marketplace/interstat/0.3.6/scripts/profile.py",
+  "main_thread_usd": 4.09,
+  "seats_usd": 5.98,
+  "claude_seats_usd": {
+    "6ce44bde-c748-4eb4-9f64-6e5d1fbf16bd": 5.98,
+    "a98c5c7f-67dd-4f3c-9884-d5dc4179e330": 0
+  },
+  "codex_seats_usd": {
+    "01a0742a-d5cf-7543-ab51-97ef4deaaf87": 0
+  },
+  "run_total_usd": 10.07,
+  "main_thread_share_of_run": 0.406,
+  "machine_window_usd": 46.09,
+  "main_thread_share_of_machine_window": 0.089,
+  "unpriced_msgs": {
+    "window": 37,
+    "main": 0
+  },
+  "files_scanned": 9352,
+  "orchestrator_turns": 11,
+  "orchestrator_tool_turns": 10,
+  "transcripts": [
+    "/Users/sma/.claude/projects/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61.jsonl"
+  ],
+  "dispatches": []
+}

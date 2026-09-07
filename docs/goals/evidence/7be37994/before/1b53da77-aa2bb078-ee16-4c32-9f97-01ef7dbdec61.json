@@ -1,0 +1,72 @@
+{
+  "summary": {
+    "main_output_share": 0.853,
+    "main_cost_share": 0.349,
+    "main_integrator_context_per_turn": 363684,
+    "completed_tasks": null,
+    "absolute_cost_per_completed_task": null,
+    "total_output_tokens": 121180,
+    "total_cost": 59.31,
+    "known_cost_subtotal": 59.31,
+    "cost_estimate_complete": true,
+    "files_scanned": 79
+  },
+  "rows": [
+    {
+      "lane": "main-integrator",
+      "model": "claude-fable-5-1",
+      "msgs": 41,
+      "output_tokens": 103408,
+      "cache_read_tokens": 13945794,
+      "cache_creation_tokens": 955743,
+      "input_tokens": 9523,
+      "context_tokens": 14911060,
+      "ctx_per_msg": 363684,
+      "cost": 20.7,
+      "pricing_status": "priced",
+      "pricing_basis": "API-equivalent"
+    },
+    {
+      "lane": "subagent",
+      "model": "claude-opus-5",
+      "msgs": 217,
+      "output_tokens": 5318,
+      "cache_read_tokens": 16468164,
+      "cache_creation_tokens": 1822651,
+      "input_tokens": 434,
+      "context_tokens": 18291249,
+      "ctx_per_msg": 84291,
+      "cost": 19.76,
+      "pricing_status": "priced",
+      "pricing_basis": "API-equivalent"
+    },
+    {
+      "lane": "subagent",
+      "model": "claude-sonnet-5",
+      "msgs": 494,
+      "output_tokens": 11726,
+      "cache_read_tokens": 41466111,
+      "cache_creation_tokens": 2862788,
+      "input_tokens": 988,
+      "context_tokens": 44329887,
+      "ctx_per_msg": 89737,
+      "cost": 15.57,
+      "pricing_status": "priced",
+      "pricing_basis": "API-equivalent"
+    },
+    {
+      "lane": "subagent",
+      "model": "claude-haiku-4-5-20251001",
+      "msgs": 180,
+      "output_tokens": 728,
+      "cache_read_tokens": 5867676,
+      "cache_creation_tokens": 2146850,
+      "input_tokens": 1498,
+      "context_tokens": 8016024,
+      "ctx_per_msg": 44533,
+      "cost": 3.28,
+      "pricing_status": "priced",
+      "pricing_basis": "API-equivalent"
+    }
+  ]
+}

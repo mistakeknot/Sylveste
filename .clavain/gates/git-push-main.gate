@@ -1,0 +1,3 @@
+op=git-push-main
+script=os/Clavain/scripts/gates/git-push-main.sh
+registered_at=2026-04-19

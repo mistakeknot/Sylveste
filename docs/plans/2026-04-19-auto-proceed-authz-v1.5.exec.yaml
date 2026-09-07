@@ -1,0 +1,78 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 1
+timeout_per_task: 600
+
+stages:
+  - name: "Wave 1 — Spec-lock + schema (independent)"
+    tasks:
+      - id: task-1
+        title: "Spec-lock: trust model + signing payload canon docs"
+        files:
+          - docs/canon/authz-signing-trust-model.md
+          - docs/canon/authz-signing-payload.md
+        depends: []
+        tier: fast
+      - id: task-2
+        title: "Migration 033 — signing columns + cutover marker"
+        files:
+          - core/intercore/internal/db/migrations/033_authz_signing.sql
+          - core/intercore/internal/db/db_test.go
+        depends: []
+
+  - name: "Wave 2 — Crypto primitives (depends on spec)"
+    tasks:
+      - id: task-3
+        title: "Ed25519 sign/verify + key management in pkg/authz"
+        files:
+          - core/intercore/pkg/authz/keys.go
+          - core/intercore/pkg/authz/keys_test.go
+          - core/intercore/pkg/authz/sign.go
+          - core/intercore/pkg/authz/sign_test.go
+        depends: [task-1]
+
+  - name: "Wave 3 — CLI + gates (depends on crypto + schema)"
+    tasks:
+      - id: task-4
+        title: "clavain-cli policy {init-key,sign,verify,rotate-key,quarantine}"
+        files:
+          - os/Clavain/cmd/clavain-cli/authz.go
+          - os/Clavain/cmd/clavain-cli/authz_test.go
+        depends: [task-2, task-3]
+      - id: task-5
+        title: "gate_sign helper + wrapper orchestration"
+        files:
+          - os/Clavain/scripts/gates/_common.sh
+          - os/Clavain/scripts/gates/bead-close.sh
+          - os/Clavain/scripts/gates/git-push-main.sh
+          - os/Clavain/scripts/gates/bd-push-dolt.sh
+          - os/Clavain/scripts/gates/ic-publish-patch.sh
+          - os/Clavain/scripts/gates/gates-smoke_test.sh
+        depends: [task-4]
+
+  - name: "Wave 4 — Publish unify (depends on CLI)"
+    tasks:
+      - id: task-6
+        title: "RequiresApproval consults authz records; marker fallback"
+        files:
+          - core/intercore/internal/publish/approval.go
+          - core/intercore/internal/publish/approval_test.go
+        depends: [task-4]
+
+  - name: "Wave 5 — Bootstrap + E2E"
+    tasks:
+      - id: task-7
+        title: "authz-init.sh bootstrap + README v1.5 quickstart"
+        files:
+          - os/Clavain/scripts/authz-init.sh
+          - os/Clavain/README.md
+          - os/Clavain/config/policy.yaml.example
+        depends: [task-5, task-6]
+        tier: fast
+      - id: task-8
+        title: "v1.5 E2E integration test + full matrix"
+        files:
+          - os/Clavain/tests/authz-v15-e2e_test.sh
+          - os/Clavain/tests/authz-e2e_test.sh
+        depends: [task-7]

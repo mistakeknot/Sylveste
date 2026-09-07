@@ -1,0 +1,19 @@
+fix(hooks): the commit lock and hook install work from a git worktree (Sylveste-asqi)
+
+interlock-precommit-hook, commit_lock_path in hooks/lib.sh and
+interlock-install-hooks built their paths from $GIT_ROOT/.git, which inside a
+worktree is the gitdir pointer file: every mkdir under it failed, so a worktree
+commit spun for the whole 30 s timeout and died with "Commit lock timeout.
+Another session is committing." (seen 2026-09-02 on interlens). The three now
+use git rev-parse --path-format=absolute --git-common-dir (the installer:
+--git-path hooks), so all worktrees of a checkout share one lock and one hooks
+directory. INTERLOCK_COMMIT_LOCK_TIMEOUT overrides the timeout for tests.
+
+tests/structural/test_precommit_lock.py runs the real hook in a worktree of a
+throwaway repo with intermute unreachable: the fixed hook passes, a live holder
+in the common dir still blocks it, and the pre-fix hook from d635136 fails the
+same fixture. This commit was made from a worktree with the fixed hook
+installed and an agent id set, which is the live case.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01Xkt2xiuD4S5FGTWkUaUNdP

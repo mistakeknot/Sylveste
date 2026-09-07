@@ -1,0 +1,39 @@
+{
+  "run": "120d9aa1",
+  "session": "aa2bb078-ee16-4c32-9f97-01ef7dbdec61",
+  "goal": "60771535",
+  "started": "2026-09-07T06:40:50Z",
+  "finished": "2026-09-07T06:51:59Z",
+  "dispatches": [
+    {
+      "item": "meti",
+      "role": "routine-execution",
+      "model": "gpt-5.6-sol",
+      "started": "2026-09-07T06:40:52Z",
+      "finished": "2026-09-07T06:47:50Z",
+      "rc": 0,
+      "timed_out": false,
+      "output": "/Users/sma/projects/Sylveste/os/Clavain/.clavain/orchestrate-runs/120d9aa1/meti/executor.md"
+    },
+    {
+      "item": "meti",
+      "role": "validation",
+      "model": "claude-fable-5-1",
+      "started": "2026-09-07T06:47:52Z",
+      "finished": "2026-09-07T06:51:25Z",
+      "rc": 0,
+      "timed_out": false,
+      "output": "/Users/sma/projects/Sylveste/os/Clavain/.clavain/orchestrate-runs/120d9aa1/meti/validator.md"
+    },
+    {
+      "item": "b7e0",
+      "role": "validation",
+      "model": "kimi-code",
+      "started": "2026-09-07T06:51:32Z",
+      "finished": "2026-09-07T06:51:58Z",
+      "rc": 0,
+      "timed_out": false,
+      "output": "/Users/sma/projects/Sylveste/os/Clavain/.clavain/orchestrate-runs/120d9aa1/b7e0/validator.md"
+    }
+  ]
+}

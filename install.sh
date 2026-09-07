@@ -3,7 +3,7 @@
 #
 # Usage:
 #   curl -fsSL https://raw.githubusercontent.com/mistakeknot/Sylveste/main/install.sh | bash
-#   bash install.sh [--help] [--dry-run] [--verbose] [--update] [--uninstall]
+#   bash install.sh [--help] [--dry-run] [--verbose] [--update] [--uninstall] [--agency=<name>]
 #
 # Flags:
 #   --help        Show this usage message and exit
@@ -11,6 +11,7 @@
 #   --verbose     Enable debug output
 #   --update      Update existing installation (skip first-time setup)
 #   --uninstall   Remove Sylveste components (Clavain, companions, ic, Codex/Gemini skills)
+#   --agency=NAME Explicitly install one first-class agency and exit
 
 set -euo pipefail
 
@@ -23,6 +24,7 @@ source "$SCRIPT_DIR/lib/installer-common.sh"
 VERBOSE=false
 UPDATE_ONLY=false
 UNINSTALL=false
+AGENCY=""
 HAS_BD=false
 CACHE_DIR="${HOME}/.claude/plugins/cache"
 
@@ -35,7 +37,7 @@ install.sh -- Curl-fetchable installer for Sylveste (Clavain + Interverse)
 
 Usage:
   curl -fsSL https://raw.githubusercontent.com/mistakeknot/Sylveste/main/install.sh | bash
-  bash install.sh [--help] [--dry-run] [--verbose] [--update] [--uninstall]
+  bash install.sh [--help] [--dry-run] [--verbose] [--update] [--uninstall] [--agency=<name>]
 
 Flags:
   --help        Show this usage message and exit
@@ -43,6 +45,7 @@ Flags:
   --verbose     Enable debug output
   --update      Update existing installation (skip first-time setup)
   --uninstall   Remove Sylveste components (prompts for confirmation)
+  --agency=NAME Explicitly install one discovered first-class agency and exit
 
 Prerequisites:
   Required: jq, Go 1.22+ (builds ic kernel and clavain-cli), git
@@ -57,6 +60,13 @@ USAGE
         --verbose) VERBOSE=true ;;
         --update) UPDATE_ONLY=true ;;
         --uninstall) UNINSTALL=true ;;
+        --agency=*)
+            AGENCY=${arg#*=}
+            if [[ -z "$AGENCY" ]]; then
+                printf '%s%s%s\n' "$RED" '--agency requires a name' "$RESET"
+                exit 1
+            fi
+            ;;
         *)
             printf "${RED}Unknown flag: %s${RESET}\n" "$arg"
             printf "Run with --help for usage.\n"
@@ -64,6 +74,17 @@ USAGE
             ;;
     esac
 done
+
+if [[ -n "$AGENCY" ]]; then
+    if [[ "$UNINSTALL" == true ]]; then
+        printf '%s%s%s\n' "$RED" '--agency cannot be combined with --uninstall' "$RESET"
+        exit 1
+    fi
+    AGENCY_ROOT="${SYLVESTE_ROOT:-$SCRIPT_DIR}"
+    AGENCY_ARGS=(--root "$AGENCY_ROOT" install "$AGENCY")
+    [[ "$DRY_RUN" == true ]] && AGENCY_ARGS+=(--dry-run)
+    exec python3 "$SCRIPT_DIR/scripts/interverse_agency.py" "${AGENCY_ARGS[@]}"
+fi
 
 debug() {
     if [[ "$VERBOSE" == true ]]; then
@@ -186,6 +207,30 @@ if [[ "$UNINSTALL" == true ]]; then
         log "${BOLD}Removing Gemini skills...${RESET}"
         run rm -rf "${HOME}/.gemini/generated-skills"
         success "Gemini generated skills removed"
+        log ""
+    fi
+
+    # Remove Kimi integration
+    if [[ -d "${HOME}/.kimi-code" ]]; then
+        log "${BOLD}Removing Kimi integration...${RESET}"
+        KIMI_SOURCE=""
+        if [[ -f "os/Clavain/scripts/install-kimi.sh" ]]; then
+            KIMI_SOURCE="$(cd "os/Clavain" && pwd)"
+        elif [[ -f "$SCRIPT_DIR/os/Clavain/scripts/install-kimi.sh" ]]; then
+            KIMI_SOURCE="$SCRIPT_DIR/os/Clavain"
+        fi
+        if [[ -n "$KIMI_SOURCE" ]]; then
+            if [[ "$DRY_RUN" == true ]]; then
+                log "  ${DIM}[DRY RUN] Would run bash ${KIMI_SOURCE}/scripts/install-kimi.sh uninstall --source ${KIMI_SOURCE}${RESET}"
+            elif bash "$KIMI_SOURCE/scripts/install-kimi.sh" uninstall --source "$KIMI_SOURCE" >/dev/null 2>&1; then
+                success "Kimi integration removed"
+            else
+                warn "Kimi uninstall reported errors"
+            fi
+        else
+            run rm -f "${HOME}/.agents/skills/clavain"
+            success "Kimi skills symlink removed (managed blocks in ~/.kimi-code left in place)"
+        fi
         log ""
     fi
 
@@ -501,6 +546,30 @@ else
     warn "Skipping ic build (source not available)"
 fi
 
+# --- Zaka + Alwe (agent steering and observation) ---
+# Same pattern as ic: build from the local checkout when present.
+for tool in Zaka Alwe; do
+    lc=$(echo "$tool" | tr '[:upper:]' '[:lower:]')
+    SRC=""
+    if [[ -f "os/$tool/cmd/$lc/main.go" ]]; then
+        SRC="os/$tool"
+    elif [[ -f "../os/$tool/cmd/$lc/main.go" ]]; then
+        SRC="../os/$tool"
+    fi
+
+    if [[ -z "$SRC" ]]; then
+        warn "Skipping $lc build (source not available). Install later with: go install github.com/mistakeknot/$tool/cmd/$lc@latest"
+        continue
+    fi
+
+    run mkdir -p "${HOME}/.local/bin"
+    if run go build -C "$SRC" -mod=readonly -o "${HOME}/.local/bin/$lc" ./cmd/$lc; then
+        [[ "$DRY_RUN" != true ]] && success "$lc built and installed to ~/.local/bin/$lc"
+    else
+        warn "$lc build failed — continuing (non-fatal). Try manually: go build -C $SRC -o ~/.local/bin/$lc ./cmd/$lc"
+    fi
+done
+
 log ""
 
 # --- Codex CLI (optional) ---
@@ -610,6 +679,64 @@ else
     debug "Gemini CLI not found, skipping Gemini skill setup"
 fi
 
+# --- Kimi Code CLI (optional) ---
+if command -v kimi &>/dev/null; then
+    log "${BOLD}Kimi Code CLI detected — installing Kimi integration...${RESET}"
+    KIMI_SOURCE=""
+
+    if [[ -f "os/Clavain/scripts/install-kimi.sh" ]]; then
+        KIMI_SOURCE="$(cd "os/Clavain" && pwd)"
+    elif [[ -f "$SCRIPT_DIR/os/Clavain/scripts/install-kimi.sh" ]]; then
+        KIMI_SOURCE="$SCRIPT_DIR/os/Clavain"
+    elif command -v git &>/dev/null; then
+        # Curl-pipe mode: clone Sylveste for the Kimi installer
+        KIMI_CLONE_DIR="${HOME}/.local/share/Sylveste"
+        if [[ -d "$KIMI_CLONE_DIR/.git" ]]; then
+            log "  Updating Sylveste checkout at $KIMI_CLONE_DIR"
+            git -C "$KIMI_CLONE_DIR" pull --ff-only 2>/dev/null || true
+            git -C "$KIMI_CLONE_DIR" submodule update --init --recursive 2>/dev/null || true
+        else
+            log "  Cloning Sylveste for Kimi integration..."
+            git clone --recursive https://github.com/mistakeknot/Sylveste.git "$KIMI_CLONE_DIR" 2>/dev/null || true
+        fi
+        if [[ -f "$KIMI_CLONE_DIR/os/Clavain/scripts/install-kimi.sh" ]]; then
+            KIMI_SOURCE="$KIMI_CLONE_DIR/os/Clavain"
+        fi
+    fi
+
+    if [[ -n "$KIMI_SOURCE" ]]; then
+        if [[ "$DRY_RUN" == true ]]; then
+            log "  ${DIM}[DRY RUN] Would install Kimi integration via install-kimi.sh${RESET}"
+        else
+            if bash "$KIMI_SOURCE/scripts/install-kimi.sh" install --source "$KIMI_SOURCE" 2>&1; then
+                success "Kimi integration installed (skills, MCP, hooks)"
+                if bash "$KIMI_SOURCE/scripts/install-kimi.sh" doctor --source "$KIMI_SOURCE" >/tmp/sylveste-kimi-doctor.out 2>/tmp/sylveste-kimi-doctor.err; then
+                    success "Kimi doctor passed"
+                else
+                    warn "Kimi doctor reported issues after install"
+                    if [[ "$VERBOSE" == true ]]; then
+                        log "  --- doctor stdout ---"
+                        sed 's/^/  /' /tmp/sylveste-kimi-doctor.out || true
+                        log "  --- doctor stderr ---"
+                        sed 's/^/  /' /tmp/sylveste-kimi-doctor.err || true
+                    fi
+                    log "  Re-run manually: ${BLUE}bash \"$KIMI_SOURCE/scripts/install-kimi.sh\" doctor --source \"$KIMI_SOURCE\"${RESET}"
+                fi
+                rm -f /tmp/sylveste-kimi-doctor.out /tmp/sylveste-kimi-doctor.err
+            else
+                warn "Kimi integration install failed"
+                log "  Re-run manually: ${BLUE}bash \"$KIMI_SOURCE/scripts/install-kimi.sh\" install --source \"$KIMI_SOURCE\"${RESET}"
+            fi
+        fi
+    else
+        warn "Kimi installer not found — run manually after cloning:"
+        log "  ${BLUE}bash os/Clavain/scripts/install-kimi.sh install${RESET}"
+    fi
+    log ""
+else
+    debug "Kimi Code CLI not found, skipping Kimi setup"
+fi
+
 # --- Verification ---
 log "${BOLD}Verifying installation...${RESET}"
 
@@ -662,6 +789,12 @@ if command -v gemini &>/dev/null; then
     log "${BOLD}Gemini CLI:${RESET}"
     log "  Skills generated and linked to ~/.gemini/generated-skills/ globally."
     log "  Runbook: ${BLUE}https://github.com/mistakeknot/Sylveste/blob/main/docs/guide-gemini-setup.md${RESET}"
+fi
+if command -v kimi &>/dev/null; then
+    log ""
+    log "${BOLD}Kimi Code CLI:${RESET}"
+    log "  Skills linked at ~/.agents/skills/clavain; MCP/hooks in ~/.kimi-code/ — restart Kimi to load them."
+    log "  Doctor: ${BLUE}bash os/Clavain/scripts/install-kimi.sh doctor${RESET}"
 fi
 log ""
 log "${BOLD}Guides:${RESET}"

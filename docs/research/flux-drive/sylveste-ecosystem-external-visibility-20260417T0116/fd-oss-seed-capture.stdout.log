@@ -1,0 +1,9 @@
+Review written to `docs/research/flux-drive/sylveste-ecosystem-external-visibility-20260417T0116/fd-oss-seed-capture.md`.
+
+**Top findings:**
+
+- **P0:** Architecture table appears before any capability moment — cold reader bounces at ~30 seconds. Fix: fold the table, put a 90-sec `asciinema` of `ic` + Clavain above it.
+- **P1:** "~30 min full platform" with no finish-line artifact. Nobody commits 30 minutes without seeing what success looks like first.
+- **P2:** interchart is the only interactive artifact and it opens with 64 nodes — hide it from lead position.
+
+**Single move this week:** Fix the README first screen. Everything else (demo, blog, HN post) points there — and right now it converts to a bounce.

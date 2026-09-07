@@ -1,0 +1,14 @@
+You are the resolved validation executor, and your resolved model must differ from the producer (the producer was codex gpt-5.6-sol). Read the contract at /private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/brief-gauge-apply.md and the executor packet below. In /Users/sma/projects/Sylveste/os/Clavain at c03442c, run its Verification with the Bash tool, every command, from the repo root, and judge only against its frozen Acceptance Criteria: output line 1 `VERDICT: PASS`, `VERDICT: FAIL`, or `VERDICT: UNRUN` (UNRUN whenever any Verification command could not be executed: a denied tool call, a missing program, an unreadable path; never guess the outcome of a command you did not run), line 2 `CRITERION: <the failing criterion, or none>`, line 3 `RECEIPT: <the verbatim output of the receipt command named below, or none>`. Then output `BEYOND THE GAUGE:` with bullets for real defects or risks the replay did not check (`- none` allowed). Never restate the contract; never fix anything; never edit a file. Note: HEAD has since advanced past c03442c with two unrelated orchestrator commits; judge the executor's commit c03442c (git show --stat c03442c) and run the Verification against the working tree as it stands. Receipt command: cat /private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/brief-gauge-apply.receipt. Executor packet:
+- Commit: `c03442c8fde4432bc151f3baa485c2275095987f`
+- Checks:
+  - `py_compile`: passed
+  - Structural tests: `30 passed`
+  - Self-test: `SELF-TEST PASSED`
+  - Bats gate: `8 passed`
+  - Frozen acceptance file: `frozen-intact`
+  - Commit scope: only `scripts/plan-gauge-lint.py`
+- Failures:
+  - Expected pre-implementation red: `10 failed, 2 passed`; `--apply` was unrecognized.
+  - Initial sandboxed uv/commit attempts lacked cache/git-index access; authorized retries succeeded.
+- Unresolved questions: none.
+- Push/deploy: not performed.

@@ -1,0 +1,99 @@
+{
+  "run": "70691474",
+  "session": "aa2bb078-ee16-4c32-9f97-01ef7dbdec61",
+  "goal": "a7f02287",
+  "started": "2026-09-07T11:08:02Z",
+  "finished": "2026-09-07T11:41:20Z",
+  "wall_s": 1998.3,
+  "max_parallel": 1,
+  "dispatches": [
+    {
+      "item": "9hqr",
+      "role": "validation",
+      "model": "gpt-5.6-sol",
+      "started": "2026-09-07T11:08:08Z",
+      "finished": "2026-09-07T11:10:03Z",
+      "rc": 0,
+      "timed_out": false,
+      "output": "/private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/demo2/seq/Clavain/.clavain/orchestrate-runs/70691474/9hqr/validator.md"
+    },
+    {
+      "item": "n8jf",
+      "role": "routine-execution",
+      "model": "gpt-5.6-sol",
+      "started": "2026-09-07T11:10:06Z",
+      "finished": "2026-09-07T11:17:31Z",
+      "rc": 0,
+      "timed_out": false,
+      "output": "/private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/demo2/seq/Clavain/.clavain/orchestrate-runs/70691474/n8jf/executor.md"
+    },
+    {
+      "item": "n8jf",
+      "role": "validation",
+      "model": "claude-fable-5-1",
+      "started": "2026-09-07T11:17:34Z",
+      "finished": "2026-09-07T11:20:45Z",
+      "rc": 0,
+      "timed_out": false,
+      "output": "/private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/demo2/seq/Clavain/.clavain/orchestrate-runs/70691474/n8jf/validator.md"
+    },
+    {
+      "item": "ihnv",
+      "role": "routine-execution",
+      "model": "gpt-5.6-sol",
+      "started": "2026-09-07T11:20:50Z",
+      "finished": "2026-09-07T11:37:26Z",
+      "rc": 0,
+      "timed_out": false,
+      "output": "/private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/demo2/seq/Clavain/.clavain/orchestrate-runs/70691474/ihnv/executor.md"
+    },
+    {
+      "item": "ihnv",
+      "role": "validation",
+      "model": "claude-fable-5-1",
+      "started": "2026-09-07T11:37:28Z",
+      "finished": "2026-09-07T11:41:18Z",
+      "rc": 0,
+      "timed_out": false,
+      "output": "/private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/demo2/seq/Clavain/.clavain/orchestrate-runs/70691474/ihnv/validator.md"
+    }
+  ],
+  "items": [
+    {
+      "id": "9hqr",
+      "status": "validator_fail",
+      "wait_s": 0.0,
+      "run_s": 122.9,
+      "merge_outcome": "not_attempted",
+      "files": [
+        "scripts/orchestrate.py",
+        "tests/structural/test_orchestrate_fresh_output.py"
+      ],
+      "blocked_by": null
+    },
+    {
+      "id": "n8jf",
+      "status": "merged",
+      "wait_s": 0.0,
+      "run_s": 644.3,
+      "merge_outcome": "merged",
+      "files": [
+        "scripts/dispatch.sh",
+        "tests/shell/dispatch_claude_settings.bats"
+      ],
+      "blocked_by": null
+    },
+    {
+      "id": "ihnv",
+      "status": "merged",
+      "wait_s": 0.0,
+      "run_s": 1231.1,
+      "merge_outcome": "merged",
+      "files": [
+        "scripts/plan-gauge-lint.py",
+        "tests/structural/test_plan_gauge_apply.py"
+      ],
+      "blocked_by": null
+    }
+  ]
+}
