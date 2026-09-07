@@ -1,19 +1,28 @@
 #!/usr/bin/env sh
-# --- BEGIN BEADS INTEGRATION v1.0.2 ---
+# --- BEGIN BEADS INTEGRATION v1.1.2 ---
 # This section is managed by beads. Do not remove these markers.
 if command -v bd >/dev/null 2>&1; then
   export BD_GIT_HOOK=1
   _bd_timeout=${BEADS_HOOK_TIMEOUT:-300}
+  _bd_used_perl=0
   if command -v timeout >/dev/null 2>&1; then
     timeout "$_bd_timeout" bd hooks run pre-commit "$@"
     _bd_exit=$?
-    if [ $_bd_exit -eq 124 ]; then
-      echo >&2 "beads: hook 'pre-commit' timed out after ${_bd_timeout}s — continuing without beads"
-      _bd_exit=0
-    fi
+  elif command -v gtimeout >/dev/null 2>&1; then
+    gtimeout "$_bd_timeout" bd hooks run pre-commit "$@"
+    _bd_exit=$?
+  elif command -v perl >/dev/null 2>&1; then
+    _bd_used_perl=1
+    perl -e 'alarm shift; exec @ARGV' "$_bd_timeout" bd hooks run pre-commit "$@"
+    _bd_exit=$?
   else
+    echo >&2 "beads: hook 'pre-commit' running without timeout; install coreutils or perl to enable BEADS_HOOK_TIMEOUT"
     bd hooks run pre-commit "$@"
     _bd_exit=$?
+  fi
+  if [ $_bd_exit -eq 124 ] || { [ $_bd_used_perl -eq 1 ] && [ $_bd_exit -eq 142 ]; }; then
+    echo >&2 "beads: hook 'pre-commit' timed out after ${_bd_timeout}s — continuing without beads"
+    _bd_exit=0
   fi
   if [ $_bd_exit -eq 3 ]; then
     echo >&2 "beads: database not initialized — skipping hook 'pre-commit'"
@@ -21,19 +30,32 @@ if command -v bd >/dev/null 2>&1; then
   fi
   if [ $_bd_exit -ne 0 ]; then exit $_bd_exit; fi
 fi
-# --- END BEADS INTEGRATION v1.0.2 ---
+# --- END BEADS INTEGRATION v1.1.2 ---
 
 # --- BEGIN SYLVESTE BEADS JSONL/DOLT DRIFT GUARD ---
-# Keep tracked .beads/issues.jsonl from getting ahead of the live Dolt authority.
-# This prevents priority-based automation from missing ready/open Beads that only
-# exist in the JSONL export.
+# Keep tracked .beads/issues.jsonl and the live Dolt authority in agreement,
+# in BOTH directions.
+#
+#   JSONL ahead of Dolt  -> priority automation misses Beads only in the export.
+#   Dolt ahead of JSONL  -> the committed snapshot silently omits real work, and
+#                           since JSONL is the only git-shared copy, that work
+#                           exists on exactly one machine's disk.
+#
+# The second direction is why --strict-extra is passed. Without it this guard ran
+# for weeks while .beads/issues.jsonl sat 63 issues behind Dolt: the check fired,
+# exited 0, and reported nothing, because it was only ever asked half the
+# question.
+#
+# Friction is bounded by the case gate below: this only runs when issues.jsonl is
+# actually staged, i.e. when the commit is claiming to be a current snapshot.
+# Mid-session commits that do not touch the export are unaffected.
 if [ -f "scripts/check_beads_jsonl_dolt_sync.py" ]; then
   _staged_files=$(git diff --cached --name-only 2>/dev/null || true)
   case "$_staged_files" in
     *".beads/issues.jsonl"*)
       _beads_jsonl_staged=$(mktemp "${TMPDIR:-/tmp}/sylveste-beads-jsonl.XXXXXX") || exit 1
       if git show :'.beads/issues.jsonl' >"$_beads_jsonl_staged" 2>/dev/null; then
-        python3 scripts/check_beads_jsonl_dolt_sync.py --issues-jsonl "$_beads_jsonl_staged"
+        python3 scripts/check_beads_jsonl_dolt_sync.py --issues-jsonl "$_beads_jsonl_staged" --strict-extra
         _beads_guard_exit=$?
       else
         echo >&2 "sylveste: unable to read staged .beads/issues.jsonl"
@@ -45,3 +67,40 @@ if [ -f "scripts/check_beads_jsonl_dolt_sync.py" ]; then
   esac
 fi
 # --- END SYLVESTE BEADS JSONL/DOLT DRIFT GUARD ---
+
+# --- NOTE: THE NO-LOSS GUARD MOVED, DO NOT RE-ADD IT HERE ---
+# A staged-vs-HEAD no-loss check lived here from 2026-08-04 to 2026-08-05. It now
+# runs for every repo from cloud/pre-commit-beads-no-loss.py, reached through the
+# shared dispatcher below, because this repo was 1 of 110 tracked
+# .beads/issues.jsonl files and the other 109 had no equivalent.
+#
+# The copy here also had a defect worth remembering: it passed a --path defaulting
+# to `.beads/issues.jsonl`, so staging this repo's OTHER tracked export --
+# research/gsv-portfolio-39/.beads/issues.jsonl -- made it compare the root path
+# instead and report "ok, 500 ids kept" about a file nobody had touched (proven
+# 2026-08-05). A check whose subject is "the wrong path was used" must find its
+# own paths; the shared one iterates whatever the commit actually stages.
+#
+# The drift guard above stays here: it is Dolt-specific and this is the only repo
+# whose Dolt authority it knows how to reach.
+
+# --- BEGIN SHARED PRE-COMMIT DISPATCHER ---
+# Call the shared secret scanner / config-invariant checks. Kept as a call from
+# this tracked hook rather than letting the installer symlink over it: that
+# displaced this file (a tracked typechange) and left a pre-commit.bak-* behind
+# for the dispatcher to chain back to, so the repo could never be clean and the
+# untracked .bak was load-bearing.
+#
+# $HOME-relative with a presence check, so this stays committable and is a
+# no-op on any machine without the dotfiles checkout.
+if [ -x "$HOME/projects/dotfiles/cloud/pre-commit.sh" ]; then
+  "$HOME/projects/dotfiles/cloud/pre-commit.sh" "$@" || exit $?
+fi
+# --- END SHARED PRE-COMMIT DISPATCHER ---
+
+# --- BEGIN SYLVESTE AUTONOMY POSITION ---
+# Managed by scripts/install-pre-commit-hook.sh. Do not hand-edit.
+if [ -x "$(git rev-parse --show-toplevel)/scripts/pre-commit-hook.sh" ]; then
+  "$(git rev-parse --show-toplevel)/scripts/pre-commit-hook.sh" "$@" || exit $?
+fi
+# --- END SYLVESTE AUTONOMY POSITION ---

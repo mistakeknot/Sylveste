@@ -27,22 +27,45 @@ Four claims, all of which must be true for Sylveste to be right:
 
 If any of these claims is wrong, the project is misguided.
 
-#### The OODARC Lens
+<a id="the-oodarc-lens"></a>
+#### The OODARCS Lens
 
-The flywheel (authority → actions → evidence → authority) is an instance of **OODARC** — Observe, Orient, Decide, Act, Reflect, Compound — operating at nested timescales:
+The flywheel (authority → actions → evidence → authority) is an instance of
+**OODARCS** — Observe, Orient, Decide, Act, Reflect, Compound, Synthesize —
+operating at nested timescales across coding, research, planning, and documentation.
+Observe actual evidence; Orient against the goal and constraints; Decide the next
+proportionate action and verification; Act within the existing scope and authority.
 
-- **Per-turn:** Agent observes tool results, orients on context, decides next action, acts, reflects on the outcome, and compounds by updating working memory.
-- **Per-sprint:** Phase gates observe artifacts, orient on sprint state, decide phase transitions, advance phases, reflect at sprint end, and compound by calibrating estimates and persisting learnings.
-- **Cross-session:** Interspect observes evidence, orients via pattern classification, decides routing proposals, acts via override application, reflects via canary monitoring, and compounds by writing routing overrides that change future behavior.
+- **Reflect** identifies what the outcome taught us: what happened, what was
+  expected, and what differed.
+- **Compound** preserves a useful improvement in an authorized artifact: a fix,
+  test, requested document, calibration, or project tracker record. Memory writes
+  remain subject to separate authorization.
+- **Synthesize** reconciles that learning with existing evidence and goals,
+  updating the working understanding and next priorities within the agreed scope.
+  Contradictory evidence can change a conclusion or priority; make that revision
+  explicit rather than retaining incompatible claims or silently expanding scope.
 
-OODARC extends Boyd's OODA loop with two phases, not one:
+At task scale, use real results to revise the next action. At sprint scale,
+reconcile verification and review outcomes with acceptance criteria. Across
+sessions, compare retained lessons with new evidence before applying them again.
+A saved lesson is evidence to assess, not an automatic authority grant.
 
-- **Reflect** extracts the lesson: what happened, what was expected, what differed. This is observation of one's own process — per-sprint, ephemeral until captured.
-- **Compound** persists the lesson in a form that changes future behavior: calibration files that adjust estimates, routing overrides that reclassify agents, solution docs that prevent repeated mistakes. This is what closes the loop — without it, Reflect is journaling.
+Apply the loop proportionally. Trivial requests need no skill ceremony; substantive
+work does not require seven response headings, an invented lesson, an automatic
+memory write, or unrelated follow-up work. If there is no worthwhile authorized
+artifact to improve, retain the learning in the response or current working
+understanding. Review, release, and model-routing authority remain unchanged.
 
-The distinction matters because Reflect without Compound is write-only learning (OODA with a diary). Compound without Reflect is cargo-culting (copying patterns without understanding why). The **Closed-loop by default** principle (below) is the operational implementation of Compound: the 4-stage calibration pattern (defaults → collect → calibrate → fallback) is how the C in OODARC feeds back into O (Orient) for the next cycle.
+This is an operating-contract clarification. Existing **OODARC** telemetry names,
+event identifiers, database schemas, and execution phases remain compatible;
+there is no execution-phase or telemetry migration. The existing OODARC section
+anchor is retained for incoming links.
 
-Situation assessments are prompt aids, not ground truth. Always verify recent evidence against cached assessments.
+The **Closed-loop by default** principle below implements calibration; Synthesize
+asks whether the accumulated results still support the current understanding and
+goals. Situation assessments are prompt aids, not ground truth. Verify recent
+evidence against cached assessments.
 
 ---
 
@@ -96,21 +119,13 @@ The fleet enrichment pipeline is the existence proof: `estimate-costs.sh` reads 
 
 *Principle 2 applied everywhere: trust is progressive, evidence-based, and never assumed.*
 
-**Autonomy.** A dial, not a binary. The goal is human-above-the-loop — humans govern outcomes via receipts, not step-by-step supervision.
+**Autonomy.** A dial, not a binary. The goal is human-above-the-loop — humans govern outcomes via receipts, not step-by-step supervision. Authority is delegated progressively along the L0–L5 trust ladder, and each level requires demonstrated safety at the previous one. No shortcuts.
 
-Progressive trust ladder:
-- Level 0: Human approves every action.
-- Level 1: Human approves at phase gates.
-- Level 2: Human reviews evidence post-hoc.
-- Level 3: Human sets policy, agent executes.
-- Level 4: Agent proposes policy changes.
-- Level 5: Agent proposes mechanism changes.
+The kernel boundary (L1 cannot be modified by agents) is a trust threshold, not an architectural invariant — it softens as trust is earned, but through gated processes, not direct modification.
 
-Currently operating at Level 1-2. Each level requires demonstrated safety at the previous level. No shortcuts. The kernel boundary (L1 cannot be modified by agents) is a trust threshold, not an architectural invariant — it softens as trust is earned, but through gated processes, not direct modification.
+> **Definitions live in [`docs/canon/autonomy.md`](docs/canon/autonomy.md)** — the L0–L5 delegation ladder and the current position on it, the M0–M4 capability mesh, phase chains, and discovery confidence tiers. That page also records why these four scales are orthogonal, and which terms only look like levels. Cite it rather than restating any of them here.
 
-Note: this is the *human delegation* ladder — how much authority the human delegates. The vision doc's capability mesh (10 subsystems, M0-M4 maturity) tracks *system capability* per subsystem. The two are orthogonal and advance independently.
-
-**Graduated authority as mechanism.** Trust levels are tracked per-subsystem using an ordinal maturity scale (M0: Planned → M1: Built → M2: Operational → M3: Calibrated → M4: Adaptive). Promotion requires pre-specified evidence thresholds. Demotion is triggered by sustained regression indicators exceeding threshold for a defined observation window. Evidence epochs reset trust when environmental conditions shift (major model changes, architecture migrations, subsystem replacements). The principle (evidence earns authority) is permanent. The mechanism (specific thresholds, epoch triggers, demotion criteria) is revisable by human authority regardless of accumulated evidence — the right to redefine trust criteria remains with humans.
+**Graduated authority as mechanism.** Capability is tracked per subsystem on an ordinal maturity scale (M0–M4). Promotion requires pre-specified evidence thresholds. Demotion is triggered by sustained regression indicators exceeding threshold for a defined observation window. Evidence epochs reset trust when environmental conditions shift (major model changes, architecture migrations, subsystem replacements). The principle (evidence earns authority) is permanent. The mechanism (specific thresholds, epoch triggers, demotion criteria) is revisable by human authority regardless of accumulated evidence — the right to redefine trust criteria remains with humans.
 
 **Safety.** Structural, not moral. Sylveste enforces structural constraints (bounded blast radius, auditable decisions, revocable authority) through architecture, not ethical reasoning. More autonomy means more responsibility to get safety right. The blast radius is scoped to the actual risk domain: wrong code committed, bad PRs merged, wasted tokens.
 

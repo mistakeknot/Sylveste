@@ -1,0 +1,68 @@
+{
+  "plan": "/private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/demo/exact-b7e0.md",
+  "contract": "exact",
+  "notes": [
+    "contract=exact; virtual post-edit gauge replay"
+  ],
+  "findings": [],
+  "apply": {
+    "ok": true,
+    "repo_root": "/Users/sma/projects/Sylveste/os/Clavain/.clavain/orchestrate-runs/120d9aa1/wt/b7e0",
+    "steps": [
+      {
+        "kind": "precondition",
+        "line": 9,
+        "target": null,
+        "heading": "Preconditions",
+        "status": "ok",
+        "rc": 0,
+        "detail": "passed"
+      },
+      {
+        "kind": "edit",
+        "line": 24,
+        "target": "scripts/orchestrate.py",
+        "heading": null,
+        "status": "ok",
+        "rc": null,
+        "detail": "applied"
+      },
+      {
+        "kind": "edit",
+        "line": 54,
+        "target": "scripts/orchestrate.py",
+        "heading": null,
+        "status": "ok",
+        "rc": null,
+        "detail": "applied"
+      },
+      {
+        "kind": "edit",
+        "line": 64,
+        "target": "scripts/orchestrate.py",
+        "heading": null,
+        "status": "ok",
+        "rc": null,
+        "detail": "applied"
+      },
+      {
+        "kind": "create",
+        "line": 70,
+        "target": "tests/structural/test_orchestrate_review_dirty_scope.py",
+        "heading": null,
+        "status": "ok",
+        "rc": null,
+        "detail": "created"
+      },
+      {
+        "kind": "verify",
+        "line": 158,
+        "target": null,
+        "heading": "Verify Task 1",
+        "status": "ok",
+        "rc": 0,
+        "detail": "matched exit 0"
+      }
+    ]
+  }
+}

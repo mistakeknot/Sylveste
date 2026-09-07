@@ -12,6 +12,7 @@ sdk/*
 # ── Beads runtime artifacts (beads' own .gitignore handles the rest) ──
 .beads/bd.sock.startlock
 .beads/daemon-error
+.beads/push-hook.log
 
 # ── Claude Code session artifacts ──
 .claude/settings.local.json
@@ -45,7 +46,6 @@ docs/docs
 .clavain/gate-tier-calibration.json
 .clavain/intercore.db
 .clavain/intercore.db.backup-*
-.clavain/interspect/
 
 # Authz signing keys — private ONLY; pubkey is intentionally committed for verifiers.
 .clavain/keys/*.key
@@ -83,6 +83,7 @@ research/*
 docs/research/*/
 !docs/research/dialectics/
 !docs/research/flux-drive/
+!docs/research/flux-melange/
 !docs/research/flux-research/
 !docs/research/flux-review/
 !docs/research/f1-cypher-benchmark/
@@ -104,8 +105,48 @@ docs/research/*/
 .claude/session-state.json
 .clavain/cxdb/
 .clavain/intercept/
+# interspect's local instrument store. evidence.db/interspect.db are already
+# covered by .clavain/**/*.db, but delegation-calibration.json is not, and one
+# unignored generated file is enough to leave the whole directory untracked --
+# which is how this repo showed up as "needs a human" with nothing in it a human
+# should decide. Same class as .clavain/gate-tier-calibration.json above.
+.clavain/interspect/
+.clavain/**/*.db
+.clavain/**/*.db-shm
+.clavain/**/*.db-wal
 .codex
 
 # Keep local Interstat/session data ignored while publishing OYRF's public CSV.
 data/*
 !data/cost-trajectory.csv
+
+# interspect-audit reports are durable research evidence (spike reports +
+# quarterly calibration audits), exempt from the local-only research-subdir rule
+!docs/research/interspect-audit/
+!docs/research/interspect-audit/**
+# bd worktree
+n2ma-bdtest/
+# bd worktree
+n2ma-redirect-test-18358/
+# bd worktree
+n2ma-redirect-test-18879/
+# bd worktree
+n2ma-redirect-test-19575/
+# bd worktree
+n2ma-redirect-test-69698/
+# bd worktree
+n2ma-redirect-test-69998/
+# bd worktree
+n2ma-redirect-test-70291/
+
+# Editor/OS and Python bytecode noise. These recur constantly and made
+# `git status` unreadable in this monorepo, which is how .DS_Store came to be
+# tracked in the first place.
+.DS_Store
+**/.DS_Store
+__pycache__/
+*.py[cod]
+
+# Advisory lock files from flux-drive/flux-melange runs. Transient by nature:
+# the owning process is gone, so a stale one only misleads a future run.
+*.jsonl.lock
