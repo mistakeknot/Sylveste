@@ -1,0 +1,13 @@
+1b53da77	aa2bb078-ee16-4c32-9f97-01ef7dbdec61	2026-09-03T18:06:55Z	2026-09-03T21:50:51Z	orchestrator; journal excluded the melange review lane by hand
+c60de386	aa2bb078-ee16-4c32-9f97-01ef7dbdec61	2026-09-03T21:58:56Z	2026-09-03T23:49:44Z	orchestrator window mint..close
+c4cda02c	aa2bb078-ee16-4c32-9f97-01ef7dbdec61	2026-09-04T01:00:57Z	2026-09-04T02:06:51Z	orchestrator window mint..close
+ff7fd1a1	aa2bb078-ee16-4c32-9f97-01ef7dbdec61	2026-09-04T06:09:07Z	2026-09-04T06:40:25Z	orchestrator window mint..close
+c60de386	39c8935e			resumed once after the Fable weekly cap at turn 8
+c60de386	2f8dafde			whole pilot session
+c60de386	d758b3e9			whole pilot session
+c60de386	0f950073			whole pilot session
+c4cda02c	b96b269d			duplicate instance ran ~10 min (resumed after sandbox SIGTERM)
+c4cda02c	9ece15fa			duplicate instance ran ~10 min (resumed after sandbox SIGTERM)
+c4cda02c	c15f4648			whole pilot session
+c4cda02c	c0eedb2a			live pilot; gate row has no goal field
+ff7fd1a1	3807a93b			whole pilot session
