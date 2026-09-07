@@ -1,0 +1,89 @@
+{
+  "run": "8565586e",
+  "session": "aa2bb078-ee16-4c32-9f97-01ef7dbdec61",
+  "goal": "a7f02287",
+  "started": "2026-09-07T11:41:21Z",
+  "finished": "2026-09-07T12:05:13Z",
+  "wall_s": 1431.6,
+  "max_parallel": 3,
+  "dispatches": [
+    {
+      "item": "9hqr",
+      "role": "validation",
+      "model": "gpt-5.6-sol",
+      "started": "2026-09-07T11:41:32Z",
+      "finished": "2026-09-07T11:42:27Z",
+      "rc": 0,
+      "timed_out": false,
+      "output": "/Users/sma/projects/Sylveste/os/Clavain/.clavain/orchestrate-runs/8565586e/9hqr/validator.md"
+    },
+    {
+      "item": "n8jf",
+      "role": "routine-execution",
+      "model": "gpt-5.6-sol",
+      "started": "2026-09-07T11:41:22Z",
+      "finished": "2026-09-07T11:49:16Z",
+      "rc": 0,
+      "timed_out": false,
+      "output": "/Users/sma/projects/Sylveste/os/Clavain/.clavain/orchestrate-runs/8565586e/n8jf/executor.md"
+    },
+    {
+      "item": "n8jf",
+      "role": "validation",
+      "model": "claude-fable-5-1",
+      "started": "2026-09-07T11:49:18Z",
+      "finished": "2026-09-07T11:51:33Z",
+      "rc": 0,
+      "timed_out": false,
+      "output": "/Users/sma/projects/Sylveste/os/Clavain/.clavain/orchestrate-runs/8565586e/n8jf/validator.md"
+    },
+    {
+      "item": "ihnv",
+      "role": "routine-execution",
+      "model": "gpt-5.6-sol",
+      "started": "2026-09-07T11:41:23Z",
+      "finished": "2026-09-07T12:05:12Z",
+      "rc": 0,
+      "timed_out": false,
+      "output": "/Users/sma/projects/Sylveste/os/Clavain/.clavain/orchestrate-runs/8565586e/ihnv/executor.md"
+    }
+  ],
+  "items": [
+    {
+      "id": "9hqr",
+      "status": "validator_fail",
+      "wait_s": 0.1,
+      "run_s": 65.6,
+      "merge_outcome": "not_attempted",
+      "files": [
+        "scripts/orchestrate.py",
+        "tests/structural/test_orchestrate_fresh_output.py"
+      ],
+      "blocked_by": null
+    },
+    {
+      "id": "n8jf",
+      "status": "merged",
+      "wait_s": 0.1,
+      "run_s": 612.8,
+      "merge_outcome": "merged",
+      "files": [
+        "scripts/dispatch.sh",
+        "tests/shell/dispatch_claude_settings.bats"
+      ],
+      "blocked_by": null
+    },
+    {
+      "id": "ihnv",
+      "status": "executor_failed",
+      "wait_s": 0.1,
+      "run_s": 1431.5,
+      "merge_outcome": "not_attempted",
+      "files": [
+        "scripts/plan-gauge-lint.py",
+        "tests/structural/test_plan_gauge_apply.py"
+      ],
+      "blocked_by": null
+    }
+  ]
+}

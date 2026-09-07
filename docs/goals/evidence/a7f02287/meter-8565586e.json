@@ -1,0 +1,173 @@
+{
+  "run": "8565586e",
+  "goal": "a7f02287",
+  "session": "aa2bb078-ee16-4c32-9f97-01ef7dbdec61",
+  "window": {
+    "since": "2026-09-07T11:41:21Z",
+    "until": "2026-09-07T12:05:13Z"
+  },
+  "wall_s": 1431.6,
+  "max_parallel": 3,
+  "items": [
+    {
+      "id": "9hqr",
+      "status": "validator_fail",
+      "wait_s": 0.1,
+      "run_s": 65.6,
+      "merge_outcome": "not_attempted",
+      "files": [
+        "scripts/orchestrate.py",
+        "tests/structural/test_orchestrate_fresh_output.py"
+      ],
+      "blocked_by": null
+    },
+    {
+      "id": "n8jf",
+      "status": "merged",
+      "wait_s": 0.1,
+      "run_s": 612.8,
+      "merge_outcome": "merged",
+      "files": [
+        "scripts/dispatch.sh",
+        "tests/shell/dispatch_claude_settings.bats"
+      ],
+      "blocked_by": null
+    },
+    {
+      "id": "ihnv",
+      "status": "executor_failed",
+      "wait_s": 0.1,
+      "run_s": 1431.5,
+      "merge_outcome": "not_attempted",
+      "files": [
+        "scripts/plan-gauge-lint.py",
+        "tests/structural/test_plan_gauge_apply.py"
+      ],
+      "blocked_by": null
+    }
+  ],
+  "profile_py": "/Users/sma/projects/Sylveste/interverse/interstat/scripts/profile.py",
+  "main_thread_usd": 1.49,
+  "seats_usd": 6.17,
+  "claude_seats_usd": {
+    "dbf8d2ef-8878-4b0b-8683-57bc2f96fbce": 1.44
+  },
+  "codex_seats_usd": {
+    "01a07bac-4a42-7c10-8eb4-8e09cbaf0b6e": 1.19,
+    "01a07bac-4acd-7a91-bf66-1913062d46aa": 3.28,
+    "01a07bac-4d9f-70b0-a0b2-f875a4f64eae": 0,
+    "01a07bac-537b-7272-9c27-86d57d87f8e6": 0,
+    "01a07bac-73df-7e12-8ac1-9ebe841195d5": 0.26
+  },
+  "run_total_usd": 7.66,
+  "main_thread_share_of_run": 0.195,
+  "machine_window_usd": 51.91,
+  "main_thread_share_of_machine_window": 0.029,
+  "unpriced_msgs": {
+    "window": 73,
+    "main": 0
+  },
+  "files_scanned": 9391,
+  "orchestrator_turns": 6,
+  "orchestrator_tool_turns": 6,
+  "transcripts": [
+    "/Users/sma/.claude/projects/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61.jsonl"
+  ],
+  "dispatches": [
+    {
+      "item": "9hqr",
+      "role": "validation",
+      "model": "gpt-5.6-sol",
+      "started": "2026-09-07T11:41:32Z",
+      "finished": "2026-09-07T11:42:27Z",
+      "rc": 0,
+      "timed_out": false,
+      "output": "/Users/sma/projects/Sylveste/os/Clavain/.clavain/orchestrate-runs/8565586e/9hqr/validator.md"
+    },
+    {
+      "item": "n8jf",
+      "role": "routine-execution",
+      "model": "gpt-5.6-sol",
+      "started": "2026-09-07T11:41:22Z",
+      "finished": "2026-09-07T11:49:16Z",
+      "rc": 0,
+      "timed_out": false,
+      "output": "/Users/sma/projects/Sylveste/os/Clavain/.clavain/orchestrate-runs/8565586e/n8jf/executor.md"
+    },
+    {
+      "item": "n8jf",
+      "role": "validation",
+      "model": "claude-fable-5-1",
+      "started": "2026-09-07T11:49:18Z",
+      "finished": "2026-09-07T11:51:33Z",
+      "rc": 0,
+      "timed_out": false,
+      "output": "/Users/sma/projects/Sylveste/os/Clavain/.clavain/orchestrate-runs/8565586e/n8jf/validator.md"
+    },
+    {
+      "item": "ihnv",
+      "role": "routine-execution",
+      "model": "gpt-5.6-sol",
+      "started": "2026-09-07T11:41:23Z",
+      "finished": "2026-09-07T12:05:12Z",
+      "rc": 0,
+      "timed_out": false,
+      "output": "/Users/sma/projects/Sylveste/os/Clavain/.clavain/orchestrate-runs/8565586e/ihnv/executor.md"
+    }
+  ],
+  "compare": [
+    {
+      "run": "70691474",
+      "window": {
+        "since": "2026-09-07T11:08:02Z",
+        "until": "2026-09-07T11:41:20Z"
+      },
+      "wall_s": 1998.3,
+      "max_parallel": 1,
+      "items": [
+        {
+          "id": "9hqr",
+          "status": "validator_fail",
+          "wait_s": 0.0,
+          "run_s": 122.9,
+          "merge_outcome": "not_attempted",
+          "files": [
+            "scripts/orchestrate.py",
+            "tests/structural/test_orchestrate_fresh_output.py"
+          ],
+          "blocked_by": null
+        },
+        {
+          "id": "n8jf",
+          "status": "merged",
+          "wait_s": 0.0,
+          "run_s": 644.3,
+          "merge_outcome": "merged",
+          "files": [
+            "scripts/dispatch.sh",
+            "tests/shell/dispatch_claude_settings.bats"
+          ],
+          "blocked_by": null
+        },
+        {
+          "id": "ihnv",
+          "status": "merged",
+          "wait_s": 0.0,
+          "run_s": 1231.1,
+          "merge_outcome": "merged",
+          "files": [
+            "scripts/plan-gauge-lint.py",
+            "tests/structural/test_plan_gauge_apply.py"
+          ],
+          "blocked_by": null
+        }
+      ],
+      "main_thread_usd": 2.57,
+      "seats_usd": 7.69,
+      "run_total_usd": 10.26,
+      "main_thread_share_of_run": 0.25,
+      "orchestrator_turns": 9,
+      "orchestrator_tool_turns": 9
+    }
+  ]
+}

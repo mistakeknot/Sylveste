@@ -1,0 +1,8 @@
+# Pattern F meter: run 838742fd (goal a7f02287), session aa2bb078-ee16-4c32-9f97-01ef7dbdec61
+window: 2026-09-07T12:07:16Z .. 2026-09-07T12:09:07Z
+main thread $0 | seats $0.28 (claude {}, codex {'01a07bc4-3cf6-7300-bb8a-8fb1e53ac86e': 0.28}) | run total $0.28 | main-thread share of the run 0.0
+orchestrating session turns in the window: 0 (with tool calls: 0)
+wall time 111.3s at max_parallel 1
+  item 9hqr: merged; waited 0.1s, ran 111.2s, merge merged
+  dispatch 9hqr validation model=gpt-5.6-sol 2026-09-07T12:07:28Z .. 2026-09-07T12:09:06Z rc=0 timed_out=False
+context: everything on this machine in the window $3.21 (main thread 0.0 of it; files scanned 9391; unpriced messages 5)

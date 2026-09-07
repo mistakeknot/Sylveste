@@ -1,0 +1,3 @@
+=== plan-gauge-lint: /private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/demo2/exact-9hqr.md ===
+  note: contract=exact; virtual post-edit gauge replay
+  no gauge defects found
