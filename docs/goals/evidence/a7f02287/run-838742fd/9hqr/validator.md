@@ -1,0 +1,5 @@
+VERDICT: PASS
+CRITERION: none
+RECEIPT: receipt-07340fc94e
+BEYOND THE GAUGE:
+- none

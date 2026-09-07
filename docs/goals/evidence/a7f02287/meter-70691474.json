@@ -1,0 +1,131 @@
+{
+  "run": "70691474",
+  "goal": "a7f02287",
+  "session": "aa2bb078-ee16-4c32-9f97-01ef7dbdec61",
+  "window": {
+    "since": "2026-09-07T11:08:02Z",
+    "until": "2026-09-07T11:41:20Z"
+  },
+  "wall_s": 1998.3,
+  "max_parallel": 1,
+  "items": [
+    {
+      "id": "9hqr",
+      "status": "validator_fail",
+      "wait_s": 0.0,
+      "run_s": 122.9,
+      "merge_outcome": "not_attempted",
+      "files": [
+        "scripts/orchestrate.py",
+        "tests/structural/test_orchestrate_fresh_output.py"
+      ],
+      "blocked_by": null
+    },
+    {
+      "id": "n8jf",
+      "status": "merged",
+      "wait_s": 0.0,
+      "run_s": 644.3,
+      "merge_outcome": "merged",
+      "files": [
+        "scripts/dispatch.sh",
+        "tests/shell/dispatch_claude_settings.bats"
+      ],
+      "blocked_by": null
+    },
+    {
+      "id": "ihnv",
+      "status": "merged",
+      "wait_s": 0.0,
+      "run_s": 1231.1,
+      "merge_outcome": "merged",
+      "files": [
+        "scripts/plan-gauge-lint.py",
+        "tests/structural/test_plan_gauge_apply.py"
+      ],
+      "blocked_by": null
+    }
+  ],
+  "profile_py": "/Users/sma/projects/Sylveste/interverse/interstat/scripts/profile.py",
+  "main_thread_usd": 2.57,
+  "seats_usd": 7.69,
+  "claude_seats_usd": {
+    "1053c96e-6f5c-4f2f-ba48-c386fec257e4": 1.79,
+    "4ee3a476-581d-4dc7-9c28-48ef0da24919": 2.14
+  },
+  "codex_seats_usd": {
+    "01a07b8d-ddfa-7031-9200-93c275e95063": 0.3,
+    "01a07b8f-aa4c-70b2-8c61-7755ffaf07fb": 1.13,
+    "01a07b8f-ad89-7120-af7a-072d48b6b62e": 0,
+    "01a07b99-7c79-74f3-8a5a-80a34165ac36": 2.01,
+    "01a07b99-7e8c-72a1-83ed-7aab9ef792b4": 0,
+    "01a07b9b-52d6-71d2-8c60-7aa62e220b7e": 0.16,
+    "01a07ba5-ab68-7db1-9813-997507efcfdc": 0.16
+  },
+  "run_total_usd": 10.26,
+  "main_thread_share_of_run": 0.25,
+  "machine_window_usd": 73.14,
+  "main_thread_share_of_machine_window": 0.035,
+  "unpriced_msgs": {
+    "window": 70,
+    "main": 0
+  },
+  "files_scanned": 9388,
+  "orchestrator_turns": 9,
+  "orchestrator_tool_turns": 9,
+  "transcripts": [
+    "/Users/sma/.claude/projects/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61.jsonl"
+  ],
+  "dispatches": [
+    {
+      "item": "9hqr",
+      "role": "validation",
+      "model": "gpt-5.6-sol",
+      "started": "2026-09-07T11:08:08Z",
+      "finished": "2026-09-07T11:10:03Z",
+      "rc": 0,
+      "timed_out": false,
+      "output": "/private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/demo2/seq/Clavain/.clavain/orchestrate-runs/70691474/9hqr/validator.md"
+    },
+    {
+      "item": "n8jf",
+      "role": "routine-execution",
+      "model": "gpt-5.6-sol",
+      "started": "2026-09-07T11:10:06Z",
+      "finished": "2026-09-07T11:17:31Z",
+      "rc": 0,
+      "timed_out": false,
+      "output": "/private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/demo2/seq/Clavain/.clavain/orchestrate-runs/70691474/n8jf/executor.md"
+    },
+    {
+      "item": "n8jf",
+      "role": "validation",
+      "model": "claude-fable-5-1",
+      "started": "2026-09-07T11:17:34Z",
+      "finished": "2026-09-07T11:20:45Z",
+      "rc": 0,
+      "timed_out": false,
+      "output": "/private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/demo2/seq/Clavain/.clavain/orchestrate-runs/70691474/n8jf/validator.md"
+    },
+    {
+      "item": "ihnv",
+      "role": "routine-execution",
+      "model": "gpt-5.6-sol",
+      "started": "2026-09-07T11:20:50Z",
+      "finished": "2026-09-07T11:37:26Z",
+      "rc": 0,
+      "timed_out": false,
+      "output": "/private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/demo2/seq/Clavain/.clavain/orchestrate-runs/70691474/ihnv/executor.md"
+    },
+    {
+      "item": "ihnv",
+      "role": "validation",
+      "model": "claude-fable-5-1",
+      "started": "2026-09-07T11:37:28Z",
+      "finished": "2026-09-07T11:41:18Z",
+      "rc": 0,
+      "timed_out": false,
+      "output": "/private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/demo2/seq/Clavain/.clavain/orchestrate-runs/70691474/ihnv/validator.md"
+    }
+  ]
+}
