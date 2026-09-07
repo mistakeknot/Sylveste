@@ -1,0 +1,3 @@
+op=bd-push-dolt
+script=os/Clavain/scripts/gates/bd-push-dolt.sh
+registered_at=2026-04-19

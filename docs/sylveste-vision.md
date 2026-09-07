@@ -138,21 +138,13 @@ Note: Persistence (Intercore) is the shared substrate beneath all phases, not a
 
 ## The Capability Mesh
 
-How mature is each subsystem? The mesh replaces the v4.0 linear autonomy ladder (L0-L4) with a multi-dimensional view where different subsystems mature at different rates. Each subsystem is independently measurable, though not all are independently maturable — some depend on upstream subsystems reaching sufficient maturity first.
+How mature is each subsystem? The mesh replaces the retired v4.0 linear capability ladder with a multi-dimensional view where different subsystems mature at different rates. Each subsystem is independently measurable, though not all are independently maturable — some depend on upstream subsystems reaching sufficient maturity first.
 
 ### Maturity Scale
 
-Five levels, with observable criteria:
+The M0–M4 scale (Planned → Built → Operational → Calibrated → Adaptive), the `min()` rule for system-level trust, and how the mesh differs from the retired ladder are defined once in **[`docs/canon/autonomy.md` § Capability mesh maturity](canon/autonomy.md#2-capability-mesh-maturity-m0m4)**.
 
-| Level | Name | Criteria |
-|-------|------|----------|
-| **M0** | Planned | Design exists (brainstorm, PRD), no implementation |
-| **M1** | Built | Code shipped and tests pass, not operationally tested |
-| **M2** | Operational | Running under real conditions, evidence signals yielding data for 30+ days. Example: Routing M1→M2 requires gate pass rate >70% sustained over 30 consecutive days, evaluated by Interspect, with at least 1 Tier-1 or Tier-2 signal meeting threshold. |
-| **M3** | Calibrated | Evidence thresholds defined and tested, promotion/demotion criteria met |
-| **M4** | Adaptive | Self-improving based on evidence, minimal human intervention needed |
-
-System-level trust = min(maturity across M1+ mesh cells). Subsystems at M0 (not yet built) are excluded — they represent planned capabilities, not operational components. Critical-tier subsystems have stricter evidence requirements at each maturity level than Medium-tier ones. System trust is a step function: it advances when the weakest *operational* subsystem catches up. Evidence compounds per-subsystem, but system-level trust is gated on the weakest link.
+Worked promotion example: Routing M1→M2 requires gate pass rate >70% sustained over 30 consecutive days, evaluated by Interspect, with at least one Tier-1 or Tier-2 signal meeting threshold.
 
 ### Current Mesh State
 
@@ -308,10 +300,7 @@ Implementation and testing. Codex handles parallel implementation. Opus and Sonn
 
 ### Ship
 
-Final review, deployment, and knowledge capture. The interflux fleet deploys explicit cognitive diversity lenses during final review. Code pushes are gated on human confirmation, where the scope of "confirmation" evolves with the human delegation ladder (see PHILOSOPHY.md § Earned Authority):
-- **L0-L2 (current):** Per-change human confirmation before each push.
-- **L3:** Human sets shipping policy (which repos, which confidence thresholds). Agent pushes when policy conditions are met.
-- **L4-L5:** Human approves the policy itself; agent pushes autonomously within policy bounds.
+Final review, deployment, and knowledge capture. The interflux fleet deploys explicit cognitive diversity lenses during final review. Code pushes are gated on human confirmation, where the scope of "confirmation" evolves with the human delegation ladder — see [`docs/canon/autonomy.md` § What the current level implies](canon/autonomy.md#what-the-current-level-implies) for the per-level push behavior and the current position on that ladder.
 
 ### Reflect
 
@@ -330,12 +319,15 @@ The metric where all three outcome axes collapse into a single number. A low cos
 | **Efficiency** | Model routing accuracy | % of model selections matching the outcome-optimal model |
 | **Quality** | Defect escape rate | Bugs found after Ship that were present during Build |
 | **Quality** | Cost per actionable finding | Token cost of findings that aren't false positives |
+| **Quality** | Activation rate | % of merged subsystems with telemetry-confirmed invocation within 14 days, counted only after ≥3 distinct sessions show activation |
 | **Autonomy** | Sprint completion rate | % of sprints reaching Ship without abandonment |
 | **Autonomy** | Gate pass rate | % of phase transitions passing on first attempt |
 | **Learning** | Self-improvement rate | Interspect proposals that improve metrics when applied |
 | **Trust** | Maturity advancement rate | Mesh cells advancing to the next maturity level per quarter |
 
 **Goodhart caveat:** Any stable metric becomes a target, and any target becomes gamed. Rotate emphasis, diversify evaluation dimensions, and watch for agents optimizing the metric at the expense of actual quality. (See PHILOSOPHY.md § Receipts Close Loops, Measurement.)
+
+**Activation-rate baseline.** Passive v1 measures whether a merged subsystem is actually invoked within 14 days by combining existing telemetry-adjacent receipts — CASS traces, git history, closeout artifacts, and route/phase evidence — before explicit subsystem-event emits are required. A subsystem counts as activated only when evidence spans at least three distinct sessions. The first three weeks are baseline observation and report-only: findings should produce follow-up beads or patches, not hard gates. Any v2 soft-block must wait for explicit calibration approval and a documented Goodhart review. Because the Phase 0 spike recorded `passive_spike_recall:3/3` and `next_phase:passive-v1`, explicit emit infrastructure remains deferred until passive reporting misses a confirmed activation gap.
 
 The cost-per-landable-change baseline was established on 2026-02-28 at $1.17 (Opus 95% of cost). As of 2026-03-18, the figure is $2.93 — the increase reflects expanded review scope (multi-agent review, reaction rounds) rather than efficiency regression. The trajectory is expected to improve as model routing matures.
 

@@ -1,0 +1,71 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 5
+timeout_per_task: 300
+
+stages:
+  - name: "Wave 1 — Config & Fixtures (independent)"
+    tasks:
+      - id: task-1
+        title: "FluxBench metric definitions config"
+        files: [interverse/interflux/config/flux-drive/fluxbench-metrics.yaml, interverse/interflux/config/flux-drive/fluxbench-thresholds.yaml]
+        depends: []
+        tier: fast
+      - id: task-2
+        title: "Qualification test fixtures"
+        files: [interverse/interflux/tests/fixtures/qualification/]
+        depends: []
+
+  - name: "Wave 2 — Scoring Engine & Registry"
+    tasks:
+      - id: task-3
+        title: "FluxBench scoring engine"
+        files: [interverse/interflux/scripts/fluxbench-score.sh, interverse/interflux/tests/test_fluxbench_score.bats]
+        depends: [task-1, task-2]
+      - id: task-5
+        title: "Model registry schema extension"
+        files: [interverse/interflux/config/flux-drive/model-registry.yaml]
+        depends: [task-1]
+        tier: fast
+
+  - name: "Wave 3 — Pipeline Scripts"
+    tasks:
+      - id: task-4
+        title: "Calibration script"
+        files: [interverse/interflux/scripts/fluxbench-calibrate.sh, interverse/interflux/tests/test_fluxbench_calibrate.bats]
+        depends: [task-3]
+      - id: task-6
+        title: "AgMoDB store-and-forward sync"
+        files: [interverse/interflux/scripts/fluxbench-sync.sh, interverse/interflux/tests/test_fluxbench_sync.bats]
+        depends: [task-3]
+      - id: task-7
+        title: "Drift detection script"
+        files: [interverse/interflux/scripts/fluxbench-drift.sh, interverse/interflux/tests/test_fluxbench_drift.bats]
+        depends: [task-3]
+      - id: task-8
+        title: "Qualification runner"
+        files: [interverse/interflux/scripts/fluxbench-qualify.sh, interverse/interflux/tests/test_fluxbench_qualify.bats]
+        depends: [task-3]
+
+  - name: "Wave 4 — Integration & Automation"
+    tasks:
+      - id: task-9
+        title: "SessionStart awareness hook"
+        files: [interverse/interflux/hooks/session-start.sh]
+        depends: [task-8]
+        tier: fast
+      - id: task-10
+        title: "Weekly discovery agent spec"
+        files: [interverse/interflux/agents/fluxbench-discover.md]
+        depends: [task-8]
+        tier: fast
+      - id: task-11
+        title: "interrank TASK_DOMAIN_MAP update"
+        files: [interverse/interrank/src/recommend.ts]
+        depends: [task-6]
+        tier: fast
+      - id: task-12
+        title: "Challenger slot triage integration"
+        files: [interverse/interflux/config/flux-drive/budget.yaml, interverse/interflux/config/flux-drive/agent-roles.yaml, interverse/interflux/scripts/fluxbench-challenger.sh]
+        depends: [task-3, task-7]

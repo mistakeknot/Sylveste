@@ -1,0 +1,6 @@
+pf(9hqr): Plan: an empty output file pre-created by the engine is not fresh output (mk-9hqr)
+
+Applied by plan-gauge-lint.py --apply from exact-9hqr.md; verify fences replayed by the tool.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01Xkt2xiuD4S5FGTWkUaUNdP

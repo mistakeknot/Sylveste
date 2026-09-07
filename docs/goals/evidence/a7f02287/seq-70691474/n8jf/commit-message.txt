@@ -1,0 +1,8 @@
+fix(dispatch): a claude role seat runs without the operator's user-scope settings (Sylveste-n8jf)
+
+Exclude user-scope Claude settings from role seats and direct dispatches by
+default, while preserving an explicit direct-operator compatibility escape.
+Keep the dry-run command faithful to the real stdin-based claude invocation.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01Xkt2xiuD4S5FGTWkUaUNdP

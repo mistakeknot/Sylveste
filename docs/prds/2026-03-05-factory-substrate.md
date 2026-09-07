@@ -205,8 +205,8 @@ holdout: false
 
 **Acceptance criteria:**
 - [ ] `.clavain/policy.yml` schema defining per-phase tool permissions and file path denylists
-- [ ] `clavain-cli policy-check <agent> <action>` returns allow/deny with reason
-- [ ] `clavain-cli policy-show` displays current policy in human-readable format
+- [ ] `clavain-cli scenario-policy-check <agent> <action>` returns allow/deny with reason (renamed from `policy-check` post sylveste-qdqr to free `policy` namespace for authz)
+- [ ] `clavain-cli scenario-policy-show` displays current policy in human-readable format
 - [ ] **Preventive:** SessionStart hook excludes `.clavain/scenarios/holdout/` from agent context during Build phase (implementation agents don't see holdout files)
 - [ ] **Detective:** All holdout file access during Build phase recorded as CXDB turns (`clavain.policy_violation.v1`)
 - [ ] **Consequence:** `enforce-gate` queries for holdout access violations and invalidates satisfaction scores from contaminated sprints

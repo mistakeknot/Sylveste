@@ -1,0 +1,25 @@
+Pattern F run 120d9aa1: 2 item(s), repo /Users/sma/projects/Sylveste/os/Clavain, run dir /Users/sma/projects/Sylveste/os/Clavain/.clavain/orchestrate-runs/120d9aa1
+
+[pf] item meti: brief-meti.md (brief)
+  [pf] meti: gauge clean
+  [pf] meti: worktree /Users/sma/projects/Sylveste/os/Clavain/.clavain/orchestrate-runs/120d9aa1/wt/meti on pf/120d9aa1/meti
+  [pf] meti: register executor replay PASS commit=5778cfcfe7738e3c64681a71ee9225cf03da1cfe
+  [pf] meti: executor PASS commit=5778cfcfe7738e3c64681a71ee9225cf03da1cfe
+  [pf] meti: register validator replay PASS commit=5778cfcfe7738e3c64681a71ee9225cf03da1cfe
+  [pf] meti: register validator independent FAIL commit=5778cfcfe7738e3c64681a71ee9225cf03da1cfe
+  [pf] meti: register validator independent FAIL commit=5778cfcfe7738e3c64681a71ee9225cf03da1cfe
+  [pf] meti: register validator independent FAIL commit=5778cfcfe7738e3c64681a71ee9225cf03da1cfe
+  [pf] meti: register validator independent FAIL commit=5778cfcfe7738e3c64681a71ee9225cf03da1cfe
+  [pf] meti: register validator independent FAIL commit=5778cfcfe7738e3c64681a71ee9225cf03da1cfe
+  [pf] meti: validator PASS; 5 beyond-the-gauge finding(s)
+  [pf] meti: merged -> 864ebbfc11a9e7ccea281862ecb514d502e731d8
+
+[pf] item b7e0: exact-b7e0.md (exact)
+  [pf] b7e0: gauge clean
+  [pf] b7e0: worktree /Users/sma/projects/Sylveste/os/Clavain/.clavain/orchestrate-runs/120d9aa1/wt/b7e0 on pf/120d9aa1/b7e0
+  [pf] b7e0: register executor replay PASS commit=5ee637820fbb596aec850d998fee57b3d41880fa
+  [pf] b7e0: executor PASS commit=5ee637820fbb596aec850d998fee57b3d41880fa
+  [pf] b7e0: register validator replay UNRUN commit=5ee637820fbb596aec850d998fee57b3d41880fa
+  [pf] b7e0: validator UNRUN (no VERDICT line from the seat (dispatch rc=0, sidecar warn)); 0 beyond-the-gauge finding(s)
+
+Pattern F run 120d9aa1 finished: merged=1, validator_unrun=1; register rows read back for the session: 39

@@ -1,0 +1,14 @@
+# Pattern F meter: run d9dd99e0 (goal a7f02287), session aa2bb078-ee16-4c32-9f97-01ef7dbdec61
+window: 2026-09-07T10:40:26Z .. 2026-09-07T11:07:53Z
+main thread $2.87 | seats $6.16 (claude {'62b251cc-f42d-4abc-9d2c-8f48d816f8d9': 1.57, '86cc2b35-f852-47fc-b770-fe7a03df7a9a': 1.7}, codex {'01a07b74-992e-7730-85e3-3ed36ea8c648': 0.21, '01a07b75-98ec-79b3-80eb-78c83b7dabe4': 1.07, '01a07b75-9a2d-7103-ad5e-6ef232bd834c': 0, '01a07b7f-1dac-7000-bdee-b15f6f538d12': 1.61, '01a07b7f-1ec0-7aa1-a4ab-eca61571777c': 0}) | run total $9.03 | main-thread share of the run 0.318
+orchestrating session turns in the window: 10 (with tool calls: 10)
+wall time 1646.8s at max_parallel 1
+  item 9hqr: validator_unrun; waited 0.0s, ran 72.1s, merge not_attempted
+  item n8jf: merged; waited 0.0s, ran 623.8s, merge merged
+  item ihnv: merged; waited 0.0s, ran 950.9s, merge merged
+  dispatch 9hqr validation model=gpt-5.6-sol 2026-09-07T10:40:26Z .. 2026-09-07T10:41:38Z rc=None timed_out=False
+  dispatch n8jf routine-execution model=gpt-5.6-sol 2026-09-07T10:41:38Z .. 2026-09-07T10:52:02Z rc=None timed_out=False
+  dispatch n8jf validation model=claude-fable-5-1 2026-09-07T10:41:38Z .. 2026-09-07T10:52:02Z rc=None timed_out=False
+  dispatch ihnv routine-execution model=gpt-5.6-sol 2026-09-07T10:52:02Z .. 2026-09-07T11:07:53Z rc=None timed_out=False
+  dispatch ihnv validation model=claude-fable-5-1 2026-09-07T10:52:02Z .. 2026-09-07T11:07:53Z rc=None timed_out=False
+context: everything on this machine in the window $60.38 (main thread 0.048 of it; files scanned 9377; unpriced messages 61)

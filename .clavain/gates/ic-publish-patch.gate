@@ -1,0 +1,3 @@
+op=ic-publish-patch
+script=os/Clavain/scripts/gates/ic-publish-patch.sh
+registered_at=2026-04-19

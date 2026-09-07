@@ -1,0 +1,11 @@
+fix(gauge): --apply runs fences from a file in their own process group and round-trips edits as bytes (Sylveste-ihnv)
+
+Run exact-contract fences from temporary scripts with isolated process groups,
+terminate the full group on timeout, and preserve target byte conventions while
+refusing invalid UTF-8 before any edit.
+
+Add regressions for stdin-reading fences, child cleanup, CRLF preservation, and
+invalid UTF-8 refusal.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01Xkt2xiuD4S5FGTWkUaUNdP

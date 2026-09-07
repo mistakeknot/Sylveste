@@ -1,1 +1,1 @@
-2026-04-11-interop-phase2-adapters.md
+2026-05-25-a2a-outbound-shipped-zklw-handoff.md

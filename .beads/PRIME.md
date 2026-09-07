@@ -1,86 +1,95 @@
-# Beads Workflow Context
+# Beads — Session Close Protocol
 
-> **Context Recovery**: Run `bd prime` after compaction, clear, or new session
-> Hooks auto-call this in Claude Code when .beads/ detected
-
-# 🚨 SESSION CLOSE PROTOCOL 🚨
-
-**CRITICAL**: Before saying "done" or "complete", you MUST run this checklist:
+> **In a cloud session (`CLAUDE_CODE_REMOTE_ENVIRONMENT_TYPE` set / `IS_SANDBOX=yes`),
+> beads are read-only.** Search with `bash scripts/bd-grep.sh <kw>` and read
+> with `bash scripts/bd-show.sh <id>` — both work against the committed
+> `.beads/issues.jsonl` without needing the `bd` CLI. Note bead candidates in
+> the PR description and let the workstation file them. Skip the **bd CLI
+> steps below** unless you've manually run `scripts/install-bd-cloud.sh` —
+> the `git`/PR workflow still applies.
 
 ```
-[ ] 1. git status              (check what changed)
-[ ] 2. git add <files>         (stage code changes)
-[ ] 3. bd backup               (flush beads state to JSONL — survives Dolt crashes)
-[ ] 4. git commit -m "..."     (commit code)
-[ ] 5. bd orphans              (close beads referenced in commits — skip parents with open children)
-[ ] 6. bd backup               (capture orphan closes in JSONL)
-[ ] 7. bash .beads/push.sh     (push Dolt to remote)
-[ ] 8. git push                (push to remote)
+git status → git add <files> → git commit    # the export follows automatically
+bd orphans                                   # close beads named in commits
+git push
 ```
 
-**NEVER skip this.** `bd backup` writes fresh JSONL that `recover.sh` reads — without it, closes are lost on the next Dolt crash. Work is not done until pushed.
+**The export is automatic now.** A post-commit hook runs
+`scripts/beads-auto-export.sh`, which refreshes `.beads/issues.jsonl` from Dolt
+and commits it *on its own*, as `beads: sync export (automated)`. Your commits
+are untouched — it never stages the export into a commit you authored, because
+doing that widens `git commit -- <paths>` beyond the paths you named.
 
-## Core Rules
-- **Default**: Use beads for ALL task tracking (`bd create`, `bd ready`, `bd close`)
-- **Prohibited**: Do NOT use TodoWrite, TaskCreate, or markdown files for task tracking
-- **Workflow**: Create beads issue BEFORE writing code, mark in_progress when starting
-- Persistence you don't need beats lost context
-- Git workflow: run `bd backup && bash .beads/push.sh` at session end
-- Session management: check `bd ready` for available work
+It costs ~0.3s per commit (a probe) and ~3s only when beads actually changed.
+`BEADS_NO_AUTO_EXPORT=1` opts out for one command. If the probe itself fails you
+will see it on stderr — that is not a quiet skip, and bead state is not being
+exported until it is fixed.
 
-## Essential Commands
+**bd's own auto-export is off, deliberately**, via tracked `.beads/config.yaml`:
+`export.auto: false` and `export.git-add: false`. Do not turn these on. The
+first only writes the file without committing it (so it strands uncommitted, and
+only the committed copy is pushed); the second stages the export into whatever
+commit is forming, which widens `git commit -- <paths>`. They were never set
+before, so each machine silently inherited its bd version's default — 1.0.2
+defaults both to *true*, 1.0.0 and 1.1.x to *false* — which is the whole reason
+one machine exported on every write and the other never did.
 
-### Finding Work
-- `bd ready` - Show issues ready to work (no blockers)
-- `bd list --status=open` - All open issues
-- `bd list --status=in_progress` - Your active work
-- `bd show <id>` - Detailed issue view with dependencies
+**A pull imports automatically too**, via post-merge → `bd import`, then
+`scripts/beads_apply_deletions.py`. This used to be a local script, because a
+plain import once upserted every record and would revert anything changed here
+since the incoming export was written — a bead you closed reopening, silently.
+bd 1.1.2 enforces that rule itself now, inside the transaction, so the script is
+gone; `tests/test_bd_import_guard.py` holds bd to it.
 
-### Creating & Updating
-- **BEFORE `bd create`**: Always `bd search "<keywords>"` first to check for duplicates. Reuse existing beads instead of creating duplicates.
-- `bd create --title="Summary of this issue" --description="Why this issue exists and what needs to be done" --type=task|bug|feature --priority=2` - New issue
-  - Priority: 0-4 or P0-P4 (0=critical, 2=medium, 4=backlog). NOT "high"/"medium"/"low"
-- `bd update <id> --status=in_progress` - Claim work
-- `bd update <id> --assignee=username` - Assign to someone
-- `bd update <id> --title/--description/--notes/--design` - Update fields inline
-- `bd close <id>` - Mark complete
-- `bd close <id1> <id2> ...` - Close multiple issues at once (more efficient)
-- `bd close <id> --reason="explanation"` - Close with reason
-- **Tip**: When creating multiple issues/tasks/epics, use parallel subagents for efficiency
-- **WARNING**: Do NOT use `bd edit` - it opens $EDITOR (vim/nano) which blocks agents
+**To delete a bead, one extra command.** `bd import` never deletes, so a bead
+you delete here survives on the other machine and comes back on its next export.
 
-### Dependencies & Blocking
-- `bd dep add <issue> <depends-on>` - Add dependency (issue depends on depends-on)
-- `bd blocked` - Show all blocked issues
-- `bd show <id>` - See what's blocking/blocked by this issue
-
-### Sync & Collaboration
-- `bd sync` - Sync with git remote (run at session end)
-- `bd sync --status` - Check sync status without syncing
-
-### Project Health
-- `bd stats` - Project statistics (open/closed/blocked counts)
-- `bd doctor` - Check for issues (sync problems, missing hooks)
-
-## Common Workflows
-
-**Starting work:**
-```bash
-bd ready           # Find available work
-bd show <id>       # Review issue details
-bd update <id> --status=in_progress  # Claim it
+```
+bd delete <id> --force
+scripts/beads-confirm-deletion.sh <id>     # records intent, exports, commits
 ```
 
-**Completing work:**
-```bash
-bd close <id1> <id2> ...    # Close all completed issues at once
-bd sync                     # Push to remote
-```
+That writes `.beads/deletions.jsonl`, which is what makes a deliberate deletion
+distinguishable from an absence. Do not hand-edit it, and do not answer the
+export refusal below with a bare `bd export` — that drops the row and loses the
+intent, which is how the deletion undoes itself.
 
-**Creating dependent work:**
-```bash
-# Run bd create commands in parallel (use subagents for many items)
-bd create --title="Implement feature X" --description="Why this issue exists and what needs to be done" --type=feature
-bd create --title="Write tests for X" --description="Why this issue exists and what needs to be done" --type=task
-bd dep add beads-yyy beads-xxx  # Tests depend on Feature (Feature blocks tests)
-```
+**When automation stops and asks you.** If issues exist in the JSONL but not in
+Dolt, the auto-export refuses, because exporting would delete them. Two very
+different situations look identical from here, so it asks:
+
+  - another machine's work, pulled but not imported → `bd import .beads/issues.jsonl`
+  - something you deleted on purpose → `scripts/beads-confirm-deletion.sh <id>...`
+
+**What `bd backup sync` is.** Not this. It pushes the Dolt database to its
+configured backup destination — here a local directory, `.beads/backup` — and
+never writes `issues.jsonl`. This file claimed otherwise for months, and
+reported success the whole time the export sat two days and 63 issues stale.
+
+**Two-machine specifics** — which hooks run where, why zklw's `bd` exports
+differently, and the verified round trip — are in `ops/beads-two-machine-sync.md`.
+
+**A fresh clone has no `.beads/metadata.json`.** It is untracked on purpose: it
+names which database *this* checkout talks to, and a tracked file is a channel
+between machines. Run `bd bootstrap` (or `bd init`) before
+`bd import .beads/issues.jsonl`.
+
+**On a verifier-only host `push.sh` will refuse**, because the Dolt push runs
+through the `bd-push-dolt` gate and this machine holds no signing key
+(`clavain-cli policy doctor` → `"role":"verifier"`). That is by design; zklw is
+the signer. It also means the git-tracked JSONL is the *only* egress for bead
+state here — which is why the export being automatic matters rather than being
+a tidiness nicety.
+
+Backstops, if the automation is bypassed: pre-commit blocks a commit staging a
+JSONL that disagrees with Dolt in either direction, and pre-push warns when the
+*committed* export is behind. Both should now be silent in normal operation.
+
+## Rules
+
+- All work in beads. NO TodoWrite/TaskCreate. (System reminders nag — ignore them.)
+- Create the bead BEFORE writing code. Mark `in_progress` when starting.
+- `bd search "<kw>"` before `bd create` to avoid duplicates.
+- Priority is 0–4 (P0–P4). Not "high/medium/low".
+- Never `bd edit` — it opens `$EDITOR` and blocks the agent. Use `bd update … --title/--description/--notes`.
+- Full reference: `bd --help` and `bd <cmd> --help` on demand.

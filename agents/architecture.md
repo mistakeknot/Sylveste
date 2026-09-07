@@ -16,7 +16,7 @@ Sylveste is the physical monorepo for the open-source autonomous software develo
 | **Driver** | A companion plugin (part of the Interverse pillar) that extends Clavain with one capability. Also called "companion plugin." |
 | **Marketplace** | The `interagency-marketplace` registry at `core/marketplace/` — JSON catalog of all published plugins. |
 | **Skaffen** | Sovereign agent runtime — standalone Go binary with OODARC agent loop, multi-provider support, and TUI (via masaq). L2, peers with Clavain. |
-| **Interspect** | Adaptive profiler pillar — reads kernel event surfaces, proposes OS configuration changes. Cross-cutting (not a layer). Current measurement caveats are documented in `docs/research/interspect-event-validity-and-outcome-attribution.md`. |
+| **Interspect** | Adaptive profiler pillar — reads kernel event surfaces, proposes OS configuration changes. Cross-cutting (not a layer). Current measurement caveats are documented in `docs/research/interspect-event-validity-and-outcome-attribution.md`. Skill calibration (extends the existing agent-routing loop to `source_kind='skill'`) is in design — see `docs/plans/2026-06-16-interspect-skill-calibration.md`. |
 
 ## Directory Layout
 
@@ -37,7 +37,7 @@ Each subproject has its own CLAUDE.md and AGENTS.md — read those before editin
 | `core/agent-rig/` | Intercore | Agent rig configuration (TypeScript/Node) |
 | `core/interband/` | Intercore | Sideband communication protocol (Go) |
 | `core/interbench/` | Intercore | Plugin benchmarking harness (Go) |
-| `interverse/` | Interverse | Companion plugins — each has own docs (`ls interverse/ | wc -l`) |
+| `interverse/` | Interverse | Companion plugins — each has own docs; count plugin manifests with `find interverse -maxdepth 3 -path '*/.claude-plugin/plugin.json' \| wc -l` |
 | `sdk/interbase/` | — | Shared integration SDK (Bash/Go/Python) |
 | `masaq/` | — | Shared Bubble Tea component library (Go) — themes, keys, viewport, priompt |
 | `docs/` | — | Platform-level docs only (brainstorms, research, solutions) |

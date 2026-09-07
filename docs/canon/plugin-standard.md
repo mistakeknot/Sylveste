@@ -1,6 +1,6 @@
 # Interverse Plugin Standard
 
-The structural quality bar for every plugin in the Interverse ecosystem. Derived from consistency across 40+ repos. This is the canonical reference — not a suggestion.
+The structural quality bar for every plugin in the Interverse ecosystem. This is the canonical reference — not a suggestion, and it is where plugin inventory and structure belong instead of being dumped into public launch-page copy.
 
 ## Required Files
 

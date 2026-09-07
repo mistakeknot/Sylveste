@@ -1,19 +1,59 @@
 #!/usr/bin/env sh
-# --- BEGIN BEADS INTEGRATION v0.62.0 ---
+# >>> interwatch managed block — do not edit manually
+# Refreshes .interwatch/drift.json after post-merge. Detached background process,
+# non-blocking; errors logged to .interwatch/hook.log.
+#
+# Hook body uses portable path resolution (no hardcoded machine paths)
+# because in some setups (e.g., bd's core.hooksPath = .beads/hooks) the
+# hook file is tracked in git and shared across developers.
+#
+# Resolution order: $INTERWATCH_HOOK_RUNNER, repo-relative
+# interverse/interwatch/scripts/hook-runner.sh, plugin cache. If none
+# found, silently skip (interwatch may not be installed on this machine).
+#
+# setsid escapes git's process group — `&` + `disown` alone is
+# insufficient because git SIGHUPs its process group on exit, killing the
+# background scan before it completes.
+(
+  cd "$(git rev-parse --show-toplevel)" || exit 0
+  mkdir -p .interwatch
+  runner=""
+  for candidate in \
+      "${INTERWATCH_HOOK_RUNNER:-}" \
+      "$(pwd)/interverse/interwatch/scripts/hook-runner.sh" \
+      "$HOME/.claude/plugins/cache/interwatch/scripts/hook-runner.sh"; do
+    if [ -n "$candidate" ] && [ -x "$candidate" ]; then
+      runner="$candidate"; break
+    fi
+  done
+  if [ -z "$runner" ]; then exit 0; fi
+  setsid bash "$runner" "post-merge" </dev/null >/dev/null 2>&1 &
+) || true
+# <<< interwatch managed block
+# --- BEGIN BEADS INTEGRATION v1.1.2 ---
 # This section is managed by beads. Do not remove these markers.
 if command -v bd >/dev/null 2>&1; then
   export BD_GIT_HOOK=1
   _bd_timeout=${BEADS_HOOK_TIMEOUT:-300}
+  _bd_used_perl=0
   if command -v timeout >/dev/null 2>&1; then
     timeout "$_bd_timeout" bd hooks run post-merge "$@"
     _bd_exit=$?
-    if [ $_bd_exit -eq 124 ]; then
-      echo >&2 "beads: hook 'post-merge' timed out after ${_bd_timeout}s — continuing without beads"
-      _bd_exit=0
-    fi
+  elif command -v gtimeout >/dev/null 2>&1; then
+    gtimeout "$_bd_timeout" bd hooks run post-merge "$@"
+    _bd_exit=$?
+  elif command -v perl >/dev/null 2>&1; then
+    _bd_used_perl=1
+    perl -e 'alarm shift; exec @ARGV' "$_bd_timeout" bd hooks run post-merge "$@"
+    _bd_exit=$?
   else
+    echo >&2 "beads: hook 'post-merge' running without timeout; install coreutils or perl to enable BEADS_HOOK_TIMEOUT"
     bd hooks run post-merge "$@"
     _bd_exit=$?
+  fi
+  if [ $_bd_exit -eq 124 ] || { [ $_bd_used_perl -eq 1 ] && [ $_bd_exit -eq 142 ]; }; then
+    echo >&2 "beads: hook 'post-merge' timed out after ${_bd_timeout}s — continuing without beads"
+    _bd_exit=0
   fi
   if [ $_bd_exit -eq 3 ]; then
     echo >&2 "beads: database not initialized — skipping hook 'post-merge'"
@@ -21,4 +61,37 @@ if command -v bd >/dev/null 2>&1; then
   fi
   if [ $_bd_exit -ne 0 ]; then exit $_bd_exit; fi
 fi
-# --- END BEADS INTEGRATION v0.62.0 ---
+# --- END BEADS INTEGRATION v1.1.2 ---
+
+# --- BEGIN SYLVESTE BEADS AUTO-IMPORT ---
+# A pull brings another machine's issues in the JSONL, but nothing loads them
+# into the local Dolt, so `bd` cannot see them. Two sat invisible here for over
+# a week that way.
+#
+# This was scripts/beads_safe_import.py until bd 1.1.2. That script existed
+# because a plain `bd import` used to upsert every record, reverting anything
+# changed here since the incoming export was written. bd now enforces the same
+# rule itself — and enforces it inside the upsert rather than as a pre-filter,
+# so a local write landing mid-import is preserved too. Measured equivalent on
+# the reversion case and the equal-timestamp tie before the switch.
+#
+# Via beads-import-merged.sh, which hands bd only the rows this merge changed.
+# A full import of the file is ~49s and would land on every pull; the rows a
+# merge touches are usually a handful. bd still applies its guard per row —
+# only the batch size is ours to choose.
+_bd_root="$(git rev-parse --show-toplevel)"
+if [ -x "$_bd_root/scripts/beads-import-merged.sh" ]; then
+  "$_bd_root/scripts/beads-import-merged.sh" >/dev/null 2>&1 || true
+else
+  bd import "$_bd_root/.beads/issues.jsonl" >/dev/null 2>&1 || true
+fi
+
+# Then, and only then, apply deletions. `bd import` never deletes, so a bead
+# dropped on the other machine survives here and gets written back out on the
+# next export — the deletion undoes itself. The ledger is what distinguishes a
+# deliberate deletion from an absence. Ordered after the import because the
+# import would otherwise re-create what this removes.
+if [ -f "$_bd_root/scripts/beads_apply_deletions.py" ]; then
+  python3 "$_bd_root/scripts/beads_apply_deletions.py" --quiet || true
+fi
+# --- END SYLVESTE BEADS AUTO-IMPORT ---

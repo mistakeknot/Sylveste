@@ -1,0 +1,12 @@
+`★ Insight ─────────────────────────────────────`
+The "wired or it doesn't exist" claim survives peer contrast precisely because it defines a *completion criterion* rather than a capability — no framework (Inspect, LangSmith, LangGraph) defines when a feature is truly done in these terms, making it unusually actionable as a blog primitive.
+`─────────────────────────────────────────────────`
+
+Review written to `docs/research/flux-drive/sylveste-ecosystem-external-visibility-20260417T0116/fd-agent-framework-landscape.md`.
+
+Key findings:
+- **P0 (cancel):** Claims 11 and 12 are pure boilerplate — remove from PHILOSOPHY.md now
+- **P0 (polish):** OODARC dies without a one-paragraph Reflexion contrast; Shinn 2023 is the direct peer
+- **P1:** Trust ladder and Zollman claim both need operational artifacts before external publication
+- **Survive:** Claims 5 ("wired or it doesn't exist"), 2 (Clavain phase sequencer), and 7 (M0-M4 with epoch resets) are genuinely peer-defensible
+- **Single move:** The "wired or it doesn't exist" HN post anchored to `estimate-costs.sh` is the highest-leverage action — one afternoon of writing, no new infrastructure required
