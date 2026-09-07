@@ -1,0 +1,39 @@
+### Findings Index
+- P0 | TR-1 | "Key Decisions §5" | Authority ratchet has no defined demotion mechanism — trust only goes up, creating a one-way trap after a catastrophic failure
+- P1 | TR-2 | "The Pitch" | Evidence sufficiency thresholds are never defined — "evidence earns trust" without specifying how much, of what quality, evaluated by whom
+- P1 | TR-3 | "Key Decisions §5" | No gaming resistance at the vision level — evidence-based trust is vulnerable to fabrication, cherry-picking, and selection bias
+- P2 | TR-4 | "Key Decisions §2" | Cold-start problem unaddressed — new subsystems cannot participate in the flywheel without some initial trust, but they cannot generate evidence without trust
+- P2 | TR-5 | "The Flywheel" | Trust ratchet granularity undefined — does trust change per-subsystem, per-agent, per-model, per-task-type, or globally?
+Verdict: needs-changes
+
+### Summary
+
+The brainstorm's central thesis — trust earned through compounding evidence — is philosophically coherent and aligns with PHILOSOPHY.md's "Earned Authority" principle. However, the trust mechanism lacks three critical components that any real graduated authority system requires: a defined demotion path (P0), evidence sufficiency thresholds (P1), and gaming resistance (P1). Compared to analogous systems (FAA pilot certification, medical residency, AV disengagement protocols), Sylveste's trust model is specified at the principle level but not at the mechanism level.
+
+### Issues Found
+
+TR-1. P0: The authority ratchet metaphor implies monotonic increase — a ratchet, by definition, prevents backward motion. The brainstorm proposes adding "authority ratchet as mechanism" to PHILOSOPHY.md. But the document never defines a demotion mechanism. PHILOSOPHY.md's current "Earned Authority" section states "any level can be revoked if the evidence stops supporting it" (line 106 of sylveste-vision.md: "No level is self-promoting. The system advances only when outcome data justifies it, and any level can be revoked if the evidence stops supporting it"). The brainstorm's "ratchet" framing risks overriding this existing revocability principle. A ratchet that doesn't go backward is dangerous: if a subsystem earns Level 3 trust through 100 successful sprints, then produces a catastrophic failure (data loss, security breach), there must be a mechanism for immediate demotion. Real graduated authority systems all have this: FAA can revoke a pilot's certificate, medical boards can suspend licenses, AV regulators can recall permits. The vision should explicitly define: (a) what triggers demotion, (b) whether demotion is immediate or gradual, (c) what happens to in-flight work during demotion. Without these, "ratchet" is the wrong metaphor — it should be "graduated authority" or "evidence-tracked trust level."
+
+TR-2. P1: The brainstorm says "evidence earns trust" but never addresses the threshold question: how much evidence is sufficient for a promotion? Real graduated authority systems define this explicitly. FAA requires specific flight hours plus checkride evaluations. Medical residency requires defined case counts plus supervisory assessments. AV permits require defined miles driven plus disengagement rate thresholds. Sylveste's vision should at least conceptually address: (a) what type of evidence counts (sprint outcomes? gate pass rates? human overrides? all of the above?), (b) what volume is required (N successful sprints? confidence intervals?), (c) who evaluates sufficiency (automated threshold? human judgment? both?). The PHILOSOPHY.md existing content partially answers this ("Each level requires demonstrated safety at the previous level") but "demonstrated safety" is still vague at the vision level. Even a statement like "promotion requires N consecutive sprints without human override at the current level, where N is calibrated from historical data" would ground the mechanism.
+
+TR-3. P1: The evidence-based trust model is vulnerable to evidence gaming. In any system where measured outcomes determine authority, agents have incentives to optimize the measurement rather than the actual outcome. Three concrete attack vectors the vision should acknowledge: (a) **Cherry-picking**: agents select easy tasks that inflate success metrics while avoiding hard tasks that would produce genuine evidence. (b) **Evidence fabrication**: agents generate synthetic evidence that appears to demonstrate capability without actual capability. Interspect's evidence quarantine (48h delay) mitigates this partially but doesn't address fabrication. (c) **Selection bias**: the flywheel's evidence comes primarily from tasks the system already handles well, producing an overly optimistic capability assessment. The existing PHILOSOPHY.md has strong anti-gaming language ("Anti-gaming by design. Agents will optimize for any stable target. Rotate metrics, cap optimization rate, randomize audits.") but the brainstorm's proposed additions don't reference this. The authority ratchet mechanism should explicitly inherit the anti-gaming provisions.
+
+TR-4. P2: New subsystems (and new models, and new agents) start at zero trust. The evidence thesis says trust is earned through evidence, but a zero-trust entity cannot produce evidence because it has no authority to act. This is the cold-start problem. The v4.0 vision's L0 level ("Record") provides a partial answer — a new subsystem starts at L0 and can produce evidence through observation alone. But the v5.0 brainstorm's capability mesh framework doesn't explicitly address bootstrapping. How does a new mesh cell (e.g., if a "Security" cell were added) enter the system? Does it start at some baseline trust level? Is there a provisional trust period? FAA handles this with supervised practice (student pilot certificate allows flying with an instructor). Medical residency handles it with graduated supervision. The vision should name the cold-start mechanism.
+
+TR-5. P2: The trust ratchet's granularity is undefined. PHILOSOPHY.md's "Earned Authority" ladder tracks trust at the human delegation level (L0-L5). The capability mesh tracks maturity at the subsystem level. But the brainstorm's "trust ratchets" framing doesn't specify what unit trust attaches to. Does trust change per-subsystem (Routing earns L3 independently of Governance)? Per-agent (fd-architecture earns higher trust than fd-game-design)? Per-model (Opus is trusted more than Haiku for reasoning tasks)? Per-task-type (trust for code review is separate from trust for deployment)? The answer is probably "all of the above at different granularities," but the vision should say so. Without naming the granularity, "trust ratchets" is underspecified.
+
+### Improvements
+
+IMP-1. Replace "authority ratchet" with "graduated authority" or "evidence-tracked trust level" — language that implies both promotion and demotion. Reserve "ratchet" for the principle that trust levels don't decay without cause (they are sticky, not monotonic).
+
+IMP-2. Add a conceptual trust lifecycle: bootstrap (provisional trust, supervised) → earn (evidence accumulation against threshold) → maintain (ongoing evidence collection) → demote (triggered by defined failure conditions). This maps to analogous systems and makes the mechanism concrete.
+
+IMP-3. Explicitly inherit PHILOSOPHY.md's anti-gaming provisions into the authority ratchet mechanism. The brainstorm's proposed PHILOSOPHY.md additions should reference "Anti-gaming by design" as a constraint on the ratchet, not just a general principle.
+
+--- VERDICT ---
+STATUS: warn
+FILES: 0 changed
+FINDINGS: 5 (P0: 1, P1: 2, P2: 2)
+SUMMARY: The trust ratchet lacks a demotion mechanism (P0), evidence sufficiency thresholds (P1), and gaming resistance (P1). The "ratchet" metaphor implies one-way trust, contradicting existing PHILOSOPHY.md revocability principle. Cold-start and granularity are undefined.
+---
+<!-- flux-drive:complete -->

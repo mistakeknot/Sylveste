@@ -1,175 +1,101 @@
 # Sylveste Roadmap
 
-**Modules:** `find apps os core interverse sdk -maxdepth 2 -name .git -printf '%h\n' 2>/dev/null | wc -l` | **Beads:** `bd stats` | **Last updated:** 2026-03-27
-**Structure:** [`CLAUDE.md`](../CLAUDE.md)
-**Machine output:** [`docs/roadmap.json`](roadmap.json) — auto-generated superset of roadmap-placed items only (fewer than `bd stats` totals, which track all beads).
+**Last reviewed:** 2026-09-07. **Canonical task source:** zklw Sylveste Beads.
 
----
+[Machine roadmap](roadmap.json) · [Detailed backlog](backlog.md) ·
+[Version gates](roadmap-v1.md) · [Autonomous maintenance design](plans/2026-09-07-remontoire-roadmap-maintenance.md)
 
-## Now — Frontier Priorities
+The immediate objective is a usable, measured delivery loop: a human decision becomes
+governed execution, produces attributable evidence, and changes later work. Finish the
+active delivery work before expanding the platform. The principal has authorized full
+planning reprioritization; the July corrective freeze no longer overrides the explicitly
+selected delivery cohort. Product acceptance, model promotion, and release gates remain.
 
-**P1: Skaffen competitive gap closure** (Sylveste-6i0, epic, 22 open subtasks). The largest active epic. Closing feature gaps identified in the coding-agent feature matrix — hooks, compaction, skills, subagents, sandbox, image support, web search, plan mode, and more. 1/23 subtasks shipped so far. Brainstorms and plans landed for most critical gaps (hook system, skills system, subagent system, sandbox, image support, web search, plan mode, per-project config).
+## Now — six outcomes
 
-**P1: SWE-bench pass rate** (Sylveste-ynh Phase 1 + Sylveste-9lx Phase 2). Two epics targeting +15-20% (quick wins: grep context lines, glob fixes, tail-preserving truncation, py_compile validation, fault hypothesis prompting) and +10-15% (test-driven feedback loop, empty-diff detection, aggregate diff review). pyenv per-cell Python selection (Sylveste-sdk0) also open.
+| Order | Outcome and existing work | Evidence needed to finish |
+|---|---|---|
+| 1 | **Trust governed execution.** `Sylveste-nmiu` — Flere, Intercore, Clavain | Preserve the implemented admission, root restrictions, terminal-receipt and indeterminate-outcome protections; finish the explicit real fixed-worker profile/provider/model and provider-backed native terminal proof |
+| 2 | **Measure accepted delivery.** `Sylveste-yibw`, `Sylveste-kbh5` — Interstat, Clavain, Astra canary | Task/session/turn identity before aggregation; shared overhead counted once; execution and independent acceptance separate; coverage and pricing explicit; retain the published mixed context result; complete whole-cohort accounting and the larger canary gates |
+| 3 | **Complete the feedback journey.** `Sylveste-fuwn` — Autarch, Flere, Clavain, lattice | Real observation and voice evidence, correction/playback, reconnect, investigation, revision-bound proposal acceptance, execution, acknowledged build launch, human retest, and guidance affecting later work |
+| 4 | **Make planning records agree.** `sylveste-bkrh`, `sylveste-y0k7`, `sylveste-owjn`, `sylveste-7jj5` | Preserve cross-host history; reconcile differing records; fresh canonical projections; separate Remontoire backlog binding from kernel state; implement bounded autonomous maintenance |
+| 5 | **Close provenance gaps.** `sylveste-mn13`, `sylveste-5xpi` | Cryptographically anchored legacy history, key identities and archived verification, enforced quarantine; current installed audit evidence |
+| 6 | **Accumulate valid autonomy proof.** `sylveste-myyw.16`, `sylveste-9lp.37`, then `Sylveste-4b5.1` | Ten natural no-touch sprints with receipt chains across all three calibration loops; external holdouts before consensus monitoring; no synthetic counter credit |
 
-**P1: Infrastructure + bugs.**
-- **iv-ho3** StrongDM Factory Substrate — validation-first infra for Clavain. In progress. Blocks iv-296 → iv-g36hy → iv-3ov (the measurement chain).
-- **iv-v5ayb** go.mod replace directive breaks interlock/intermap in plugin cache. Quick fix: publish interbase/go as Go module.
-- **iv-28vf9** Compaction recovery protocol for SessionStart hook.
-- **iv-6376** Kernel E9: Autarch Phase 2 — Pollard + Gurgeh migration.
+The ordering is a delivery sequence, not a replacement for Beads priorities. Independent
+provenance work can run alongside product delivery; natural proof accumulates during
+ordinary qualifying work. The proof gate remains P0. This review did not remeasure its
+live streak, so the previous dated 0/10 display is not repeated as a current observation.
 
-Note: iv-83du3 (Intercom message delivery reliability) shipped — outbox, LISTEN/NOTIFY, UDS, SQLite retirement all complete.
+## Current evidence and limits
 
-**P1: Measurement hardening chain.** The path to making the north-star metric canonical:
-- iv-ho3 (in progress) → iv-296 (CXDB integration) → iv-g36hy (sprint execution recording) → iv-3ov (evidence pipeline wiring)
+The canonical tracker now contains `Sylveste-fuwn`, `Sylveste-nmiu`, and `Sylveste-yibw`
+under their original IDs. Those records had existed only on the Mac; this refresh imported those specific
+records without overwriting other server work. `Sylveste-kbh5` already existed on both hosts. The larger native replication repair is
+still open: Mac and server use different Dolt remotes, and a GitHub pull timed out after
+a successful native server backup. Machine artifacts in this publication reflect the
+server tracker, not an invented merged database.
 
-**P1: Hyperspace AGI adoption** (Sylveste-a42, epic). Three themes from Hyperspace research: close Skaffen's feedback loop (quality signals, compound phase), consolidate observability, enable autonomous plugin improvement via interlab mutation campaigns.
+`Sylveste-8nov` (Codex installer) and `Sylveste-7wn0` (complete companion compatibility)
+are closed on the Mac but still open on the server at this review. Preserve their
+existing evidence and reconcile the terminal records before treating both hosts as
+consistent. Do not restart their implementation solely because one tracker is stale.
+The attribution cohort still requires complete context and acceptance evidence; it does
+not get retroactive credit from Autarch or Flere work.
 
-**P2: Adaptive routing (the flywheel).**
-- **iv-5ztam** Interspect adaptive routing epic — evidence-driven agent selection. 10+ subtasks including counterfactual shadow evaluation, rate limiter, meta-learning loop.
-- **iv-jgdct** Apply complexity-aware routing across all subagents. B2 infrastructure is fully built but has zero production callers — needs signal collection + injection at dispatch points (flux-drive, quality-gates). Staged rollout plan: shadow first, enforce later.
-- **Sylveste-g4ja** Interspect-interrank wiring. Override consumption (Gap 1) shipped — lib-routing.sh now reads `.claude/routing-overrides.json`. Gaps 2-5 (interrank at decision time, calibration validation, routing decision feedback, override TTL) remain open.
-- **Sylveste-g3a** Interspect calibration pipeline — fix broken verdict recording in quality-gates, upgrade calibration schema to v2 with source weighting and phase awareness.
+The [three-pair context checkpoint report](https://github.com/mistakeknot/Clavain/blob/c83d0aafa5d730be416e509de5d0af78422a85be/docs/research/2026-09-05-measured-task-context.md)
+is already published. Results were mixed and did not establish 20% savings; retain the
+existing context policy. Native coverage of the six selected turns is complete, while
+whole-task attribution, setup coverage, and human effort remain incomplete or unknown.
+This checkpoint is delivered; it is not whole-cohort acceptance or Astra promotion.
 
-**Recently completed (since last update):**
-- **iv-awny7** Intercom Rust/Postgres cutover — ALL 6 SUBTASKS CLOSED. Group registration, scheduled tasks, SQLite removal, command plane unification, Node scaffolding removal, architecture docs. Former P0 epic, done.
-- **iv-iq14t** Intent contract hardening — quality gate follow-ups (closed)
-- **iv-godia** Routing decision capture as replayable kernel facts (closed)
-- **iv-fo0rx** Canonical landed-change entity and north-star denominator (closed)
-- **iv-30zy3** Durable session-bead-run attribution ledger in interstat (closed)
-- **iv-544dn** Interspect event validity and outcome attribution research (closed)
-- **iv-ojik9** Apps → OS → Kernel intent contract research (closed)
-- **Sylveste-g4ja** Override consumption (Gap 1) — lib-routing.sh reads interspect overrides (closed)
-- **Sylveste-pgl** Context monitor hook — inject context % warnings (closed)
-- **iv-83du3** Intercom message delivery reliability — outbox, LISTEN/NOTIFY, UDS IPC, SQLite retirement (closed)
-- **iv-craui** interkasten self-referential FK fix (closed)
-- **iv-q8ge7** BeadID/SessionID validation before subprocess arg passing (closed)
-- **interlab v0.4.0** Mutation store with SQLite-backed provenance tracking, 3 new MCP tools (mutation_record, mutation_query, mutation_genealogy), /autoresearch integration, interflux self-review pilot campaign
-- **interlab v0.4.1** Multi-plugin quality scanner — scan all interverse plugins by PQS, generate campaign specs for /autoresearch-multi
-- **interlab v0.4.2** Delta sharing via interlock — broadcast mutations and aggregate results so parallel sessions discover and build on each other's approaches
+Recently completed in the canonical tracker: `sylveste-n2ma` (worktree-first coordination).
+This is a tracker status observation, not a fresh revalidation of every installed host.
+Earlier July baseline releases remain historical evidence; their version numbers and
+signature counts are not presented here as today's installed state.
 
----
+The live `bv` snapshot disagreed with Beads counts, so its graph ranking was not used
+for this refresh. Dependency analysis must consume the same validated snapshot as the
+roadmap. Missing dependency targets remain visible and conservatively blocking.
 
-## Next — Strategic Themes (P2)
+This review repaired the reversed holdout prerequisite: `sylveste-9lp.37` no longer
+depends on the consensus monitor it must precede. `Sylveste-4b5.1` still depends on
+the holdout. The two-node cycle is removed without weakening that acceptance gate.
 
-5 themes defining the medium-term direction. Full item inventory: [backlog.md](backlog.md).
+## Next — spend only after measurement can answer
 
-1. **Skaffen Sovereign Agent** — Go-native coding agent with OODARC loop, masaq TUI, MCP client, intercore bridge, model routing. The second runtime alongside Clavain. Brainstorms and plans cover v0.1 completion, agent loop separation, quality signals (cross-session compound learning), scoped sessions, and competitive feature parity. See [Skaffen brainstorms](brainstorms/) from 2026-03-10 through 2026-03-14.
+1. `sylveste-xka6` (P2): evaluate B2 routing promotion with observed quality and cost,
+   preserving its existing promotion gates.
+2. `sylveste-i8gp` (P2): complete the next evidence source and prove attribution through
+   a real consumer before broadening the measurement system.
+3. `sylveste-oyrf` (P3): resume longitudinal cost calibration when fresh accepted-work
+   accounting can supply comparable observations.
+4. `sylveste-w4sj` (P3): automate version-roadmap publication after maintenance decisions
+   and publication receipts are reliable. Refreshing prose does not establish a version gate.
 
-2. **Adaptive Routing (Track B2→B3)** — Complexity-aware routing activation (B2 infrastructure exists, callers needed), interspect calibration pipeline fixes, evidence-driven agent selection. The learning loop that makes the system cheaper and better over time.
+The external holdout `sylveste-9lp.37` is P2 in Beads; its dependency role puts it in the
+Now outcome without falsely labeling it P1. The older roadmap also overstated the
+priorities of routing, evidence, and cost work; the labels above match this review.
 
-3. **Autonomous Improvement Loop** — interlab mutation store (shipped), meta-improvement campaigns (interflux self-review pilot planned), intermix cross-repo matrix evaluation harness (planned, Sylveste-ome7), multi-plugin quality scanning (shipped). The infrastructure for agents improving themselves.
+## Later — expansion follows evidence
 
-4. **Measurement Hardening** — Make the north-star metric canonical. The measurement chain unblocks the evidence pipeline that adaptive routing needs.
+Consolidated MCP work, broad orchestration, autonomous skill calibration, and A:L4
+remain later opportunities. Reconsider them when the delivery loop exposes a concrete
+bottleneck and a bounded experiment can measure the gain. Do not add a new harness or
+scheduler simply to maintain planning documents.
 
-5. **Developer Experience & Tooling** — Intermap code mapping, interlock coordination, Autarch TUI migration, plugin ecosystem maturity, masaq component library refinements (breadcrumb, viewport, markdown improvements in progress).
+## Maintenance contract
 
----
+Beads owns work; Interpath generates `roadmap.json` and `backlog.md` from one frozen
+snapshot. P0/P1 map to Now, P2 to Next, and P3/P4 to Later. The backlog renders P2–P4;
+the JSON includes every nonclosed task, including in-progress and deferred work.
+This strategic view stays at six outcomes and links to the full inventory.
 
-## Later — Horizon (P3)
+Remontoire should own evidence-driven reprioritization. The selected design uses
+model-free daily checks, one bounded fresh Codex assessment on meaningful change,
+and weekly aging review. Full reprioritization is authorized, but the new maintenance
+action and trusted planning publisher are **not yet enabled**. See the linked charter
+for schemas, concurrency, usage, recovery, and installed-canary requirements.
 
-Longer-term directions, not yet scoped into specific items. Full inventory: [backlog.md](backlog.md).
-
-- **Kernel library bindings** — Native client bindings for intercore (blocked by intent router)
-- **Continuous dispatch** — Daemon mode for always-on agent orchestration
-- **Workspace isolation** — Git worktree per task for parallel safe execution
-- **Runtime budget enforcement** — Real-time token budget checks mid-execution
-- **Intercom Go rewrite** — Port Rust daemon to Go + Skaffen integration (Sylveste-mvy)
-- **Mycroft fleet orchestrator** — Multi-agent fleet coordination (brainstorm complete)
-- **Evaluation infrastructure** — intermix harness (planned), model-capability sensitivity benchmarks, verifier context patterns
-- **Exploration-exploitation strategy** — Skaffen Orient phase (Sylveste-e0t)
-
----
-
-## Ecosystem Snapshot
-
-| Module | Location | Version | Status | Roadmap | Open Beads (context) |
-|--------|----------|---------|--------|---------|----------------------|
-| agent-rig | core/agent-rig | 0.1.0 | early | no | n/a |
-| autarch | apps/autarch | 0.1.0 | active | yes | n/a |
-| clavain | os/clavain | 0.6.236 | active | yes | n/a |
-| interblog | apps/interblog | 0.1.3 | early | no | n/a |
-| interband | core/interband | — | planned | no | n/a |
-| interbench | core/interbench | — | planned | no | n/a |
-| intercache | interverse/intercache | 0.2.0 | early | no | n/a |
-| interchart | interverse/interchart | 0.1.8 | early | no | n/a |
-| intercheck | interverse/intercheck | 0.2.2 | active | yes | 4 |
-| intercom | apps/intercom | 1.1.0 | active | shipped | n/a |
-| intercore | core/intercore | — | active | yes | n/a |
-| intercraft | interverse/intercraft | 0.1.2 | active | yes | 4 |
-| interdeep | interverse/interdeep | 0.1.6 | early | no | n/a |
-| interdev | interverse/interdev | 0.2.0 | active | yes | 4 |
-| interdoc | interverse/interdoc | 5.2.1 | active | yes | 4 |
-| interfer | interverse/interfer | 0.1.0 | early | no | n/a |
-| interfluence | interverse/interfluence | 0.2.10 | active | yes | 4 |
-| interflux | interverse/interflux | 0.2.52 | active | yes | n/a |
-| interform | interverse/interform | 0.1.0 | active | yes | 4 |
-| interhelm | interverse/interhelm | 0.2.0 | active | yes | n/a |
-| interject | interverse/interject | 0.1.14 | active | yes | 4 |
-| interkasten | interverse/interkasten | 0.4.25 | active | no | n/a |
-| interknow | interverse/interknow | 0.1.5 | early | no | n/a |
-| interlab | interverse/interlab | 0.4.6 | active | yes | n/a |
-| interlearn | interverse/interlearn | 0.1.0 | active | yes | 8 |
-| interleave | interverse/interleave | 0.1.2 | early | no | n/a |
-| interlens | interverse/interlens | 2.2.4 | active | yes | 4 |
-| interline | interverse/interline | 0.2.13 | active | yes | 4 |
-| interlock | interverse/interlock | 0.2.10 | active | yes | n/a |
-| interlore | interverse/interlore | 0.1.0 | early | no | n/a |
-| intermap | interverse/intermap | 0.1.6 | active | yes | 7 |
-| intermem | interverse/intermem | 0.2.4 | active | yes | n/a |
-| intermix | interverse/intermix | 0.1.11 | active | no | n/a |
-| intermonk | interverse/intermonk | 0.1.1 | early | no | n/a |
-| intermute | core/intermute | — | active | yes | n/a |
-| intermux | interverse/intermux | 0.1.5 | active | yes | 4 |
-| intername | interverse/intername | 0.1.2 | early | no | n/a |
-| internext | interverse/internext | 0.1.5 | active | yes | 4 |
-| interpath | interverse/interpath | 0.3.2 | active | yes | 4 |
-| interpeer | interverse/interpeer | 0.1.0 | early | no | n/a |
-| interphase | interverse/interphase | 0.3.17 | active | yes | 4 |
-| interplug | interverse/interplug | 0.1.5 | early | no | n/a |
-| interpub | interverse/interpub | 0.1.8 | active | yes | 4 |
-| interpulse | interverse/interpulse | 0.1.5 | early | no | n/a |
-| interrank | interverse/interrank | 0.3.0 | active | no | n/a |
-| interscribe | interverse/interscribe | 0.1.1 | early | no | n/a |
-| intersearch | interverse/intersearch | 0.2.1 | active | yes | 4 |
-| ~~intersense~~ | ~~interverse/intersense~~ | — | archived | — | — |
-| intership | interverse/intership | 0.3.1 | early | no | n/a |
-| intersight | interverse/intersight | 0.1.5 | early | no | n/a |
-| interskill | interverse/interskill | 0.1.3 | early | no | n/a |
-| interslack | interverse/interslack | 0.1.0 | active | yes | 4 |
-| interspect | interverse/interspect | 0.1.18 | active | [vision](./interspect-vision.md) | n/a |
-| interstat | interverse/interstat | 0.2.27 | active | yes | 4 |
-| intersynth | interverse/intersynth | 0.1.9 | early | no | n/a |
-| intertest | interverse/intertest | 0.1.2 | early | no | n/a |
-| intertrace | interverse/intertrace | 0.1.2 | early | no | n/a |
-| intertrack | interverse/intertrack | 0.1.4 | active | yes | n/a |
-| intertree | interverse/intertree | 0.1.2 | early | no | n/a |
-| intertrust | interverse/intertrust | 0.1.3 | early | no | n/a |
-| interverse | root | — | active | yes | n/a |
-| interwatch | interverse/interwatch | 0.3.3 | active | yes | 5 |
-| marketplace | core/marketplace | — | active | yes | n/a |
-| skaffen | os/skaffen | — | active | yes | n/a |
-| tldr-swinton | interverse/tldr-swinton | 0.7.17 | active | yes | n/a |
-| tool-time | interverse/tool-time | 0.3.10 | active | yes | n/a |
-| tuivision | interverse/tuivision | 0.2.0 | active | yes | 4 |
-
-**Legend:** active = recent commits or active tracker items; early = manifest exists but roadmap maturity is limited. `n/a` means there is no module-local `.beads` database.
-
----
-
-## Keeping Current
-
-```
-# Regenerate this roadmap JSON from current repo state
-scripts/sync-roadmap-json.sh docs/roadmap.json
-
-# Regenerate via interpath command flow (Claude Code)
-/interpath:roadmap    (from Interverse root)
-
-# Propagate items to subrepo roadmaps
-/interpath:propagate  (from Interverse root)
-```
-
----
-
-**Moved to separate files:** Module highlights → [sylveste-reference.md](sylveste-reference.md). Research agenda, cross-module dependencies, modules without roadmaps → [backlog.md](backlog.md).
+Completion always separates source implementation, producer publication, installed
+behavior, measurement coverage, and independent human or reviewer acceptance.

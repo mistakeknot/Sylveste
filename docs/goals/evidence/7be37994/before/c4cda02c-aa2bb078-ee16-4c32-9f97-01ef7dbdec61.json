@@ -1,0 +1,30 @@
+{
+  "summary": {
+    "main_output_share": 1.0,
+    "main_cost_share": 1.0,
+    "main_integrator_context_per_turn": 217788,
+    "completed_tasks": null,
+    "absolute_cost_per_completed_task": null,
+    "total_output_tokens": 95848,
+    "total_cost": 8.77,
+    "known_cost_subtotal": 8.77,
+    "cost_estimate_complete": true,
+    "files_scanned": 79
+  },
+  "rows": [
+    {
+      "lane": "main-integrator",
+      "model": "claude-fable-5-1",
+      "msgs": 38,
+      "output_tokens": 95848,
+      "cache_read_tokens": 8118213,
+      "cache_creation_tokens": 148389,
+      "input_tokens": 9348,
+      "context_tokens": 8275950,
+      "ctx_per_msg": 217788,
+      "cost": 8.77,
+      "pricing_status": "priced",
+      "pricing_basis": "API-equivalent"
+    }
+  ]
+}

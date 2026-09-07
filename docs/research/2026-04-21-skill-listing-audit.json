@@ -1,0 +1,725 @@
+[
+  {
+    "plugin": "vercel",
+    "skills": 26,
+    "desc_bytes": 5661,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "auth",
+      "nextjs",
+      "shadcn"
+    ],
+    "hard_excluded": false,
+    "cold": true
+  },
+  {
+    "plugin": "plugin-dev",
+    "skills": 7,
+    "desc_bytes": 2939,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "plugin-settings",
+      "mcp-integration",
+      "plugin-structure"
+    ],
+    "hard_excluded": false,
+    "cold": true
+  },
+  {
+    "plugin": "jetty",
+    "skills": 4,
+    "desc_bytes": 2642,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "jetty",
+      "jetty-setup",
+      "create-runbook"
+    ],
+    "hard_excluded": false,
+    "cold": true
+  },
+  {
+    "plugin": "clavain",
+    "skills": 17,
+    "desc_bytes": 2563,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "lane",
+      "ship",
+      "galiana"
+    ],
+    "hard_excluded": true,
+    "cold": false
+  },
+  {
+    "plugin": "mcp-server-dev",
+    "skills": 3,
+    "desc_bytes": 1342,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "build-mcpb",
+      "build-mcp-app",
+      "build-mcp-server"
+    ],
+    "hard_excluded": false,
+    "cold": true
+  },
+  {
+    "plugin": "interbrowse",
+    "skills": 5,
+    "desc_bytes": 1215,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "browse",
+      "research",
+      "teardown"
+    ],
+    "hard_excluded": false,
+    "cold": true
+  },
+  {
+    "plugin": "interfluence",
+    "skills": 6,
+    "desc_bytes": 1121,
+    "mcp_calls_30d": 11,
+    "examples": [
+      "apply",
+      "ingest",
+      "refine"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "notion",
+    "skills": 4,
+    "desc_bytes": 1029,
+    "mcp_calls_30d": 84,
+    "examples": [
+      "knowledge-capture",
+      "meeting-intelligence",
+      "research-documentation"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "dotenv",
+    "skills": 2,
+    "desc_bytes": 933,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "dotenv",
+      "dotenvx"
+    ],
+    "hard_excluded": false,
+    "cold": true
+  },
+  {
+    "plugin": "interplug",
+    "skills": 3,
+    "desc_bytes": 596,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "plugin",
+      "validate",
+      "troubleshoot"
+    ],
+    "hard_excluded": false,
+    "cold": true
+  },
+  {
+    "plugin": "interjawn",
+    "skills": 2,
+    "desc_bytes": 440,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "add-jawn",
+      "record-jawn"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "telegram",
+    "skills": 2,
+    "desc_bytes": 435,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "access",
+      "configure"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "discord",
+    "skills": 2,
+    "desc_bytes": 430,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "access",
+      "configure"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "interlab",
+    "skills": 2,
+    "desc_bytes": 421,
+    "mcp_calls_30d": 27,
+    "examples": [
+      "autoresearch",
+      "autoresearch-multi"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "intermonk",
+    "skills": 1,
+    "desc_bytes": 418,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "dialectic"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "imessage",
+    "skills": 2,
+    "desc_bytes": 410,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "access",
+      "configure"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "intertest",
+    "skills": 3,
+    "desc_bytes": 395,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "systematic-debugging",
+      "test-driven-development",
+      "verification-before-completion"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "interskill",
+    "skills": 2,
+    "desc_bytes": 392,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "skill",
+      "audit"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "interject",
+    "skills": 6,
+    "desc_bytes": 371,
+    "mcp_calls_30d": 1,
+    "examples": [
+      "scan",
+      "inbox",
+      "status"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "intersearch",
+    "skills": 1,
+    "desc_bytes": 364,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "session-search"
+    ],
+    "hard_excluded": true,
+    "cold": false
+  },
+  {
+    "plugin": "interdev",
+    "skills": 2,
+    "desc_bytes": 360,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "mcp-cli",
+      "working-with-claude-code"
+    ],
+    "hard_excluded": true,
+    "cold": false
+  },
+  {
+    "plugin": "claude-code-setup",
+    "skills": 1,
+    "desc_bytes": 354,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "claude-automation-recommender"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "claude-md-management",
+    "skills": 1,
+    "desc_bytes": 338,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "claude-md-improver"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "example-plugin",
+    "skills": 2,
+    "desc_bytes": 333,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "example-skill",
+      "example-command"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "skill-creator",
+    "skills": 1,
+    "desc_bytes": 320,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "skill-creator"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "better-result",
+    "skills": 2,
+    "desc_bytes": 312,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "adopt",
+      "v2"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "claude-opus-4-5-migration",
+    "skills": 1,
+    "desc_bytes": 297,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "claude-opus-4-5-migration"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "interscribe",
+    "skills": 1,
+    "desc_bytes": 293,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "interscribe"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "playground",
+    "skills": 1,
+    "desc_bytes": 268,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "playground"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "interlock",
+    "skills": 2,
+    "desc_bytes": 267,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "conflict-recovery",
+      "coordination-protocol"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "intertrack",
+    "skills": 2,
+    "desc_bytes": 261,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "report",
+      "metrics"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "interstat",
+    "skills": 4,
+    "desc_bytes": 260,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "cost",
+      "report",
+      "status"
+    ],
+    "hard_excluded": true,
+    "cold": false
+  },
+  {
+    "plugin": "intercraft",
+    "skills": 1,
+    "desc_bytes": 248,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "agent-native-architecture"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "frontend-design",
+    "skills": 1,
+    "desc_bytes": 234,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "frontend-design"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "interdoc",
+    "skills": 1,
+    "desc_bytes": 229,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "interdoc"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "interpeer",
+    "skills": 1,
+    "desc_bytes": 223,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "interpeer"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "interflux",
+    "skills": 1,
+    "desc_bytes": 201,
+    "mcp_calls_30d": 86,
+    "examples": [
+      "flux-drive"
+    ],
+    "hard_excluded": true,
+    "cold": false
+  },
+  {
+    "plugin": "interpath",
+    "skills": 1,
+    "desc_bytes": 195,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "artifact-gen"
+    ],
+    "hard_excluded": true,
+    "cold": false
+  },
+  {
+    "plugin": "hookify",
+    "skills": 1,
+    "desc_bytes": 191,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "writing-rules"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "intertree",
+    "skills": 1,
+    "desc_bytes": 185,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "tree"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "intertrace",
+    "skills": 1,
+    "desc_bytes": 184,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "intertrace"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "interform",
+    "skills": 1,
+    "desc_bytes": 184,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "distinctive-design"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "interpulse",
+    "skills": 1,
+    "desc_bytes": 183,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "pressure"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "intermux",
+    "skills": 1,
+    "desc_bytes": 180,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "agents"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "intercheck",
+    "skills": 1,
+    "desc_bytes": 171,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "quality"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "internext",
+    "skills": 1,
+    "desc_bytes": 165,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "next-work"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "session-report",
+    "skills": 1,
+    "desc_bytes": 154,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "session-report"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "interphase",
+    "skills": 1,
+    "desc_bytes": 154,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "beads-workflow"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "tuivision",
+    "skills": 1,
+    "desc_bytes": 151,
+    "mcp_calls_30d": 11,
+    "examples": [
+      "tui-test"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "interslack",
+    "skills": 1,
+    "desc_bytes": 151,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "slack-messaging"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "tool-time",
+    "skills": 2,
+    "desc_bytes": 150,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "tool-time",
+      "tool-time-codex"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "interkasten",
+    "skills": 4,
+    "desc_bytes": 145,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "layout",
+      "doctor",
+      "onboard"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "interwatch",
+    "skills": 1,
+    "desc_bytes": 144,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "doc-watch"
+    ],
+    "hard_excluded": true,
+    "cold": false
+  },
+  {
+    "plugin": "interchart",
+    "skills": 1,
+    "desc_bytes": 144,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "interchart"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "interlearn",
+    "skills": 1,
+    "desc_bytes": 129,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "interlearn"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "intersight",
+    "skills": 1,
+    "desc_bytes": 102,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "analyze"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "interdeep",
+    "skills": 1,
+    "desc_bytes": 85,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "deep-research"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "intermem",
+    "skills": 2,
+    "desc_bytes": 83,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "tidy",
+      "synthesize"
+    ],
+    "hard_excluded": true,
+    "cold": false
+  },
+  {
+    "plugin": "intermap",
+    "skills": 1,
+    "desc_bytes": 79,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "skills"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "interknow",
+    "skills": 2,
+    "desc_bytes": 74,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "recall",
+      "compound"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "interleave",
+    "skills": 1,
+    "desc_bytes": 32,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "interleave"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  },
+  {
+    "plugin": "math-olympiad",
+    "skills": 1,
+    "desc_bytes": 0,
+    "mcp_calls_30d": 0,
+    "examples": [
+      "math-olympiad"
+    ],
+    "hard_excluded": false,
+    "cold": false
+  }
+]

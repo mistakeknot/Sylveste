@@ -1,3 +1,0 @@
-# git-autosync: auto-commit+push on agent file edits
-DEBOUNCE_SECS=3
-MAX_RETRIES=2

@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+# >>> interwatch managed block — do not edit manually
+# Refreshes .interwatch/drift.json after post-commit. Detached background process,
+# non-blocking; errors logged to .interwatch/hook.log.
+#
+# Hook body uses portable path resolution (no hardcoded machine paths)
+# because in some setups (e.g., bd's core.hooksPath = .beads/hooks) the
+# hook file is tracked in git and shared across developers.
+#
+# Resolution order: $INTERWATCH_HOOK_RUNNER, repo-relative
+# interverse/interwatch/scripts/hook-runner.sh, plugin cache. If none
+# found, silently skip (interwatch may not be installed on this machine).
+#
+# setsid escapes git's process group — `&` + `disown` alone is
+# insufficient because git SIGHUPs its process group on exit, killing the
+# background scan before it completes.
+(
+  cd "$(git rev-parse --show-toplevel)" || exit 0
+  mkdir -p .interwatch
+  runner=""
+  for candidate in \
+      "${INTERWATCH_HOOK_RUNNER:-}" \
+      "$(pwd)/interverse/interwatch/scripts/hook-runner.sh" \
+      "$HOME/.claude/plugins/cache/interwatch/scripts/hook-runner.sh"; do
+    if [ -n "$candidate" ] && [ -x "$candidate" ]; then
+      runner="$candidate"; break
+    fi
+  done
+  if [ -z "$runner" ]; then exit 0; fi
+  setsid bash "$runner" "post-commit" </dev/null >/dev/null 2>&1 &
+) || true
+# <<< interwatch managed block
+
+# >>> beads dolt auto-push block — managed (do not edit manually)
+# Push the per-project Dolt DB after any commit that changes .beads/issues.jsonl,
+# so bead state reaches the remote without a manual `.beads/push.sh`. setsid
+# detaches from git's process group (git SIGHUPs it on exit); fail-open, never
+# blocks or fails the commit; output → .beads/push-hook.log. Tracked in git
+# (core.hooksPath=.beads/hooks) so it applies on every machine.
+#
+# setsid is Linux-only. On macOS the block was silently inert — the subshell
+# failed, `|| true` swallowed it, and push-hook.log was never even created, so
+# there was no trace to notice. Harmless on Clavain, which is verifier-only and
+# could not push anyway, but "does nothing and leaves no evidence" is the wrong
+# failure shape for a sync mechanism. Fall back to a plain background job and
+# always write the log, so the file's absence means the hook did not fire rather
+# than the platform lacking a utility.
+(
+  root="$(git rev-parse --show-toplevel)" || exit 0
+  cd "$root" || exit 0
+  if git diff-tree --no-commit-id --name-only -r HEAD 2>/dev/null | grep -qx '.beads/issues.jsonl'; then
+    if [[ -x "$root/.beads/push.sh" ]]; then
+      _bd_detach=setsid
+      command -v setsid >/dev/null 2>&1 || _bd_detach=""
+      $_bd_detach bash -c '
+        cd "$1" || exit 0
+        {
+          echo "--- $(date -u +%FT%TZ) post-commit dolt auto-push (HEAD $(git rev-parse --short HEAD 2>/dev/null))"
+          bash "$1/.beads/push.sh"
+          echo "--- exit $?"
+        } >> "$1/.beads/push-hook.log" 2>&1
+      ' _ "$root" </dev/null >/dev/null 2>&1 &
+    fi
+  fi
+) || true
+# <<< beads dolt auto-push block
+
+# --- BEGIN SYLVESTE BEADS AUTO-EXPORT ---
+# Keep .beads/issues.jsonl current without anyone remembering `bd export`.
+#
+# Synchronous on purpose. It creates a commit, and doing that from a detached
+# background job races the user's next git command for .git/index.lock. The cost
+# is a ~0.3s probe on every commit and a ~3s export only when beads actually
+# changed; the probe is the same checker the pre-commit guard uses, so the
+# trigger and the guard cannot disagree about what "in sync" means.
+#
+# Ordering, re-entrancy, and the no-change case are handled inside the script
+# and covered by tests/test_beads_auto_export.sh.
+if [ -x "$(git rev-parse --show-toplevel)/scripts/beads-auto-export.sh" ]; then
+  "$(git rev-parse --show-toplevel)/scripts/beads-auto-export.sh" || true
+fi
+# --- END SYLVESTE BEADS AUTO-EXPORT ---

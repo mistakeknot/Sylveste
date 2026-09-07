@@ -1,21 +1,46 @@
-# Quality Gates — TurboQuant (Sylveste-4dy)
+# Quality Gates — sylveste-nfqo
 
-## Status: PASS
+**Date:** 2026-04-19
+**Diff:** /tmp/qg-diff-nfqo-1776626890.txt (4755 lines, 31 files under core/intermute/)
+**Reviewers:** fd-correctness, fd-safety, fd-architecture, fd-quality (parallel)
 
-## Summary
+## Verdict: NO-GO
 
-No source code in working tree diff — all changes committed across 3 incremental commits. Only beads backup state (JSON) remains as unstaged changes.
+3 P0 ship-blockers + 7 P1 must-fix issues.
 
-### Pre-execution review (Step 4)
-3 specialized agents (correctness, performance, architecture) reviewed the plan. All P0 findings were addressed in the plan revision:
-- Storage layout fixed: native QuantizedKVCache instead of custom dequantize-on-fetch
-- Offset tracking: delegated to inner cache via PolarCacheWrapper.__getattr__
-- Dual KV pathway: mutual exclusion ValueError guard added
-- Bool parsing: documented as known issue in config loader (not introduced by this PR)
+## P0 Ship-Blockers
 
-### Test results
-- 77/77 tests pass (full suite)
-- 16 new tests for TurboQuant (polar transform, QJL, cache wrapper, integration)
-- No regressions in existing tests
+1. **arch-plan-drift-1:** internal/http imports internal/livetransport concretely — the LiveDelivery interface was meant to prevent exactly this. Fix: move Target to internal/core, move WrapEnvelope behind the interface or to internal/core.
+2. **arch-plan-drift-2:** handleSendMessage is 180 lines after extraction — plan specified ~30-50. Fix: pull inline policy-override block into resolveRecipientPlans.
+3. **corr-orphan-event:** transport=live inject-fail commits orphan PokeResultFailed audit event; also partial-inject for multi-recipient live (one recipient receives poke before caller gets 503). Fix: skip AppendEvents in live+failure branch.
 
-### Findings: 0 P0, 0 P1, 0 P2
+## P1 Must-Fix
+
+- safety: InMemory.UpsertWindowIdentityWithToken accepts any non-empty token (test stub gap)
+- safety: no http.MaxBytesReader on new decoders (DoS exposure if non-loopback binding added)
+- arch: recipientPlan.Target is *livetransport.Target (root cause of P0-1)
+- arch: broadcastLimiter + liveRateLimiter duplicate implementations
+- arch: noopLiveDelivery.Deliver returns error; should return nil for transport=async tests
+- quality: inboxPoke struct duplicated between cmd + internal/http
+- quality: URL query params not escaped via url.QueryEscape in CLI
+
+## Plan Commitments Verified (no drift)
+
+- Atomic durable + poke staging via AppendEvents
+- INSERT OR IGNORE on pending_pokes (no surfaced_at clearing)
+- Staleness inside GetAgentFocusState (2s threshold)
+- WrapEnvelope body sanitization (--- escape + C0 strip)
+- Registration token ownership check
+- Feature flag gate (config.live_transport_enabled)
+- Rate limiter (10/min per sender-recipient)
+- Single EventPeerWindowPoke with result field
+- Named TransportMode type
+- Migrations follow tableHasColumn pattern; schema.sql has no ALTER TABLE
+- TransportOrDefault normalization at every write site
+
+## Test State
+
+- go build ./... — PASS
+- go vet ./... — PASS  
+- go test ./... — PASS
+- go test -tags tmux_integration ./... — PASS (after test fix: session-only target)

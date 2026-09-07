@@ -1,0 +1,39 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 4
+timeout_per_task: 600
+
+stages:
+  - name: "Wave 1 — independent"
+    tasks:
+      - id: task-1
+        title: "Fix drift_pct signal-name mismatch in check.go"
+        files: [os/Ockham/cmd/ockham/check.go]
+        depends: []
+        tier: fast
+      - id: task-2
+        title: "Scaffold cmd/ockham integration test harness"
+        files: [os/Ockham/cmd/ockham/check_test.go]
+        depends: []
+      - id: task-4
+        title: "Add UnknownVerdictBlocks policy knob to trigger pipeline"
+        files:
+          - os/Ockham/internal/trigger/pipeline.go
+          - os/Ockham/internal/trigger/pipeline_test.go
+        depends: []
+  - name: "Wave 2 — depends on Wave 1"
+    tasks:
+      - id: task-5
+        title: "Harden prev_drift parse with strconv.ParseFloat"
+        files: [os/Ockham/cmd/ockham/check.go]
+        depends: [task-1]
+        tier: fast
+      - id: task-3
+        title: "Integration tests — fire / fast-path / release / Healthy-blocks"
+        files:
+          - os/Ockham/cmd/ockham/check.go
+          - os/Ockham/cmd/ockham/check_test.go
+        depends: [task-1, task-2, task-5]
+# task-6 (bead close) intentionally omitted — gated on user approval after
+# waves 1-3 finish. Re-add and re-run if/when ready to close.

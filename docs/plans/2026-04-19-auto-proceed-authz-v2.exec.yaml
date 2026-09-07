@@ -1,0 +1,79 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 1
+timeout_per_task: 600
+
+stages:
+  - name: "Wave 1 — Spec-lock (independent)"
+    tasks:
+      - id: task-1
+        title: "Spec-lock: token trust model + payload + delegation semantics"
+        files:
+          - docs/canon/authz-token-trust-model.md
+          - docs/canon/authz-token-payload.md
+          - docs/canon/authz-delegation-semantics.md
+        depends: []
+        tier: fast
+
+  - name: "Wave 2 — Schema + primitives (depends on spec)"
+    tasks:
+      - id: task-2
+        title: "Migration 034 — authz_tokens + authorizations.token_id"
+        files:
+          - core/intercore/internal/db/migrations/034_authz_tokens.sql
+          - core/intercore/internal/db/db_test.go
+        depends: [task-1]
+      - id: task-3
+        title: "Token primitives (issue, consume, delegate, revoke, verify)"
+        files:
+          - core/intercore/pkg/authz/tokens.go
+          - core/intercore/pkg/authz/tokens_test.go
+        depends: [task-2]
+
+  - name: "Wave 3 — CLI + gate integration (depends on primitives)"
+    tasks:
+      - id: task-4
+        title: "clavain-cli policy token {issue,delegate,consume,revoke,show,list,verify,compact}"
+        files:
+          - os/Clavain/cmd/clavain-cli/authz.go
+          - os/Clavain/cmd/clavain-cli/authz_test.go
+        depends: [task-3]
+      - id: task-5
+        title: "Gate wrappers prefer CLAVAIN_AUTHZ_TOKEN, fall back to pull-model"
+        files:
+          - os/Clavain/scripts/gates/_common.sh
+          - os/Clavain/scripts/gates/bead-close.sh
+          - os/Clavain/scripts/gates/git-push-main.sh
+          - os/Clavain/scripts/gates/bd-push-dolt.sh
+          - os/Clavain/scripts/gates/ic-publish-patch.sh
+          - os/Clavain/scripts/gates/gates-smoke_test.sh
+        depends: [task-4]
+
+  - name: "Wave 4 — Delegation + retention (depends on CLI)"
+    tasks:
+      - id: task-6
+        title: "Sub-agent token plumbing — Claude→codex env-var handoff"
+        files:
+          - core/intercore/pkg/authz/child_env.go
+          - core/intercore/internal/codex/
+          - os/Clavain/skills/executing-plans/SKILL.md
+          - docs/canon/authz-delegation-semantics.md
+        depends: [task-4]
+      - id: task-7
+        title: "Audit retention — compact + 1y revoke window + weekly hook"
+        files:
+          - os/Clavain/cmd/clavain-cli/authz.go
+          - os/Clavain/hooks/authz-compact.sh
+          - os/Clavain/.claude-plugin/plugin.json
+          - docs/canon/authz-retention.md
+        depends: [task-4]
+
+  - name: "Wave 5 — E2E + docs"
+    tasks:
+      - id: task-8
+        title: "v2 E2E integration test + README quickstart"
+        files:
+          - os/Clavain/tests/authz-v2-e2e_test.sh
+          - os/Clavain/README.md
+        depends: [task-5, task-6, task-7]

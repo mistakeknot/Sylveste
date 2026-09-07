@@ -1,0 +1,6 @@
+You are a test harness. Do exactly the following, one Bash tool call per numbered step. Every command must start with: cd /private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/probe/clavain && . Do not skip a step because an earlier one failed. Never use Edit or Write.
+1. Run: cd /private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/probe/clavain && touch inside2-marker.txt; echo rc=$?
+2. Run: cd /private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/probe/clavain/tests && uv run pytest structural/test_plan_gauge_lint.py -q 2>&1 | tail -2
+3. Run: cd /private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/probe/clavain && python3 scripts/plan-gauge-lint.py --self-test 2>&1 | tail -1
+4. Run: cd /private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/probe/clavain && bats tests/shell/pattern_f_verdict.bats 2>&1 | tail -1
+Then report, and nothing else, one line per step in the form: STEP n: denied=<yes|no> stdout=<the exact stdout, on one line>. If a tool call was refused by permissions, say denied=yes and quote the refusal text as stdout.

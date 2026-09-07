@@ -1,0 +1,16 @@
+Pattern F run 838742fd: 1 item(s), repo /Users/sma/projects/Sylveste/os/Clavain, run dir /Users/sma/projects/Sylveste/os/Clavain/.clavain/orchestrate-runs/838742fd
+[pf] dispatching 1 item(s), up to 1 at once
+
+[pf] item 9hqr: exact-9hqr.md (exact)
+  [pf] 9hqr: gauge clean
+  [pf] 9hqr: reserved 2 path(s) in scope Clavain after 0.1s: scripts/orchestrate.py tests/structural/test_orchestrate_fresh_output.py
+  [pf] 9hqr: worktree /Users/sma/projects/Sylveste/os/Clavain/.clavain/orchestrate-runs/838742fd/wt/9hqr on pf/838742fd/9hqr
+  [pf] 9hqr: register executor replay PASS commit=6321519a08a16841671a966ea238aea111ac89eb
+  [pf] 9hqr: executor PASS commit=6321519a08a16841671a966ea238aea111ac89eb
+  [pf] 9hqr: register validator replay PASS commit=6321519a08a16841671a966ea238aea111ac89eb
+  [pf] 9hqr: validator PASS; 0 beyond-the-gauge finding(s)
+  [pf] 9hqr: merged -> 6321519a08a16841671a966ea238aea111ac89eb
+
+Pattern F run 838742fd finished in 111.3s (max_parallel 1): merged=1; register rows read back for the session: 84
+  9hqr: merged; waited 0.1s, ran 111.2s, merge merged
+{"run":"838742fd","goal":"a7f02287","session":"aa2bb078-ee16-4c32-9f97-01ef7dbdec61","register":"/Users/sma/projects/Sylveste/.clavain/interspect/interspect.db","repo":"/Users/sma/projects/Sylveste/os/Clavain","started":"2026-09-07T12:07:16Z","finished":"2026-09-07T12:09:07Z","run_dir":"/Users/sma/projects/Sylveste/os/Clavain/.clavain/orchestrate-runs/838742fd","wall_s":111.3,"max_parallel":1,"meter":"/Users/sma/projects/Sylveste/os/Clavain/.clavain/orchestrate-runs/838742fd/meter.json","register_readback":84,"items":[{"id":"9hqr","plan":"/private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/demo2/exact-9hqr.md","contract":"exact","status":"merged","gauge_rc":0,"worktree":"/Users/sma/projects/Sylveste/os/Clavain/.clavain/orchestrate-runs/838742fd/wt/9hqr","branch":"pf/838742fd/9hqr","executor_model":"plan-gauge-lint.py --apply","executor_commit":"6321519a08a16841671a966ea238aea111ac89eb","executor_verdict":"PASS","executor_criterion":null,"validator_model":"gpt-5.6-sol","validator_verdict":"PASS","validator_criterion":"none","receipt_ok":true,"independent_findings":0,"merged":true,"merge_commit":"6321519a08a16841671a966ea238aea111ac89eb","register_rows":2,"register_errors":0,"note":null,"beyond_gauge":[],"run":"838742fd","files":["scripts/orchestrate.py","tests/structural/test_orchestrate_fresh_output.py"],"reservations":2,"blocked_by":null,"wait_s":0.1,"run_s":111.2,"started":"2026-09-07T12:07:16Z","finished":"2026-09-07T12:09:07Z","merge_outcome":"merged","pilot":"9hqr","plan_path":"/private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/demo2/exact-9hqr.md","lint_rc":0,"executor_strikes":0,"validator_strikes":0,"register_rc":0,"notes":""}]}

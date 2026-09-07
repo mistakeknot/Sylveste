@@ -1,0 +1,43 @@
+{
+  "run": "c44f9b33",
+  "goal": "60771535",
+  "session": "aa2bb078-ee16-4c32-9f97-01ef7dbdec61",
+  "window": {
+    "since": "2026-09-07T06:55:38Z",
+    "until": "2026-09-07T06:58:13Z"
+  },
+  "profile_py": "/Users/sma/.claude/plugins/cache/interagency-marketplace/interstat/0.3.6/scripts/profile.py",
+  "main_thread_usd": 1.44,
+  "seats_usd": 0.42,
+  "claude_seats_usd": {},
+  "codex_seats_usd": {
+    "01a07aa6-c9b4-77c2-b383-ad265aab912c": 0.42,
+    "01a07aa6-cadb-7e22-a339-62ba641876d0": 0
+  },
+  "run_total_usd": 1.86,
+  "main_thread_share_of_run": 0.774,
+  "machine_window_usd": 5.82,
+  "main_thread_share_of_machine_window": 0.247,
+  "unpriced_msgs": {
+    "window": 3,
+    "main": 0
+  },
+  "files_scanned": 9353,
+  "orchestrator_turns": 4,
+  "orchestrator_tool_turns": 3,
+  "transcripts": [
+    "/Users/sma/.claude/projects/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61.jsonl"
+  ],
+  "dispatches": [
+    {
+      "item": "b7e0",
+      "role": "validation",
+      "model": "gpt-5.6-sol",
+      "started": "2026-09-07T06:55:43Z",
+      "finished": "2026-09-07T06:58:13Z",
+      "rc": 0,
+      "timed_out": false,
+      "output": "/Users/sma/projects/Sylveste/os/Clavain/.clavain/orchestrate-runs/c44f9b33/b7e0/validator.md"
+    }
+  ]
+}

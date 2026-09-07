@@ -1,0 +1,7 @@
+`★ Insight ─────────────────────────────────────`
+The review surfaces a structural asymmetry in how "self-building" claims work as receipts: the bead JSONL is already committed to a public repo, making it the only artifact that passes the Tuesday test without additional infrastructure — the problem is that nobody has pointed a viewer at it yet. The $2.93 cost figure is the inverse case: high credibility, zero reproducibility, because `cost-query.sh` reads a local DB. A 300-row CSV export to `data/` would flip the Tuesday test from fail to pass with one commit.
+`─────────────────────────────────────────────────`
+
+Review written to `docs/research/flux-drive/sylveste-ecosystem-external-visibility-20260417T0116/fd-demo-artifact-authenticity.md`.
+
+**Lead finding:** the self-building bead trail is the only Tuesday-reproducible demo candidate today — `git clone` + `bd stats` + `cat issues.jsonl` takes 3 minutes. The $2.93 cost claim is P0-blocked until a CSV export makes `cost-query.sh` runnable by outsiders. Interchart diagram and architecture table are explicitly named as demos to refuse.

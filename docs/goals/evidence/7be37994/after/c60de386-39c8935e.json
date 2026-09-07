@@ -1,0 +1,77 @@
+{
+  "summary": {
+    "main_output_share": 0.934,
+    "main_cost_share": 0.849,
+    "main_integrator_context_per_turn": 73704,
+    "completed_tasks": null,
+    "absolute_cost_per_completed_task": null,
+    "total_output_tokens": 44465,
+    "total_cost": 6.67,
+    "known_cost_subtotal": 6.67,
+    "cost_estimate_complete": true,
+    "pricing_lower_bound": false,
+    "files_scanned": 4051
+  },
+  "rows": [
+    {
+      "lane": "main-integrator",
+      "model": "claude-fable-5-1",
+      "msgs": 12,
+      "output_tokens": 41535,
+      "cache_read_tokens": 788442,
+      "cache_creation_tokens": 169148,
+      "ttl_unreported_msgs": 0,
+      "input_tokens": 563,
+      "context_tokens": 958153,
+      "ctx_per_msg": 79846,
+      "cost": 5.66,
+      "pricing_status": "priced",
+      "pricing_basis": "API-equivalent"
+    },
+    {
+      "lane": "subagent",
+      "model": "claude-opus-5",
+      "msgs": 11,
+      "output_tokens": 44,
+      "cache_read_tokens": 518737,
+      "cache_creation_tokens": 66463,
+      "ttl_unreported_msgs": 0,
+      "input_tokens": 22,
+      "context_tokens": 585222,
+      "ctx_per_msg": 53202,
+      "cost": 0.68,
+      "pricing_status": "priced",
+      "pricing_basis": "API-equivalent"
+    },
+    {
+      "lane": "subagent",
+      "model": "claude-sonnet-5",
+      "msgs": 13,
+      "output_tokens": 2886,
+      "cache_read_tokens": 677045,
+      "cache_creation_tokens": 64281,
+      "ttl_unreported_msgs": 0,
+      "input_tokens": 26,
+      "context_tokens": 741352,
+      "ctx_per_msg": 57027,
+      "cost": 0.33,
+      "pricing_status": "priced",
+      "pricing_basis": "API-equivalent"
+    },
+    {
+      "lane": "main-integrator",
+      "model": "<synthetic>",
+      "msgs": 1,
+      "output_tokens": 0,
+      "cache_read_tokens": 0,
+      "cache_creation_tokens": 0,
+      "ttl_unreported_msgs": 0,
+      "input_tokens": 0,
+      "context_tokens": 0,
+      "ctx_per_msg": 0,
+      "cost": 0.0,
+      "pricing_status": "priced",
+      "pricing_basis": "API-equivalent"
+    }
+  ]
+}

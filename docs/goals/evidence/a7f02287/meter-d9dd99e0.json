@@ -1,0 +1,134 @@
+{
+  "run": "d9dd99e0",
+  "goal": "a7f02287",
+  "session": "aa2bb078-ee16-4c32-9f97-01ef7dbdec61",
+  "window": {
+    "since": "2026-09-07T10:40:26Z",
+    "until": "2026-09-07T11:07:53Z"
+  },
+  "wall_s": 1646.8,
+  "max_parallel": 1,
+  "items": [
+    {
+      "id": "9hqr",
+      "status": "validator_unrun",
+      "wait_s": 0.0,
+      "run_s": 72.1,
+      "merge_outcome": "not_attempted",
+      "files": [
+        "scripts/orchestrate.py",
+        "tests/structural/test_orchestrate_fresh_output.py"
+      ],
+      "blocked_by": null
+    },
+    {
+      "id": "n8jf",
+      "status": "merged",
+      "wait_s": 0.0,
+      "run_s": 623.8,
+      "merge_outcome": "merged",
+      "files": [
+        "scripts/dispatch.sh",
+        "tests/shell/dispatch_claude_settings.bats"
+      ],
+      "blocked_by": null
+    },
+    {
+      "id": "ihnv",
+      "status": "merged",
+      "wait_s": 0.0,
+      "run_s": 950.9,
+      "merge_outcome": "merged",
+      "files": [
+        "scripts/plan-gauge-lint.py",
+        "tests/structural/test_plan_gauge_apply.py"
+      ],
+      "blocked_by": null
+    }
+  ],
+  "profile_py": "/Users/sma/projects/Sylveste/interverse/interstat/scripts/profile.py",
+  "main_thread_usd": 2.87,
+  "seats_usd": 6.16,
+  "claude_seats_usd": {
+    "62b251cc-f42d-4abc-9d2c-8f48d816f8d9": 1.57,
+    "86cc2b35-f852-47fc-b770-fe7a03df7a9a": 1.7
+  },
+  "codex_seats_usd": {
+    "01a07b74-992e-7730-85e3-3ed36ea8c648": 0.21,
+    "01a07b75-98ec-79b3-80eb-78c83b7dabe4": 1.07,
+    "01a07b75-9a2d-7103-ad5e-6ef232bd834c": 0,
+    "01a07b7f-1dac-7000-bdee-b15f6f538d12": 1.61,
+    "01a07b7f-1ec0-7aa1-a4ab-eca61571777c": 0
+  },
+  "run_total_usd": 9.03,
+  "main_thread_share_of_run": 0.318,
+  "machine_window_usd": 60.38,
+  "main_thread_share_of_machine_window": 0.048,
+  "unpriced_msgs": {
+    "window": 61,
+    "main": 0
+  },
+  "files_scanned": 9378,
+  "orchestrator_turns": 10,
+  "orchestrator_tool_turns": 10,
+  "transcripts": [
+    "/Users/sma/.claude/projects/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61.jsonl"
+  ],
+  "dispatches": [
+    {
+      "item": "9hqr",
+      "role": "validation",
+      "model": "gpt-5.6-sol",
+      "started": "2026-09-07T10:40:26Z",
+      "finished": "2026-09-07T10:41:38Z",
+      "rc": null,
+      "timed_out": false,
+      "output": null,
+      "note": "reconstructed from the packet: item-level times"
+    },
+    {
+      "item": "n8jf",
+      "role": "routine-execution",
+      "model": "gpt-5.6-sol",
+      "started": "2026-09-07T10:41:38Z",
+      "finished": "2026-09-07T10:52:02Z",
+      "rc": null,
+      "timed_out": false,
+      "output": null,
+      "note": "reconstructed from the packet: item-level times"
+    },
+    {
+      "item": "n8jf",
+      "role": "validation",
+      "model": "claude-fable-5-1",
+      "started": "2026-09-07T10:41:38Z",
+      "finished": "2026-09-07T10:52:02Z",
+      "rc": null,
+      "timed_out": false,
+      "output": null,
+      "note": "reconstructed from the packet: item-level times"
+    },
+    {
+      "item": "ihnv",
+      "role": "routine-execution",
+      "model": "gpt-5.6-sol",
+      "started": "2026-09-07T10:52:02Z",
+      "finished": "2026-09-07T11:07:53Z",
+      "rc": null,
+      "timed_out": false,
+      "output": null,
+      "note": "reconstructed from the packet: item-level times"
+    },
+    {
+      "item": "ihnv",
+      "role": "validation",
+      "model": "claude-fable-5-1",
+      "started": "2026-09-07T10:52:02Z",
+      "finished": "2026-09-07T11:07:53Z",
+      "rc": null,
+      "timed_out": false,
+      "output": null,
+      "note": "reconstructed from the packet: item-level times"
+    }
+  ]
+}

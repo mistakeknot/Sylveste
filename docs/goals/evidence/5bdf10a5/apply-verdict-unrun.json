@@ -1,0 +1,149 @@
+{
+  "plan": "/private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/exact-verdict-unrun.md",
+  "contract": "exact",
+  "notes": [
+    "contract=exact; virtual post-edit gauge replay"
+  ],
+  "findings": [],
+  "apply": {
+    "ok": true,
+    "repo_root": "/Users/sma/projects/Sylveste/os/Clavain",
+    "steps": [
+      {
+        "kind": "precondition",
+        "line": 9,
+        "target": null,
+        "heading": "Preconditions",
+        "status": "ok",
+        "rc": 0,
+        "detail": "passed"
+      },
+      {
+        "kind": "edit",
+        "line": 28,
+        "target": "scripts/pattern-f-verdict.sh",
+        "heading": null,
+        "status": "ok",
+        "rc": null,
+        "detail": "applied"
+      },
+      {
+        "kind": "edit",
+        "line": 46,
+        "target": "scripts/pattern-f-verdict.sh",
+        "heading": null,
+        "status": "ok",
+        "rc": null,
+        "detail": "applied"
+      },
+      {
+        "kind": "edit",
+        "line": 57,
+        "target": "scripts/pattern-f-verdict.sh",
+        "heading": null,
+        "status": "ok",
+        "rc": null,
+        "detail": "applied"
+      },
+      {
+        "kind": "edit",
+        "line": 71,
+        "target": "scripts/pattern-f-verdict.sh",
+        "heading": null,
+        "status": "ok",
+        "rc": null,
+        "detail": "applied"
+      },
+      {
+        "kind": "create",
+        "line": 83,
+        "target": "tests/shell/pattern_f_verdict_unrun.bats",
+        "heading": null,
+        "status": "ok",
+        "rc": null,
+        "detail": "created"
+      },
+      {
+        "kind": "verify",
+        "line": 149,
+        "target": null,
+        "heading": "Verify Task 1",
+        "status": "ok",
+        "rc": 0,
+        "detail": "matched exit 0"
+      },
+      {
+        "kind": "edit",
+        "line": 167,
+        "target": "skills/executing-plans/references/pattern-f-contracts.md",
+        "heading": null,
+        "status": "ok",
+        "rc": null,
+        "detail": "applied"
+      },
+      {
+        "kind": "edit",
+        "line": 179,
+        "target": "skills/executing-plans/references/pattern-f-contracts.md",
+        "heading": null,
+        "status": "ok",
+        "rc": null,
+        "detail": "applied"
+      },
+      {
+        "kind": "edit",
+        "line": 189,
+        "target": "skills/executing-plans/references/pattern-f-contracts.md",
+        "heading": null,
+        "status": "ok",
+        "rc": null,
+        "detail": "applied"
+      },
+      {
+        "kind": "edit",
+        "line": 199,
+        "target": "skills/executing-plans/references/pattern-f-contracts.md",
+        "heading": null,
+        "status": "ok",
+        "rc": null,
+        "detail": "applied"
+      },
+      {
+        "kind": "edit",
+        "line": 211,
+        "target": "skills/executing-plans/references/pattern-f-contracts.md",
+        "heading": null,
+        "status": "ok",
+        "rc": null,
+        "detail": "applied"
+      },
+      {
+        "kind": "edit",
+        "line": 224,
+        "target": "skills/executing-plans/references/pattern-f-contracts.md",
+        "heading": null,
+        "status": "ok",
+        "rc": null,
+        "detail": "applied"
+      },
+      {
+        "kind": "edit",
+        "line": 234,
+        "target": "skills/executing-plans/references/pattern-f-contracts.md",
+        "heading": null,
+        "status": "ok",
+        "rc": null,
+        "detail": "applied"
+      },
+      {
+        "kind": "verify",
+        "line": 240,
+        "target": null,
+        "heading": "Verify Task 2",
+        "status": "ok",
+        "rc": 0,
+        "detail": "matched exit 0"
+      }
+    ]
+  }
+}

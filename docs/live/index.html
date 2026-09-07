@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Sylveste public closed-loop cost and session telemetry." />
+  <title>Sylveste / Live</title>
+  <style>
+    @font-face {
+      font-family: 'Ioskeley Mono';
+      src: url('/fonts/IoskeleyMono-Light.woff2') format('woff2');
+      font-weight: 300;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Ioskeley Mono';
+      src: url('/fonts/IoskeleyMono-Regular.woff2') format('woff2');
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Ioskeley Mono';
+      src: url('/fonts/IoskeleyMono-Bold.woff2') format('woff2');
+      font-weight: 700;
+      font-display: swap;
+    }
+    :root { color-scheme: dark; --bg:#000; --surface:#0a0a0a; --border:#222; --text:#e8e8e8; --muted:#666; --accent:#c8a000; --mono:'Ioskeley Mono',ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono',monospace; }
+    * { box-sizing: border-box; border-radius: 0 !important; }
+    html, body { margin:0; min-height:100%; background:var(--bg); color:var(--text); font-family:var(--mono); }
+    body { font-weight: 300; }
+    a { color:var(--text); text-decoration:none; transition: opacity 50ms; } a:hover { opacity:.6; }
+    .nav { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; padding:20px 24px; color:var(--muted); font-size:13px; letter-spacing:.2em; text-transform:uppercase; }
+    .nav-center { justify-self:center; font-size:11px; letter-spacing:.1em; }
+    .nav a, .nav-center a { color:var(--muted); }
+    main { padding:0 24px 64px; }
+    .shell { max-width:1160px; margin:0 auto; }
+    .hero { border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:44px 0 40px; }
+    .kicker { color:var(--muted); font-size:11px; letter-spacing:.1em; text-transform:uppercase; margin-bottom:18px; }
+    h1 { max-width:760px; margin:0; font-size:clamp(28px,4.6vw,56px); line-height:1.04; letter-spacing:-.05em; font-weight:300; }
+    .lede { max-width:720px; margin:22px 0 0; color:var(--text); font-size:14px; line-height:1.65; }
+    .metrics { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); border-top:1px solid var(--border); margin-top:42px; }
+    .metric { border-bottom:1px solid var(--border); padding:18px 18px 18px 0; min-height:96px; }
+    .metric + .metric { border-left:1px solid var(--border); padding-left:18px; }
+    .metric dt { color:var(--muted); font-size:11px; letter-spacing:.1em; text-transform:uppercase; margin-bottom:14px; }
+    .metric dd { margin:0; font-size:22px; letter-spacing:-.03em; }
+    .panel { margin-top:40px; }
+    .section-label { margin:0 0 12px; color:var(--muted); font-size:11px; letter-spacing:.1em; text-transform:uppercase; }
+    .note { color:var(--muted); font-size:13px; line-height:1.6; }
+    table { width:100%; border-collapse:collapse; margin-top:16px; font-size:13px; }
+    th, td { border-bottom:1px solid var(--border); padding:12px 12px 12px 0; text-align:left; vertical-align:top; }
+    th { color:var(--muted); font-size:11px; letter-spacing:.1em; text-transform:uppercase; font-weight:400; }
+    code { color:var(--text); font-family:var(--mono); }
+    footer { margin-top:56px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:11px; }
+    footer a { color:var(--muted); }
+    @media (max-width: 780px) { .metrics { grid-template-columns:1fr 1fr; } }
+    @media (max-width: 560px) { .nav { grid-template-columns:1fr; gap:8px; } .nav-center { justify-self:start; } main { padding-inline:18px; } .hero { padding:34px 0; } .metrics { grid-template-columns:1fr; } .metric + .metric { border-left:0; padding-left:0; } th:nth-child(2), td:nth-child(2) { display:none; } }
+  </style>
+</head>
+<body>
+  <nav class="nav" aria-label="Site navigation">
+    <a href="/">Sylveste</a>
+    <span class="nav-center"><a href="/live/">live line</a> · <a href="https://github.com/mistakeknot/Sylveste">source</a></span>
+    <span aria-hidden="true"></span>
+  </nav>
+
+  <main>
+    <div class="shell">
+      <section class="hero" aria-labelledby="live-heading">
+        <div class="kicker">Closed-loop telemetry</div>
+        <h1 id="live-heading">Public cost and session trajectory.</h1>
+        <p class="lede">This page renders only public aggregate calibration data. It never reads private Interstat databases, prompts, local session logs, Beads state, or credentials.</p>
+      </section>
+
+      <dl class="metrics" id="metrics" aria-label="Latest public metrics">
+        <div class="metric"><dt>Source</dt><dd id="source">loading</dd></div>
+        <div class="metric"><dt>Sessions</dt><dd id="sessions">—</dd></div>
+        <div class="metric"><dt>Total tokens</dt><dd id="tokens">—</dd></div>
+        <div class="metric"><dt>Cost / session</dt><dd id="cost-session">—</dd></div>
+      </dl>
+
+      <section class="panel" aria-labelledby="trajectory-heading">
+        <div class="section-label" id="trajectory-heading">Cost trajectory</div>
+        <p class="note">Data source: <a href="https://github.com/mistakeknot/Sylveste/blob/oyrf-data/data/cost-trajectory.csv">repo CSV</a>. The exporter writes safe aggregate rows only.</p>
+        <div id="table-wrap"><p class="note">Loading public CSV…</p></div>
+      </section>
+
+      <section class="panel" aria-labelledby="contract-heading">
+        <div class="section-label" id="contract-heading">Public data contract</div>
+        <p class="note">The CSV columns are <code>captured_at</code>, <code>window_days</code>, <code>session_count</code>, <code>total_tokens</code>, <code>input_tokens</code>, <code>output_tokens</code>, <code>total_cost_usd</code>, <code>cost_per_session_usd</code>, and <code>source</code>. Valid sources are <code>interstat</code>, <code>interstat-empty</code>, and <code>dry-run-fixture</code>.</p>
+        <p class="note">Template source: <a href="https://github.com/mistakeknot/Sylveste/blob/main/docs/live/closed-loop.md">docs/live/closed-loop.md</a>.</p>
+      </section>
+
+      <footer><a href="/">Sylveste</a></footer>
+    </div>
+  </main>
+
+  <script>
+    const CSV_URL = 'https://raw.githubusercontent.com/mistakeknot/Sylveste/oyrf-data/data/cost-trajectory.csv';
+    function parseCsv(text) {
+      const lines = text.trim().split(/\r?\n/).filter(Boolean);
+      const headers = lines.shift().split(',');
+      return lines.map(line => Object.fromEntries(line.split(',').map((value, index) => [headers[index], value])));
+    }
+    function fmtInt(value) {
+      const n = Number(value || 0);
+      return Number.isFinite(n) ? n.toLocaleString() : '0';
+    }
+    function fmtUsd(value) {
+      const n = Number(value || 0);
+      return Number.isFinite(n) ? `$${n.toFixed(6)}` : '$0.000000';
+    }
+    fetch(CSV_URL, { cache: 'no-store' })
+      .then(response => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.text();
+      })
+      .then(text => {
+        const rows = parseCsv(text);
+        const latest = rows[rows.length - 1] || {};
+        document.getElementById('source').textContent = latest.source || 'none';
+        document.getElementById('sessions').textContent = fmtInt(latest.session_count);
+        document.getElementById('tokens').textContent = fmtInt(latest.total_tokens);
+        document.getElementById('cost-session').textContent = fmtUsd(latest.cost_per_session_usd);
+        document.getElementById('table-wrap').innerHTML = `<table><thead><tr><th>Captured</th><th>Window</th><th>Sessions</th><th>Tokens</th><th>Cost</th><th>Source</th></tr></thead><tbody>${rows.slice(-8).reverse().map(row => `<tr><td>${row.captured_at}</td><td>${row.window_days}d</td><td>${fmtInt(row.session_count)}</td><td>${fmtInt(row.total_tokens)}</td><td>${fmtUsd(row.total_cost_usd)}</td><td>${row.source}</td></tr>`).join('')}</tbody></table>`;
+      })
+      .catch(error => {
+        document.getElementById('source').textContent = 'unavailable';
+        document.getElementById('table-wrap').innerHTML = `<p class="note">Could not load public CSV: ${error.message}. Use the repo CSV link above as fallback.</p>`;
+      });
+  </script>
+</body>
+</html>

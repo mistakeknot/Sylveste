@@ -1,0 +1,17 @@
+version: 1
+session: aa2bb078-ee16-4c32-9f97-01ef7dbdec61
+goal: "60771535"
+register: /Users/sma/projects/Sylveste/.clavain/interspect/interspect.db
+repo: /Users/sma/projects/Sylveste/os/Clavain
+timeout: 2400
+trailers:
+  - "Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
+  - "Claude-Session: https://claude.ai/code/session_01Xkt2xiuD4S5FGTWkUaUNdP"
+items:
+  - id: meti
+    plan: /private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/demo/brief-meti.md
+    executor_role: routine-execution
+    producer: gpt-5.6-sol
+  - id: b7e0
+    plan: /private/tmp/claude-501/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61/scratchpad/demo/exact-b7e0.md
+    producer: claude-fable-5-1

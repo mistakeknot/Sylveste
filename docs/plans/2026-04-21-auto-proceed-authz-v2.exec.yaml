@@ -1,0 +1,82 @@
+version: 1
+mode: dependency-driven
+tier: deep
+max_parallel: 3
+timeout_per_task: 600
+
+stages:
+  - name: "Wave 1 — spec lock (blocks all downstream)"
+    tasks:
+      - id: task-1
+        title: "Spec-lock: authz-token-model.md + authz-token-payload.md + backlinks"
+        files:
+          - docs/canon/authz-token-model.md
+          - docs/canon/authz-token-payload.md
+          - docs/brainstorms/2026-04-19-auto-proceed-authz-design.md
+          - docs/handoffs/latest.md
+        depends: []
+
+  - name: "Wave 2 — schema"
+    tasks:
+      - id: task-2
+        title: "Migration 034: authz_tokens table + cutover marker (SQL + inline DDL)"
+        files:
+          - core/intercore/internal/db/migrations/034_authz_tokens.sql
+          - core/intercore/internal/db/db.go
+          - core/intercore/internal/db/db_test.go
+        depends: [task-1]
+
+  - name: "Wave 3 — token primitives"
+    tasks:
+      - id: task-3
+        title: "pkg/authz/token.go: Token, CanonicalTokenPayload, Issue/Delegate/Consume/Revoke, 9 error classes"
+        files:
+          - core/intercore/pkg/authz/token.go
+          - core/intercore/pkg/authz/token_test.go
+        depends: [task-2]
+
+  - name: "Wave 4 — CLI surface"
+    tasks:
+      - id: task-4
+        title: "clavain-cli policy token {issue,consume,delegate,revoke,list,show,verify}"
+        files:
+          - os/Clavain/cmd/clavain-cli/authz_token.go
+          - os/Clavain/cmd/clavain-cli/authz_token_test.go
+          - os/Clavain/cmd/clavain-cli/authz.go
+        depends: [task-3]
+
+  - name: "Wave 5 — integrations (parallel)"
+    tasks:
+      - id: task-5
+        title: "Gate wrapper gate_token_consume + short-circuit integration in 4 wrappers"
+        files:
+          - os/Clavain/scripts/gates/_common.sh
+          - os/Clavain/scripts/gates/bead-close.sh
+          - os/Clavain/scripts/gates/git-push-main.sh
+          - os/Clavain/scripts/gates/bd-push-dolt.sh
+          - os/Clavain/scripts/gates/ic-publish-patch.sh
+          - os/Clavain/scripts/gates/gates-smoke_test.sh
+        depends: [task-4]
+      - id: task-6
+        title: "ic publish --patch consumes publish-scoped token; marker warns louder"
+        files:
+          - core/intercore/internal/publish/approval.go
+          - core/intercore/internal/publish/approval_test.go
+          - core/intercore/cmd/ic/publish.go
+        depends: [task-4]
+      - id: task-7
+        title: "Bootstrap (--with-token-demo) + README v2 quickstart + policy.yaml.example note"
+        files:
+          - os/Clavain/scripts/authz-init.sh
+          - os/Clavain/README.md
+          - os/Clavain/config/policy.yaml.example
+        depends: [task-4]
+
+  - name: "Wave 6 — E2E"
+    tasks:
+      - id: task-8
+        title: "E2E test: 13 scenarios incl. delegate/cascade/double-consume/cross-project"
+        files:
+          - os/Clavain/tests/authz-v2-e2e_test.sh
+          - os/Clavain/tests/authz-v15-e2e_test.sh
+        depends: [task-5, task-6, task-7]

@@ -1,0 +1,64 @@
+{
+  "run": "prior-5bdf10a5",
+  "goal": "5bdf10a5",
+  "session": "aa2bb078-ee16-4c32-9f97-01ef7dbdec61",
+  "window": {
+    "since": "2026-09-07T05:24:59Z",
+    "until": "2026-09-07T05:33:24Z"
+  },
+  "profile_py": "/Users/sma/.claude/plugins/cache/interagency-marketplace/interstat/0.3.6/scripts/profile.py",
+  "main_thread_usd": 4.09,
+  "seats_usd": 23.7,
+  "claude_seats_usd": {
+    "018f136e-fe99-4287-b543-0db46437a14c": 1.64,
+    "0c3243b2-8d7c-4f69-805b-cda6f8613a0d": 2.59,
+    "22f5b15e-936c-416e-a73e-e7221d6e0cd6": 0.46,
+    "373ea7e3-bcc7-416c-b4a1-c9f9f30d568f": 0,
+    "461e5798-4b72-432d-8a06-53ce1f79b959": 0,
+    "680b78dc-c19e-46b9-b5f5-30ce31a3e550": 0,
+    "830de40b-e147-4ca3-883e-b5ead4bfed82": 1.93,
+    "9c7114db-e42d-48a7-8e2e-67c4095759b7": 0,
+    "9cb199bc-05fc-4f8e-a70f-1b0f6fbc2bf2": 0,
+    "a17c3f8b-8a18-4320-bc8f-b7648e7b9cb7": 0,
+    "a82d447a-1cc2-4727-b86b-c6d7d2286f67": 1.22,
+    "bcaaf70a-842b-432f-86bd-0e745d564f1b": 0,
+    "c57de7d0-b87c-47f1-899c-a4f9830dbb7f": 0,
+    "e9255d6f-0deb-4aa5-b241-ea943bd27884": 0,
+    "ef9816d6-d966-4c0b-82d3-e7de6866dab0": 0
+  },
+  "codex_seats_usd": {
+    "01a0742a-d5cf-7543-ab51-97ef4deaaf87": 0,
+    "01a079c1-4e2d-7842-876c-5fc4d3fbb556": 1.16,
+    "01a079e4-3466-7d23-a810-8a275b33371f": 2.77,
+    "01a079e5-5b8b-7c12-9a0b-f7a510fda825": 4.33,
+    "01a079e5-c264-7e91-8ec2-9c88c456d0a2": 2.78,
+    "01a079e5-c6ea-7643-b2ee-f24999c948d5": 0,
+    "01a079e5-faea-7050-98bb-3facdc367c2b": 4.82,
+    "01a079e9-de73-7e22-8aca-a70f1fb6840a": 0,
+    "01a07a74-ea82-78f1-8e82-22ca2415b920": 0,
+    "01a07a79-2eef-7d52-b5b4-7466f2b8fb4a": 0,
+    "01a07a7d-2b75-7393-8909-38fa675eac00": 0,
+    "01a07a82-457c-7e20-9bad-82f0699480ea": 0,
+    "01a07a82-cb97-7303-806a-e0b87dea0070": 0,
+    "01a07a82-de4c-78c1-bbf5-11bfab87500b": 0,
+    "01a07a99-29cf-7271-92a9-7bc6619a832b": 0,
+    "01a07a99-2d17-7132-a1cf-0d9f47dff2ae": 0,
+    "01a07aa6-c9b4-77c2-b383-ad265aab912c": 0,
+    "01a07aa6-cadb-7e22-a339-62ba641876d0": 0
+  },
+  "run_total_usd": 27.79,
+  "main_thread_share_of_run": 0.147,
+  "machine_window_usd": 31.77,
+  "main_thread_share_of_machine_window": 0.129,
+  "unpriced_msgs": {
+    "window": 17,
+    "main": 0
+  },
+  "files_scanned": 9353,
+  "orchestrator_turns": 14,
+  "orchestrator_tool_turns": 14,
+  "transcripts": [
+    "/Users/sma/.claude/projects/-Users-sma-projects/aa2bb078-ee16-4c32-9f97-01ef7dbdec61.jsonl"
+  ],
+  "dispatches": []
+}
