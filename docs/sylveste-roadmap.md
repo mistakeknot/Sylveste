@@ -1,119 +1,101 @@
 # Sylveste Roadmap
 
-**Modules discovered:** 84 | **Ledger:** 3,662 total; 3,172 closed; 458 open; 13 in progress; 18 deferred; 1 blocked | **Last updated:** 2026-07-11
+**Last reviewed:** 2026-09-07. **Canonical task source:** zklw Sylveste Beads.
 
-**Machine roadmap:** [`roadmap.json`](roadmap.json) | **Detailed P2-P4 inventory:** [`backlog.md`](backlog.md) | **Architecture:** [`CLAUDE.md`](../CLAUDE.md)
+[Machine roadmap](roadmap.json) · [Detailed backlog](backlog.md) ·
+[Version gates](roadmap-v1.md) · [Autonomous maintenance design](plans/2026-09-07-remontoire-roadmap-maintenance.md)
 
-> **Operating decision:** remain corrective-first. The live close-gate is enforced; do not start new plugins, consolidated MCP work, A:L4/auto-ship, or additive research until the evidence-qualified A:L3 proof and the remaining P1 authorization-provenance gaps pass. Live evidence outranks graph centrality, issue priority, and unit-test completion.
+The immediate objective is a usable, measured delivery loop: a human decision becomes
+governed execution, produces attributable evidence, and changes later work. Finish the
+active delivery work before expanding the platform. The principal has authorized full
+planning reprioritization; the July corrective freeze no longer overrides the explicitly
+selected delivery cohort. Product acceptance, model promotion, and release gates remain.
 
----
+## Now — six outcomes
 
-## Current Baseline
+| Order | Outcome and existing work | Evidence needed to finish |
+|---|---|---|
+| 1 | **Trust governed execution.** `Sylveste-nmiu` — Flere, Intercore, Clavain | Preserve the implemented admission, root restrictions, terminal-receipt and indeterminate-outcome protections; finish the explicit real fixed-worker profile/provider/model and provider-backed native terminal proof |
+| 2 | **Measure accepted delivery.** `Sylveste-yibw`, `Sylveste-kbh5` — Interstat, Clavain, Astra canary | Task/session/turn identity before aggregation; shared overhead counted once; execution and independent acceptance separate; coverage and pricing explicit; retain the published mixed context result; complete whole-cohort accounting and the larger canary gates |
+| 3 | **Complete the feedback journey.** `Sylveste-fuwn` — Autarch, Flere, Clavain, lattice | Real observation and voice evidence, correction/playback, reconnect, investigation, revision-bound proposal acceptance, execution, acknowledged build launch, human retest, and guidance affecting later work |
+| 4 | **Make planning records agree.** `sylveste-bkrh`, `sylveste-y0k7`, `sylveste-owjn`, `sylveste-7jj5` | Preserve cross-host history; reconcile differing records; fresh canonical projections; separate Remontoire backlog binding from kernel state; implement bounded autonomous maintenance |
+| 5 | **Close provenance gaps.** `sylveste-mn13`, `sylveste-5xpi` | Cryptographically anchored legacy history, key identities and archived verification, enforced quarantine; current installed audit evidence |
+| 6 | **Accumulate valid autonomy proof.** `sylveste-myyw.16`, `sylveste-9lp.37`, then `Sylveste-4b5.1` | Ten natural no-touch sprints with receipt chains across all three calibration loops; external holdouts before consensus monitoring; no synthetic counter credit |
 
-The 2026-07-10 operating-baseline repair is complete:
+The ordering is a delivery sequence, not a replacement for Beads priorities. Independent
+provenance work can run alongside product delivery; natural proof accumulates during
+ordinary qualifying work. The proof gate remains P0. This review did not remeasure its
+live streak, so the previous dated 0/10 display is not repeated as a current observation.
 
-- Beads/Dolt/JSONL history reconciled to 3,633 issues without discarding later state.
-- Stale claims, one duplicate, four completed epics, and 12 reversed dependency edges repaired.
-- Clavain source and installed surfaces canonicalized on the Mac and zklw.
-- Clavain structural CI, both Codex installer doctors, Interverse quality scoring, and `ic publish doctor` are green.
-- `roadmap.json` and `backlog.md` now regenerate from the canonical tracker rather than erased `iv-*` snapshots.
-- The receipt and runtime-close pipeline is published and deployed as Clavain 0.6.266, Intercore 0.3.4, Interstat 0.3.1, and Interspect 0.1.22 on both hosts.
-- zklw is the sole authorization signer and canonical writable ledger; the Mac holds a read-only verifier snapshot and no private key. The repaired schema-35 ledger and both real managed operations verify with zero failed signatures.
-- **Recently completed:** `sylveste-6h7x`, `Sylveste-4b5.2`, `Sylveste-4b5.11`, and `Sylveste-rkm` closed after exact installed canaries, cross-host doctors, signed-history repair, and real managed close/push receipts.
+## Current evidence and limits
 
-One integrity closeout remains evidence-driven:
+The canonical tracker now contains `Sylveste-fuwn`, `Sylveste-nmiu`, and `Sylveste-yibw`
+under their original IDs. Those records had existed only on the Mac; this refresh imported those specific
+records without overwriting other server work. `Sylveste-kbh5` already existed on both hosts. The larger native replication repair is
+still open: Mac and server use different Dolt remotes, and a GitHub pull timed out after
+a successful native server backup. Machine artifacts in this publication reflect the
+server tracker, not an invented merged database.
 
-- **`sylveste-xogc`** - restoration and integrity guards are delivered; close only after the periodic integrity path is recorded and verified.
+`Sylveste-8nov` (Codex installer) and `Sylveste-7wn0` (complete companion compatibility)
+are closed on the Mac but still open on the server at this review. Preserve their
+existing evidence and reconcile the terminal records before treating both hosts as
+consistent. Do not restart their implementation solely because one tracker is stale.
+The attribution cohort still requires complete context and acceptance evidence; it does
+not get retroactive credit from Autarch or Flere work.
 
-**`sylveste-tizx`** and **`Sylveste-4b5.3`** are closed after the corrected artifacts landed and the consistency audit passed.
+The [three-pair context checkpoint report](https://github.com/mistakeknot/Clavain/blob/c83d0aafa5d730be416e509de5d0af78422a85be/docs/research/2026-09-05-measured-task-context.md)
+is already published. Results were mixed and did not establish 20% savings; retain the
+existing context policy. Native coverage of the six selected turns is complete, while
+whole-task attribution, setup coverage, and human effort remain incomplete or unknown.
+This checkpoint is delivered; it is not whole-cohort acceptance or Astra promotion.
 
-The previous A:L3 display of 8/10 is invalid. SessionEnd advanced blind counters even when calibration failed, normal `/reflect` runs recorded manual intervention, and proof state fragmented by working directory. A:L3 restarted at zero under receipt verification.
+Recently completed in the canonical tracker: `sylveste-n2ma` (worktree-first coordination).
+This is a tracker status observation, not a fresh revalidation of every installed host.
+Earlier July baseline releases remain historical evidence; their version numbers and
+signature counts are not presented here as today's installed state.
 
----
+The live `bv` snapshot disagreed with Beads counts, so its graph ranking was not used
+for this refresh. Dependency analysis must consume the same validated snapshot as the
+roadmap. Missing dependency targets remain visible and conservatively blocking.
 
-## Now - Finish the Corrective Proof
+This review repaired the reversed holdout prerequisite: `sylveste-9lp.37` no longer
+depends on the consensus monitor it must precede. `Sylveste-4b5.1` still depends on
+the holdout. The two-node cycle is removed without weakening that acceptance gate.
 
-### 1. Finish A:L3 with natural receipts
+## Next — spend only after measurement can answer
 
-**`sylveste-myyw.16` (P0)** - Observe 10 consecutive natural no-touch sprints whose Intercore run, Bead closure, artifact chain, and routing/gate-threshold/phase-cost outcomes all verify.
+1. `sylveste-xka6` (P2): evaluate B2 routing promotion with observed quality and cost,
+   preserving its existing promotion gates.
+2. `sylveste-i8gp` (P2): complete the next evidence source and prove attribution through
+   a real consumer before broadening the measurement system.
+3. `sylveste-oyrf` (P3): resume longitudinal cost calibration when fresh accepted-work
+   accounting can supply comparable observations.
+4. `sylveste-w4sj` (P3): automate version-roadmap publication after maintenance decisions
+   and publication receipts are reliable. Refreshing prose does not establish a version gate.
 
-Both deployed proof epochs are currently **0/10**. This is deliberately observational: synthetic recorder calls and direct counter manipulation do not count. Continue normal corrective sprints and let valid SessionEnd receipts accumulate; a failure, timeout, duplicate, manual intervention, or broken hash chain resets the proof.
+The external holdout `sylveste-9lp.37` is P2 in Beads; its dependency role puts it in the
+Now outcome without falsely labeling it P1. The older roadmap also overstated the
+priorities of routing, evidence, and cost work; the labels above match this review.
 
-### 2. Harden signed-history provenance
+## Later — expansion follows evidence
 
-- **`sylveste-mn13` (P1)** - cryptographically anchor the three retained pre-signing rows so changing a signed record to `sig_version=0` cannot evade verification.
-- **`sylveste-5xpi` (P1)** - add signer key IDs, archived public-key lookup, and enforced quarantine before enabling key rotation.
+Consolidated MCP work, broad orchestration, autonomous skill calibration, and A:L4
+remain later opportunities. Reconsider them when the delivery loop exposes a concrete
+bottleneck and a bounded experiment can measure the gain. Do not add a new harness or
+scheduler simply to maintain planning documents.
 
-The safe single-signer baseline is live: zklw owns the only private key and writable ledger, Mac verification is read-only, and all 218 current authorization rows pass audit. These P1 items close the remaining database-tamper and future-rotation gaps rather than weakening that topology.
+## Maintenance contract
 
-### 3. Guard calibration against self-confirmation
+Beads owns work; Interpath generates `roadmap.json` and `backlog.md` from one frozen
+snapshot. P0/P1 map to Now, P2 to Next, and P3/P4 to Later. The backlog renders P2–P4;
+the JSON includes every nonclosed task, including in-progress and deferred work.
+This strategic view stays at six outcomes and links to the full inventory.
 
-- **`sylveste-9lp.37` (P1)** - establish an external holdout for each calibration loop, including refresh policy and contamination failure mode.
-- **`Sylveste-4b5.1` (P1)** - after the holdout exists, monitor agreement, diversity, and independent defect escape so consensus cannot masquerade as improvement.
+Remontoire should own evidence-driven reprioritization. The selected design uses
+model-free daily checks, one bounded fresh Codex assessment on meaningful change,
+and weekly aging review. Full reprioritization is authorized, but the new maintenance
+action and trusted planning publisher are **not yet enabled**. See the linked charter
+for schemas, concurrency, usage, recovery, and installed-canary requirements.
 
-### 4. Make deployment identity self-repairing
-
-- **`sylveste-npc5` (P2)** - verify version, install path, Git commit, and binary digest atomically after Claude plugin updates; fail or perform a data-preserving repair when commit metadata is stale.
-- **`sylveste-dan6` (P2)** - design authenticated remote signing or conflict-safe canonical replication before permitting Mac-originated managed operations.
-- **`sylveste-otv9` (P2)** - archive or namespace both historical home ledgers without losing their real run evidence.
-- **`sylveste-4jmp` (P2)** - make the Interverse quality sweep frozen and non-mutating; keep variable PQS values as telemetry rather than a deterministic gate.
-
-`bv --robot-next` ranks the additive `sylveste-bcok` integration bridge by its
-seven downstream unblocks, while robot triage also surfaces `sylveste-22oi`
-and `sylveste-7505`. Those graph scores do not supersede the observed proof
-and audit failures above; all three remain behind the corrective freeze.
-
----
-
-## Next - After A:L3
-
-1. **`sylveste-xka6` (P1)** - promote B2 routing from shadow to enforce with observed quality and cost evidence. This unlocks `Sylveste-4b5.15` and `Sylveste-4b5.18`.
-2. **`sylveste-i8gp` (P1)** - activate the second cross-subsystem evidence source and prove attribution through the live flywheel.
-3. **`sylveste-oyrf` (P0)** - resume longitudinal cost-calibration evidence. Keep **`sylveste-3rod`** as the launch outcome gate, not a general build epic.
-4. **`Sylveste-2ss` -> `Sylveste-r8g` -> `sylveste-m71`** - resume the benchmark campaign only when its result feeds a live routing decision.
-5. **`sylveste-n2ma` (P1)** - make worktree-first coordination canonical after its prerequisites land.
-
-These outrank standalone feature work because each closes or measures an existing loop rather than creating a new surface.
-
----
-
-## Later - Explicitly Frozen
-
-- **`sylveste-7505`** - consolidated Interverse MCP server. Re-evaluate process savings and tool parity after the corrective gates pass; do not start implementation during the freeze.
-- **`sylveste-7aj8` / `sylveste-lgci`** - autonomous skill calibration and formal A:L4 evaluation remain post-v0.7 work. `sylveste-ysny` must first show that the scoring signal is dense enough to trust.
-- **`Sylveste-4b5.14`, `Sylveste-4b5.15`, `Sylveste-4b5.16`, `Sylveste-4b5.18`, `Sylveste-4b5.20`** - additive or measurement-gated experiments remain behind their corrected prerequisites.
-- **`sylveste-3kol`** - broad parallel orchestration follows the live close-gate and canonical worktree contract.
-- New plugins and open-ended research remain out of scope until the Now exit conditions are observed, not merely implemented.
-
----
-
-## Prioritization Rules
-
-1. **Observed closure before expansion.** Installed, live, and state-changing evidence is required for completion.
-2. **Finish active corrective work first.** A nearly-complete gate outranks a new high-centrality feature.
-3. **Unblocking beats inventory priority.** Dependency direction and transitive unlocks matter more than a raw P0/P1 label.
-4. **Bad evidence blocks autonomy.** Sparse, saturated, self-referential, or unattributed signals remain read-only.
-5. **Frozen means frozen.** Graph tools may rank additive work highly; the operating freeze is the higher-order constraint.
-
----
-
-## Artifact Contract
-
-- `docs/roadmap.json` is the machine-readable rollup of all non-closed tracker items. Its `now`, `next`, and `later` phases map from P0/P1, P2, and P3/P4.
-- `docs/backlog.md` is generated from the same tracker state and contains every live P2-P4 item grouped by module. Do not hand-edit it.
-- This document is the curated strategic view. Keep **Now to six or fewer outcomes** and move full inventory detail to the generated backlog.
-- Regenerate machine artifacts with `scripts/sync-roadmap-json.sh docs/roadmap.json docs/backlog.md`, then run `scripts/audit-roadmap-beads.sh` before publishing.
-
----
-
-## Exit Conditions
-
-The corrective freeze ends only when:
-
-- `sylveste-myyw` verifies 10 consecutive unique natural sprint receipts across all three loops.
-- Managed-close policy audit verification reports zero unsigned or invalid post-cutover rows.
-- The shipped runtime close-gate remains green in exact installed canaries and its recurring audit.
-- Both hosts retain one canonical source/install surface and zero installer or publish-doctor errors.
-- Tracker integrity and roadmap generation remain reproducible from the canonical zklw state.
-
-Until then, the roadmap is deliberately narrow.
+Completion always separates source implementation, producer publication, installed
+behavior, measurement coverage, and independent human or reviewer acceptance.

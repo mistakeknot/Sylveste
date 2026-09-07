@@ -1,6 +1,24 @@
 # Sylveste v1.0 Roadmap
 
-> Living document. Last audited: 2026-04-27. Runtime evidence may move faster than this roadmap; treat code receipts and bead closures as source of truth for shipped wiring.
+> Version-gate definitions retained. Planning review: 2026-09-07; the component audit below is historical (2026-04-27), not a fresh installed-state audit. Follow [the current prioritized roadmap](sylveste-roadmap.md) and [canonical inventory](roadmap.json) for work selection.
+
+## Current gate disposition
+
+No version promotion is asserted by this documentation refresh. The natural A:L3
+receipt gate (`sylveste-myyw.16`) remains open in the canonical tracker; its current
+streak was not independently remeasured here. The previously reported 8/10 was
+invalidated, and dated counter displays must not be used as present evidence.
+
+The immediate work is governed Flere execution, accepted-work accounting, the Autarch
+feedback journey, canonical planning continuity, and provenance repair. Their acceptance
+conditions are in the [six-outcome roadmap](sylveste-roadmap.md). Worktree coordination
+(`sylveste-n2ma`) is closed in the canonical tracker. Installer/companion terminal status
+still differs across hosts and must be reconciled without discarding evidence.
+
+Autonomous roadmap maintenance is a separate planning action. It can reprioritize work
+under the principal's authorization, but it cannot award A/B/C levels, accept product
+behavior, or declare a release from generated prose. The definitions and historical
+component tables below remain reference material pending a dedicated gate audit.
 
 ## Model
 

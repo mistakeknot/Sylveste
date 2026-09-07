@@ -135,6 +135,8 @@ def test_roadmap_sync_regenerates_backlog_with_machine_output(tmp_path: Path) ->
     plugin_scripts.mkdir(parents=True)
     shutil.copy2(GENERATOR, plugin_scripts)
     shutil.copy2(SCRIPT, plugin_scripts)
+    for helper in ["roadmap_snapshot.py", "publish_roadmap.py"]:
+        shutil.copy2(GENERATOR.parent / helper, plugin_scripts)
 
     manifest = repo / "interverse" / "demo" / ".claude-plugin" / "plugin.json"
     manifest.parent.mkdir(parents=True)

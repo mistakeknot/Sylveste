@@ -1,7 +1,7 @@
 # Sylveste Backlog - Detailed Inventory
 
 **Companion to:** [sylveste-roadmap.md](sylveste-roadmap.md) (strategic roadmap)
-**Last synced:** 2026-08-08
+**Last synced:** 2026-09-07
 
 This file contains every live P2-P4 item in the canonical Beads tracker.
 It is generated from [roadmap.json](roadmap.json); do not hand-edit it.
@@ -11,7 +11,7 @@ It is generated from [roadmap.json](roadmap.json); do not hand-edit it.
 ## P2 - Next
 
 ### a2a
-- **sylveste-ewy3.4.1.4** OAuth2 Resource Indicators authentication on /messages + /tasks _(blocked)_
+- **sylveste-ewy3.4.1.4** OAuth2 Resource Indicators authentication on /messages + /tasks
 
 ### auraken
 - **sylveste-0rmf** Prompt-injection defense for external content (2-of-3 verdict combiner)
@@ -46,18 +46,18 @@ It is generated from [roadmap.json](roadmap.json); do not hand-edit it.
 ### interfer
 - **Sylveste-0gi** DeepSeek V4 Flash on flash-moe — port effort vs wait-for-hardware decision
 - **Sylveste-2ss** Flash-MoE holistic benchmark suite — quality, latency, memory, reliability _(blocked)_
-- **Sylveste-6ru** Qwen3.6-35B-A3B quantization sweep (DWQ vs nvfp4 vs OptiQ vs plain) _(blocked)_
+- **Sylveste-6ru** Qwen3.6-35B-A3B quantization sweep (DWQ vs nvfp4 vs OptiQ vs plain)
 - **Sylveste-bov** flash-moe decode regression — 5 tok/s actual vs 12.9 tok/s spec
-- **sylveste-dczo** Promote Track B5 to enforce mode _(blocked)_
-- **Sylveste-ep8** Evaluate Qwen3.6-27B-OptiQ-4bit (released 2026-04-25) _(blocked)_
+- **sylveste-dczo** Promote Track B5 to enforce mode
+- **Sylveste-ep8** Evaluate Qwen3.6-27B-OptiQ-4bit (released 2026-04-25)
 - **Sylveste-wfz** Fix test_polar_transform_range TurboQuant test failure
 - **sylveste-yfot** Benchmark speculative decoding with 9B draft model _(deferred)_
 
 ### interfer 2ss
-- **Sylveste-r8g** Add SWE-bench Lite runner to code_correctness harness _(blocked)_
+- **Sylveste-r8g** Add SWE-bench Lite runner to code_correctness harness
 
 ### interfer+interflux
-- **Sylveste-k8c** Local inference backend for flux-review agents — server-mode bridge _(blocked)_
+- **Sylveste-k8c** Local inference backend for flux-review agents — server-mode bridge
 
 ### interfere
 - **sylveste-m71** Publish Pareto frontier analysis: speed vs quality across local models _(blocked)_
@@ -67,7 +67,7 @@ It is generated from [roadmap.json](roadmap.json); do not hand-edit it.
 - **sylveste-9lp.15** P2: Structured disagreement as first-class output — disagreement_profile in findings schema
 - **sylveste-9lp.17** P2: Passage-level citation in research synthesis — attribute claims to source passages, not agents
 - **sylveste-9lp.18** P2: Evaluation rubrics — track finding recall, precision, coverage over time
-- **sylveste-9lp.19** P2: Difficulty-aware slot ceiling — replace static formula with content-signal estimator _(blocked)_
+- **sylveste-9lp.19** P2: Difficulty-aware slot ceiling — replace static formula with content-signal estimator
 - **sylveste-9lp.20** P2: Embedding-based dedup pass — cosine similarity on finding titles for conceptual duplicates
 - **sylveste-9lp.21** P2: Typed agent-state log — JSONL per agent replacing in-prompt state tracking
 - **sylveste-9lp.22** P2: Trust model diagnostics — explain low scores and feed back into prompt tuning
@@ -76,7 +76,7 @@ It is generated from [roadmap.json](roadmap.json); do not hand-edit it.
 - **sylveste-9lp.33** BP-C3: sanitize_untrusted.py fuzz tests + TrustedContent NewType — full 4-channel integration
 - **sylveste-9lp.35** BP-C2: explicit dispatch state machine + VerificationStep primitive + run_uuid + decisions.log _(blocked)_
 - **sylveste-9lp.35.6** BP-C2.B: run_uuid quire-mark + decisions.log per-run
-- **sylveste-9lp.37** Holdout Register — name the ground-truth source for every calibration loop _(blocked)_
+- **sylveste-9lp.37** Holdout Register — name the ground-truth source for every calibration loop
 - **sylveste-fyo3.6** P2: Hard budget enforcement mode — test and enable blocking behavior
 - **sylveste-lrnk** Editor-of-record protocol for shared design-doc sections + n6zw close-predicate
 - **sylveste-wyoi** Brainstorm-to-roadmap lift discipline — checklist step in /interpath:roadmap
@@ -100,15 +100,32 @@ It is generated from [roadmap.json](roadmap.json); do not hand-edit it.
 - **Sylveste-ktz** Post-baseline small-fix bundle: date -d fallbacks (Sylveste-a3a) + ic publish --cwd hard-error (Sylveste-1zu) + legacy /tmp sideband retirement (Sylveste-zlc)
 
 ### interwatch
+- **sylveste-0u93** 3 pillar AGENTS.md newly surfaced by watchables.yaml path-casing fix (autarch-agents-md, intercom-agents-md, clavain-agents-md)
+- **sylveste-90ek** docs/solutions/ distillation backlog drifted (distillation-candidates)
 - **sylveste-mxns** 6 doc(s) drifted from source (weekly scan)
+- **sylveste-oy2u** interverse/interflux/AGENTS.md drifted, missing command/skills/MCP server (interflux-agents-md)
+- **sylveste-se7s** interfer, interflux, interwatch have no .beads db — cannot file per-repo findings there
+- **sylveste-txrs** 6 docs drifted: agents-md, claude-md, readme-md, sylveste-roadmap, intercore-agents-md, interflux-agents-md
+- **sylveste-y0k7** docs/sylveste-roadmap.md + docs/sylveste-vision.md drifted (sylveste-roadmap, sylveste-vision)
+- **sylveste-ypxx** core/intercore/AGENTS.md drifted beyond the version-string fix (intercore-agents-md)
+
+### interwatch-scan.py
+- **sylveste-4qxf** crashes on url-based (deployed-*) watchables missing 'path'
+
+### interwatch:interverse
+- **sylveste-dkr5** 4 docs drifted: agents-md, cuj, philosophy, conventions
+- **sylveste-vzwt** 2 docs drifted: vision, agents-md
 
 ### microrouter
 - **sylveste-5p7s** F2: D2 heuristic-baseline measurement — sibling to .19.9, parallel-runnable _(deferred)_
-- **sylveste-s3z6.19.5** Resolver integration in Clavain — wire into routing.yaml _(blocked)_
+- **sylveste-s3z6.19.5** Resolver integration in Clavain — wire into routing.yaml
 - **sylveste-s3z6.19.6** Privacy-routing extension — sensitive tasks always engage router _(blocked)_
 
+### remontoire
+- **sylveste-7jj5** Maintain roadmap and backlog with bounded evidence-driven reprioritization
+
 ### routing
-- **Sylveste-2bg** Re-measure heuristic coverage after agent-roles.yaml extension _(blocked)_
+- **Sylveste-2bg** Re-measure heuristic coverage after agent-roles.yaml extension
 
 ### spike
 - **Sylveste-0gi.2** DeepSeek V4 → flash-moe 5-day feasibility spike (C-prime)
@@ -126,21 +143,21 @@ It is generated from [roadmap.json](roadmap.json); do not hand-edit it.
 - **sylveste-0h8** Competitive Landscape: Close Clavain routing gaps vs LiteLLM/OpenRouter
 - **Sylveste-0pk** /model-routing economy|quality seds flatten routing-table v2 phase overrides
 - **sylveste-104h** Skaffen evidence contract — consume Clavains proven schema (add run_id attribution) _(blocked)_
-- **sylveste-10na** F9: E2E install smoke + compatibility_evidence transcripts _(blocked)_
+- **sylveste-10na** F9: E2E install smoke + compatibility_evidence transcripts
 - **sylveste-129h** Cache-corrected cost-per-landable-change as second-line north-star
 - **sylveste-18a.10** Two-stage LLM bash safety classifier for Skaffen trust evaluator
 - **sylveste-18a.11** Persistent agent memory system for Skaffen
 - **sylveste-18a.12** MCP HTTP/SSE transport for Skaffen
 - **sylveste-18a.3** Fork subagent cache optimization for parallel OODARC spawns
-- **sylveste-18a.5** Permission bubble mode for nested Skaffen agent chains _(blocked)_
+- **sylveste-18a.5** Permission bubble mode for nested Skaffen agent chains
 - **sylveste-1j30** F7: interlens MCP adapter — swap JSON backend to ontology-queries _(blocked)_
 - **sylveste-1mb8** Auraken-Hermes: cross-provider validation (does selector transfer beyond Claude?)
 - **sylveste-1nvc** Generic thinker-profile extraction pipeline _(blocked)_
 - **sylveste-2131** F1: Core daemon + event bus (SyncJournal, CollisionWindow, AncestorStore) _(blocked)_
 - **sylveste-22oi.3** Auraken v0.2: GPG signing pipeline for checksums.txt.asc
 - **sylveste-22oi.7.3** Cognitive profile: extraction pipeline (trajectory + conversation -> entities) _(blocked)_
-- **sylveste-22oi.7.4** Cognitive profile: auraken-profile MCP server (mirror auraken-lens) _(blocked)_
-- **sylveste-22oi.7.5** Cognitive profile: epistemic engine (promotion + half-life decay + harpoon test) _(blocked)_
+- **sylveste-22oi.7.4** Cognitive profile: auraken-profile MCP server (mirror auraken-lens)
+- **sylveste-22oi.7.5** Cognitive profile: epistemic engine (promotion + half-life decay + harpoon test)
 - **sylveste-22oi.7.7** Cognitive profile: pattern-awareness SKILL behaviors (Journeys 2/7/21 + harpoon hook) _(blocked)_
 - **sylveste-2fhj** rig-hook-wiring.py is tracked but declared in neither installer and not in the health surface
 - **Sylveste-2fu3** shadow-work: 17-line hook repair awaiting mk's commit in a third-party-org repo
@@ -148,10 +165,10 @@ It is generated from [roadmap.json](roadmap.json); do not hand-edit it.
 - **sylveste-2xzz** Thinker-profile schema v1 (YAML + validation harness)
 - **Sylveste-2ys** clavain create-agent-skill command references a missing skill
 - **sylveste-301b** Diagnose interstat tool_selection_events ↔ agent_runs session_id join gap
-- **sylveste-34r2** F5.2: Go-Python persistent worker bridge _(blocked)_
+- **sylveste-34r2** F5.2: Go-Python persistent worker bridge
 - **sylveste-35x5** Migrate interlens to high-level MCP TS SDK (prereq for sylveste-7505)
 - **sylveste-39p5** F5: TypeScript plugin adapters (interfluence,interlens,interrank,tuivision) _(blocked)_
-- **sylveste-3v97** F1: Bundle scaffolding + MANIFEST.yaml v1 schema (auraken-distribution v0.1) _(blocked)_
+- **sylveste-3v97** F1: Bundle scaffolding + MANIFEST.yaml v1 schema (auraken-distribution v0.1)
 - **sylveste-3xgz** Fresh-session remeasure: validate ~1,482b skill_listing reduction from sylveste-zppj
 - **sylveste-3xl3.1.19** F6.2: Run live A/B benchmark on flux-explore-teams-brainstorm-{adjacent,distant}.json corpus
 - **sylveste-3xl3.1.23** F5.3: Resolve teammate session UUIDs from team config + project session JSONLs
@@ -166,18 +183,18 @@ It is generated from [roadmap.json](roadmap.json); do not hand-edit it.
 - **Sylveste-4b5.10** LLM-judge bias doc-hygiene + gate-hardening rider (no new judge epic)
 - **Sylveste-4b5.12** Audit-plane correlation layer (deferred, three-feed + consumer gated)
 - **Sylveste-4b5.13** Trust-card: glanceable per-task human review surface from existing evidence
-- **Sylveste-4b5.14** ACE coding-skill playbook vs compound-baseline bake-off (measurement-gated spike) _(blocked)_
+- **Sylveste-4b5.14** ACE coding-skill playbook vs compound-baseline bake-off (measurement-gated spike)
 - **Sylveste-4b5.15** Pass@k harness extension + kill-gated test-time-compute scaling spike _(blocked)_
-- **Sylveste-4b5.16** Skaffen compaction verification + context-rot working-set instrumentation _(blocked)_
-- **Sylveste-4b5.5** Ground review verdict in concrete pass/fail signal (downgrade unverified 'clean') _(blocked)_
-- **Sylveste-4b5.6** Wire clavain policy engine into a real fail-CLOSED PreToolUse interdiction hook _(blocked)_
+- **Sylveste-4b5.16** Skaffen compaction verification + context-rot working-set instrumentation
+- **Sylveste-4b5.5** Ground review verdict in concrete pass/fail signal (downgrade unverified 'clean')
+- **Sylveste-4b5.6** Wire clavain policy engine into a real fail-CLOSED PreToolUse interdiction hook
 - **Sylveste-4b5.7** Pre-dispatch parallelizability + cost gate folded into the 3kol Rimsky spec
 - **Sylveste-4b5.8** Conflict-economics telemetry on the parallel dispatcher (Rimsky, child of 3kol)
-- **Sylveste-4b5.9** campaign.md route-to-fallback-on-verified-failure (replace blind retry/skip/abort) _(blocked)_
+- **Sylveste-4b5.9** campaign.md route-to-fallback-on-verified-failure (replace blind retry/skip/abort)
 - **sylveste-4li0** interop: daemon adapter construction from config
 - **sylveste-4rwh** Add Break stage to trust lifecycle (Earn → Compound → Break → Epoch → Demote)
 - **Sylveste-4vol** secret scanner: the X_SECRET_Y= class still slides past the generic rule
-- **sylveste-4wq6** Extend auraken-lens trajectory schema: capture lenses_offered + user question choice (training signal) _(blocked)_
+- **sylveste-4wq6** Extend auraken-lens trajectory schema: capture lenses_offered + user question choice (training signal)
 - **sylveste-5boi** Signal command: log (recent forge sessions)
 - **sylveste-5hx7** Signal command: diff (re-show pending changes)
 - **sylveste-5jn8** Auraken lens_select latency: 12-20s per call is real UX cost (dogfood finding)
@@ -189,11 +206,13 @@ It is generated from [roadmap.json](roadmap.json); do not hand-edit it.
 - **sylveste-7505** Consolidated interverse MCP server _(blocked)_
 - **sylveste-7aj8** Interspect skill calibration
 - **sylveste-7aj8.9** interspect skillcal: collector coverage — no_redirect/tokens drop ~97% of rows
-- **sylveste-7g96** F3: Prebuilt auraken-lens Go binaries for 4 platforms (v0.1.0) _(blocked)_
+- **sylveste-7g96** F3: Prebuilt auraken-lens Go binaries for 4 platforms (v0.1.0)
+- **Sylveste-7wn0** Audit divergent Codex companion upgrades without global refresh
 - **sylveste-7zw2** Implement generated-agent retention, pack-scoped loading, and stale index refresh
 - **Sylveste-84by** git-autosync-promote reports NEEDS-REBASE for lanes that are strict ancestors of main
+- **Sylveste-8nov** Codex installer doctor disagrees with supported MCP table schema
 - **sylveste-8tfd** Two hook scripts are present on both machines and registered nowhere
-- **sylveste-8ucm** F5.3: Core query templates (4 pure queries) _(blocked)_
+- **sylveste-8ucm** F5.3: Core query templates (4 pure queries)
 - **Sylveste-8umf** Unknown clavain-cli flags are silently ignored instead of rejected
 - **sylveste-9g6v** F2: Beads adapter — bidirectional bd CLI sync _(blocked)_
 - **Sylveste-9yoh** intercore: ic sweep — wire the 4 implemented-never-wired subsystems (scheduler engine, stall detector, RecoverPending, audit chain) with per-subsystem witness obligations (f-158)
@@ -214,8 +233,8 @@ It is generated from [roadmap.json](roadmap.json); do not hand-edit it.
 - **sylveste-dsbl** F3: Schema + DDL migration 001 — 7-entity ontology with all G3-G9 fields locked _(blocked)_
 - **sylveste-dvu** Unified user identity: composite identity table
 - **Sylveste-dvw** Research spike: execute pre-registered F6b flux-drive triage A/B (sylveste-g939)
-- **sylveste-dz94** Run test-conversations.md acceptance on Claude-family models (Opus + Haiku) _(blocked)_
-- **sylveste-e8te** F5: INSTALL.md + canonical two-step install path _(blocked)_
+- **sylveste-dz94** Run test-conversations.md acceptance on Claude-family models (Opus + Haiku)
+- **sylveste-e8te** F5: INSTALL.md + canonical two-step install path
 - **Sylveste-e9c** Make beads post-merge handler run 'bd import' so git pull auto-syncs Dolt (real fix behind the sync-guard advisory)
 - **sylveste-ewy3.1.1** Temporal Cloud dev namespace setup + credentials path
 - **sylveste-ewy3.1.2** Wire first Skaffen test-dispatch as Temporal Workflow + mirror to Intercore event log
@@ -229,32 +248,32 @@ It is generated from [roadmap.json](roadmap.json); do not hand-edit it.
 - **sylveste-fij2** F5: Local filesystem adapter — fsnotify, SHA-256 change detection _(blocked)_
 - **Sylveste-fsdy** Two hook scripts are present on both machines and registered nowhere
 - **Sylveste-g1cu** publish drift: shipped artifact behind committed source (2026-08-03)
-- **sylveste-g939** F6b: flux-drive triage backend swap + A/B execution + ship decision _(blocked)_
+- **sylveste-g939** F6b: flux-drive triage backend swap + A/B execution + ship decision
 - **sylveste-gd3q** Repackage Interspect and consolidate evidence telemetry boundaries
 - **sylveste-gfp2** Style mirroring for early conversations (pre-fingerprint)
 - **Sylveste-gtqg** New plugin repos start unprotected — nothing enforces the branch-protection policy as an invariant
 - **Sylveste-hni3** Clavain: SYLVESTE_EXEMPLAR_ROOT detection helper routed through ensure_repo, codex-auto-refresh, check-install-updates (f-084/f-085/f-052)
 - **Sylveste-hvkl** dotfiles vendors obra/superpowers as a split tree — pin an upstream ref instead?
 - **sylveste-i0px** Auraken thinker-profile system (proprietary reasoning moat) _(blocked)_
-- **sylveste-i8gp** Evidence pipeline wiring — activate sylveste-xcn4 and close the flywheel _(blocked)_
+- **sylveste-i8gp** Evidence pipeline wiring — activate sylveste-xcn4 and close the flywheel
 - **sylveste-islh** F3: Interspect activation aggregator (race-fixed cursor + dedup) _(deferred)_
-- **sylveste-j0yv** F5.5: Shared resolution primitives _(blocked)_
+- **sylveste-j0yv** F5.5: Shared resolution primitives
 - **sylveste-j7gy** F5: Plugin manifest annotations + 5-plugin reference adoption _(deferred)_
 - **sylveste-j7vl** cc-changelog: unreviewed Claude Code releases (2.1.216 → 2.1.220)
 - **sylveste-jqxf** AI Factory Wave 1 foundation (ysxe successor)
-- **sylveste-jum2** Precompile interrank TypeScript at publish time (drop tsx runtime) _(blocked)_
+- **sylveste-jum2** Precompile interrank TypeScript at publish time (drop tsx runtime)
 - **Sylveste-keb3** Six beads differ between the machines in ways no import can reconcile
 - **Sylveste-kp9o** Khouri lane frozen 109 days — mk to decide on f985d94
 - **Sylveste-kq4** Interband sideband parity from sprint-advance _(in progress)_
 - **sylveste-lbvq** F4: Python plugin adapters (intercache,interdeep,interfer,interject,intersearch,interseed) _(blocked)_
 - **sylveste-lf3b** Rename fd-agent personas with misleading lexical-prefix collisions
-- **sylveste-lfdy.1** Wire jetty.io as eval substrate for Auraken voice + behavioral signature scoring _(blocked)_
+- **sylveste-lfdy.1** Wire jetty.io as eval substrate for Auraken voice + behavioral signature scoring
 - **sylveste-llen** Strengthen natural-language feedback loop for self-improvement
 - **sylveste-lny4** Self-dispatch loop for AI factory (ysxe.3 successor)
 - **sylveste-lon1** Cross-model dispatch scoring + integration (9lp.9 successor)
 - **sylveste-lwp7** lattice: apply_lifecycle_transition mutates et.families in registered EntityType
-- **sylveste-m2p** F4: Garden Salon agent bridge for interseed _(blocked)_
-- **sylveste-m36b** F6: SKILL.md curation + voice-rubric.md (Mandatory Form / Permitted Variation) _(blocked)_
+- **sylveste-m2p** F4: Garden Salon agent bridge for interseed
+- **sylveste-m36b** F6: SKILL.md curation + voice-rubric.md (Mandatory Form / Permitted Variation)
 - **sylveste-mblb** F2: Subsystem emit helper (Go + bash) with durable session sentinel _(deferred)_
 - **sylveste-mj11.1** Hallmark log: immutable advancement_events table for trust-tier transitions
 - **sylveste-mj11.2** Tier-weight aggregation specification + conflict-resolution rule
@@ -267,18 +286,18 @@ It is generated from [roadmap.json](roadmap.json); do not hand-edit it.
 - **sylveste-nr6x.5** L5: Skaffen integration — sovereign agent lifecycle
 - **sylveste-nyx** Hidden /about page with mission/vision from GSV identity repo
 - **sylveste-o8wo** Fix subagent Write permission for flux-gen-specs and docs/research/flux-* directories
-- **sylveste-oej5** F10: auraken-lens Go CLI binary wrapper (cmd/auraken-lens) _(blocked)_
+- **sylveste-oej5** F10: auraken-lens Go CLI binary wrapper (cmd/auraken-lens)
 - **sylveste-owjn.3** Extend observation.Snapshot to a true superset (artifacts map + phase-advance history) so ic situation snapshot fully replaces lib-sprint.sh ad-hoc queries
-- **Sylveste-oxcv** A negative-control proof cannot tell 'assertion failed' from 'fork failed', so 7 of 9 results are unknown
-- **sylveste-p6so** F8: GitHub release auraken-distribution/v0.1.0 + signed checksums + CHANGELOG _(blocked)_
-- **sylveste-pexq** Audit Python MCP servers for lazy top-level imports _(blocked)_
+- **sylveste-p6so** F8: GitHub release auraken-distribution/v0.1.0 + signed checksums + CHANGELOG
+- **sylveste-pexq** Audit Python MCP servers for lazy top-level imports
 - **sylveste-pf4** intersite-blog: blog fold-in + full pipeline enforcement
-- **sylveste-pfi** F5: Signal feeds + graduation workflow _(blocked)_
-- **sylveste-q2k** F6: Autonomy ratchet state machine _(blocked)_
+- **sylveste-pfi** F5: Signal feeds + graduation workflow
+- **sylveste-pfww** bd-lane-wrapper: Bash-tool shell snapshot drops _il_bd_* helper functions, breaking bd() wrapper
+- **sylveste-q2k** F6: Autonomy ratchet state machine
 - **Sylveste-qgvl** intercore: wire audit chain to gate-mode resolutions + dispatch transitions (run-scoped chains, LogQ tx variant, checksum policy v2 — f-188)
 - **sylveste-qhn1** interverse hygiene: root go.work + 3 READMEs + DEPENDENCIES.md + HOOKS-REGISTRY.md
 - **Sylveste-qm2** interlock tier-2: embedding-based semantic conflict detection in pre-edit hook
-- **sylveste-qroh** F6: interrank TASK_DOMAIN_MAP FluxBench integration _(blocked)_
+- **sylveste-qroh** F6: interrank TASK_DOMAIN_MAP FluxBench integration
 - **Sylveste-r3xs** Adopt --to auto --class at remaining dispatch call sites (phase 1.5)
 - **Sylveste-rgj** Research spike: null test — does multi-agent coordination beat single-strong-model on our task mix?
 - **Sylveste-rhw** Route charter-vs-plain-goal from goal risk properties (wire classifyComplexity + spend signal into the goal-form fork)
@@ -289,25 +308,25 @@ It is generated from [roadmap.json](roadmap.json); do not hand-edit it.
 - **sylveste-rsj.3.5** Evaluate Agentica SDK as complementary agent framework — type-safe multi-agent with stateful REPL
 - **sylveste-rsj.8** Stigmergic coordination substrate — pheromone fields with decay on shared documents
 - **sylveste-s01c** Drop lattice->attp local-path replace (close iv-v5ayb residual)
-- **sylveste-s288** F4: install.sh — atomic, gated, transmissive close _(blocked)_
+- **sylveste-s288** F4: install.sh — atomic, gated, transmissive close
 - **sylveste-sn7** Tuivision: token-efficient terminal state encoding
 - **sylveste-sn7.10** Add ROI (region-of-interest) encoding — high fidelity for active regions only
 - **sylveste-sn7.14** Fix alternate screen buffer detection for cursor position
 - **Sylveste-so2i** intercore: ClearLocks staleness guard + --dry-run + classified tombstone event (f-060, f-192)
 - **sylveste-t5x4** auraken-thinker MCP server (sibling to auraken-lens) _(blocked)_
 - **sylveste-td2o** Brainstorm-summary feedforward into plan review (review <- plan,brainstorm)
-- **sylveste-tfj7** F7: Challenger slot mechanism for unqualified candidates _(blocked)_
+- **sylveste-tfj7** F7: Challenger slot mechanism for unqualified candidates
 - **Sylveste-tfvr** bd cannot open the beads database in Nartopo and mediumsetting: pending schema migrations on dirty tables
 - **sylveste-ttlq** rig-autosync-freshness.py is tracked but declared in neither installer nor the health surface
-- **sylveste-ttwz** Triage Python MCP servers for Go port candidates (hot-path first) _(blocked)_
+- **sylveste-ttwz** Triage Python MCP servers for Go port candidates (hot-path first)
 - **sylveste-u28h** CPVO + DWSQ domain-general north star metrics (rsj.4 successor)
-- **sylveste-u74g** F7: build-dist.sh — deterministic bundle assembly _(blocked)_
+- **sylveste-u74g** F7: build-dist.sh — deterministic bundle assembly
 - **sylveste-uhjv** audit.log producer dormant — log-tool-invocation.sh not wired into settings.json
-- **sylveste-ukd3** lattice-web V0 — static browse + search at interverse/lattice/web/ _(blocked)_
-- **sylveste-ung7** Reconsider sylveste-7505 consolidation given spike C findings (cold-start math doesn't favor it) _(blocked)_
+- **sylveste-ukd3** lattice-web V0 — static browse + search at interverse/lattice/web/
+- **sylveste-ung7** Reconsider sylveste-7505 consolidation given spike C findings (cold-start math doesn't favor it)
 - **sylveste-ungg** Local plan-phase check in /work + /execute-plan (intercore-independent)
-- **sylveste-usj** F5: Tier 1 INFORM signals + pleasure signals _(blocked)_
-- **sylveste-usvf** F5: Proactive model surfacing — SessionStart + weekly schedule _(blocked)_
+- **sylveste-usj** F5: Tier 1 INFORM signals + pleasure signals
+- **sylveste-usvf** F5: Proactive model surfacing — SessionStart + weekly schedule
 - **sylveste-uzpo** Interface evidence instrumentation — 5 cross-subsystem signals
 - **sylveste-v3ck** Demotion-rehearsal as M3+ promotion precondition
 - **sylveste-v4t2** Meadowsyn experiment suite (jpum successor)
@@ -331,12 +350,13 @@ It is generated from [roadmap.json](roadmap.json); do not hand-edit it.
 - **sylveste-xoki.3** Plugin and skill architecture deprecation plan
 - **sylveste-xspv** Auto-revert timeout for pending forge code changes
 - **Sylveste-y6rl** Nothing stops a commit from adding a tracked dotfiles path with no declaration
-- **sylveste-ya2** F2: Auraken idea capture via /idea command _(blocked)_
-- **sylveste-ye7y** F4: Drift detection — sample-based + version-triggered _(blocked)_
+- **sylveste-ya2** F2: Auraken idea capture via /idea command
+- **sylveste-ye7y** F4: Drift detection — sample-based + version-triggered
 - **sylveste-yrc** clavain-cli not on PATH after monorepo clone
 - **sylveste-ysny** Skill calibration: signal density too low to trust scoring — gate autonomy on it
 - **sylveste-yxk8** F6: North Star integration + observation methodology + Goodhart breaker _(deferred)_
 - **sylveste-z55b** Refactor Clavain SessionStart into cached read model plus hook health ledger
+- **Sylveste-z7s4** intermux server version skew: running servers behind the published version (2026-08-11)
 
 ### upstream-sync
 - **Sylveste-ie6.11** sp-lab: tombstone dead slack-messaging skill + vendor new windows-vm skill
@@ -365,19 +385,19 @@ It is generated from [roadmap.json](roadmap.json); do not hand-edit it.
 
 ### interfere
 - **sylveste-1zh** Experiment: StreamingLLM attention sinks for infinite context
-- **sylveste-308** Autoresearch: SSD page cache pre-fetching for 397B streaming _(blocked)_
+- **sylveste-308** Autoresearch: SSD page cache pre-fetching for 397B streaming
 - **sylveste-37g** Experiment: Mixture of Depths (MoD) dynamic layer routing
 - **sylveste-3uy** Autoresearch: Metal compute shader optimization _(blocked)_
-- **sylveste-4wl** Autoresearch: adaptive batching parameters for concurrent agents _(blocked)_
-- **sylveste-8v3** Benchmark Kimi K2.5 3-bit (1T, 32B active) _(blocked)_
+- **sylveste-4wl** Autoresearch: adaptive batching parameters for concurrent agents
+- **sylveste-8v3** Benchmark Kimi K2.5 3-bit (1T, 32B active)
 - **sylveste-9tc** Autoresearch: LayerSkip exit threshold tuning _(blocked)_
-- **sylveste-bpg** Benchmark GLM-5 4-bit (744B, 40B active) _(blocked)_
+- **sylveste-bpg** Benchmark GLM-5 4-bit (744B, 40B active)
 - **sylveste-f0k** Experiment: reservoir computing readout for task routing
 - **sylveste-i8u** Experiment: custom Metal compute shaders for mlx-lm
 - **sylveste-ji6** Experiment: Multi-head Latent Attention (MLA) for KV compression _(deferred)_
 - **sylveste-naj** BHQ speed optimization via autoresearch _(deferred)_
-- **sylveste-uln** Benchmark DeepSeek V3.2 4-bit (672B, ~37B active) _(blocked)_
-- **sylveste-xc8** Experiment: memory wiring and page cache optimization for SSD streaming _(blocked)_
+- **sylveste-uln** Benchmark DeepSeek V3.2 4-bit (672B, ~37B active)
+- **sylveste-xc8** Experiment: memory wiring and page cache optimization for SSD streaming
 
 ### interflux
 - **sylveste-9lp.25** P3: Learned orchestration from run history — requires labeled negative data
@@ -387,7 +407,7 @@ It is generated from [roadmap.json](roadmap.json); do not hand-edit it.
 - **sylveste-9lp.29** P3: Triage subagent — offload Steps 1.0-1.2 from host context
 - **sylveste-9lp.32.6.10** BP-C1.B.drift: migrate fluxbench-drift.sh registry writes (needs flock restructure)
 - **sylveste-9lp.32.6.11** BP-C1.B.discover: migrate discover-merge.sh registry writes (needs add-model primitive)
-- **sylveste-fyo3.10** P3: Weekly discovery agent automation — run fluxbench-discover.md on cron schedule _(blocked)_
+- **sylveste-fyo3.10** P3: Weekly discovery agent automation — run fluxbench-discover.md on cron schedule
 - **sylveste-fyo3.11** P3: Oracle cross-AI review integration — enable non-Claude peer review via Oracle binary
 - **sylveste-fyo3.7** P2: Interspect overlay activation — promote from progressive enhancement to default
 
@@ -423,8 +443,8 @@ It is generated from [roadmap.json](roadmap.json); do not hand-edit it.
 - **Sylveste-4b5.17** Rimsky (3kol) topology doc-hygiene: record flat-fan-out structural rule
 - **Sylveste-4b5.18** Cache-aware effective-cost term in B2 routing (child of xka6, gated on enforce) _(blocked)_
 - **Sylveste-4b5.19** Contamination-resistant benchmark re-pin (deferred, gated on harness consuming a routing decision)
-- **Sylveste-4b5.20** VerifyLoop feasibility — self-generated-oracle iteration vs TDD baseline (research spike) _(blocked)_
-- **Sylveste-4b5.21** interrank benchmark source-provenance ranking input (child of s3z6, gated on s10) _(blocked)_
+- **Sylveste-4b5.20** VerifyLoop feasibility — self-generated-oracle iteration vs TDD baseline (research spike)
+- **Sylveste-4b5.21** interrank benchmark source-provenance ranking input (child of s3z6, gated on s10)
 - **Sylveste-4b5.22** Local lint-triage classifier feasibility (s10 child, measure-only, likely-moot)
 - **Sylveste-4b5.23** CoAgent live-external-state concurrency watch-item (gated, self-limiting, kill-dated)
 - **Sylveste-4b8** Research spike: LLM-judge reliability harness for interflux + cross-model consensus test

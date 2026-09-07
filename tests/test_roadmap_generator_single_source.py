@@ -32,14 +32,14 @@ RENDERER = ROOT / "interverse" / "interpath" / "scripts" / "render_backlog.py"
 FAKE_BD = """#!/usr/bin/env python3
 import json
 print(json.dumps([
-  {'id': 'demo-open',     'title': '[demo] Open item',     'status': 'open',
+  {'id': 'Sylveste-open',     'title': '[demo] Open item',     'status': 'open',
    'priority': 2, 'labels': [], 'dependency_count': 0},
-  {'id': 'demo-deferred', 'title': '[demo] Deferred item', 'status': 'deferred',
+  {'id': 'Sylveste-deferred', 'title': '[demo] Deferred item', 'status': 'deferred',
    'priority': 2, 'labels': [], 'dependency_count': 0},
-  {'id': 'demo-blocked',  'title': '[demo] Blocked item',  'status': 'open',
+  {'id': 'Sylveste-blocked',  'title': '[demo] Blocked item',  'status': 'open',
    'priority': 2, 'labels': [], 'dependency_count': 1,
-   'dependencies': [{'issue_id': 'demo-blocked',
-                     'depends_on_id': 'demo-prereq', 'type': 'blocks'}]},
+   'dependencies': [{'issue_id': 'Sylveste-blocked',
+                     'depends_on_id': 'Sylveste-prereq', 'type': 'blocks'}]},
 ]))
 """
 
@@ -54,6 +54,8 @@ def _fake_repo(tmp_path: Path) -> tuple[Path, Path]:
     plugin_scripts.mkdir(parents=True)
     shutil.copy2(GENERATOR, plugin_scripts)
     shutil.copy2(RENDERER, plugin_scripts)
+    for helper in ["roadmap_snapshot.py", "publish_roadmap.py"]:
+        shutil.copy2(GENERATOR.parent / helper, plugin_scripts)
 
     manifest = repo / "interverse" / "demo" / ".claude-plugin" / "plugin.json"
     manifest.parent.mkdir(parents=True)
@@ -76,7 +78,7 @@ def _run(script: Path, repo: Path, bin_dir: Path, tag: str) -> dict:
         ["bash", str(script), str(roadmap), str(backlog)],
         cwd=repo,
         env={**os.environ, "PATH": f"{bin_dir}:{os.environ['PATH']}",
-             "ROADMAP_PROJECT": "demo"},
+             "ROADMAP_PROJECT": "sylveste"},
         capture_output=True,
         text=True,
         check=False,
@@ -141,7 +143,7 @@ def test_deferred_beads_are_not_counted_as_open_work(tmp_path: Path) -> None:
         for phase in ("now", "next", "later")
         for item in out["roadmap"]["roadmap"].get(phase, [])
     ]
-    deferred = [i for i in items if i["id"] == "demo-deferred"]
+    deferred = [i for i in items if i["id"] == "Sylveste-deferred"]
     assert deferred, "the deferred bead vanished from the roadmap entirely"
     assert deferred[0]["status"] == "deferred"
     assert "_(deferred)_" in out["backlog"]
@@ -157,9 +159,9 @@ def test_dependency_edges_survive(tmp_path: Path) -> None:
         for phase in ("now", "next", "later")
         for item in out["roadmap"]["roadmap"].get(phase, [])
     ]
-    blocked = next(i for i in items if i["id"] == "demo-blocked")
+    blocked = next(i for i in items if i["id"] == "Sylveste-blocked")
     assert blocked["status"] == "blocked"
-    assert blocked["blocked_by"] == ["demo-prereq"]
+    assert blocked["blocked_by"] == ["Sylveste-prereq"]
 
 
 def test_the_monorepo_keeps_no_second_copy_of_the_generator() -> None:
@@ -198,3 +200,18 @@ def test_the_shim_delegates_instead_of_reimplementing() -> None:
         assert marker not in joined, (
             f"{marker!r} is generation logic and belongs in interpath, not the shim"
         )
+
+
+def test_shim_rejects_other_portfolio_even_with_project_override(tmp_path: Path) -> None:
+    repo, bin_dir = _fake_repo(tmp_path)
+    (bin_dir / "bd").write_text(FAKE_BD.replace("Sylveste-", "shadow-work-"))
+    output = repo / "docs/roadmap.json"
+    output.write_text("previous")
+    result = subprocess.run(
+        ["bash", str(repo / "scripts/sync-roadmap-json.sh"), str(output), str(repo / "docs/backlog.md")],
+        cwd=repo, env={**os.environ, "PATH": f"{bin_dir}:{os.environ['PATH']}", "ROADMAP_PROJECT": "sylveste"},
+        capture_output=True, text=True,
+    )
+    assert result.returncode != 0
+    assert "wrong portfolio" in result.stderr
+    assert output.read_text() == "previous"

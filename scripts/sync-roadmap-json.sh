@@ -42,6 +42,7 @@ fi
 # renamed checkout or a worktree under another name would otherwise silently
 # change `project`, `kind`, and the backlog heading.
 export ROADMAP_PROJECT="${ROADMAP_PROJECT:-sylveste}"
+export ROADMAP_EXPECTED_PREFIX="sylveste"
 
 # Run from the monorepo root: interpath resolves its project root with
 # `git rev-parse --show-toplevel`, which reads the CURRENT DIRECTORY, not the
