@@ -38,7 +38,7 @@ bd backup && bash .beads/push.sh && git push  # Complete work after commit
 
 **Work tracking:** Beads (`bd create/close`) is the canonical tracker for Sylveste-internal work. All Sylveste agents and contributors track work in beads inside this repo — do not duplicate it via TODO files or markdown checklists. External rigs (superpowers, GSD, compound-engineering) ship their own task surfaces; that tracking belongs to those rigs and is not displaced by this rule. See [agents/beads-workflow.md](agents/beads-workflow.md).
 
-**Git workflow:** Owner/agents commit directly to `main` (trunk-based). External contributors: Fork + PR (branch protection enabled). See [docs/guide-contributing.md](docs/guide-contributing.md).
+**Git workflow:** `main` is protected (required checks, PR only). Owners and agents land through a branch plus PR, never a direct push; autosync pushes to `main` fail silently. External contributors: fork + PR. See [docs/guide-contributing.md](docs/guide-contributing.md).
 
 **Worktrees:** Native Claude Code worktrees isolate file edits; interlock coordinates agents that share a tree. Mutating agent/workflow fan-outs default to `isolation: worktree`, **per nested repo** — a root-repo worktree materializes almost none of the nested plugins, so root operations that touch nested repos (publish waves, cross-repo sweeps) run against the main checkout. See [docs/guide-worktree-first-coordination.md](docs/guide-worktree-first-coordination.md).
 
@@ -61,17 +61,7 @@ bd backup && bash .beads/push.sh && git push  # Complete work after commit
 
 ## Session Close Protocol
 
-1. File beads for remaining work (`bd create`)
-2. Run quality gates (tests, linters, builds)
-3. Stage only intentional files (`git add <files>`; never `git add .`)
-4. Run `bd backup`
-5. Commit
-6. Run `bd orphans` and close/update beads that are truly complete
-7. Run `bd backup` again
-8. Push Beads with `bash .beads/push.sh`, then push Git with `git push`
-9. Verify `git status` shows "up to date with origin"
-
-Work is NOT complete until `git push` succeeds. See [agents/session-protocol.md](agents/session-protocol.md) for full details.
+One protocol: the generated "Session Completion" list below. Two steps it does not carry: stage only intentional files (`git add <files>`, never `git add .`), and run `bd orphans` before the final `bd backup` so beads finished during the session close with it. Work is not complete until `git push` succeeds. Long form: [agents/session-protocol.md](agents/session-protocol.md).
 
 <!-- bv-agent-instructions-v1: beads commands and workflow covered in agents/beads-workflow.md -->
 
