@@ -1,0 +1,288 @@
+[
+ {
+  "goal": "1b53da77",
+  "session": "aa2bb078-ee16-4c32-9f97-01ef7dbdec61",
+  "before": {
+   "main": 20.7,
+   "sub": 38.61,
+   "whole": 59.31,
+   "msgs": 41,
+   "ctx": 363684,
+   "cshare": 0.349,
+   "tshare": 0.853
+  },
+  "after": {
+   "main": 27.07,
+   "sub": 38.61,
+   "whole": 65.68,
+   "msgs": 40,
+   "ctx": 366256,
+   "cshare": 0.412,
+   "tshare": 0.847
+  }
+ },
+ {
+  "goal": "c60de386",
+  "session": "aa2bb078-ee16-4c32-9f97-01ef7dbdec61",
+  "before": {
+   "main": 12.28,
+   "sub": 0.86,
+   "whole": 13.14,
+   "msgs": 82,
+   "ctx": 179399,
+   "cshare": 0.935,
+   "tshare": 0.997
+  },
+  "after": {
+   "main": 14.32,
+   "sub": 0.86,
+   "whole": 15.18,
+   "msgs": 79,
+   "ctx": 184708,
+   "cshare": 0.943,
+   "tshare": 0.997
+  }
+ },
+ {
+  "goal": "c4cda02c",
+  "session": "aa2bb078-ee16-4c32-9f97-01ef7dbdec61",
+  "before": {
+   "main": 8.77,
+   "sub": 0,
+   "whole": 8.77,
+   "msgs": 38,
+   "ctx": 217788,
+   "cshare": 1.0,
+   "tshare": 1.0
+  },
+  "after": {
+   "main": 8.46,
+   "sub": 0,
+   "whole": 8.46,
+   "msgs": 37,
+   "ctx": 219796,
+   "cshare": 1.0,
+   "tshare": 1.0
+  }
+ },
+ {
+  "goal": "ff7fd1a1",
+  "session": "aa2bb078-ee16-4c32-9f97-01ef7dbdec61",
+  "before": {
+   "main": 1.77,
+   "sub": 0,
+   "whole": 1.77,
+   "msgs": 9,
+   "ctx": 340653,
+   "cshare": 1.0,
+   "tshare": 1.0
+  },
+  "after": {
+   "main": 1.94,
+   "sub": 0,
+   "whole": 1.94,
+   "msgs": 9,
+   "ctx": 340653,
+   "cshare": 1.0,
+   "tshare": 1.0
+  }
+ },
+ {
+  "goal": "c60de386",
+  "session": "39c8935e",
+  "before": {
+   "main": 4.39,
+   "sub": 1.01,
+   "whole": 5.4,
+   "msgs": 14,
+   "ctx": 68440,
+   "cshare": 0.813,
+   "tshare": 0.934
+  },
+  "after": {
+   "main": 5.66,
+   "sub": 1.01,
+   "whole": 6.67,
+   "msgs": 13,
+   "ctx": 73704,
+   "cshare": 0.849,
+   "tshare": 0.934
+  }
+ },
+ {
+  "goal": "c60de386",
+  "session": "2f8dafde",
+  "before": {
+   "main": 3.24,
+   "sub": 1.0899999999999999,
+   "whole": 4.33,
+   "msgs": 10,
+   "ctx": 79891,
+   "cshare": 0.748,
+   "tshare": 0.982
+  },
+  "after": {
+   "main": 3.91,
+   "sub": 1.0899999999999999,
+   "whole": 5.0,
+   "msgs": 10,
+   "ctx": 79891,
+   "cshare": 0.782,
+   "tshare": 0.982
+  }
+ },
+ {
+  "goal": "c60de386",
+  "session": "d758b3e9",
+  "before": {
+   "main": 3.49,
+   "sub": 1.95,
+   "whole": 5.44,
+   "msgs": 16,
+   "ctx": 81957,
+   "cshare": 0.642,
+   "tshare": 0.804
+  },
+  "after": {
+   "main": 4.17,
+   "sub": 1.95,
+   "whole": 6.12,
+   "msgs": 16,
+   "ctx": 81957,
+   "cshare": 0.681,
+   "tshare": 0.804
+  }
+ },
+ {
+  "goal": "c60de386",
+  "session": "0f950073",
+  "before": {
+   "main": 2.88,
+   "sub": 1.69,
+   "whole": 4.57,
+   "msgs": 14,
+   "ctx": 70778,
+   "cshare": 0.63,
+   "tshare": 0.924
+  },
+  "after": {
+   "main": 3.47,
+   "sub": 1.69,
+   "whole": 5.16,
+   "msgs": 14,
+   "ctx": 70778,
+   "cshare": 0.672,
+   "tshare": 0.924
+  }
+ },
+ {
+  "goal": "c4cda02c",
+  "session": "b96b269d",
+  "before": {
+   "main": 11.67,
+   "sub": 1.65,
+   "whole": 13.32,
+   "msgs": 32,
+   "ctx": 117634,
+   "cshare": 0.876,
+   "tshare": 0.99
+  },
+  "after": {
+   "main": 13.56,
+   "sub": 1.65,
+   "whole": 15.21,
+   "msgs": 32,
+   "ctx": 117634,
+   "cshare": 0.892,
+   "tshare": 0.99
+  }
+ },
+ {
+  "goal": "c4cda02c",
+  "session": "9ece15fa",
+  "before": {
+   "main": 8.99,
+   "sub": 2.0700000000000003,
+   "whole": 11.06,
+   "msgs": 33,
+   "ctx": 98221,
+   "cshare": 0.813,
+   "tshare": 0.976
+  },
+  "after": {
+   "main": 10.48,
+   "sub": 2.0700000000000003,
+   "whole": 12.55,
+   "msgs": 33,
+   "ctx": 98221,
+   "cshare": 0.835,
+   "tshare": 0.976
+  }
+ },
+ {
+  "goal": "c4cda02c",
+  "session": "c15f4648",
+  "before": {
+   "main": 4.93,
+   "sub": 2.49,
+   "whole": 7.42,
+   "msgs": 16,
+   "ctx": 98273,
+   "cshare": 0.664,
+   "tshare": 0.849
+  },
+  "after": {
+   "main": 5.94,
+   "sub": 2.49,
+   "whole": 8.43,
+   "msgs": 16,
+   "ctx": 98273,
+   "cshare": 0.705,
+   "tshare": 0.849
+  }
+ },
+ {
+  "goal": "c4cda02c",
+  "session": "c0eedb2a",
+  "before": {
+   "main": 1.54,
+   "sub": 1.75,
+   "whole": 3.29,
+   "msgs": 12,
+   "ctx": 56221,
+   "cshare": 0.468,
+   "tshare": 0.851
+  },
+  "after": {
+   "main": 1.95,
+   "sub": 1.75,
+   "whole": 3.7,
+   "msgs": 12,
+   "ctx": 56221,
+   "cshare": 0.527,
+   "tshare": 0.851
+  }
+ },
+ {
+  "goal": "ff7fd1a1",
+  "session": "3807a93b",
+  "before": {
+   "main": 6.49,
+   "sub": 2.3,
+   "whole": 8.79,
+   "msgs": 16,
+   "ctx": 107393,
+   "cshare": 0.738,
+   "tshare": 0.908
+  },
+  "after": {
+   "main": 7.69,
+   "sub": 2.3,
+   "whole": 9.99,
+   "msgs": 16,
+   "ctx": 107393,
+   "cshare": 0.77,
+   "tshare": 0.908
+  }
+ }
+]
