@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Overlay latest trajectory from oyrf-data
         run: |
@@ -32,7 +32,7 @@ jobs:
         run: python3 scripts/validate_oyrf_cost_infra.py --run-dry-run
 
       - name: Check out oyrf-data branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: oyrf-data
           path: oyrf-data-branch
