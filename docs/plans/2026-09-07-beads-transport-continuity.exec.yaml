@@ -1,0 +1,50 @@
+version: 1
+mode: all-sequential
+tier: deep
+max_parallel: 1
+timeout_per_task: 1800
+# Updated user routing: Claude Code interactive tmux; Sonnet 5 bounded
+# implementation, Opus 5 harder work, Opus 5 / GPT-5.6 Sol review and Fable
+# 5.1 plan/QA escalation. See the plan's execution contract. One source owner.
+# This manifest is sequencing evidence; model selections are explicit per run.
+stages:
+  - name: Producer implementation
+    tasks:
+      - id: task-1
+        title: Record comparison and guarded export
+        files: [scripts/check_beads_jsonl_dolt_sync.py, scripts/beads-auto-export.sh, tests/test_beads_jsonl_dolt_sync.py, tests/test_beads_auto_export.sh]
+        depends: []
+      - id: task-2
+        title: Bounded recoverable import
+        files: [scripts/beads-import-merged.sh, .beads/hooks/post-merge, scripts/beads-confirm-deletion.sh, scripts/beads_apply_deletions.py, tests/test_beads_import_merged.sh, tests/test_bd_import_guard.py, tests/test_beads_deletion_propagation.sh]
+        depends: [task-1]
+      - id: task-3
+        title: Hook setup and operational documentation
+        files: [scripts/beads-transport-setup.sh, scripts/lib-beads-transport.sh, .beads/.gitignore, .beads/hooks/pre-commit, .beads/hooks/pre-push, scripts/beads-sync-guard.sh, tests/test_beads_transport_lib.sh, tests/test_beads_transport_hooks.sh, ops/beads-two-machine-sync.md, .beads/PRIME.md]
+        depends: [task-2]
+  - name: Integrator acceptance
+    tasks:
+      - id: task-4
+        title: Refresh and safely integrate upstream; freeze and independently review
+        files: []
+        depends: [task-3]
+      - id: task-5
+        title: Scoped source commit and exact-SHA CI; publish reviewed source
+        files: []
+        depends: [task-4]
+      - id: task-6
+        title: Protected source bootstrap and narrow verified hook installation
+        files: []
+        depends: [task-5]
+      - id: task-7
+        title: Fresh host-local backups; reviewed baseline and per-record reconciliation
+        files: []
+        depends: [task-6]
+      - id: task-8
+        title: Native bidirectional first-pass canary and separate signed backup receipt
+        files: []
+        depends: [task-7]
+      - id: task-9
+        title: Final reconciliation and roadmap checks; review disposition and closure
+        files: []
+        depends: [task-8]

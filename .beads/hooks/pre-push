@@ -63,4 +63,11 @@ if [ -f "scripts/check_beads_jsonl_dolt_sync.py" ] && command -v python3 >/dev/n
   fi
   [ -n "$_beads_head_jsonl" ] && rm -f "$_beads_head_jsonl"
 fi
+# A pending import batch means the local database is behind the file that is
+# about to be pushed. Git runs no hook for an "Already up to date" pull, so
+# this is one of the places the batch is announced rather than left waiting.
+if [ -f ".beads/transport/pending-import.json" ]; then
+  echo >&2 "beads: a pending import batch is waiting in .beads/transport/pending-import.json;"
+  echo >&2 "       the local database is behind the file. Load it with: scripts/beads-import-merged.sh --retry"
+fi
 # --- END SYLVESTE BEADS EGRESS WARNING ---

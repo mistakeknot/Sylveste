@@ -58,6 +58,12 @@ ephemeral.sqlite3-shm
 
 # Dolt server management (auto-started by bd)
 dolt-server.pid
+
+# Git transport state (per-machine): last export/import verdicts, a pending
+# import batch with its before/after commits, and private conflict evidence
+# holding both versions of every ambiguous record. Never shared: the evidence
+# is exactly the content whose publication the conflict prevented.
+transport/
 dolt-server.log
 dolt-server.lock
 dolt-server.port

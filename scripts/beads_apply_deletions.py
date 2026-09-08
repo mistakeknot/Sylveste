@@ -81,27 +81,45 @@ def read_ledger(path: Path) -> tuple[list[dict], list[tuple[int, str]]]:
     return entries, malformed
 
 
-def local_state(repo: Path, bd: str, issue_id: str) -> dict | None:
-    """The local row, or None if this bead does not exist here.
+ABSENT_MARKERS = ("no issue found matching", "no issues found matching")
+
+
+def local_state(repo: Path, bd: str, issue_id: str) -> tuple[str, dict | None, str]:
+    """("present", row, "") | ("absent", None, "") | ("error", None, why).
+
+    Absence is only what bd SAYS is absence. A `bd show` that fails for any
+    other reason — server down, schema skew, a timeout — used to read as "not
+    here", which let the ledger replay silently while nothing was checked and,
+    worse, let a later export treat the bead as gone. An error is an error.
 
     Deliberately `bd show --json` and not `bd sql`: the latter does not exist in
     embedded mode, which is what a fresh `bd init` produces. A deletion path
     that only works in server mode would be inert exactly where it is least
     expected to be.
     """
-    result = subprocess.run(
-        [bd, "show", issue_id, "--json"], cwd=repo, text=True, capture_output=True, check=False
-    )
+    try:
+        result = subprocess.run(
+            [bd, "show", issue_id, "--json"], cwd=repo, text=True, capture_output=True,
+            check=False, timeout=60,
+        )
+    except subprocess.TimeoutExpired:
+        return "error", None, "bd show timed out"
+    text = (result.stdout or "") + (result.stderr or "")
     if result.returncode != 0:
-        return None
-    payload = result.stdout[result.stdout.find("[") :] if "[" in result.stdout else ""
+        if any(marker in text for marker in ABSENT_MARKERS):
+            return "absent", None, ""
+        first = text.strip().splitlines()[:1]
+        return "error", None, f"bd show exited {result.returncode}: {first[0] if first else 'no output'}"
+    payload = result.stdout[result.stdout.find("[") :] if "[" in result.stdout else result.stdout
     try:
         rows = json.loads(payload)
     except ValueError:
-        return None
-    if isinstance(rows, list) and rows:
-        return rows[0]
-    return rows if isinstance(rows, dict) else None
+        return "error", None, "bd show returned unreadable JSON"
+    if isinstance(rows, list) and rows and isinstance(rows[0], dict):
+        return "present", rows[0], ""
+    if isinstance(rows, dict) and rows.get("id"):
+        return "present", rows, ""
+    return "error", None, "bd show returned no row"
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -133,15 +151,27 @@ def main(argv: list[str] | None = None) -> int:
 
     deleted: list[str] = []
     refused: list[tuple[str, str, str]] = []
+    failed: list[tuple[str, str]] = []
     for row in entries:
         issue_id = row["id"]
-        current = local_state(repo, bd, issue_id)
-        if current is None:
+        state, current, why = local_state(repo, bd, issue_id)
+        if state == "absent":
             continue  # already gone here; the ledger replays harmlessly
+        if state == "error" or current is None:
+            failed.append((issue_id, f"could not determine local state: {why}"))
+            continue
 
+        # Both timestamps have to be readable to compare them. A deletion
+        # record without a usable deleted_at, or a local row without a usable
+        # updated_at, cannot be shown to be safe — and "cannot be shown safe"
+        # is a refusal, not a pass.
         deleted_at = parse_ts(row.get("deleted_at") or "")
         updated_at = parse_ts(current.get("updated_at") or "")
-        if deleted_at and updated_at and updated_at > deleted_at:
+        if deleted_at is None or updated_at is None:
+            failed.append((issue_id, "unreadable timestamp: "
+                           f"deleted_at={row.get('deleted_at')!r} local updated_at={current.get('updated_at')!r}"))
+            continue
+        if updated_at > deleted_at:
             refused.append((issue_id, current.get("updated_at", ""), row.get("deleted_at", "")))
             continue
 
@@ -152,11 +182,8 @@ def main(argv: list[str] | None = None) -> int:
             [bd, "delete", issue_id, "--force"], cwd=repo, text=True, capture_output=True, check=False
         )
         if result.returncode != 0:
-            print(
-                f"beads: could not delete {issue_id}: "
-                f"{(result.stderr or result.stdout).strip().splitlines()[:1]}",
-                file=sys.stderr,
-            )
+            first = (result.stderr or result.stdout).strip().splitlines()[:1]
+            failed.append((issue_id, f"bd delete exited {result.returncode}: {first[0] if first else 'no output'}"))
             continue
         deleted.append(issue_id)
 
@@ -172,12 +199,18 @@ def main(argv: list[str] | None = None) -> int:
             "scripts/beads-confirm-deletion.sh",
             file=sys.stderr,
         )
+    for issue_id, why in failed:
+        print(f"beads: deletion of {issue_id} NOT applied — {why}", file=sys.stderr)
 
     if deleted and (not args.quiet or args.dry_run):
         verb = "would delete" if args.dry_run else "deleted"
         print(f"beads_apply_deletions {verb}={len(deleted)}: {' '.join(deleted[:10])}")
 
-    return 2 if malformed else 0
+    # Non-zero whenever the ledger was not fully applied, for whatever reason:
+    # the hook that calls this reports "incomplete" on it rather than moving on.
+    if malformed:
+        return 2
+    return 1 if (refused or failed) else 0
 
 
 if __name__ == "__main__":  # pragma: no cover

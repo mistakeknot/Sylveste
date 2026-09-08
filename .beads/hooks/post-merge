@@ -30,6 +30,80 @@
   setsid bash "$runner" "post-merge" </dev/null >/dev/null 2>&1 &
 ) || true
 # <<< interwatch managed block
+# --- BEGIN SYLVESTE BEADS AUTO-IMPORT ---
+# A pull brings another machine's issues in the JSONL, but nothing loads them
+# into the local Dolt, so `bd` cannot see them. Two sat invisible here for over
+# a week that way.
+#
+# This was scripts/beads_safe_import.py until bd 1.1.2. That script existed
+# because a plain `bd import` used to upsert every record, reverting anything
+# changed here since the incoming export was written. bd now enforces the same
+# rule itself — and enforces it inside the upsert rather than as a pre-filter,
+# so a local write landing mid-import is preserved too. Measured equivalent on
+# the reversion case and the equal-timestamp tie before the switch.
+#
+# Via beads-import-merged.sh, which hands bd only the rows this merge changed,
+# bounded, and then verifies natively that they landed before it reports
+# success. A full import of the file is ~49s and would land on every pull; the
+# rows a merge touches are usually a handful. bd still applies its guard per
+# row — only the batch size is ours to choose.
+#
+# The helper's diagnostics are no longer discarded. It exits 1 when the batch
+# did not verifiably land; the pull itself has already completed, so this hook
+# never fails git — it says, on stderr and in .beads/transport/status.json,
+# that git finished and Beads did not, and it names the retry. A pending batch
+# is retried by the next merge that runs this hook and by --retry; a pull that
+# is already up to date runs no hook, so it retries nothing.
+#
+# Without the helper this hook does NOT fall back to an unbounded whole-file
+# import: that is the hang the helper exists to prevent, and it would report
+# nothing. It says the helper is missing instead.
+_bd_root="$(git rev-parse --show-toplevel)"
+_bd_sync_ok=1
+if [ -x "$_bd_root/scripts/beads-import-merged.sh" ]; then
+  if ! "$_bd_root/scripts/beads-import-merged.sh" >/dev/null; then
+    _bd_sync_ok=0
+    echo >&2 "beads: git completed, but Beads sync is INCOMPLETE — the pulled rows are not all in the local database."
+    echo >&2 "       Retry: scripts/beads-import-merged.sh --retry   (status: scripts/beads-import-merged.sh --status)"
+  fi
+else
+  _bd_sync_ok=0
+  echo >&2 "beads: git completed, but Beads sync did NOT run — scripts/beads-import-merged.sh is missing or not executable."
+fi
+
+# Then, and only then, apply deletions. `bd import` never deletes, so a bead
+# dropped on the other machine survives here and gets written back out on the
+# next export — the deletion undoes itself. The ledger is what distinguishes a
+# deliberate deletion from an absence. Ordered after the import because the
+# import would otherwise re-create what this removes — and skipped entirely
+# after an incomplete import, because a deletion applied against a database
+# that has not yet received the other host's rows can remove the wrong
+# version of a bead.
+if [ "$_bd_sync_ok" -eq 1 ] && [ -f "$_bd_root/scripts/beads_apply_deletions.py" ]; then
+  if ! python3 "$_bd_root/scripts/beads_apply_deletions.py" --quiet; then
+    echo >&2 "beads: git completed, but the deletion ledger was not fully applied; see the messages above."
+  fi
+elif [ "$_bd_sync_ok" -ne 1 ]; then
+  echo >&2 "beads: deletion ledger NOT applied (import incomplete); it runs after the next successful import."
+fi
+
+# ─── Native post-merge import: disabled for THIS invocation ───────────
+# bd's own post-merge block sits BELOW this one on purpose (the file order is
+# ours; `bd hooks install` rewrites only between its own markers). Left to
+# itself it imports .beads/issues.jsonl, applying every strictly-newer row
+# with no classification — which would overwrite an independent local edit
+# before anything above could hold it back. bd 1.1.2 (20e493e56) maps the
+# dotted config key import.auto to the environment as BD_IMPORT_AUTO and
+# returns from its auto-import when that is false (verified against the
+# installed binary with a positive control). The override is set here, for
+# the remainder of this hook process only — never in a shell profile or the
+# shared config — so bd's block still runs its chained hooks and everything
+# else it does, minus the unclassified import. A file at import.path, newer
+# or not, is therefore irrelevant to this hook.
+BD_IMPORT_AUTO=false
+export BD_IMPORT_AUTO
+# --- END SYLVESTE BEADS AUTO-IMPORT ---
+
 # --- BEGIN BEADS INTEGRATION v1.1.2 ---
 # This section is managed by beads. Do not remove these markers.
 if command -v bd >/dev/null 2>&1; then
@@ -62,36 +136,3 @@ if command -v bd >/dev/null 2>&1; then
   if [ $_bd_exit -ne 0 ]; then exit $_bd_exit; fi
 fi
 # --- END BEADS INTEGRATION v1.1.2 ---
-
-# --- BEGIN SYLVESTE BEADS AUTO-IMPORT ---
-# A pull brings another machine's issues in the JSONL, but nothing loads them
-# into the local Dolt, so `bd` cannot see them. Two sat invisible here for over
-# a week that way.
-#
-# This was scripts/beads_safe_import.py until bd 1.1.2. That script existed
-# because a plain `bd import` used to upsert every record, reverting anything
-# changed here since the incoming export was written. bd now enforces the same
-# rule itself — and enforces it inside the upsert rather than as a pre-filter,
-# so a local write landing mid-import is preserved too. Measured equivalent on
-# the reversion case and the equal-timestamp tie before the switch.
-#
-# Via beads-import-merged.sh, which hands bd only the rows this merge changed.
-# A full import of the file is ~49s and would land on every pull; the rows a
-# merge touches are usually a handful. bd still applies its guard per row —
-# only the batch size is ours to choose.
-_bd_root="$(git rev-parse --show-toplevel)"
-if [ -x "$_bd_root/scripts/beads-import-merged.sh" ]; then
-  "$_bd_root/scripts/beads-import-merged.sh" >/dev/null 2>&1 || true
-else
-  bd import "$_bd_root/.beads/issues.jsonl" >/dev/null 2>&1 || true
-fi
-
-# Then, and only then, apply deletions. `bd import` never deletes, so a bead
-# dropped on the other machine survives here and gets written back out on the
-# next export — the deletion undoes itself. The ledger is what distinguishes a
-# deliberate deletion from an absence. Ordered after the import because the
-# import would otherwise re-create what this removes.
-if [ -f "$_bd_root/scripts/beads_apply_deletions.py" ]; then
-  python3 "$_bd_root/scripts/beads_apply_deletions.py" --quiet || true
-fi
-# --- END SYLVESTE BEADS AUTO-IMPORT ---

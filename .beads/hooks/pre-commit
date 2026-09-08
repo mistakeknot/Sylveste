@@ -41,10 +41,23 @@ fi
 #                           since JSONL is the only git-shared copy, that work
 #                           exists on exactly one machine's disk.
 #
-# The second direction is why --strict-extra is passed. Without it this guard ran
-# for weeks while .beads/issues.jsonl sat 63 issues behind Dolt: the check fired,
-# exited 0, and reported nothing, because it was only ever asked half the
-# question.
+# The second direction is what --records answers completely: every record is
+# compared by content against a private native export, with the committed
+# blob as the provenance baseline. The id-level probe this replaced ran for
+# weeks while .beads/issues.jsonl sat 63 issues behind Dolt, and even with
+# --strict-extra it could not see an edit to an old task or a same-second
+# conflict.
+#
+# What blocks: a snapshot that OMITS database-side work (database_changed /
+# database_only), or a verdict that is not complete. What does not block:
+# rows only the transport holds and conflicted records kept at their transport
+# version — those are the accepted preserve-and-flag outcome of the guarded
+# export, reported on stderr and in .beads/transport/status.json.
+#
+# scripts/beads-auto-export.sh sets BEADS_TRANSPORT_VERIFIED to the sha256 of
+# the file it just verified and is committing; when the staged blob is exactly
+# that file the guard skips re-deriving the same verdict. Any other blob, or a
+# stale hash, runs the full check.
 #
 # Friction is bounded by the case gate below: this only runs when issues.jsonl is
 # actually staged, i.e. when the commit is claiming to be a current snapshot.
@@ -54,15 +67,41 @@ if [ -f "scripts/check_beads_jsonl_dolt_sync.py" ]; then
   case "$_staged_files" in
     *".beads/issues.jsonl"*)
       _beads_jsonl_staged=$(mktemp "${TMPDIR:-/tmp}/sylveste-beads-jsonl.XXXXXX") || exit 1
+      _beads_guard_exit=0
       if git show :'.beads/issues.jsonl' >"$_beads_jsonl_staged" 2>/dev/null; then
-        python3 scripts/check_beads_jsonl_dolt_sync.py --issues-jsonl "$_beads_jsonl_staged" --strict-extra
-        _beads_guard_exit=$?
+        _beads_staged_sha=$(python3 -c 'import hashlib,sys; print(hashlib.sha256(open(sys.argv[1],"rb").read()).hexdigest())' "$_beads_jsonl_staged" 2>/dev/null)
+        if [ -n "${BEADS_TRANSPORT_VERIFIED:-}" ] && [ "$BEADS_TRANSPORT_VERIFIED" = "$_beads_staged_sha" ]; then
+          : # verified by the guarded export that is committing it
+        else
+          # Provenance is the persisted baseline in .beads/transport (none on a
+          # host that has never run the transport: every difference is then a
+          # conflict, which is the honest answer, not a blocking one).
+          _beads_verdict=$(python3 scripts/check_beads_jsonl_dolt_sync.py --records --json \
+                             --issues-jsonl "$_beads_jsonl_staged" 2>&1)
+          _beads_guard_exit=$(printf '%s' "$_beads_verdict" | python3 -c '
+import json, sys
+raw = sys.stdin.read().strip().splitlines()
+try:
+    d = json.loads(raw[-1])
+except Exception:
+    print("beads: drift guard produced no verdict:", " ".join(raw)[:300], file=sys.stderr); print(1); raise SystemExit
+if d.get("coverage") != "complete":
+    print("beads: refusing to commit .beads/issues.jsonl — coverage is", d.get("coverage"), ";", "; ".join(d.get("errors", [])), file=sys.stderr); print(1); raise SystemExit
+omitted = d.get("database_changed", []) + d.get("database_only", [])
+if omitted:
+    print("beads: refusing to commit .beads/issues.jsonl — it omits database-side work on", len(omitted), "record(s):", " ".join(omitted[:10]), file=sys.stderr)
+    print("       Run scripts/beads-auto-export.sh --manual to publish a guarded merge.", file=sys.stderr); print(1); raise SystemExit
+for reason in d.get("incomplete_reasons", []):
+    print("beads: note —", reason, "(preserved, see .beads/transport/status.json)", file=sys.stderr)
+print(0)
+')
+        fi
       else
         echo >&2 "sylveste: unable to read staged .beads/issues.jsonl"
         _beads_guard_exit=1
       fi
       rm -f "$_beads_jsonl_staged"
-      if [ $_beads_guard_exit -ne 0 ]; then exit $_beads_guard_exit; fi
+      if [ "${_beads_guard_exit:-1}" -ne 0 ]; then exit "${_beads_guard_exit:-1}"; fi
       ;;
   esac
 fi

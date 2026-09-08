@@ -15,15 +15,21 @@ git push
 ```
 
 **The export is automatic now.** A post-commit hook runs
-`scripts/beads-auto-export.sh`, which refreshes `.beads/issues.jsonl` from Dolt
-and commits it *on its own*, as `beads: sync export (automated)`. Your commits
-are untouched — it never stages the export into a commit you authored, because
-doing that widens `git commit -- <paths>` beyond the paths you named.
+`scripts/beads-auto-export.sh`, which merges Dolt's changes into
+`.beads/issues.jsonl` record by record and commits it *on its own*, as
+`beads: sync export (automated)`. Your commits are untouched — it never stages
+the export into a commit you authored, because doing that widens
+`git commit -- <paths>` beyond the paths you named. Rows only the file holds are
+preserved; a record edited on both hosts keeps the file's version and is
+reported as a conflict (both versions under `.beads/transport/evidence/`, IDs in
+`.beads/transport/status.json`). Safe records never wait on conflicted ones.
 
-It costs ~0.3s per commit (a probe) and ~3s only when beads actually changed.
-`BEADS_NO_AUTO_EXPORT=1` opts out for one command. If the probe itself fails you
-will see it on stderr — that is not a quiet skip, and bead state is not being
-exported until it is fixed.
+It costs a private `bd export` (~3s) per commit. `BEADS_NO_AUTO_EXPORT=1` opts
+out for one command. If the probe itself fails you will see it on stderr — that
+is not a quiet skip, and bead state is not being exported until it is fixed.
+`scripts/beads-transport-setup.sh` checks that the hooks are actually effective
+in *this* checkout and that `bd` here talks to the Sylveste database (a linked
+worktree checked with `bd -C` reports the wrong one; run bd from the checkout).
 
 **bd's own auto-export is off, deliberately**, via tracked `.beads/config.yaml`:
 `export.auto: false` and `export.git-add: false`. Do not turn these on. The
@@ -34,12 +40,19 @@ before, so each machine silently inherited its bd version's default — 1.0.2
 defaults both to *true*, 1.0.0 and 1.1.x to *false* — which is the whole reason
 one machine exported on every write and the other never did.
 
-**A pull imports automatically too**, via post-merge → `bd import`, then
-`scripts/beads_apply_deletions.py`. This used to be a local script, because a
-plain import once upserted every record and would revert anything changed here
-since the incoming export was written — a bead you closed reopening, silently.
-bd 1.1.2 enforces that rule itself now, inside the transaction, so the script is
-gone; `tests/test_bd_import_guard.py` holds bd to it.
+**A pull imports automatically too**, via post-merge →
+`scripts/beads-import-merged.sh`, then `scripts/beads_apply_deletions.py` only
+after the import verified. The helper classifies the pulled rows first: a row
+whose local copy changed independently is held back (never handed to
+`bd import`, both versions kept privately); the rest are imported, bounded, and
+verified natively before success is claimed. bd's own strictly-newer guard
+stays as the second line (`tests/test_bd_import_guard.py`); bd's own
+post-merge import is switched off for that hook invocation with
+`BD_IMPORT_AUTO=false`, never globally. If the hook says
+**Beads sync is INCOMPLETE**, git finished and the database is behind the
+file: `scripts/beads-import-merged.sh --status`, then `--retry`. A pull that is
+"Already up to date" runs no hook, so a pending batch waits for `--retry` or
+the next merge; every commit and push reminds you it is there.
 
 **To delete a bead, one extra command.** `bd import` never deletes, so a bead
 you delete here survives on the other machine and comes back on its next export.

@@ -146,7 +146,7 @@ if [ "$abs_drift" -gt "$TOLERANCE" ]; then
         # Dolt ahead of JSONL → local changes not yet exported. `bd export` / sync fixes it.
         printf 'beads: JSONL behind Dolt — Dolt has %d issues, JSONL has %d (%d unexported).\n' \
             "$dolt_issues" "$jsonl_issues" "$abs_drift" >&2
-        printf "beads: run 'bd backup sync' (or 'bd export --output .beads/issues.jsonl') before committing.\n" >&2
+        printf "beads: run 'scripts/beads-auto-export.sh --manual' before pushing (a guarded merge; never a bare 'bd export' over the transport, and 'bd backup sync' is not cross-host replication).\n" >&2
     fi
 fi
 

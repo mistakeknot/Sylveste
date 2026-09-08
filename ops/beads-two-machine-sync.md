@@ -20,18 +20,197 @@ Dolt database; the JSONL is how they reach each other.
 
 | Direction | Mechanism | Trigger |
 |---|---|---|
-| Dolt → JSONL | export, then a dedicated commit | `post-commit` |
-| JSONL → Dolt | `bd import`, via `scripts/beads-import-merged.sh` | `post-merge` |
-| deletions | `scripts/beads_apply_deletions.py`, after the import | `post-merge` |
+| Dolt → JSONL | guarded merge (`scripts/beads-auto-export.sh`), then a dedicated commit | `post-commit` |
+| JSONL → Dolt | classify, `bd import` the unambiguous rows, verify (`scripts/beads-import-merged.sh`) | `post-merge` |
+| deletions | `scripts/beads_apply_deletions.py`, after a *verified* import only | `post-merge` |
 
-`beads-import-merged.sh` hands bd only the rows the merge changed. A full
-`bd import` of the file measures ~49s on Clavain, and on zklw it does not finish
-at all — see below. It would run on every pull; the retired importer had been
-avoiding that incidentally, by filtering before importing. git already knows
-which lines changed and every issue is one line, so the filter costs nothing and
-bd still applies its guard per row. When the diff cannot be determined it
-imports the whole file: slow beats an import that silently skips another
-machine's work.
+## Repaired 2026-09-07: record-level, preserve-and-flag, durable evidence
+
+Topology is unchanged — Clavain and zklw, one Dolt each, git in between — but
+the transport now reasons per record, remembers what it verified, and never
+resolves ambiguity by picking a host or a timestamp.
+
+**Provenance is a persisted per-record baseline**, `.beads/transport/baseline.json`
+(per machine, gitignored, mode 0700): for every record, the semantic hash of
+the last content on which the transport and the database were seen to agree.
+Not HEAD. After a preserve-and-flag export HEAD holds the transport's side of a
+conflict, and a pass that took HEAD as provenance would read the database's side
+as a fresh one-sided change and publish it. The baseline moves only on
+agreement (equal on both sides, a verified export, a verified import); conflicts
+leave their entry alone, which is what keeps a conflict a conflict on the next
+pass. With no entry for a record, a difference is a conflict until the sides
+agree — or the integrator seeds the baseline from a reviewed reconciliation
+(`check_beads_jsonl_dolt_sync.py --state-dir .beads/transport --seed-baseline <jsonl>`).
+
+**Semantic comparison** ignores derived counts (`comment_count`,
+`dependency_count`, `dependent_count`, `_type`), normalises timestamps and
+list order, and drops empty fields. The two hosts' snapshots differ on derived
+counts for shared rows; treating those as edits would manufacture conflicts.
+
+**Export** (`post-commit`, or `scripts/beads-auto-export.sh --manual`): a
+private `bd export` to a temp file, every record classified against the
+transport and the baseline, then a merged transport written and atomically
+replaced only if its bytes have not moved since the snapshot. Database-side
+changes and new records apply. Rows only the transport holds (pulled but not
+imported, or absent here) are preserved — absence is not deletion. Conflicted
+IDs keep their current transport version; every version is kept under
+`.beads/transport/evidence/<stamp>/` (private) and the IDs and hashes go to
+stderr and `.beads/transport/status.json`. Safe records never wait on
+conflicted ones. The pre-commit drift guard runs the same record-level check
+on any hand-staged JSONL and blocks only a snapshot that omits database-side
+work.
+
+**Import** (`post-merge`, `--retry`, `--full`): the added lines of the range's
+diff are validated as records, then classified *before* bd sees any of them.
+A row the database lacks, or already holds with equal content, is always safe.
+For an existing row with different content two things are required. First,
+git provenance: **every two-parent merge in the admitted range is inspected**,
+and a record that differs from that merge's base on both of its sides changed
+on both hosts since they last agreed — a `both_changed_since_merge_base`
+conflict whichever side the merge took and whatever the timestamps say. This
+is what protects an edit that was already exported (every commit exports):
+locally that row equals the pre-merge transport and the baseline, so baseline
+equality alone would hand it to bd and the newer incoming row would win. Only
+then, second, the local-state rule: the local row must be unchanged since the
+last verified state (persisted baseline, or the pre-merge transport);
+otherwise it is an independent local modification. `--full` has no git
+provenance, so it imports absent rows, confirms equal ones, and holds every
+differing existing record as `no_git_provenance`. A range git cannot explain
+(the before-commit is not an ancestor of HEAD, an octopus merge, no common
+ancestor) is an explicit `ancestry_unknown` incomplete result — never an
+invented baseline. Every held-back record goes to evidence with every version
+(incoming, database, before, base, ours, theirs). bd's strictly-newer guard
+stays as the second line of defence for what is handed over (it cannot protect
+a modified local row from a *newer* incoming one; the classifier can). Success
+is `bd import` exiting 0 with a parseable reply **and** a native verification:
+a private export shows every importable row present with the same content or
+legitimately kept back by bd. Until then the batch is pending:
+`.beads/transport/pending-import.json` holds the exact before/after commits,
+the reason, and the merge ancestry used, `pending-import.jsonl` the rows. A
+pending batch is picked up by the next merge that runs the hook (the range
+starts at the pending before-commit and classifies with the ancestry it
+recorded) and by `--retry`. **Git runs no hook for a pull that is "Already up
+to date"**, so such a pull retries nothing; the
+batch is instead announced by every later commit (post-commit) and push
+(pre-push) and by `beads-transport-setup.sh check` until it is loaded. An
+unresolvable before-commit is an explicit incomplete result with `--full` as the
+deliberate, still bounded and verified, whole-file import — never an unbounded
+one. The deletion ledger runs only after a verified import.
+
+**Native `bd hooks run post-merge` imports the JSONL by itself.** Measured on
+bd 1.1.2 (`20e493e56`): it applies every strictly-newer row. bd maps the
+dotted config key `import.auto` to the environment as `BD_IMPORT_AUTO` and
+returns from its auto-import when that is false — verified against the
+installed binary with a positive control. The tracked `post-merge` therefore
+puts bd's block *after* Sylveste's and sets `BD_IMPORT_AUTO=false` for the
+remainder of that hook process only: bd's chained hooks still run, its
+unclassified import does not, and nothing is written to any config or shell
+profile. No file at `transport-disabled.jsonl` (the retired mechanism) has
+any effect. `tests/test_bd_import_guard.py` holds bd to the native behaviour
+and runs the actual tracked hook against a real bd; the hook suite proves the
+override reaches bd's process through a real pull and leaks nowhere.
+
+**Foreign hooks are never retired silently.** `install` inspects the directory
+that is effective *before* it writes anything: a hook there is acceptable only
+if every non-comment line outside the four transport sections is retained by
+the tracked hook (an older copy of these hooks, a bare bd shim). A custom hook,
+or a hook name Sylveste does not ship, refuses the install by name with
+`core.hooksPath` untouched. Nothing is chained or wrapped: re-running an old
+transport hook would reintroduce the unguarded native import or export twice.
+
+**The database is verified before every export and import.** `bd -C <linked
+worktree>` resolves the `.beads/` *above* the worktree (on Clavain, the
+`~/projects` workspace database, 767 issues), while a cwd run follows the
+worktree's `.git` file to the main checkout's `Sylveste` database — verified
+with both `bd context --json` and `bd info` on 2026-09-07. Every helper runs
+bd from the checkout, never with `-C`, and refuses when the reported
+`beads_dir` is not the main checkout's `.beads/` (`BEADS_TRANSPORT_EXPECT_PROJECT`
+adds a project-id check). That is the sylveste-vqlu shape, closed at runtime.
+
+**Serialization**: one kernel `flock` per database, held by a child process for
+as long as the caller lives, at
+`$HOME/.cache/sylveste-beads-transport/<hash>.flock` — the same path whatever
+`TMPDIR` or `XDG_RUNTIME_DIR` a login shell, launchd job or IDE hook has; with
+no `HOME` there is no lock and the operation refuses. The hash is of the
+physical `.beads` directory, normalised from either `bd context --json`
+(`beads_dir`) or legacy `bd info` (the data directory beneath it), so two
+processes that asked bd differently contend for one lock; a lookup that is
+not a `.beads` directory is no identity and refuses. No stale-lock takeover
+exists to race; a SIGKILLed hook releases the lock with its holder. An import
+that cannot take the lock, or cannot verify its database, leaves the
+holder's pending state untouched and records the deferral in the log and
+under its own status key. Bounded subprocesses kill the whole process group,
+not only the leader.
+
+### Setup and check
+
+```bash
+scripts/beads-transport-setup.sh            # check: exit 1 on any problem
+scripts/beads-transport-setup.sh install    # make the tracked hooks effective HERE
+scripts/beads-transport-setup.sh check --json --expect-project 07e89680-8485-4489-a63a-9105595860b2
+```
+
+The hooks are tracked files in `.beads/hooks/`; what a clone lacks is git's
+decision to run them (`core.hooksPath`). The isolated roadmap clone had every
+hook file and ran none. `check` reports the *effective* hook path, the
+transport blocks in each hook (foreign sections counted, never rewritten), the
+database bd resolves from this checkout, pending/conflict state, and every
+other worktree's effective path. `install` in a linked worktree enables
+`extensions.worktreeConfig` (one-time, shared) and writes `core.hooksPath` into
+that worktree's own `config.worktree`, then proves every other worktree's
+effective path is unchanged; it refuses when the database binding is not
+verified and never initialises a database. `bd hooks install` is composed, not
+replaced — it does not install Sylveste's transport blocks.
+
+### Recovering a pending import
+
+```bash
+scripts/beads-import-merged.sh --status     # what is pending, since which commit, why
+scripts/beads-import-merged.sh --retry      # idempotent; rows classified again first
+scripts/beads-import-merged.sh --full       # only when the before-commit is unknown
+```
+
+### Conflicts
+
+`.beads/transport/conflicts.json` carries every open conflict with its reason
+(`both_changed_since_baseline`, `equal_updated_at_different_content`,
+`no_baseline`, `local_changed_since_verified`, `native_guard_kept_local`,
+`removed_from_transport_but_changed_in_database`), hashes, first/last seen and
+the evidence directory holding each version. Resolve by editing the bead
+natively on the host whose version should win and letting the next export or
+import carry it; once both sides agree the entry clears itself. Never resolve by
+copying a version into the JSONL by hand. Autonomous reprioritization stays
+disabled while conflicts are open.
+
+### Canary
+
+1. Mac: `bd create "canary <date>"`, then an ordinary commit — the post-commit
+   export commit appears; `git push`.
+2. zklw: `git pull` — `bd show <id>` answers; `.beads/transport/status.json`
+   says `import: verified`.
+3. zklw: `bd update <id> --status closed`, ordinary commit, push.
+4. Mac: `git pull` — `bd show <id>` is closed; status verified; no pending, no
+   conflicts.
+
+No manual export/import may substitute for any step.
+
+`beads-import-merged.sh` hands bd only the rows the merge changed, after
+classifying them. A full `bd import` of the file measures ~49s on Clavain, and
+on zklw it does not finish at all — see below. It would run on every pull; the
+retired importer had been avoiding that incidentally, by filtering before
+importing. git already knows which lines changed and every issue is one line,
+so the filter costs nothing and bd still applies its guard per row. When the
+diff cannot be determined (the before-commit does not resolve, or git cannot
+explain the range) the helper does **not** fall back to importing the whole
+file unbounded: it records an explicit incomplete result with pending state and
+exits 1, and the deliberate recovery is `scripts/beads-import-merged.sh --full`
+— still classified, bounded and verified. `--full` has no git provenance, so it
+imports rows the database lacks and confirms rows already equal, and it **holds
+every existing record whose content differs** as a `no_git_provenance` conflict
+with both versions in evidence; whole-file scope is not permission to choose an
+exported concurrent edit by timestamp. An import that silently skips another
+machine's work and one that silently overwrites this machine's are both
+failures; neither is traded for the other.
 
 **It helps a lot.** Measured 3 rows on a same-machine merge (49s → 1s). It used
 to degrade to **3,313 rows** on a cross-machine one — exactly the case it was
@@ -430,26 +609,43 @@ nothing to switch on.
 
 **Expect merge conflicts on `.beads/issues.jsonl` when both machines export.**
 
-It is a ~3,800-line generated file and both ends rewrite it, so git conflicts on
-it are routine rather than exceptional. Do not hand-resolve the hunks. Dolt is
-the authority; the file is a projection:
+It is a ~3,900-line generated file and both ends rewrite it, so git conflicts on
+it are routine rather than exceptional. Do not hand-resolve the hunks. Take the
+incoming side, then let the guarded helpers do the rest:
 
 ```bash
 git show MERGE_HEAD:.beads/issues.jsonl > .beads/issues.jsonl   # take incoming
 git add .beads/issues.jsonl && git commit --no-edit             # finish merge
-bd import .beads/issues.jsonl                                   # theirs -> local Dolt
-python3 scripts/beads_apply_deletions.py                        # their deletions too
-bd export --output .beads/issues.jsonl                          # union back out
+scripts/beads-import-merged.sh ORIG_HEAD                        # classify, import, verify
+python3 scripts/beads_apply_deletions.py                        # their deletions, if the import verified
+scripts/beads-auto-export.sh --manual                           # guarded merge back out
 ```
 
-Note that `git commit --no-edit` on a conflicted merge means git does **not**
-run `post-merge`, so the import and the deletion pass have to be run by hand
-here. That is the one path where the automation does not cover for you.
+Note that finishing a conflicted merge with `git commit --no-edit` runs the
+commit hooks (pre-commit, post-commit) but **not** `post-merge`, so the import
+and the deletion pass have to be run by hand here. That is the one path where
+the automation does not cover for you.
 
-Taking the incoming side first is deliberate: the import is additive, so nothing
-local is lost by adopting the other machine's file and then re-exporting the
-union. Resolving the other way round would drop whatever the incoming export
-uniquely held.
+Taking the incoming side first is deliberate: the helper classifies with git's
+own provenance — every two-parent merge in the range `ORIG_HEAD..HEAD`,
+including the one just made, with the merge base of its two parents — so a
+record edited on both hosts since they last agreed is a conflict
+(`both_changed_since_merge_base`) whichever side the merge took and whatever
+the timestamps say; every version goes to evidence and neither host's is
+chosen. Rows only the transport holds are preserved, unrelated one-sided rows
+apply, and the guarded export re-adds local database-side work without touching
+the conflicted ones. Because `git commit --no-edit` does not run `post-merge`,
+the explicit `scripts/beads-import-merged.sh ORIG_HEAD` call is required on
+this path — the merge commit's parents are what the helper reads, so it must
+run after that commit. Every two-parent merge in the admitted range is
+inspected, whether it diverged from `ORIG_HEAD` or happened entirely upstream;
+a dependency-PR merge is harmless because its records did not diverge, not
+because of where its parents sit, and a fast-forward across such merges is
+ordinary. A range git cannot explain (a rebase, any octopus merge in the
+range, no common ancestor) is an explicit incomplete result; `--full` is the
+deliberate way past it, and it still holds differing existing records rather
+than choosing by timestamp. Never a bare `bd export` over the transport, and `bd backup
+sync` is a Dolt backup, not cross-host replication.
 
 ## Retired: `scripts/beads_safe_import.py`
 
