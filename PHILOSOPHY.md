@@ -27,6 +27,30 @@ Four claims, all of which must be true for Sylveste to be right:
 
 If any of these claims is wrong, the project is misguided.
 
+### Reasoning Allocation
+
+Use frontier reasoning for substantial uncertainty, foundational decisions,
+broad consequences, and difficult verification. A cheap implementation of a
+wrong premise multiplies downstream cost. Domain names supply examples, not
+automatic escalation: substantial new game capabilities, agent systems, AI/ML,
+graph databases, and product strategy need frontier planning; routine changes
+with settled constraints need not.
+
+Keep frontier involvement while experiments or investigation change the plan.
+Hand off when decisions, constraints, verification, and escalation conditions
+are explicit. Playtests, experiments, user evidence, and production canaries
+remain acceptance requirements where applicable. Ordinarily use one frontier
+author; foundational or especially consequential plans require review by the
+other frontier model. Preserve stricter existing gates. Capability and premise
+failures justify escalation; authentication, rate limits, permissions, and
+infrastructure failures are operational problems.
+
+Clavain owns the portable executable policy and model assignments in
+`config/routing.yaml` and `docs/canon/reasoning-routing.md` in its installation.
+Intercore enforces declared requirements and records evidence. Host adapters
+deliver the same contract and state their actual enforcement capabilities.
+Calibration may improve allocation within quality and authority boundaries.
+
 <a id="the-oodarc-lens"></a>
 #### The OODARCS Lens
 
