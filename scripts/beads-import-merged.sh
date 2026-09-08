@@ -73,6 +73,25 @@ PENDING_BATCH="$STATE/pending-import.jsonl"
 CHECKER="$ROOT/scripts/check_beads_jsonl_dolt_sync.py"
 TIMEOUT="${BEADS_IMPORT_TIMEOUT:-120}"
 
+# run_range's own working files. These are deliberately NOT "local" to
+# run_range: the EXIT trap it installs only fires later, at actual process
+# exit, by which point a normally-RETURNing run_range has already torn down
+# its local scope — so a trap that closed over "local TMP" read an unbound
+# variable under set -u on every successful (non-exit-from-inside-run_range)
+# return. Globals stay valid for the trap to read no matter when it fires.
+TMP=""
+TMP_MERGE_N=0
+# shellcheck disable=SC2329  # invoked only from the trap string set in run_range
+cleanup_range_tmp() {
+  [ -n "$TMP" ] || return 0
+  rm -f -- "$TMP" "$TMP.batch" "$TMP.before" "$TMP.diff" "$TMP.err" "$TMP.out"
+  local i=1
+  while [ "$i" -le "$TMP_MERGE_N" ]; do
+    rm -f -- "$TMP.base$i" "$TMP.ours$i" "$TMP.theirs$i"
+    i=$((i + 1))
+  done
+}
+
 MODE='diff'
 BEFORE_ARG=""
 for arg in "$@"; do
@@ -262,11 +281,12 @@ ancestry() {
 run_range() {
   local BEFORE="$1" AFTER="$2"
   R_BEFORE="$BEFORE"; R_KIND="$3"; R_MERGES="$4"
-  local TMP rows bad reason_scope
+  local rows bad reason_scope
 
   TMP="$(mktemp "${TMPDIR:-/tmp}/beads-merged.XXXXXX")" || { incomplete "$BEFORE" "$AFTER" "mktemp_failed" 0 "mktemp failed"; exit 1; }
   chmod 600 "$TMP"
-  trap 'rm -f "$TMP" "$TMP.batch" "$TMP.before" "$TMP.base" "$TMP.theirs" "$TMP.diff" "$TMP.err" "$TMP.out"; beads_transport_unlock' EXIT
+  TMP_MERGE_N=0
+  trap 'cleanup_range_tmp; beads_transport_unlock' EXIT
 
   if [ "$R_KIND" = "full" ]; then
     cp "$JSONL" "$TMP"
@@ -377,13 +397,13 @@ PY
     for m in $(printf '%s' "$R_MERGES" | tr ',' ' '); do
       mb="$(printf '%s' "$m" | cut -d: -f2)"; mo="$(printf '%s' "$m" | cut -d: -f3)"; mt="$(printf '%s' "$m" | cut -d: -f4)"
       i=$((i + 1))
+      TMP_MERGE_N="$i"
       beads_transport_head_blob "$TMP.base$i" "$mb" || : > "$TMP.base$i"
       beads_transport_head_blob "$TMP.ours$i" "$mo" || : > "$TMP.ours$i"
       beads_transport_head_blob "$TMP.theirs$i" "$mt" || : > "$TMP.theirs$i"
       side_args+=(--merge-side "$TMP.base$i" "$TMP.ours$i" "$TMP.theirs$i")
     done
   fi
-  trap 'rm -f "$TMP" "$TMP".*; beads_transport_unlock' EXIT
   local plan prc
   plan="$(python3 "$CHECKER" --repo "$ROOT" --json --state-dir "$STATE" \
             --plan-import "$TMP" "${side_args[@]}" --write-batch "$BATCH" \

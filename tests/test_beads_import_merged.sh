@@ -756,4 +756,46 @@ python3 -c 'import json; c=json.load(open(".beads/transport/conflicts.json"))["r
 ev="$(python3 -c 'import json; print(json.load(open(".beads/transport/conflicts.json"))["records"]["k"]["evidence"])')"
 grep -q '"k per b1"' "$ev"/k.*.json && grep -q '"k per b2"' "$ev"/k.*.json || fail "evidence does not hold both upstream versions of k"
 
+echo "=== 33: a normal verified fast-forward import leaves no stray TMP files and releases the lock ==="
+# Regression for the installed defect diagnosed on zklw: run_range declared
+# its working file as "local TMP" but installed an EXIT trap that reads $TMP
+# only when the WHOLE PROCESS exits — by which point a successful (non-exit)
+# return from run_range has already torn down that local binding, so the trap
+# read an unbound variable under set -u and never reached its cleanup/unlock.
+# Each sub-scenario below runs the real script as a child process against an
+# isolated TMPDIR, so leftover files are unambiguous and never confused with
+# another scenario's temp files in this same $SANDBOX.
+reset_import
+prev="$(git rev-parse HEAD)"
+{ cat .beads/issues.jsonl; row tmp1 2026-12-20T00:00:00Z; } > .beads/issues.jsonl.new; mv .beads/issues.jsonl.new .beads/issues.jsonl
+git commit -q -m "add tmp1" -- .beads/issues.jsonl
+range_tmp="$(mktemp -d)"
+rc=0
+out="$(TMPDIR="$range_tmp" bash scripts/beads-import-merged.sh "$prev" 2>&1 >/dev/null)" || rc=$?
+[ "$rc" -eq 0 ] || fail "a plain fast-forward import that should verify cleanly exited $rc: $out"
+case "$out" in *"unbound variable"*) fail "run_range's temp-file trap referenced an out-of-scope variable: $out" ;; esac
+[ -z "$(ls -A "$range_tmp")" ] || fail "run_range left temp files behind on a successful return: $(ls -A "$range_tmp")"
+bash -c '. scripts/lib-beads-transport.sh; beads_transport_lock_held' && fail "the transport lock was still held after a successful run"
+db_has tmp1 || fail "fixture: the row exercising the cleanup path did not actually import"
+rm -rf "$range_tmp"
+
+echo "=== 34: a merge-ancestry import (indexed .base/.ours/.theirs temp files) also leaves nothing behind ==="
+reset_import
+rm -f .beads/transport/conflicts.json
+base33="$(git rev-parse HEAD)"
+git checkout -q -b merge33 "$base33"
+{ cat .beads/issues.jsonl; row tmp2 2026-12-21T00:00:00Z; } > .beads/issues.jsonl.new; mv .beads/issues.jsonl.new .beads/issues.jsonl
+git commit -q -m "merge33 adds tmp2" -- .beads/issues.jsonl
+git checkout -q main
+git merge -q --no-ff -m "merge tmp2" merge33
+range_tmp2="$(mktemp -d)"
+rc=0
+out="$(TMPDIR="$range_tmp2" bash scripts/beads-import-merged.sh "$base33" 2>&1 >/dev/null)" || rc=$?
+[ "$rc" -eq 0 ] || fail "a merge-ancestry import that should verify cleanly exited $rc: $out"
+case "$out" in *"unbound variable"*) fail "the merge-ancestry trap referenced an out-of-scope variable: $out" ;; esac
+[ -z "$(ls -A "$range_tmp2")" ] || fail "a merge-ancestry import left indexed side-files behind: $(ls -A "$range_tmp2")"
+bash -c '. scripts/lib-beads-transport.sh; beads_transport_lock_held' && fail "the transport lock was still held after a merge-ancestry run"
+db_has tmp2 || fail "fixture: the merge-ancestry row did not actually import"
+rm -rf "$range_tmp2"
+
 echo "all import-merged scenarios passed"
