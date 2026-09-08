@@ -17,3 +17,9 @@ Host-native snapshots remain private. Results will be recorded after execution.
 Historical conflicts remain distinct from this fresh-record check. Neither
 this prospective report nor a passing canary closes `sylveste-bkrh` while its
 final reconciliation remains incomplete.
+
+The Mac-to-zklw leg passed on its first ordinary pull (`f5e5c36a` to
+`a3318c13`). Only the canary changed natively, its complete semantic content
+matched the transport, and the import, pending-state, temporary-file and lock
+checks passed. The canary has now been updated and closed natively on zklw;
+the Mac return leg remains pending.
