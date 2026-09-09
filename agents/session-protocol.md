@@ -22,7 +22,14 @@ This repo has **git-autosync** enabled (`.git-autosync` marker). Claude Code hoo
 - **You still must follow the Session Close Protocol** (beads, quality gates, intentional commit message, push). Autosync handles incremental safety; session close handles intentional milestones.
 - Don't manually push after every small edit — autosync handles that. Save manual commits for meaningful checkpoints.
 
-**Ship validated fixes without asking.** When a fix is validated (read back looks correct, tests pass), commit, push, and publish without pausing to confirm. Wasted round-trips cost more than the fix. Only ask before irreversible actions (publish, delete, merge, bead-close).
+**Complete authorized work.** Carry implementation through current verification,
+required independent review, intentional commits and authorized pushes. Do not
+pause to reconfirm authority already supplied in the session. Publishing,
+deployment, destructive changes and other consequential actions require authority
+for that action and their applicable gates; a successful push does not grant it.
+Runtime restrictions remain binding. Ask only for missing information or authority,
+and continue unaffected work. Close a bead only when its required acceptance
+evidence exists; keep operationally blocked or unverified work outstanding.
 
 **Debugging heuristic:** Check the cheapest observable signals first — is the binary present? (`command -v <tool>`), is the cache stale? (clear and retry), is CWD correct? (`pwd`). Explore complex hypotheses only after ruling out simple causes.
 
@@ -55,7 +62,7 @@ Use nearest, task-scoped instruction loading instead of reading every instructio
    git push
    git status  # MUST show "up to date with origin"
    ```
-9. **Clean up** - Clear stashes, prune remote branches
+9. **Preserve unrelated work** - Leave other files, stashes and branches untouched
 10. **Verify** - All changes committed AND pushed
 11. **Hand off** - Provide context for next session
 
