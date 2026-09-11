@@ -1,0 +1,4 @@
+# Built from two private repos. Sylveste is public: publishing the atlas is a
+# deliberate decision (README gate 1), never a side effect of committing code.
+symbol-atlas.json
+__pycache__/
