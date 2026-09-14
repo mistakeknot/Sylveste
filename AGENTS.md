@@ -42,6 +42,8 @@ bd backup && bash .beads/push.sh && git push  # Complete work after commit
 
 **Worktrees:** Native Claude Code worktrees isolate file edits; interlock coordinates agents that share a tree. Mutating agent/workflow fan-outs default to `isolation: worktree`, **per nested repo** — a root-repo worktree materializes almost none of the nested plugins, so root operations that touch nested repos (publish waves, cross-repo sweeps) run against the main checkout. See [docs/guide-worktree-first-coordination.md](docs/guide-worktree-first-coordination.md).
 
+**Token discipline:** The estate's workload is output-dominated (2026-02-28 baseline: output tokens ≈ 97% of cost), and Claude Fable 5.1 leans toward whole-file rewrites and one tool call per turn. So: surgically edit a file rather than rewrite it when the result is the same; in agent loops, first list what you need next, then request every item that doesn't depend on another's result in one response; keep changes and committed tests to what the task asks for, and report anything else as a follow-up. Source: Anthropic's Fable 5.1 prompting guide; rationale and experiments in [docs/research/2026-09-14-frontier-harness-delta.md](docs/research/2026-09-14-frontier-harness-delta.md).
+
 **Philosophy alignment:** When planning, brainstorming, or reviewing changes in any module, read that module's `PHILOSOPHY.md`. Add two short lines to planning outputs: **Alignment** (how it supports the module's purpose) and **Conflict/Risk** (any tension, or 'none'). If a high-value change conflicts, either adjust the plan or create follow-up to update the module's `PHILOSOPHY.md`.
 
 ## Recent Changes
