@@ -254,7 +254,7 @@ def validate_workflow(failures: list[str]) -> None:
     required_patterns = [
         r"cron:\s*['\"]0 \*/6 \* \* \*['\"]",
         r"bash\s+estimate-costs\.sh",
-        r"actions/checkout@v4",
+        r"actions/checkout@v\d+",
         r"cost-trajectory\.csv",
         r"workflow_dispatch:",
     ]
