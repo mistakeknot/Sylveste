@@ -7,8 +7,7 @@
             "command": "command -v bd >/dev/null 2>&1 && bd --sandbox prime || cat .beads/PRIME.md 2>/dev/null",
             "type": "command"
           }
-        ],
-        "matcher": "manual"
+        ]
       }
     ],
     "SessionStart": [
