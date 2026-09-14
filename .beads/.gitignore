@@ -115,3 +115,23 @@ metadata.json
 
 # Auto-export hook diagnostics (machine-local)
 auto-export.log
+
+# Dolt backup location and its sync bookkeeping (machine-local).
+#
+# Same class as metadata.json above, and missed for the same reason: both were
+# committed by the original `bd init` (22b4d794) before that policy was written,
+# and nothing revisited them.
+#
+# dolt-backup.json names WHERE this machine keeps its beads backup, as an
+# absolute path. The tracked copy said file:///Users/sma/projects/Sylveste/
+# .beads/backup -- Clavain's path -- while zklw's working copy said
+# file:///home/mk/.local/state/roadmap-maintenance/beads-backup. A tracked file
+# is a channel between machines: whichever machine committed last would repoint
+# the other's backup at a directory that does not exist there. Neither machine
+# ever committed it, so the two sat permanently modified instead -- which is how
+# this surfaced, as autosync reporting NEEDS-HUMAN on every run for 28 days.
+#
+# dolt-backup-state.json is the last-sync timestamp of that backup. Per-machine
+# by construction and rewritten on every run.
+dolt-backup.json
+dolt-backup-state.json
