@@ -10,7 +10,7 @@ Increase session cadence only when the closed-loop cost-calibration signal remai
 
 ## Week 1 — Instrument and stabilize
 
-- Run `estimate-costs.sh` through the six-hour GitHub Actions cadence.
+- Run `estimate-costs.sh` through the six-hour `ops/oyrf-cost-export` timer on the machine that holds Interstat (GitHub Actions cannot see Interstat and only validates the plumbing).
 - Confirm `data/cost-trajectory.csv` receives structurally valid rows.
 - Keep Mythos dry-runs fixture-only unless Interstat metrics are verified.
 - Record any `interstat-empty` streak longer than one day as an instrumentation fault, not as true zero cost.
