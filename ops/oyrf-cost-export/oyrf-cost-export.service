@@ -1,0 +1,7 @@
+[Unit]
+Description=OYRF longitudinal cost export — append one measured row to oyrf-data, never an empty one
+
+[Service]
+Type=oneshot
+ExecStart=%h/bin/oyrf-cost-export.sh
+Nice=10
