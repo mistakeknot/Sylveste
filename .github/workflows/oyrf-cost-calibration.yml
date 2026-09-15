@@ -1,53 +1,59 @@
 name: OYRF cost calibration
 
+# This workflow validates the OYRF cost-calibration plumbing. It does not run
+# the exporter live, and it never touches the oyrf-data branch.
+#
+# It used to. From 2026-04-30 to 2026-09-07 a six-hourly schedule here ran
+# `bash estimate-costs.sh` on a CI checkout and pushed the result to oyrf-data:
+# 225 rows, every one of them `interstat-empty`, because the exporter reads
+# interstat and interstat lives under interverse/, which is gitignored — a CI
+# checkout has never contained it. A row that measured nothing looked like a
+# measurement. Measurement now happens where the data is: the
+# ops/oyrf-cost-export timer on the machine that holds interstat, which
+# refuses to publish an empty row. scripts/validate_oyrf_cost_infra.py holds
+# this workflow to that contract.
+
 on:
-  schedule:
-    - cron: '0 */6 * * *'
+  pull_request:
+    paths:
+      - estimate-costs.sh
+      - data/cost-trajectory.csv
+      - scripts/validate_oyrf_cost_infra.py
+      - scripts/mythos-transition-dry-run.sh
+      - ops/oyrf-cost-export/**
+      - docs/live/closed-loop.md
+      - docs/specs/mythos-transition-harness.md
+      - docs/plans/2026-04-30-session-cadence-dial-up-plan.md
+      - .github/workflows/oyrf-cost-calibration.yml
+  push:
+    branches: [main]
+    paths:
+      - estimate-costs.sh
+      - data/cost-trajectory.csv
+      - scripts/validate_oyrf_cost_infra.py
+      - scripts/mythos-transition-dry-run.sh
+      - ops/oyrf-cost-export/**
+      - docs/live/closed-loop.md
+      - docs/specs/mythos-transition-harness.md
+      - docs/plans/2026-04-30-session-cadence-dial-up-plan.md
+      - .github/workflows/oyrf-cost-calibration.yml
   workflow_dispatch:
 
 permissions:
-  contents: write
-
-concurrency:
-  group: oyrf-cost-calibration-${{ github.ref }}
-  cancel-in-progress: false
+  contents: read
 
 jobs:
-  estimate-costs:
-    name: Export longitudinal cost trajectory
+  validate:
+    name: Validate OYRF cost-calibration plumbing
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
 
-      - name: Overlay latest trajectory from oyrf-data
-        run: |
-          git fetch origin oyrf-data
-          git checkout origin/oyrf-data -- data/cost-trajectory.csv || echo "no oyrf-data copy yet; using main's"
-
-      - name: Append cost trajectory sample
-        run: bash estimate-costs.sh
-
-      - name: Validate OYRF cost-calibration artifacts
+      - name: Validate exporter, dry-run harness, docs and the export timer
         run: python3 scripts/validate_oyrf_cost_infra.py --run-dry-run
 
-      - name: Check out oyrf-data branch
-        uses: actions/checkout@v7
-        with:
-          ref: oyrf-data
-          path: oyrf-data-branch
-
-      - name: Commit updated cost-trajectory.csv to oyrf-data
+      - name: Report where real measurement lives
         run: |
-          mkdir -p oyrf-data-branch/data
-          cp data/cost-trajectory.csv oyrf-data-branch/data/cost-trajectory.csv
-          cd oyrf-data-branch
-          if git diff --quiet -- data/cost-trajectory.csv && [ -z "$(git status --porcelain -- data/cost-trajectory.csv)" ]; then
-            echo "No cost-trajectory.csv changes to commit."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/cost-trajectory.csv
-          git commit -m "data: update OYRF cost trajectory"
-          git push origin HEAD:oyrf-data
+          echo "This job proves the plumbing. Rows are produced by ops/oyrf-cost-export"
+          echo "on the machine that holds interstat; a CI checkout cannot measure anything."

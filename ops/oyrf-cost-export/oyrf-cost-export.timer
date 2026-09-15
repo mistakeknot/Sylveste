@@ -1,0 +1,10 @@
+[Unit]
+Description=Six-hourly OYRF cost export to oyrf-data (runs where interstat lives)
+
+[Timer]
+OnCalendar=*-*-* 00/6:23
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target

@@ -1,12 +1,21 @@
 #!/usr/bin/env python3
 """Validate sylveste-oyrf.1 longitudinal cost-calibration infra artifacts.
 
-This is intentionally structural: it proves the public/repo CSV, scheduled
-estimator, public live template, transition harness, and cadence plan are wired
-well enough for automation and review without requiring private interstat data.
-The public live template must stay launch-safe and no longer names held/private
-Mythos terminology; the internal transition harness remains the Mythos-specific
-measurement artifact.
+This is intentionally structural: it proves the public/repo CSV, the estimator,
+the export timer under ops/, the public live template, transition harness, and
+cadence plan are wired well enough for automation and review without requiring
+private interstat data. The public live template must stay launch-safe and no
+longer names held/private Mythos terminology; the internal transition harness
+remains the Mythos-specific measurement artifact.
+
+Two contracts are enforced rather than described, because both were violated
+for four months while every check here passed:
+
+- The GitHub Actions workflow validates and never publishes. A CI checkout has
+  no interverse/ and so no interstat; when the workflow ran the exporter live it
+  pushed 225 `interstat-empty` rows to oyrf-data (2026-04-30 → 2026-09-07).
+- The ops/oyrf-cost-export timer publishes and never fabricates: an empty
+  interstat result exits 3 (could not look) and appends nothing.
 """
 
 from __future__ import annotations
@@ -29,6 +38,7 @@ LIVE_TEMPLATE = ROOT / "docs" / "live" / "closed-loop.md"
 MYTHOS_HARNESS = ROOT / "docs" / "specs" / "mythos-transition-harness.md"
 CADENCE_PLAN = ROOT / "docs" / "plans" / "2026-04-30-session-cadence-dial-up-plan.md"
 DRY_RUN = ROOT / "scripts" / "mythos-transition-dry-run.sh"
+EXPORTER_DIR = ROOT / "ops" / "oyrf-cost-export"
 
 REQUIRED_CSV_COLUMNS = [
     "captured_at",
@@ -248,27 +258,84 @@ JSON
 
 
 def validate_workflow(failures: list[str]) -> None:
+    """CI validates the plumbing and never publishes.
+
+    The checkout action's major version is deliberately not pinned here: a
+    Dependabot bump from @v4 to @v7 once failed this check on every run for
+    days, and the check's intent was only ever "the workflow checks out the
+    repo".
+    """
     text = read_text(WORKFLOW, failures)
     if not text:
         return
     required_patterns = [
-        r"cron:\s*['\"]0 \*/6 \* \* \*['\"]",
-        r"bash\s+estimate-costs\.sh",
-        r"actions/checkout@v\d+",
-        r"cost-trajectory\.csv",
-        r"workflow_dispatch:",
+        (r"actions/checkout@v\d+", "checks out the repository"),
+        (r"validate_oyrf_cost_infra\.py\s+--run-dry-run", "runs this validator with --run-dry-run"),
+        (r"workflow_dispatch:", "can be run on demand"),
+        (r"permissions:\s*\n\s*contents:\s*read", "holds only read permission"),
     ]
-    for pattern in required_patterns:
+    for pattern, why in required_patterns:
         if not re.search(pattern, text):
-            fail(f"workflow missing required pattern: {pattern}", failures)
+            fail(f"workflow must match {pattern!r} ({why})", failures)
+    # The contract is about what the workflow does, so comments (which explain
+    # why it no longer touches oyrf-data) are not scanned.
+    active = "\n".join(line for line in text.splitlines() if not line.lstrip().startswith("#"))
+    forbidden_patterns = [
+        (r"^\s*schedule:", "a schedule: a CI checkout cannot see interstat, so a scheduled run measures nothing"),
+        (r"run:\s*bash\s+estimate-costs\.sh(?!\s+--dry-run)", "a live estimate-costs.sh run, which would write an interstat-empty row"),
+        (r"contents:\s*write", "contents: write — CI must not publish"),
+        (r"oyrf-data", "any reference to the oyrf-data branch — only ops/oyrf-cost-export writes it"),
+    ]
+    for pattern, why in forbidden_patterns:
+        if re.search(pattern, active, flags=re.MULTILINE):
+            fail(f"workflow must not contain {why}", failures)
+
+
+def validate_exporter_timer(failures: list[str]) -> None:
+    """The ops/ timer publishes measured rows and refuses to publish empty ones."""
+    script = EXPORTER_DIR / "oyrf-cost-export.sh"
+    service = EXPORTER_DIR / "oyrf-cost-export.service"
+    timer = EXPORTER_DIR / "oyrf-cost-export.timer"
+
+    text = read_text(script, failures)
+    if text:
+        if not os.access(script, os.X_OK):
+            fail("ops/oyrf-cost-export/oyrf-cost-export.sh must be executable", failures)
+        for needle, why in [
+            ("estimate-costs.sh", "runs the exporter"),
+            ("oyrf-data", "publishes to the oyrf-data branch"),
+            ('"$source" != "interstat"', "refuses an interstat-empty row (exit 3, could not look)"),
+            ("exit 3", "uses the rig's could-not-look exit code"),
+            (".claude-automations-paused", "honours the rig automation pause"),
+        ]:
+            if needle not in text:
+                fail(f"exporter script must contain {needle!r} ({why})", failures)
+
+    text = read_text(service, failures)
+    if text:
+        if "Type=oneshot" not in text:
+            fail("exporter service must be Type=oneshot", failures)
+        if "ExecStart=%h/bin/oyrf-cost-export.sh" not in text:
+            fail("exporter service must ExecStart=%h/bin/oyrf-cost-export.sh (rig units run copies from ~/bin)", failures)
+
+    text = read_text(timer, failures)
+    if text:
+        if not re.search(r"^OnCalendar=", text, flags=re.MULTILINE):
+            fail("exporter timer must set OnCalendar=", failures)
+        if "Persistent=true" not in text:
+            fail("exporter timer must set Persistent=true so a missed six-hour slot runs on wake", failures)
+        if "WantedBy=timers.target" not in text:
+            fail("exporter timer must be WantedBy=timers.target", failures)
 
 
 def validate_docs(failures: list[str]) -> None:
     live = read_text(LIVE_TEMPLATE, failures)
     if live:
-        for needle in ["cost-trajectory.csv", "closed-loop", "sylveste-oyrf.1"]:
+        for needle in ["cost-trajectory.csv", "closed-loop", "sylveste-oyrf.1", "ops/oyrf-cost-export"]:
             if needle not in live:
                 fail(f"closed-loop template must mention {needle!r}", failures)
+        if "every six hours" in live and "oyrf-cost-calibration.yml" in live.split("ops/oyrf-cost-export")[0]:
+            fail("closed-loop template must not claim the GitHub Actions workflow refreshes the data", failures)
 
     harness = read_text(MYTHOS_HARNESS, failures)
     if harness:
@@ -298,6 +365,7 @@ def validate(run_dry_run: bool = False) -> list[str]:
     validate_estimator(failures, run_dry_run=run_dry_run)
     validate_nested_interstat_baseline_fixture(failures)
     validate_workflow(failures)
+    validate_exporter_timer(failures)
     validate_docs(failures)
     return failures
 
