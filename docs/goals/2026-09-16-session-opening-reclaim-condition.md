@@ -1,4 +1,4 @@
-/goal Sylveste — measure the whole session opening, then remove what it pays for and does not use
+Sylveste — measure the whole session opening, then remove what it pays for and does not use
 
 OUTCOME: A session on this rig opens with materially less fixed context than the 81,295 tokens measured on 2026-09-16, and every cut that got it there is backed by an eval showing the affected skills still trigger and still behave. Today only plugin advertisement text is instrumented, which is under a tenth of the opening, so the rig has been optimizing the part it can see. When this is done the whole opening is measurable on demand on both machines, and the published number is reproducible by re-running the meter.
 
