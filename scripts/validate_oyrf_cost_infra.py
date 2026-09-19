@@ -47,6 +47,8 @@ REQUIRED_CSV_COLUMNS = [
     "total_tokens",
     "input_tokens",
     "output_tokens",
+    "cache_read_tokens",
+    "cache_creation_tokens",
     "total_cost_usd",
     "cost_per_session_usd",
     "source",
@@ -86,7 +88,7 @@ def validate_csv(failures: list[str]) -> None:
     for idx, row in enumerate(rows, start=2):
         if not re.match(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$", row.get("captured_at", "")):
             fail(f"CSV row {idx} captured_at must be UTC ISO-8601 Z", failures)
-        for col in ["window_days", "session_count", "total_tokens", "input_tokens", "output_tokens"]:
+        for col in ["window_days", "session_count", "total_tokens", "input_tokens", "output_tokens", "cache_read_tokens", "cache_creation_tokens"]:
             try:
                 int(row.get(col, ""))
             except ValueError:

@@ -20,7 +20,9 @@ The live page should render these fields from the newest rows in `cost-trajector
 | `captured_at` | UTC timestamp for the estimator sample. |
 | `window_days` | Lookback window used for the Interstat baseline query. |
 | `session_count` | Number of sessions included in the window. |
-| `total_tokens` | Input plus output tokens counted by Interstat. |
+| `total_tokens` | Input plus output tokens counted by Interstat. Excludes cache; see the two cache columns. |
+| `cache_read_tokens` | Prompt-cache reads. In a cached agent session this is the bulk of the input side. |
+| `cache_creation_tokens` | Prompt-cache writes, billed above base rate. |
 | `total_cost_usd` | Estimated API-equivalent spend for the window. |
 | `cost_per_session_usd` | Normalized cost pressure for session-cadence decisions. |
 | `source` | `interstat`, `interstat-empty`, or `dry-run-fixture`. |
