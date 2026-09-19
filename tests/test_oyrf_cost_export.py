@@ -19,9 +19,10 @@ ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "ops" / "oyrf-cost-export" / "oyrf-cost-export.sh"
 HEADER = (
     "captured_at,window_days,session_count,total_tokens,input_tokens,"
-    "output_tokens,total_cost_usd,cost_per_session_usd,source\n"
+    "output_tokens,cache_read_tokens,cache_creation_tokens,"
+    "total_cost_usd,cost_per_session_usd,source\n"
 )
-SEED_ROW = "2026-04-30T17:23:50Z,7,0,0,0,0,0.000000,0.000000,interstat-empty\n"
+SEED_ROW = "2026-04-30T17:23:50Z,7,0,0,0,0,0,0,0.000000,0.000000,interstat-empty\n"
 
 
 def _git(*args, cwd):
@@ -126,7 +127,8 @@ def test_empty_interstat_result_is_not_published(estate, tmp_path):
 def test_measured_row_is_published(estate, tmp_path):
     fake = _fake_cost_query(
         tmp_path,
-        'echo \'{"session_count": 3, "input_tokens": 100, "output_tokens": 50, "total_usd": 1.5}\'',
+        'echo \'{"session_count": 3, "input_tokens": 100, "output_tokens": 50, '
+        '"cache_read_tokens": 90000, "cache_creation_tokens": 7000, "total_usd": 1.5}\'',
     )
     result = _run(estate, OYRF_COST_QUERY_OVERRIDE=fake)
     assert result.returncode == 0, result.stderr + result.stdout
@@ -138,7 +140,9 @@ def test_measured_row_is_published(estate, tmp_path):
     assert last[-1] == "interstat"
     assert last[2] == "3"           # session_count
     assert last[3] == "150"         # total_tokens repaired from input+output
-    assert last[6] == "1.500000"    # total_cost_usd
+    assert last[6] == "90000"       # cache_read_tokens — the stream the baseline used to drop
+    assert last[7] == "7000"        # cache_creation_tokens
+    assert last[8] == "1.500000"    # total_cost_usd
     assert "exit=0 source=interstat" in _receipt(estate)
 
 

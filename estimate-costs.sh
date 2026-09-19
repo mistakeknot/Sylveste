@@ -145,6 +145,8 @@ HEADER = [
     "total_tokens",
     "input_tokens",
     "output_tokens",
+    "cache_read_tokens",
+    "cache_creation_tokens",
     "total_cost_usd",
     "cost_per_session_usd",
     "source",
@@ -197,8 +199,16 @@ def add_metrics(target: dict[str, float], item: dict[str, Any]) -> None:
     output_tokens = as_int(first_number(item, "output_tokens", "completion_tokens"))
     if not output_tokens:
         output_tokens = as_int(first_number(token_metrics, "output", "output_tokens", "completion_tokens"))
+    cache_read_tokens = as_int(first_number(item, "cache_read_tokens", "cache_read"))
+    if not cache_read_tokens:
+        cache_read_tokens = as_int(first_number(token_metrics, "cache_read", "cache_read_tokens"))
+    cache_creation_tokens = as_int(first_number(item, "cache_creation_tokens", "cache_creation"))
+    if not cache_creation_tokens:
+        cache_creation_tokens = as_int(first_number(token_metrics, "cache_creation", "cache_creation_tokens"))
     target["input_tokens"] += input_tokens
     target["output_tokens"] += output_tokens
+    target["cache_read_tokens"] += cache_read_tokens
+    target["cache_creation_tokens"] += cache_creation_tokens
 
     total_tokens = as_int(first_number(item, "total_tokens", "tokens"))
     if not total_tokens:
@@ -220,6 +230,8 @@ metrics = {
     "total_tokens": 0.0,
     "input_tokens": 0.0,
     "output_tokens": 0.0,
+    "cache_read_tokens": 0.0,
+    "cache_creation_tokens": 0.0,
     "total_cost_usd": 0.0,
 }
 source = source_hint
@@ -260,6 +272,8 @@ row = {
     "total_tokens": str(int(metrics["total_tokens"])),
     "input_tokens": str(int(metrics["input_tokens"])),
     "output_tokens": str(int(metrics["output_tokens"])),
+    "cache_read_tokens": str(int(metrics["cache_read_tokens"])),
+    "cache_creation_tokens": str(int(metrics["cache_creation_tokens"])),
     "total_cost_usd": f"{total_cost:.6f}",
     "cost_per_session_usd": f"{cost_per_session:.6f}",
     "source": source,
