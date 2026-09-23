@@ -31,6 +31,7 @@ Each subproject has its own CLAUDE.md and AGENTS.md — read those before editin
 | `os/Zaka/` | Zaka | Universal CLI agent driver — tmux steering (L2 OS) |
 | `os/Alwe/` | Alwe | Universal agent observation layer — CASS + MCP (L2 OS) |
 | `os/Ockham/` | Ockham | Factory governor — intent, authority, anomaly, dispatch (L2 OS) |
+| `os/Sonnerie/` | Sonnerie | Token-free GitHub watcher — routes PR and issue events to the owning BB thread |
 | `core/intercore/` | Intercore | Orchestration kernel — Go CLI `ic` (L1) |
 | `core/intermute/` | Intercore | Multi-agent coordination service (Go) |
 | `core/marketplace/` | Intercore | Plugin marketplace registry |
