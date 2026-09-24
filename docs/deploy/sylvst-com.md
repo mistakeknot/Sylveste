@@ -24,6 +24,8 @@ https://raw.githubusercontent.com/mistakeknot/Sylveste/main/data/cost-trajectory
 
 It does not read private Interstat data, prompts, local session logs, Beads state, Dolt state, or credentials.
 
+Rows land on `main` via the `ops/oyrf-cost-promote` daily systemd timer, which opens an auto-merge PR copying new measured rows from `oyrf-data`; see `docs/live/closed-loop.md`.
+
 ## Cloudflare Pages
 
 Cloudflare Pages project:
