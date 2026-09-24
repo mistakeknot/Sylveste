@@ -2,7 +2,7 @@
 Description=Daily OYRF cost trajectory promotion, shortly after the six-hourly export lands
 
 [Timer]
-OnCalendar=*-*-* 01:00
+OnCalendar=*-*-* 00:35
 Persistent=true
 RandomizedDelaySec=300
 
