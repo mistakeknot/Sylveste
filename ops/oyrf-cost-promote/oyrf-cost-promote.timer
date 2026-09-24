@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily OYRF cost trajectory promotion, shortly after the six-hourly export lands
+
+[Timer]
+OnCalendar=*-*-* 01:00
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target
