@@ -9,6 +9,7 @@ This page is the `/live/closed-loop.md` source template for the public closed-lo
 - Data file: [`/data/cost-trajectory.csv`](../../data/cost-trajectory.csv)
 - Repository path: `data/cost-trajectory.csv`
 - Refresh path: the `ops/oyrf-cost-export` systemd timer runs `bash estimate-costs.sh` every six hours on the machine that holds Interstat and publishes the row to the `oyrf-data` branch. `.github/workflows/oyrf-cost-calibration.yml` only validates the plumbing; a CI checkout has no Interstat and cannot measure anything.
+- Promotion path: `sylvst.com/live` reads `main`, not `oyrf-data` (see `docs/deploy/sylvst-com.md`). The `ops/oyrf-cost-promote` systemd timer runs daily, shortly after the export lands, diffs new `source=interstat` rows out of `oyrf-data`, and opens a PR onto `main` with `gh pr merge --auto` set — it lands only once the required `Generator and parity checkers` check passes, never by force-push or admin bypass. Idempotent: a run with nothing new, or with a promotion PR already open, does nothing.
 - No safe-empty rows: when Interstat cannot be read the timer exits 3 (could not look) and appends nothing. Rows with `source=interstat-empty` dated before 2026-09-15 come from the earlier CI-run exporter and are not measurements — filter them out when rendering.
 
 ## Closed-loop readout
