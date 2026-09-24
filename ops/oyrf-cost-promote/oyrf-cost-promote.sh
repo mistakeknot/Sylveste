@@ -62,15 +62,23 @@ fi
 git -C "$WORKTREE" checkout -q --detach origin/main || wrong "cannot check out origin/main" checkout
 git -C "$WORKTREE" reset -q --hard origin/main || wrong "cannot reset to origin/main" reset
 
-data_csv="$(git -C "$REPO" show "origin/oyrf-data:$CSV" 2>/dev/null)" \
+data_csv="$(git -C "$REPO" show "origin/oyrf-data:$CSV" 2>/dev/null | tr -d '\r')" \
   || wrong "cannot read origin/oyrf-data:$CSV" no-data-csv
+
+# estimate-costs.sh writes CRLF rows (Python csv default) and both branches'
+# CSVs carry it; strip it before comparing/filtering or the last field reads
+# "interstat\r" and never matches, or two otherwise-identical rows look
+# different. Normalize to LF for the merge, then re-add CRLF on write so the
+# file's existing line-ending convention doesn't change.
+main_header="$(head -n 1 "$WORKTREE/$CSV" | tr -d '\r')"
+main_body="$(tail -n +2 "$WORKTREE/$CSV" | tr -d '\r')"
 
 # Idempotent merge: every row already in main's CSV stays; any source=interstat
 # row from oyrf-data whose exact line isn't already present in main is new.
 # Exact-line comparison (not just captured_at) so a schema difference shows up
 # as "new" instead of being silently treated as a duplicate.
 new_rows="$(comm -13 \
-  <(tail -n +2 "$WORKTREE/$CSV" | sort) \
+  <(printf '%s\n' "$main_body" | sort) \
   <(printf '%s\n' "$data_csv" | tail -n +2 | awk -F',' '$NF == "interstat"' | sort))"
 
 if [ -z "$new_rows" ]; then
@@ -79,8 +87,8 @@ if [ -z "$new_rows" ]; then
   exit 0
 fi
 
-{ tail -n +2 "$WORKTREE/$CSV"; printf '%s\n' "$new_rows"; } | sort -t, -k1,1 > "$STATE_DIR/body.csv"
-{ head -n 1 "$WORKTREE/$CSV"; cat "$STATE_DIR/body.csv"; } > "$WORKTREE/$CSV.new"
+{ printf '%s\n' "$main_body"; printf '%s\n' "$new_rows"; } | sort -t, -k1,1 | sed 's/$/\r/' > "$STATE_DIR/body.csv"
+{ printf '%s\r\n' "$main_header"; cat "$STATE_DIR/body.csv"; } > "$WORKTREE/$CSV.new"
 mv "$WORKTREE/$CSV.new" "$WORKTREE/$CSV"
 rm -f "$STATE_DIR/body.csv"
 
