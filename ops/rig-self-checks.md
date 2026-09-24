@@ -27,6 +27,7 @@ This page exists so that never depends on someone remembering.
 | `settings-history` — did the settings snapshot actually record | launchd | (watchdog) | daily 09:15 |
 | `autosync-repair` — commit and push what the marker promised | — | **systemd timer** | daily 08:45 |
 | `oyrf-cost-export` — one measured cost row to `oyrf-data`, never an empty one (`ops/oyrf-cost-export/`) | — | **systemd timer** | every 6h at :23 |
+| `oyrf-cost-promote` — auto-merge PR moving new measured rows from `oyrf-data` to `main` (`ops/oyrf-cost-promote/`) | — | **systemd timer** | daily 00:35 |
 | settings.json history | SessionStart + daily | **continuous, 10s poll** | see below |
 
 ## Could not look is not nothing found

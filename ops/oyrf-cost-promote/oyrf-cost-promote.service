@@ -1,0 +1,7 @@
+[Unit]
+Description=OYRF cost trajectory promotion — open (and auto-merge) a PR moving new measured rows from oyrf-data into main
+
+[Service]
+Type=oneshot
+ExecStart=%h/bin/oyrf-cost-promote.sh
+Nice=10
