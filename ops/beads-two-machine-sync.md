@@ -415,6 +415,39 @@ Note `shadow-work` appears here for zklw but migrated cleanly on Clavain — the
 two machines do not have the same set of working databases, so this list is
 per-machine rather than a property of the repo.
 
+### A clone of an old remote fails at migration 0047
+
+```
+migration 0047_recompute_mixed_is_blocked: Error 1146: table not found: wisps
+```
+
+Upstream [#4695](https://github.com/gastownhall/beads/issues/4695), fixed in
+bd v1.2.0 (`3f5e1ba3`, PR #4878). `wisps` and `wisp_dependencies` are
+dolt-ignored, so they never arrive with a clone, and bd 1.1.2 creates them only
+*after* the main migration series has already reached 0047. Any 1.1.2 clone that
+bootstraps from a remote below v47 hits this. The failed run also leaves
+migrations 24–46 uncommitted, which then trips the dirty-tables refusal above.
+
+The `dolt` CLI workaround does not apply here: dolt 1.85 cannot write databases
+made by bd 1.1.2's embedded engine (`table has unknown fields`). What worked for
+cujgel on 2026-09-27 (v23→v53, 28/28 issue IDs and statuses identical):
+
+1. Build a one-off bd from 1.1.2 (`20e493e56`) with only the v47 pre-migration
+   repair backported. Copy `ensureWispTablesForMixedBlockedRecompute` and its two
+   `...DDLForMigration0047` constants from `3f5e1ba3`'s
+   `internal/storage/schema/migration_repairs.go`, and dispatch it from
+   `preMigrationRepair` for `schema_migrations` version 47. Do not cherry-pick the
+   whole commit: it adds migration 0057, which would push the database past the
+   fleet's v53.
+2. Move the half-migrated `.beads/embeddeddolt` aside (keep it), then run
+   `bd bootstrap --yes`. It reports failure ("needs N schema migrations"), but the
+   clone itself succeeds.
+3. `BD_ALLOW_REMOTE_MIGRATE=1 <patched-bd> migrate`, then verify ID+status sets
+   against a pre-export and `bd dolt push`. Other clones then `bd bootstrap` rather
+   than migrating themselves.
+
+The durable fix is upgrading the fleet to bd ≥ 1.2.0.
+
 ## The trap that cost the most
 
 `.beads/metadata.json` carries a `dolt_server_port` field that bd 1.1.2 warns
