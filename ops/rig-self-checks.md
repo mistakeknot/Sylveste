@@ -25,6 +25,7 @@ This page exists so that never depends on someone remembering.
 | `peer-agreement` — do this machine and its peers agree on what must match | launchd | systemd timer | daily 09:15 |
 | `publish-drift` — does the published artifact contain the committed source | launchd | systemd timer | daily 09:15 |
 | `settings-history` — did the settings snapshot actually record | launchd | (watchdog) | daily 09:15 |
+| `beads-shared-dolt` — is the Mac's shared bd Dolt server (127.0.0.1:3308) listening and serving the `beads` database; run from the dev server over ssh, not on the Mac (see below) | — (skip) | systemd timer | daily |
 | `autosync-repair` — commit and push what the marker promised | — | **systemd timer** | daily 08:45 |
 | `oyrf-cost-export` — one measured cost row to `oyrf-data`, never an empty one (`ops/oyrf-cost-export/`) | — | **systemd timer** | every 6h at :23 |
 | `oyrf-cost-promote` — auto-merge PR moving new measured rows from `oyrf-data` to `main` (`ops/oyrf-cost-promote/`) | — | **systemd timer** | daily 00:35 |
@@ -3967,3 +3968,35 @@ already set both per-repo, and unlike the branch name a wrong value there fails
 loudly instead of silently producing an empty clone. Recorded in the suite header
 so the absence is a decision rather than an oversight — the third-counter call of
 2026-08-07 applied to a case where it still holds.
+
+## `beads-shared-dolt` — asked from the dev server, over ssh, 2026-10-07
+
+bd on the Mac talks to one shared `dolt sql-server` on 127.0.0.1:3308, kept up
+by a launchd agent. When it stops, every bd call on the Mac fails, and nothing
+said so.
+
+The check is `rig-beads-shared-dolt.py`, server tree only. It runs on **the dev server**
+and reaches the Mac with `ssh -o BatchMode=yes`, then asks two read-only
+questions there: is anything listening on the port (`nc -z`), and does the
+installed dolt client get an answer to `SHOW DATABASES` as the local root
+account, with `beads` in the list. No credential is
+read, nothing is written, nothing is restarted. The launchd line is printed as
+detail and does not decide the verdict.
+
+**Why the dev server and not the Mac**, although the server is local to the Mac:
+
+- Nobody would hear it. Peer reporting brings the dev server's statuses to the Mac and
+  pushes the Mac's facts to the dev server, but not the Mac's statuses; the sessions that
+  read health run on the dev server. A Mac-only check reports into a void.
+- A sleeping Mac runs no launchd job, so a Mac-side check goes quiet exactly
+  when it cannot answer, and the reader sees STALE. From the dev server that case has a
+  name.
+
+Exit codes: `0` listening and serving `beads` → pass; `1` the Mac answered and
+the port is closed, the query failed, or `beads` is missing → fail; `3` could
+not look → warn. Could-not-look is an ssh failure or timeout (the Mac asleep or
+off the private network), no dolt client to query with, no `nc` on the Mac, or an
+unrecognised remote exit. **Cannot reach the Mac is not
+down.** If the helper itself exits with any other code, the health script records
+`fail` (unexpected exit). On the Mac the check writes `skip`, and `rig-dotfiles-deployed.py`
+exempts the helper there.
