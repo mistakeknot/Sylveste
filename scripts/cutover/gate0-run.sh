@@ -183,7 +183,7 @@ agents_in_root() {  # "pid comm" for each process whose cwd is under the checkou
       case $c in "$ROOT"|"$ROOT"/*) under_self "$p" || echo "$p $(tr -d '\0' < "$d/comm" 2>/dev/null)" ;; esac; done
   else
     command -v lsof >/dev/null 2>&1 || return 2
-    out=$(lsof -d cwd -Fpcn 2>/dev/null)
+    out=$(lsof -d cwd -Fpcn 2>/dev/null) || return 2   # a failed listing can still show this script and omit others
     case "
 $out
 " in *"
@@ -252,7 +252,7 @@ archive_check() {  # the private archive destination: validated by the lane libr
     [ -z "$(pg ls-remote "$LANE" "refs/heads/$o/*" | head -n 1)" ] || say "gate0-run: note: $o/* branches exist already (a re-run reuses an equal one)"; done; }
 do_preflight() {
   ready_checks
-  if [ $CHECKMODE = 1 ]; then "$CS" --check >/dev/null || stop "cutover-steps.sh --check failed"; say "gate0-run: preflight check: would run cutover-steps.sh p0"; return 0; fi
+  if [ $CHECKMODE = 1 ]; then env CUTOVER_REPORT=0 "$CS" --check >/dev/null || stop "cutover-steps.sh --check failed"; say "gate0-run: preflight check: would run cutover-steps.sh p0"; return 0; fi
   mkdir -p "$G"
   if [ -d "$J/p0" ] && [ -e "$G/preflight" ]; then say "gate0-run: P0 already recorded ($(cat "$G/preflight"))"; return 0; fi
   runlog cs p0 || stop "P0 (cutover-steps.sh p0) failed"
@@ -263,7 +263,7 @@ do_preflight() {
 do_freeze() {
   local a w u act="" f
   [ -e "$G/preflight" ] || { [ $CHECKMODE = 1 ] || refuse "no preflight record; run preflight first"; }
-  if [ -e "$G/freeze" ] && [ $CHECKMODE = 0 ]; then
+  if [ -e "$G/freeze" ] && [ $CHECKMODE = 0 ] && ! restarted_any; then   # after a completed restart a new freeze is a new attempt: it falls through
     for u in $(sed -n 's/^timer //p' "$G/freeze"); do ! is_active "$u" || stop "the freeze was recorded but $u is active again"; done
     { marker_aside || [ "$(sed -n 's/^marker //p' "$G/freeze")" = none ]; } || stop "the freeze was recorded but the marker is back in the checkout"
     say "gate0-run: freeze already holds"; return 0
@@ -277,7 +277,7 @@ do_freeze() {
   for u in $TIMERS; do if is_active "$u"; then act="$act timer $u"; fi; done
   say "gate0-run: timers active before the freeze:${act:- none}"
   if [ $CHECKMODE = 1 ]; then say "gate0-run: freeze check: would stop the timers and services and move the marker aside (marker present: $([ -e "$ROOT/.git-autosync" ] && echo yes || echo no))"; return 0; fi
-  mkdir -p "$G"; rm -f -- "$G"/restarted-*   # a new freeze starts a new attempt: an earlier attempt's restart records no longer apply
+  mkdir -p "$G"
   for u in $TIMERS; do units stop "$u" || stop "cannot stop $u"; done
   for u in $SERVICES; do units stop "$u" || stop "cannot stop $u"; done
   for u in $TIMERS $SERVICES; do ! is_active "$u" || stop "$u is still active"; done
@@ -287,7 +287,9 @@ do_freeze() {
   w="marker $([ -e "$G/marker" ] && sha < "$G/marker" || echo none)"
   { printf '%s\n' "$act" | sed 's/^ *//; s/ timer /\ntimer /g' | sed -n 's/^timer \(.*\)/timer \1/p; /^timer/!{/./p}'; printf '%s\n' "$w"; printf 'at %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"; } > "$G/freeze.tmp.$$"
   f=$(cat "$G/freeze.tmp.$$"); rm -f "$G/freeze.tmp.$$"; put "$G/freeze" "$f"
+  rm -f -- "$G"/restarted-*   # a new freeze starts a new attempt: an earlier attempt's restart records no longer apply (cleared once the new freeze is recorded)
   say "gate0-run: freeze holds (timers and services stopped, marker aside)"; }
+restarted_any() { local f; for f in "$G"/restarted-*; do [ -e "$f" ] && return 0; done; return 1; }
 freeze_holds() { local u a
   [ -e "$G/freeze" ] || stop "no freeze record; run freeze first"
   for u in $TIMERS $SERVICES; do ! is_active "$u" || stop "$u is active: the freeze no longer holds"; done
@@ -370,11 +372,13 @@ reconcile() {  # restart step 3: the first bd command is bd export; the base's a
 journal_since() { journalctl --user -u "$REPAIR_SVC" --since "$1" --no-pager -o cat 2>/dev/null; }
 predict() { RESTART_REPORT=0 "$PRED" "$@"; }   # the wrapper reports once; the predictor's own report sender stays off
 rbail() { local u; for u in $(sed -n 's/^timer //p' "$G/freeze"); do units stop "$u" >/dev/null 2>&1; done; move_marker_aside; stop "$@"; }   # back to the frozen state
-restart_server() {  # exit-name  predict-exit
-  local ex=$1 pe=$2 p2 start pred rc tries n tip0 tip1 tags0 tags1 arch0 arch1 h=$HOST
+restore_marker() {  # the marker set aside goes back, and must be the one the freeze record names (server and Clavain alike)
   [ -f "$G/marker" ] && cp -p "$G/marker" "$ROOT/.git-autosync.tmp.$$" && mv -f -- "$ROOT/.git-autosync.tmp.$$" "$ROOT/.git-autosync" ||
     { [ ! -e "$G/marker" ] && [ "$(sed -n 's/^marker //p' "$G/freeze")" = none ]; } || stop "cannot restore the marker"
-  [ ! -e "$ROOT/.git-autosync" ] || [ "$(sha < "$ROOT/.git-autosync")" = "$(sed -n 's/^marker //p' "$G/freeze")" ] || { rm -f -- "$ROOT/.git-autosync"; stop "the restored marker differs from the one set aside"; }
+  [ ! -e "$ROOT/.git-autosync" ] || [ "$(sha < "$ROOT/.git-autosync")" = "$(sed -n 's/^marker //p' "$G/freeze")" ] || { rm -f -- "$ROOT/.git-autosync"; stop "the restored marker differs from the one set aside"; }; }
+restart_server() {  # exit-name  predict-exit
+  local ex=$1 pe=$2 p2 start pred rc tries n tip0 tip1 tags0 tags1 arch0 arch1 h=$HOST
+  restore_marker
   if pg status --porcelain=v1 --untracked-files=all | cut -c4- | grep -qx '.git-autosync'; then
     rbail "the marker rule: .git-autosync is in the status; a run would commit it into the checkout and push it to the lane"; fi
   p2=; [ "$ex" != r6 ] || p2=$J/p2.status.all
@@ -407,7 +411,7 @@ restart_clavain() {  # exit-name
     [ "$(pg ls-remote "$LANE" "refs/heads/autosync/$HOST" | cut -f1)" = "$(cat "$J/p0/lane" 2>/dev/null)" ] || stop "the Clavain lane tip changed with no marker"
     return 0; fi
   [ -f "$G/marker" ] && grep -qE '^LANE=1[[:space:]]*$' "$G/marker" || stop "the marker to restore has no LANE=1: a state in no row"
-  cp -p "$G/marker" "$ROOT/.git-autosync.tmp.$$" && mv -f -- "$ROOT/.git-autosync.tmp.$$" "$ROOT/.git-autosync" || stop "cannot restore the marker"
+  restore_marker
   pred=$LOGD/prediction.txt
   predict clavain "$ROOT" "$HOST" > "$pred" 2> "$pred.err"; rc=$?; cat "$pred" "$pred.err" >> "$LOG"
   if [ $rc != 0 ] || ! grep -q '^verdict run' "$pred"; then rbail "the prediction says STOP; the sweep was not run, marker moved aside again (see $pred)"; fi
@@ -442,7 +446,9 @@ do_restart() {
   reconcile
   if [ "$MACHINE" = server ]; then restart_server "$ex" "$pe"; else restart_clavain "$ex"; fi
   # step 5: the timers; the bd writers and the agent sessions resume afterwards, started by their owners
-  local u; for u in $(sed -n 's/^timer //p' "$G/freeze"); do units start "$u" || rbail "cannot re-enable $u; every timer of this attempt is stopped again and the marker is aside"; done
+  local u; for u in $(sed -n 's/^timer //p' "$G/freeze"); do
+    units start "$u" || rbail "cannot re-enable $u; every timer of this attempt is stopped again and the marker is aside"
+    [ "$(unit_state "$u")" = active ] || rbail "$u is not active after its start (a controller that returns 0 proves nothing); every timer of this attempt is stopped again and the marker is aside"; done
   put "$G/restarted-$ex" "at $(date -u +%Y-%m-%dT%H:%M:%SZ)" unrecord_bail
   say "gate0-run: restart $ex done: the recorded timers are running again; resume the bd writers and the agent sessions now (they are not started by this script)"; }
 
