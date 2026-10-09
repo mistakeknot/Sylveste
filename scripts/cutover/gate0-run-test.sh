@@ -161,7 +161,7 @@ if [ -e "$ST/fail-lsremote" ]; then case " \$* " in *" ls-remote "*) case "\$($R
 if [ -e "$ST/fail-arch-after" ]; then case " \$* " in *" ls-remote "*archive/gate0*) case "\$($REALPS -o args= -p \$PPID)" in *cutover-steps*) ;; *) n=\$(cat "$ST/arch-n" 2>/dev/null || echo 0); n=\$((n+1)); echo \$n > "$ST/arch-n"; if [ \$n -gt \$(cat "$ST/fail-arch-after") ]; then echo "fatal: unable to access the lane (stub)" >&2; exit 128; fi ;; esac ;; esac; fi
 if [ -e "$ST/fail-tip-after" ]; then case " \$* " in *" ls-remote "*refs/heads/autosync/*) case "\$($REALPS -o args= -p \$PPID)" in *cutover-steps*) ;; *) n=\$(cat "$ST/tip-n" 2>/dev/null || echo 0); n=\$((n+1)); echo \$n > "$ST/tip-n"; if [ \$n -gt \$(cat "$ST/fail-tip-after") ]; then echo "fatal: unable to access the lane (stub)" >&2; exit 128; fi ;; esac ;; esac; fi
 if [ -e "$ST/gitfail" ]; then case " \$* " in *"\$(cat "$ST/gitfail")"*) case "\$($REALPS -o args= -p \$PPID)" in *cutover-steps*) ;; *) n=\$(cat "$ST/gitfail-n" 2>/dev/null || echo 0); n=\$((n+1)); echo \$n > "$ST/gitfail-n"
-  if [ \$n -gt \$(cat "$ST/gitfail-skip" 2>/dev/null || echo 0) ]; then echo "fatal: injected failure (stub)" >&2; exit 128; fi ;; esac ;; esac; fi
+  if [ \$n -gt \$(cat "$ST/gitfail-skip" 2>/dev/null || echo 0) ]; then [ ! -e "$ST/gitfail-out" ] || $REALGIT "\$@"; echo "fatal: injected failure (stub)" >&2; exit 128; fi ;; esac ;; esac; fi
 exec $REALGIT "\$@"
 EOF
 # sha256sum: fails for a stdin that is a file whose path matches the glob in $ST/fail-sha (Linux: /proc names the file behind the redirect)
@@ -179,13 +179,29 @@ cat > "$B/stub/awk" <<EOF
 if [ -e "$ST/fail-awk" ]; then case "\$*" in *"-v r="*) cat > /dev/null; echo "awk: injected failure (stub)" >&2; exit 2 ;; esac; fi
 exec $REALAWK "\$@"
 EOF
+# grep: a call whose arguments contain the text in $ST/grepfail fails with status 2, printing what it would first while $ST/grepfail-out exists
+REALGREP=$(command -v grep)
+cat > "$B/stub/grep" <<EOF
+#!/bin/bash
+if [ -e "$ST/grepfail" ]; then case " \$* " in *"\$(cat "$ST/grepfail")"*) if [ -e "$ST/grepfail-out" ]; then $REALGREP "\$@"; else cat > /dev/null; fi; echo "grep: injected failure (stub)" >&2; exit 2 ;; esac; fi
+exec $REALGREP "\$@"
+EOF
+# sed: a call whose arguments contain the text in $ST/sedfail fails (after $ST/sedfail-skip such calls passed), printing what it would first while $ST/sedfail-out exists
+REALSED=$(command -v sed)
+cat > "$B/stub/sed" <<EOF
+#!/bin/bash
+if [ -e "$ST/sedfail" ]; then case " \$* " in *"\$(cat "$ST/sedfail")"*)
+  n=\$(cat "$ST/sedfail-n" 2>/dev/null || echo 0); n=\$((n+1)); echo \$n > "$ST/sedfail-n"
+  if [ \$n -gt \$(cat "$ST/sedfail-skip" 2>/dev/null || echo 0) ]; then [ ! -e "$ST/sedfail-out" ] || $REALSED "\$@"; echo "sed: injected failure (stub)" >&2; exit 4; fi ;; esac; fi
+exec $REALSED "\$@"
+EOF
 # systemctl --user is-active UNIT : prints the word in $ST/sysctl-out and exits $ST/sysctl-rc (stop and start do nothing)
 cat > "$B/stub/systemctl" <<EOF
 #!/bin/bash
 case "\$*" in *is-active*) cat "$ST/sysctl-out" 2>/dev/null; exit \$(cat "$ST/sysctl-rc" 2>/dev/null || echo 4) ;; esac
 exit 0
 EOF
-chmod +x "$B/stub/awk" "$B/stub/systemctl" "$B/stub/sha256sum" "$B/stub/git" "$B/stub/sync" "$B/stub/python3" "$B/bin/sweep" "$B/stub/lsof" "$B/stub/ps" "$B/bin/ctl" "$B/stub/journalctl" "$B/bin/pred" "$B/bin/tell"
+chmod +x "$B/stub/grep" "$B/stub/sed" "$B/stub/awk" "$B/stub/systemctl" "$B/stub/sha256sum" "$B/stub/git" "$B/stub/sync" "$B/stub/python3" "$B/bin/sweep" "$B/stub/lsof" "$B/stub/ps" "$B/bin/ctl" "$B/stub/journalctl" "$B/bin/pred" "$B/bin/tell"
 rec() { printf '{"_type":"issue","id":"%s","title":"%s","status":"open","priority":2,"issue_type":"task","created_at":"%s","updated_at":"%s"}\n' "$1" "$2" "$3" "$3"; }
 rec fx-one one 2026-10-01T00:00:01Z > "$B/one.jsonl"
 { rec fx-two two 2026-10-01T00:00:02Z; cat "$B/one.jsonl"; } > "$B/trk.jsonl"
@@ -552,13 +568,13 @@ t_swhookgit() {  # a failed read of core.hooksPath, or of the hooks directory, i
   restore fx; sw_inj ' --git-path hooks'
   wg preflight > "$B/out.sw" 2>&1; b="$?/$(sw_msg 'cannot locate the hooks directory')/$([ -d "$J/p0" ] && echo p0)"
   SWC="$a;$b"; [ "$SWC" = "3/1/;3/1/" ]; }
-t_swready() {  # the git directory, the commit count and the two status reads: a failed read is a STOP, not an empty value
-  local p res= k m; for p in ' rev-parse --absolute-git-dir|cannot read the git directory|1' ' rev-list --left-right --count|cannot count the commits' \
+t_swready() {  # the git directory, the commit count and the two status reads: a failed read is a STOP, not an empty value, and a read that fails after its output is a failed read
+  local p res= k m o; for o in plain out; do for p in ' rev-parse --absolute-git-dir|cannot read the git directory|1' ' rev-list --left-right --count|cannot count the commits' \
       ' status --porcelain --untracked-files=no|cannot read the status: the local changes' ' status --porcelain --untracked-files=all|cannot read the status: the untracked files'; do
     m=${p#*|}; k=0; case $m in *"|"*) k=${m#*|}; m=${m%%|*} ;; esac   # the wrapper's own start-up reads the git directory once
-    restore fx; sw_inj "${p%%|*}" $k; wg preflight > "$B/out.sw" 2>&1; res="$res$?/$(sw_msg "$m")/$([ -d "$J/p0" ] && echo p0);"
-  done
-  SWD=$res; [ "$SWD" = "3/1/;3/1/;3/1/;3/1/;" ]; }
+    restore fx; sw_inj "${p%%|*}" $k; [ $o = plain ] || touch "$ST/gitfail-out"; wg preflight > "$B/out.sw" 2>&1; res="$res$?/$(sw_msg "$m")/$([ -d "$J/p0" ] && echo p0);"
+  done; done
+  SWD=$res; [ "$SWD" = "3/1/;3/1/;3/1/;3/1/;3/1/;3/1/;3/1/;3/1/;" ]; }
 t_swarchlist() {  # an archive listing that fails is not an empty one
   restore fx; echo 0 > "$ST/fail-arch-after"; rm -f "$ST/arch-n"
   wg preflight > "$B/out.sw" 2>&1; SWE="$?/$(sw_msg 'cannot list the archive branches on the lane')/$([ -d "$J/p0" ] && echo p0)"
@@ -646,6 +662,79 @@ t_swlsremote() {  # --check: origin/main read from the remote and from the track
   restore fx; sw_inj 'main'
   wg --check preflight > "$B/out.sw" 2>&1; SWS="$?/$(sw_msg 'check: cannot read origin/main from the remote')"
   [ "$SWS" = "3/1" ]; }
+
+# ---- class sweep, round 12: the record reads, the push URL read and the status compares (bead mk-z9st.22)
+sw_injo() { sw_inj "$@"; touch "$ST/gitfail-out"; }   # as sw_inj, but the real output is shown before the failure
+sw_sed() {  # TEXT [SKIP] [out] : the wrapper's sed calls whose arguments contain TEXT fail (after SKIP matching calls pass); "out" prints their output first
+  printf '%s' "$1" > "$ST/sedfail"; printf '%s' "${2:-0}" > "$ST/sedfail-skip"; rm -f "$ST/sedfail-n" "$ST/sedfail-out"; [ "${3:-}" != out ] || touch "$ST/sedfail-out"; }
+t_swrecrbail() {  # cleanup with an unreadable freeze record still stops every configured timer (the recorded restart's check and its cleanup both fail to read it)
+  restore r0a; wg restart r0 > "$B/out.sw" 2>&1 || return 1
+  sw_sed 's/^timer //p'
+  wg restart r0 > "$B/out.sw" 2>&1; SWT="$?/$(sw_msg 'every configured timer is stopped instead')/$(sw_state)"
+  [ "$SWT" = "3/1//1/no/no/" ]; }
+t_swrecholds() {  # a recorded restart whose freeze record fails after its output (the timers, then the marker) is undone, not trusted
+  local a b
+  restore r0a; wg restart r0 > "$B/out.sw" 2>&1 || return 1
+  sw_sed 's/^timer //p' 0 out; wg restart r0 > "$B/out.sw" 2>&1; a="$?/$(sw_msg 'the timers it names cannot be checked')/$(sw_state)"
+  restore r0a; wg restart r0 > "$B/out.sw" 2>&1 || return 1
+  sw_sed 's/^marker //p' 0 out; wg restart r0 > "$B/out.sw" 2>&1; b="$?/$(sw_msg 'its marker cannot be checked')/$(sw_state)"
+  SWU="$a;$b"; [ "$SWU" = "3/1//1/no/no/;3/1//1/no/no/" ]; }
+t_swstep5() {  # the timers to start are read from the record with its status checked: a read that fails after its output starts no timer
+  restore r0a; sw_sed 's/^timer //p' 0 out
+  wg restart r0 > "$B/out.sw" 2>&1; SWV="$?/$(sw_msg 'the timers to start are unknown')/$(sw_state)"
+  [ "$SWV" = "3/1//1/no/no/" ]; }
+t_swfreezerec() {  # a freeze record, or an earlier freeze intent, that fails after its output is not a list to trust
+  local a b
+  restore fx; stepto preflight freeze || return 1; sw_sed 's/^timer //p' 0 out
+  wg freeze > "$B/out.sw" 2>&1; a="$?/$(sw_msg 'whether its timers stay stopped cannot be told')"
+  restore fx; stepto preflight || return 1; printf 'timer git-autosync-repair.timer\n' > "$J/gate0-run/freeze-intent"; sw_sed 'freeze-intent' 0 out
+  wg freeze > "$B/out.sw" 2>&1; b="$?/$(sw_msg 'the earlier freeze intent cannot be read')/$([ -e "$J/gate0-run/freeze" ] && echo recorded)"
+  SWW="$a;$b"; [ "$SWW" = "3/1;3/1/" ]; }
+t_swpushurl() {  # the lane's push URL read prints the validated URL and then fails: that is a failed read, not a match
+  restore r0a; sw_injo ' remote get-url --push' 1
+  wg restart r0 > "$B/out.sw" 2>&1; SWX="$?/$(sw_msg 'cannot read the push URL')/$(sw_state)"
+  [ "$SWX" = "3/1//0/no/no/" ]; }
+sw_r0prep() { restore fx; stepto preflight freeze || return 1; mkdir -p "$J/p1-pre"; g status --porcelain -uall > "$J/p1-pre/status.all"; }
+t_swr0status() {  # R0 without P1a: P1-pre's status record is read, and filtered, with each status checked
+  local a b c
+  sw_r0prep || return 1; wg restart r0 > "$B/out.sw" 2>&1; a=$(sw_msg 'R0 without P1a')   # control: a readable, equal record passes this check
+  sw_r0prep || return 1; chmod 000 "$J/p1-pre/status.all"
+  wg restart r0 > "$B/out.sw" 2>&1; b="$?/$(sw_msg 'status record cannot be read')/$(sw_state)"; chmod 644 "$J/p1-pre/status.all"
+  sw_r0prep || return 1; printf '%s' 'beads/issues' > "$ST/grepfail"; touch "$ST/grepfail-out"
+  wg restart r0 > "$B/out.sw" 2>&1; c="$?/$(sw_msg 'the status cannot be filtered')/$(sw_state)"
+  SWY="$a;$b;$c"; [ "$SWY" = "0;3/1//0/no/no/;3/1//0/no/no/" ]; }
+t_swmarkfilter() {  # the filter behind the marker rule fails: a filter that fails shows no marker, which is not a clean status
+  local a b
+  restore r0a; wg restart r0 > "$B/out.sw" 2>&1; a=$(sw_msg 'cannot filter the status for the marker rule')   # control: a working filter passes
+  restore r0a; printf '%s' '-x \.git-autosync' > "$ST/grepfail"
+  wg restart r0 > "$B/out.sw" 2>&1; b="$?/$(sw_msg 'cannot filter the status for the marker rule')/$(sw_state)"
+  SWMF="$a;$b"; [ "$SWMF" = "0;3/1//0/no/no/" ]; }
+t_swlsfilesu() {  # the unmerged-entries read fails after its output: an index that cannot be read is not a clean one
+  restore fx; sw_injo ' ls-files -u'
+  wg preflight > "$B/out.sw" 2>&1; SWAA="$?/$(sw_msg 'cannot read the index')/$([ -d "$J/p0" ] && echo p0)"
+  [ "$SWAA" = "3/1/" ]; }
+t_swpgs() {  # a read that prints the matching value and then fails is not a match (HEAD's name, origin/main, the tag after P1a)
+  local p res=
+  for p in ' symbolic-ref -q HEAD|HEAD is not main' ' rev-parse refs/remotes/origin/main|origin/main is not the approved base'; do
+    restore fx; sw_injo "${p%%|*}"; wg preflight > "$B/out.sw" 2>&1; res="$res$?/$(sw_msg "${p#*|}")/$([ -d "$J/p0" ] && echo p0);"; done
+  restore fx; stepto preflight freeze || return 1; sw_injo '--verify refs/tags/gate0'
+  wg capture > "$B/out.sw" 2>&1; res="$res$?/$(sw_msg 're-check: the tag')/$([ -e "$J/gate0-run/captured" ] && echo captured);"
+  SWAB="$res"; [ "$SWAB" = "3/1/;3/1/;3/1/;" ]; }
+t_swp0laneread() { local t  # a P0 lane record that exists but cannot be read is not an empty tip (the lane has no branch, so its listing is empty too)
+  restore r0a; rm -f "$B/drift.txt" "$J/gate0-run/marker" "$R/.git-autosync"
+  sed -i 's/^marker .*/marker none/' "$J/gate0-run/freeze"; : > "$J/p0/lane"; chmod 000 "$J/p0/lane"
+  for t in $(git --git-dir="$W/lane.git" for-each-ref --format='%(refname)' 'refs/heads/autosync'); do git --git-dir="$W/lane.git" update-ref -d "$t"; done
+  GATE0_MACHINE=clavain GATE0_SWEEP="$B/bin/sweep" GATE0_DRIFT_REPORT="$B/drift.txt" wg restart r0 > "$B/out.sw" 2>&1; SWAC="$?/$(sw_msg 'lane record .*cannot be read')/$(sw_state)"; chmod 644 "$J/p0/lane"
+  [ "$SWAC" = "3/1//0/no/no/" ]; }
+t_swinputs() {  # an approved input that exists but cannot be read is refused before any write, not read as empty
+  restore fx; chmod 000 "$J/lane-remote"
+  wg preflight > "$B/out.sw" 2>&1; SWAD="$?/$(sw_msg 'an input in J cannot be read')/$([ -d "$J/p0" ] && echo p0)"; chmod 644 "$J/lane-remote"
+  [ "$SWAD" = "1/1/" ]; }
+t_swsharec() {  # the capture's sha256 record must name exactly the bundle and the W-snapshot: a record that names fewer is not verified file by file
+  restore fx; stepto preflight freeze capture || return 1
+  grep -v 'wtree.tar' "$J/capture/sha256" > "$B/sha256.new"; cat "$B/sha256.new" > "$J/capture/sha256"
+  wg capture > "$B/out.sw" 2>&1; SWAE="$?/$(sw_msg 'does not name exactly main.bundle and wtree.tar')"
+  [ "$SWAE" = "3/1" ]; }
 
 echo "== --check forms change nothing"
 restore fx; c0=$(ckfp); j0=$(jfp); l0=$(lanerefs)
@@ -791,6 +880,7 @@ sc "the preflight record never names an empty head" t_swheadrec
 sc "a missing, empty or damaged P1-pre head is a STOP (restart and a repeated capture)" t_swp1pre
 sc "an unreadable tree or index after P1a is a STOP and capture is not recorded" t_swtree
 sc "a failed status read behind the marker rule starts nothing" t_swrestatus
+sc "a failed filter behind the marker rule starts nothing" t_swmarkfilter
 sc "a failed gate0 tag read, before or after the run, is a STOP with the marker aside" t_swtags
 sc "no journal cursor is a STOP before the service starts" t_swjcursor
 sc "a Clavain restart with no P0 lane record is a STOP" t_swp0lane
@@ -800,6 +890,17 @@ sc "the production unit controller branch: the word and the status must agree, a
 sc "a journal read that fails after its output is a STOP with the marker aside" t_swjournal
 sc "an lsof listing whose filter fails is a STOP, not no agent" t_swlsofawk
 sc "--check: a failed read of origin/main is a STOP, not an empty value equal to another" t_swlsremote
+sc "cleanup with an unreadable freeze record still stops every configured timer" t_swrecrbail
+sc "a recorded restart whose freeze record fails after its output is undone, not trusted" t_swrecholds
+sc "the timers to start are not taken from a record read that failed" t_swstep5
+sc "a freeze record or freeze intent that fails after its output is not a list to trust" t_swfreezerec
+sc "a push URL read that prints the validated URL and then fails is a STOP before anything runs" t_swpushurl
+sc "R0 without P1a: an unreadable or unfilterable status record is a STOP" t_swr0status
+sc "an unmerged-entries read that fails after its output is a STOP" t_swlsfilesu
+sc "a HEAD, origin/main or tag read that prints a match and then fails is not a match" t_swpgs
+sc "an unreadable P0 lane record is not an empty tip" t_swp0laneread
+sc "an approved input that cannot be read is refused" t_swinputs
+sc "a capture sha256 record that names the wrong files is a STOP" t_swsharec
 
 echo "== mutation controls (each must be judged NOT fail-closed)"
 mutate() {  # NAME SEDEXPR : a copy of the wrapper with one safeguard removed; WG names it
@@ -883,7 +984,7 @@ mutate M36 's/^  if \[ "\${1:-}" = force \] \&\& \[ ! -e "\$G\/marker" \]/  if f
   { WG=$B/mut/M36.sh; t_holdsnone; r=$?; WG=; check "M36 (cleanup of a no-marker record makes a marker record instead of keeping the bytes) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M37 's/^  archive_check$/  :/' &&
   { WG=$B/mut/M37.sh; t_archrecheck; r=$?; WG=; check "M37 (no archive destination re-validation before P1a) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
-mutate M38 's/^  \[ -n "\${ASL_URL:-}" \] && \[ "\$(pg remote get-url --push "\$LANE" 2>\/dev\/null)" = "\$ASL_URL" \] || stop .*/  :/' &&
+mutate M38 's/^  \[ -n "\${ASL_URL:-}" \] && \[ "\$pu" = "\$ASL_URL" \] || stop .*/  :; }/' &&
   { WG=$B/mut/M38.sh; t_archrecheck; r=$?; WG=; check "M38 (P1a not bound to the validated push URL) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M39 's/ \&\& flush_path "\$d\/\$f.tmp.\$\$"//' &&
   { WG=$B/mut/M39.sh; t_flushfail; r=$?; WG=; check "M39 (the copied file is not flushed before it is moved) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
@@ -937,7 +1038,7 @@ mutate M63 's/tags1=\$(tag_refs) || rbail "[^"]*"/tags1=$(tag_refs)/' &&
   { WG=$B/mut/M63.sh; t_swtags; r=$?; WG=; check "M63 (a failed tag read after the run is accepted) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M64 's/cur=\$(journal_cursor) \&\& \[ -n "\$cur" \] || rbail "[^"]*"/cur=$(journal_cursor)/' &&
   { WG=$B/mut/M64.sh; t_swjcursor; r=$?; WG=; check "M64 (no journal cursor is accepted) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
-mutate M65 's/\[ -f "\$J\/p0\/lane" \] || stop "the P0 lane record[^"]*"/true/' &&
+mutate M65 's/\[ -f "\$J\/p0\/lane" \] || stop "the P0 lane record[^"]*"/true/; s/l0=\$(cat "\$J\/p0\/lane") || stop "[^"]*"/l0=$(cat "$J\/p0\/lane" 2>\/dev\/null)/' &&
   { WG=$B/mut/M65.sh; t_swp0lane; r=$?; WG=; check "M65 (a missing P0 lane record is accepted) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M66 '/^  archive_ready   # the lane this restart/d' &&
   { WG=$B/mut/M66.sh; t_swarchready; r=$?; WG=; check "M66 (the restart does not validate the archive destination itself) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
@@ -951,4 +1052,21 @@ mutate M70 's/ || return 2   # a filter that fails shows no agents; that is not 
   { WG=$B/mut/M70.sh; t_swlsofawk; r=$?; WG=; check "M70 (a failed lsof filter shows no agents) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M71 's/^  else rm_=.*/  else rm_=$(pg ls-remote origin refs\/heads\/main | cut -f1)/' &&
   { WG=$B/mut/M71.sh; t_swlsremote; r=$?; WG=; check "M71 (the remote read behind --check is not checked) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mm() {  # NAME TEST DESC SEDEXPR : one more mutation control
+  local n=$1 t=$2 d=$3; mutate "$n" "$4" && { WG=$B/mut/$n.sh; $t; r=$?; WG=; check "$n ($d) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }; }
+mm M72 t_swrecrbail "cleanup without a readable freeze record stops no timer" 's/^  ts=\$(rec_timers) || { ts=\$TIMERS; say [^}]*}/  ts=$(rec_timers)/'
+mm M73 t_swrecholds "the recorded timers are trusted after a failed read" 's/^  ts=\$(rec_timers) || unrecord_bail "[^"]*"/  ts=$(rec_timers)/'
+mm M74 t_swrecholds "the recorded marker is trusted after a failed read" 's/^  m=\$(rec_marker) || unrecord_bail "[^"]*"/  m=$(rec_marker)/'
+mm M75 t_swstep5 "timers are started from a failed read" 's/ts=\$(rec_timers) || rbail "the freeze record cannot be read: the timers to start[^"]*"/ts=$(rec_timers)/'
+mm M76 t_swfreezerec "a recorded freeze is trusted after a failed read" 's/^    a=\$(rec_timers) || stop "[^"]*"/    a=$(rec_timers)/'
+mm M77 t_swfreezerec "an earlier freeze intent is trusted after a failed read" 's/ || prior=\$(rec_timers "\$G\/freeze-intent") || stop "[^"]*"/ || prior=$(rec_timers "$G\/freeze-intent")/'
+mm M78 t_swpushurl "the push URL is compared after a failed read" 's/2>\/dev\/null) || stop "cannot read the push URL[^"]*"/2>\/dev\/null)/'
+mm M79 t_swr0status "an unreadable status record is read as empty" 's/sr=\$(cat "\$J\/p1-pre\/status.all") || stop "[^"]*"/sr=$(cat "$J\/p1-pre\/status.all" 2>\/dev\/null)/'
+mm M80 t_swr0status "a failed status filter is accepted" 's/^nobeads() { local rc; grep -v .*$/nobeads() { grep -v " \\.beads\/issues\\.jsonl$"; true; }/'
+mm M81 t_swlsfilesu "a failed unmerged-entries read is accepted" 's/ || stop "cannot read the index: unmerged entries cannot be ruled out"//'
+mm M82 t_swpgs "output-then-failure reads are compared" 's/\$(pgs /$(pg /g'
+mm M83 t_swp0laneread "an unreadable P0 lane record is read as empty" 's/l0=\$(cat "\$J\/p0\/lane") || stop "[^"]*"/l0=$(cat "$J\/p0\/lane" 2>\/dev\/null)/'
+mm M84 t_swinputs "an unreadable input is read as empty" 's/ \&\& LANE=\$(cat "\$J\/lane-remote") \&\& \[ -n "\$LANE" \] || refuse "an input in J cannot be read"/; LANE=$(cat "$J\/lane-remote" 2>\/dev\/null)/'
+mm M85 t_swsharec "a sha256 record naming fewer files is accepted" '/^  \[ "\$(set -o pipefail; cut -f1 "\$J\/capture\/sha256"/d'
+mm M86 t_swmarkfilter "a failed marker-rule filter is read as a clean status" 's/ || rbail "cannot filter the status for the marker rule[^"]*"/ || true/'
 if [ $fails = 0 ]; then echo "GATE0-RUN: PASS"; exit 0; else echo "GATE0-RUN: FAIL ($fails)"; exit 1; fi
