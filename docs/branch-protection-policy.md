@@ -177,7 +177,7 @@ machine is exactly the one you cannot see — and flags anything waiting longer
 than `--days` (default 7). Its first live run found `apps/Khouri` **frozen 109
 days**. Exit 1 when any lane needs attention.
 
-`git-autosync-promote.sh` runs on a `git-autosync-promote.timer` on zklw and
+`git-autosync-promote.sh` runs on a `git-autosync-promote.timer` on the build server and
 promotes *any* machine's fast-forwardable lane, not only its own — if only one
 machine runs the timer, restricting it to that machine's lane would let every
 other lane rot.
@@ -206,7 +206,7 @@ The goal that produced this work wanted CI drift gates wired into protection.
 That is **not possible while autosync exists**, and the reason is worth writing
 down so nobody re-litigates it from first principles.
 
-- 93 repos on zklw carry `.git-autosync` markers, **84 of them inside Sylveste**.
+- 93 repos on the build server carry `.git-autosync` markers, **84 of them inside Sylveste**.
 - `~/bin/git-autosync-sweep.sh` pushes with `git push -u origin "$branch"`,
   where `$branch` is the checked-out branch — `main`. Direct pushes, no PR.
 - Required status checks gate **direct pushes as well as merges**: GitHub
@@ -218,7 +218,7 @@ exclusive. Enabling checks today would turn every sweep on 84 repos into
 `PUSH-FAIL` and quietly accumulate unpushed commits.
 
 The resolution already exists on paper and is not yet built: the per-machine
-lane design (`autosync/zklw`, `autosync/clavain`, with `main` reached by
+lane design (`autosync/<build-host>`, `autosync/clavain`, with `main` reached by
 deliberate merge). Once autosync stops pushing to `main`, `main` can take the
 full treatment — required PR, required checks, `enforce_admins`. Until then, CI
 is advisory and the enforcement that *is* real covers the operations that

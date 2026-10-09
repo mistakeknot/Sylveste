@@ -93,8 +93,8 @@ bash -n scripts/index-solutions.sh
 python3 -c "import json; json.load(open('.claude-plugin/plugin.json'))"
 
 # Check generated outputs
-jq . /home/mk/projects/Sylveste/docs/solutions/index.json
-wc -l /home/mk/projects/Sylveste/docs/solutions/INDEX.md
+jq . ~/projects/Sylveste/docs/solutions/index.json
+wc -l ~/projects/Sylveste/docs/solutions/INDEX.md
 ```
 
 No pytest suite — interlearn is shell-only. Validation is structural (manifest, syntax, output format).

@@ -30,7 +30,7 @@ the same commit, run on two machines:
 | Machine | Nodes | Edges |
 |---|---|---|
 | Clavain (macOS) | 244 | 320 |
-| zklw (Linux) | **219** | **287** |
+| the build server (Linux) | **219** | **287** |
 
 219/244 = **0.90**. The guard's floor is 0.50. It was never close to firing —
 and it should not have been, because a guard that trips at 0.90 would fire on
@@ -111,7 +111,7 @@ idea applied at three different layers.
 A generator whose output legitimately differs per machine is a separate problem,
 and guard 0 does not solve it. Measured 2026-07-28 across the estate:
 
-| Generator | Clavain | zklw |
+| Generator | Clavain | the build server |
 |---|---|---|
 | `gen-interverse-inventory.py` | 62 plugins, 67 warnings | 65 plugins, 77 warnings |
 | `gen-skill-prefix-table.py` | 56 plugins, 81 commands | 55 plugins, **131** commands |

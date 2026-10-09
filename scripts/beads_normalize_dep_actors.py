@@ -3,7 +3,7 @@
 
 THE BUG
 -------
-`dependencies[].created_by` diverged between Clavain and zklw on 3,589 of 3,657
+`dependencies[].created_by` diverged between Clavain and the build server on 3,589 of 3,657
 shared dependency rows. Everything else about those rows matched. The effect was
 that every export that alternated machines rewrote ~3,300 issues, producing the
 recurring 3,300-line commits, and handing `bd import` ~3,300 rows on exactly the

@@ -23,7 +23,7 @@ When adding new tables to intercore's SQLite schema (e.g., v2→v3 adding `runs`
 ## Investigation Steps
 
 1. `ic version` showed `schema: v2` — binary was stale
-2. `which ic` → `/home/mk/.local/bin/ic` → symlink to `/home/mk/go/bin/ic`
+2. `which ic` → `~/.local/bin/ic` → symlink to `~/go/bin/ic`
 3. Binary timestamp predated the commit adding v3 schema
 
 ## Solution: 3-Step Deployment Sequence
@@ -31,7 +31,7 @@ When adding new tables to intercore's SQLite schema (e.g., v2→v3 adding `runs`
 ```bash
 # 1. Rebuild binary from source (schema.sql is //go:embed'd)
 cd /root/projects/Interverse/infra/intercore
-go build -o /home/mk/go/bin/ic ./cmd/ic
+go build -o ~/go/bin/ic ./cmd/ic
 
 # 2. Migrate live DB (creates timestamped backup automatically)
 cd /root/projects/Interverse

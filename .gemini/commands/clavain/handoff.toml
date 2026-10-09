@@ -90,7 +90,7 @@ Also write a persistent memory file so future sessions load the handoff automati
 Write to the project's auto-memory directory:
 
 ```bash
-MEMORY_DIR="${CLAUDE_PROJECT_MEMORY_DIR:-$HOME/.gemini/projects/-home-mk-projects-$(basename "$(pwd)")/memory}"
+MEMORY_DIR="${CLAUDE_PROJECT_MEMORY_DIR:-$HOME/.gemini/projects/$(pwd | sed 's|/|-|g')/memory}"
 ```
 
 Create `${MEMORY_DIR}/handoff_latest.md` with this structure:

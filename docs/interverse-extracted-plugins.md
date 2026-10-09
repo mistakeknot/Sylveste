@@ -239,7 +239,7 @@ which it could not report while the files were still tracked.
 ### Trap: a tracked hooks directory turns hook installs into commits
 
 A hook installer symlinked `pre-commit` to
-`/Users/sma/projects/dotfiles/cloud/pre-commit.sh` in roughly 130 repos under
+`~/projects/dotfiles/cloud/pre-commit.sh` in roughly 130 repos under
 `~/projects`. In almost all of them it landed in `.git/hooks/`, which git never
 tracks — so it was invisible and harmless by construction.
 

@@ -5,7 +5,7 @@ set -euo pipefail
 # Evaluates how many beads can be routed WITHOUT falling through to haiku (Step 4b)
 # Reads heuristic rules from interlab-heuristics.sh, runs against all closed beads
 
-CLAVAIN_CLI="/home/mk/.claude/plugins/cache/interagency-marketplace/clavain/0.6.192/bin/clavain-cli"
+CLAVAIN_CLI="${CLAVAIN_CLI:-clavain-cli}"
 
 # Source the heuristic rules (this is the file we iterate on)
 source "$(dirname "$0")/interlab-heuristics.sh"

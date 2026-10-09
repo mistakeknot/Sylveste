@@ -3,7 +3,7 @@
 # Defaults to the newest jsonl in the project dir; override with --session-id
 # (explicit ID avoids the ls -t race when the current session is still writing).
 set -euo pipefail
-project_dir="${HOME}/.claude/projects/-home-mk-projects-Sylveste"
+project_dir="${HOME}/.claude/projects/$(git rev-parse --show-toplevel | sed 's|/|-|g')"
 session_id=""
 for arg in "$@"; do
   case "$arg" in

@@ -30,16 +30,16 @@ bash scripts/bd-create-checked.sh -t task -p 2 \
 As an alias (drop into `~/.bashrc` or shell init):
 
 ```bash
-alias bd-create='bash /home/mk/projects/Sylveste/scripts/bd-create-checked.sh'
+alias bd-create='bash ~/projects/Sylveste/scripts/bd-create-checked.sh'
 ```
 
 …or to make it the default `bd create` everywhere, define a function override:
 
 ```bash
 bd() {
-    if [[ "${1:-}" == "create" ]] && [[ -f /home/mk/projects/Sylveste/scripts/bd-create-checked.sh ]]; then
+    if [[ "${1:-}" == "create" ]] && [[ -f ~/projects/Sylveste/scripts/bd-create-checked.sh ]]; then
         shift
-        bash /home/mk/projects/Sylveste/scripts/bd-create-checked.sh "$@"
+        bash ~/projects/Sylveste/scripts/bd-create-checked.sh "$@"
     else
         command bd "$@"
     fi

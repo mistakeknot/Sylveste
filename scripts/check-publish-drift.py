@@ -87,7 +87,7 @@ SHIPPED_SURFACE = ("hooks", "skills", "commands", "agents", "lib", "scripts", "m
 # from identical committed code:
 #
 #     Clavain   source=local (clone 234 commits stale)   status=clean
-#     zklw      source=mirror (no local clone)           status=drift, 38 commits
+#     the build server      source=mirror (no local clone)           status=drift, 38 commits
 #
 # The module docstring claims "either can determine all 67 on its own". That was
 # true only for repos we write to. So vendored entries resolve from the MIRROR
@@ -416,7 +416,7 @@ def main() -> int:
             # Drift is closed by publishing, and publishing is not something a
             # scheduled run can do: `ic publish --auto` refuses a plugin an
             # agent has touched, and the wave runs from the signer machine
-            # (zklw) with CLAVAIN_AUTHZ_PROJECT_ROOT pinned. So this check will
+            # (the build server) with CLAVAIN_AUTHZ_PROJECT_ROOT pinned. So this check will
             # report the same plugins, in the same words, every day until a
             # human runs it -- and a line that is red every morning is one
             # people stop reading, which is the failure the response budget
@@ -427,7 +427,7 @@ def main() -> int:
             # It just names who can close it and how, so the reader is not left
             # to infer that from a count of unshipped commits.
             print("\n  Closed by publishing, which is a human action: run the wave "
-                  "from the signer machine (zklw), regenerating manifests from the "
+                  "from the signer machine (the build server), regenerating manifests from the "
                   "MONOREPO ROOT first, then `ic publish <exact-version>` per plugin. "
                   "`ic publish --auto` will refuse any plugin an agent has modified.")
         if vendored_behind:

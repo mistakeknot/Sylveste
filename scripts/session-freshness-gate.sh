@@ -68,7 +68,7 @@ fi
 
 # User-memory state (if present — stored in ~/.claude/projects/<slug>/memory/MEMORY.md)
 MEMORY_PATH=""
-PROJECT_SLUG=$(echo "$PROJECT_DIR" | sed 's|/|-|g')   # e.g. -home-mk-projects-Sylveste
+PROJECT_SLUG=$(echo "$PROJECT_DIR" | sed 's|/|-|g')   # e.g. -home-USER-projects-Sylveste
 CANDIDATE="$HOME/.claude/projects/$PROJECT_SLUG/memory/MEMORY.md"
 if [[ -f "$CANDIDATE" ]]; then
     MEMORY_PATH="$CANDIDATE"

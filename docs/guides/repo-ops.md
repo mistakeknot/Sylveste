@@ -72,9 +72,9 @@ git -C os/clavain commit -m "fix: update plugin manifest"
 git -C os/clavain push
 
 # Then commit skeleton changes
-git -C /home/mk/projects/Sylveste add README.md
-git -C /home/mk/projects/Sylveste commit -m "docs: update README links"
-git -C /home/mk/projects/Sylveste push
+git -C ~/projects/Sylveste add README.md
+git -C ~/projects/Sylveste commit -m "docs: update README links"
+git -C ~/projects/Sylveste push
 ```
 
 ## Common mistakes
