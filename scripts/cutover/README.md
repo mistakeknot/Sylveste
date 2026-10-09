@@ -71,7 +71,23 @@ directory, journal and preservation copy outside the checkout and its git direct
 (checked by physical path, before anything is created), runs no step that rewrites the
 index to refresh stat data (`GIT_OPTIONAL_LOCKS=0`), and keeps the predictor's own stderr
 and report sender out of the prediction the verifier reads. The freeze is re-checked
-(timers, services, marker, agent processes, bd) at every capture and immediately before
-the checkout is realigned.
+(timers, services, marker, agent processes, bd) at every capture, immediately before
+the checkout is realigned, and before every restart and rollback.
+
+Further properties, each with a test and a mutation control in `gate0-run-test.sh`:
+
+- Process listings fail closed. If `ps` cannot be read, or the agent listing (`/proc`, else
+  `lsof`) does not show the wrapper itself, the wrapper stops: an empty listing from a failed
+  command is not "no agent and no bd". `GATE0_PROCFS` (default `/proc`) names the process
+  file system; the test points it elsewhere to force the `lsof` branch.
+- Children are confined too: the log directory, `gate0-run/` and each preservation
+  directory must be plain physical children outside the checkout, its git directory and
+  the journal (a symlinked `logs/` or `gate0-run/` is refused; a symlinked preservation
+  directory is a STOP before the checkout is realigned).
+- `bd` and the steps run with the checkout as their working directory, whatever the caller's.
+- A restart that is already recorded runs nothing: it re-verifies that the recorded timers
+  are active and the marker is the one set aside. A new `freeze` clears earlier restart records.
+- If a successful restart cannot be recorded, the wrapper stops the attempt's timers and
+  puts the marker aside again, as for any other failed restart.
 
 The wrapper's own sha256 changes with any edit. A handoff cites the digest of the final bytes.

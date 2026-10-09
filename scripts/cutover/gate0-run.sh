@@ -99,9 +99,16 @@ PRES=$(physpath "${GATE0_PRESERVE_DIR:-$SD/preserve}") || { echo "gate0-run: can
 # physical paths, checked before anything is created: nothing this script writes may land in the checkout or its git directory
 for d in "state directory:$SD" "journal:$J" "preservation copy:$PRES"; do
   case "${d#*:}/" in "$ROOT"/*|"$GD"/*) echo "gate0-run: the ${d%%:*} must be outside the checkout and its git directory" >&2; exit 1 ;; esac; done
-[ $CHECKMODE = 1 ] || mkdir -p "$J" || { echo "gate0-run: cannot create the journal" >&2; exit 1; }
+within() {  # PHYSICAL-PATH DIR... : the path is inside one of the directories
+  local p=$1 d; shift; for d in "$@"; do case "$p/" in "$d"/*) return 0 ;; esac; done; return 1; }
+# the children are checked as well: a symlinked logs/ or gate0-run/ must not turn a write into one inside the checkout or the journal
+within "$PRES" "$J" && { echo "gate0-run: the preservation copy must be outside the journal" >&2; exit 1; }
 G=$J/gate0-run
-LOGD=$SD/logs/$PHASE-$(date -u +%Y%m%dT%H%M%SZ)-$$; mkdir -p "$LOGD" || { echo "gate0-run: cannot create $LOGD" >&2; exit 1; }
+GP=$(physpath "$G") && [ "$GP" = "$G" ] || { echo "gate0-run: $G is not a plain child of the journal (a symlink)" >&2; exit 1; }
+LOGD=$SD/logs/$PHASE-$(date -u +%Y%m%dT%H%M%SZ)-$$
+LP=$(physpath "$LOGD") && ! within "$LP" "$ROOT" "$GD" "$J" "$PRES" || { echo "gate0-run: the log directory must be outside the checkout, its git directory, the journal and the preservation copy" >&2; exit 1; }
+[ $CHECKMODE = 1 ] || mkdir -p "$J" || { echo "gate0-run: cannot create the journal" >&2; exit 1; }
+mkdir -p "$LOGD" || { echo "gate0-run: cannot create $LOGD" >&2; exit 1; }
 LOG=$LOGD/run.log; RLOG=$LOGD/run.report
 MACHINE=${GATE0_MACHINE:-server}; case $MACHINE in server|clavain) ;; *) echo "gate0-run: GATE0_MACHINE is server or clavain" >&2; exit 1 ;; esac
 OPH=${GATE0_OPERATOR_HOME:-${HOME:-}}; BDBIN=${GATE0_BD:-bd}
@@ -129,11 +136,12 @@ refuse() { say "gate0-run: refused, nothing written: $*" >&2; exit 1; }
 runlog() {  # command... : run it, show and log its output, keep its exit status
   local rc; "$@" > "$LOGD/cmd.out" 2>&1; rc=$?; cat "$LOGD/cmd.out"; cat "$LOGD/cmd.out" >> "$LOG"; rm -f "$LOGD/cmd.out"; return $rc; }
 pg() { git -C "$ROOT" "$@"; }
-cs() { CUTOVER_REPORT=0 CUTOVER_PATH=$PATH CUTOVER_BD=$BDBIN CUTOVER_CHECK_DIR=$LOGD "$CS" "$ROOT" "$J" "$@"; }
-put() {  # file text : atomic, durable replace (skipped in --check)
+inroot() { ( cd "$ROOT" && "$@" ); }   # bd and the steps find the tracker from the working directory: always the checkout's, never the caller's
+cs() { inroot env CUTOVER_REPORT=0 CUTOVER_PATH="$PATH" CUTOVER_BD="$BDBIN" CUTOVER_CHECK_DIR="$LOGD" "$CS" "$ROOT" "$J" "$@"; }
+put() {  # file text [handler] : atomic, durable replace (skipped in --check); a failure calls the handler (default stop)
   [ $CHECKMODE = 0 ] || return 0
   local t="$1.tmp.$$"; printf '%s\n' "$2" > "$t" && { sync "$t" 2>/dev/null || sync; } && mv -f -- "$t" "$1" && { sync "$(dirname "$1")" 2>/dev/null || sync; } ||
-    { rm -f -- "$t"; stop "cannot record $1"; }; }
+    { rm -f -- "$t"; ${3:-stop} "cannot record $1"; }; }
 need_inputs() {
   local f; for f in base host lane-remote dispositions pr1-head delete-list; do [ -s "$J/$f" ] || refuse "J/$f is missing or empty (the operator writes the approved inputs there)"; done
   BASE=$(cat "$J/base"); HOST=$(cat "$J/host"); LANE=$(cat "$J/lane-remote")
@@ -163,18 +171,30 @@ is_active() {  # UNIT : 0 active, 1 confirmed inactive; any other answer is a ST
 under_self() {  # PID : true when this script is among PID's ancestors (its own subshells and helpers)
   local q=$1 n=0
   while [ -n "$q" ] && [ "$q" -gt 1 ] 2>/dev/null && [ $n -lt 64 ]; do [ "$q" != "$$" ] || return 0; q=$(ps -o ppid= -p "$q" 2>/dev/null | tr -d ' '); n=$((n+1)); done; return 1; }
+PROCFS=${GATE0_PROCFS:-/proc}
 agents_in_root() {  # "pid comm" for each process whose cwd is under the checkout, apart from this script, its ancestors and its descendants
-  local skip=" $$ " p d c; p=$$
+  # status 2 when the processes cannot be listed: a listing that does not show this script itself proves nothing
+  local skip=" $$ " p d c out; p=$$
   while [ -n "$p" ] && [ "$p" -gt 1 ] 2>/dev/null; do p=$(ps -o ppid= -p "$p" 2>/dev/null | tr -d ' '); skip="$skip$p "; done
-  if [ -d /proc/self ]; then
-    for d in /proc/[0-9]*; do p=${d#/proc/}; case $skip in *" $p "*) continue ;; esac
+  if [ -d "$PROCFS/self" ]; then
+    readlink "$PROCFS/$$/cwd" >/dev/null 2>&1 || return 2
+    for d in "$PROCFS"/[0-9]*; do p=${d#"$PROCFS"/}; case $skip in *" $p "*) continue ;; esac
       c=$(readlink "$d/cwd" 2>/dev/null) || continue
       case $c in "$ROOT"|"$ROOT"/*) under_self "$p" || echo "$p $(tr -d '\0' < "$d/comm" 2>/dev/null)" ;; esac; done
   else
-    lsof -d cwd -Fpcn 2>/dev/null | awk -v r="$ROOT" '/^p/{p=substr($0,2)} /^c/{c=substr($0,2)} /^n/{n=substr($0,2); if (n==r || index(n, r "/")==1) print p, c}' |
+    command -v lsof >/dev/null 2>&1 || return 2
+    out=$(lsof -d cwd -Fpcn 2>/dev/null)
+    case "
+$out
+" in *"
+p$$
+"*) ;; *) return 2 ;; esac
+    printf '%s\n' "$out" | awk -v r="$ROOT" '/^p/{p=substr($0,2)} /^c/{c=substr($0,2)} /^n/{n=substr($0,2); if (n==r || index(n, r "/")==1) print p, c}' |
       while read -r p c; do case $skip in *" $p "*) ;; *) under_self "$p" || echo "$p $c" ;; esac; done
-  fi; }
-bd_writers() { ps -A -o pid= -o comm= 2>/dev/null | awk '{ n = $2; sub(/.*\//, "", n); if (n == "bd") print $1, n }'; }
+  fi; return 0; }
+bd_writers() {  # "pid bd" for each process named bd; status 2 when the process table cannot be read (it must list this script itself)
+  local out; out=$(ps -A -o pid= -o comm= 2>/dev/null) || return 2
+  printf '%s\n' "$out" | awk -v me="$$" '$1 == me { ok = 1 } { n = $2; sub(/.*\//, "", n); if (n == "bd") print $1, n } END { exit ok ? 0 : 2 }'; }
 presence() {
   local want="mk is present for gate 0 on $HOST base ${BASE:0:12}" got=
   if [ -n "${GATE0_CONFIRM_FILE:-}" ]; then got=$(head -n 1 "$GATE0_CONFIRM_FILE" 2>/dev/null)
@@ -184,7 +204,9 @@ presence() {
 marker_aside() { [ -e "$G/marker" ] && [ ! -e "$ROOT/.git-autosync" ]; }
 move_marker_aside() {  # the marker is untracked and ignored; keep its bytes in G, verify, then remove it from the checkout
   [ -e "$ROOT/.git-autosync" ] || return 0
-  [ ! -e "$G/marker" ] || [ "$(sha < "$G/marker")" = "$(sha < "$ROOT/.git-autosync")" ] || stop "a different marker is already set aside"
+  if [ -e "$G/marker" ]; then   # the copy is already there (a restart put the marker back from it): no write to the journal is needed
+    [ "$(sha < "$G/marker")" = "$(sha < "$ROOT/.git-autosync")" ] || stop "a different marker is already set aside"
+    rm -f -- "$ROOT/.git-autosync" && [ ! -e "$ROOT/.git-autosync" ] || stop "cannot move the marker aside"; return 0; fi
   cp -p "$ROOT/.git-autosync" "$G/marker.tmp.$$" && { sync "$G/marker.tmp.$$" 2>/dev/null || sync; } &&
     mv -f -- "$G/marker.tmp.$$" "$G/marker" && [ "$(sha < "$G/marker")" = "$(sha < "$ROOT/.git-autosync")" ] &&
     rm -f -- "$ROOT/.git-autosync" || stop "cannot move the marker aside"; }
@@ -247,14 +269,15 @@ do_freeze() {
     say "gate0-run: freeze already holds"; return 0
   fi
   if [ $CHECKMODE = 1 ]; then say "gate0-run: freeze check: the presence phrase would be required"; else presence; fi
-  a=$(agents_in_root); w=${GATE0_QUIESCE_WAIT:-0}
-  while [ -n "$a" ] && [ "$w" -gt 0 ] 2>/dev/null; do sleep 1; w=$((w-1)); a=$(agents_in_root); done
+  a=$(agents_in_root) || stop "cannot list the processes (lsof or /proc): quiescence cannot be established"; w=${GATE0_QUIESCE_WAIT:-0}
+  while [ -n "$a" ] && [ "$w" -gt 0 ] 2>/dev/null; do sleep 1; w=$((w-1)); a=$(agents_in_root) || stop "cannot list the processes: quiescence cannot be established"; done
   [ -z "$a" ] || stop "processes still have their working directory in the checkout (tell their threads to quiesce): $(echo "$a" | tr '\n' ';')"
-  [ -z "$(bd_writers)" ] || stop "a bd process is running: $(bd_writers | tr '\n' ';')"
+  a=$(bd_writers) || stop "cannot read the process table (ps): no bd process can be ruled out"
+  [ -z "$a" ] || stop "a bd process is running: $(echo "$a" | tr '\n' ';')"
   for u in $TIMERS; do if is_active "$u"; then act="$act timer $u"; fi; done
   say "gate0-run: timers active before the freeze:${act:- none}"
   if [ $CHECKMODE = 1 ]; then say "gate0-run: freeze check: would stop the timers and services and move the marker aside (marker present: $([ -e "$ROOT/.git-autosync" ] && echo yes || echo no))"; return 0; fi
-  mkdir -p "$G"
+  mkdir -p "$G"; rm -f -- "$G"/restarted-*   # a new freeze starts a new attempt: an earlier attempt's restart records no longer apply
   for u in $TIMERS; do units stop "$u" || stop "cannot stop $u"; done
   for u in $SERVICES; do units stop "$u" || stop "cannot stop $u"; done
   for u in $TIMERS $SERVICES; do ! is_active "$u" || stop "$u is still active"; done
@@ -269,8 +292,10 @@ freeze_holds() { local u a
   [ -e "$G/freeze" ] || stop "no freeze record; run freeze first"
   for u in $TIMERS $SERVICES; do ! is_active "$u" || stop "$u is active: the freeze no longer holds"; done
   [ ! -e "$ROOT/.git-autosync" ] || stop "the marker is back in the checkout: the freeze no longer holds"
-  a=$(agents_in_root); [ -z "$a" ] || stop "an agent process has its working directory in the checkout: the freeze no longer holds: $(echo "$a" | tr '\n' ';')"
-  a=$(bd_writers); [ -z "$a" ] || stop "a bd process is running: the freeze no longer holds: $(echo "$a" | tr '\n' ';')"; }
+  a=$(agents_in_root) || stop "cannot list the processes (lsof or /proc): the freeze cannot be confirmed"
+  [ -z "$a" ] || stop "an agent process has its working directory in the checkout: the freeze no longer holds: $(echo "$a" | tr '\n' ';')"
+  a=$(bd_writers) || stop "cannot read the process table (ps): the freeze cannot be confirmed"
+  [ -z "$a" ] || stop "a bd process is running: the freeze no longer holds: $(echo "$a" | tr '\n' ';')"; }
 
 # ---- capture (P1-pre, P1a, the re-check, the preservation copy)
 recheck_after_p1a() {  # P0's readiness repeated with no local-head exception
@@ -282,8 +307,11 @@ recheck_after_p1a() {  # P0's readiness repeated with no local-head exception
   [ "$(pg rev-parse -q --verify "refs/tags/gate0/$h-$o")" = "$o" ] || stop "re-check: the tag gate0/$h-$o does not resolve to the old tip"
   [ "$(pg write-tree 2>/dev/null)" = "$(pg rev-parse "$b^{tree}")" ] || stop "re-check: the index is not the base's tree"
   say "gate0-run: re-check after P1a passes"; }
+pres_check() {  # PD : this capture's preservation directory, a plain physical child of the preservation copy and outside the checkout and the journal
+  local pp; PD=$PRES/$HOST-$(cat "$J/p1-pre/head")
+  pp=$(physpath "$PD") && [ "$pp" = "$PD" ] && ! within "$pp" "$ROOT" "$GD" "$J" || stop "the preservation directory $PD is not a plain directory outside the checkout and the journal (a symlink?)"; }
 preserve_copy() {  # the capture, outside the journal, verified file by file
-  local o d f s; o=$(cat "$J/p1-pre/head"); d=$PRES/$HOST-$o
+  local o d f s; o=$(cat "$J/p1-pre/head"); pres_check; d=$PD
   [ -f "$J/capture/sha256" ] || stop "no capture to copy"
   mkdir -p "$d" || stop "cannot create $d"
   for f in main.bundle wtree.tar wtree.manifest sha256; do cp -p "$J/capture/$f" "$d/$f.tmp.$$" 2>/dev/null && mv -f -- "$d/$f.tmp.$$" "$d/$f" || stop "cannot copy $f"; done
@@ -297,7 +325,7 @@ do_capture() {
   if [ $CHECKMODE = 1 ]; then
     [ -d "$J" ] || stop "check: no journal $J (run preflight first)"
     if [ -e "$J/cp" ]; then say "gate0-run: capture check: P1a is already recorded ($(cut -d' ' -f1 "$J/cp")); nothing to check"; return 0; fi
-    runlog env CUTOVER_REPORT=0 CUTOVER_PATH="$PATH" CUTOVER_BD="$BDBIN" CUTOVER_CHECK_DIR="$LOGD" "$CS" --check "$ROOT" "$J" p1a ||
+    runlog inroot env CUTOVER_REPORT=0 CUTOVER_PATH="$PATH" CUTOVER_BD="$BDBIN" CUTOVER_CHECK_DIR="$LOGD" "$CS" --check "$ROOT" "$J" p1a ||
       stop "the P1a check failed (it ran P1-pre and every capture check against a scratch copy)"
     say "gate0-run: capture check: P1a would run; it writes the capture, the archive branch, the tag and the realign"; return 0; fi
   [ -e "$G/preflight" ] || refuse "no preflight record"
@@ -307,6 +335,7 @@ do_capture() {
     say "gate0-run: capture already done ($(cat "$G/captured")); re-verified"; return 0; fi
   if [ ! -d "$J/p1-pre" ]; then runlog cs p1-pre || stop "P1-pre failed; re-run preflight and get a fresh approval"; fi
   o=$(cat "$J/p1-pre/head")
+  if [ "$o" != "$BASE" ]; then pres_check; fi   # before anything is realigned
   if [ "$o" = "$BASE" ]; then
     say "gate0-run: main equals the base: P1a does not run; P1-pre's record stands"; put "$G/p1a-skipped" "$o"; return 0; fi
   freeze_holds   # quiescence, once more, immediately before the checkout is realigned
@@ -321,6 +350,7 @@ do_capture() {
 do_rollback() {
   if [ $CHECKMODE = 1 ]; then say "gate0-run: rollback check: would run cutover-steps.sh rollback (R0a, before P5 only)"; return 0; fi
   [ -e "$G/freeze" ] || refuse "no freeze record"
+  freeze_holds   # rollback: the freeze must hold now, not only have been recorded
   runlog cs rollback || stop "R0a failed"
   say "gate0-run: R0a done: checkpoint $(cut -d' ' -f1 "$J/cp")"; }
 
@@ -332,7 +362,7 @@ reconcile() {  # restart step 3: the first bd command is bd export; the base's a
   eval "$(sed -n '/^jsonl_dominated() {/,/"\$2" "\$1"; }$/p' "$CS")"
   command -v jsonl_dominated >/dev/null 2>&1 || type jsonl_dominated >/dev/null 2>&1 || stop "cannot load jsonl_dominated from $CS"
   o=$(cat "$J/p1-pre/head"); x=$LOGD/export.jsonl
-  "$BDBIN" export -o "$x" > "$LOGD/bd-export.out" 2>&1 && [ -f "$x" ] || stop "bd export failed (see $LOGD/bd-export.out)"
+  inroot "$BDBIN" export -o "$x" > "$LOGD/bd-export.out" 2>&1 && [ -f "$x" ] || stop "bd export failed (see $LOGD/bd-export.out)"
   for t in "$o" "$BASE"; do
     pg show "$t:.beads/issues.jsonl" > "$LOGD/jsonl.$t" 2>/dev/null || : > "$LOGD/jsonl.$t"
     jsonl_dominated "$LOGD/jsonl.$t" "$x" || stop "the tracker export does not dominate the records at $t"; done
@@ -385,12 +415,22 @@ restart_clavain() {  # exit-name
   [ -f "$DRIFT" ] || rbail "the sweep left no drift report ($DRIFT)"
   predict verify "$pred" "$DRIFT" > "$LOGD/verify.out" 2>&1 || { tee -a "$LOG" < "$LOGD/verify.out"; rbail "the sweep differs from the prediction; marker moved aside"; }
   cat "$LOGD/verify.out" >> "$LOG"; }
+unrecord_bail() { rm -f -- "$G/restarted-$XARG"; rbail "$@; every timer of this attempt is stopped again and the marker is aside"; }
+restarted_holds() {  # a restart that is already recorded: re-verify the state it describes and run nothing
+  local u m
+  for u in $(sed -n 's/^timer //p' "$G/freeze"); do is_active "$u" || stop "restart $1 is recorded but $u is not active: the state is not the one the record describes; nothing was run"; done
+  m=$(sed -n 's/^marker //p' "$G/freeze")
+  if [ "$m" != none ]; then [ -e "$ROOT/.git-autosync" ] && [ "$(sha < "$ROOT/.git-autosync")" = "$m" ] ||
+    stop "restart $1 is recorded but the marker in the checkout is not the one set aside; nothing was run"; fi
+  say "gate0-run: restart $1 already done ($(cat "$G/restarted-$1")); the recorded timers are active and the marker is in place; nothing run"; }
 do_restart() {
   local ex=$XARG pe=$XARG
   if [ $CHECKMODE = 1 ]; then
     [ ! -d "$J/p1-pre" ] || [ ! -e "$J/done-p1a" ] || runlog cs preserved "$( [ "$ex" = r6 ] && echo r6 )" || stop "restart step 1 would fail"
     say "gate0-run: restart $ex check: would run the unfreeze gate, preservation, reconciliation, the marker, one autosync run and the timers"; return 0; fi
   [ -e "$G/freeze" ] || refuse "no freeze record"
+  if [ -e "$G/restarted-$ex" ]; then restarted_holds "$ex"; return 0; fi   # a repeat runs nothing
+  freeze_holds   # restart: the freeze must hold now (units, marker, agents, bd), not only have been recorded
   if [ "$ex" = r0 ]; then
     if [ "$(cut -d' ' -f1 "$J/cp" 2>/dev/null)" = a0r ]; then pe=a0r
     elif [ ! -e "$J/done-p1a" ]; then pe=p10   # P1a never ran: the machine is at the base, rows 1 or 2 with P1-pre's status
@@ -403,7 +443,7 @@ do_restart() {
   if [ "$MACHINE" = server ]; then restart_server "$ex" "$pe"; else restart_clavain "$ex"; fi
   # step 5: the timers; the bd writers and the agent sessions resume afterwards, started by their owners
   local u; for u in $(sed -n 's/^timer //p' "$G/freeze"); do units start "$u" || rbail "cannot re-enable $u; every timer of this attempt is stopped again and the marker is aside"; done
-  put "$G/restarted-$ex" "at $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  put "$G/restarted-$ex" "at $(date -u +%Y-%m-%dT%H:%M:%SZ)" unrecord_bail
   say "gate0-run: restart $ex done: the recorded timers are running again; resume the bd writers and the agent sessions now (they are not started by this script)"; }
 
 need_inputs

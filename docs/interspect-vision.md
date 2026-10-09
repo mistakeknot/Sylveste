@@ -83,7 +83,7 @@ The key insight: automated signals don't replace human signals. They provide a d
 
 ### Graduated signal cost ordering
 
-The signal taxonomy above describes *what* signals exist. A complementary question is *when* to use each one. NetHack's item identification system — where players use cheap signals (appearance, price) before expensive ones (scroll of identify) — provides a useful framework: route to the cheapest signal that resolves the decision, escalating only when cheap signals are ambiguous. See [`assess-identification-as-calibration.md` (internal doc, not in the public tree)](../research/assess-identification-as-calibration.md) for a design assessment applying this pattern to Interspect's routing pipeline, and [docs/sylveste-vision.md § External Validation](./sylveste-vision.md#external-validation) for broader empirical grounding.
+The signal taxonomy above describes *what* signals exist. A complementary question is *when* to use each one. NetHack's item identification system — where players use cheap signals (appearance, price) before expensive ones (scroll of identify) — provides a useful framework: route to the cheapest signal that resolves the decision, escalating only when cheap signals are ambiguous. See `assess-identification-as-calibration.md` (an internal doc, not in the public tree) for a design assessment applying this pattern to Interspect's routing pipeline, and [docs/sylveste-vision.md § External Validation](./sylveste-vision.md#external-validation) for broader empirical grounding.
 
 ## How It Works
 

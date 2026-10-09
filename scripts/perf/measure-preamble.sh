@@ -3,7 +3,7 @@
 # Defaults to the newest jsonl in the project dir; override with --session-id
 # (explicit ID avoids the ls -t race when the current session is still writing).
 set -euo pipefail
-project_dir="${HOME}/.claude/projects/$(git rev-parse --show-toplevel | sed 's|/|-|g')"
+project_dir=""
 session_id=""
 for arg in "$@"; do
   case "$arg" in
@@ -11,6 +11,8 @@ for arg in "$@"; do
     --project-dir=*) project_dir="${arg#--project-dir=}" ;;
   esac
 done
+# the default needs a git checkout; an explicit --project-dir does not
+[[ -n "$project_dir" ]] || project_dir="${HOME}/.claude/projects/$(git rev-parse --show-toplevel | sed 's|/|-|g')"
 
 if [[ -n "$session_id" ]]; then
   target="$project_dir/$session_id.jsonl"

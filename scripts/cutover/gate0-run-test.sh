@@ -79,7 +79,7 @@ for u in "\$@"; do case \$act in
   start) [ ! -e "\$S/failstart-\$u" ] || exit 1
          if [ "\$u" = git-autosync-repair.service ]; then echo "start \$(date +%s)" >> "\$S/starts"
            [ -e "\$S/nojournal" ] || echo "1 autosync repo(s): 1 unchanged" > "\$S/journal.txt"
-         else touch "\$S/units/\$u"; fi ;;
+         else touch "\$S/units/\$u"; [ ! -e "\$S/lockg" ] || chmod a-w "$J/gate0-run"; fi ;;
   esac; done
 EOF
 printf '#!/bin/bash\ncat %q 2>/dev/null; true\n' "$ST/journal.txt" > "$B/stub/journalctl"
@@ -112,14 +112,15 @@ EOF
 REALPS=$(command -v ps)
 cat > "$B/stub/ps" <<EOF
 #!/bin/bash
-if [ "\$*" = "-A -o pid= -o comm=" ]; then $REALPS "\$@" | awk -v keep="\$(cat "$B/bdpid" 2>/dev/null)" '{ n = \$2; sub(/.*\//, "", n); if (n == "bd" && \$1 != keep) next; print }'
+if [ "\$*" = "-A -o pid= -o comm=" ]; then [ ! -e "$B/ps-fail" ] || exit 1; $REALPS "\$@" | awk -v keep="\$(cat "$B/bdpid" 2>/dev/null)" '{ n = \$2; sub(/.*\//, "", n); if (n == "bd" && \$1 != keep) next; print }'
 else exec $REALPS "\$@"; fi
 EOF
-chmod +x "$B/stub/ps" "$B/bin/ctl" "$B/stub/journalctl" "$B/bin/pred" "$B/bin/tell"
+printf '#!/bin/bash\nexit 1\n' > "$B/stub/lsof"   # a listing that fails: used only when the test forces the lsof branch
+chmod +x "$B/stub/lsof" "$B/stub/ps" "$B/bin/ctl" "$B/stub/journalctl" "$B/bin/pred" "$B/bin/tell"
 rec() { printf '{"_type":"issue","id":"%s","title":"%s","status":"open","priority":2,"issue_type":"task","created_at":"%s","updated_at":"%s"}\n' "$1" "$2" "$3" "$3"; }
 rec fx-one one 2026-10-01T00:00:01Z > "$B/one.jsonl"
 { rec fx-two two 2026-10-01T00:00:02Z; cat "$B/one.jsonl"; } > "$B/trk.jsonl"
-mkbd() { printf '#!/bin/bash\ncase "$1 ${2:-}" in "export -o") cp %q "$3" ;; *) echo "bd stub: unsupported: $*" >&2; exit 2 ;; esac\n' "$1" > "$B/bin/bd"; chmod +x "$B/bin/bd"; }
+mkbd() { printf '#!/bin/bash\npwd -P >> %q\ncase "$1 ${2:-}" in "export -o") cp %q "$3" ;; *) echo "bd stub: unsupported: $*" >&2; exit 2 ;; esac\n' "$B/bd-cwd" "$1" > "$B/bin/bd"; chmod +x "$B/bin/bd"; }
 mkbd "$B/trk.jsonl"
 mkdir -p "$B/x"; cp "$(command -v sleep)" "$B/x/bd"
 
@@ -229,6 +230,42 @@ t_self() {  # freeze started from inside the checkout does not report the wrappe
   restore fx; stepto preflight || return 1
   ( cd "$R" && wg freeze > "$B/out.self" 2>&1 ); SRC=$?; [ "$SRC" = 0 ]; }
 
+t_cwd() {  # bd and the steps find the tracker from the working directory: the checkout's, whatever the caller's
+  restore fx; stepto preflight freeze || return 1; rm -f "$B/bd-cwd"
+  ( cd "$B" && wg capture > "$B/out.cwd" 2>&1 ); local c1=$?
+  restore r0a; ( cd "$B" && wg restart r0 >> "$B/out.cwd" 2>&1 ); local c2=$?
+  CWR="$c1$c2/$(sort -u "$B/bd-cwd" 2>/dev/null | paste -sd, -)"; [ "$CWR" = "00/$R" ]; }
+t_listfail() {  # a process listing that fails is not an empty one: no agent and no bd can be ruled out, so STOP
+  restore fx; stepto preflight || return 1
+  touch "$B/ps-fail"; wg freeze > "$B/out.lf" 2>&1; LF1=$?; rm -f "$B/ps-fail"
+  GATE0_PROCFS="$B/no-procfs" wg freeze >> "$B/out.lf" 2>&1; LF2=$?   # no /proc: the lsof branch, whose stub fails
+  [ "$LF1/$LF2/$(timers)" = "3/3/yes/yes" ] && grep -q 'cannot read the process table' "$B/out.lf" && grep -q 'cannot list the processes' "$B/out.lf"; }
+t_symlinks() {  # children of the state, journal and preservation directories are checked as well as the directories
+  restore fx; local c0 r1 r2 r3 k; c0=$(ckfp)
+  mkdir -p "$W/state"; ln -s "$R" "$W/state/logs"
+  wg --check preflight > "$B/out.sl" 2>&1; r1=$?
+  rm -f "$W/state/logs"; ln -s "$R" "$J/gate0-run"
+  wg preflight >> "$B/out.sl" 2>&1; r2=$?
+  SLK=$([ "$(ckfp)" = "$c0" ] && echo same); rm -f "$J/gate0-run"
+  restore fx; stepto preflight freeze || return 1
+  mkdir -p "$W/pres"; ln -s "$R" "$W/pres/mA-$O"; k=$(ckfp)
+  wg capture >> "$B/out.sl" 2>&1; r3=$?
+  SLR="$r1$r2$r3"; [ "$SLR" = 113 ] && [ "$(ckfp)" = "$k" ] && [ ! -e "$J/cp" ] && [ "$SLK" = same ] && [ ! -e "$R/main.bundle" ]; }
+t_restart_idem() {  # a repeated restart runs nothing; a restart or rollback needs a live freeze
+  restore r0a; wg restart r0 > "$B/out.ri" 2>&1; RI1=$?
+  wg restart r0 >> "$B/out.ri" 2>&1; RI2=$?; RIS=$(nstarts)
+  restore r0a; touch "$ST/units/git-autosync-promote.timer"
+  wg restart r0 >> "$B/out.ri" 2>&1; RI3=$?; RIN=$(nstarts)
+  restore fx; stepto preflight freeze capture || return 1
+  touch "$ST/units/git-autosync-promote.timer"
+  wg rollback >> "$B/out.ri" 2>&1; RI4=$?; RIC=$(cut -d' ' -f1 "$J/cp")
+  [ "$RI1/$RI2/$RIS/$RI3/$RIN/$RI4/$RIC" = "0/0/1/3/0/3/a1" ]; }
+t_putfail() {  # the restart succeeded but could not be recorded: the frozen state is restored, not left half-restarted
+  restore r0a; touch "$ST/lockg"
+  wg restart r0 > "$B/out.pf" 2>&1; PFR=$?; chmod u+w "$J/gate0-run"; rm -f "$ST/lockg"
+  PFS="$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)/$([ -e "$J/gate0-run/restarted-r0" ] && echo recorded)"
+  [ "$PFR/$PFS" = "3//no/no/" ]; }
+
 echo "== --check forms change nothing"
 restore fx; c0=$(ckfp); j0=$(jfp); l0=$(lanerefs)
 WG= wg --check > "$B/out" 2>&1; check "--check" "$?" 0
@@ -329,6 +366,11 @@ t_cleanup; check "a failed restart (timer start, or a differing run) leaves mark
 t_confine; check "state, journal and preservation inside the checkout (also through a symlink) are refused, nothing created" "$CFR/$?" "1111/0"
 t_locks; check "--check leaves the index bytes alone when a tracked file's timestamp changed" "$?" 0
 t_self; check "freeze from inside the checkout does not count the wrapper's own processes as agents" "$SRC/$?" "0/0"
+t_cwd; check "bd and the steps run in the checkout whatever the caller's directory: capture and restart exit 0" "$CWR/$?" "00/$R/0"
+t_listfail; check "a failing ps or lsof is a STOP at freeze (exit 3), timers untouched" "$LF1/$LF2/$?" "3/3/0"
+t_symlinks; check "a symlinked logs/, gate0-run/ or preservation child is refused (1, 1, STOP 3); nothing written into the checkout" "$SLR/$?" "113/0"
+t_restart_idem; check "restart twice runs once; restart or rollback without a live freeze is a STOP" "$RI1/$RI2/$RIS/$RI3/$RIN/$RI4/$RIC/$?" "0/0/1/3/0/3/a1/0"
+t_putfail; check "a restart that cannot be recorded: exit 3, marker aside, timers stopped, no record" "$PFR/$PFS/$?" "3//no/no//0"
 
 echo "== mutation controls (each must be judged NOT fail-closed)"
 mutate() {  # NAME SEDEXPR : a copy of the wrapper with one safeguard removed; WG names it
@@ -354,5 +396,23 @@ mutate M8 's/2> "\$pred.err"/2>\&1/' &&
   { WG=$B/mut/M8.sh; t_noise; r=$?; WG=; check "M8 (predictor stderr in the prediction) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M9 's/^  a=\$(agents_in_root).*$/  :/' &&
   { WG=$B/mut/M9.sh; t_agentre; r=$?; WG=; check "M9 (no agent re-check at capture) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M10 's/^  if \[ -e "\$G\/restarted-\$ex" \]; then restarted_holds.*$/  :/' &&
+  { WG=$B/mut/M10.sh; t_restart_idem; r=$?; WG=; check "M10 (a repeated restart runs again) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M11 's/^  freeze_holds   # restart:.*$/  :/' &&
+  { WG=$B/mut/M11.sh; t_restart_idem; r=$?; WG=; check "M11 (no freeze check before restart) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M12 's/^  freeze_holds   # rollback:.*$/  :/' &&
+  { WG=$B/mut/M12.sh; t_restart_idem; r=$?; WG=; check "M12 (no freeze check before rollback) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M13 's/stop "cannot read the process table (ps): no bd process can be ruled out"/true/' &&
+  { WG=$B/mut/M13.sh; t_listfail; r=$?; WG=; check "M13 (a failing ps read as no bd) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M14 's/command -v lsof >\/dev\/null 2>&1 || return 2/:/; s/ \*) return 2 ;; esac/ *) ;; esac/' &&
+  { WG=$B/mut/M14.sh; t_listfail; r=$?; WG=; check "M14 (a failing lsof read as no agents) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M15 's/^LP=.*$/LP=x/' &&
+  { WG=$B/mut/M15.sh; t_symlinks; r=$?; WG=; check "M15 (no check of the log directory's physical path) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M16 's/^  if \[ "\$o" != "\$BASE" \]; then pres_check; fi.*$/  :/; s/pres_check; d=\$PD/PD=\$PRES\/\$HOST-\$o; d=\$PD/' &&
+  { WG=$B/mut/M16.sh; t_symlinks; r=$?; WG=; check "M16 (no check of the preservation directory) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M17 's/ unrecord_bail$//' &&
+  { WG=$B/mut/M17.sh; t_putfail; r=$?; WG=; check "M17 (a failed record leaves the restart half done) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M18 's/^inroot() {.*$/inroot() { "$@"; }/' &&
+  { WG=$B/mut/M18.sh; t_cwd; r=$?; WG=; check "M18 (bd run from the caller's directory) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 
 if [ $fails = 0 ]; then echo "GATE0-RUN: PASS"; exit 0; else echo "GATE0-RUN: FAIL ($fails)"; exit 1; fi
