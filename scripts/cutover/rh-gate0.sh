@@ -751,7 +751,7 @@ for h in crash-inject.sh cutover-repro.sh lane-sync-test.sh; do
 echo "== hash tools: the scripts fall back to shasum -a 256 and refuse a blank identity hash (nested bubblewrap)"
 hb() { "$BWRAP" --ro-bind / / --bind "$B" "$B" --dev /dev --proc /proc --tmpfs /tmp --unshare-net --die-with-parent --clearenv \
   --setenv PATH "$SPATH" --setenv LC_ALL C --setenv HOME "$B/home" --setenv TMPDIR "$B/tmp" --setenv CUTOVER_REPORT 0 \
-  --setenv RESTART_REPORT 0 --setenv RH_REPORT 0 "$@"; }
+  --setenv RESTART_REPORT 0 --setenv RH_REPORT 0 --setenv GATE0_OPERATOR_HOME "$OPH" --setenv GATE0_DOTFILES "$DOT" "$@"; }
 M1=(--ro-bind /dev/null /usr/bin/sha256sum); M2=("${M1[@]}" --ro-bind /dev/null /usr/bin/shasum)
 check "the masks break the tools (sha256sum fails; then shasum fails too)" \
   "$(hb "${M1[@]}" /bin/bash -c 'printf "" | sha256sum > /dev/null 2>&1; echo $?') $(hb "${M2[@]}" /bin/bash -c 'printf "" | shasum -a 256 > /dev/null 2>&1; echo $?')" "126 126"
