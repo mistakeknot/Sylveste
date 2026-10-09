@@ -280,6 +280,7 @@ do_freeze() {
   if [ -e "$G/freeze" ] && [ $CHECKMODE = 0 ] && ! restarted_any; then   # after a completed restart a new freeze is a new attempt: it falls through
     for u in $(sed -n 's/^timer //p' "$G/freeze"); do ! is_active "$u" || stop "the freeze was recorded but $u is active again"; done
     { marker_aside || [ "$(sed -n 's/^marker //p' "$G/freeze")" = none ]; } || stop "the freeze was recorded but the marker is back in the checkout"
+    rm -f -- "$G/freeze-intent"   # a crash after the freeze was recorded can leave the intent behind; the record holds the set
     say "gate0-run: freeze already holds"; return 0
   fi
   if [ $CHECKMODE = 1 ]; then say "gate0-run: freeze check: the presence phrase would be required"; else presence; fi
@@ -304,8 +305,8 @@ do_freeze() {
   if [ -n "${GATE0_STATUS_CMD:-}" ]; then "$GATE0_STATUS_CMD" > "$LOGD/autosync-status.txt" 2>&1; say "gate0-run: autosync status recorded (exit $?)"; fi
   w="marker $([ -e "$G/marker" ] && sha < "$G/marker" || echo none)"
   f=$(act_lines "$act"; printf '%s\n' "$w"; printf 'at %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"); put "$G/freeze" "$f"
-  rm -f -- "$G/freeze-intent"   # the freeze record now holds the restart set
   rm -f -- "$G"/restarted-*   # a new freeze starts a new attempt: an earlier attempt's restart records no longer apply (cleared once the new freeze is recorded)
+  rm -f -- "$G/freeze-intent"   # last: while a stale restart record exists the intent still names the restart set, so a crash between these two steps loses nothing
   say "gate0-run: freeze holds (timers and services stopped, marker aside)"; }
 restarted_any() { local f; for f in "$G"/restarted-*; do [ -e "$f" ] && return 0; done; return 1; }
 freeze_holds() { local u a
@@ -376,7 +377,7 @@ do_rollback() {
 
 # ---- restart (R0, P10, R6)
 reconcile() {  # restart step 3: the first bd command is bd export; the base's and the old tip's records must be dominated
-  local x o t cap
+  local x o t l
   [ -e "$J/done-p1a" ] || { say "gate0-run: P1a did not run on this machine: no reconciliation"; return 0; }
   # the same function the P1a check uses; extracted from the script that defines it, so there is one definition
   eval "$(sed -n '/^jsonl_dominated() {/,/"\$2" "\$1"; }$/p' "$CS")"
@@ -384,10 +385,13 @@ reconcile() {  # restart step 3: the first bd command is bd export; the base's a
   o=$(cat "$J/p1-pre/head"); x=$LOGD/export.jsonl
   inroot "$BDBIN" export -o "$x" > "$LOGD/bd-export.out" 2>&1 && [ -f "$x" ] || stop "bd export failed (see $LOGD/bd-export.out)"
   for t in "$o" "$BASE"; do
-    pg show "$t:.beads/issues.jsonl" > "$LOGD/jsonl.$t" 2>/dev/null || : > "$LOGD/jsonl.$t"
+    l=$(pg ls-tree "$t" -- .beads/issues.jsonl 2>/dev/null) || stop "cannot read the tree of $t: whether it holds tracker records cannot be confirmed"
+    if [ -n "$l" ]; then pg show "$t:.beads/issues.jsonl" > "$LOGD/jsonl.$t" 2>/dev/null || stop "cannot read .beads/issues.jsonl at $t (the tree lists it): its records cannot be compared"
+    else : > "$LOGD/jsonl.$t"; fi   # confirmed absent from the tree: nothing to dominate
     jsonl_dominated "$LOGD/jsonl.$t" "$x" || stop "the tracker export does not dominate the records at $t"; done
   say "gate0-run: reconciliation holds: the export dominates the base and the old tip"; }
-journal_since() { journalctl --user -u "$REPAIR_SVC" --since "$1" --no-pager -o cat 2>/dev/null; }
+journal_cursor() { journalctl --user -n 1 --show-cursor -o cat --no-pager 2>/dev/null | sed -n 's/^-- cursor: //p'; }   # the position of the newest entry, taken before the start
+journal_since() { journalctl --user -u "$REPAIR_SVC" --after-cursor="$1" --no-pager -o cat 2>/dev/null; }   # only lines written after that position: an earlier invocation's lines are never this run's
 predict() { RESTART_REPORT=0 "$PRED" "$@"; }   # the wrapper reports once; the predictor's own report sender stays off
 rbail() {  # back to the frozen state: every recorded timer stopped, each timer and service read back, the marker aside; a stop that cannot be confirmed is said so
   local u bad=
@@ -400,7 +404,7 @@ restore_marker() {  # the marker set aside goes back, and must be the one the fr
     { [ ! -e "$G/marker" ] && [ "$(sed -n 's/^marker //p' "$G/freeze")" = none ]; } || stop "cannot restore the marker"
   [ ! -e "$ROOT/.git-autosync" ] || [ "$(sha < "$ROOT/.git-autosync")" = "$(sed -n 's/^marker //p' "$G/freeze")" ] || { rm -f -- "$ROOT/.git-autosync"; stop "the restored marker differs from the one set aside"; }; }
 restart_server() {  # exit-name  predict-exit
-  local ex=$1 pe=$2 p2 start pred rc tries n tip0 tip1 tags0 tags1 arch0 arch1 h=$HOST
+  local ex=$1 pe=$2 p2 cur pred rc tries n tip0 tip1 tags0 tags1 arch0 arch1 h=$HOST
   restore_marker
   if pg status --porcelain=v1 --untracked-files=all | cut -c4- | grep -qx '.git-autosync'; then
     rbail "the marker rule: .git-autosync is in the status; a run would commit it into the checkout and push it to the lane"; fi
@@ -412,10 +416,10 @@ restart_server() {  # exit-name  predict-exit
   tip0=$(pg ls-remote "$LANE" "refs/heads/autosync/$h" | cut -f1)
   tags0=$(pg for-each-ref --format='%(refname) %(objectname)' refs/tags/gate0 | sort | paste -sd' ' -)
   arch0=$(pg ls-remote "$LANE" "refs/heads/archive/gate0/$h/*" | sort | paste -sd' ' -)
-  start=$(date '+%Y-%m-%d %H:%M:%S')
+  cur=$(journal_cursor); [ -n "$cur" ] || rbail "cannot take a journal cursor: lines of an earlier run could not be told from this run's; nothing started, marker moved aside again"
   units start "$REPAIR_SVC"; say "gate0-run: the service start returned $? (the unit's result is not a row signal; the run is judged by Sylveste's lines and the checkout)"
   tries=${GATE0_JOURNAL_TRIES:-10}; n=0
-  while :; do journal_since "$start" > "$LOGD/journal.txt"; grep -Eq '^[0-9]+ autosync repo\(s\)' "$LOGD/journal.txt" && break
+  while :; do journal_since "$cur" > "$LOGD/journal.txt"; grep -Eq '^[0-9]+ autosync repo\(s\)' "$LOGD/journal.txt" && break
     n=$((n+1)); [ "$n" -le "$tries" ] || break; sleep 1; done
   cat "$LOGD/journal.txt" >> "$LOG"
   grep -Eq '^[0-9]+ autosync repo\(s\)' "$LOGD/journal.txt" || rbail "the start left no '<n> autosync repo(s)' summary line: the run did not happen; marker moved aside, timers stay stopped"
@@ -448,10 +452,10 @@ restart_clavain() {  # exit-name
 unrecord_bail() { rm -f -- "$G/restarted-$XARG"; rbail "$@; every timer of this attempt is stopped again and the marker is aside"; }
 restarted_holds() {  # a restart that is already recorded: re-verify the state it describes and run nothing
   local u m
-  for u in $(sed -n 's/^timer //p' "$G/freeze"); do is_active "$u" || stop "restart $1 is recorded but $u is not active: the state is not the one the record describes; nothing was run"; done
+  for u in $(sed -n 's/^timer //p' "$G/freeze"); do is_active "$u" || unrecord_bail "restart $1 is recorded but $u is not active: the state is not the one the record describes; nothing was run"; done
   m=$(sed -n 's/^marker //p' "$G/freeze")
   if [ "$m" != none ]; then [ -e "$ROOT/.git-autosync" ] && [ "$(sha < "$ROOT/.git-autosync")" = "$m" ] ||
-    stop "restart $1 is recorded but the marker in the checkout is not the one set aside; nothing was run"; fi
+    unrecord_bail "restart $1 is recorded but the marker in the checkout is not the one set aside; nothing was run"; fi
   say "gate0-run: restart $1 already done ($(cat "$G/restarted-$1")); the recorded timers are active and the marker is in place; nothing run"; }
 do_restart() {
   local ex=$XARG pe=$XARG

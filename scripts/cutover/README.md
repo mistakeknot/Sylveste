@@ -111,5 +111,18 @@ Further properties, each with a test and a mutation control in `gate0-run-test.s
   `CUTOVER_LOG_DIR` cannot make a check write into the journal or the checkout.
 - If a successful restart cannot be recorded, the wrapper stops the attempt's timers and
   puts the marker aside again, as for any other failed restart.
+- A new freeze after a completed restart clears the earlier restart records only after the new
+  freeze record is written, and removes the restart-set intent last, so a crash at either point
+  leaves a set the repeated freeze can still read. A repeated freeze that finds the record already
+  holding also removes a leftover intent.
+- Reconciliation separates a tracker file that is absent from a commit (the tree does not list it:
+  nothing to dominate) from one that cannot be read (the tree lists it, or cannot be listed): the
+  second is a STOP, never an empty file.
+- The service's journal is read from a cursor taken just before the start (`--after-cursor`), so a
+  summary line left by an earlier run is never taken for this run's. If no cursor can be taken, the
+  restart stops before anything starts.
+- A recorded restart whose timers or marker no longer match the record is undone like any other
+  failed restart: the record is removed, every timer of the attempt is stopped and the marker is
+  aside, so a later restart is a new attempt.
 
 The wrapper's own sha256 changes with any edit. A handoff cites the digest of the final bytes.
