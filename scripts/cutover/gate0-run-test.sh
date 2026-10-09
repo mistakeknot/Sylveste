@@ -406,6 +406,31 @@ t_holdsmarker() {  # a recorded restart whose marker bytes changed is undone too
   HMS="$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)/$([ -e "$J/gate0-run/restarted-r0" ] && echo recorded)/$k"
   [ "$HMC/$HMS" = "3//no/no//1" ] && cmp -s "$B/hm.changed" "$J/gate0-run"/marker.unexpected.*; }
 
+t_restartcrash() {  # a restart that ends after it restored the marker and started the service or a timer, before its completion record, is found and undone by the next restart
+  local pt pat crash=$B/mut/crash.sh rc rc2 rc3 f; RCS=
+  for pt in service timer; do
+    case $pt in service) pat='/^  units start "\$REPAIR_SVC"/i exit 9' ;; timer) pat='/^    units start "\$u" || rbail "cannot re-enable/a exit 9' ;; esac
+    sed "$pat" "${WG:-$GW}" > "$crash"; chmod +x "$crash"; cp "$HERE/cutover-steps.sh" "$B/mut/cutover-steps.sh"
+    cmp -s "${WG:-$GW}" "$crash" && { echo "  FAIL crash copy for $pt changed nothing"; return 1; }
+    restore r0a; WG=$crash wg restart r0 > "$B/out.rc" 2>&1; rc=$?
+    f="$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)"
+    wg restart r0 >> "$B/out.rc" 2>&1; rc2=$?
+    f="$f/$rc2/$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)/$(ls "$J/gate0-run" | grep -c '^restart')"
+    wg restart r0 >> "$B/out.rc" 2>&1; rc3=$?
+    RCS="$RCS$rc/$f/$rc3/$(timers)/$([ -e "$J/gate0-run/restarted-r0" ] && echo recorded);"
+  done
+  [ "$RCS" = "9/marker/no/no/3//no/no/0/0/yes/yes/recorded;9/marker/yes/no/3//no/no/0/0/yes/yes/recorded;" ]; }
+t_holdsnone() {  # Clavain row 8 (no marker) is recorded; a marker that appears afterwards is undone like any state the record does not describe, its bytes kept
+  local k; restore r0a; rm -f "$B/drift.txt"; rm -f "$J/gate0-run/marker"; rm -f "$R/.git-autosync"
+  sed -i 's/^marker .*/marker none/' "$J/gate0-run/freeze"
+  GATE0_MACHINE=clavain GATE0_SWEEP="$B/bin/sweep" GATE0_DRIFT_REPORT="$B/drift.txt" wg restart r0 > "$B/out.hn" 2>&1; HN0=$?
+  HN0S="$([ -e "$J/gate0-run/restarted-r0" ] && echo recorded)/$(timers)"
+  printf 'LANE=1\n' > "$R/.git-autosync"
+  GATE0_MACHINE=clavain GATE0_SWEEP="$B/bin/sweep" GATE0_DRIFT_REPORT="$B/drift.txt" wg restart r0 >> "$B/out.hn" 2>&1; HN1=$?
+  k=$(ls "$J/gate0-run"/marker.unexpected.* 2>/dev/null | wc -l)
+  HN1S="$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)/$([ -e "$J/gate0-run/restarted-r0" ] && echo recorded)/$k/$([ -e "$J/gate0-run/marker" ] && echo marker-record)"
+  [ "$HN0/$HN0S/$HN1/$HN1S" = "0/recorded/yes/yes/3//no/no//1/" ]; }
+
 echo "== --check forms change nothing"
 restore fx; c0=$(ckfp); j0=$(jfp); l0=$(lanerefs)
 WG= wg --check > "$B/out" 2>&1; check "--check" "$?" 0
@@ -527,6 +552,8 @@ t_stalejournal; check "a journal that holds only an earlier run's summary line i
 t_holdsbail; check "a recorded restart whose timer is no longer active is undone: timers stopped, marker aside, record removed" "$HBC/$HBS/$?" "3//no/no//0"
 t_holdsunknown; check "a recorded restart whose timer state cannot be read is undone: timers stopped, marker aside, record removed, UNCONFIRMED said" "$HUC/$HUS/$?" "3//no/no//0"
 t_holdsmarker; check "a recorded restart whose marker bytes changed is undone: the changed bytes kept beside the record, none left in the checkout" "$HMC/$HMS/$?" "3//no/no//1/0"
+t_restartcrash; check "a restart cut off after the marker/service/first timer, before its record: the next restart undoes it (timers stopped, marker aside, attempt closed), the one after runs" "$RCS/$?" "9/marker/no/no/3//no/no/0/0/yes/yes/recorded;9/marker/yes/no/3//no/no/0/0/yes/yes/recorded;/0"
+t_holdsnone; check "a recorded no-marker restart: a marker that appears afterwards is undone, its bytes kept, no marker record made" "$HN0/$HN0S/$HN1/$HN1S/$?" "0/recorded/yes/yes/3//no/no//1//0"
 
 echo "== mutation controls (each must be judged NOT fail-closed)"
 mutate() {  # NAME SEDEXPR : a copy of the wrapper with one safeguard removed; WG names it
@@ -544,7 +571,7 @@ mutate M4 's/^  hook_check   # first:.*/  :/; s/^  archive_check; }$/  hook_chec
   { WG=$B/mut/M4.sh; t_hookfetch; r=$?; WG=; check "M4 (hook check after the fetch) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M5 's/\*) stop "cannot establish whether \$1 is active: the unit controller gave an error" ;; esac; }/*) return 1 ;; esac; }/' &&
   { WG=$B/mut/M5.sh; t_unitserr; r=$?; WG=; check "M5 (controller error read as inactive) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
-mutate M6 's/^  move_marker_aside force; stop /  stop /' &&
+mutate M6 's/^  move_marker_aside force; \[ -n /  [ -n /' &&
   { WG=$B/mut/M6.sh; t_cleanup; r=$?; WG=; check "M6 (failed restart leaves the marker in place) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M7 's/under_self "\$p" || //g' &&
   { WG=$B/mut/M7.sh; t_self; r=$?; WG=; check "M7 (own processes counted as agents) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
@@ -599,7 +626,13 @@ mutate M31 '/^restarted_holds()/,/^do_restart/ s/unrecord_bail/stop/' &&
   { WG=$B/mut/M31.sh; t_holdsbail; r=$?; WG=; check "M31 (a failed recorded-restart check left as a plain STOP) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M32 '/^restarted_holds()/,/^do_restart/ s/\[ "\$(unit_state "\$u")" = active \] || unrecord_bail/is_active "$u" || unrecord_bail/' &&
   { WG=$B/mut/M32.sh; t_holdsunknown; r=$?; WG=; check "M32 (an unknown timer state in a recorded restart skips the cleanup) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
-mutate M33 's/^  move_marker_aside force; stop /  move_marker_aside; stop /' &&
+mutate M33 's/^  move_marker_aside force; \[ -n /  move_marker_aside; [ -n /' &&
   { WG=$B/mut/M33.sh; t_holdsmarker; r=$?; WG=; check "M33 (a changed marker left in the checkout by the cleanup) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 
+mutate M34 's/^  if restarting_any; then rbail /  if false; then rbail /' &&
+  { WG=$B/mut/M34.sh; t_restartcrash; r=$?; WG=; check "M34 (an earlier restart attempt that left no record is not looked for) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M35 's/\[ ! -e "\$ROOT\/.git-autosync" \] || unrecord_bail "restart \$1 is recorded with no marker[^"]*"/:/' &&
+  { WG=$B/mut/M35.sh; t_holdsnone; r=$?; WG=; check "M35 (a recorded no-marker restart does not check the marker stays absent) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M36 's/^  if \[ "\${1:-}" = force \] \&\& \[ ! -e "\$G\/marker" \]/  if false \&\& [ ! -e "$G\/marker" ]/' &&
+  { WG=$B/mut/M36.sh; t_holdsnone; r=$?; WG=; check "M36 (cleanup of a no-marker record makes a marker record instead of keeping the bytes) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 if [ $fails = 0 ]; then echo "GATE0-RUN: PASS"; exit 0; else echo "GATE0-RUN: FAIL ($fails)"; exit 1; fi
