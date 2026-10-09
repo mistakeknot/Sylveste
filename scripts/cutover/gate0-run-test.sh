@@ -78,11 +78,19 @@ for u in "\$@"; do case \$act in
   active) [ ! -e "\$S/ctl-error" ] || exit 4; [ -e "\$S/units/\$u" ] || exit 3 ;;
   start) [ ! -e "\$S/failstart-\$u" ] || exit 1
          if [ "\$u" = git-autosync-repair.service ]; then echo "start \$(date +%s)" >> "\$S/starts"
-           [ -e "\$S/nojournal" ] || echo "1 autosync repo(s): 1 unchanged" > "\$S/journal.txt"
+           [ -e "\$S/nojournal" ] || echo "1 autosync repo(s): 1 unchanged" >> "\$S/jlog"
          else [ -e "\$S/lie-\$u" ] || touch "\$S/units/\$u"; [ ! -e "\$S/lockg" ] || chmod a-w "$J/gate0-run"; fi ;;
   esac; done
 EOF
-printf '#!/bin/bash\ncat %q 2>/dev/null; true\n' "$ST/journal.txt" > "$B/stub/journalctl"
+# journalctl: an append-only log whose cursor is the number of lines so far (--show-cursor), read back with --after-cursor
+cat > "$B/stub/journalctl" <<EOF
+#!/bin/bash
+f=$ST/jlog; touch "\$f"
+for a in "\$@"; do case \$a in
+  --show-cursor) echo "-- cursor: \$(wc -l < "\$f" | tr -d ' ')"; exit 0 ;;
+  --after-cursor=*) tail -n +\$(( \${a#--after-cursor=} + 1 )) "\$f"; exit 0 ;; esac; done
+cat "\$f"
+EOF
 cat > "$B/lib/autosync-lane.sh" <<EOF
 # stub lane library: asl_resolve REPO [REMOTE] validates, asl_tip REPO REF reads the tip
 asl_resolve() { ASL_REASON=; ASL_SLUG=fixture/lane; ASL_NAME=\$2
@@ -129,7 +137,14 @@ cat > "$B/bin/sweep" <<EOF
 #!/bin/bash
 touch "$ST/sweep-ran"; [ ! -e "$ST/sweep-fail" ] || exit 1; echo "drift fixture" > "$B/drift.txt"
 EOF
-chmod +x "$B/bin/sweep" "$B/stub/lsof" "$B/stub/ps" "$B/bin/ctl" "$B/stub/journalctl" "$B/bin/pred" "$B/bin/tell"
+REALGIT=$(command -v git)
+cat > "$B/stub/git" <<EOF
+#!/bin/bash
+# the real git, except that reading the tracker file from a commit fails while $ST/failshow exists (an unreadable object)
+if [ -e "$ST/failshow" ]; then case " \$* " in *" show "*":.beads/issues.jsonl"*) echo "fatal: bad object (stub)" >&2; exit 128 ;; esac; fi
+exec $REALGIT "\$@"
+EOF
+chmod +x "$B/stub/git" "$B/bin/sweep" "$B/stub/lsof" "$B/stub/ps" "$B/bin/ctl" "$B/stub/journalctl" "$B/bin/pred" "$B/bin/tell"
 rec() { printf '{"_type":"issue","id":"%s","title":"%s","status":"open","priority":2,"issue_type":"task","created_at":"%s","updated_at":"%s"}\n' "$1" "$2" "$3" "$3"; }
 rec fx-one one 2026-10-01T00:00:01Z > "$B/one.jsonl"
 { rec fx-two two 2026-10-01T00:00:02Z; cat "$B/one.jsonl"; } > "$B/trk.jsonl"
@@ -346,6 +361,37 @@ t_unconfirmed() {  # a stop the wrapper cannot confirm in cleanup is said so, wi
   UCS="$UC/$(timers)/$([ -e "$R/.git-autosync" ] && echo marker)"
   [ "$UCS" = "3/yes/no/" ] && grep -q 'UNCONFIRMED: these units are not confirmed stopped: git-autosync-repair.timer' "$B/out.uc"; }
 
+t_refreezecrash() {  # a crash while a new freeze clears the earlier attempt's records must not lose the restart set, at either point
+  local pt pat crash=$B/mut/crash.sh rc rc2 n left; RZS=
+  for pt in restarted intent; do
+    case $pt in restarted) pat='^  rm -f -- "\$G"\/restarted-\*' ;; intent) pat='^  rm -f -- "\$G\/freeze-intent"' ;; esac
+    sed "/$pat/i exit 9" "${WG:-$GW}" > "$crash"; chmod +x "$crash"; cp "$HERE/cutover-steps.sh" "$B/mut/cutover-steps.sh"
+    cmp -s "${WG:-$GW}" "$crash" && { echo "  FAIL crash copy for $pt changed nothing"; return 1; }
+    restore r0a; wg restart r0 > "$B/out.rz" 2>&1 || return 1
+    WG=$crash wg freeze >> "$B/out.rz" 2>&1; rc=$?
+    wg freeze >> "$B/out.rz" 2>&1; rc2=$?
+    n=$(grep -c '^timer ' "$J/gate0-run/freeze" 2>/dev/null)
+    left=$([ -e "$J/gate0-run/restarted-r0" ] && echo restarted; [ -e "$J/gate0-run/freeze-intent" ] && echo intent)
+    RZS="$RZS$rc/$rc2/$n/$left/"
+  done
+  [ "$RZS" = "9/0/2//9/0/2//" ]; }
+t_reconcileread() {  # a tracker file that cannot be read from a commit that lists it is a STOP, not an empty file
+  restore r0a; touch "$ST/failshow"
+  wg restart r0 > "$B/out.rr" 2>&1; RRC=$?; rm -f "$ST/failshow"
+  RRS="$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)/$(nstarts)"
+  [ "$RRC/$RRS" = "3//no/no/0" ] && grep -q 'cannot read .beads/issues.jsonl at' "$B/out.rr"; }
+t_stalejournal() {  # lines of an earlier run in the journal are not this run's evidence
+  restore r0a; echo "1 autosync repo(s): 1 unchanged" >> "$ST/jlog"; touch "$ST/nojournal"
+  wg restart r0 > "$B/out.sj" 2>&1; SJC=$?
+  SJS="$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)"
+  [ "$SJC/$SJS" = "3//no/no" ]; }
+t_holdsbail() {  # a recorded restart whose state no longer holds is undone like any failed restart: timers stopped, marker aside, record gone
+  restore r0a; wg restart r0 > "$B/out.hb" 2>&1 || return 1
+  rm -f "$ST/units/git-autosync-promote.timer"
+  wg restart r0 >> "$B/out.hb" 2>&1; HBC=$?
+  HBS="$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)/$([ -e "$J/gate0-run/restarted-r0" ] && echo recorded)"
+  [ "$HBC/$HBS" = "3//no/no/" ]; }
+
 echo "== --check forms change nothing"
 restore fx; c0=$(ckfp); j0=$(jfp); l0=$(lanerefs)
 WG= wg --check > "$B/out" 2>&1; check "--check" "$?" 0
@@ -461,6 +507,10 @@ t_unreadable; check "a live process with an unreadable working directory is a ST
 t_failstop; check "a freeze whose stop failed midway: the repeat keeps the timer already stopped in the restart set, then holds" "$FSS/$?" "3/no/yes/0/no/no/2//0"
 t_staledrift; check "Clavain: a sweep that writes no new drift report is a STOP (the earlier report is put back); a fresh one is accepted" "$SDS/$?" "3/old drift//no/no/0/drift fixture/0"
 t_unconfirmed; check "a cleanup stop that cannot be confirmed is reported with the unit named; the marker is still aside" "$UCS/$?" "3/yes/no//0"
+t_refreezecrash; check "a crash while a new freeze clears the earlier records loses nothing at either point: the repeat holds both timers" "$RZS/$?" "9/0/2//9/0/2///0"
+t_reconcileread; check "a tracker file that cannot be read from a commit that lists it is a STOP: marker aside, timers stopped, nothing started" "$RRC/$RRS/$?" "3//no/no/0/0"
+t_stalejournal; check "a journal that holds only an earlier run's summary line is not this run's evidence: STOP, marker aside, timers stopped" "$SJC/$SJS/$?" "3//no/no/0"
+t_holdsbail; check "a recorded restart whose timer is no longer active is undone: timers stopped, marker aside, record removed" "$HBC/$HBS/$?" "3//no/no//0"
 
 echo "== mutation controls (each must be judged NOT fail-closed)"
 mutate() {  # NAME SEDEXPR : a copy of the wrapper with one safeguard removed; WG names it
@@ -484,7 +534,7 @@ mutate M7 's/under_self "\$p" || //g' &&
   { WG=$B/mut/M7.sh; t_self; r=$?; WG=; check "M7 (own processes counted as agents) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M8 's/2> "\$pred.err"/2>\&1/' &&
   { WG=$B/mut/M8.sh; t_noise; r=$?; WG=; check "M8 (predictor stderr in the prediction) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
-mutate M9 's/^  a=\$(agents_in_root).*$/  :/' &&
+mutate M9 's/^  a=\$(agents_in_root) || stop "cannot list the processes (lsof or \/proc): the freeze cannot be confirmed"/  a=/' &&
   { WG=$B/mut/M9.sh; t_agentre; r=$?; WG=; check "M9 (no agent re-check at capture) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M10 's/^  if \[ -e "\$G\/restarted-\$ex" \]; then restarted_holds.*$/  :/' &&
   { WG=$B/mut/M10.sh; t_restart_idem; r=$?; WG=; check "M10 (a repeated restart runs again) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
@@ -523,5 +573,13 @@ mutate M26 's/^  \[ ! -e "\$DRIFT" \] || mv -f -- "\$DRIFT" "\$LOGD\/drift.befor
   { WG=$B/mut/M26.sh; t_staledrift; r=$?; WG=; check "M26 (an earlier drift report accepted) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M27 's/^  \[ -z "\$bad" \] || say .*$/  :/; s/\${bad:+; UNCONFIRMED stop of\$bad}//' &&
   { WG=$B/mut/M27.sh; t_unconfirmed; r=$?; WG=; check "M27 (an unconfirmed stop not reported) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M28 's/^  rm -f -- "\$G"\/restarted-\*/  rm -f -- "$G\/freeze-intent"\n&/; /^  rm -f -- "\$G\/freeze-intent"   # last/d' &&
+  { WG=$B/mut/M28.sh; t_refreezecrash; r=$?; WG=; check "M28 (the restart set dropped before the earlier restart records) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M29 's/2>\/dev\/null || stop "cannot read .beads\/issues.jsonl at \$t (the tree lists it): its records cannot be compared"/2>\/dev\/null || : > "$LOGD\/jsonl.$t"/' &&
+  { WG=$B/mut/M29.sh; t_reconcileread; r=$?; WG=; check "M29 (an unreadable tracker file read as empty) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M30 's/ --after-cursor="\$1"//' &&
+  { WG=$B/mut/M30.sh; t_stalejournal; r=$?; WG=; check "M30 (journal lines not tied to this start) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M31 '/^restarted_holds()/,/^do_restart/ s/unrecord_bail/stop/' &&
+  { WG=$B/mut/M31.sh; t_holdsbail; r=$?; WG=; check "M31 (a failed recorded-restart check left as a plain STOP) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 
 if [ $fails = 0 ]; then echo "GATE0-RUN: PASS"; exit 0; else echo "GATE0-RUN: FAIL ($fails)"; exit 1; fi
