@@ -59,8 +59,8 @@ export GIT_OPTIONAL_LOCKS=0   # no git command of this script, nor the steps it 
 HERE=$(cd "$(dirname "$0")" && pwd -P); SELF=$HERE/$(basename "$0")
 # the hash tool is chosen by a known answer (the digest of no input), so a present but broken sha256sum falls back
 if [ "$(printf '' | sha256sum 2>/dev/null | cut -d' ' -f1)" = e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 ]
-then sha() { local h; h=$(sha256sum | cut -d' ' -f1) && [[ $h =~ ^[0-9a-f]{64}$ ]] && printf '%s\n' "$h"; }
-else sha() { local h; h=$(shasum -a 256 2>/dev/null | cut -d' ' -f1) && [[ $h =~ ^[0-9a-f]{64}$ ]] && printf '%s\n' "$h"; }; fi   # a hash that fails prints nothing and fails: two failed hashes are never "equal"
+then sha() { local h; h=$(set -o pipefail; sha256sum | cut -d' ' -f1) && [[ $h =~ ^[0-9a-f]{64}$ ]] && printf '%s\n' "$h"; }
+else sha() { local h; h=$(set -o pipefail; shasum -a 256 2>/dev/null | cut -d' ' -f1) && [[ $h =~ ^[0-9a-f]{64}$ ]] && printf '%s\n' "$h"; }; fi   # a hash that fails prints nothing and fails: two failed hashes are never "equal"
 SELF_SHA=$(sha < "$SELF")
 [[ $SELF_SHA =~ ^[0-9a-f]{64}$ ]] || { echo "gate0-run: no sha256 of this script (neither sha256sum nor shasum -a 256 works); refusing" >&2; exit 1; }
 CS=${GATE0_CS:-$HERE/cutover-steps.sh}; PRED=${GATE0_PRED:-$HERE/restart-predict.sh}
@@ -174,8 +174,8 @@ unit_state() {  # UNIT : active | inactive | unknown; a controller error is unkn
     case $rc in 0) echo active ;; 3) echo inactive ;; *) echo unknown ;; esac; return 0; fi
   [ "$(uname -s)" = Linux ] || { echo unknown; return 0; }
   export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}
-  out=$(systemctl --user is-active "$u" 2>/dev/null)
-  case $out in active|activating|reloading|deactivating) echo active ;; inactive|failed) echo inactive ;; *) echo unknown ;; esac; }
+  out=$(systemctl --user is-active "$u" 2>/dev/null); rc=$?   # the word and the status must agree: active is 0, inactive and failed are nonzero (3)
+  case $out/$rc in active/0) echo active ;; inactive/[1-9]*|failed/[1-9]*) echo inactive ;; *) echo unknown ;; esac; }   # activating, reloading, deactivating and a word that disagrees with its status are not confirmed either way
 is_active() {  # UNIT : 0 active, 1 confirmed inactive; any other answer is a STOP
   case $(unit_state "$1") in active) return 0 ;; inactive) return 1 ;; *) stop "cannot establish whether $1 is active: the unit controller gave an error" ;; esac; }
 
@@ -209,8 +209,8 @@ $out
 " in *"
 p$$
 "*) ;; *) return 2 ;; esac
-    printf '%s\n' "$out" | awk -v r="$ROOT" '/^p/{p=substr($0,2)} /^c/{c=substr($0,2)} /^n/{n=substr($0,2); if (n==r || index(n, r "/")==1) print p, c}' |
-      while read -r p c; do case $skip in *" $p "*) ;; *) under_self "$p" || echo "$p $c" ;; esac; done
+    out=$(set -o pipefail; printf '%s\n' "$out" | awk -v r="$ROOT" '/^p/{p=substr($0,2)} /^c/{c=substr($0,2)} /^n/{n=substr($0,2); if (n==r || index(n, r "/")==1) print p, c}') || return 2   # a filter that fails shows no agents; that is not "none"
+    while read -r p c; do [ -n "$p" ] || continue; case $skip in *" $p "*) ;; *) under_self "$p" || echo "$p $c" ;; esac; done <<< "$out"
   fi; return 0; }
 bd_writers() {  # "pid bd" for each process named bd; status 2 when the process table cannot be read (it must list this script itself)
   local out; out=$(ps -A -o pid= -o comm= 2>/dev/null) || return 2
@@ -243,7 +243,7 @@ move_marker_aside() {  # [force] : the marker is untracked and ignored; keep its
 
 # ---- preflight (P0)
 ready_checks() {  # the P0 readiness list, read-only
-  local gd p b h u st ut
+  local gd p b h u st ut rm_
   hook_check   # first: the fetch below can run an installed reference-transaction hook
   [ "$(pg symbolic-ref -q HEAD)" = refs/heads/main ] || stop "HEAD is not main"
   gd=$(pg rev-parse --absolute-git-dir) && [ -n "$gd" ] || stop "cannot read the git directory: the operation-state files cannot be checked"
@@ -251,7 +251,8 @@ ready_checks() {  # the P0 readiness list, read-only
   [ -z "$(pg ls-files -u)" ] || stop "unmerged entries"
   pg diff --cached --quiet || stop "staged entries"
   if [ $CHECKMODE = 0 ]; then pg fetch -q origin || stop "git fetch origin failed"
-  else [ "$(pg ls-remote origin refs/heads/main | cut -f1)" = "$(pg rev-parse refs/remotes/origin/main)" ] || stop "check: origin/main differs from the remote-tracking ref; fetch first"; fi
+  else rm_=$(set -o pipefail; pg ls-remote origin refs/heads/main | cut -f1) && [[ $rm_ =~ ^[0-9a-f]{40}$ ]] || stop "check: cannot read origin/main from the remote"   # two failed reads are not equal
+    [ "$rm_" = "$(pg rev-parse refs/remotes/origin/main)" ] || stop "check: origin/main differs from the remote-tracking ref; fetch first"; fi
   [ "$(pg rev-parse refs/remotes/origin/main)" = "$BASE" ] || stop "origin/main is not the approved base $BASE (no exception; rebuild PR 1 and re-run the rehearsal)"
   b=$(pg rev-list --left-right --count HEAD...refs/remotes/origin/main) || stop "cannot count the commits between HEAD and origin/main"
   b=$(printf '%s' "$b" | tr '\t' ' '); [[ $b =~ ^[0-9]+\ [0-9]+$ ]] || stop "the commit count between HEAD and origin/main is unreadable [$b]"
@@ -469,9 +470,11 @@ restart_server() {  # exit-name  predict-exit
   cur=$(journal_cursor) && [ -n "$cur" ] || rbail "cannot take a journal cursor: lines of an earlier run could not be told from this run's; nothing started, marker moved aside again"
   units start "$REPAIR_SVC"; say "gate0-run: the service start returned $? (the unit's result is not a row signal; the run is judged by Sylveste's lines and the checkout)"
   tries=${GATE0_JOURNAL_TRIES:-10}; n=0
-  while :; do journal_since "$cur" > "$LOGD/journal.txt"; grep -Eq '^[0-9]+ autosync repo\(s\)' "$LOGD/journal.txt" && break
+  jok=0
+  while :; do if journal_since "$cur" > "$LOGD/journal.txt"; then jok=1; grep -Eq '^[0-9]+ autosync repo\(s\)' "$LOGD/journal.txt" && break; else jok=0; fi   # lines read by a failed read are not evidence
     n=$((n+1)); [ "$n" -le "$tries" ] || break; sleep 1; done
   cat "$LOGD/journal.txt" >> "$LOG"
+  [ "$jok" = 1 ] || rbail "the journal could not be read after the start: its lines cannot be trusted; marker moved aside, timers stay stopped"
   grep -Eq '^[0-9]+ autosync repo\(s\)' "$LOGD/journal.txt" || rbail "the start left no '<n> autosync repo(s)' summary line: the run did not happen; marker moved aside, timers stay stopped"
   if ! predict verify "$pred" "$LOGD/journal.txt" > "$LOGD/verify.out" 2>&1; then
     cat "$LOGD/verify.out" >> "$LOG"; cat "$LOGD/verify.out"; rbail "the run differs from the prediction (log lines, committed paths, status after, or lane tip); marker moved aside, timers stay stopped"; fi
