@@ -142,6 +142,12 @@ runlog() {  # command... : run it, show and log its output, keep its exit status
 pg() { git -C "$ROOT" "$@"; }
 inroot() { ( cd "$ROOT" && "$@" ); }   # bd and the steps find the tracker from the working directory: always the checkout's, never the caller's
 cs() { inroot env CUTOVER_REPORT=0 CUTOVER_PATH="$PATH" CUTOVER_BD="$BDBIN" CUTOVER_CHECK_DIR="$LOGD" "$CS" "$ROOT" "$J" "$@"; }
+flush_path() {  # PATH : flush a file or directory to disk; fails when neither sync nor an fsync can do it
+  sync "$1" 2>/dev/null && return 0
+  python3 -I -c 'import os,sys
+fd=os.open(sys.argv[1],os.O_RDONLY)
+try: os.fsync(fd)
+finally: os.close(fd)' "$1" 2>/dev/null; }
 put() {  # file text [handler] : atomic, durable replace (skipped in --check); a failure calls the handler (default stop)
   [ $CHECKMODE = 0 ] || return 0
   local t="$1.tmp.$$"; printf '%s\n' "$2" > "$t" && { sync "$t" 2>/dev/null || sync; } && mv -f -- "$t" "$1" && { sync "$(dirname "$1")" 2>/dev/null || sync; } ||
@@ -346,11 +352,13 @@ preserve_copy() {  # the capture, outside the journal, verified file by file
   local o d f s; o=$(cat "$J/p1-pre/head"); pres_check; d=$PD
   [ -f "$J/capture/sha256" ] || stop "no capture to copy"
   mkdir -p "$d" || stop "cannot create $d"
-  for f in main.bundle wtree.tar wtree.manifest sha256; do cp -p "$J/capture/$f" "$d/$f.tmp.$$" 2>/dev/null && mv -f -- "$d/$f.tmp.$$" "$d/$f" || stop "cannot copy $f"; done
+  for f in main.bundle wtree.tar wtree.manifest sha256; do
+    cp -p "$J/capture/$f" "$d/$f.tmp.$$" 2>/dev/null && flush_path "$d/$f.tmp.$$" && mv -f -- "$d/$f.tmp.$$" "$d/$f" || { rm -f -- "$d/$f.tmp.$$"; stop "cannot copy and flush $f"; }; done
   while IFS=$(printf '\t') read -r f s; do
     [ -n "$s" ] && [ "$(sha < "$d/$f")" = "$s" ] && cmp -s "$d/$f" "$J/capture/$f" || stop "the preservation copy of $f differs from the capture"; done < "$J/capture/sha256"
   cmp -s "$d/wtree.manifest" "$J/capture/wtree.manifest" || stop "the copied W-snapshot manifest differs"
-  sync "$d" 2>/dev/null || sync
+  for f in main.bundle wtree.tar wtree.manifest sha256; do flush_path "$d/$f" || stop "cannot flush $d/$f"; done
+  flush_path "$d" || stop "cannot flush the directory $d: the copy is not known to be on disk"
   say "gate0-run: preservation copy verified in $d (bundle and W-snapshot sha256 in $d/sha256)"; }
 do_capture() {
   local o
@@ -371,6 +379,9 @@ do_capture() {
   if [ "$o" = "$BASE" ]; then
     say "gate0-run: main equals the base: P1a does not run; P1-pre's record stands"; put "$G/p1a-skipped" "$o"; return 0; fi
   freeze_holds   # quiescence, once more, immediately before the checkout is realigned
+  # the archive destination is validated again now, and its push URL must be the one just validated: P1a pushes the internal commits there
+  archive_check
+  [ -n "${ASL_URL:-}" ] && [ "$(pg remote get-url --push "$LANE" 2>/dev/null)" = "$ASL_URL" ] || stop "the push URL of $LANE is not the one just validated; nothing was pushed or realigned"
   runlog cs p1a || stop "P1a failed (see the log; the journal holds the checkpoint and intent; re-run to continue)"
   recheck_after_p1a
   preserve_copy
@@ -406,7 +417,7 @@ journal_since() { journalctl --user -u "$REPAIR_SVC" --after-cursor="$1" --no-pa
 predict() { RESTART_REPORT=0 "$PRED" "$@"; }   # the wrapper reports once; the predictor's own report sender stays off
 rbail() {  # back to the frozen state: every recorded timer stopped, each timer and service read back, the marker aside; a stop that cannot be confirmed is said so
   local u bad=
-  for u in $(sed -n 's/^timer //p' "$G/freeze"); do units stop "$u" >/dev/null 2>&1; done
+  for u in $(sed -n 's/^timer //p' "$G/freeze") $SERVICES; do units stop "$u" >/dev/null 2>&1; done   # a service a cut-off restart left running is stopped too
   for u in $(sed -n 's/^timer //p' "$G/freeze") $SERVICES; do [ "$(unit_state "$u")" = inactive ] || bad="$bad $u"; done
   [ -z "$bad" ] || say "gate0-run: UNCONFIRMED: these units are not confirmed stopped:$bad; a human must stop them before anything else runs" >&2
   move_marker_aside force; [ -n "$bad" ] || rm -f -- "$G"/restarting-*   # the attempt is closed only when every unit is confirmed stopped and the marker is aside
@@ -443,11 +454,12 @@ restart_server() {  # exit-name  predict-exit
   [ "$tags0" = "$tags1" ] && [ "$arch0" = "$arch1" ] || rbail "the tag or an archive branch changed during the restart run; marker moved aside, timers stay stopped"
   tip1=$(pg ls-remote "$LANE" "refs/heads/autosync/$h" | cut -f1); say "gate0-run: lane tip autosync/$h: ${tip0:-absent} -> ${tip1:-absent}"; }
 restart_clavain() {  # exit-name
-  local pred rc
+  local pred rc tipn
   [ ! -e "$PAUSE" ] || stop "the automations are paused ($PAUSE exists): the sweep would exit at once; remove it deliberately and re-run"
   if [ "$(sed -n 's/^marker //p' "$G/freeze")" = none ]; then
     say "gate0-run: P0 found no marker: Clavain has no autosync to restart (row 8)"
-    [ "$(pg ls-remote "$LANE" "refs/heads/autosync/$HOST" | cut -f1)" = "$(cat "$J/p0/lane" 2>/dev/null)" ] || stop "the Clavain lane tip changed with no marker"
+    tipn=$(pg ls-remote "$LANE" "refs/heads/autosync/$HOST") || stop "cannot read the Clavain lane tip: an unreadable lane is not an unchanged one"
+    [ "$(printf '%s' "$tipn" | cut -f1)" = "$(cat "$J/p0/lane" 2>/dev/null)" ] || stop "the Clavain lane tip changed with no marker"
     return 0; fi
   [ -f "$G/marker" ] && grep -qE '^LANE=1[[:space:]]*$' "$G/marker" || stop "the marker to restore has no LANE=1: a state in no row"
   restore_marker
