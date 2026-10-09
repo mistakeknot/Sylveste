@@ -150,3 +150,44 @@ __pycache__/
 # Advisory lock files from flux-drive/flux-melange runs. Transient by nature:
 # the owning process is gone, so a stale one only misleads a future run.
 *.jsonl.lock
+
+# ── Internal planning docs, agent output and state (kept in the private overlay) ──
+# These paths are untracked in the public repo (bead mk-z9st.22). The overlay
+# repo holds them; scripts/git-internal drives it. Ignored here so a stray
+# `git add -A` cannot republish them.
+/.git-internal/
+.tldrs/
+/docs/research/
+/docs/research-notes/
+/docs/plans/
+/docs/planning/
+/docs/brainstorms/
+/docs/prds/
+/docs/prd/
+/docs/goals/
+/docs/handoffs/
+/docs/reflections/
+/docs/reflect/
+/docs/sprints/
+/docs/audits/
+/docs/reviews/
+/docs/traces/
+/docs/evidence/
+/docs/measurements/
+/docs/flux-drive/
+/docs/flux-review/
+/todos/
+/.claude/flux-drive-output/
+/.claude/reviews/
+/.claude/memory-modularity-research.md
+/.claude/clodex-toggle.flag
+/.clavain/calibration-streak.json
+/.clavain/calibration-streak.lock
+/.clavain/daemon/
+/.clavain/dod/
+/.clavain/orphan-triage-*.md
+/.clavain/reflections/
+/.clavain/setup-verified
+/.interfluence/reference-corpora/
+/.interfluence/corpus/
+.clavain/*.lock
