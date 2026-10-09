@@ -231,7 +231,7 @@ When a new piece of memory needs a home:
 
 **Curated knowledge converges.** Multiple C4 stores (interknow, compound docs) converge into a single write path and read path, with shared provenance metadata. The goal is one place to look for validated engineering knowledge, not three.
 
-See `docs/prds/2026-03-07-memory-architecture-convergence.md` for the full system map, per-system recommendations, and implementation sequence.
+See `2026-03-07-memory-architecture-convergence.md` (internal doc, not in the public tree) for the full system map, per-system recommendations, and implementation sequence.
 
 ---
 

@@ -4,7 +4,7 @@ CUJ documents describe end-to-end user experiences that the product must support
 
 ## Template
 
-See the [brainstorm](../brainstorms/2026-03-05-cujs-as-first-class-artifacts.md) for the full design rationale.
+See the brainstorm (internal doc, not in the public tree) for the full design rationale.
 
 Generate a new CUJ: `/interpath:cuj`
 

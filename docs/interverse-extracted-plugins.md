@@ -398,7 +398,7 @@ outlier.
 
 ## See also
 
-- `docs/reflections/2026-07-25-monorepo-tree-cleanup-reflect.md` — where the 198
+- `2026-07-25-monorepo-tree-cleanup-reflect.md` (internal doc, not in the public tree) — where the 198
   were first found
 - `docs/solutions/2026-07-25-unattended-work-needs-a-stopped-signal.md`
   § "Adjacent: ignore-noise buries real work"

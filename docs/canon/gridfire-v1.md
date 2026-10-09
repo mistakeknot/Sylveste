@@ -7,7 +7,7 @@ superseded_by: (none)
 
 # Gridfire — v1: MCP OAuth Resource Indicators
 
-Gridfire's **P6 Capability** primitive (see `docs/brainstorms/2026-02-27-gridfire-brainstorm.md` and `MISSION.md`) is the deny-by-default, unforgeable capability-token system that replaces ambient authority for agent action. The full vision — unforgeable tokens with effects allowlists, resource bounds, expiry, and delegation chains — is a multi-quarter build. This document specifies the **v1 implementation**: Sylveste adopts **MCP OAuth Resource Indicators (RFC 8707)** as its capability-scoped token mechanism for agent-to-tool calls.
+Gridfire's **P6 Capability** primitive (see `2026-02-27-gridfire-brainstorm.md` (internal doc, not in the public tree) and `MISSION.md`) is the deny-by-default, unforgeable capability-token system that replaces ambient authority for agent action. The full vision — unforgeable tokens with effects allowlists, resource bounds, expiry, and delegation chains — is a multi-quarter build. This document specifies the **v1 implementation**: Sylveste adopts **MCP OAuth Resource Indicators (RFC 8707)** as its capability-scoped token mechanism for agent-to-tool calls.
 
 Resource Indicators are already required in MCP clients as of late 2025; ten thousand-plus active MCP servers ship the primitive in production. The standard is peer-reviewed (IETF RFC 8707), interoperable across the 500+ public MCP servers, and removes the entire class of token-confusion attacks. Adopting it for v1 frees the Gridfire team to focus on the v2 primitives that no one else is building yet.
 
@@ -104,8 +104,8 @@ This canon doc is the spec; landing it satisfies the docs-level component of `sy
 
 - RFC 8707 — Resource Indicators for OAuth 2.0: https://datatracker.ietf.org/doc/html/rfc8707
 - MCP authorization spec: https://modelcontextprotocol.io/specification/ (auth section)
-- Gridfire vision: `docs/brainstorms/2026-02-27-gridfire-brainstorm.md` (P6 Capability primitive)
+- Gridfire vision: `2026-02-27-gridfire-brainstorm.md` (internal doc, not in the public tree) (P6 Capability primitive)
 - A2A security scheme advertisement: `docs/canon/intercom-transport-target.md` (Authentication)
 - Internal gate-op token system (distinct): `docs/canon/authz-token-model.md`
-- Synthesis source: `docs/research/flux-research/sylveste-ecosystem-strategic-scan-2026q2-mythos-gate-e359cecd/SYNTHESIS.md` (Tier 2 #6)
+- Synthesis source: `SYNTHESIS.md` (internal doc, not in the public tree) (Tier 2 #6)
 - Beads: `sylveste-ewy3.3` (this doc), `sylveste-ewy3.4` (A2A target, referencing this), `sylveste-3xl3` (Agent Teams epic that will exercise Resource Indicators on the first MCP integration).

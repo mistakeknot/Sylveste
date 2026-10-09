@@ -162,5 +162,5 @@ This canon doc satisfies acceptance criterion #1 of `sylveste-ewy3.5`. Implement
 - Capability tokens (action-grant side): `docs/canon/gridfire-v1.md`
 - A2A artifact carrier: `docs/canon/intercom-transport-target.md` (§Sylveste-sprint↔A2A-Task adapter)
 - PHILOSOPHY: `PHILOSOPHY.md` § "Receipts Close Loops" + § "Evidence Earns Authority"
-- Synthesis source: `docs/research/flux-research/sylveste-ecosystem-strategic-scan-2026q2-mythos-gate-e359cecd/SYNTHESIS.md` (Moat opportunity #6, best-practices-researcher Finding "What's NOT Happening")
+- Synthesis source: `SYNTHESIS.md` (internal doc, not in the public tree) (Moat opportunity #6, best-practices-researcher Finding "What's NOT Happening")
 - Beads: `sylveste-ewy3.5` (this doc), `sylveste-ewy3` (parent epic). Implementation follow-ups filed alongside.

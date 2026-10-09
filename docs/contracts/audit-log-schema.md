@@ -63,7 +63,7 @@ operator (cron job → external storage if long-term analysis is needed).
   rows into the evidence store under `source_kind='skill'`, then derives per-skill
   composite quality scores from four signals (tokens, bead_close,
   no_redirect, error). See
-  `docs/plans/2026-06-16-interspect-skill-calibration.md`. No schema change —
+  `2026-06-16-interspect-skill-calibration.md` (internal doc, not in the public tree). No schema change —
   `tool: "Skill"` is already captured per the example above.
 
 ## Versioning
