@@ -139,5 +139,18 @@ Further properties, each with a test and a mutation control in `gate0-run-test.s
 - A restart recorded with no marker (the freeze found none) checks that no marker has appeared; one that
   has is undone like any other mismatch. A cleanup with no marker recorded keeps a marker it finds as
   `marker.unexpected.<sha256>` and removes the live file, without creating a marker record.
+- Capture validates the archive destination again after the last freeze check, immediately before the
+  checkout is realigned, and the destination's push URL must be the one the lane library just validated;
+  a destination that stopped being acceptable, or a push URL that changed in between, is a STOP before P1a
+  pushes anything. (The push inside `cutover-steps.sh` itself cannot be re-validated from outside; that
+  file is not edited by this wrapper's change, so only the read-back after its push covers a change made
+  after this check.)
+- The preservation copy is flushed file by file (the temporary copy before it is moved, each verified file
+  and the directory) with the status of each flush checked; a flush that fails is a STOP and the capture is
+  not recorded. `sync` is tried first, then an `fsync` of the path.
+- A Clavain restart recorded with no marker reads the lane tip with its exit status: a lane that cannot be
+  read is a STOP, never "unchanged".
+- A cleanup (`rbail`) stops the services as well as the timers before it reads them back, so a service a
+  cut-off restart left running is stopped, and the next restart is a new attempt.
 
 The wrapper's own sha256 changes with any edit. A handoff cites the digest of the final bytes.

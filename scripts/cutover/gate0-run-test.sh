@@ -77,7 +77,7 @@ for u in "\$@"; do case \$act in
   stop) [ ! -e "\$S/failstop-\$u" ] || exit 1; rm -f "\$S/units/\$u" ;;
   active) [ ! -e "\$S/ctl-error" ] || exit 4; [ -e "\$S/units/\$u" ] || exit 3 ;;
   start) [ ! -e "\$S/failstart-\$u" ] || exit 1
-         if [ "\$u" = git-autosync-repair.service ]; then echo "start \$(date +%s)" >> "\$S/starts"
+         if [ "\$u" = git-autosync-repair.service ]; then echo "start \$(date +%s)" >> "\$S/starts"; [ ! -e "\$S/svc-stays-active" ] || touch "\$S/units/\$u"
            [ -e "\$S/nojournal" ] || echo "1 autosync repo(s): 1 unchanged" >> "\$S/jlog"
          else [ -e "\$S/lie-\$u" ] || touch "\$S/units/\$u"; [ ! -e "\$S/lockg" ] || chmod a-w "$J/gate0-run"; fi ;;
   esac; done
@@ -93,8 +93,9 @@ cat "\$f"
 EOF
 cat > "$B/lib/autosync-lane.sh" <<EOF
 # stub lane library: asl_resolve REPO [REMOTE] validates, asl_tip REPO REF reads the tip
-asl_resolve() { ASL_REASON=; ASL_SLUG=fixture/lane; ASL_NAME=\$2
-  [ ! -e "$ST/refuse-archive" ] || { ASL_REASON="not verified private"; return 1; }; }
+asl_resolve() { ASL_REASON=; ASL_SLUG=fixture/lane; ASL_NAME=\$2; ASL_URL=
+  [ ! -e "$ST/refuse-archive" ] || { ASL_REASON="not verified private"; return 1; }
+  if [ -e "$ST/asl-url" ]; then ASL_URL=\$(cat "$ST/asl-url"); else ASL_URL=\$(git -C "\$1" remote get-url --push "\$2"); fi; }
 asl_tip() { ASL_TIP=\$(git -C "\$1" ls-remote "\$ASL_NAME" "refs/heads/\$2" | cut -f1); }
 EOF
 cat > "$B/bin/pred" <<EOF
@@ -133,6 +134,18 @@ p=\$PPID
 while [ -n "\$p" ] && [ "\$p" -gt 1 ]; do printf 'p%s\ncfake\nn/nowhere\n' "\$p"; p=\$($REALPS -o ppid= -p "\$p" | tr -d ' '); done
 exit 1
 EOF
+# sync, except that it fails for an argument matching the glob in $ST/failsync (a flush that does not happen); the python fsync fallback too
+cat > "$B/stub/sync" <<EOF
+#!/bin/bash
+if [ -e "$ST/failsync" ]; then for a in "\$@"; do case \$a in \$(cat "$ST/failsync")) exit 1 ;; esac; done; fi
+exec /bin/sync "\$@"
+EOF
+REALPY=$(command -v python3)
+cat > "$B/stub/python3" <<EOF
+#!/bin/bash
+if [ -e "$ST/failsync" ]; then case \${!#} in \$(cat "$ST/failsync")) exit 1 ;; esac; fi
+exec $REALPY "\$@"
+EOF
 cat > "$B/bin/sweep" <<EOF
 #!/bin/bash
 touch "$ST/sweep-ran"; [ ! -e "$ST/sweep-fail" ] || exit 1; echo "drift fixture" > "$B/drift.txt"
@@ -142,9 +155,11 @@ cat > "$B/stub/git" <<EOF
 #!/bin/bash
 # the real git, except that reading the tracker file from a commit fails while $ST/failshow exists (an unreadable object)
 if [ -e "$ST/failshow" ]; then case " \$* " in *" show "*":.beads/issues.jsonl"*) echo "fatal: bad object (stub)" >&2; exit 128 ;; esac; fi
+# the lane cannot be read by the wrapper's own git calls (the steps it runs read it through their own, which still work)
+if [ -e "$ST/fail-lsremote" ]; then case " \$* " in *" ls-remote "*) case "\$($REALPS -o args= -p \$PPID)" in *cutover-steps*) ;; *) echo "fatal: unable to access the lane (stub)" >&2; exit 128 ;; esac ;; esac; fi
 exec $REALGIT "\$@"
 EOF
-chmod +x "$B/stub/git" "$B/bin/sweep" "$B/stub/lsof" "$B/stub/ps" "$B/bin/ctl" "$B/stub/journalctl" "$B/bin/pred" "$B/bin/tell"
+chmod +x "$B/stub/git" "$B/stub/sync" "$B/stub/python3" "$B/bin/sweep" "$B/stub/lsof" "$B/stub/ps" "$B/bin/ctl" "$B/stub/journalctl" "$B/bin/pred" "$B/bin/tell"
 rec() { printf '{"_type":"issue","id":"%s","title":"%s","status":"open","priority":2,"issue_type":"task","created_at":"%s","updated_at":"%s"}\n' "$1" "$2" "$3" "$3"; }
 rec fx-one one 2026-10-01T00:00:01Z > "$B/one.jsonl"
 { rec fx-two two 2026-10-01T00:00:02Z; cat "$B/one.jsonl"; } > "$B/trk.jsonl"
@@ -409,17 +424,19 @@ t_holdsmarker() {  # a recorded restart whose marker bytes changed is undone too
 t_restartcrash() {  # a restart that ends after it restored the marker and started the service or a timer, before its completion record, is found and undone by the next restart
   local pt pat crash=$B/mut/crash.sh rc rc2 rc3 f; RCS=
   for pt in service timer; do
-    case $pt in service) pat='/^  units start "\$REPAIR_SVC"/i exit 9' ;; timer) pat='/^    units start "\$u" || rbail "cannot re-enable/a exit 9' ;; esac
+    case $pt in service) pat='/^  units start "\$REPAIR_SVC"/a exit 9' ;; timer) pat='/^    units start "\$u" || rbail "cannot re-enable/a exit 9' ;; esac
     sed "$pat" "${WG:-$GW}" > "$crash"; chmod +x "$crash"; cp "$HERE/cutover-steps.sh" "$B/mut/cutover-steps.sh"
     cmp -s "${WG:-$GW}" "$crash" && { echo "  FAIL crash copy for $pt changed nothing"; return 1; }
-    restore r0a; WG=$crash wg restart r0 > "$B/out.rc" 2>&1; rc=$?
-    f="$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)"
+    restore r0a; rm -f "$ST/units/git-autosync-repair.service"; [ $pt != service ] || touch "$ST/svc-stays-active"; WG=$crash wg restart r0 > "$B/out.rc" 2>&1; rc=$?
+    f="$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)/svc-$(active git-autosync-repair.service)"
+    rm -f "$ST/svc-stays-active"   # the retry's own start of the service finishes at once, as the real oneshot does
     wg restart r0 >> "$B/out.rc" 2>&1; rc2=$?
-    f="$f/$rc2/$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)/$(ls "$J/gate0-run" | grep -c '^restart')"
+    f="$f/$rc2/$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)/svc-$(active git-autosync-repair.service)/$(ls "$J/gate0-run" | grep -c '^restart')"
     wg restart r0 >> "$B/out.rc" 2>&1; rc3=$?
     RCS="$RCS$rc/$f/$rc3/$(timers)/$([ -e "$J/gate0-run/restarted-r0" ] && echo recorded);"
   done
-  [ "$RCS" = "9/marker/no/no/3//no/no/0/0/yes/yes/recorded;9/marker/yes/no/3//no/no/0/0/yes/yes/recorded;" ]; }
+  rm -f "$ST/svc-stays-active"
+  [ "$RCS" = "9/marker/no/no/svc-yes/3//no/no/svc-no/0/0/yes/yes/recorded;9/marker/yes/no/svc-no/3//no/no/svc-no/0/0/yes/yes/recorded;" ]; }
 t_holdsnone() {  # Clavain row 8 (no marker) is recorded; a marker that appears afterwards is undone like any state the record does not describe, its bytes kept
   local k; restore r0a; rm -f "$B/drift.txt"; rm -f "$J/gate0-run/marker"; rm -f "$R/.git-autosync"
   sed -i 's/^marker .*/marker none/' "$J/gate0-run/freeze"
@@ -430,6 +447,36 @@ t_holdsnone() {  # Clavain row 8 (no marker) is recorded; a marker that appears 
   k=$(ls "$J/gate0-run"/marker.unexpected.* 2>/dev/null | wc -l)
   HN1S="$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)/$([ -e "$J/gate0-run/restarted-r0" ] && echo recorded)/$k/$([ -e "$J/gate0-run/marker" ] && echo marker-record)"
   [ "$HN0/$HN0S/$HN1/$HN1S" = "0/recorded/yes/yes/3//no/no//1/" ]; }
+
+t_archrecheck() {  # capture validates the archive destination again after the last freeze check, and binds P1a to the push URL it validated
+  local c0 rc1 rc2 rc3 d
+  restore fx; stepto preflight freeze || return 1; touch "$ST/refuse-archive"; c0=$(ckfp)
+  wg capture > "$B/out.ar" 2>&1; rc1=$?
+  d="$(grep -c 'archive destination is not acceptable' "$B/out.ar")/$([ -e "$J/cp" ] && echo cp)/$([ "$(ckfp)" = "$c0" ] && echo same)/$(ls "$W/pres" 2>/dev/null | wc -l)"
+  rm -f "$ST/refuse-archive"
+  restore fx; stepto preflight freeze || return 1; echo "file:///somewhere/else.git" > "$ST/asl-url"; c0=$(ckfp)
+  wg capture > "$B/out.ar" 2>&1; rc2=$?
+  d="$d/$(grep -c 'push URL of lane is not the one just validated' "$B/out.ar")/$([ -e "$J/cp" ] && echo cp)/$([ "$(ckfp)" = "$c0" ] && echo same)"
+  rm -f "$ST/asl-url"
+  restore fx; stepto preflight freeze || return 1
+  wg capture > "$B/out.ar" 2>&1; rc3=$?
+  ARS="$rc1/$rc2/$rc3/$d/$([ -e "$J/cp" ] && echo cp)"
+  [ "$ARS" = "3/3/0/1//same/0/1//same/cp" ]; }
+t_flushfail() {  # a flush that fails is a STOP at every point of the preservation copy; the capture is not recorded as done
+  local pat rc res=; local pats=("*/pres/*/main.bundle.tmp.*" "*/pres/*/wtree.manifest" "*/pres/*/sha256" "*/pres/mA-????????????????????????????????????????")
+  for pat in "${pats[@]}"; do
+    restore fx; stepto preflight freeze || return 1; printf '%s\n' "$pat" > "$ST/failsync"
+    wg capture > "$B/out.ff" 2>&1; rc=$?; rm -f "$ST/failsync"
+    res="$res$rc/$(grep -c 'cannot \(copy and \)\?flush' "$B/out.ff")/$([ -e "$J/gate0-run/captured" ] && echo captured);"
+  done
+  FFS=$res
+  [ "$res" = "3/1/;3/1/;3/1/;3/1/;" ]; }
+t_lanefail() {  # Clavain row 8: a lane that cannot be read is not a lane that has not changed, even when the recorded tip is empty
+  restore r0a; rm -f "$B/drift.txt"; rm -f "$J/gate0-run/marker" "$R/.git-autosync"
+  sed -i 's/^marker .*/marker none/' "$J/gate0-run/freeze"; : > "$J/p0/lane"; touch "$ST/fail-lsremote"
+  GATE0_MACHINE=clavain GATE0_SWEEP="$B/bin/sweep" GATE0_DRIFT_REPORT="$B/drift.txt" wg restart r0 > "$B/out.lf" 2>&1; LFC=$?; rm -f "$ST/fail-lsremote"
+  LFS="$(grep -c 'cannot read the Clavain lane tip' "$B/out.lf")/$([ -e "$J/gate0-run/restarted-r0" ] && echo recorded)/$(timers)"
+  [ "$LFC/$LFS" = "3/1//no/no" ]; }
 
 echo "== --check forms change nothing"
 restore fx; c0=$(ckfp); j0=$(jfp); l0=$(lanerefs)
@@ -552,8 +599,11 @@ t_stalejournal; check "a journal that holds only an earlier run's summary line i
 t_holdsbail; check "a recorded restart whose timer is no longer active is undone: timers stopped, marker aside, record removed" "$HBC/$HBS/$?" "3//no/no//0"
 t_holdsunknown; check "a recorded restart whose timer state cannot be read is undone: timers stopped, marker aside, record removed, UNCONFIRMED said" "$HUC/$HUS/$?" "3//no/no//0"
 t_holdsmarker; check "a recorded restart whose marker bytes changed is undone: the changed bytes kept beside the record, none left in the checkout" "$HMC/$HMS/$?" "3//no/no//1/0"
-t_restartcrash; check "a restart cut off after the marker/service/first timer, before its record: the next restart undoes it (timers stopped, marker aside, attempt closed), the one after runs" "$RCS/$?" "9/marker/no/no/3//no/no/0/0/yes/yes/recorded;9/marker/yes/no/3//no/no/0/0/yes/yes/recorded;/0"
+t_restartcrash; check "a restart cut off after the marker/service/first timer, before its record: the next restart undoes it (timers stopped, marker aside, attempt closed), the one after runs" "$RCS/$?" "9/marker/no/no/svc-yes/3//no/no/svc-no/0/0/yes/yes/recorded;9/marker/yes/no/svc-no/3//no/no/svc-no/0/0/yes/yes/recorded;/0"
 t_holdsnone; check "a recorded no-marker restart: a marker that appears afterwards is undone, its bytes kept, no marker record made" "$HN0/$HN0S/$HN1/$HN1S/$?" "0/recorded/yes/yes/3//no/no//1//0"
+t_archrecheck; check "capture validates the archive destination again after the last freeze check: a refused destination or a push URL that is not the validated one stops it before P1a, checkout unchanged; the validated one proceeds" "$ARS/$?" "3/3/0/1//same/0/1//same/cp/0"
+t_flushfail; check "a flush that fails (the copied file before it is moved, a verified file, the sha256 file, the directory) is a STOP and the capture is not recorded" "$FFS/$?" "3/1/;3/1/;3/1/;3/1/;/0"
+t_lanefail; check "a Clavain no-marker restart whose lane cannot be read is a STOP (not an unchanged lane), nothing recorded, timers stay stopped" "$LFC/$LFS/$?" "3/1//no/no/0"
 
 echo "== mutation controls (each must be judged NOT fail-closed)"
 mutate() {  # NAME SEDEXPR : a copy of the wrapper with one safeguard removed; WG names it
@@ -635,4 +685,18 @@ mutate M35 's/\[ ! -e "\$ROOT\/.git-autosync" \] || unrecord_bail "restart \$1 i
   { WG=$B/mut/M35.sh; t_holdsnone; r=$?; WG=; check "M35 (a recorded no-marker restart does not check the marker stays absent) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M36 's/^  if \[ "\${1:-}" = force \] \&\& \[ ! -e "\$G\/marker" \]/  if false \&\& [ ! -e "$G\/marker" ]/' &&
   { WG=$B/mut/M36.sh; t_holdsnone; r=$?; WG=; check "M36 (cleanup of a no-marker record makes a marker record instead of keeping the bytes) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M37 's/^  archive_check$/  :/' &&
+  { WG=$B/mut/M37.sh; t_archrecheck; r=$?; WG=; check "M37 (no archive destination re-validation before P1a) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M38 's/^  \[ -n "\${ASL_URL:-}" \] && \[ "\$(pg remote get-url --push "\$LANE" 2>\/dev\/null)" = "\$ASL_URL" \] || stop .*/  :/' &&
+  { WG=$B/mut/M38.sh; t_archrecheck; r=$?; WG=; check "M38 (P1a not bound to the validated push URL) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M39 's/ \&\& flush_path "\$d\/\$f.tmp.\$\$"//' &&
+  { WG=$B/mut/M39.sh; t_flushfail; r=$?; WG=; check "M39 (the copied file is not flushed before it is moved) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M40 '/^  for f in main.bundle wtree.tar wtree.manifest sha256; do flush_path/d' &&
+  { WG=$B/mut/M40.sh; t_flushfail; r=$?; WG=; check "M40 (the verified files are not flushed) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M41 's/^  flush_path "\$d" || stop .*/  flush_path "$d" || true/' &&
+  { WG=$B/mut/M41.sh; t_flushfail; r=$?; WG=; check "M41 (a failed directory flush is ignored) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M42 's/^    tipn=\$(pg ls-remote "\$LANE" "refs\/heads\/autosync\/\$HOST") || stop .*/    tipn=$(pg ls-remote "$LANE" "refs\/heads\/autosync\/$HOST")/' &&
+  { WG=$B/mut/M42.sh; t_lanefail; r=$?; WG=; check "M42 (a failed lane read is taken for an unchanged lane) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M43 '/# a service a cut-off restart left running is stopped too/ s/ \$SERVICES;/;/' &&
+  { WG=$B/mut/M43.sh; t_restartcrash; r=$?; WG=; check "M43 (a cleanup does not stop the services) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 if [ $fails = 0 ]; then echo "GATE0-RUN: PASS"; exit 0; else echo "GATE0-RUN: FAIL ($fails)"; exit 1; fi
