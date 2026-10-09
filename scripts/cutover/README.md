@@ -124,5 +124,12 @@ Further properties, each with a test and a mutation control in `gate0-run-test.s
 - A recorded restart whose timers or marker no longer match the record is undone like any other
   failed restart: the record is removed, every timer of the attempt is stopped and the marker is
   aside, so a later restart is a new attempt.
+- A recorded restart whose timer state cannot be read (the controller errors) is not a hard stop
+  that skips cleanup: it goes through the same cleanup, and the STOP names the units that are not
+  confirmed stopped ("UNCONFIRMED").
+- Cleanup does not depend on the marker matching the record. If the marker in the checkout differs
+  from the recorded one, its bytes are first kept beside the record as `marker.unexpected.<sha256>`
+  (copied, flushed and compared), then the live file is removed. A `freeze` still stops when a
+  different marker is already set aside, because that is an operator decision.
 
 The wrapper's own sha256 changes with any edit. A handoff cites the digest of the final bytes.

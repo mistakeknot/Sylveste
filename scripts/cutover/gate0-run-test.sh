@@ -392,6 +392,20 @@ t_holdsbail() {  # a recorded restart whose state no longer holds is undone like
   HBS="$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)/$([ -e "$J/gate0-run/restarted-r0" ] && echo recorded)"
   [ "$HBC/$HBS" = "3//no/no/" ]; }
 
+t_holdsunknown() {  # a recorded restart whose timer state cannot be read is undone too, with the unconfirmed readback said
+  restore r0a; wg restart r0 > "$B/out.hu" 2>&1 || return 1
+  touch "$ST/ctl-error"; wg restart r0 >> "$B/out.hu" 2>&1; HUC=$?; rm -f "$ST/ctl-error"
+  HUS="$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)/$([ -e "$J/gate0-run/restarted-r0" ] && echo recorded)"
+  [ "$HUC/$HUS" = "3//no/no/" ] && grep -q 'UNCONFIRMED: these units are not confirmed stopped' "$B/out.hu"; }
+t_holdsmarker() {  # a recorded restart whose marker bytes changed is undone too: the changed bytes are kept beside the record and removed from the checkout
+  local k
+  restore r0a; wg restart r0 > "$B/out.hm" 2>&1 || return 1
+  echo "LANE=changed-by-someone" >> "$R/.git-autosync"; cp "$R/.git-autosync" "$B/hm.changed"
+  wg restart r0 >> "$B/out.hm" 2>&1; HMC=$?
+  k=$(ls "$J/gate0-run"/marker.unexpected.* 2>/dev/null | wc -l)
+  HMS="$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)/$([ -e "$J/gate0-run/restarted-r0" ] && echo recorded)/$k"
+  [ "$HMC/$HMS" = "3//no/no//1" ] && cmp -s "$B/hm.changed" "$J/gate0-run"/marker.unexpected.*; }
+
 echo "== --check forms change nothing"
 restore fx; c0=$(ckfp); j0=$(jfp); l0=$(lanerefs)
 WG= wg --check > "$B/out" 2>&1; check "--check" "$?" 0
@@ -511,6 +525,8 @@ t_refreezecrash; check "a crash while a new freeze clears the earlier records lo
 t_reconcileread; check "a tracker file that cannot be read from a commit that lists it is a STOP: marker aside, timers stopped, nothing started" "$RRC/$RRS/$?" "3//no/no/0/0"
 t_stalejournal; check "a journal that holds only an earlier run's summary line is not this run's evidence: STOP, marker aside, timers stopped" "$SJC/$SJS/$?" "3//no/no/0"
 t_holdsbail; check "a recorded restart whose timer is no longer active is undone: timers stopped, marker aside, record removed" "$HBC/$HBS/$?" "3//no/no//0"
+t_holdsunknown; check "a recorded restart whose timer state cannot be read is undone: timers stopped, marker aside, record removed, UNCONFIRMED said" "$HUC/$HUS/$?" "3//no/no//0"
+t_holdsmarker; check "a recorded restart whose marker bytes changed is undone: the changed bytes kept beside the record, none left in the checkout" "$HMC/$HMS/$?" "3//no/no//1/0"
 
 echo "== mutation controls (each must be judged NOT fail-closed)"
 mutate() {  # NAME SEDEXPR : a copy of the wrapper with one safeguard removed; WG names it
@@ -528,7 +544,7 @@ mutate M4 's/^  hook_check   # first:.*/  :/; s/^  archive_check; }$/  hook_chec
   { WG=$B/mut/M4.sh; t_hookfetch; r=$?; WG=; check "M4 (hook check after the fetch) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M5 's/\*) stop "cannot establish whether \$1 is active: the unit controller gave an error" ;; esac; }/*) return 1 ;; esac; }/' &&
   { WG=$B/mut/M5.sh; t_unitserr; r=$?; WG=; check "M5 (controller error read as inactive) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
-mutate M6 's/^  move_marker_aside; stop /  stop /' &&
+mutate M6 's/^  move_marker_aside force; stop /  stop /' &&
   { WG=$B/mut/M6.sh; t_cleanup; r=$?; WG=; check "M6 (failed restart leaves the marker in place) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M7 's/under_self "\$p" || //g' &&
   { WG=$B/mut/M7.sh; t_self; r=$?; WG=; check "M7 (own processes counted as agents) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
@@ -581,5 +597,9 @@ mutate M30 's/ --after-cursor="\$1"//' &&
   { WG=$B/mut/M30.sh; t_stalejournal; r=$?; WG=; check "M30 (journal lines not tied to this start) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M31 '/^restarted_holds()/,/^do_restart/ s/unrecord_bail/stop/' &&
   { WG=$B/mut/M31.sh; t_holdsbail; r=$?; WG=; check "M31 (a failed recorded-restart check left as a plain STOP) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M32 '/^restarted_holds()/,/^do_restart/ s/\[ "\$(unit_state "\$u")" = active \] || unrecord_bail/is_active "$u" || unrecord_bail/' &&
+  { WG=$B/mut/M32.sh; t_holdsunknown; r=$?; WG=; check "M32 (an unknown timer state in a recorded restart skips the cleanup) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M33 's/^  move_marker_aside force; stop /  move_marker_aside; stop /' &&
+  { WG=$B/mut/M33.sh; t_holdsmarker; r=$?; WG=; check "M33 (a changed marker left in the checkout by the cleanup) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 
 if [ $fails = 0 ]; then echo "GATE0-RUN: PASS"; exit 0; else echo "GATE0-RUN: FAIL ($fails)"; exit 1; fi
