@@ -168,7 +168,17 @@ Further properties, each with a test and a mutation control in `gate0-run-test.s
   hash, the marker's hash at the freeze, the archive listing (including its use in a restart), the head the
   preflight record names, the P1-pre head, the base's tree and the index's tree after P1a, the status, tag
   and journal-cursor reads of a restart, and the P0 lane record of a Clavain restart. A hash that fails
-  prints nothing and fails; a recorded marker that is not a sha256 is never compared with a hash.
+  prints nothing and fails, including a tool that prints a digest and then exits nonzero; a recorded marker
+  that is not a sha256 is never compared with a hash. The production unit controller branch accepts a state
+  only when the word and the exit status agree (`active` with 0; `inactive` or `failed` with a nonzero
+  status); `activating`, `reloading`, `deactivating` and a word that disagrees with its status are unknown,
+  and unknown is a STOP. The journal read after the service start must succeed: lines printed by a read
+  that then failed are not evidence, and the failure leaves the marker aside with the timers stopped. A
+  failed `lsof` listing or filter, and a failed read of `origin/main` behind `--check`, are STOPs and never
+  an empty result equal to another empty result. The reviewed pipelines that stay as they are (`ps | tr`
+  in the ancestor walk, where a failure only makes more processes count as agents; the count and status
+  strings, where an empty value never equals the expected one; the Clavain lane-tip compare, whose read is
+  status-checked and whose record is required to exist) are fail-safe by construction.
 - A step that acts on a recorded value re-validates it at the point of use: the P1-pre head must be a
   commit sha every time it is read, the marker record must hold a sha256 before it is compared, and a
   restart validates the archive destination and its push URL again itself (server and Clavain) instead of

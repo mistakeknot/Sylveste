@@ -88,7 +88,7 @@ cat > "$B/stub/journalctl" <<EOF
 f=$ST/jlog; touch "\$f"
 for a in "\$@"; do case \$a in
   --show-cursor) [ ! -e "$ST/fail-jcursor" ] || { echo "journalctl: cannot read the journal (stub)" >&2; exit 1; }; echo "-- cursor: \$(wc -l < "\$f" | tr -d ' ')"; exit 0 ;;
-  --after-cursor=*) tail -n +\$(( \${a#--after-cursor=} + 1 )) "\$f"; exit 0 ;; esac; done
+  --after-cursor=*) tail -n +\$(( \${a#--after-cursor=} + 1 )) "\$f"; [ ! -e "$ST/fail-jafter" ] || { echo "journalctl: read failed after output (stub)" >&2; exit 1; }; exit 0 ;; esac; done
 cat "\$f"
 EOF
 cat > "$B/lib/autosync-lane.sh" <<EOF
@@ -129,9 +129,10 @@ EOF
 # ancestors and nothing else, so a caller that ignores the exit status sees itself and no other process
 cat > "$B/stub/lsof" <<EOF
 #!/bin/bash
-[ -e "$B/lsof-partial" ] || exit 1
+[ -e "$B/lsof-partial" ] || [ -e "$B/lsof-ok" ] || exit 1
 p=\$PPID
 while [ -n "\$p" ] && [ "\$p" -gt 1 ]; do printf 'p%s\ncfake\nn/nowhere\n' "\$p"; p=\$($REALPS -o ppid= -p "\$p" | tr -d ' '); done
+[ -e "$B/lsof-ok" ] && exit 0
 exit 1
 EOF
 # sync, except that it fails for an argument matching the glob in $ST/failsync (a flush that does not happen); the python fsync fallback too
@@ -168,9 +169,23 @@ REALSHA=$(command -v sha256sum)
 cat > "$B/stub/sha256sum" <<EOF
 #!/bin/bash
 if [ -e "$ST/fail-sha" ]; then p=\$(readlink /proc/self/fd/0 2>/dev/null); case "\$p" in \$(cat "$ST/fail-sha")) cat > /dev/null; echo "sha256sum: injected failure (stub)" >&2; exit 1 ;; esac; fi
+if [ -e "$ST/fail-sha-out" ]; then p=\$(readlink /proc/self/fd/0 2>/dev/null); case "\$p" in \$(cat "$ST/fail-sha-out")) $REALSHA "\$@"; echo "sha256sum: injected failure after output (stub)" >&2; exit 1 ;; esac; fi
 exec $REALSHA "\$@"
 EOF
-chmod +x "$B/stub/sha256sum" "$B/stub/git" "$B/stub/sync" "$B/stub/python3" "$B/bin/sweep" "$B/stub/lsof" "$B/stub/ps" "$B/bin/ctl" "$B/stub/journalctl" "$B/bin/pred" "$B/bin/tell"
+# awk: the lsof listing's filter (the call with -v r=) fails while $ST/fail-awk exists
+REALAWK=$(command -v awk)
+cat > "$B/stub/awk" <<EOF
+#!/bin/bash
+if [ -e "$ST/fail-awk" ]; then case "\$*" in *"-v r="*) cat > /dev/null; echo "awk: injected failure (stub)" >&2; exit 2 ;; esac; fi
+exec $REALAWK "\$@"
+EOF
+# systemctl --user is-active UNIT : prints the word in $ST/sysctl-out and exits $ST/sysctl-rc (stop and start do nothing)
+cat > "$B/stub/systemctl" <<EOF
+#!/bin/bash
+case "\$*" in *is-active*) cat "$ST/sysctl-out" 2>/dev/null; exit \$(cat "$ST/sysctl-rc" 2>/dev/null || echo 4) ;; esac
+exit 0
+EOF
+chmod +x "$B/stub/awk" "$B/stub/systemctl" "$B/stub/sha256sum" "$B/stub/git" "$B/stub/sync" "$B/stub/python3" "$B/bin/sweep" "$B/stub/lsof" "$B/stub/ps" "$B/bin/ctl" "$B/stub/journalctl" "$B/bin/pred" "$B/bin/tell"
 rec() { printf '{"_type":"issue","id":"%s","title":"%s","status":"open","priority":2,"issue_type":"task","created_at":"%s","updated_at":"%s"}\n' "$1" "$2" "$3" "$3"; }
 rec fx-one one 2026-10-01T00:00:01Z > "$B/one.jsonl"
 { rec fx-two two 2026-10-01T00:00:02Z; cat "$B/one.jsonl"; } > "$B/trk.jsonl"
@@ -606,6 +621,32 @@ t_swarchready() {  # a restart validates the archive destination and its push UR
   done
   SWN=$res; [ "$SWN" = "3/1//0/no/no/;3/1//0/no/no/;3/1//0/no/no/;3/1//0/no/no/;" ]; }
 
+t_swshaout() {  # a hash that is printed and then fails (the tool exits nonzero after its output) is not a hash
+  restore fx; stepto preflight || return 1; printf '%s' '*/gate0-run/marker' > "$ST/fail-sha-out"
+  wg freeze > "$B/out.sw" 2>&1; SWO="$?/$(sw_msg 'cannot hash the marker set aside')/$([ -e "$J/gate0-run/freeze" ] && echo recorded)"
+  [ "$SWO" = "3/1/" ]; }
+t_swunitstate() {  # the production controller branch: the state word and the exit status must agree, and a transitional state is not confirmed
+  local fn row res= w r
+  fn=$(sed -n '/^unit_state() {/,/^is_active() {/p' "${WG:-$GW}" | sed '$d')
+  for row in 'active 0 active' 'inactive 3 inactive' 'failed 3 inactive' 'inactive 0 unknown' 'active 3 unknown' 'failed 0 unknown' \
+             'deactivating 3 unknown' 'activating 0 unknown' 'reloading 0 unknown' 'unknown 4 unknown' '- 1 unknown' '- 0 unknown'; do
+    set -- $row; w=$1; r=$2; if [ "$w" = - ]; then : > "$ST/sysctl-out"; else printf '%s\n' "$w" > "$ST/sysctl-out"; fi; echo "$r" > "$ST/sysctl-rc"
+    res="$res$( unset GATE0_TIMER_CTL; PATH="$PATHS"; XDG_RUNTIME_DIR=/nonexistent; eval "$fn"; unit_state git-autosync.timer )/"
+  done
+  SWP=$res; [ "$SWP" = "active/inactive/inactive/unknown/unknown/unknown/unknown/unknown/unknown/unknown/unknown/unknown/" ]; }
+t_swjournal() {  # journal lines read by a failed read are not evidence: a start whose journal read fails is a STOP with the marker aside
+  restore r0a; touch "$ST/fail-jafter"
+  GATE0_JOURNAL_TRIES=0 wg restart r0 > "$B/out.sw" 2>&1; SWQ="$?/$(sw_msg 'the journal could not be read after the start')/$(sw_state)"
+  [ "$SWQ" = "3/1//1/no/no/" ]; }
+t_swlsofawk() {  # the lsof branch: a filter that fails shows no agents, and that is not "no agent"
+  restore fx; stepto preflight || return 1; touch "$B/lsof-ok" "$ST/fail-awk"
+  GATE0_PROCFS="$B/no-procfs" wg freeze > "$B/out.sw" 2>&1; SWR="$?/$(sw_msg 'cannot list the processes')/$([ -e "$J/gate0-run/freeze" ] && echo recorded)"
+  rm -f "$B/lsof-ok"; [ "$SWR" = "3/1/" ]; }
+t_swlsremote() {  # --check: origin/main read from the remote and from the tracking ref, both failing, are not "equal"
+  restore fx; sw_inj 'main'
+  wg --check preflight > "$B/out.sw" 2>&1; SWS="$?/$(sw_msg 'check: cannot read origin/main from the remote')"
+  [ "$SWS" = "3/1" ]; }
+
 echo "== --check forms change nothing"
 restore fx; c0=$(ckfp); j0=$(jfp); l0=$(lanerefs)
 WG= wg --check > "$B/out" 2>&1; check "--check" "$?" 0
@@ -754,6 +795,11 @@ sc "a failed gate0 tag read, before or after the run, is a STOP with the marker 
 sc "no journal cursor is a STOP before the service starts" t_swjcursor
 sc "a Clavain restart with no P0 lane record is a STOP" t_swp0lane
 sc "a restart validates the archive destination and push URL itself, on both machines" t_swarchready
+[ -n "$HAVE_PROC" ] && sc "a hash that prints and then fails is not a hash" t_swshaout
+sc "the production unit controller branch: the word and the status must agree, a transitional state is unconfirmed" t_swunitstate
+sc "a journal read that fails after its output is a STOP with the marker aside" t_swjournal
+sc "an lsof listing whose filter fails is a STOP, not no agent" t_swlsofawk
+sc "--check: a failed read of origin/main is a STOP, not an empty value equal to another" t_swlsremote
 
 echo "== mutation controls (each must be judged NOT fail-closed)"
 mutate() {  # NAME SEDEXPR : a copy of the wrapper with one safeguard removed; WG names it
@@ -895,4 +941,14 @@ mutate M65 's/\[ -f "\$J\/p0\/lane" \] || stop "the P0 lane record[^"]*"/true/' 
   { WG=$B/mut/M65.sh; t_swp0lane; r=$?; WG=; check "M65 (a missing P0 lane record is accepted) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M66 '/^  archive_ready   # the lane this restart/d' &&
   { WG=$B/mut/M66.sh; t_swarchready; r=$?; WG=; check "M66 (the restart does not validate the archive destination itself) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+[ -n "$HAVE_PROC" ] && mutate M67 '/^then sha() {/s/set -o pipefail; //' &&
+  { WG=$B/mut/M67.sh; t_swshaout; r=$?; WG=; check "M67 (a hash that fails after its output is used) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M68 's/^  case \$out\/\$rc in .*/  case $out in active|activating|reloading|deactivating) echo active ;; inactive|failed) echo inactive ;; *) echo unknown ;; esac; }/' &&
+  { WG=$B/mut/M68.sh; t_swunitstate; r=$?; WG=; check "M68 (the controller's word is trusted without its status) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M69 's/^  while :; do if journal_since "\$cur" > "\$LOGD\/journal.txt"; then jok=1; /  while :; do if journal_since "$cur" > "$LOGD\/journal.txt" || true; then jok=1; /' &&
+  { WG=$B/mut/M69.sh; t_swjournal; r=$?; WG=; check "M69 (a failed journal read is accepted) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M70 's/ || return 2   # a filter that fails shows no agents; that is not "none"//' &&
+  { WG=$B/mut/M70.sh; t_swlsofawk; r=$?; WG=; check "M70 (a failed lsof filter shows no agents) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M71 's/^  else rm_=.*/  else rm_=$(pg ls-remote origin refs\/heads\/main | cut -f1)/' &&
+  { WG=$B/mut/M71.sh; t_swlsremote; r=$?; WG=; check "M71 (the remote read behind --check is not checked) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 if [ $fails = 0 ]; then echo "GATE0-RUN: PASS"; exit 0; else echo "GATE0-RUN: FAIL ($fails)"; exit 1; fi
