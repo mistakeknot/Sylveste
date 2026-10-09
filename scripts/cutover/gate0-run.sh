@@ -38,6 +38,10 @@
 #                         and is a STOP, never taken as inactive.
 #     GATE0_CONFIRM_FILE  tests only: read the presence phrase from this file instead of the terminal
 #     GATE0_QUIESCE_WAIT  seconds to wait for agent processes to leave the checkout (default 0)
+#     GATE0_UNINSPECTABLE_UIDS  space-separated uids of accounts whose processes this account cannot inspect and
+#                         that run no agent or bd work in the checkout (default none). On Linux a live process whose
+#                         working directory cannot be read is a STOP unless its owner's uid is listed here. The lsof
+#                         branch (no /proc) sees only the processes lsof may list and cannot make this distinction.
 #     GATE0_STATUS_CMD    optional command whose output is recorded at freeze (an autosync status report)
 #     GATE0_READONLY_HOOKS  a file of sha256 values of reference-transaction hooks the owner reviewed as
 #                         read-only; any other installed hook is refused
@@ -172,6 +176,14 @@ under_self() {  # PID : true when this script is among PID's ancestors (its own 
   local q=$1 n=0
   while [ -n "$q" ] && [ "$q" -gt 1 ] 2>/dev/null && [ $n -lt 64 ]; do [ "$q" != "$$" ] || return 0; q=$(ps -o ppid= -p "$q" 2>/dev/null | tr -d ' '); n=$((n+1)); done; return 1; }
 PROCFS=${GATE0_PROCFS:-/proc}
+skippable_proc() {  # DIR PID : a /proc entry whose working directory cannot be read, and that cannot hold an agent: gone, a zombie, or an account declared uninspectable
+  local d=$1 p=$2 u m
+  [ -d "$d" ] || return 0   # it exited between the listing and the read
+  case $(sed -n 's/^State:[[:space:]]*\(.\).*/\1/p' "$d/status" 2>/dev/null) in Z|X) return 0 ;; esac
+  u=$(stat -c %u "$d" 2>/dev/null) || { [ -d "$d" ] || return 0; u=; }
+  if [ -n "$u" ]; then case " ${GATE0_UNINSPECTABLE_UIDS:-} " in *" $u "*) return 0 ;; esac; fi
+  m="gate0-run: pid $p (uid ${u:-unknown}) is live and its working directory cannot be read, so it cannot be ruled out as an agent; end it, or list its uid in GATE0_UNINSPECTABLE_UIDS only if no process of that account that you cannot inspect can be an agent or bd work in the checkout"
+  printf '%s\n' "$m" >&2; printf '%s\n' "$m" >> "$LOG"; return 1; }
 agents_in_root() {  # "pid comm" for each process whose cwd is under the checkout, apart from this script, its ancestors and its descendants
   # status 2 when the processes cannot be listed: a listing that does not show this script itself proves nothing
   local skip=" $$ " p d c out; p=$$
@@ -179,7 +191,7 @@ agents_in_root() {  # "pid comm" for each process whose cwd is under the checkou
   if [ -d "$PROCFS/self" ]; then
     readlink "$PROCFS/$$/cwd" >/dev/null 2>&1 || return 2
     for d in "$PROCFS"/[0-9]*; do p=${d#"$PROCFS"/}; case $skip in *" $p "*) continue ;; esac
-      c=$(readlink "$d/cwd" 2>/dev/null) || continue
+      c=$(readlink "$d/cwd" 2>/dev/null) || { skippable_proc "$d" "$p" && continue; return 2; }
       case $c in "$ROOT"|"$ROOT"/*) under_self "$p" || echo "$p $(tr -d '\0' < "$d/comm" 2>/dev/null)" ;; esac; done
   else
     command -v lsof >/dev/null 2>&1 || return 2
@@ -260,8 +272,10 @@ do_preflight() {
   say "gate0-run: P0 recorded in $J/p0"; }
 
 # ---- freeze (P1)
+in_list() { local x=$1 y; shift; for y in "$@"; do [ "$y" = "$x" ] && return 0; done; return 1; }
+act_lines() { printf '%s\n' "$1" | sed 's/^ *//; s/ timer /\ntimer /g' | sed -n '/^timer /p'; }   # " timer A timer B" : one "timer UNIT" line each
 do_freeze() {
-  local a w u act="" f
+  local a w u act="" f prior
   [ -e "$G/preflight" ] || { [ $CHECKMODE = 1 ] || refuse "no preflight record; run preflight first"; }
   if [ -e "$G/freeze" ] && [ $CHECKMODE = 0 ] && ! restarted_any; then   # after a completed restart a new freeze is a new attempt: it falls through
     for u in $(sed -n 's/^timer //p' "$G/freeze"); do ! is_active "$u" || stop "the freeze was recorded but $u is active again"; done
@@ -274,10 +288,14 @@ do_freeze() {
   [ -z "$a" ] || stop "processes still have their working directory in the checkout (tell their threads to quiesce): $(echo "$a" | tr '\n' ';')"
   a=$(bd_writers) || stop "cannot read the process table (ps): no bd process can be ruled out"
   [ -z "$a" ] || stop "a bd process is running: $(echo "$a" | tr '\n' ';')"
-  for u in $TIMERS; do if is_active "$u"; then act="$act timer $u"; fi; done
-  say "gate0-run: timers active before the freeze:${act:- none}"
+  prior=; [ ! -f "$G/freeze-intent" ] || prior=$(sed -n 's/^timer //p' "$G/freeze-intent")
+  for u in $TIMERS; do
+    if is_active "$u"; then act="$act timer $u"
+    elif in_list "$u" $prior; then act="$act timer $u"; say "gate0-run: $u is inactive but an earlier freeze attempt that did not finish had stopped it: it stays in the restart set"; fi; done
+  say "gate0-run: timers to restart after the freeze:${act:- none}"
   if [ $CHECKMODE = 1 ]; then say "gate0-run: freeze check: would stop the timers and services and move the marker aside (marker present: $([ -e "$ROOT/.git-autosync" ] && echo yes || echo no))"; return 0; fi
   mkdir -p "$G"
+  put "$G/freeze-intent" "$(act_lines "$act")"   # before the first stop: a stop that fails midway must not lose the timers already stopped
   for u in $TIMERS; do units stop "$u" || stop "cannot stop $u"; done
   for u in $SERVICES; do units stop "$u" || stop "cannot stop $u"; done
   for u in $TIMERS $SERVICES; do ! is_active "$u" || stop "$u is still active"; done
@@ -285,8 +303,8 @@ do_freeze() {
   [ ! -e "$ROOT/.git-autosync" ] || stop "the marker is still in the checkout"
   if [ -n "${GATE0_STATUS_CMD:-}" ]; then "$GATE0_STATUS_CMD" > "$LOGD/autosync-status.txt" 2>&1; say "gate0-run: autosync status recorded (exit $?)"; fi
   w="marker $([ -e "$G/marker" ] && sha < "$G/marker" || echo none)"
-  { printf '%s\n' "$act" | sed 's/^ *//; s/ timer /\ntimer /g' | sed -n 's/^timer \(.*\)/timer \1/p; /^timer/!{/./p}'; printf '%s\n' "$w"; printf 'at %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"; } > "$G/freeze.tmp.$$"
-  f=$(cat "$G/freeze.tmp.$$"); rm -f "$G/freeze.tmp.$$"; put "$G/freeze" "$f"
+  f=$(act_lines "$act"; printf '%s\n' "$w"; printf 'at %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"); put "$G/freeze" "$f"
+  rm -f -- "$G/freeze-intent"   # the freeze record now holds the restart set
   rm -f -- "$G"/restarted-*   # a new freeze starts a new attempt: an earlier attempt's restart records no longer apply (cleared once the new freeze is recorded)
   say "gate0-run: freeze holds (timers and services stopped, marker aside)"; }
 restarted_any() { local f; for f in "$G"/restarted-*; do [ -e "$f" ] && return 0; done; return 1; }
@@ -371,7 +389,12 @@ reconcile() {  # restart step 3: the first bd command is bd export; the base's a
   say "gate0-run: reconciliation holds: the export dominates the base and the old tip"; }
 journal_since() { journalctl --user -u "$REPAIR_SVC" --since "$1" --no-pager -o cat 2>/dev/null; }
 predict() { RESTART_REPORT=0 "$PRED" "$@"; }   # the wrapper reports once; the predictor's own report sender stays off
-rbail() { local u; for u in $(sed -n 's/^timer //p' "$G/freeze"); do units stop "$u" >/dev/null 2>&1; done; move_marker_aside; stop "$@"; }   # back to the frozen state
+rbail() {  # back to the frozen state: every recorded timer stopped, each timer and service read back, the marker aside; a stop that cannot be confirmed is said so
+  local u bad=
+  for u in $(sed -n 's/^timer //p' "$G/freeze"); do units stop "$u" >/dev/null 2>&1; done
+  for u in $(sed -n 's/^timer //p' "$G/freeze") $SERVICES; do [ "$(unit_state "$u")" = inactive ] || bad="$bad $u"; done
+  [ -z "$bad" ] || say "gate0-run: UNCONFIRMED: these units are not confirmed stopped:$bad; a human must stop them before anything else runs" >&2
+  move_marker_aside; stop "$*${bad:+; UNCONFIRMED stop of$bad}"; }
 restore_marker() {  # the marker set aside goes back, and must be the one the freeze record names (server and Clavain alike)
   [ -f "$G/marker" ] && cp -p "$G/marker" "$ROOT/.git-autosync.tmp.$$" && mv -f -- "$ROOT/.git-autosync.tmp.$$" "$ROOT/.git-autosync" ||
     { [ ! -e "$G/marker" ] && [ "$(sed -n 's/^marker //p' "$G/freeze")" = none ]; } || stop "cannot restore the marker"
@@ -415,8 +438,11 @@ restart_clavain() {  # exit-name
   pred=$LOGD/prediction.txt
   predict clavain "$ROOT" "$HOST" > "$pred" 2> "$pred.err"; rc=$?; cat "$pred" "$pred.err" >> "$LOG"
   if [ $rc != 0 ] || ! grep -q '^verdict run' "$pred"; then rbail "the prediction says STOP; the sweep was not run, marker moved aside again (see $pred)"; fi
-  "$SWEEP" > "$LOGD/sweep.out" 2>&1; say "gate0-run: the sweep returned $?"; cat "$LOGD/sweep.out" >> "$LOG"
-  [ -f "$DRIFT" ] || rbail "the sweep left no drift report ($DRIFT)"
+  # an earlier report is not evidence about this sweep: set it aside, so only a report this sweep wrote can be verified
+  [ ! -e "$DRIFT" ] || mv -f -- "$DRIFT" "$LOGD/drift.before" || rbail "cannot set the earlier drift report aside ($DRIFT)"
+  "$SWEEP" > "$LOGD/sweep.out" 2>&1; say "gate0-run: the sweep returned $? (its exit status is logged, not judged: the verdict is the drift report it wrote)"; cat "$LOGD/sweep.out" >> "$LOG"
+  if [ ! -f "$DRIFT" ]; then [ ! -e "$LOGD/drift.before" ] || mv -f -- "$LOGD/drift.before" "$DRIFT"   # put the earlier report back as found
+    rbail "the sweep wrote no new drift report ($DRIFT)"; fi
   predict verify "$pred" "$DRIFT" > "$LOGD/verify.out" 2>&1 || { tee -a "$LOG" < "$LOGD/verify.out"; rbail "the sweep differs from the prediction; marker moved aside"; }
   cat "$LOGD/verify.out" >> "$LOG"; }
 unrecord_bail() { rm -f -- "$G/restarted-$XARG"; rbail "$@; every timer of this attempt is stopped again and the marker is aside"; }

@@ -74,7 +74,7 @@ cat > "$B/bin/ctl" <<EOF
 # ctl stop|start|active UNIT : unit state is a file; starting the repair service writes the journal unless told not to
 S=$ST; act=\$1; shift
 for u in "\$@"; do case \$act in
-  stop) rm -f "\$S/units/\$u" ;;
+  stop) [ ! -e "\$S/failstop-\$u" ] || exit 1; rm -f "\$S/units/\$u" ;;
   active) [ ! -e "\$S/ctl-error" ] || exit 4; [ -e "\$S/units/\$u" ] || exit 3 ;;
   start) [ ! -e "\$S/failstart-\$u" ] || exit 1
          if [ "\$u" = git-autosync-repair.service ]; then echo "start \$(date +%s)" >> "\$S/starts"
@@ -127,7 +127,7 @@ exit 1
 EOF
 cat > "$B/bin/sweep" <<EOF
 #!/bin/bash
-touch "$ST/sweep-ran"; echo "drift fixture" > "$B/drift.txt"
+touch "$ST/sweep-ran"; [ ! -e "$ST/sweep-fail" ] || exit 1; echo "drift fixture" > "$B/drift.txt"
 EOF
 chmod +x "$B/bin/sweep" "$B/stub/lsof" "$B/stub/ps" "$B/bin/ctl" "$B/stub/journalctl" "$B/bin/pred" "$B/bin/tell"
 rec() { printf '{"_type":"issue","id":"%s","title":"%s","status":"open","priority":2,"issue_type":"task","created_at":"%s","updated_at":"%s"}\n' "$1" "$2" "$3" "$3"; }
@@ -175,8 +175,11 @@ echo "  base $BASE, old $O; script under test $GW ($(sha < "$GW"))"
 snap fx
 
 PATHS="$B/stub:/usr/local/bin:/usr/bin:/bin"
+hostuids() {  # every account that owns a process on this host: the host may run processes whose working directory this account cannot read
+  # (a same-account tailscale ssh child is one), and the fixture must not depend on them. Only unreadable processes are exempted; readable ones are still examined
+  stat -c %u /proc/[0-9]* 2>/dev/null | sort -u | tr '\n' ' '; }
 wg() {  # run the wrapper under test (WG, default $GW) with the fixture's stubs
-  env GATE0_ROOT="$R" GATE0_STATE_DIR="${T_STATE:-$W/state}" GATE0_JOURNAL="${T_JOURNAL:-$J}" GATE0_PRESERVE_DIR="${T_PRES:-$W/pres}" GATE0_NO_REEXEC=1 \
+  env GATE0_UNINSPECTABLE_UIDS="$(hostuids)" GATE0_ROOT="$R" GATE0_STATE_DIR="${T_STATE:-$W/state}" GATE0_JOURNAL="${T_JOURNAL:-$J}" GATE0_PRESERVE_DIR="${T_PRES:-$W/pres}" GATE0_NO_REEXEC=1 \
     GATE0_PATH="$PATHS" GATE0_BD="$B/bin/bd" GATE0_OPERATOR_HOME="$HOME" AUTOSYNC_LANE_LIB="$B/lib/autosync-lane.sh" \
     GATE0_TIMER_CTL="$B/bin/ctl" GATE0_CONFIRM_FILE="${GATE0_CONFIRM_FILE:-$B/confirm}" GATE0_PRED="$B/bin/pred" GATE0_CS="$CS" \
     GATE0_REPORT_TELL="$B/bin/tell" GATE0_REPORT_TITLE="fixture title" GATE0_JOURNAL_TRIES=0 GATE0_QUIESCE_WAIT=0 \
@@ -311,6 +314,38 @@ t_refreeze() {  # a new freeze after a completed restart is a new attempt: timer
   RFS="$(timers)/$([ -e "$R/.git-autosync" ] && echo marker)/$([ -e "$J/gate0-run/restarted-r0" ] && echo recorded)/$(grep -c '^timer ' "$J/gate0-run/freeze")"
   [ "$RF1/$RF2/$RFS" = "0/0/no/no///2" ]; }
 
+t_unreadable() {  # a live process whose working directory cannot be read is a STOP, unless it is a zombie or its account is declared uninspectable
+  local pf=$B/pf h=$B/procfix.sh me o1 o2 o3 o4 r1 r2 r3 r4; me=$(id -u)
+  { echo 'ROOT=$1; LOG=$2; mkdir -p "$GATE0_PROCFS/$$"; ln -sfn / "$GATE0_PROCFS/$$/cwd"'   # the harness's own entry: the listing must show it
+    sed -n '/^under_self() {/,/^bd_writers() {/{/^bd_writers() {/!p;}' "${WG:-$GW}"; echo 'agents_in_root; echo "rc=$?"'; } > "$h"
+  hr() { rm -f -- "$B/unr.log"; env GATE0_PROCFS="$pf" GATE0_UNINSPECTABLE_UIDS="$1" bash "$h" "$R" "$B/unr.log" 2>&1; }
+  rm -rf -- "${pf:?}"; mkdir -p "$pf/self" "$pf/424242"; printf 'State:\tS (sleeping)\n' > "$pf/424242/status"   # no cwd entry: unreadable
+  o1=$(hr ""); r1=$(printf '%s\n' "$o1" | sed -n 's/^rc=//p')
+  o2=$(hr "$me"); r2=$(printf '%s\n' "$o2" | sed -n 's/^rc=//p')
+  printf 'State:\tZ (zombie)\n' > "$pf/424242/status"; o3=$(hr ""); r3=$(printf '%s\n' "$o3" | sed -n 's/^rc=//p')
+  printf 'State:\tS (sleeping)\n' > "$pf/424242/status"; mkdir -p "$pf/424243"; ln -s "$R" "$pf/424243/cwd"; echo agentx > "$pf/424243/comm"
+  o4=$(hr "$me"); r4=$(printf '%s\n' "$o4" | grep -c '^424243 agentx$')
+  UNR="$r1/$r2/$r3/$r4"; [ "$UNR" = 2/0/0/1 ] && printf '%s\n' "$o1" | grep -q "pid 424242 (uid $me) is live and its working directory cannot be read"; }
+t_failstop() {  # a freeze whose stop fails midway has still stopped some timers: a repeat must keep them in the restart set
+  restore fx; stepto preflight || return 1
+  touch "$ST/failstop-git-autosync-promote.timer"; wg freeze > "$B/out.fs" 2>&1; FS1=$?; rm -f "$ST/failstop-git-autosync-promote.timer"
+  FS1S=$(timers); wg freeze >> "$B/out.fs" 2>&1; FS2=$?
+  FSS="$FS1/$FS1S/$FS2/$(timers)/$(grep -c '^timer ' "$J/gate0-run/freeze")/$([ -e "$J/gate0-run/freeze-intent" ] && echo intent)"
+  [ "$FSS" = "3/no/yes/0/no/no/2/" ]; }
+t_staledrift() {  # Clavain restart: only a drift report this sweep wrote is evidence; an earlier one is set aside and put back as found
+  restore r0a; echo "old drift" > "$B/drift.txt"; touch "$ST/sweep-fail"
+  GATE0_MACHINE=clavain GATE0_SWEEP="$B/bin/sweep" GATE0_DRIFT_REPORT="$B/drift.txt" wg restart r0 > "$B/out.sd" 2>&1; SD1=$?
+  SD1S="$(cat "$B/drift.txt" 2>/dev/null)/$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)"
+  restore r0a; echo "old drift" > "$B/drift.txt"
+  GATE0_MACHINE=clavain GATE0_SWEEP="$B/bin/sweep" GATE0_DRIFT_REPORT="$B/drift.txt" wg restart r0 >> "$B/out.sd" 2>&1; SD2=$?
+  SDS="$SD1/$SD1S/$SD2/$(cat "$B/drift.txt" 2>/dev/null)"
+  [ "$SDS" = "3/old drift//no/no/0/drift fixture" ] && grep -q 'the sweep wrote no new drift report' "$B/out.sd"; }
+t_unconfirmed() {  # a stop the wrapper cannot confirm in cleanup is said so, with the units named
+  restore r0a; touch "$ST/failstart-git-autosync-promote.timer" "$ST/failstop-git-autosync-repair.timer"
+  wg restart r0 > "$B/out.uc" 2>&1; UC=$?; rm -f "$ST/failstop-git-autosync-repair.timer"
+  UCS="$UC/$(timers)/$([ -e "$R/.git-autosync" ] && echo marker)"
+  [ "$UCS" = "3/yes/no/" ] && grep -q 'UNCONFIRMED: these units are not confirmed stopped: git-autosync-repair.timer' "$B/out.uc"; }
+
 echo "== --check forms change nothing"
 restore fx; c0=$(ckfp); j0=$(jfp); l0=$(lanerefs)
 WG= wg --check > "$B/out" 2>&1; check "--check" "$?" 0
@@ -422,6 +457,11 @@ t_startlie; check "a start that returns 0 with the timer still inactive is a STO
 t_checkreport; check "--check preflight and capture with an inherited report directory write nothing" "$CR1/$CR2/$CR3/$?" "0/0/0/0"
 t_refreeze; check "freeze after a completed restart re-freezes: timers and marker out, restart record cleared, both timers recorded" "$RF1/$RF2/$RFS/$?" "0/0/no/no///2/0"
 
+t_unreadable; check "a live process with an unreadable working directory is a STOP; a zombie, or an account declared uninspectable, is not; a readable agent is still found" "$UNR/$?" "2/0/0/1/0"
+t_failstop; check "a freeze whose stop failed midway: the repeat keeps the timer already stopped in the restart set, then holds" "$FSS/$?" "3/no/yes/0/no/no/2//0"
+t_staledrift; check "Clavain: a sweep that writes no new drift report is a STOP (the earlier report is put back); a fresh one is accepted" "$SDS/$?" "3/old drift//no/no/0/drift fixture/0"
+t_unconfirmed; check "a cleanup stop that cannot be confirmed is reported with the unit named; the marker is still aside" "$UCS/$?" "3/yes/no//0"
+
 echo "== mutation controls (each must be judged NOT fail-closed)"
 mutate() {  # NAME SEDEXPR : a copy of the wrapper with one safeguard removed; WG names it
   sed "$2" "$GW" > "$B/mut/$1.sh"; chmod +x "$B/mut/$1.sh"
@@ -438,7 +478,7 @@ mutate M4 's/^  hook_check   # first:.*/  :/; s/^  archive_check; }$/  hook_chec
   { WG=$B/mut/M4.sh; t_hookfetch; r=$?; WG=; check "M4 (hook check after the fetch) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M5 's/\*) stop "cannot establish whether \$1 is active: the unit controller gave an error" ;; esac; }/*) return 1 ;; esac; }/' &&
   { WG=$B/mut/M5.sh; t_unitserr; r=$?; WG=; check "M5 (controller error read as inactive) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
-mutate M6 's/move_marker_aside; stop "\$@"; }   # back/stop "$@"; }   # back/' &&
+mutate M6 's/^  move_marker_aside; stop /  stop /' &&
   { WG=$B/mut/M6.sh; t_cleanup; r=$?; WG=; check "M6 (failed restart leaves the marker in place) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M7 's/under_self "\$p" || //g' &&
   { WG=$B/mut/M7.sh; t_self; r=$?; WG=; check "M7 (own processes counted as agents) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
@@ -474,5 +514,14 @@ mutate M22 's/env CUTOVER_REPORT=0 "\$CS" --check/"$CS" --check/' &&
   { WG=$B/mut/M22.sh; t_checkreport; r=$?; WG=; check "M22 (preflight check lets the step script report) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M23 's/ && ! restarted_any; then/; then/' &&
   { WG=$B/mut/M23.sh; t_refreeze; r=$?; WG=; check "M23 (freeze after a completed restart stops) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+
+mutate M24 's/|| { skippable_proc "\$d" "\$p" && continue; return 2; }/|| continue/' &&
+  { WG=$B/mut/M24.sh; t_unreadable; r=$?; WG=; check "M24 (an unreadable process skipped) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M25 's/^  prior=; .*$/  prior=/' &&
+  { WG=$B/mut/M25.sh; t_failstop; r=$?; WG=; check "M25 (no memory of a partly stopped freeze) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M26 's/^  \[ ! -e "\$DRIFT" \] || mv -f -- "\$DRIFT" "\$LOGD\/drift.before".*$/  :/' &&
+  { WG=$B/mut/M26.sh; t_staledrift; r=$?; WG=; check "M26 (an earlier drift report accepted) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M27 's/^  \[ -z "\$bad" \] || say .*$/  :/; s/\${bad:+; UNCONFIRMED stop of\$bad}//' &&
+  { WG=$B/mut/M27.sh; t_unconfirmed; r=$?; WG=; check "M27 (an unconfirmed stop not reported) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 
 if [ $fails = 0 ]; then echo "GATE0-RUN: PASS"; exit 0; else echo "GATE0-RUN: FAIL ($fails)"; exit 1; fi

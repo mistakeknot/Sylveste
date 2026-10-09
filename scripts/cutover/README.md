@@ -21,8 +21,9 @@ does not cut over any checkout; each checkout is cut over separately by its oper
 | `repro-r5/` ... `repro-r8.1/` | Fixtures for the reproduction tests. |
 
 The test scripts and the shipped copies of the Gate 0 scripts were edited to remove
-private paths and a host name (the pre-push guard refuses them). The edits are
-mechanical substitutions; behaviour is unchanged and the tests pass on the shipped bytes.
+private paths and a host name (the pre-push guard refuses them). The substitutions are
+mechanical, and the tests pass on the shipped bytes. The wrapper `gate0-run.sh` and its
+test are new in this change and are not a Gate 0 original.
 
 ## Running the tests
 
@@ -61,7 +62,7 @@ Environment knobs (all optional; defaults are the production values): `GATE0_ROO
 `GATE0_OPERATOR`, `GATE0_OPERATOR_HOME`, `GATE0_PATH`, `GATE0_CS`, `GATE0_PRED`,
 `GATE0_BD`, `GATE0_TIMER_CTL`, `GATE0_UNITS_TIMERS`, `GATE0_UNITS_SERVICES`,
 `GATE0_CONFIRM_FILE`, `GATE0_READONLY_HOOKS`, `GATE0_REPORT_TELL`, `GATE0_REPORT_TITLE`,
-`GATE0_JOURNAL_TRIES`, `GATE0_QUIESCE_WAIT`, `GATE0_STATUS_CMD`, `AUTOSYNC_LANE_LIB`. See the header of the script.
+`GATE0_JOURNAL_TRIES`, `GATE0_QUIESCE_WAIT`, `GATE0_STATUS_CMD`, `GATE0_UNINSPECTABLE_UIDS`, `AUTOSYNC_LANE_LIB`. See the header of the script.
 
 Unit control (`GATE0_TIMER_CTL`, default `systemctl --user`): the controller is called as
 `CTL stop|start|active UNIT`. For `active`, exit 0 means active, exit 3 means inactive,
@@ -80,6 +81,19 @@ Further properties, each with a test and a mutation control in `gate0-run-test.s
   `lsof`) does not show the wrapper itself or the listing command exits non-zero, the wrapper
   stops: a failed or partial listing is not "no agent and no bd". `GATE0_PROCFS` (default `/proc`) names the process
   file system; the test points it elsewhere to force the `lsof` branch.
+- A live process whose working directory cannot be read (the `/proc` branch) is a STOP naming
+  its pid and uid: it cannot be ruled out as an agent. Only a process that has gone, a zombie, or
+  one owned by an account listed in `GATE0_UNINSPECTABLE_UIDS` (space separated, default empty) is
+  skipped; readable processes of a listed account are still examined. The `lsof` branch cannot see or
+  classify processes that `lsof` does not list; that limit is not closed by this wrapper.
+- A freeze that fails part-way has already stopped some timers. The restart set is written to
+  `freeze-intent` before the first stop, and a repeated freeze takes the union of that set and the
+  timers active now, so a timer stopped by the failed attempt is still restarted later.
+- A cleanup (`rbail`) reads each recorded timer and service back after stopping it. A unit that is
+  not confirmed inactive is named in the message ("UNCONFIRMED"), and the STOP says so.
+- Clavain restart: an earlier drift report is not evidence about this sweep. It is set aside before
+  the sweep, and only a report the sweep wrote is verified; if none is written the earlier report is
+  put back as found and the restart stops. The sweep's own exit status is logged, not judged.
 - Children are confined too: the log directory, `gate0-run/` and each preservation
   directory must be plain physical children outside the checkout, its git directory and
   the journal (a symlinked `logs/` or `gate0-run/` is refused; a symlinked preservation
