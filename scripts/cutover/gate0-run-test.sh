@@ -87,7 +87,7 @@ cat > "$B/stub/journalctl" <<EOF
 #!/bin/bash
 f=$ST/jlog; touch "\$f"
 for a in "\$@"; do case \$a in
-  --show-cursor) echo "-- cursor: \$(wc -l < "\$f" | tr -d ' ')"; exit 0 ;;
+  --show-cursor) [ ! -e "$ST/fail-jcursor" ] || { echo "journalctl: cannot read the journal (stub)" >&2; exit 1; }; echo "-- cursor: \$(wc -l < "\$f" | tr -d ' ')"; exit 0 ;;
   --after-cursor=*) tail -n +\$(( \${a#--after-cursor=} + 1 )) "\$f"; exit 0 ;; esac; done
 cat "\$f"
 EOF
@@ -157,9 +157,20 @@ cat > "$B/stub/git" <<EOF
 if [ -e "$ST/failshow" ]; then case " \$* " in *" show "*":.beads/issues.jsonl"*) echo "fatal: bad object (stub)" >&2; exit 128 ;; esac; fi
 # the lane cannot be read by the wrapper's own git calls (the steps it runs read it through their own, which still work)
 if [ -e "$ST/fail-lsremote" ]; then case " \$* " in *" ls-remote "*) case "\$($REALPS -o args= -p \$PPID)" in *cutover-steps*) ;; *) echo "fatal: unable to access the lane (stub)" >&2; exit 128 ;; esac ;; esac; fi
+if [ -e "$ST/fail-arch-after" ]; then case " \$* " in *" ls-remote "*archive/gate0*) case "\$($REALPS -o args= -p \$PPID)" in *cutover-steps*) ;; *) n=\$(cat "$ST/arch-n" 2>/dev/null || echo 0); n=\$((n+1)); echo \$n > "$ST/arch-n"; if [ \$n -gt \$(cat "$ST/fail-arch-after") ]; then echo "fatal: unable to access the lane (stub)" >&2; exit 128; fi ;; esac ;; esac; fi
+if [ -e "$ST/fail-tip-after" ]; then case " \$* " in *" ls-remote "*refs/heads/autosync/*) case "\$($REALPS -o args= -p \$PPID)" in *cutover-steps*) ;; *) n=\$(cat "$ST/tip-n" 2>/dev/null || echo 0); n=\$((n+1)); echo \$n > "$ST/tip-n"; if [ \$n -gt \$(cat "$ST/fail-tip-after") ]; then echo "fatal: unable to access the lane (stub)" >&2; exit 128; fi ;; esac ;; esac; fi
+if [ -e "$ST/gitfail" ]; then case " \$* " in *"\$(cat "$ST/gitfail")"*) case "\$($REALPS -o args= -p \$PPID)" in *cutover-steps*) ;; *) n=\$(cat "$ST/gitfail-n" 2>/dev/null || echo 0); n=\$((n+1)); echo \$n > "$ST/gitfail-n"
+  if [ \$n -gt \$(cat "$ST/gitfail-skip" 2>/dev/null || echo 0) ]; then echo "fatal: injected failure (stub)" >&2; exit 128; fi ;; esac ;; esac; fi
 exec $REALGIT "\$@"
 EOF
-chmod +x "$B/stub/git" "$B/stub/sync" "$B/stub/python3" "$B/bin/sweep" "$B/stub/lsof" "$B/stub/ps" "$B/bin/ctl" "$B/stub/journalctl" "$B/bin/pred" "$B/bin/tell"
+# sha256sum: fails for a stdin that is a file whose path matches the glob in $ST/fail-sha (Linux: /proc names the file behind the redirect)
+REALSHA=$(command -v sha256sum)
+cat > "$B/stub/sha256sum" <<EOF
+#!/bin/bash
+if [ -e "$ST/fail-sha" ]; then p=\$(readlink /proc/self/fd/0 2>/dev/null); case "\$p" in \$(cat "$ST/fail-sha")) cat > /dev/null; echo "sha256sum: injected failure (stub)" >&2; exit 1 ;; esac; fi
+exec $REALSHA "\$@"
+EOF
+chmod +x "$B/stub/sha256sum" "$B/stub/git" "$B/stub/sync" "$B/stub/python3" "$B/bin/sweep" "$B/stub/lsof" "$B/stub/ps" "$B/bin/ctl" "$B/stub/journalctl" "$B/bin/pred" "$B/bin/tell"
 rec() { printf '{"_type":"issue","id":"%s","title":"%s","status":"open","priority":2,"issue_type":"task","created_at":"%s","updated_at":"%s"}\n' "$1" "$2" "$3" "$3"; }
 rec fx-one one 2026-10-01T00:00:01Z > "$B/one.jsonl"
 { rec fx-two two 2026-10-01T00:00:02Z; cat "$B/one.jsonl"; } > "$B/trk.jsonl"
@@ -473,10 +484,127 @@ t_flushfail() {  # a flush that fails is a STOP at every point of the preservati
   [ "$res" = "3/1/;3/1/;3/1/;3/1/;" ]; }
 t_lanefail() {  # Clavain row 8: a lane that cannot be read is not a lane that has not changed, even when the recorded tip is empty
   restore r0a; rm -f "$B/drift.txt"; rm -f "$J/gate0-run/marker" "$R/.git-autosync"
-  sed -i 's/^marker .*/marker none/' "$J/gate0-run/freeze"; : > "$J/p0/lane"; touch "$ST/fail-lsremote"
-  GATE0_MACHINE=clavain GATE0_SWEEP="$B/bin/sweep" GATE0_DRIFT_REPORT="$B/drift.txt" wg restart r0 > "$B/out.lf" 2>&1; LFC=$?; rm -f "$ST/fail-lsremote"
+  sed -i 's/^marker .*/marker none/' "$J/gate0-run/freeze"; : > "$J/p0/lane"; echo 1 > "$ST/fail-tip-after"; rm -f "$ST/tip-n"
+  GATE0_MACHINE=clavain GATE0_SWEEP="$B/bin/sweep" GATE0_DRIFT_REPORT="$B/drift.txt" wg restart r0 > "$B/out.lf" 2>&1; LFC=$?; rm -f "$ST/fail-tip-after"
   LFS="$(grep -c 'cannot read the Clavain lane tip' "$B/out.lf")/$([ -e "$J/gate0-run/restarted-r0" ] && echo recorded)/$(timers)"
   [ "$LFC/$LFS" = "3/1//no/no" ]; }
+
+t_archfail() {  # a lane read that fails is a STOP, not an empty listing that equals another empty listing (tip before, archive before, archive after)
+  local n rc; AFS=
+  for n in tip 1 2; do   # the archive listing in the restart's own archive check is the first call; the reads before and after the run are the next two
+    restore r0a; rm -f "$ST/arch-n"
+    case $n in tip) echo 1 > "$ST/fail-tip-after"; rm -f "$ST/tip-n" ;; *) echo "$n" > "$ST/fail-arch-after" ;; esac
+    wg restart r0 > "$B/out.af$n" 2>&1; rc=$?
+    AFS="$AFS$rc/$(grep -c 'cannot read the \(lane tip\|archive branches\)' "$B/out.af$n")/$([ -e "$J/gate0-run/restarted-r0" ] && echo recorded)/$(timers)/$([ -e "$R/.git-autosync" ] && echo marker);"
+    rm -f "$ST/fail-tip-after" "$ST/fail-arch-after"
+  done
+  [ "$AFS" = "3/1//no/no/;3/1//no/no/;3/1//no/no/;" ]; }
+t_svcoverride() {  # a custom service list still holds the service a restart starts: a cut-off restart's cleanup stops it
+  local crash=$B/mut/crash.sh rc rc2
+  sed '/^  units start "\$REPAIR_SVC"/a exit 9' "${WG:-$GW}" > "$crash"; chmod +x "$crash"; cp "$HERE/cutover-steps.sh" "$B/mut/cutover-steps.sh"
+  restore r0a; rm -f "$ST/units/git-autosync-repair.service"; touch "$ST/svc-stays-active"
+  GATE0_UNITS_SERVICES="other.service" WG=$crash wg restart r0 > "$B/out.so" 2>&1; rc=$?
+  rm -f "$ST/svc-stays-active"
+  GATE0_UNITS_SERVICES="other.service" wg restart r0 >> "$B/out.so" 2>&1; rc2=$?
+  SOS="$rc/$rc2/$(active git-autosync-repair.service)/$(timers)/$([ -e "$R/.git-autosync" ] && echo marker)"
+  [ "$SOS" = "9/3/no/no/no/" ]; }
+t_hookafter() {  # a writing hook installed after preflight is found before capture's fetch runs it
+  restore fx; stepto preflight freeze || return 1
+  rm -f "$B/hook-ran"; git -C "$SD" push -q origin main:refs/heads/newbr2
+  printf '#!/bin/sh\ntouch %q\n' "$B/hook-ran" > "$R/.git/hooks/reference-transaction"; chmod +x "$R/.git/hooks/reference-transaction"
+  wg capture > "$B/out.ha" 2>&1; HAC=$?
+  HAS="$(grep -c 'reference-transaction hook' "$B/out.ha")/$([ -e "$B/hook-ran" ] && echo ran)/$([ -d "$J/p1-pre" ] && echo pre)"
+  rm -f "$R/.git/hooks/reference-transaction"
+  [ "$HAC/$HAS" = "3/1//" ]; }
+
+# ---- class sweep: every read whose status or content a decision rests on is checked where it is used (bead mk-z9st.22)
+# swrun LABEL... : the status, the matching message count and the state words of the last run are one string
+sw_msg() { grep -c -- "$1" "$B/out.sw"; }
+sw_inj() {  # PATTERN [SKIP] : the wrapper's own git calls whose arguments contain PATTERN fail (after SKIP matching calls pass)
+  printf '%s' "$1" > "$ST/gitfail"; printf '%s' "${2:-0}" > "$ST/gitfail-skip"; rm -f "$ST/gitfail-n"; }
+t_swfreezesha() {  # a marker that cannot be hashed is not recorded as "none" or as an empty value
+  restore fx; stepto preflight || return 1; printf '%s' '*/gate0-run/marker' > "$ST/fail-sha"
+  wg freeze > "$B/out.sw" 2>&1; SWA="$?/$(sw_msg 'cannot hash the marker set aside')/$([ -e "$J/gate0-run/freeze" ] && echo recorded)"
+  [ "$SWA" = "3/1/" ]; }
+t_swhooksha() {  # an installed hook that cannot be hashed is a STOP, not an empty digest that matches nothing
+  restore fx; printf '#!/bin/sh\nexit 0\n' > "$R/.git/hooks/reference-transaction"; chmod +x "$R/.git/hooks/reference-transaction"
+  sha < "$R/.git/hooks/reference-transaction" > "$B/ro-hooks.sw"; printf '%s' '*/hooks/reference-transaction' > "$ST/fail-sha"
+  GATE0_READONLY_HOOKS="$B/ro-hooks.sw" wg preflight > "$B/out.sw" 2>&1; SWB="$?/$(sw_msg 'cannot hash the installed reference-transaction hook')/$([ -d "$J/p0" ] && echo p0)"
+  [ "$SWB" = "3/1/" ]; }
+t_swhookgit() {  # a failed read of core.hooksPath, or of the hooks directory, is a STOP and not "no hook"
+  local a b; restore fx; sw_inj ' config core.hooksPath'
+  wg preflight > "$B/out.sw" 2>&1; a="$?/$(sw_msg 'cannot read core.hooksPath')/$([ -d "$J/p0" ] && echo p0)"
+  restore fx; sw_inj ' --git-path hooks'
+  wg preflight > "$B/out.sw" 2>&1; b="$?/$(sw_msg 'cannot locate the hooks directory')/$([ -d "$J/p0" ] && echo p0)"
+  SWC="$a;$b"; [ "$SWC" = "3/1/;3/1/" ]; }
+t_swready() {  # the git directory, the commit count and the two status reads: a failed read is a STOP, not an empty value
+  local p res= k m; for p in ' rev-parse --absolute-git-dir|cannot read the git directory|1' ' rev-list --left-right --count|cannot count the commits' \
+      ' status --porcelain --untracked-files=no|cannot read the status: the local changes' ' status --porcelain --untracked-files=all|cannot read the status: the untracked files'; do
+    m=${p#*|}; k=0; case $m in *"|"*) k=${m#*|}; m=${m%%|*} ;; esac   # the wrapper's own start-up reads the git directory once
+    restore fx; sw_inj "${p%%|*}" $k; wg preflight > "$B/out.sw" 2>&1; res="$res$?/$(sw_msg "$m")/$([ -d "$J/p0" ] && echo p0);"
+  done
+  SWD=$res; [ "$SWD" = "3/1/;3/1/;3/1/;3/1/;" ]; }
+t_swarchlist() {  # an archive listing that fails is not an empty one
+  restore fx; echo 0 > "$ST/fail-arch-after"; rm -f "$ST/arch-n"
+  wg preflight > "$B/out.sw" 2>&1; SWE="$?/$(sw_msg 'cannot list the archive branches on the lane')/$([ -d "$J/p0" ] && echo p0)"
+  [ "$SWE" = "3/1/" ]; }
+t_swheadrec() {  # the preflight record never names an empty head
+  restore fx; sw_inj ' rev-parse HEAD' 
+  wg preflight > "$B/out.sw" 2>&1; SWF="$?/$(sw_msg 'cannot read HEAD')/$([ -e "$J/gate0-run/preflight" ] && echo recorded)"
+  [ "$SWF" = "3/1/" ]; }
+sw_state() { echo "$([ -e "$J/gate0-run/restarted-r0" ] && echo recorded)/$(nstarts)/$(timers)/$([ -e "$R/.git-autosync" ] && echo marker)"; }
+t_swp1pre() {  # a missing, empty or damaged P1-pre head is a STOP in the restart and in a repeated capture, never an empty old tip
+  local v res=
+  for v in missing empty junk; do
+    restore r0a; case $v in missing) rm -f "$J/p1-pre/head" ;; empty) : > "$J/p1-pre/head" ;; junk) echo "not-a-sha" > "$J/p1-pre/head" ;; esac
+    wg restart r0 > "$B/out.sw" 2>&1; res="$res$?/$(sw_msg 'the unfreeze gate refused\|P1-pre record')/$(sw_state);"
+  done
+  restore fx; stepto preflight freeze capture || return 1; rm -f "$J/p1-pre/head"
+  wg capture > "$B/out.sw" 2>&1; res="$res$?/$(sw_msg 'P1-pre record')"
+  SWG=$res; [ "$SWG" = "3/1//0/no/no/;3/1//0/no/no/;3/1//0/no/no/;3/1" ]; }
+t_swtree() {  # the base's tree and the index's tree are both read; a failed read of either is a STOP after P1a, and capture is not recorded
+  local a b
+  restore fx; stepto preflight freeze || return 1; sw_inj '^{tree}'
+  wg capture > "$B/out.sw" 2>&1; a="$?/$(sw_msg "re-check: cannot read the base's tree")/$([ -e "$J/gate0-run/captured" ] && echo captured)"
+  restore fx; stepto preflight freeze || return 1; sw_inj ' write-tree'
+  wg capture > "$B/out.sw" 2>&1; b="$?/$(sw_msg "re-check: the index is not the base's tree")/$([ -e "$J/gate0-run/captured" ] && echo captured)"
+  SWH="$a;$b"; [ "$SWH" = "3/1/;3/1/" ]; }
+t_swmarkrec() {  # a marker record that names no hash is not equal to a hash that could not be computed (restore, and a recorded restart)
+  local a b
+  restore r0a; sed -i '/^marker /d' "$J/gate0-run/freeze"; printf '%s' '*/.git-autosync' > "$ST/fail-sha"
+  wg restart r0 > "$B/out.sw" 2>&1; a="$?/$(sw_msg 'the restored marker differs')/$(sw_state)"
+  restore r0a; wg restart r0 > "$B/out.sw" 2>&1 || return 1
+  sed -i '/^marker /d' "$J/gate0-run/freeze"; printf '%s' '*/.git-autosync' > "$ST/fail-sha"
+  wg restart r0 > "$B/out.sw" 2>&1; b="$?/$(sw_msg 'is recorded but the marker in the checkout is not the one set aside')/$(sw_state)"
+  SWI="$a;$b"; [ "$SWI" = "3/1//0/no/no/;3/1//1/no/no/" ]; }
+t_swrestatus() {  # the status read behind the marker rule: a failed read is a STOP with nothing started
+  restore r0a; sw_inj ' status --porcelain=v1'
+  wg restart r0 > "$B/out.sw" 2>&1; SWJ="$?/$(sw_msg 'cannot read the status: whether the marker')/$(sw_state)"
+  [ "$SWJ" = "3/1//0/no/no/" ]; }
+t_swtags() { local t  # the gate0 tags are read before and after the run with the status checked; an empty list after P1a is a failed read in disguise
+  local k res= t
+  for k in 0 1; do restore r0a; sw_inj 'refs/tags/gate0' $k
+    wg restart r0 > "$B/out.sw" 2>&1; res="$res$?/$(sw_msg 'cannot read the gate0 tags')/$(sw_state);"; done
+  SWK=$res; [ "$SWK" = "3/1//0/no/no/;3/1//1/no/no/;" ]; }
+t_swjcursor() {  # no journal cursor is a STOP before the service starts
+  restore r0a; touch "$ST/fail-jcursor"
+  wg restart r0 > "$B/out.sw" 2>&1; SWL="$?/$(sw_msg 'cannot take a journal cursor')/$(sw_state)"
+  [ "$SWL" = "3/1//0/no/no/" ]; }
+t_swp0lane() { local t  # a Clavain restart recorded with no marker needs the P0 lane record: a missing record is not an empty tip
+  restore r0a; rm -f "$B/drift.txt" "$J/gate0-run/marker" "$R/.git-autosync" "$J/p0/lane"
+  sed -i 's/^marker .*/marker none/' "$J/gate0-run/freeze"
+  for t in $(git --git-dir="$W/lane.git" for-each-ref --format='%(refname)' 'refs/heads/autosync'); do git --git-dir="$W/lane.git" update-ref -d "$t"; done
+  GATE0_MACHINE=clavain GATE0_SWEEP="$B/bin/sweep" GATE0_DRIFT_REPORT="$B/drift.txt" wg restart r0 > "$B/out.sw" 2>&1; SWM="$?/$(sw_msg 'the P0 lane record')/$(sw_state)"
+  [ "$SWM" = "3/1//0/no/no/" ]; }
+t_swarchready() {  # a restart validates the archive destination and its push URL itself, on both machines, before any side effect
+  local res= m
+  for m in server clavain; do
+    restore r0a; touch "$ST/refuse-archive"
+    GATE0_MACHINE=$m GATE0_SWEEP="$B/bin/sweep" GATE0_DRIFT_REPORT="$B/drift.txt" wg restart r0 > "$B/out.sw" 2>&1; res="$res$?/$(sw_msg 'archive destination is not acceptable')/$(sw_state);"
+    restore r0a; echo "file:///somewhere/else.git" > "$ST/asl-url"
+    GATE0_MACHINE=$m GATE0_SWEEP="$B/bin/sweep" GATE0_DRIFT_REPORT="$B/drift.txt" wg restart r0 > "$B/out.sw" 2>&1; res="$res$?/$(sw_msg 'push URL of lane is not the one just validated')/$(sw_state);"
+  done
+  SWN=$res; [ "$SWN" = "3/1//0/no/no/;3/1//0/no/no/;3/1//0/no/no/;3/1//0/no/no/;" ]; }
 
 echo "== --check forms change nothing"
 restore fx; c0=$(ckfp); j0=$(jfp); l0=$(lanerefs)
@@ -604,6 +732,28 @@ t_holdsnone; check "a recorded no-marker restart: a marker that appears afterwar
 t_archrecheck; check "capture validates the archive destination again after the last freeze check: a refused destination or a push URL that is not the validated one stops it before P1a, checkout unchanged; the validated one proceeds" "$ARS/$?" "3/3/0/1//same/0/1//same/cp/0"
 t_flushfail; check "a flush that fails (the copied file before it is moved, a verified file, the sha256 file, the directory) is a STOP and the capture is not recorded" "$FFS/$?" "3/1/;3/1/;3/1/;3/1/;/0"
 t_lanefail; check "a Clavain no-marker restart whose lane cannot be read is a STOP (not an unchanged lane), nothing recorded, timers stay stopped" "$LFC/$LFS/$?" "3/1//no/no/0"
+t_archfail; check "a failed read of the lane tip or of the archive branches (before or after the run) is a STOP, never an equal empty listing; nothing recorded, timers stopped, marker aside" "$AFS/$?" "3/1//no/no/;3/1//no/no/;3/1//no/no/;/0"
+t_svcoverride; check "with a custom service list the repair service is still stopped by the cleanup of a cut-off restart" "$SOS/$?" "9/3/no/no/no//0"
+t_hookafter; check "a writing hook installed after preflight stops capture before its fetch: exit 3, hook not run, P1-pre not run" "$HAC/$HAS/$?" "3/1///0"
+
+echo "== class sweep: a read whose status or content a decision rests on is checked where it is used"
+HAVE_PROC=$([ -r /proc/self/fd/0 ] && echo 1)
+sc() { local lbl=$1 fn=$2; shift 2; "$fn"; check "$lbl" "$([ $? = 0 ] && echo fail-closed || echo open)" fail-closed; }
+[ -n "$HAVE_PROC" ] && {
+sc "a marker that cannot be hashed is not recorded at the freeze: exit 3, no freeze record" t_swfreezesha
+sc "an installed hook that cannot be hashed is a STOP at preflight" t_swhooksha
+sc "a restored marker is not compared with a missing record (restore, and a recorded restart)" t_swmarkrec; }
+sc "a failed read of core.hooksPath or of the hooks directory is a STOP, not no hook" t_swhookgit
+sc "a failed git-directory, count or status read is a STOP at preflight" t_swready
+sc "an archive listing that fails is not an empty one" t_swarchlist
+sc "the preflight record never names an empty head" t_swheadrec
+sc "a missing, empty or damaged P1-pre head is a STOP (restart and a repeated capture)" t_swp1pre
+sc "an unreadable tree or index after P1a is a STOP and capture is not recorded" t_swtree
+sc "a failed status read behind the marker rule starts nothing" t_swrestatus
+sc "a failed gate0 tag read, before or after the run, is a STOP with the marker aside" t_swtags
+sc "no journal cursor is a STOP before the service starts" t_swjcursor
+sc "a Clavain restart with no P0 lane record is a STOP" t_swp0lane
+sc "a restart validates the archive destination and push URL itself, on both machines" t_swarchready
 
 echo "== mutation controls (each must be judged NOT fail-closed)"
 mutate() {  # NAME SEDEXPR : a copy of the wrapper with one safeguard removed; WG names it
@@ -699,4 +849,50 @@ mutate M42 's/^    tipn=\$(pg ls-remote "\$LANE" "refs\/heads\/autosync\/\$HOST"
   { WG=$B/mut/M42.sh; t_lanefail; r=$?; WG=; check "M42 (a failed lane read is taken for an unchanged lane) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M43 '/# a service a cut-off restart left running is stopped too/ s/ \$SERVICES;/;/' &&
   { WG=$B/mut/M43.sh; t_restartcrash; r=$?; WG=; check "M43 (a cleanup does not stop the services) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M44 's/o=\$(pg ls-remote "\$LANE" "\$1") || return 1/o=$(pg ls-remote "$LANE" "$1")/' &&
+  { WG=$B/mut/M44.sh; t_archfail; r=$?; WG=; check "M44 (a failed lane read is an empty listing) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M45 '/^case " \$SERVICES " in/d' &&
+  { WG=$B/mut/M45.sh; t_svcoverride; r=$?; WG=; check "M45 (the repair service is not bound to the configured list) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M46 '/^  hook_check   # a hook installed after preflight/d' &&
+  { WG=$B/mut/M46.sh; t_hookafter; r=$?; WG=; check "M46 (no hook check after preflight) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+[ -n "$HAVE_PROC" ] && mutate M47 's/w=\$(sha < "\$G\/marker") || stop "cannot hash the marker set aside[^"]*"/w=$(sha < "$G\/marker")/' &&
+  { WG=$B/mut/M47.sh; t_swfreezesha; r=$?; WG=; check "M47 (a marker that cannot be hashed is recorded as empty) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+[ -n "$HAVE_PROC" ] && mutate M48 's/s=\$(sha < "\$h") || stop "cannot hash the installed[^"]*"/s=$(sha < "$h")/' &&
+  { WG=$B/mut/M48.sh; t_swhooksha; r=$?; WG=; check "M48 (a hook that cannot be hashed is compared as empty) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M49 's/\*) stop "cannot read core.hooksPath[^"]*" ;;/*) ;;/' &&
+  { WG=$B/mut/M49.sh; t_swhookgit; r=$?; WG=; check "M49 (a failed core.hooksPath read is no hook) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M50 's/ \&\& \[ -n "\$hp" \] || stop "cannot locate the hooks directory[^"]*"//' &&
+  { WG=$B/mut/M50.sh; t_swhookgit; r=$?; WG=; check "M50 (a failed hooks-directory read is no hook) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M51 's/ \&\& \[ -n "\$gd" \] || stop "cannot read the git directory[^"]*"//' &&
+  { WG=$B/mut/M51.sh; t_swready; r=$?; WG=; check "M51 (a failed git-directory read is accepted) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M52 's/b=\$(pg rev-list --left-right --count HEAD...refs\/remotes\/origin\/main) || stop "[^"]*"/b=$(pg rev-list --left-right --count HEAD...refs\/remotes\/origin\/main)/' &&
+  { WG=$B/mut/M52.sh; t_swready; r=$?; WG=; check "M52 (a failed commit count is accepted) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M53 's/st=\$(pg status --porcelain --untracked-files=no) || stop "[^"]*"/st=$(pg status --porcelain --untracked-files=no)/' &&
+  { WG=$B/mut/M53.sh; t_swready; r=$?; WG=; check "M53 (a failed local-changes status is accepted) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M54 's/ut=\$(pg status --porcelain --untracked-files=all) || stop "[^"]*"/ut=$(pg status --porcelain --untracked-files=all)/' &&
+  { WG=$B/mut/M54.sh; t_swready; r=$?; WG=; check "M54 (a failed untracked status is accepted) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M55 's/r=\$(pg ls-remote "\$LANE" "refs\/heads\/\$o\/\*") || stop "[^"]*"/r=$(pg ls-remote "$LANE" "refs\/heads\/$o\/*")/' &&
+  { WG=$B/mut/M55.sh; t_swarchlist; r=$?; WG=; check "M55 (a failed archive listing is an empty one) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M56 's/ \&\& \[\[ \$hd =~ \^\[0-9a-f\]{40}\$ \]\] || stop "cannot read HEAD[^"]*"//' &&
+  { WG=$B/mut/M56.sh; t_swheadrec; r=$?; WG=; check "M56 (the preflight record accepts an empty head) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M57 's/ \&\& \[\[ \$OLD =~ \^\[0-9a-f\]{40}\$ \]\] || stop "the P1-pre record[^"]*"//' &&
+  { WG=$B/mut/M57.sh; t_swp1pre; r=$?; WG=; check "M57 (a damaged P1-pre head is accepted) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M58 's/ \&\& \[\[ \$t =~ \^\[0-9a-f\]{40}\$ \]\] || stop "re-check: cannot read[^"]*"//' &&
+  { WG=$B/mut/M58.sh; t_swtree; r=$?; WG=; check "M58 (an unreadable base tree is accepted) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M59 's/ \&\& \[ "\$w" = "\$t" \] || stop "re-check: the index[^"]*"//' &&
+  { WG=$B/mut/M59.sh; t_swtree; r=$?; WG=; check "M59 (an unreadable index tree is accepted) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+[ -n "$HAVE_PROC" ] && mutate M60 's/\[\[ \$m =~ \^\[0-9a-f\]{64}\$ \]\] \&\& \(\[ "\$(sha < "\$ROOT\/.git-autosync")" = "\$m" \]\); }/\1; }/' &&
+  { WG=$B/mut/M60.sh; t_swmarkrec; r=$?; WG=; check "M60 (the restored marker is compared without checking the record) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M61 's/st=\$(pg status --porcelain=v1 --untracked-files=all) || rbail "[^"]*"/st=$(pg status --porcelain=v1 --untracked-files=all)/' &&
+  { WG=$B/mut/M61.sh; t_swrestatus; r=$?; WG=; check "M61 (a failed status read behind the marker rule is accepted) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M62 's/tags0=\$(tag_refs) || rbail "[^"]*"/tags0=$(tag_refs)/' &&
+  { WG=$B/mut/M62.sh; t_swtags; r=$?; WG=; check "M62 (a failed tag read before the run is accepted) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M63 's/tags1=\$(tag_refs) || rbail "[^"]*"/tags1=$(tag_refs)/' &&
+  { WG=$B/mut/M63.sh; t_swtags; r=$?; WG=; check "M63 (a failed tag read after the run is accepted) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M64 's/cur=\$(journal_cursor) \&\& \[ -n "\$cur" \] || rbail "[^"]*"/cur=$(journal_cursor)/' &&
+  { WG=$B/mut/M64.sh; t_swjcursor; r=$?; WG=; check "M64 (no journal cursor is accepted) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M65 's/\[ -f "\$J\/p0\/lane" \] || stop "the P0 lane record[^"]*"/true/' &&
+  { WG=$B/mut/M65.sh; t_swp0lane; r=$?; WG=; check "M65 (a missing P0 lane record is accepted) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M66 '/^  archive_ready   # the lane this restart/d' &&
+  { WG=$B/mut/M66.sh; t_swarchready; r=$?; WG=; check "M66 (the restart does not validate the archive destination itself) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 if [ $fails = 0 ]; then echo "GATE0-RUN: PASS"; exit 0; else echo "GATE0-RUN: FAIL ($fails)"; exit 1; fi

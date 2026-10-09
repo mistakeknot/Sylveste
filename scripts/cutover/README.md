@@ -152,5 +152,27 @@ Further properties, each with a test and a mutation control in `gate0-run-test.s
   read is a STOP, never "unchanged".
 - A cleanup (`rbail`) stops the services as well as the timers before it reads them back, so a service a
   cut-off restart left running is stopped, and the next restart is a new attempt.
+- A restart reads the lane tip and the archive branches before and after the run with the exit status
+  checked: a read that fails is a STOP (marker aside, timers stopped), never an empty listing that equals
+  another empty listing.
+- The service a restart starts (`git-autosync-repair.service`) is always part of the service list the freeze
+  and the cleanup stop and read back, whatever `GATE0_UNITS_SERVICES` names.
+- The reference-transaction hook is checked again every time the freeze is confirmed (before capture's
+  fetch and realign, before a rollback and before a restart), not only at preflight: a writing hook
+  installed after preflight is a STOP before any later git command can run it.
+- Every read whose status or content a decision rests on is checked where it is used, not trusted from an
+  earlier phase: a snapshot or compare that reads from git, the lane, `lsof` or the unit controller checks
+  each stage's status (`set -o pipefail` or an explicit status) and refuses an empty result where a
+  non-empty one is required, so two failed reads never compare equal. This covers the git directory, the
+  commit count and both status reads at preflight, `core.hooksPath` and the hooks directory, the hook's
+  hash, the marker's hash at the freeze, the archive listing (including its use in a restart), the head the
+  preflight record names, the P1-pre head, the base's tree and the index's tree after P1a, the status, tag
+  and journal-cursor reads of a restart, and the P0 lane record of a Clavain restart. A hash that fails
+  prints nothing and fails; a recorded marker that is not a sha256 is never compared with a hash.
+- A step that acts on a recorded value re-validates it at the point of use: the P1-pre head must be a
+  commit sha every time it is read, the marker record must hold a sha256 before it is compared, and a
+  restart validates the archive destination and its push URL again itself (server and Clavain) instead of
+  trusting preflight. The gate in `cutover-steps.sh` still runs first; where it refuses a damaged record
+  the wrapper's own check is a second line that is reached only when that step is bypassed.
 
 The wrapper's own sha256 changes with any edit. A handoff cites the digest of the final bytes.

@@ -59,7 +59,8 @@ export GIT_OPTIONAL_LOCKS=0   # no git command of this script, nor the steps it 
 HERE=$(cd "$(dirname "$0")" && pwd -P); SELF=$HERE/$(basename "$0")
 # the hash tool is chosen by a known answer (the digest of no input), so a present but broken sha256sum falls back
 if [ "$(printf '' | sha256sum 2>/dev/null | cut -d' ' -f1)" = e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 ]
-then sha() { sha256sum | cut -d' ' -f1; }; else sha() { shasum -a 256 2>/dev/null | cut -d' ' -f1; }; fi
+then sha() { local h; h=$(sha256sum | cut -d' ' -f1) && [[ $h =~ ^[0-9a-f]{64}$ ]] && printf '%s\n' "$h"; }
+else sha() { local h; h=$(shasum -a 256 2>/dev/null | cut -d' ' -f1) && [[ $h =~ ^[0-9a-f]{64}$ ]] && printf '%s\n' "$h"; }; fi   # a hash that fails prints nothing and fails: two failed hashes are never "equal"
 SELF_SHA=$(sha < "$SELF")
 [[ $SELF_SHA =~ ^[0-9a-f]{64}$ ]] || { echo "gate0-run: no sha256 of this script (neither sha256sum nor shasum -a 256 works); refusing" >&2; exit 1; }
 CS=${GATE0_CS:-$HERE/cutover-steps.sh}; PRED=${GATE0_PRED:-$HERE/restart-predict.sh}
@@ -123,6 +124,7 @@ PAUSE=${GATE0_PAUSE_FILE:-$OPH/.claude-automations-paused}
 TIMERS=${GATE0_UNITS_TIMERS:-git-autosync-repair.timer git-autosync-promote.timer}
 SERVICES=${GATE0_UNITS_SERVICES:-git-autosync-repair.service git-autosync-promote.service}
 REPAIR_SVC=git-autosync-repair.service
+case " $SERVICES " in *" $REPAIR_SVC "*) ;; *) SERVICES="$SERVICES $REPAIR_SVC" ;; esac   # the service a restart starts is always one the freeze and the cleanup stop and read back
 REL=${GATE0_REL:-$(basename "$ROOT")}
 export AUTOSYNC_LANE_LIB=${AUTOSYNC_LANE_LIB:-$OPH/.local/lib/autosync-lane.sh}
 
@@ -221,70 +223,82 @@ presence() {
   [ "$got" = "$want" ] || refuse "presence not confirmed"; }
 marker_aside() { [ -e "$G/marker" ] && [ ! -e "$ROOT/.git-autosync" ]; }
 keep_unexpected_marker() {  # the bytes now in the checkout are not the recorded marker (or the record says there is none): keep them beside the record, verified, before they are removed
-  local m=$G/marker.unexpected.$(sha < "$ROOT/.git-autosync")
+  local m h; h=$(sha < "$ROOT/.git-autosync") || stop "cannot hash the unexpected marker to keep it"; m=$G/marker.unexpected.$h
   if [ ! -e "$m" ]; then
     cp -p "$ROOT/.git-autosync" "$m.tmp.$$" && { sync "$m.tmp.$$" 2>/dev/null || sync; } && mv -f -- "$m.tmp.$$" "$m" || stop "cannot keep the unexpected marker bytes before removing them"; fi
-  [ "$(sha < "$m")" = "$(sha < "$ROOT/.git-autosync")" ] || stop "the kept copy of the unexpected marker does not match it"
+  cmp -s "$m" "$ROOT/.git-autosync" || stop "the kept copy of the unexpected marker does not match it"
   say "gate0-run: the marker in the checkout is not the recorded one; its bytes are kept in $m"; }
 move_marker_aside() {  # [force] : the marker is untracked and ignored; keep its bytes in G, verify, then remove it from the checkout
   [ -e "$ROOT/.git-autosync" ] || return 0
   if [ "${1:-}" = force ] && [ ! -e "$G/marker" ] && [ "$(sed -n 's/^marker //p' "$G/freeze" 2>/dev/null)" = none ]; then   # cleanup: the record says there is no marker, so none may stay
     keep_unexpected_marker; rm -f -- "$ROOT/.git-autosync" && [ ! -e "$ROOT/.git-autosync" ] || stop "cannot move the marker aside"; return 0; fi
   if [ -e "$G/marker" ]; then   # the copy is already there (a restart put the marker back from it): no write to the journal is needed
-    if [ "$(sha < "$G/marker")" != "$(sha < "$ROOT/.git-autosync")" ]; then
+    if ! cmp -s "$G/marker" "$ROOT/.git-autosync"; then
       [ "${1:-}" = force ] || stop "a different marker is already set aside"
       keep_unexpected_marker; fi   # cleanup after a failure: keep the bytes beside the record, then remove the live file
     rm -f -- "$ROOT/.git-autosync" && [ ! -e "$ROOT/.git-autosync" ] || stop "cannot move the marker aside"; return 0; fi
   cp -p "$ROOT/.git-autosync" "$G/marker.tmp.$$" && { sync "$G/marker.tmp.$$" 2>/dev/null || sync; } &&
-    mv -f -- "$G/marker.tmp.$$" "$G/marker" && [ "$(sha < "$G/marker")" = "$(sha < "$ROOT/.git-autosync")" ] &&
+    mv -f -- "$G/marker.tmp.$$" "$G/marker" && cmp -s "$G/marker" "$ROOT/.git-autosync" &&
     rm -f -- "$ROOT/.git-autosync" || stop "cannot move the marker aside"; }
 
 # ---- preflight (P0)
 ready_checks() {  # the P0 readiness list, read-only
-  local gd p b h u
+  local gd p b h u st ut
   hook_check   # first: the fetch below can run an installed reference-transaction hook
   [ "$(pg symbolic-ref -q HEAD)" = refs/heads/main ] || stop "HEAD is not main"
-  gd=$(pg rev-parse --absolute-git-dir)
+  gd=$(pg rev-parse --absolute-git-dir) && [ -n "$gd" ] || stop "cannot read the git directory: the operation-state files cannot be checked"
   for p in MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD BISECT_LOG rebase-merge rebase-apply; do [ ! -e "$gd/$p" ] || stop "operation state $p"; done
   [ -z "$(pg ls-files -u)" ] || stop "unmerged entries"
   pg diff --cached --quiet || stop "staged entries"
   if [ $CHECKMODE = 0 ]; then pg fetch -q origin || stop "git fetch origin failed"
   else [ "$(pg ls-remote origin refs/heads/main | cut -f1)" = "$(pg rev-parse refs/remotes/origin/main)" ] || stop "check: origin/main differs from the remote-tracking ref; fetch first"; fi
   [ "$(pg rev-parse refs/remotes/origin/main)" = "$BASE" ] || stop "origin/main is not the approved base $BASE (no exception; rebuild PR 1 and re-run the rehearsal)"
-  b=$(pg rev-list --left-right --count HEAD...refs/remotes/origin/main | tr '\t' ' ')
+  b=$(pg rev-list --left-right --count HEAD...refs/remotes/origin/main) || stop "cannot count the commits between HEAD and origin/main"
+  b=$(printf '%s' "$b" | tr '\t' ' '); [[ $b =~ ^[0-9]+\ [0-9]+$ ]] || stop "the commit count between HEAD and origin/main is unreadable [$b]"
   if [ "$b" = "0 0" ]; then say "gate0-run: HEAD equals the base: P1a will not run on this machine"
   else say "gate0-run: local head is $b (ahead behind) against the base: P1a will realign it (the local-head exception, recorded)"; fi
   # a dirty path with no disposition is P1a's STOP (it is the authority); --check capture runs it without writing
-  say "gate0-run: tracked paths with local changes (P1a decides each one's disposition): $(pg status --porcelain --untracked-files=no | wc -l | tr -d ' ')"
-  say "gate0-run: untracked files outside the internal set (recorded): $(pg status --porcelain --untracked-files=all | grep -c '^??' | tr -d ' ')"
+  st=$(pg status --porcelain --untracked-files=no) || stop "cannot read the status: the local changes cannot be counted"
+  ut=$(pg status --porcelain --untracked-files=all) || stop "cannot read the status: the untracked files cannot be counted"
+  say "gate0-run: tracked paths with local changes (P1a decides each one's disposition): $(printf '%s\n' "$st" | grep -c .)"
+  say "gate0-run: untracked files outside the internal set (recorded): $(printf '%s\n' "$ut" | grep -c '^??')"
   archive_check; }
 hook_check() {  # an installed reference-transaction hook that writes anything is a STOP (design choice)
-  local hp h s ok=0
-  hp=$(pg config core.hooksPath 2>/dev/null) || hp=
-  if [ -n "$hp" ]; then case $hp in /*) ;; *) hp=$ROOT/$hp ;; esac; else hp=$(pg rev-parse --git-path hooks); case $hp in /*) ;; *) hp=$ROOT/$hp ;; esac; fi
+  local hp h s ok=0 rc
+  hp=$(pg config core.hooksPath 2>/dev/null); rc=$?   # 1 is "not set"; any other failure is a read that did not happen
+  case $rc in 0|1) ;; *) stop "cannot read core.hooksPath (git config exit $rc): whether a reference-transaction hook is installed cannot be told" ;; esac
+  [ $rc = 0 ] || hp=
+  if [ -z "$hp" ]; then hp=$(pg rev-parse --git-path hooks) && [ -n "$hp" ] || stop "cannot locate the hooks directory: whether a reference-transaction hook is installed cannot be told"; fi
+  case $hp in /*) ;; *) hp=$ROOT/$hp ;; esac
   h=$hp/reference-transaction
   if [ -e "$h" ] || [ -L "$h" ]; then
-    s=$(sha < "$h")
+    s=$(sha < "$h") || stop "cannot hash the installed reference-transaction hook $h"
     [ -f "${GATE0_READONLY_HOOKS:-/nonexistent}" ] && grep -qx "$s" "$GATE0_READONLY_HOOKS" && ok=1
     [ $ok = 1 ] || stop "an installed reference-transaction hook ($h, sha256 $s) is not on the reviewed read-only list; it could write during update-ref"
     say "gate0-run: reference-transaction hook $s is on the reviewed read-only list"
   else say "gate0-run: no reference-transaction hook installed"; fi; }
 archive_check() {  # the private archive destination: validated by the lane library the autosync scripts use
-  local o
+  local o r
   # shellcheck disable=SC1090
   source "$AUTOSYNC_LANE_LIB" 2>/dev/null || stop "the lane library does not load ($AUTOSYNC_LANE_LIB)"
   asl_resolve "$ROOT" "$LANE" || stop "the archive destination is not acceptable: ${ASL_REASON:-unknown}"
   asl_tip "$ROOT" "autosync/$HOST" || stop "the archive destination is unreachable: ${ASL_REASON:-unknown}"
   say "gate0-run: archive destination ${ASL_SLUG:-?} accepted (private, validated); lane tip autosync/$HOST: ${ASL_TIP:-absent}"
   for o in "archive/gate0/$HOST"; do
-    [ -z "$(pg ls-remote "$LANE" "refs/heads/$o/*" | head -n 1)" ] || say "gate0-run: note: $o/* branches exist already (a re-run reuses an equal one)"; done; }
+    r=$(pg ls-remote "$LANE" "refs/heads/$o/*") || stop "cannot list the archive branches on the lane: an unreadable lane is not an empty one"
+    [ -z "$r" ] || say "gate0-run: note: $o/* branches exist already (a re-run reuses an equal one)"; done; }
+archive_ready() {  # the archive destination is acceptable now, and its push URL is the one the lane library just validated
+  archive_check
+  [ -n "${ASL_URL:-}" ] && [ "$(pg remote get-url --push "$LANE" 2>/dev/null)" = "$ASL_URL" ] || stop "the push URL of $LANE is not the one just validated; nothing was pushed, realigned or restarted"; }
 do_preflight() {
+  local hd
   ready_checks
   if [ $CHECKMODE = 1 ]; then env CUTOVER_REPORT=0 "$CS" --check >/dev/null || stop "cutover-steps.sh --check failed"; say "gate0-run: preflight check: would run cutover-steps.sh p0"; return 0; fi
   mkdir -p "$G"
   if [ -d "$J/p0" ] && [ -e "$G/preflight" ]; then say "gate0-run: P0 already recorded ($(cat "$G/preflight"))"; return 0; fi
   runlog cs p0 || stop "P0 (cutover-steps.sh p0) failed"
-  put "$G/preflight" "base $BASE head $(pg rev-parse HEAD) host $HOST machine $MACHINE at $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  hd=$(pg rev-parse HEAD) && [[ $hd =~ ^[0-9a-f]{40}$ ]] || stop "cannot read HEAD: the preflight record would name no head"
+  put "$G/preflight" "base $BASE head $hd host $HOST machine $MACHINE at $(date -u +%Y-%m-%dT%H:%M:%SZ)"
   say "gate0-run: P0 recorded in $J/p0"; }
 
 # ---- freeze (P1)
@@ -319,7 +333,7 @@ do_freeze() {
   move_marker_aside
   [ ! -e "$ROOT/.git-autosync" ] || stop "the marker is still in the checkout"
   if [ -n "${GATE0_STATUS_CMD:-}" ]; then "$GATE0_STATUS_CMD" > "$LOGD/autosync-status.txt" 2>&1; say "gate0-run: autosync status recorded (exit $?)"; fi
-  w="marker $([ -e "$G/marker" ] && sha < "$G/marker" || echo none)"
+  if [ -e "$G/marker" ]; then w=$(sha < "$G/marker") || stop "cannot hash the marker set aside: the freeze record would name no marker"; w="marker $w"; else w="marker none"; fi
   f=$(act_lines "$act"; printf '%s\n' "$w"; printf 'at %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"); put "$G/freeze" "$f"
   rm -f -- "$G"/restarted-* "$G"/restarting-*   # a new freeze starts a new attempt: an earlier attempt's restart records no longer apply (cleared once the new freeze is recorded)
   rm -f -- "$G/freeze-intent"   # last: while a stale restart record exists the intent still names the restart set, so a crash between these two steps loses nothing
@@ -328,6 +342,7 @@ restarting_any() { local f; for f in "$G"/restarting-*; do [ -e "$f" ] && return
 restarted_any() { local f; for f in "$G"/restarted-*; do [ -e "$f" ] && return 0; done; return 1; }
 freeze_holds() { local u a
   [ -e "$G/freeze" ] || stop "no freeze record; run freeze first"
+  hook_check   # a hook installed after preflight would run on the fetch, the realign or the repair run that follow
   for u in $TIMERS $SERVICES; do ! is_active "$u" || stop "$u is active: the freeze no longer holds"; done
   [ ! -e "$ROOT/.git-autosync" ] || stop "the marker is back in the checkout: the freeze no longer holds"
   a=$(agents_in_root) || stop "cannot list the processes (lsof or /proc): the freeze cannot be confirmed"
@@ -336,20 +351,23 @@ freeze_holds() { local u a
   [ -z "$a" ] || stop "a bd process is running: the freeze no longer holds: $(echo "$a" | tr '\n' ';')"; }
 
 # ---- capture (P1-pre, P1a, the re-check, the preservation copy)
+p1pre_head() {  # OLD : the old tip P1-pre recorded; a missing, empty or damaged record is a STOP, never an empty tip
+  OLD=$(cat "$J/p1-pre/head" 2>/dev/null) && [[ $OLD =~ ^[0-9a-f]{40}$ ]] || stop "the P1-pre record $J/p1-pre/head is missing or is not a commit sha"; }
 recheck_after_p1a() {  # P0's readiness repeated with no local-head exception
-  local o h b
-  b=$BASE; h=$HOST; o=$(cat "$J/p1-pre/head")
+  local o h b t w
+  b=$BASE; h=$HOST; p1pre_head; o=$OLD
   [ "$(pg symbolic-ref -q HEAD)" = refs/heads/main ] || stop "re-check: HEAD is not main"
   [ "$(pg rev-parse HEAD)" = "$b" ] && [ "$(pg rev-parse refs/remotes/origin/main)" = "$b" ] || stop "re-check: HEAD and origin/main are not both the base"
   [ "$(pg rev-list --left-right --count HEAD...refs/remotes/origin/main | tr '\t' ' ')" = "0 0" ] || stop "re-check: the count is not 0 0"
   [ "$(pg rev-parse -q --verify "refs/tags/gate0/$h-$o")" = "$o" ] || stop "re-check: the tag gate0/$h-$o does not resolve to the old tip"
-  [ "$(pg write-tree 2>/dev/null)" = "$(pg rev-parse "$b^{tree}")" ] || stop "re-check: the index is not the base's tree"
+  t=$(pg rev-parse "$b^{tree}") && [[ $t =~ ^[0-9a-f]{40}$ ]] || stop "re-check: cannot read the base's tree"
+  w=$(pg write-tree 2>/dev/null) && [ "$w" = "$t" ] || stop "re-check: the index is not the base's tree"
   say "gate0-run: re-check after P1a passes"; }
 pres_check() {  # PD : this capture's preservation directory, a plain physical child of the preservation copy and outside the checkout and the journal
-  local pp; PD=$PRES/$HOST-$(cat "$J/p1-pre/head")
+  local pp; p1pre_head; PD=$PRES/$HOST-$OLD
   pp=$(physpath "$PD") && [ "$pp" = "$PD" ] && ! within "$pp" "$ROOT" "$GD" "$J" || stop "the preservation directory $PD is not a plain directory outside the checkout and the journal (a symlink?)"; }
 preserve_copy() {  # the capture, outside the journal, verified file by file
-  local o d f s; o=$(cat "$J/p1-pre/head"); pres_check; d=$PD
+  local d f s; pres_check; d=$PD
   [ -f "$J/capture/sha256" ] || stop "no capture to copy"
   mkdir -p "$d" || stop "cannot create $d"
   for f in main.bundle wtree.tar wtree.manifest sha256; do
@@ -374,14 +392,13 @@ do_capture() {
     recheck_after_p1a; preserve_copy; runlog cs preserved || stop "restart step 1 (preservation) failed"
     say "gate0-run: capture already done ($(cat "$G/captured")); re-verified"; return 0; fi
   if [ ! -d "$J/p1-pre" ]; then runlog cs p1-pre || stop "P1-pre failed; re-run preflight and get a fresh approval"; fi
-  o=$(cat "$J/p1-pre/head")
+  p1pre_head; o=$OLD
   if [ "$o" != "$BASE" ]; then pres_check; fi   # before anything is realigned
   if [ "$o" = "$BASE" ]; then
     say "gate0-run: main equals the base: P1a does not run; P1-pre's record stands"; put "$G/p1a-skipped" "$o"; return 0; fi
   freeze_holds   # quiescence, once more, immediately before the checkout is realigned
   # the archive destination is validated again now, and its push URL must be the one just validated: P1a pushes the internal commits there
-  archive_check
-  [ -n "${ASL_URL:-}" ] && [ "$(pg remote get-url --push "$LANE" 2>/dev/null)" = "$ASL_URL" ] || stop "the push URL of $LANE is not the one just validated; nothing was pushed or realigned"
+  archive_ready
   runlog cs p1a || stop "P1a failed (see the log; the journal holds the checkpoint and intent; re-run to continue)"
   recheck_after_p1a
   preserve_copy
@@ -404,7 +421,7 @@ reconcile() {  # restart step 3: the first bd command is bd export; the base's a
   # the same function the P1a check uses; extracted from the script that defines it, so there is one definition
   eval "$(sed -n '/^jsonl_dominated() {/,/"\$2" "\$1"; }$/p' "$CS")"
   command -v jsonl_dominated >/dev/null 2>&1 || type jsonl_dominated >/dev/null 2>&1 || stop "cannot load jsonl_dominated from $CS"
-  o=$(cat "$J/p1-pre/head"); x=$LOGD/export.jsonl
+  p1pre_head; o=$OLD; x=$LOGD/export.jsonl
   inroot "$BDBIN" export -o "$x" > "$LOGD/bd-export.out" 2>&1 && [ -f "$x" ] || stop "bd export failed (see $LOGD/bd-export.out)"
   for t in "$o" "$BASE"; do
     l=$(pg ls-tree "$t" -- .beads/issues.jsonl 2>/dev/null) || stop "cannot read the tree of $t: whether it holds tracker records cannot be confirmed"
@@ -412,7 +429,7 @@ reconcile() {  # restart step 3: the first bd command is bd export; the base's a
     else : > "$LOGD/jsonl.$t"; fi   # confirmed absent from the tree: nothing to dominate
     jsonl_dominated "$LOGD/jsonl.$t" "$x" || stop "the tracker export does not dominate the records at $t"; done
   say "gate0-run: reconciliation holds: the export dominates the base and the old tip"; }
-journal_cursor() { journalctl --user -n 1 --show-cursor -o cat --no-pager 2>/dev/null | sed -n 's/^-- cursor: //p'; }   # the position of the newest entry, taken before the start
+journal_cursor() { local o; o=$(journalctl --user -n 1 --show-cursor -o cat --no-pager 2>/dev/null) || return 1; printf '%s\n' "$o" | sed -n 's/^-- cursor: //p'; }   # the position of the newest entry, taken before the start
 journal_since() { journalctl --user -u "$REPAIR_SVC" --after-cursor="$1" --no-pager -o cat 2>/dev/null; }   # only lines written after that position: an earlier invocation's lines are never this run's
 predict() { RESTART_REPORT=0 "$PRED" "$@"; }   # the wrapper reports once; the predictor's own report sender stays off
 rbail() {  # back to the frozen state: every recorded timer stopped, each timer and service read back, the marker aside; a stop that cannot be confirmed is said so
@@ -423,23 +440,33 @@ rbail() {  # back to the frozen state: every recorded timer stopped, each timer 
   move_marker_aside force; [ -n "$bad" ] || rm -f -- "$G"/restarting-*   # the attempt is closed only when every unit is confirmed stopped and the marker is aside
   stop "$*${bad:+; UNCONFIRMED stop of$bad}"; }
 restore_marker() {  # the marker set aside goes back, and must be the one the freeze record names (server and Clavain alike)
+  local m
   [ -f "$G/marker" ] && cp -p "$G/marker" "$ROOT/.git-autosync.tmp.$$" && mv -f -- "$ROOT/.git-autosync.tmp.$$" "$ROOT/.git-autosync" ||
     { [ ! -e "$G/marker" ] && [ "$(sed -n 's/^marker //p' "$G/freeze")" = none ]; } || stop "cannot restore the marker"
-  [ ! -e "$ROOT/.git-autosync" ] || [ "$(sha < "$ROOT/.git-autosync")" = "$(sed -n 's/^marker //p' "$G/freeze")" ] || { rm -f -- "$ROOT/.git-autosync"; stop "the restored marker differs from the one set aside"; }; }
+  [ ! -e "$ROOT/.git-autosync" ] || { m=$(sed -n 's/^marker //p' "$G/freeze"); [[ $m =~ ^[0-9a-f]{64}$ ]] && [ "$(sha < "$ROOT/.git-autosync")" = "$m" ]; } || { rm -f -- "$ROOT/.git-autosync"; stop "the restored marker differs from the one set aside"; }; }
+lane_refs() {  # PATTERN : the lane's refs matching it, sorted, on one line; a failed read is a failure, never an empty list
+  local o; o=$(pg ls-remote "$LANE" "$1") || return 1
+  ( set -o pipefail; printf '%s\n' "$o" | sort | paste -sd' ' - ); }
+tag_refs() {  # the gate0 tags, sorted, on one line; a failed read is a failure, never an empty list
+  local o; o=$(pg for-each-ref --format='%(refname) %(objectname)' refs/tags/gate0) || return 1
+  ( set -o pipefail; printf '%s\n' "$o" | sort | paste -sd' ' - ); }
 restart_server() {  # exit-name  predict-exit
-  local ex=$1 pe=$2 p2 cur pred rc tries n tip0 tip1 tags0 tags1 arch0 arch1 h=$HOST
+  local ex=$1 pe=$2 p2 cur pred rc tries n tip0 tip1 tags0 tags1 arch0 arch1 st h=$HOST
   restore_marker
-  if pg status --porcelain=v1 --untracked-files=all | cut -c4- | grep -qx '.git-autosync'; then
+  st=$(pg status --porcelain=v1 --untracked-files=all) || rbail "cannot read the status: whether the marker would be committed cannot be told; nothing started, marker moved aside again"
+  if printf '%s\n' "$st" | cut -c4- | grep -qx '.git-autosync'; then
     rbail "the marker rule: .git-autosync is in the status; a run would commit it into the checkout and push it to the lane"; fi
   p2=; [ "$ex" != r6 ] || p2=$J/p2.status.all
   pred=$LOGD/prediction.txt
   predict server "$ROOT" "$REL" "$h" "$pe" $p2 > "$pred" 2> "$pred.err"; rc=$?   # stdout only is the prediction
   cat "$pred" "$pred.err" >> "$LOG"; sed -n 's/^\(row\|verdict\) /\1 /p' "$pred" | while read -r l; do say "gate0-run: prediction: $l"; done
   if [ $rc != 0 ] || ! grep -q '^verdict run' "$pred"; then rbail "the prediction says STOP; nothing started, marker moved aside again (see $pred)"; fi
-  tip0=$(pg ls-remote "$LANE" "refs/heads/autosync/$h" | cut -f1)
-  tags0=$(pg for-each-ref --format='%(refname) %(objectname)' refs/tags/gate0 | sort | paste -sd' ' -)
-  arch0=$(pg ls-remote "$LANE" "refs/heads/archive/gate0/$h/*" | sort | paste -sd' ' -)
-  cur=$(journal_cursor); [ -n "$cur" ] || rbail "cannot take a journal cursor: lines of an earlier run could not be told from this run's; nothing started, marker moved aside again"
+  tip0=$(lane_refs "refs/heads/autosync/$h") || rbail "cannot read the lane tip before the run: an unreadable lane is not an unchanged one; nothing started, marker moved aside again"
+  tip0=$(printf '%s' "$tip0" | cut -f1)
+  tags0=$(tag_refs) || rbail "cannot read the gate0 tags before the run; nothing started, marker moved aside again"
+  arch0=$(lane_refs "refs/heads/archive/gate0/$h/*") || rbail "cannot read the archive branches before the run; nothing started, marker moved aside again"
+  [ ! -e "$J/done-p1a" ] || { [ -n "$tags0" ] && [ -n "$arch0" ]; } || rbail "P1a ran on this machine but the gate0 tag or the archive branch is not there: nothing started, marker moved aside again"
+  cur=$(journal_cursor) && [ -n "$cur" ] || rbail "cannot take a journal cursor: lines of an earlier run could not be told from this run's; nothing started, marker moved aside again"
   units start "$REPAIR_SVC"; say "gate0-run: the service start returned $? (the unit's result is not a row signal; the run is judged by Sylveste's lines and the checkout)"
   tries=${GATE0_JOURNAL_TRIES:-10}; n=0
   while :; do journal_since "$cur" > "$LOGD/journal.txt"; grep -Eq '^[0-9]+ autosync repo\(s\)' "$LOGD/journal.txt" && break
@@ -449,17 +476,19 @@ restart_server() {  # exit-name  predict-exit
   if ! predict verify "$pred" "$LOGD/journal.txt" > "$LOGD/verify.out" 2>&1; then
     cat "$LOGD/verify.out" >> "$LOG"; cat "$LOGD/verify.out"; rbail "the run differs from the prediction (log lines, committed paths, status after, or lane tip); marker moved aside, timers stay stopped"; fi
   cat "$LOGD/verify.out" >> "$LOG"
-  tags1=$(pg for-each-ref --format='%(refname) %(objectname)' refs/tags/gate0 | sort | paste -sd' ' -)
-  arch1=$(pg ls-remote "$LANE" "refs/heads/archive/gate0/$h/*" | sort | paste -sd' ' -)
+  tags1=$(tag_refs) || rbail "cannot read the gate0 tags after the run: the tag is not known to be preserved; marker moved aside, timers stay stopped"
+  arch1=$(lane_refs "refs/heads/archive/gate0/$h/*") || rbail "cannot read the archive branches after the run: the archive is not known to be preserved; marker moved aside, timers stay stopped"
   [ "$tags0" = "$tags1" ] && [ "$arch0" = "$arch1" ] || rbail "the tag or an archive branch changed during the restart run; marker moved aside, timers stay stopped"
-  tip1=$(pg ls-remote "$LANE" "refs/heads/autosync/$h" | cut -f1); say "gate0-run: lane tip autosync/$h: ${tip0:-absent} -> ${tip1:-absent}"; }
+  tip1=$(lane_refs "refs/heads/autosync/$h") || rbail "cannot read the lane tip after the run; marker moved aside, timers stay stopped"
+  tip1=$(printf '%s' "$tip1" | cut -f1); say "gate0-run: lane tip autosync/$h: ${tip0:-absent} -> ${tip1:-absent}"; }
 restart_clavain() {  # exit-name
   local pred rc tipn
   [ ! -e "$PAUSE" ] || stop "the automations are paused ($PAUSE exists): the sweep would exit at once; remove it deliberately and re-run"
   if [ "$(sed -n 's/^marker //p' "$G/freeze")" = none ]; then
     say "gate0-run: P0 found no marker: Clavain has no autosync to restart (row 8)"
     tipn=$(pg ls-remote "$LANE" "refs/heads/autosync/$HOST") || stop "cannot read the Clavain lane tip: an unreadable lane is not an unchanged one"
-    [ "$(printf '%s' "$tipn" | cut -f1)" = "$(cat "$J/p0/lane" 2>/dev/null)" ] || stop "the Clavain lane tip changed with no marker"
+    [ -f "$J/p0/lane" ] || stop "the P0 lane record $J/p0/lane is missing: whether the Clavain lane tip changed cannot be told"
+    [ "$(printf '%s' "$tipn" | cut -f1)" = "$(cat "$J/p0/lane")" ] || stop "the Clavain lane tip changed with no marker"
     return 0; fi
   [ -f "$G/marker" ] && grep -qE '^LANE=1[[:space:]]*$' "$G/marker" || stop "the marker to restore has no LANE=1: a state in no row"
   restore_marker
@@ -479,13 +508,13 @@ restarted_holds() {  # a restart that is already recorded: re-verify the state i
   for u in $(sed -n 's/^timer //p' "$G/freeze"); do   # an unknown state is a failure of this check, so it goes through the cleanup too
     [ "$(unit_state "$u")" = active ] || unrecord_bail "restart $1 is recorded but $u is not confirmed active: the state is not the one the record describes; nothing was run"; done
   m=$(sed -n 's/^marker //p' "$G/freeze")
-  if [ "$m" != none ]; then [ -e "$ROOT/.git-autosync" ] && [ "$(sha < "$ROOT/.git-autosync")" = "$m" ] ||
+  if [ "$m" != none ]; then [[ $m =~ ^[0-9a-f]{64}$ ]] && [ -e "$ROOT/.git-autosync" ] && [ "$(sha < "$ROOT/.git-autosync")" = "$m" ] ||
     unrecord_bail "restart $1 is recorded but the marker in the checkout is not the one set aside; nothing was run"
   else [ ! -e "$ROOT/.git-autosync" ] || unrecord_bail "restart $1 is recorded with no marker, but a marker is in the checkout; nothing was run"; fi
   rm -f -- "$G"/restarting-*   # a leftover from a crash after the record was written
   say "gate0-run: restart $1 already done ($(cat "$G/restarted-$1")); the recorded timers are active and the marker is in place; nothing run"; }
 do_restart() {
-  local ex=$XARG pe=$XARG
+  local ex=$XARG pe=$XARG sn
   if [ $CHECKMODE = 1 ]; then
     [ ! -d "$J/p1-pre" ] || [ ! -e "$J/done-p1a" ] || runlog cs preserved "$( [ "$ex" = r6 ] && echo r6 )" || stop "restart step 1 would fail"
     say "gate0-run: restart $ex check: would run the unfreeze gate, preservation, reconciliation, the marker, one autosync run and the timers"; return 0; fi
@@ -493,10 +522,13 @@ do_restart() {
   if [ -e "$G/restarted-$ex" ]; then restarted_holds "$ex"; return 0; fi   # a repeat runs nothing
   if restarting_any; then rbail "an earlier restart attempt began (marker, service or timers) and left no completion record: its effects are undone now (every timer stopped, marker aside); run the restart again as a new attempt"; fi
   freeze_holds   # restart: the freeze must hold now (units, marker, agents, bd), not only have been recorded
+  archive_ready   # the lane this restart reads and the run pushes to is validated now, not trusted from preflight
   if [ "$ex" = r0 ]; then
     if [ "$(cut -d' ' -f1 "$J/cp" 2>/dev/null)" = a0r ]; then pe=a0r
     elif [ ! -e "$J/done-p1a" ]; then pe=p10   # P1a never ran: the machine is at the base, rows 1 or 2 with P1-pre's status
-      [ "$(pg status --porcelain -uall | grep -v ' \.beads/issues\.jsonl$')" = "$(grep -v ' \.beads/issues\.jsonl$' "$J/p1-pre/status.all" 2>/dev/null)" ] ||
+      sn=$(pg status --porcelain -uall) || stop "R0 without P1a: cannot read the status"
+      [ -f "$J/p1-pre/status.all" ] || stop "R0 without P1a: P1-pre's status record $J/p1-pre/status.all is missing"
+      [ "$(printf '%s\n' "$sn" | grep -v ' \.beads/issues\.jsonl$')" = "$(grep -v ' \.beads/issues\.jsonl$' "$J/p1-pre/status.all")" ] ||
         stop "R0 without P1a: the status differs from P1-pre's record"
     else stop "R0 after P1a needs R0a first (run rollback)"; fi; fi
   runlog cs unfreeze-gate "$ex" || stop "the unfreeze gate refused: the freeze stays"
