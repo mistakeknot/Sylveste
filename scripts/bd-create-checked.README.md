@@ -8,7 +8,7 @@ Wrapper around `bd create` that warns on likely duplicate beads before creating.
 
 ## Signal stack
 
-Per finding KF-02 + POLY-5 (`docs/research/flux-review/sylveste-improvements-multi-axis/2026-05-04-synthesis.md`):
+Per finding KF-02 + POLY-5 (the 2026-05-04 sylveste-improvements-multi-axis flux-review synthesis, kept in the private internal docs):
 
 - **Title TF-IDF cosine** (45%) — high precision for rename-style dups; rare-token-weighted
 - **Title+description TF-IDF cosine** (25%) — broader semantic overlap when titles diverge

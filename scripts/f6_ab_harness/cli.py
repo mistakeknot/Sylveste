@@ -4,7 +4,7 @@ Usage::
 
     python -m scripts.f6_ab_harness \
         --backend legacy \
-        --corpus-dir docs/research/f6-ab-corpus \
+        --corpus-dir /path/to/f6-ab-corpus \
         --output /tmp/legacy.jsonl \
         --baseline-sha f72d3cfd
 

@@ -1,0 +1,36 @@
+# Approved private paths (plan §1.4 P8). A line ending in / is a prefix; any other line is one exact path.
+# PR 1: the PR 1 delete list (out/paths-pr1.txt). PR 2 (X-steps) appends the publicly tracked .beads files.
+docs/research/
+docs/research-notes/
+docs/plans/
+docs/planning/
+docs/brainstorms/
+docs/prds/
+docs/prd/
+docs/goals/
+docs/handoffs/
+docs/reflections/
+docs/reflect/
+docs/sprints/
+docs/audits/
+docs/reviews/
+docs/traces/
+docs/evidence/
+docs/measurements/
+docs/flux-drive/
+docs/flux-review/
+.claude/flux-drive-output/
+.claude/reviews/
+.claude/memory-modularity-research.md
+.claude/clodex-toggle.flag
+.clavain/calibration-streak.json
+.clavain/calibration-streak.lock
+.clavain/daemon/
+.clavain/dod/
+.clavain/orphan-triage-2026-04-10.md
+.clavain/quality-gates/
+.clavain/reflections/
+.clavain/setup-verified
+.interfluence/reference-corpora/
+.interfluence/corpus/
+todos/

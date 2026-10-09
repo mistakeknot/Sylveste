@@ -19,7 +19,7 @@ class Finding:
     metric). A finding "covers" a ground-truth theme when one of its declared
     themes matches the theme. F6b's metric implementation may use either exact
     string match against ``themes`` or a tagger over the prose body — see
-    docs/research/f6-measurement-preregistration.md §Metrics.
+    the F6 measurement pre-registration (private internal docs), §Metrics.
     """
 
     title: str

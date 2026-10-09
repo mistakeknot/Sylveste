@@ -1,6 +1,6 @@
 """Metric computation for the F6 A/B harness.
 
-Pre-registered metrics (see ``docs/research/f6-measurement-preregistration.md``):
+Pre-registered metrics (see the F6 measurement pre-registration, kept in the private internal docs):
 
 - **Primary — review-coverage-per-diff.** Per-diff fraction of
   ``expected_findings_themes`` (ground truth) covered by the backend's emitted

@@ -6,7 +6,7 @@ Usage::
     from scripts.f6_ab_harness.backends import FakeBackend
 
     result = run_corpus(
-        corpus_dir=Path("docs/research/f6-ab-corpus"),
+        corpus_dir=Path("/path/to/f6-ab-corpus"),
         backend=FakeBackend(script={...}),
         baseline_sha="f72d3cfd...",
         output_path=Path("/tmp/legacy-results.jsonl"),
@@ -135,7 +135,7 @@ def run_corpus(
     """Drive ``backend`` over every diff in ``corpus_dir`` and write JSONL to ``output_path``.
 
     Args:
-        corpus_dir: Path to ``docs/research/f6-ab-corpus``.
+        corpus_dir: Path to the F6 A/B corpus directory (kept in the private internal docs, not in the public tree).
         backend: Implementation of :class:`Backend`.
         baseline_sha: Frozen-baseline SHA from the pre-registration doc; passed to each
             backend invocation so backends that depend on baseline state stay reproducible.

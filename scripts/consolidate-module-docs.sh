@@ -4,6 +4,9 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
+# One-shot migration of the internal docs (private overlay, not in the public tree).
+[[ -d docs/research ]] || { echo "no docs/research under $ROOT_DIR: the internal docs overlay is not installed" >&2; exit 1; }
+
 declare -A MODULE_DEST=(
   [interject]="interverse/interject/docs"
   [intercore]="core/intercore/docs"

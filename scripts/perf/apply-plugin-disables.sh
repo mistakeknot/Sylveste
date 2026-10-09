@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
-# Apply the plugin disables listed in docs/research/2026-04-21-plugin-disable-decisions.yaml
-# to ~/.claude/settings.json. Idempotent — re-running leaves the file unchanged
+# Apply the plugin disables listed in a decisions YAML file (pass its path as
+# the first argument; the 2026-04-21 decisions file is kept in the private
+# internal docs) to ~/.claude/settings.json. Idempotent — re-running leaves the file unchanged
 # once disables are applied. Creates a backup at ~/.claude/settings.json.bak.<timestamp>
 # before any change.
 set -euo pipefail
 
 here="$(cd "$(dirname "$0")" && pwd)"
 repo_root="$(cd "$here/../.." && pwd)"
-decisions="${1:-$repo_root/docs/research/2026-04-21-plugin-disable-decisions.yaml}"
+decisions="${1:?usage: apply-plugin-disables.sh DECISIONS_YAML}"
 settings="${HOME}/.claude/settings.json"
 
 [[ -f "$decisions" ]] || { echo "no decisions file: $decisions" >&2; exit 1; }
