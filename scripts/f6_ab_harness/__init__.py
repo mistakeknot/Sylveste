@@ -5,8 +5,8 @@ backends (legacy flux-drive wrapper, ontology lattice-template wrapper) land in
 F6b (sylveste-g939). The runner, metrics module, and Backend protocol are
 frozen at F6a so F6b cannot regress the contract.
 
-See docs/research/f6-ab-corpus/README.md and
-docs/research/f6-measurement-preregistration.md for the full design.
+The F6 corpus README and measurement pre-registration (kept in the private
+internal docs, not in the public tree) hold the full design.
 """
 
 from .backends.base import Backend, BackendResult, Finding

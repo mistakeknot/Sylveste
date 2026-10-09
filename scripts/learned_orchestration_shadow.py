@@ -21,9 +21,9 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_INPUT = ROOT / "docs" / "research" / "learned-orchestration" / "seed-examples-v0.jsonl"
-DEFAULT_OUTPUT = ROOT / "docs" / "research" / "learned-orchestration" / "shadow-comparisons-v0.jsonl"
-DEFAULT_REPORT = ROOT / "docs" / "research" / "learned-orchestration" / "shadow-report-v0.md"
+DEFAULT_INPUT = ROOT / "tests" / "fixtures" / "learned-orchestration" / "seed-examples-v0.jsonl"
+DEFAULT_OUTPUT = ROOT / ".tmp" / "learned-orchestration" / "shadow-comparisons-v0.jsonl"
+DEFAULT_REPORT = ROOT / ".tmp" / "learned-orchestration" / "shadow-report-v0.md"
 
 REQUIRED_EXAMPLE_FIELDS = {
     "example_id",

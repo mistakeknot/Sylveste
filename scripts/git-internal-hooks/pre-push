@@ -1,0 +1,14 @@
+#!/bin/bash
+# git-internal private pre-push (template; installed by `git-internal
+# install-hooks` into .git-internal/hooks/). The only destination an agent may
+# push is refs/heads/autosync/<host>, <host> read from the machine-local
+# .git-internal/info/host. Deleting that lane is refused too. Promotion of
+# main is mk's (plan §1.4 "Private sync"). PR 2a appends the JSONL blob checks.
+set -u
+host=$(cat "$(git rev-parse --git-dir)/info/host" 2>/dev/null)
+[ -n "$host" ] || { echo "private pre-push: .git-internal/info/host is missing" >&2; exit 1; }
+while read -r lref lsha rref rsha; do
+  [ "$rref" = "refs/heads/autosync/$host" ] || { echo "private pre-push: only refs/heads/autosync/$host may be pushed (got $rref)" >&2; exit 1; }
+  [[ $lsha =~ ^0+$ ]] && { echo "private pre-push: deleting refs/heads/autosync/$host is refused" >&2; exit 1; }
+done
+exit 0

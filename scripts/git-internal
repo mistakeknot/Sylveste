@@ -1,0 +1,514 @@
+#!/bin/bash
+# git-internal: the private overlay helper (plan §1.4 P8, P9 and "Private
+# sync"). Ships in PR 1 as scripts/git-internal, with its hook templates and
+# the approved-path list in scripts/git-internal-hooks/. The private repo's
+# git dir is <root>/.git-internal with core.worktree .. and no core.hooksPath.
+#
+#   git-internal [-C ROOT] doctor             platform preflight (bash, git >= 2.38, sha256 tool)
+#   git-internal [-C ROOT] install URL HOST   P8: clone, bind, hooks, absent-only checkout;
+#                                             rerun after an interruption, it finishes
+#   git-internal [-C ROOT] install-hooks      copy the hook templates into $GIT_DIR/hooks
+#   git-internal [-C ROOT] add PATH...        stage approved, root-relative paths (add -f)
+#   git-internal [-C ROOT] commit -m MSG
+#   git-internal [-C ROOT] sync               merge main and the other lanes, install, push own lane
+#   git-internal [-C ROOT] resolve REF        after exit 3: merge REF into the recorded fold,
+#                                             using the resolved files on disk, then continue
+#   git-internal [-C ROOT] probe              P9 binding check with a synthetic commit
+#   git-internal [-C ROOT] status|log|diff|show|ls-files|ls-tree|rev-parse|fetch ARGS
+#
+# Exit codes: 0 ok; 1 usage or refused; 2 clone or fetch failed; 3 conflict,
+# nothing written; 4 precondition (detached, staged, local edits to a path the
+# sync changes, or HEAD moved since a recorded conflict), nothing written;
+# 5 an incoming path exists on disk, nothing written; 6 a step failed before
+# the intent was written (sync, resolve: the worktree, the index and HEAD
+# are untouched; install: rerun it to finish); 7 lane push failed; 8 probe
+# failed; 9 platform preflight; 10 unfinished: a sync or resolve recorded in
+# $GIT_DIR/git-internal-intent is not finished (interrupted, its importer
+# failed, or a path, the index or HEAD is in neither its old nor its new
+# state, or a git write on the way failed, such as ORIG_HEAD behind a stale
+# lock). The lane was not pushed. Every writing command first finishes it.
+#
+# Crash safety (revision 8). Before its first write to the worktree, the index
+# or HEAD, a sync or resolve writes the intent "STEP OLD NEW" atomically (temp
+# file, fsync, rename, directory fsync). One idempotent routine, forward(),
+# finishes it on the first run and on every recovery: each changed path must
+# hold its OLD or its NEW entry, the index OLD's or NEW's tree, and HEAD OLD or
+# NEW. It writes what is still OLD, moves the index and HEAD, runs the
+# importer, and removes the intent last. A step that completed before its
+# intent was removed finishes as "already NEW: run the importer, remove the
+# intent". Revision 8.1: every git write on this path is checked, and ORIG_HEAD
+# is set to OLD and read back before the importer runs (Sol round 8).
+# GIT_INTERNAL_CRASH_AT=N (tests only) kills the helper at its Nth
+# crash point, counted in the file $GIT_INTERNAL_CRASH_COUNT, which a caller
+# may share.
+#
+# Symlinks are recorded as git records them: mode 120000 and a blob holding the
+# link text (readlink), never the target's bytes, and a dangling link included.
+#
+# Portable to /bin/bash 3.2 (macOS): no mapfile, no associative arrays, and
+# every array expansion is guarded with ${a[@]+"${a[@]}"} for set -u.
+set -u
+PATH=${GIT_INTERNAL_PATH:-/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin}
+TPL=$(cd "$(dirname "$0")" && pwd -P)/git-internal-hooks
+
+die() { local rc=$1; shift; echo "git-internal: $*" >&2; exit "$rc"; }
+
+# platform preflight (finding: Clavain runs /bin/bash 3.2 and may lack sha256sum)
+sha256() {  # FILE... : "<hex>  <file>" lines, from sha256sum or shasum -a 256
+  if command -v sha256sum >/dev/null 2>&1; then sha256sum ${1+"$@"}
+  elif command -v shasum >/dev/null 2>&1; then shasum -a 256 ${1+"$@"}
+  else return 127; fi
+}
+preflight() {  # quiet unless something is missing; doctor prints the report
+  local v maj min bad=0 c
+  for c in git cat cp chmod dirname basename grep sed cut mkdir rm mv readlink sync; do
+    command -v "$c" >/dev/null 2>&1 || { echo "git-internal: preflight: $c not on PATH ($PATH)" >&2; bad=1; }
+  done
+  command -v sha256sum >/dev/null 2>&1 || command -v shasum >/dev/null 2>&1 ||
+    { echo "git-internal: preflight: neither sha256sum nor shasum on PATH ($PATH)" >&2; bad=1; }
+  if command -v git >/dev/null 2>&1; then
+    v=$(git version 2>/dev/null); v=${v#git version }; maj=${v%%.*}; min=${v#*.}; min=${min%%.*}
+    case $maj$min in *[!0-9]*|'') echo "git-internal: preflight: cannot parse git version '$v'" >&2; bad=1 ;;
+      *) [ "$maj" -gt 2 ] || { [ "$maj" = 2 ] && [ "$min" -ge 38 ]; } ||
+           { echo "git-internal: preflight: git $v is older than 2.38 (merge-tree --write-tree)" >&2; bad=1; } ;;
+    esac
+  fi
+  [ $bad = 0 ] || exit 9
+}
+cmd_doctor() {
+  preflight
+  echo "git-internal: doctor ok: bash $BASH_VERSION, $(git version), sha256 via $(command -v sha256sum || command -v shasum), PATH=$PATH"
+}
+
+ROOT=${GIT_INTERNAL_ROOT:-}
+if [ "${1:-}" = -C ]; then ROOT=${2:?}; shift 2; fi
+cmd=${1:-}; [ $# -gt 0 ] && shift
+preflight
+if [ -z "$ROOT" ]; then
+  ROOT=$PWD; while [ "$ROOT" != / ] && [ ! -d "$ROOT/.git-internal" ]; do ROOT=$(dirname "$ROOT"); done
+  [ -d "$ROOT/.git-internal" ] || [ "$cmd" = install ] || [ "$cmd" = doctor ] || die 1 "no .git-internal above $PWD; use -C ROOT"
+  [ -d "$ROOT/.git-internal" ] || ROOT=$PWD
+fi
+ROOT=$(cd "$ROOT" && pwd -P) || die 1 "bad root"
+GD=$ROOT/.git-internal
+STATE=$GD/git-internal-conflict   # recorded by an exit-3 sync: HEAD, fold, ref sha, ref name
+FOLDREF=refs/git-internal/fold    # keeps the recorded fold reachable; local only, never pushed
+INTENT=$GD/git-internal-intent    # "STEP OLD NEW": a sync or resolve from OLD to NEW is not finished
+gi() { git -C "$ROOT" --git-dir="$GD" ${1+"$@"}; }
+
+crash_point() {  # name : tests only; see the header
+  [ -n "${GIT_INTERNAL_CRASH_AT:-}" ] || return 0
+  local n; n=$(cat "${GIT_INTERNAL_CRASH_COUNT:?}" 2>/dev/null) || n=0
+  n=$((n+1)); echo "$n" > "$GIT_INTERNAL_CRASH_COUNT"
+  [ -z "${GIT_INTERNAL_CRASH_LOG:-}" ] || echo "$n git-internal $1" >> "$GIT_INTERNAL_CRASH_LOG"
+  [ "$n" != "$GIT_INTERNAL_CRASH_AT" ] || kill -KILL $$
+}
+fsync_path() { sync "$1" 2>/dev/null || sync; }   # GNU sync FILE fsyncs it; elsewhere a global sync
+put() {  # file text : atomic, durable replace (temp, fsync, rename, directory fsync)
+  local t="$1.tmp.$$"
+  printf '%s\n' "$2" > "$t" && fsync_path "$t" || { rm -f -- "${t:?}"; return 1; }
+  crash_point "$(basename "$1")-tmp"
+  mv -f "$t" "$1" && fsync_path "$(dirname "$1")" || { rm -f -- "${t:?}"; return 1; }
+  crash_point "$(basename "$1")"
+}
+host() { local h; h=$(cat "$GD/info/host" 2>/dev/null); [ -n "$h" ] || die 4 "$GD/info/host is missing"; printf '%s' "$h"; }
+
+approved() {  # path : 0 if on info/approved-paths
+  local p=$1 a
+  while IFS= read -r a; do
+    case $a in
+      ''|'#'*) ;;
+      */) [[ $p == "$a"* ]] && return 0 ;;
+      *)  [[ $p == "$a" ]] && return 0 ;;
+    esac
+  done < "$GD/info/approved-paths"
+  return 1
+}
+
+cmd_install_hooks() {
+  [ -d "$GD" ] || die 1 "install-hooks: no $GD"
+  mkdir -p "$GD/hooks" || die 1 "install-hooks: cannot create $GD/hooks"
+  for h in pre-commit pre-push; do   # PR 2a adds post-merge and post-rewrite (the importer)
+    cp "$TPL/$h" "$GD/hooks/$h" && chmod 0755 "$GD/hooks/$h" || die 1 "install-hooks: cannot install $h"
+  done
+  (cd "$GD/hooks" && sha256 pre-commit pre-push) > "$GD/info/hooks.sha256" || die 9 "install-hooks: sha256 failed"
+}
+
+# Crash-safe (revision 8): the git dir is built as .git-internal.new and renamed
+# into place whole, so .git-internal is either absent or complete. The checkout
+# then writes only absent paths, one at a time, and a path that already holds
+# its entry counts as written, so a rerun after an interruption finishes it.
+# info/installed marks the end.
+cmd_install() {
+  [ $# = 2 ] || die 1 "usage: install URL HOST"
+  local fin=$GD p
+  local -a present=() todo=()
+  if [ -e "$GD" ]; then
+    [ ! -e "$GD/info/installed" ] || die 4 "install: $GD is already installed"
+    [ "$(gi config --get remote.origin.url)" = "$1" ] && [ "$(cat "$GD/info/host" 2>/dev/null)" = "$2" ] ||
+      die 4 "install: $GD exists, unfinished, for another URL or host"
+    rm -f -- "${GD:?}"/info/installed.tmp.*   # a killed run's temporary
+    echo "git-internal: install: finishing an interrupted install" >&2
+  else
+    rm -rf -- "${fin:?}.new"                # an interrupted build; only install writes it
+    GD=$fin.new
+    git clone -q --bare "$1" "$GD" || die 2 "install: clone failed"
+    { gi config core.bare false && gi config core.worktree .. && gi config status.showUntrackedFiles no &&
+      gi config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'; } || die 6 "install: cannot configure $GD"
+    printf '%s\n' "$2" > "$GD/info/host" || die 6 "install: cannot record the host"
+    [ -e "$GD/info/approved-paths" ] || cp "$TPL/approved-paths" "$GD/info/approved-paths" || die 6 "install: cannot copy approved-paths"
+    cmd_install_hooks                       # before any commit, sync or probe can run
+    gi fetch -q origin || die 2 "install: fetch failed"
+    gi reset -q || die 6 "install: cannot write the index"   # mixed: writes only the index
+    crash_point install-built
+    mv "$GD" "$fin" && fsync_path "$ROOT" || die 6 "install: cannot move $GD into place"
+    GD=$fin; crash_point install-renamed
+  fi
+  while IFS= read -r -d '' p; do
+    same_blob HEAD "$p" && continue       # written by an earlier run, or already identical
+    if [ -e "$ROOT/$p" ] || [ -L "$ROOT/$p" ]; then present+=("$p"); else todo+=("$p"); fi
+  done < <(gi ls-files -z)
+  [ ${#present[@]} = 0 ] || { printf 'git-internal: install: exists, not overwritten: %s\n' ${present[@]+"${present[@]}"} >&2; exit 5; }
+  for p in ${todo[@]+"${todo[@]}"}; do
+    gi checkout-index -- "$p" || die 5 "install: checkout-index refused $p (it appeared since the check)"   # no -f: absent only
+    crash_point install-write
+  done
+  put "$GD/info/installed" "$1 $2" || die 6 "install: cannot record completion"
+}
+
+cmd_add() {
+  [ $# -gt 0 ] || die 1 "usage: add PATH..."
+  local p
+  for p; do
+    case $p in -*|.|./|/*|*..*) die 1 "add: '$p' refused: no options, no '.', root-relative paths only" ;; esac
+    approved "$p" || die 1 "add: '$p' is not an approved path"
+  done
+  gi add -f -- ${1+"$@"}   # -f only here: approved paths are gitignored by the public .gitignore
+}
+
+cmd_commit() {
+  [ $# = 2 ] && [ "$1" = -m ] || die 1 "usage: commit -m MSG (no -a, no paths, no --no-verify)"
+  gi commit -q -m "$2"
+}
+
+precheck() {  # the private checkout must be on a branch, with nothing staged
+  gi symbolic-ref -q HEAD >/dev/null || die 4 "HEAD is detached"
+  local f; for f in MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD rebase-merge rebase-apply; do
+    [ ! -e "$GD/$f" ] || die 4 "$f is present"
+  done
+  [ -z "$(gi ls-files -u)" ] || die 4 "unmerged index entries"
+  gi update-index -q --refresh >/dev/null || true
+  gi diff --cached --quiet || die 4 "staged changes: commit them first"
+}
+
+push_lane() { gi push -q origin "HEAD:refs/heads/autosync/$(host)" || die 7 "push of own lane failed"; }
+
+disk_mode() {  # path : the git mode the file on disk would be recorded with
+  if [ -L "$ROOT/$1" ]; then echo 120000; elif [ -x "$ROOT/$1" ]; then echo 100755; else echo 100644; fi
+}
+link_text() {  # path : the symlink's own text, exactly (no target lookup, trailing newlines kept)
+  local t; t=$(readlink -- "$ROOT/$1" && printf x) || return 1
+  t=${t%x}; printf '%s' "${t%?}"          # drop only the one newline readlink appends
+}
+disk_blob() {  # path [-w] : the blob id git records for the path on disk. A symlink
+               # hashes its link text, dangling or not; never the target's bytes.
+  if [ -L "$ROOT/$1" ]; then (               # pipefail (bash 3.0+): a readlink failure fails the hash
+    set -o pipefail
+    if [ "${2:-}" = -w ]; then link_text "$1" | gi hash-object -w --no-filters --stdin
+    else link_text "$1" | gi hash-object --no-filters --stdin; fi )
+  elif [ "${2:-}" = -w ]; then gi hash-object -w -- "$ROOT/$1"
+  else gi hash-object -- "$ROOT/$1"; fi
+}
+same_blob() {  # rev path : 0 if the path on disk already has that entry's blob AND mode
+  local e mode sha
+  { [ -L "$ROOT/$2" ] || [ -f "$ROOT/$2" ]; } || return 1
+  e=$(gi ls-tree "$1" -- "$2") && [ -n "$e" ] || return 1
+  mode=${e%% *}; sha=${e#* }; sha=${sha#* }; sha=${sha%%	*}
+  [ "$(disk_mode "$2")" = "$mode" ] && [ "$(disk_blob "$2")" = "$sha" ]
+}
+
+changes() {  # old new : fills the caller's A, M and D; 1 if git diff fails (never an empty list)
+  local f="$GD/sync-diff.$$" st p
+  gi diff --no-renames --name-status -z "$1" "$2" > "$f" || { rm -f -- "${f:?}"; return 1; }
+  while IFS= read -r -d '' st && IFS= read -r -d '' p; do
+    case $st in A) A+=("$p") ;; D) D+=("$p") ;; *) M+=("$p") ;; esac
+  done < "$f"
+  rm -f -- "${f:?}"
+}
+
+# sync or resolve OLD -> NEW: every check runs before the first write, and
+# nothing is written on refusal (4, 5). Then the intent, then forward().
+apply() {  # step old new
+  local step=$1 old=$2 new=$3 p d
+  local -a A=() M=() D=() bad=() hit=()
+  changes "$old" "$new" || { echo "git-internal: cannot list the changes $old..$new. Nothing written." >&2; return 6; }
+  # 1. tracked paths that change (content or mode) must carry no local edit,
+  #    or already hold the result (bytes and mode)
+  for p in ${M[@]+"${M[@]}"}; do
+    same_blob "$new" "$p" && continue
+    gi diff --quiet -- "$p" || bad+=("$p")
+  done
+  for p in ${D[@]+"${D[@]}"}; do
+    { [ -e "$ROOT/$p" ] || [ -L "$ROOT/$p" ]; } || continue
+    gi diff --quiet -- "$p" || bad+=("$p")
+  done
+  [ ${#bad[@]} = 0 ] || { printf 'git-internal: local edit to %s would be replaced; commit or move it. Nothing written.\n' ${bad[@]+"${bad[@]}"} >&2; return 4; }
+  # 2. collision: an added path must be absent on disk, ignored and untracked files
+  #    included; no leading component may be a file or a symlink
+  for p in ${A[@]+"${A[@]}"}; do
+    if same_blob "$new" "$p"; then continue; fi
+    if [ -e "$ROOT/$p" ] || [ -L "$ROOT/$p" ]; then hit+=("$p"); continue; fi
+    d=$(dirname "$p")
+    while [ "$d" != . ]; do
+      if [ -L "$ROOT/$d" ] || { [ -e "$ROOT/$d" ] && [ ! -d "$ROOT/$d" ]; }; then hit+=("$p"); break; fi
+      d=$(dirname "$d")
+    done
+  done
+  if [ ${#hit[@]} -gt 0 ]; then
+    printf 'git-internal: incoming path exists on disk, not overwritten: %s\n' ${hit[@]+"${hit[@]}"} >&2
+    gi ls-files -o -i --exclude-standard -- ${hit[@]+"${hit[@]}"} | sed 's/^/git-internal:   (gitignored) /' >&2
+    echo "git-internal: move it aside or delete it (owner's call), then sync again. Nothing written." >&2
+    return 5
+  fi
+  # 3. the intent, durable before the first write
+  put "$INTENT" "$step $old $new" || { echo "git-internal: cannot write $INTENT. Nothing written." >&2; return 6; }
+  forward "$step" "$old" "$new"
+}
+
+# Finish the recorded step: an idempotent roll forward from OLD to NEW, shared
+# by the first run and by every recovery. HEAD must be OLD or NEW. While it is
+# OLD, the index must hold OLD's or NEW's tree and every changed path its OLD or
+# its NEW entry (bytes and mode; absent where that side has none); anything
+# else is a STOP (10) with nothing written and the intent kept. Each write keeps
+# that invariant: an added path is created exclusively, a changed one rewritten,
+# a deleted one removed. Then the index, then HEAD (compare-and-swap), then the
+# conflict record (resolve), then ORIG_HEAD = OLD (checked; revision 8.1), then
+# the importer over ORIG_HEAD..HEAD, which must be idempotent. The intent is
+# removed last. Every git write here is checked: a failure is a STOP (10).
+forward() {  # step old new
+  local step=$1 old=$2 new=$3 h t p idx
+  local -a A=() M=() D=() bad=()
+  gi symbolic-ref -q HEAD >/dev/null || { echo "git-internal: HEAD is detached; the recorded $step $old..$new is not finished" >&2; return 10; }
+  h=$(gi rev-parse -q --verify HEAD) || { echo "git-internal: cannot read HEAD; the recorded $step $old..$new is not finished" >&2; return 10; }
+  if [ "$h" != "$new" ]; then
+    [ "$h" = "$old" ] || { echo "git-internal: HEAD is $h, neither the recorded old ($old) nor new ($new); inspect, then remove $INTENT by hand" >&2; return 10; }
+    t=$(gi write-tree 2>/dev/null)
+    [ -n "$t" ] && { [ "$t" = "$(gi rev-parse "$old^{tree}")" ] || [ "$t" = "$(gi rev-parse "$new^{tree}")" ]; } ||
+      { echo "git-internal: the index holds neither the old nor the new tree; the recorded $step $old..$new is not finished" >&2; return 10; }
+    changes "$old" "$new" || { echo "git-internal: cannot list the changes $old..$new; the recorded $step is not finished" >&2; return 10; }
+    for p in ${A[@]+"${A[@]}"}; do { [ ! -e "$ROOT/$p" ] && [ ! -L "$ROOT/$p" ]; } || same_blob "$new" "$p" || bad+=("$p"); done
+    for p in ${D[@]+"${D[@]}"}; do { [ ! -e "$ROOT/$p" ] && [ ! -L "$ROOT/$p" ]; } || same_blob "$old" "$p" || bad+=("$p"); done
+    for p in ${M[@]+"${M[@]}"}; do same_blob "$old" "$p" || same_blob "$new" "$p" || bad+=("$p"); done
+    [ ${#bad[@]} = 0 ] || { printf 'git-internal: %s holds neither its old nor its new entry; nothing written\n' ${bad[@]+"${bad[@]}"} >&2
+      echo "git-internal: move it aside (owner's call), then run any writing git-internal command to finish the recorded $step" >&2; return 10; }
+    idx="$GD/sync-index.$$"
+    GIT_INDEX_FILE=$idx gi read-tree "$new" || { rm -f -- "${idx:?}"; return 10; }
+    for p in ${A[@]+"${A[@]}"}; do
+      same_blob "$new" "$p" && continue
+      GIT_INDEX_FILE=$idx gi checkout-index -- "$p" ||        # no -f: refuses a path that appeared
+        { rm -f -- "${idx:?}"; echo "git-internal: $p appeared during the $step; move it aside, then run any writing git-internal command to finish" >&2; return 10; }
+      crash_point write
+    done
+    for p in ${M[@]+"${M[@]}"}; do
+      same_blob "$new" "$p" && continue
+      GIT_INDEX_FILE=$idx gi checkout-index -f -- "$p" || { rm -f -- "${idx:?}"; return 10; }
+      crash_point write
+    done
+    for p in ${D[@]+"${D[@]}"}; do
+      { [ -e "$ROOT/$p" ] || [ -L "$ROOT/$p" ]; } || continue
+      rm -f -- "${ROOT:?}/${p:?}" || { rm -f -- "${idx:?}"; return 10; }
+      crash_point remove
+    done
+    rm -f -- "${idx:?}"
+    gi read-tree "$new" || return 10
+    gi update-index -q --refresh >/dev/null || true
+    crash_point index
+    gi update-ref -m "git-internal $step" HEAD "$new" "$old" || { echo "git-internal: HEAD moved during the $step" >&2; return 10; }
+    crash_point head
+  fi
+  [ "$step" != resolve ] || clear_state ||
+    { echo "git-internal: cannot clear the conflict record; the lane was NOT pushed and $INTENT is kept" >&2; return 10; }
+  # the importer reads ORIG_HEAD..HEAD, so ORIG_HEAD must be the recorded OLD
+  # before it runs, on the first run and on every recovery: re-set when it is
+  # not, then read back. A stale ORIG_HEAD.lock fails the update, and an older
+  # ORIG_HEAD would import the wrong range (Sol round 8).
+  if [ "$(gi rev-parse -q --verify ORIG_HEAD)" != "$old" ]; then
+    gi update-ref ORIG_HEAD "$old" && [ "$(gi rev-parse -q --verify ORIG_HEAD)" = "$old" ] ||
+      { echo "git-internal: cannot set ORIG_HEAD to the recorded old $old (a stale $GD/ORIG_HEAD.lock?). The importer did not run, the lane was NOT pushed and $INTENT is kept. If no git command is running, remove the stale lock, then run any writing git-internal command to finish." >&2; return 10; }
+  fi
+  crash_point orig-head
+  # read-tree fires no hook, so run post-merge here (PR 2a: the importer)
+  if [ -x "$GD/hooks/post-merge" ]; then
+    (cd "$ROOT" && GIT_DIR=$GD "$GD/hooks/post-merge" 0) ||
+      { echo "git-internal: post-merge importer failed for $old..$new. HEAD and files moved; the lane was NOT pushed. $INTENT keeps the range; fix the cause, then run any writing git-internal command to retry it." >&2; return 10; }
+  fi
+  crash_point import
+  rm -f -- "${INTENT:?}" && [ ! -e "$INTENT" ] ||
+    { echo "git-internal: cannot remove $INTENT; the lane was NOT pushed" >&2; return 10; }
+  fsync_path "$GD"
+  crash_point intent-removed
+}
+
+# finish a recorded step; runs before any command that writes, syncs or pushes
+recover() {
+  local step old new
+  rm -f -- "${GD:?}"/sync-index.* "${GD:?}"/resolve-index.* "${GD:?}"/sync-diff.* "${INTENT:?}".tmp.* "${STATE:?}".tmp.*   # this helper's own temporaries
+  [ -e "$INTENT" ] || return 0
+  read -r step old new < "$INTENT" && case $step in sync|resolve) true ;; *) false ;; esac &&
+    gi rev-parse -q --verify "$old^{commit}" >/dev/null && gi rev-parse -q --verify "$new^{commit}" >/dev/null ||
+    { echo "git-internal: unreadable $INTENT; inspect it, then remove it by hand" >&2; return 10; }
+  echo "git-internal: finishing the recorded $step $old..$new" >&2
+  forward "$step" "$old" "$new"
+}
+
+clear_state() {  # 1 if the conflict record or the fold ref survives
+  rm -f -- "${STATE:?}" && [ ! -e "$STATE" ] || return 1
+  crash_point state-cleared
+  gi update-ref -d "$FOLDREF" || return 1   # deleting an absent ref succeeds; a broken one fails (rev 8.2)
+  ! gi rev-parse -q --verify "$FOLDREF" >/dev/null || return 1
+  crash_point fold-cleared
+}
+
+# fold main and every other lane into $cur, in objects only. A ref that is an
+# ancestor of cur or of another candidate is already carried and is skipped, so
+# a lane that holds a resolution is taken before the raw refs it resolved. On a
+# conflict, record HEAD, the fold so far and the ref, then exit 3 (nothing written).
+fold() {  # uses and sets cur; $1 = HEAD at the start of this sync
+  local h ref sha c keep out rc
+  local -a cand=() shas=()
+  h=$(host) || exit $?
+  for ref in $(gi for-each-ref --format='%(refname)' refs/remotes/origin/main refs/remotes/origin/autosync); do
+    [ "$ref" = "refs/remotes/origin/autosync/$h" ] && continue
+    sha=$(gi rev-parse -q --verify "$ref^{commit}") || die 6 "cannot read $ref"
+    cand+=("$ref"); shas+=("$sha")
+  done
+  local i j n=${#cand[@]}
+  i=0; while [ $i -lt $n ]; do
+    ref=${cand[$i]}; sha=${shas[$i]}; keep=1
+    j=0; while [ $j -lt $n ]; do
+      c=${shas[$j]}
+      if [ $j != $i ]; then
+        if [ "$c" = "$sha" ]; then [ $j -lt $i ] && keep=0            # same commit: keep the first
+        elif gi merge-base --is-ancestor "$sha" "$c"; then keep=0; fi  # carried by another candidate
+      fi
+      j=$((j+1))
+    done
+    i=$((i+1))
+    [ $keep = 1 ] || continue
+    gi merge-base --is-ancestor "$sha" "$cur" && continue
+    if gi merge-base --is-ancestor "$cur" "$sha"; then cur=$sha; continue; fi
+    out=$(gi merge-tree --write-tree --name-only "$cur" "$sha"); rc=$?
+    if [ $rc = 1 ]; then
+      gi update-ref "$FOLDREF" "$cur" || die 6 "cannot record the fold"; crash_point fold-ref   # resolve requires the record and the ref to agree
+      put "$STATE" "$1 $cur $sha ${ref#refs/remotes/}" || die 6 "cannot record the conflict"
+      echo "git-internal: sync: ${ref#refs/remotes/} conflicts. Nothing written. Conflicted paths:" >&2
+      printf '%s\n' "$out" | sed -n '2,/^$/p' | sed '/^$/d; s/^/  /' >&2
+      echo "git-internal: write the resolved files, then: git-internal resolve ${ref#refs/remotes/}" >&2
+      exit 3
+    fi
+    [ $rc = 0 ] || die 6 "merge-tree failed ($rc)"
+    cur=$(gi commit-tree "${out%%$'\n'*}" -p "$cur" -p "$sha" -m "git-internal sync: merge ${ref#refs/remotes/}") || die 6 "commit-tree failed"
+  done
+}
+
+cmd_sync() {
+  [ $# = 0 ] || die 1 "usage: sync"
+  local old cur
+  host >/dev/null; precheck
+  clear_state || die 6 "cannot clear the recorded conflict"   # a new sync supersedes it
+  gi fetch -q origin || die 2 "fetch failed"
+  old=$(gi rev-parse -q --verify HEAD) || die 6 "cannot read HEAD"; cur=$old
+  fold "$old"
+  if [ "$cur" != "$old" ]; then apply sync "$old" "$cur" || exit $?; fi
+  push_lane
+}
+
+# after exit 3: merge REF into the recorded fold (not into HEAD), taking each
+# conflicted path from disk (resolved by the session), then fold the remaining
+# refs and install the whole result through apply
+cmd_resolve() {
+  [ $# = 1 ] || die 1 "usage: resolve REF"
+  local head fold rsha rname old ref out rc tree p mode blob cur idx
+  host >/dev/null; precheck
+  [ -f "$STATE" ] || die 1 "resolve: no conflicted sync is recorded; run sync"
+  read -r head fold rsha rname < "$STATE" || die 1 "resolve: unreadable $STATE"
+  old=$(gi rev-parse -q --verify HEAD) || die 6 "resolve: cannot read HEAD"
+  [ "$old" = "$head" ] || die 4 "resolve: HEAD moved since the conflict was recorded; run sync again"
+  [ "$(gi rev-parse -q --verify "$FOLDREF")" = "$fold" ] || die 4 "resolve: the recorded fold is missing; run sync again"
+  ref=$(gi rev-parse -q --verify "$1^{commit}") || die 1 "resolve: unknown ref $1"
+  [ "$ref" = "$rsha" ] || die 1 "resolve: the recorded conflict is with $rname ($rsha), not $1"
+  out=$(gi merge-tree --write-tree --name-only "$fold" "$ref"); rc=$?
+  [ $rc = 1 ] || die 1 "resolve: $rname does not conflict with the recorded fold; run sync"
+  tree=${out%%$'\n'*}
+  idx="$GD/resolve-index.$$"
+  GIT_INDEX_FILE=$idx gi read-tree "$tree" || die 6 "resolve: read-tree failed"
+  while IFS= read -r p; do
+    [ -n "$p" ] || continue
+    approved "$p" || { rm -f -- "${idx:?}"; die 1 "resolve: $p is not an approved path"; }
+    if [ -L "$ROOT/$p" ]; then             # the link itself, dangling or not; never its target
+      blob=$(disk_blob "$p" -w) || { rm -f -- "${idx:?}"; die 6 "resolve: cannot record the link $p"; }
+      GIT_INDEX_FILE=$idx gi update-index --add --cacheinfo "120000,$blob,$p" || { rm -f -- "${idx:?}"; die 6 "resolve: cannot stage $p"; }
+    elif [ -f "$ROOT/$p" ]; then
+      grep -qE '^(<<<<<<<|>>>>>>>) ' "$ROOT/$p" && { rm -f -- "${idx:?}"; die 1 "resolve: $p still has conflict markers"; }
+      mode=$(disk_mode "$p")
+      blob=$(disk_blob "$p" -w) || { rm -f -- "${idx:?}"; die 6 "resolve: cannot record $p"; }
+      GIT_INDEX_FILE=$idx gi update-index --add --cacheinfo "$mode,$blob,$p" || { rm -f -- "${idx:?}"; die 6 "resolve: cannot stage $p"; }
+    else
+      GIT_INDEX_FILE=$idx gi update-index --force-remove -- "$p" || { rm -f -- "${idx:?}"; die 6 "resolve: cannot remove $p"; }
+    fi
+  done < <(printf '%s\n' "$out" | sed -n '2,/^$/p')
+  tree=$(GIT_INDEX_FILE=$idx gi write-tree) || { rm -f -- "${idx:?}"; die 6 "resolve: write-tree failed"; }
+  rm -f -- "${idx:?}"
+  cur=$(gi commit-tree "$tree" -p "$fold" -p "$ref" -m "git-internal resolve: merge $rname") || die 6 "commit-tree failed"
+  fold "$old"                              # the remaining refs; a further conflict records cur and exits 3
+  apply resolve "$old" "$cur" || exit $?    # forward() clears the conflict record once HEAD moved
+  push_lane
+}
+
+# P9 binding check, from a cwd outside the root, with a synthetic commit so the
+# dry-run push to main always carries an update and the hook always runs
+cmd_probe() {
+  [ $# = 0 ] || die 1 "usage: probe"
+  local h fails=0 p err line want f
+  h=$(host); cd / || exit 8
+  g() { git --git-dir="$GD" ${1+"$@"}; }
+  bad() { echo "git-internal: probe: $*" >&2; fails=$((fails+1)); }
+  [ "$(g rev-parse --show-toplevel)" = "$ROOT" ] || bad "toplevel is not $ROOT"
+  [ "$(g rev-parse --git-path hooks)" = "$GD/hooks" ] || bad "hooks do not resolve to $GD/hooks"
+  [ -z "$(g config --get core.hooksPath)" ] || bad "core.hooksPath is set"
+  [ "$(g config --get core.worktree)" = .. ] || bad "core.worktree is not .."
+  [ -s "$GD/info/hooks.sha256" ] || bad "no info/hooks.sha256"
+  while read -r want f; do
+    line=$(cd "$GD/hooks" && sha256 "$f" 2>/dev/null)
+    [ "${line%% *}" = "$want" ] || bad "installed hook $f differs from info/hooks.sha256"
+  done < "$GD/info/hooks.sha256"
+  p=$(g commit-tree "HEAD^{tree}" -p HEAD -m "git-internal probe (never pushed)") || bad "cannot build the probe commit"
+  err=$(g push --dry-run origin "$p:refs/heads/main" 2>&1) && bad "dry-run push of a new commit to main was NOT refused"
+  [[ $err == *"private pre-push: only refs/heads/autosync/$h"* ]] || bad "main refusal did not come from the private pre-push hook"
+  g push -q --dry-run origin "$p:refs/heads/autosync/$h" >/dev/null 2>&1 || bad "positive control: dry-run push to own lane failed"
+  [ $fails = 0 ] || exit 8
+  echo "git-internal: probe ok ($ROOT, lane autosync/$h)"
+}
+
+# a command that writes, syncs or pushes first finishes a recorded step, and
+# stops with its code (10) if it cannot; a read-only passthrough writes nothing,
+# so it only warns, and the state stays inspectable
+case $cmd in
+  doctor|install|install-hooks) ;;
+  status|log|diff|show|ls-files|ls-tree|rev-parse|fetch)
+    [ ! -e "$INTENT" ] || echo "git-internal: an unfinished $(cut -d' ' -f1 "$INTENT") is recorded in $INTENT; any writing command finishes it first" >&2 ;;
+  *) [ -d "$GD" ] && { [ -e "$GD/info/installed" ] || die 4 "the install of $GD is unfinished; rerun: git-internal install URL HOST"
+       recover || exit $?; } ;;
+esac
+case $cmd in
+  doctor) cmd_doctor ;;
+  install) cmd_install ${1+"$@"} ;;
+  install-hooks) cmd_install_hooks ${1+"$@"}; recover || exit $? ;;   # a fixed importer retries here
+  add) cmd_add ${1+"$@"} ;;
+  commit) cmd_commit ${1+"$@"} ;;
+  sync) cmd_sync ${1+"$@"} ;;
+  resolve) cmd_resolve ${1+"$@"} ;;
+  probe) cmd_probe ${1+"$@"} ;;
+  status|log|diff|show|ls-files|ls-tree|rev-parse|fetch) gi "$cmd" ${1+"$@"} ;;
+  *) die 1 "usage: git-internal [-C ROOT] doctor|install|install-hooks|add|commit|sync|resolve|probe|status|log|diff|show|ls-files|ls-tree|rev-parse|fetch" ;;
+esac

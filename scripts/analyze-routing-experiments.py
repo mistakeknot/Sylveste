@@ -11,7 +11,7 @@ Usage:
     # Analyze with shadow log directory
     python3 scripts/analyze-routing-experiments.py --shadow-dir /tmp/routing-shadow/
 
-    # Output as markdown (for docs/research/heterogeneous-routing-results.md)
+    # Output as markdown (for the heterogeneous-routing results note)
     python3 scripts/analyze-routing-experiments.py --format markdown
 
     # Filter to specific sessions

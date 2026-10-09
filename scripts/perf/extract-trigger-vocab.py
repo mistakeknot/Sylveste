@@ -4,7 +4,7 @@
 The Claude Code harness indexes skill matches against the `description:` field.
 Trimming below the trigger-vocab threshold silently breaks discovery, so this
 script captures the vocab snapshot BEFORE an edit for post-edit comparison
-(see Task 3 / Step 2.5 of docs/plans/2026-04-21-sylveste-ynh7-skill-listing-compact.md).
+(see Task 3 / Step 2.5 of the 2026-04-21 skill-listing-compact plan, kept in the private internal docs).
 """
 import json
 import re

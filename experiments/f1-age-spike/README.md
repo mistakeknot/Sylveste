@@ -4,7 +4,7 @@ Provides go/no-go evidence for using Apache AGE as the persona/lens ontology bac
 
 ## Result
 
-See `docs/research/f1-cypher-benchmark/2026-04-27-transcript.md` for the binding verdict.
+The binding verdict is in the 2026-04-27 F1 Cypher benchmark transcript, kept in the private internal docs (not in the public tree).
 
 **TL;DR:** AGE-viable. p95 = 782ms at 100k edges (threshold: < 2000ms). One pending decision: ops choice between rebuilding the production Postgres image with AGE bundled, or running a separate AGE container alongside Auraken's pgvector — see Ops Feasibility Note in the transcript.
 
@@ -52,4 +52,4 @@ docker compose down -v
 
 ## Discoveries
 
-The transcript at `docs/research/f1-cypher-benchmark/2026-04-27-transcript.md` lists six F3-relevant findings (AGE Cypher map syntax, GIN-not-BTREE indexing, agtype null-key omission, OPTIONAL MATCH+WHERE semantics, batched UNWIND requirement, bridges variance). Read them before starting F3.
+The 2026-04-27 F1 Cypher benchmark transcript (private internal docs) lists six F3-relevant findings (AGE Cypher map syntax, GIN-not-BTREE indexing, agtype null-key omission, OPTIONAL MATCH+WHERE semantics, batched UNWIND requirement, bridges variance). Read them before starting F3.

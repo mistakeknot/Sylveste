@@ -141,11 +141,12 @@ def extract_ids(path: Path, infer_missing: bool) -> list[tuple[str, str]]:
     return []
 
 
-def collect_mappings(repo_root: Path, infer_missing: bool) -> list[Mapping]:
-    docs = sorted((repo_root / "docs" / "brainstorms").glob("*.md")) + sorted(
-        (repo_root / "docs" / "plans").glob("*.md")
+def collect_mappings(repo_root: Path, infer_missing: bool, docs_root: Path | None = None) -> list[Mapping]:
+    docs_root = docs_root or repo_root / "docs"
+    docs = sorted((docs_root / "brainstorms").glob("*.md")) + sorted(
+        (docs_root / "plans").glob("*.md")
     )
-    prds = sorted((repo_root / "docs" / "prds").glob("*.md")) if (repo_root / "docs" / "prds").exists() else []
+    prds = sorted((docs_root / "prds").glob("*.md")) if (docs_root / "prds").exists() else []
 
     # Build sibling lookup from declared bead mappings across brainstorms/plans/prds.
     slug_to_ids: dict[str, set[str]] = {}
@@ -196,6 +197,12 @@ def main() -> int:
         help="Disable inference for docs without explicit Bead declaration.",
     )
     parser.add_argument(
+        "--docs-root",
+        type=Path,
+        default=None,
+        help="Directory holding brainstorms/, plans/ and prds/ (default: ./docs; these live in the private internal docs overlay).",
+    )
+    parser.add_argument(
         "--report-csv",
         default="/tmp/beads-recovery-122264884/brainstorm-plan-bead-map.csv",
         help="Path for mapping report CSV.",
@@ -203,7 +210,10 @@ def main() -> int:
     args = parser.parse_args()
 
     repo_root = Path.cwd()
-    mappings = collect_mappings(repo_root, infer_missing=not args.no_infer)
+    docs_root = args.docs_root or repo_root / "docs"
+    if not (docs_root / "brainstorms").is_dir() and not (docs_root / "plans").is_dir():
+        parser.error(f"no brainstorms/ or plans/ under {docs_root}; pass --docs-root")
+    mappings = collect_mappings(repo_root, infer_missing=not args.no_infer, docs_root=docs_root)
 
     report_path = Path(args.report_csv)
     report_path.parent.mkdir(parents=True, exist_ok=True)

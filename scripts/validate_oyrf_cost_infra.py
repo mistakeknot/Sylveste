@@ -36,7 +36,7 @@ ESTIMATOR = ROOT / "estimate-costs.sh"
 WORKFLOW = ROOT / ".github" / "workflows" / "oyrf-cost-calibration.yml"
 LIVE_TEMPLATE = ROOT / "docs" / "live" / "closed-loop.md"
 MYTHOS_HARNESS = ROOT / "docs" / "specs" / "mythos-transition-harness.md"
-CADENCE_PLAN = ROOT / "docs" / "plans" / "2026-04-30-session-cadence-dial-up-plan.md"
+CADENCE_PLAN = ROOT / "docs" / "specs" / "session-cadence-dial-up.md"
 DRY_RUN = ROOT / "scripts" / "mythos-transition-dry-run.sh"
 EXPORTER_DIR = ROOT / "ops" / "oyrf-cost-export"
 
