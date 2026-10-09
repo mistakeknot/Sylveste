@@ -63,4 +63,15 @@ Environment knobs (all optional; defaults are the production values): `GATE0_ROO
 `GATE0_CONFIRM_FILE`, `GATE0_READONLY_HOOKS`, `GATE0_REPORT_TELL`, `GATE0_REPORT_TITLE`,
 `GATE0_JOURNAL_TRIES`, `GATE0_QUIESCE_WAIT`, `GATE0_STATUS_CMD`, `AUTOSYNC_LANE_LIB`. See the header of the script.
 
+Unit control (`GATE0_TIMER_CTL`, default `systemctl --user`): the controller is called as
+`CTL stop|start|active UNIT`. For `active`, exit 0 means active, exit 3 means inactive,
+and any other result (a missing bus, a controller error) is unknown, which the wrapper
+treats as a STOP; an error is never read as "inactive". The wrapper keeps its state
+directory, journal and preservation copy outside the checkout and its git directory
+(checked by physical path, before anything is created), runs no step that rewrites the
+index to refresh stat data (`GIT_OPTIONAL_LOCKS=0`), and keeps the predictor's own stderr
+and report sender out of the prediction the verifier reads. The freeze is re-checked
+(timers, services, marker, agent processes, bd) at every capture and immediately before
+the checkout is realigned.
+
 The wrapper's own sha256 changes with any edit. A handoff cites the digest of the final bytes.

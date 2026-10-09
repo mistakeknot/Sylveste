@@ -58,7 +58,7 @@ dg() { if [ -L "$1" ]; then printf 'l:%s\n' "$(link_text "$1" | sha)"; elif [ -d
 files() { (cd "$1" && find . -path ./.git -prune -o \( -type f -o -type l \) -print | sed 's|^\./||' | sort); }
 dmap() { local p; while IFS= read -r p; do printf '%s\t%s\n' "$(dg "$1/$p")" "$p"; done < "$2"; }
 wr() { mkdir -p "$(dirname "$1")"; printf '%s\n' "$2" > "$1"; }
-g() { git -C "$R" "$@"; }
+g() { GIT_OPTIONAL_LOCKS=0 git -C "$R" "$@"; }   # the test observes the checkout without refreshing its index
 ckfp() {  # the checkout as the plan sees it, plus the marker's presence and bytes
   g symbolic-ref -q HEAD; g rev-parse HEAD; g ls-files -s | sha; g status --porcelain -uall
   files "$R" > "$B/ck.list"; dmap "$R" "$B/ck.list"
@@ -75,8 +75,9 @@ cat > "$B/bin/ctl" <<EOF
 S=$ST; act=\$1; shift
 for u in "\$@"; do case \$act in
   stop) rm -f "\$S/units/\$u" ;;
-  active) [ -e "\$S/units/\$u" ] || exit 1 ;;
-  start) if [ "\$u" = git-autosync-repair.service ]; then echo "start \$(date +%s)" >> "\$S/starts"
+  active) [ ! -e "\$S/ctl-error" ] || exit 4; [ -e "\$S/units/\$u" ] || exit 3 ;;
+  start) [ ! -e "\$S/failstart-\$u" ] || exit 1
+         if [ "\$u" = git-autosync-repair.service ]; then echo "start \$(date +%s)" >> "\$S/starts"
            [ -e "\$S/nojournal" ] || echo "1 autosync repo(s): 1 unchanged" > "\$S/journal.txt"
          else touch "\$S/units/\$u"; fi ;;
   esac; done
@@ -92,9 +93,13 @@ cat > "$B/bin/pred" <<EOF
 #!/bin/bash
 S=$ST
 case \$1 in
-  server) echo "\$*" >> "\$S/pred-args"; echo "row 4"; echo "log fixture"
+  server) echo "\$*" >> "\$S/pred-args"; echo "report=\${RESTART_REPORT:-unset}" >> "\$S/pred-env"; echo "row 4"; echo "log fixture"
+          # the real predictor writes a delivery failure to stderr when its own report sender is on and empty
+          if [ -e "\$S/pred-noise" ]; then echo "restart: report not delivered; it is /x:" >&2; fi
           if [ -e "\$S/pred-stop" ]; then echo "verdict STOP row 5 at \$6"; exit 3; fi; echo "verdict run" ;;
-  verify) [ ! -e "\$S/pred-mismatch" ] || { echo "verify: mismatch"; exit 3; }; echo "verify: match" ;;
+  verify) ! grep -q 'report not delivered' "\$2" || { echo "verify: unknown line in the prediction"; exit 3; }
+          [ ! -e "\$S/pred-tag" ] || git -C $R tag gate0/injected HEAD
+          [ ! -e "\$S/pred-mismatch" ] || { echo "verify: mismatch"; exit 3; }; echo "verify: match" ;;
   *) exit 1 ;;
 esac
 EOF
@@ -102,7 +107,15 @@ cat > "$B/bin/tell" <<EOF
 #!/bin/bash
 echo "\$*" >> "$B/tell.log"; exit 0
 EOF
-chmod +x "$B/bin/ctl" "$B/stub/journalctl" "$B/bin/pred" "$B/bin/tell"
+# the wrapper refuses while any bd runs on the machine; the test must not depend on what else the host is running,
+# so the process list the wrapper sees holds only the bd this test starts (its pid is written to $B/bdpid)
+REALPS=$(command -v ps)
+cat > "$B/stub/ps" <<EOF
+#!/bin/bash
+if [ "\$*" = "-A -o pid= -o comm=" ]; then $REALPS "\$@" | awk -v keep="\$(cat "$B/bdpid" 2>/dev/null)" '{ n = \$2; sub(/.*\//, "", n); if (n == "bd" && \$1 != keep) next; print }'
+else exec $REALPS "\$@"; fi
+EOF
+chmod +x "$B/stub/ps" "$B/bin/ctl" "$B/stub/journalctl" "$B/bin/pred" "$B/bin/tell"
 rec() { printf '{"_type":"issue","id":"%s","title":"%s","status":"open","priority":2,"issue_type":"task","created_at":"%s","updated_at":"%s"}\n' "$1" "$2" "$3" "$3"; }
 rec fx-one one 2026-10-01T00:00:01Z > "$B/one.jsonl"
 { rec fx-two two 2026-10-01T00:00:02Z; cat "$B/one.jsonl"; } > "$B/trk.jsonl"
@@ -149,7 +162,7 @@ snap fx
 
 PATHS="$B/stub:/usr/local/bin:/usr/bin:/bin"
 wg() {  # run the wrapper under test (WG, default $GW) with the fixture's stubs
-  env GATE0_ROOT="$R" GATE0_STATE_DIR="$W/state" GATE0_JOURNAL="$J" GATE0_PRESERVE_DIR="$W/pres" GATE0_NO_REEXEC=1 \
+  env GATE0_ROOT="$R" GATE0_STATE_DIR="${T_STATE:-$W/state}" GATE0_JOURNAL="${T_JOURNAL:-$J}" GATE0_PRESERVE_DIR="${T_PRES:-$W/pres}" GATE0_NO_REEXEC=1 \
     GATE0_PATH="$PATHS" GATE0_BD="$B/bin/bd" GATE0_OPERATOR_HOME="$HOME" AUTOSYNC_LANE_LIB="$B/lib/autosync-lane.sh" \
     GATE0_TIMER_CTL="$B/bin/ctl" GATE0_CONFIRM_FILE="${GATE0_CONFIRM_FILE:-$B/confirm}" GATE0_PRED="$B/bin/pred" GATE0_CS="$CS" \
     GATE0_REPORT_TELL="$B/bin/tell" GATE0_REPORT_TITLE="fixture title" GATE0_JOURNAL_TRIES=0 GATE0_QUIESCE_WAIT=0 \
@@ -176,6 +189,45 @@ t_verify() {  # a run that differs from the prediction leaves the marker aside a
   touch "$ST/pred-mismatch"
   wg restart r0 > "$B/out.vf" 2>&1; VRC=$?
   [ "$VRC" = 3 ] && grep -q 'differs from the prediction' "$B/out.vf" && [ ! -e "$R/.git-autosync" ] && [ "$(timers)" = no/no ]; }
+
+t_dirty() {  # a dirty tracked path is only counted, never run as a command (the wrapper started inside the checkout)
+  restore fx; rm -f "$B/dirty-ran"; printf '#!/bin/sh\ntouch %q\n' "$B/dirty-ran" > "$R/.beads/issues.jsonl"; chmod +x "$R/.beads/issues.jsonl"
+  ( cd "$R" && wg preflight > "$B/out.dirty" 2>&1 ); [ ! -e "$B/dirty-ran" ]; }
+t_hookfetch() {  # the hook refusal comes before the fetch: when origin gained a branch, a refused hook has not run
+  restore fx; rm -f "$B/hook-ran"; git -C "$SD" push -q origin main:refs/heads/newbr
+  printf '#!/bin/sh\ntouch %q\n' "$B/hook-ran" > "$R/.git/hooks/reference-transaction"; chmod +x "$R/.git/hooks/reference-transaction"
+  wg preflight > "$B/out.hf" 2>&1; HFRC=$?; [ "$HFRC" = 3 ] && [ ! -e "$B/hook-ran" ]; }
+t_noise() {  # predictor stderr (and its own report sender) must not reach the prediction file the verifier reads
+  restore r0a; touch "$ST/pred-noise"; rm -f "$ST/pred-env"
+  wg restart r0 > "$B/out.noise" 2>&1; NRC=$?; [ "$NRC" = 0 ] && [ "$(tail -n 1 "$ST/pred-env")" = report=0 ]; }
+t_agentre() {  # an agent that resumed after the freeze is caught again before P1a
+  restore fx; stepto preflight freeze || return 1
+  ( cd "$R" && exec sleep 60 ) & BG=$!; sleep 0.3
+  wg capture > "$B/out.ar" 2>&1; ARC=$?; kill $BG 2>/dev/null; wait $BG 2>/dev/null; BG=
+  [ "$ARC" = 3 ] && grep -q 'agent process' "$B/out.ar" && [ ! -e "$J/cp" ] && [ ! -d "$J/capture" ]; }
+t_unitserr() {  # a unit controller error is not proof that a unit is inactive
+  restore fx; stepto preflight freeze || return 1
+  touch "$ST/ctl-error"; wg capture > "$B/out.ue" 2>&1; URC=$?; rm -f "$ST/ctl-error"
+  [ "$URC" = 3 ] && grep -q 'cannot establish whether' "$B/out.ue" && [ ! -e "$J/cp" ] && [ ! -d "$J/capture" ]; }
+t_cleanup() {  # a failed restart leaves the frozen state: marker aside, every timer of the attempt stopped
+  restore r0a; touch "$ST/failstart-git-autosync-promote.timer"
+  wg restart r0 > "$B/out.cl1" 2>&1; C1=$?; C1S="$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)"
+  restore r0a; touch "$ST/pred-tag"
+  wg restart r0 > "$B/out.cl2" 2>&1; C2=$?; C2S="$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)"
+  [ "$C1/$C1S" = "3//no/no" ] && [ "$C2/$C2S" = "3//no/no" ]; }
+t_confine() {  # the state, journal and preservation directories are checked by physical path before anything is created
+  restore fx; ln -s "$R" "$B/alias" 2>/dev/null; local r1 r2 r3 r4
+  T_STATE="$R/st" wg --check preflight > "$B/out.cf" 2>&1; r1=$?
+  T_JOURNAL="$R/.git/jj" wg --check preflight >> "$B/out.cf" 2>&1; r2=$?
+  T_JOURNAL="$B/alias/jj" wg --check preflight >> "$B/out.cf" 2>&1; r3=$?
+  T_PRES="$B/alias/pp" wg preflight >> "$B/out.cf" 2>&1; r4=$?
+  CFR="$r1$r2$r3$r4"; [ "$CFR" = 1111 ] && [ ! -e "$R/st" ] && [ ! -e "$R/.git/jj" ] && [ ! -e "$R/jj" ] && [ ! -e "$R/pp" ] && [ ! -d "$J/p0" ]; }
+t_locks() {  # --check never rewrites the index, even when a tracked file's timestamp changed
+  restore fx; touch -d 2001-01-01 "$R/README.md"; local i0; i0=$(sha < "$R/.git/index")
+  wg --check preflight > "$B/out.lk" 2>&1; wg --check capture >> "$B/out.lk" 2>&1; [ "$(sha < "$R/.git/index")" = "$i0" ]; }
+t_self() {  # freeze started from inside the checkout does not report the wrapper's own subshell as an agent
+  restore fx; stepto preflight || return 1
+  ( cd "$R" && wg freeze > "$B/out.self" 2>&1 ); SRC=$?; [ "$SRC" = 0 ]; }
 
 echo "== --check forms change nothing"
 restore fx; c0=$(ckfp); j0=$(jfp); l0=$(lanerefs)
@@ -218,10 +270,10 @@ check "a wrong presence phrase is refused (exit 1); timers untouched" "$rc/$(tim
 wg freeze > "$B/out" 2>&1; rc=$?
 check "an agent process in the checkout is a STOP; timers and marker untouched" "$rc/$(timers)/$([ -e "$R/.git-autosync" ] && echo marker)" "3/yes/yes/marker"
 kill $BG; wait $BG 2>/dev/null; BG=
-"$B/x/bd" 60 & BG=$!; sleep 0.3
+"$B/x/bd" 60 & BG=$!; echo $BG > "$B/bdpid"; sleep 0.3
 wg freeze > "$B/out" 2>&1; rc=$?
 check "a running bd is a STOP; timers and marker untouched" "$rc/$(timers)/$([ -e "$R/.git-autosync" ] && echo marker)" "3/yes/yes/marker"
-kill $BG; wait $BG 2>/dev/null; BG=
+kill $BG; wait $BG 2>/dev/null; BG=; rm -f "$B/bdpid"
 M0=$(sha < "$R/.git-autosync")
 wg freeze > "$B/out" 2>&1; check "freeze exit" "$?" 0
 check "timers stopped, marker out of the checkout and kept byte for byte" "$(timers)/$([ -e "$R/.git-autosync" ] && echo marker)/$(sha < "$J/gate0-run/marker")" "no/no//$M0"
@@ -267,6 +319,17 @@ check "the predictor was asked for the a0r exit with the checkout and the host" 
 check "marker restored byte for byte, repair service started once, timers back" "$(sha < "$R/.git-autosync")/$(wc -l < "$ST/starts")/$(timers)" "$M0/1/yes/yes"
 check "the restart is recorded" "$([ -e "$J/gate0-run/restarted-r0" ] && echo yes)" yes
 
+echo "== review fixes"
+t_dirty; check "a dirty tracked executable is counted, never run (wrapper started inside the checkout)" "$?" 0
+t_hookfetch; check "a refused hook has not run on the fetch: exit 3, hook untouched" "$HFRC/$?" "3/0"
+t_noise; check "predictor stderr and its own report sender stay out of the prediction: restart exit 0, report off" "$NRC/$?" "0/0"
+t_agentre; check "an agent that resumed after the freeze is a STOP at capture: P1a did not run" "$ARC/$?" "3/0"
+t_unitserr; check "a unit controller error is a STOP, not 'inactive': P1a did not run" "$URC/$?" "3/0"
+t_cleanup; check "a failed restart (timer start, or a differing run) leaves marker aside and timers stopped" "$C1,$C2/$?" "3,3/0"
+t_confine; check "state, journal and preservation inside the checkout (also through a symlink) are refused, nothing created" "$CFR/$?" "1111/0"
+t_locks; check "--check leaves the index bytes alone when a tracked file's timestamp changed" "$?" 0
+t_self; check "freeze from inside the checkout does not count the wrapper's own processes as agents" "$SRC/$?" "0/0"
+
 echo "== mutation controls (each must be judged NOT fail-closed)"
 mutate() {  # NAME SEDEXPR : a copy of the wrapper with one safeguard removed; WG names it
   sed "$2" "$GW" > "$B/mut/$1.sh"; chmod +x "$B/mut/$1.sh"
@@ -274,9 +337,22 @@ mutate() {  # NAME SEDEXPR : a copy of the wrapper with one safeguard removed; W
   cp "$HERE/cutover-steps.sh" "$B/mut/cutover-steps.sh"; return 0; }
 mutate M1 's/|| stop "the marker is back in the checkout: the freeze no longer holds"/|| true/' &&
   { WG=$B/mut/M1.sh; t_markerback; r=$?; WG=; check "M1 (no marker check before capture) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
-mutate M2 's/^  hook_check; archive_check; }/  archive_check; }/' &&
+mutate M2 's/^  hook_check   # first:.*/  :/' &&
   { WG=$B/mut/M2.sh; t_hook; r=$?; WG=; check "M2 (no hook check) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
-mutate M3 's/cat "\$LOGD\/verify.out"; move_marker_aside; stop "the run differs/cat "$LOGD\/verify.out"; stop "the run differs/' &&
+mutate M3 's/rbail "the run differs/stop "the run differs/' &&
   { WG=$B/mut/M3.sh; t_verify; r=$?; WG=; check "M3 (marker left in place after a mismatch) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+
+mutate M4 's/^  hook_check   # first:.*/  :/; s/^  archive_check; }$/  hook_check; archive_check; }/' &&
+  { WG=$B/mut/M4.sh; t_hookfetch; r=$?; WG=; check "M4 (hook check after the fetch) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M5 's/\*) stop "cannot establish whether \$1 is active: the unit controller gave an error" ;; esac; }/*) return 1 ;; esac; }/' &&
+  { WG=$B/mut/M5.sh; t_unitserr; r=$?; WG=; check "M5 (controller error read as inactive) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M6 's/move_marker_aside; stop "\$@"; }   # back/stop "$@"; }   # back/' &&
+  { WG=$B/mut/M6.sh; t_cleanup; r=$?; WG=; check "M6 (failed restart leaves the marker in place) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M7 's/under_self "\$p" || //g' &&
+  { WG=$B/mut/M7.sh; t_self; r=$?; WG=; check "M7 (own processes counted as agents) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M8 's/2> "\$pred.err"/2>\&1/' &&
+  { WG=$B/mut/M8.sh; t_noise; r=$?; WG=; check "M8 (predictor stderr in the prediction) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M9 's/^  a=\$(agents_in_root).*$/  :/' &&
+  { WG=$B/mut/M9.sh; t_agentre; r=$?; WG=; check "M9 (no agent re-check at capture) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 
 if [ $fails = 0 ]; then echo "GATE0-RUN: PASS"; exit 0; else echo "GATE0-RUN: FAIL ($fails)"; exit 1; fi
