@@ -324,5 +324,5 @@ This gate replaces the r1 plan's vague "95% telemetry" and gives a concrete oper
 - `docs/canon/authz-token-payload.md` — canonical byte sequence for sig_version=2.
 - `docs/canon/authz-signing-payload.md` — v1.5 canonical payload (sig_version=1).
 - `docs/canon/authz-signing-trust-model.md` — v1.5 trust claim.
-- `docs/brainstorms/2026-04-19-auto-proceed-authz-design.md` — design rationale (v1 + v1.5 + v2).
-- `docs/plans/2026-04-21-auto-proceed-authz-v2.md` — implementation plan (this is its canon counterpart).
+- `2026-04-19-auto-proceed-authz-design.md` (internal doc, not in the public tree) — design rationale (v1 + v1.5 + v2).
+- `2026-04-21-auto-proceed-authz-v2.md` (internal doc, not in the public tree) — implementation plan (this is its canon counterpart).

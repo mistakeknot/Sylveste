@@ -48,7 +48,7 @@ After data loss events, use these scripts to reconstruct missing beads:
 | `scripts/map_brainstorms_plans_to_beads.py` | Map `docs/brainstorms/` and `docs/plans/` markdown files to bead IDs via `**Bead:** ...` declarations; creates placeholder beads for unmatched docs |
 | `scripts/backfill-bead-labels.py` | Apply module and theme label taxonomy to existing beads using heuristic detection (idempotent) |
 
-Recovered beads are tagged `recovered, placeholder` so they are distinguishable from original data. See `docs/research/verify-recovered-beads-quality.md` for the audit report from the 2026-02-27 recovery.
+Recovered beads are tagged `recovered, placeholder` so they are distinguishable from original data. See `verify-recovered-beads-quality.md` (internal doc, not in the public tree) for the audit report from the 2026-02-27 recovery.
 
 ## Roadmap
 

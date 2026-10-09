@@ -13,7 +13,7 @@ Owner: `Dicklesworthstone`
 
 ## Triage Criteria
 
-Repos kept if: **score >= 85** AND **relevance_type in (integration, both)**. Scores from automated triage pipeline (`docs/research/dicklesworthstone-repo-triage-2026-02-27.csv`). Detailed assessments for top repos in `docs/research/assess-*.md`.
+Repos kept if: **score >= 85** AND **relevance_type in (integration, both)**. Scores from automated triage pipeline (`dicklesworthstone-repo-triage-2026-02-27.csv` (internal doc, not in the public tree)). Detailed assessments for top repos in `docs/research/assess-*.md`.
 
 ## Integration Philosophy
 
@@ -25,14 +25,14 @@ These repos have full integration assessments in `docs/research/`:
 
 | Repo | Score | Verdict | Assessment |
 |---|---:|---|---|
-| [`beads_viewer`](https://github.com/Dicklesworthstone/beads_viewer) | 98 | port-partially | [assess-beads-viewer-repos.md](../docs/research/assess-beads-viewer-repos.md) |
-| [`mcp_agent_mail`](https://github.com/Dicklesworthstone/mcp_agent_mail) | 98 | inspire-only | [assess-mcp-agent-mail-repos.md](../docs/research/assess-mcp-agent-mail-repos.md) |
-| [`beads_viewer-pages`](https://github.com/Dicklesworthstone/beads_viewer-pages) | 96 | port-partially | [assess-beads-viewer-repos.md](../docs/research/assess-beads-viewer-repos.md) |
-| [`claude_code_agent_farm`](https://github.com/Dicklesworthstone/claude_code_agent_farm) | 96 | port-partially | [assess-agent-farm-safety-repos.md](../docs/research/assess-agent-farm-safety-repos.md) |
-| [`fastmcp_rust`](https://github.com/Dicklesworthstone/fastmcp_rust) | 96 | inspire-only | [assess-fastmcp-rust-repo.md](../docs/research/assess-fastmcp-rust-repo.md) |
-| [`mcp_agent_mail_rust`](https://github.com/Dicklesworthstone/mcp_agent_mail_rust) | 96 | inspire-only | [assess-mcp-agent-mail-repos.md](../docs/research/assess-mcp-agent-mail-repos.md) |
-| [`destructive_command_guard`](https://github.com/Dicklesworthstone/destructive_command_guard) | 95 | adopt | [assess-agent-farm-safety-repos.md](../docs/research/assess-agent-farm-safety-repos.md) |
-| [`beads_viewer_for_agentic_coding_flywheel_setup`](https://github.com/Dicklesworthstone/beads_viewer_for_agentic_coding_flywheel_setup) | 97 | inspire-only | [assess-beads-viewer-repos.md](../docs/research/assess-beads-viewer-repos.md) |
+| [`beads_viewer`](https://github.com/Dicklesworthstone/beads_viewer) | 98 | port-partially | assess-beads-viewer-repos.md (internal doc, not in the public tree) |
+| [`mcp_agent_mail`](https://github.com/Dicklesworthstone/mcp_agent_mail) | 98 | inspire-only | assess-mcp-agent-mail-repos.md (internal doc, not in the public tree) |
+| [`beads_viewer-pages`](https://github.com/Dicklesworthstone/beads_viewer-pages) | 96 | port-partially | assess-beads-viewer-repos.md (internal doc, not in the public tree) |
+| [`claude_code_agent_farm`](https://github.com/Dicklesworthstone/claude_code_agent_farm) | 96 | port-partially | assess-agent-farm-safety-repos.md (internal doc, not in the public tree) |
+| [`fastmcp_rust`](https://github.com/Dicklesworthstone/fastmcp_rust) | 96 | inspire-only | assess-fastmcp-rust-repo.md (internal doc, not in the public tree) |
+| [`mcp_agent_mail_rust`](https://github.com/Dicklesworthstone/mcp_agent_mail_rust) | 96 | inspire-only | assess-mcp-agent-mail-repos.md (internal doc, not in the public tree) |
+| [`destructive_command_guard`](https://github.com/Dicklesworthstone/destructive_command_guard) | 95 | adopt | assess-agent-farm-safety-repos.md (internal doc, not in the public tree) |
+| [`beads_viewer_for_agentic_coding_flywheel_setup`](https://github.com/Dicklesworthstone/beads_viewer_for_agentic_coding_flywheel_setup) | 97 | inspire-only | assess-beads-viewer-repos.md (internal doc, not in the public tree) |
 
 ## All Kept Repos
 

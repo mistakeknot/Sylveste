@@ -77,7 +77,7 @@ Pillars describe *what* makes up Sylveste. The three-layer model below describes
 
 All durable state flows through the kernel (L1). Higher layers do not write to the kernel's database directly.
 
-Current-state note: the generic event bus is not yet the full measurement-grade read model. Review payload fidelity, Interspect evidence, and the durable session/bead/run join still require additional surfaces beyond `ic events tail`. See [docs/research/interspect-event-validity-and-outcome-attribution.md](./research/interspect-event-validity-and-outcome-attribution.md).
+Current-state note: the generic event bus is not yet the full measurement-grade read model. Review payload fidelity, Interspect evidence, and the durable session/bead/run join still require additional surfaces beyond `ic events tail`. See `interspect-event-validity-and-outcome-attribution.md` (internal doc, not in the public tree).
 
 ```
   L3 ──intent──▶ L2 ──ic CLI──▶ L1 (SQLite)

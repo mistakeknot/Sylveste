@@ -3,7 +3,7 @@
 **Last reviewed:** 2026-09-07. **Canonical task source:** the build server Sylveste Beads.
 
 [Machine roadmap](roadmap.json) · [Detailed backlog](backlog.md) ·
-[Version gates](roadmap-v1.md) · [Autonomous maintenance design](plans/2026-09-07-remontoire-roadmap-maintenance.md)
+[Version gates](roadmap-v1.md) · Autonomous maintenance design (internal doc, not in the public tree)
 
 The immediate objective is a usable, measured delivery loop: a human decision becomes
 governed execution, produces attributable evidence, and changes later work. Finish the

@@ -4,7 +4,7 @@ Canonical definitions for every scale in Sylveste that gets called "the autonomy
 
 ## Why this page exists
 
-"Autonomy" is used in at least three incompatible senses across Sylveste docs. The flux-drive review of the Autarch autonomy gap ([`fd-vision-coherence.md` § "The term 'autonomy' is used inconsistently"](../research/flux-drive/autarch-autonomy-gap/fd-vision-coherence.md)) named the failure precisely: a reader can conclude that shipping autonomous subsystems advances the delegation ladder, and that does not follow. You can have fully unsupervised subsystems that still require L2 human oversight at the portfolio level.
+"Autonomy" is used in at least three incompatible senses across Sylveste docs. The flux-drive review of the Autarch autonomy gap (`fd-vision-coherence.md` § "The term 'autonomy' is used inconsistently" (internal doc, not in the public tree)) named the failure precisely: a reader can conclude that shipping autonomous subsystems advances the delegation ladder, and that does not follow. You can have fully unsupervised subsystems that still require L2 human oversight at the portfolio level.
 
 The bare token `L3` is overloaded **five ways**: "human sets policy" (delegation), "Auto-remediate" (retired capability), "calibration loops fire unaided" (Track A), "existential failures prevented" (Track B), and "multi-external + ODD published" (Track C). `L2` is overloaded similarly. An unqualified `L<n>` in Sylveste prose is ambiguous by default — always name the scale.
 

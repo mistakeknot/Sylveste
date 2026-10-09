@@ -124,6 +124,6 @@ Three high-leverage P0 epics block on the transport-abstraction work: Auraken→
 
 - A2A spec: https://a2a-protocol.org/latest/specification/ (§4.1 Tasks, §4.2 Streaming, §8 Agent Cards, §7 Auth, §11.3 HTTP endpoints).
 - A2A is governed by the Linux Foundation; ADK 1.0 documentation: https://google.github.io/adk-docs/a2a/.
-- Sylveste synthesis: `docs/research/flux-research/sylveste-ecosystem-strategic-scan-2026q2-mythos-gate-e359cecd/SYNTHESIS.md` (Tier 1 #2).
+- Sylveste synthesis: `SYNTHESIS.md` (internal doc, not in the public tree) (Tier 1 #2).
 - Gridfire v1 token alignment: `docs/canon/authz-token-model.md` (pending update under `sylveste-ewy3.3`).
 - Beads: `sylveste-ewy3.4` (this decision), `sylveste-2nfd` (interface), `sylveste-benl.6` (Signal adapter).

@@ -123,5 +123,5 @@ The CAS guard alone is NOT sufficient because a goroutine that reads `prevStatus
 ## Related Issues
 
 - See also: [CAS Dispatch Linking with Orphan Process Cleanup](../patterns/cas-spawn-link-orphan-cleanup-20260219.md) — related CAS pattern for dispatch linking
-- Research: `docs/research/research-sqlite-event-sourcing-bugs.md` — full literature review of SQLite concurrency patterns
-- Research: `docs/research/research-toctou-in-multi-agent-coding.md` — industry evidence for TOCTOU failures in multi-agent systems
+- Research: `research-sqlite-event-sourcing-bugs.md` (internal doc, not in the public tree) — full literature review of SQLite concurrency patterns
+- Research: `research-toctou-in-multi-agent-coding.md` (internal doc, not in the public tree) — industry evidence for TOCTOU failures in multi-agent systems

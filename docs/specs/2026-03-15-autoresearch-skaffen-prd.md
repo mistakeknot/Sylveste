@@ -3,7 +3,7 @@
 **Bead:** projects-z6k
 **Date:** 2026-03-15
 **Status:** Draft
-**Brainstorm:** `docs/brainstorms/2026-03-15-autoresearch-skaffen-brainstorm.md`
+**Brainstorm:** `2026-03-15-autoresearch-skaffen-brainstorm.md` (internal doc, not in the public tree)
 
 ## Problem Statement
 

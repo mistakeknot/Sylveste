@@ -16,7 +16,7 @@
       "A repo scoring 'high quality' should have: a passing CI badge, >1 year of consistent commits, a test suite that exercises failure paths (not just happy path), and no abandoned issues older than 90 days",
       "Port-partially candidates should have clear module boundaries that can be lifted without pulling in the entire codebase"
     ],
-    "task_context": "The research agent produces assess-*.md documents following the pattern in docs/research/assess-beads-viewer-repos.md, outputting structured verdicts (adopt/port-partially/inspire-only/skip) with per-component analysis and integration opportunities mapped to Sylveste modules (Clavain, Autarch, Intercore, Interverse, interbase).",
+    "task_context": "The research agent produces assess-*.md documents following the established repo-assessment pattern, outputting structured verdicts (adopt/port-partially/inspire-only/skip) with per-component analysis and integration opportunities mapped to Sylveste modules (Clavain, Autarch, Intercore, Interverse, interbase).",
     "anti_overlap": [
       "fd-sylveste-module-fit covers how the repo's features map to specific Sylveste modules and pillars — this agent does not evaluate module fit",
       "fd-integration-feasibility covers porting effort, API surface, and dependency compatibility at the implementation level — this agent focuses on quality signals, not integration mechanics",
@@ -40,7 +40,7 @@
       "Every component verdict should cite the Sylveste module it targets by name (e.g., 'port pkg/analysis/triage.go into apps/autarch/ internal/bigend/')",
       "The integration sequence table should follow the four-horizon pattern: now (zero code), short-term, medium-term, long-term"
     ],
-    "task_context": "The research agent produces assess-*.md documents following the pattern in docs/research/assess-beads-viewer-repos.md, outputting structured verdicts (adopt/port-partially/inspire-only/skip) with per-component analysis and integration opportunities mapped to Sylveste modules (Clavain, Autarch, Intercore, Interverse, interbase).",
+    "task_context": "The research agent produces assess-*.md documents following the established repo-assessment pattern, outputting structured verdicts (adopt/port-partially/inspire-only/skip) with per-component analysis and integration opportunities mapped to Sylveste modules (Clavain, Autarch, Intercore, Interverse, interbase).",
     "anti_overlap": [
       "fd-code-quality-and-maturity covers quality signals (tests, CI, maturity) — this agent does not re-evaluate code quality",
       "fd-integration-feasibility covers the mechanical porting cost, API surface, and build system compatibility — this agent defines what to integrate, not how hard it will be",
@@ -64,7 +64,7 @@
       "Every 'adopt' or 'port-partially' verdict must include a literal first command an agent can run today",
       "Cross-language ports must estimate lines of Go/Python/Bash that need to be written"
     ],
-    "task_context": "The research agent produces assess-*.md documents following the pattern in docs/research/assess-beads-viewer-repos.md, outputting structured verdicts (adopt/port-partially/inspire-only/skip) with per-component analysis and integration opportunities mapped to Sylveste modules (Clavain, Autarch, Intercore, Interverse, interbase).",
+    "task_context": "The research agent produces assess-*.md documents following the established repo-assessment pattern, outputting structured verdicts (adopt/port-partially/inspire-only/skip) with per-component analysis and integration opportunities mapped to Sylveste modules (Clavain, Autarch, Intercore, Interverse, interbase).",
     "anti_overlap": [
       "fd-code-quality-and-maturity covers quality signals and test coverage — this agent focuses on porting mechanics, not quality assessment",
       "fd-sylveste-module-fit covers which Sylveste modules are the integration targets — this agent focuses on how hard the integration will be, not where it goes",
@@ -88,7 +88,7 @@
       "Hook integrations must be evaluated against the fail-open principle: unrecognized commands always allowed, parse errors always allow, timeouts always allow",
       "Supply-chain concerns must reference specific files, not just claim 'there is a risk'"
     ],
-    "task_context": "The research agent produces assess-*.md documents following the pattern in docs/research/assess-beads-viewer-repos.md, outputting structured verdicts (adopt/port-partially/inspire-only/skip) with per-component analysis and integration opportunities mapped to Sylveste modules (Clavain, Autarch, Intercore, Interverse, interbase).",
+    "task_context": "The research agent produces assess-*.md documents following the established repo-assessment pattern, outputting structured verdicts (adopt/port-partially/inspire-only/skip) with per-component analysis and integration opportunities mapped to Sylveste modules (Clavain, Autarch, Intercore, Interverse, interbase).",
     "anti_overlap": [
       "fd-code-quality-and-maturity covers test coverage and CI quality signals — this agent focuses on security semantics and hook safety",
       "fd-integration-feasibility covers build and dependency compatibility — this agent focuses on security posture, not porting mechanics",
@@ -112,7 +112,7 @@
       "Each extracted pattern should name the specific Sylveste component it would improve and include a one-sentence problem statement",
       "Patterns should be actionable: not 'this is interesting' but 'add this to Clavain's X as Y'"
     ],
-    "task_context": "The research agent produces assess-*.md documents following the pattern in docs/research/assess-beads-viewer-repos.md, outputting structured verdicts (adopt/port-partially/inspire-only/skip) with per-component analysis and integration opportunities mapped to Sylveste modules (Clavain, Autarch, Intercore, Interverse, interbase).",
+    "task_context": "The research agent produces assess-*.md documents following the established repo-assessment pattern, outputting structured verdicts (adopt/port-partially/inspire-only/skip) with per-component analysis and integration opportunities mapped to Sylveste modules (Clavain, Autarch, Intercore, Interverse, interbase).",
     "anti_overlap": [
       "fd-sylveste-module-fit covers direct integration targets where code will be imported — this agent covers ideas that inform new Sylveste code without direct reuse",
       "fd-code-quality-and-maturity covers quality signals that determine trustworthiness — this agent extracts patterns regardless of adoption verdict",
