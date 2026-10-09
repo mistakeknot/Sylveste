@@ -77,8 +77,8 @@ the checkout is realigned, and before every restart and rollback.
 Further properties, each with a test and a mutation control in `gate0-run-test.sh`:
 
 - Process listings fail closed. If `ps` cannot be read, or the agent listing (`/proc`, else
-  `lsof`) does not show the wrapper itself, the wrapper stops: an empty listing from a failed
-  command is not "no agent and no bd". `GATE0_PROCFS` (default `/proc`) names the process
+  `lsof`) does not show the wrapper itself or the listing command exits non-zero, the wrapper
+  stops: a failed or partial listing is not "no agent and no bd". `GATE0_PROCFS` (default `/proc`) names the process
   file system; the test points it elsewhere to force the `lsof` branch.
 - Children are confined too: the log directory, `gate0-run/` and each preservation
   directory must be plain physical children outside the checkout, its git directory and
@@ -86,7 +86,15 @@ Further properties, each with a test and a mutation control in `gate0-run-test.s
   directory is a STOP before the checkout is realigned).
 - `bd` and the steps run with the checkout as their working directory, whatever the caller's.
 - A restart that is already recorded runs nothing: it re-verifies that the recorded timers
-  are active and the marker is the one set aside. A new `freeze` clears earlier restart records.
+  are active and the marker is the one set aside. A `freeze` after a completed restart is a new
+  attempt: it stops the timers and moves the marker aside again, and clears the earlier restart
+  records once the new freeze is recorded.
+- The marker put back by a restart (server or Clavain) must be byte for byte the one the freeze
+  record names; otherwise it is removed and the restart stops before anything runs.
+- A restarted timer is checked live: a controller that returns success while the timer stays
+  inactive is treated as a failed restart (timers stopped again, marker aside, no record).
+- `--check` phases run `cutover-steps.sh` with its reporting off, so an inherited
+  `CUTOVER_LOG_DIR` cannot make a check write into the journal or the checkout.
 - If a successful restart cannot be recorded, the wrapper stops the attempt's timers and
   puts the marker aside again, as for any other failed restart.
 

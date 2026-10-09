@@ -79,7 +79,7 @@ for u in "\$@"; do case \$act in
   start) [ ! -e "\$S/failstart-\$u" ] || exit 1
          if [ "\$u" = git-autosync-repair.service ]; then echo "start \$(date +%s)" >> "\$S/starts"
            [ -e "\$S/nojournal" ] || echo "1 autosync repo(s): 1 unchanged" > "\$S/journal.txt"
-         else touch "\$S/units/\$u"; [ ! -e "\$S/lockg" ] || chmod a-w "$J/gate0-run"; fi ;;
+         else [ -e "\$S/lie-\$u" ] || touch "\$S/units/\$u"; [ ! -e "\$S/lockg" ] || chmod a-w "$J/gate0-run"; fi ;;
   esac; done
 EOF
 printf '#!/bin/bash\ncat %q 2>/dev/null; true\n' "$ST/journal.txt" > "$B/stub/journalctl"
@@ -97,6 +97,7 @@ case \$1 in
           # the real predictor writes a delivery failure to stderr when its own report sender is on and empty
           if [ -e "\$S/pred-noise" ]; then echo "restart: report not delivered; it is /x:" >&2; fi
           if [ -e "\$S/pred-stop" ]; then echo "verdict STOP row 5 at \$6"; exit 3; fi; echo "verdict run" ;;
+  clavain) echo "\$*" >> "\$S/pred-args"; echo "row 8"; echo "verdict run" ;;
   verify) ! grep -q 'report not delivered' "\$2" || { echo "verify: unknown line in the prediction"; exit 3; }
           [ ! -e "\$S/pred-tag" ] || git -C $R tag gate0/injected HEAD
           [ ! -e "\$S/pred-mismatch" ] || { echo "verify: mismatch"; exit 3; }; echo "verify: match" ;;
@@ -115,8 +116,20 @@ cat > "$B/stub/ps" <<EOF
 if [ "\$*" = "-A -o pid= -o comm=" ]; then [ ! -e "$B/ps-fail" ] || exit 1; $REALPS "\$@" | awk -v keep="\$(cat "$B/bdpid" 2>/dev/null)" '{ n = \$2; sub(/.*\//, "", n); if (n == "bd" && \$1 != keep) next; print }'
 else exec $REALPS "\$@"; fi
 EOF
-printf '#!/bin/bash\nexit 1\n' > "$B/stub/lsof"   # a listing that fails: used only when the test forces the lsof branch
-chmod +x "$B/stub/lsof" "$B/stub/ps" "$B/bin/ctl" "$B/stub/journalctl" "$B/bin/pred" "$B/bin/tell"
+# a listing that fails: used only when the test forces the lsof branch. With $B/lsof-partial it fails after printing the wrapper's own
+# ancestors and nothing else, so a caller that ignores the exit status sees itself and no other process
+cat > "$B/stub/lsof" <<EOF
+#!/bin/bash
+[ -e "$B/lsof-partial" ] || exit 1
+p=\$PPID
+while [ -n "\$p" ] && [ "\$p" -gt 1 ]; do printf 'p%s\ncfake\nn/nowhere\n' "\$p"; p=\$($REALPS -o ppid= -p "\$p" | tr -d ' '); done
+exit 1
+EOF
+cat > "$B/bin/sweep" <<EOF
+#!/bin/bash
+touch "$ST/sweep-ran"; echo "drift fixture" > "$B/drift.txt"
+EOF
+chmod +x "$B/bin/sweep" "$B/stub/lsof" "$B/stub/ps" "$B/bin/ctl" "$B/stub/journalctl" "$B/bin/pred" "$B/bin/tell"
 rec() { printf '{"_type":"issue","id":"%s","title":"%s","status":"open","priority":2,"issue_type":"task","created_at":"%s","updated_at":"%s"}\n' "$1" "$2" "$3" "$3"; }
 rec fx-one one 2026-10-01T00:00:01Z > "$B/one.jsonl"
 { rec fx-two two 2026-10-01T00:00:02Z; cat "$B/one.jsonl"; } > "$B/trk.jsonl"
@@ -266,6 +279,38 @@ t_putfail() {  # the restart succeeded but could not be recorded: the frozen sta
   PFS="$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)/$([ -e "$J/gate0-run/restarted-r0" ] && echo recorded)"
   [ "$PFR/$PFS" = "3//no/no/" ]; }
 
+t_lsofpartial() {  # an lsof that fails after listing the wrapper itself is not a clean listing: a process in the checkout may be missing
+  restore fx; stepto preflight || return 1
+  ( cd "$R" && exec sleep 60 ) & BG=$!; sleep 0.3; touch "$B/lsof-partial"
+  GATE0_PROCFS="$B/no-procfs" wg freeze > "$B/out.lp" 2>&1; LPR=$?
+  kill $BG 2>/dev/null; wait $BG 2>/dev/null; BG=; rm -f "$B/lsof-partial"
+  [ "$LPR/$(timers)" = "3/yes/yes" ] && grep -q 'cannot list the processes' "$B/out.lp"; }
+t_clavmarker() {  # Clavain restart: the marker put back must be the one the freeze record names, as on the server
+  restore r0a; rm -f "$B/drift.txt"
+  GATE0_MACHINE=clavain GATE0_SWEEP="$B/bin/sweep" GATE0_DRIFT_REPORT="$B/drift.txt" wg restart r0 > "$B/out.cm" 2>&1; CM0=$?
+  CM0S="$([ -e "$ST/sweep-ran" ] && echo swept)/$(timers)"
+  restore r0a; rm -f "$B/drift.txt"; printf 'EXTRA=1\n' >> "$J/gate0-run/marker"
+  GATE0_MACHINE=clavain GATE0_SWEEP="$B/bin/sweep" GATE0_DRIFT_REPORT="$B/drift.txt" wg restart r0 >> "$B/out.cm" 2>&1; CM1=$?
+  CM1S="$([ -e "$R/.git-autosync" ] && echo marker)/$([ -e "$ST/sweep-ran" ] && echo swept)/$(timers)/$([ -e "$J/gate0-run/restarted-r0" ] && echo recorded)"
+  [ "$CM0/$CM0S/$CM1/$CM1S" = "0/swept/yes/yes/3///no/no/" ]; }
+t_startlie() {  # a unit controller that returns 0 from start while the timer stays inactive is not a restart
+  restore r0a; touch "$ST/lie-git-autosync-promote.timer"
+  wg restart r0 > "$B/out.sl2" 2>&1; SLIE=$?
+  SLIS="$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)/$([ -e "$J/gate0-run/restarted-r0" ] && echo recorded)"
+  [ "$SLIE/$SLIS" = "3//no/no/" ] && grep -q 'not active after its start' "$B/out.sl2"; }
+t_checkreport() {  # --check preflight and --check capture write nothing even when a report directory is inherited from the environment
+  restore fx; stepto preflight freeze || return 1
+  local c0 j0; c0=$(ckfp); j0=$(jfp)
+  CUTOVER_LOG_DIR="$J/leak" wg --check preflight > "$B/out.cr" 2>&1; CR1=$?
+  CUTOVER_LOG_DIR="$R/leak" wg --check preflight >> "$B/out.cr" 2>&1; CR2=$?
+  CUTOVER_LOG_DIR="$R/leak" wg --check capture >> "$B/out.cr" 2>&1; CR3=$?
+  [ "$CR1/$CR2/$CR3" = 0/0/0 ] && [ ! -e "$J/leak" ] && [ ! -e "$R/leak" ] && [ "$(ckfp)" = "$c0" ] && [ "$(jfp)" = "$j0" ]; }
+t_refreeze() {  # a new freeze after a completed restart is a new attempt: timers and marker stopped again, the restart record cleared
+  restore r0a; wg restart r0 > "$B/out.rf" 2>&1; RF1=$?
+  wg freeze >> "$B/out.rf" 2>&1; RF2=$?
+  RFS="$(timers)/$([ -e "$R/.git-autosync" ] && echo marker)/$([ -e "$J/gate0-run/restarted-r0" ] && echo recorded)/$(grep -c '^timer ' "$J/gate0-run/freeze")"
+  [ "$RF1/$RF2/$RFS" = "0/0/no/no///2" ]; }
+
 echo "== --check forms change nothing"
 restore fx; c0=$(ckfp); j0=$(jfp); l0=$(lanerefs)
 WG= wg --check > "$B/out" 2>&1; check "--check" "$?" 0
@@ -371,6 +416,11 @@ t_listfail; check "a failing ps or lsof is a STOP at freeze (exit 3), timers unt
 t_symlinks; check "a symlinked logs/, gate0-run/ or preservation child is refused (1, 1, STOP 3); nothing written into the checkout" "$SLR/$?" "113/0"
 t_restart_idem; check "restart twice runs once; restart or rollback without a live freeze is a STOP" "$RI1/$RI2/$RIS/$RI3/$RIN/$RI4/$RIC/$?" "0/0/1/3/0/3/a1/0"
 t_putfail; check "a restart that cannot be recorded: exit 3, marker aside, timers stopped, no record" "$PFR/$PFS/$?" "3//no/no//0"
+t_lsofpartial; check "an lsof that fails after listing the wrapper is a STOP at freeze (exit 3), timers untouched" "$LPR/$?" "3/0"
+t_clavmarker; check "Clavain restart: the unchanged marker restarts and sweeps; a changed one is a STOP before any sweep, marker aside, timers stopped" "$CM0/$CM0S/$CM1/$CM1S/$?" "0/swept/yes/yes/3///no/no//0"
+t_startlie; check "a start that returns 0 with the timer still inactive is a STOP: marker aside, timers stopped, no record" "$SLIE/$SLIS/$?" "3//no/no//0"
+t_checkreport; check "--check preflight and capture with an inherited report directory write nothing" "$CR1/$CR2/$CR3/$?" "0/0/0/0"
+t_refreeze; check "freeze after a completed restart re-freezes: timers and marker out, restart record cleared, both timers recorded" "$RF1/$RF2/$RFS/$?" "0/0/no/no///2/0"
 
 echo "== mutation controls (each must be judged NOT fail-closed)"
 mutate() {  # NAME SEDEXPR : a copy of the wrapper with one safeguard removed; WG names it
@@ -404,7 +454,7 @@ mutate M12 's/^  freeze_holds   # rollback:.*$/  :/' &&
   { WG=$B/mut/M12.sh; t_restart_idem; r=$?; WG=; check "M12 (no freeze check before rollback) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M13 's/stop "cannot read the process table (ps): no bd process can be ruled out"/true/' &&
   { WG=$B/mut/M13.sh; t_listfail; r=$?; WG=; check "M13 (a failing ps read as no bd) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
-mutate M14 's/command -v lsof >\/dev\/null 2>&1 || return 2/:/; s/ \*) return 2 ;; esac/ *) ;; esac/' &&
+mutate M14 's/command -v lsof >\/dev\/null 2>&1 || return 2/:/; s/ \*) return 2 ;; esac/ *) ;; esac/; s/ || return 2   # a failed listing can still show this script and omit others//' &&
   { WG=$B/mut/M14.sh; t_listfail; r=$?; WG=; check "M14 (a failing lsof read as no agents) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M15 's/^LP=.*$/LP=x/' &&
   { WG=$B/mut/M15.sh; t_symlinks; r=$?; WG=; check "M15 (no check of the log directory's physical path) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
@@ -414,5 +464,15 @@ mutate M17 's/ unrecord_bail$//' &&
   { WG=$B/mut/M17.sh; t_putfail; r=$?; WG=; check "M17 (a failed record leaves the restart half done) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M18 's/^inroot() {.*$/inroot() { "$@"; }/' &&
   { WG=$B/mut/M18.sh; t_cwd; r=$?; WG=; check "M18 (bd run from the caller's directory) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M19 's/ || return 2   # a failed listing can still show this script and omit others//' &&
+  { WG=$B/mut/M19.sh; t_lsofpartial; r=$?; WG=; check "M19 (lsof's exit status ignored) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M20 '/^restart_clavain()/,/^unrecord_bail/ s/^  restore_marker$/  cp -p "$G\/marker" "$ROOT\/.git-autosync" || stop "cannot restore the marker"/' &&
+  { WG=$B/mut/M20.sh; t_clavmarker; r=$?; WG=; check "M20 (Clavain marker not checked against the freeze record) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M21 's/^    \[ "\$(unit_state "\$u")" = active \] || rbail .*; done$/    :; done/' &&
+  { WG=$B/mut/M21.sh; t_startlie; r=$?; WG=; check "M21 (a started timer not checked live) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M22 's/env CUTOVER_REPORT=0 "\$CS" --check/"$CS" --check/' &&
+  { WG=$B/mut/M22.sh; t_checkreport; r=$?; WG=; check "M22 (preflight check lets the step script report) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mutate M23 's/ && ! restarted_any; then/; then/' &&
+  { WG=$B/mut/M23.sh; t_refreeze; r=$?; WG=; check "M23 (freeze after a completed restart stops) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 
 if [ $fails = 0 ]; then echo "GATE0-RUN: PASS"; exit 0; else echo "GATE0-RUN: FAIL ($fails)"; exit 1; fi
