@@ -1,0 +1,7 @@
+# Per-repo exemptions for the pre-push public-repo guard.
+# Format: rule-id  path-glob  -- reason
+agent-dir   .clavain/gates/*           -- authz gate policy read at runtime by clavain-cli
+agent-dir   .clavain/keys/*            -- public verification key and manifest, no private key
+claude-dir  .claude/settings.json      -- project hook config, paths made project-relative
+claude-dir  .claude/flux-drive.yaml    -- project review config
+claude-dir  .claude/flux-gen-specs/*   -- generator specs
