@@ -37,7 +37,7 @@ It is generated from [roadmap.json](roadmap.json); do not hand-edit it.
 - **Sylveste-ie6.7** Transplant Compound's Codex Writer safety logic into Clavain's Codex install path
 
 ### infra
-- **Sylveste-6f7** zklw Go toolchain (1.23.8) too old to build intercore (go 1.25.0) + darwin release binaries — blocks canary-registering ic and Clavain publish from zklw
+- **Sylveste-6f7** the build server Go toolchain (1.23.8) too old to build intercore (go 1.25.0) + darwin release binaries — blocks canary-registering ic and Clavain publish from the build server
 - **Sylveste-bzy** 5 interverse plugins dual-tracked: force-added into monorepo AND published from independent repos (interfer, interhelm, intersight, interseed, intership)
 
 ### intercore
@@ -458,8 +458,8 @@ It is generated from [roadmap.json](roadmap.json); do not hand-edit it.
 - **Sylveste-8ew7** Generators run on --help instead of printing usage
 - **sylveste-8g69** Thompson profile or substitute (analytical-framework consistency test) _(blocked)_
 - **sylveste-8qk** F8: Philosophy amendment + documentation
-- **Sylveste-8rpw** zklw: delete the phantom ~/projects/Demarch tree (needs mk's go)
-- **Sylveste-942** Fix /Users/arouth hardcoded path in com.arouth.claude-plugin-cleanup.plist
+- **Sylveste-8rpw** the build server: delete the phantom ~/projects/Demarch tree (needs mk's go)
+- **Sylveste-942** Fix ~ hardcoded path in com.arouth.claude-plugin-cleanup.plist
 - **sylveste-9prl** Wei profile (rare-frame detection test) _(blocked)_
 - **sylveste-9xyh** beads: bd dolt status errors with 'not supported in embedded mode' but bd dolt help lists it unconditionally under Server lifecycle
 - **sylveste-a4oj.10** Phase 3 — Infrastructure-class improvements (M+ difficulty bundle)

@@ -1,6 +1,6 @@
 # Sylveste Roadmap
 
-**Last reviewed:** 2026-09-07. **Canonical task source:** zklw Sylveste Beads.
+**Last reviewed:** 2026-09-07. **Canonical task source:** the build server Sylveste Beads.
 
 [Machine roadmap](roadmap.json) · [Detailed backlog](backlog.md) ·
 [Version gates](roadmap-v1.md) · [Autonomous maintenance design](plans/2026-09-07-remontoire-roadmap-maintenance.md)

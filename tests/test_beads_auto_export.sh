@@ -143,7 +143,7 @@ echo "PASS"
 
 echo "=== 4: issues that exist only in the JSONL survive, and nothing is committed for them ==="
 # Simulate a pull that brought another machine's issue, not yet imported.
-printf '{"_type":"issue","id":"remote-only","title":"from zklw","updated_at":"2026-02-01T00:00:00Z"}\n' >> .beads/issues.jsonl
+printf '{"_type":"issue","id":"remote-only","title":"from hostB","updated_at":"2026-02-01T00:00:00Z"}\n' >> .beads/issues.jsonl
 git add .beads/issues.jsonl
 git -c core.hooksPath=/dev/null commit -q -m "pulled remote issue"
 echo work4 > other.txt
@@ -167,7 +167,7 @@ echo "=== 5: no commit is inserted while git is mid-sequence ==="
 # Clear the pending state from scenario 4 first: the "other machine's" row is
 # now in the database too.
 export DOLT_IDS="a b c d remote-only"
-export DOLT_OVERRIDES='{"_type":"issue","id":"remote-only","title":"from zklw","updated_at":"2026-02-01T00:00:00Z"}'
+export DOLT_OVERRIDES='{"_type":"issue","id":"remote-only","title":"from hostB","updated_at":"2026-02-01T00:00:00Z"}'
 
 # Invoke the script directly rather than through a commit: git refuses a
 # partial commit while MERGE_HEAD exists, so the commit that would trigger the
@@ -260,7 +260,7 @@ echo "=== 9: a new database row is published while an unimported transport row i
 # Bring the file back in step with the database first (g exists in both).
 git commit -q -m "work9-prep" --allow-empty
 [ "$(git log -1 --format=%s)" = "beads: sync export (automated)" ] || fail "fixture: expected g to be exported"
-printf '{"_type":"issue","id":"pulled-h","title":"from zklw","updated_at":"2026-03-01T00:00:00Z"}\n' >> .beads/issues.jsonl
+printf '{"_type":"issue","id":"pulled-h","title":"from hostB","updated_at":"2026-03-01T00:00:00Z"}\n' >> .beads/issues.jsonl
 git add .beads/issues.jsonl
 git -c core.hooksPath=/dev/null commit -q -m "pulled h"
 export DOLT_IDS="a b c d remote-only e f g i"       # i created here; h never imported
@@ -282,7 +282,7 @@ echo "PASS"
 echo "=== 10: same updated_at, different content -> transport version kept, evidence written ==="
 export DOLT_IDS="a b c d remote-only e f g i pulled-h"
 # Both hosts edited 'i' in the same second, differently. The transport holds
-# zklw's version; the database holds ours.
+# hostB's version; the database holds ours.
 python3 - <<'PY'
 import json, re
 lines = open(".beads/issues.jsonl").read().splitlines()
@@ -290,23 +290,23 @@ out = []
 for line in lines:
     row = json.loads(line)
     if row["id"] == "i":
-        row.update(title="renamed on zklw", updated_at="2026-04-01T00:00:00Z")
+        row.update(title="renamed on hostB", updated_at="2026-04-01T00:00:00Z")
     if row["id"] == "pulled-h":
         pass
     out.append(json.dumps(row, separators=(",", ":")))
 open(".beads/issues.jsonl", "w").write("\n".join(out) + "\n")
 PY
 git add .beads/issues.jsonl
-git -c core.hooksPath=/dev/null commit -q -m "pulled zklw rename of i"
-# Baseline (HEAD) now carries zklw's version; the database moved from the
+git -c core.hooksPath=/dev/null commit -q -m "pulled hostB rename of i"
+# Baseline (HEAD) now carries hostB's version; the database moved from the
 # original, so both changed since the baseline the database last matched.
-export DOLT_OVERRIDES='{"_type":"issue","id":"remote-only","title":"from zklw","updated_at":"2026-02-01T00:00:00Z"}
-{"_type":"issue","id":"pulled-h","title":"from zklw","updated_at":"2026-03-01T00:00:00Z"}
+export DOLT_OVERRIDES='{"_type":"issue","id":"remote-only","title":"from hostB","updated_at":"2026-02-01T00:00:00Z"}
+{"_type":"issue","id":"pulled-h","title":"from hostB","updated_at":"2026-03-01T00:00:00Z"}
 {"_type":"issue","id":"i","title":"renamed on the mac","status":"open","updated_at":"2026-04-01T00:00:00Z","comment_count":0}'
 echo work10 > other.txt
 warn="$(git commit -q -m "work10" -- other.txt 2>&1 >/dev/null)"
 
-grep -q '"renamed on zklw"' .beads/issues.jsonl || fail "the transport version of a conflicted row was overwritten"
+grep -q '"renamed on hostB"' .beads/issues.jsonl || fail "the transport version of a conflicted row was overwritten"
 grep -q '"renamed on the mac"' .beads/issues.jsonl && fail "a conflict was resolved by picking the database side"
 case "$warn" in
   *"INCOMPLETE"*"conflicts"*" i"*) ;;
@@ -324,9 +324,9 @@ echo "PASS"
 
 echo "=== 11: an old task edited with a timestamp below the file's max is exported ==="
 # Resolve the conflict out of the way: the database now agrees with the transport.
-export DOLT_OVERRIDES='{"_type":"issue","id":"remote-only","title":"from zklw","updated_at":"2026-02-01T00:00:00Z"}
-{"_type":"issue","id":"pulled-h","title":"from zklw","updated_at":"2026-03-01T00:00:00Z"}
-{"_type":"issue","id":"i","title":"renamed on zklw","status":"open","updated_at":"2026-04-01T00:00:00Z","comment_count":0}
+export DOLT_OVERRIDES='{"_type":"issue","id":"remote-only","title":"from hostB","updated_at":"2026-02-01T00:00:00Z"}
+{"_type":"issue","id":"pulled-h","title":"from hostB","updated_at":"2026-03-01T00:00:00Z"}
+{"_type":"issue","id":"i","title":"renamed on hostB","status":"open","updated_at":"2026-04-01T00:00:00Z","comment_count":0}
 {"_type":"issue","id":"a","title":"a, edited here","status":"open","updated_at":"2026-01-15T00:00:00Z","comment_count":0}'
 echo work11 > other.txt
 git commit -q -m "work11" -- other.txt 2>/dev/null
@@ -383,19 +383,19 @@ echo "PASS"
 # ─── 14. a conflict stays a conflict across consecutive commits ───────
 
 echo "=== 14: after a partial export commits the transport side, the next pass does not publish the database side ==="
-# Baseline A (verified), transport C (pulled from zklw), database B (edited
+# Baseline A (verified), transport C (pulled from hostB), database B (edited
 # here). Pass 1: conflict, transport keeps C, and an unrelated database row
 # makes the export commit. If provenance were HEAD, pass 2 would see
 # transport == HEAD and read B as a fresh one-sided change. It must not.
 export DOLT_IDS="a b c d remote-only e f g i pulled-h j k racer"
-export DOLT_OVERRIDES='{"_type":"issue","id":"remote-only","title":"from zklw","updated_at":"2026-02-01T00:00:00Z"}
-{"_type":"issue","id":"pulled-h","title":"from zklw","updated_at":"2026-03-01T00:00:00Z"}
-{"_type":"issue","id":"i","title":"renamed on zklw","status":"open","updated_at":"2026-04-01T00:00:00Z","comment_count":0}
+export DOLT_OVERRIDES='{"_type":"issue","id":"remote-only","title":"from hostB","updated_at":"2026-02-01T00:00:00Z"}
+{"_type":"issue","id":"pulled-h","title":"from hostB","updated_at":"2026-03-01T00:00:00Z"}
+{"_type":"issue","id":"i","title":"renamed on hostB","status":"open","updated_at":"2026-04-01T00:00:00Z","comment_count":0}
 {"_type":"issue","id":"a","title":"a, edited here","status":"open","updated_at":"2026-01-15T00:00:00Z","comment_count":0}'
 echo settle > other.txt
 git commit -q -m "settle" -- other.txt 2>/dev/null            # k and racer verified, baseline moves
 [ "$(git log -1 --format=%s)" = "beads: sync export (automated)" ] || fail "fixture: expected a settling export"
-# zklw edits k (transport side, pulled); we edit k too (database side), later.
+# hostB edits k (transport side, pulled); we edit k too (database side), later.
 python3 - <<'PY'
 import json
 lines = open(".beads/issues.jsonl").read().splitlines()
@@ -403,25 +403,25 @@ out = []
 for line in lines:
     row = json.loads(line)
     if row["id"] == "k":
-        row.update(title="k per zklw", updated_at="2026-05-01T00:00:00Z")
+        row.update(title="k per hostB", updated_at="2026-05-01T00:00:00Z")
     out.append(json.dumps(row, separators=(",", ":")))
 open(".beads/issues.jsonl", "w").write("\n".join(out) + "\n")
 PY
 git add .beads/issues.jsonl
-git -c core.hooksPath=/dev/null commit -q -m "pulled zklw edit of k"
+git -c core.hooksPath=/dev/null commit -q -m "pulled hostB edit of k"
 export DOLT_OVERRIDES="$DOLT_OVERRIDES
 {\"_type\":\"issue\",\"id\":\"k\",\"title\":\"k per the mac\",\"status\":\"open\",\"updated_at\":\"2026-06-01T00:00:00Z\",\"comment_count\":0}"
 export DOLT_IDS="$DOLT_IDS m"                                  # unrelated new row forces a commit
 echo work14 > other.txt
 warn="$(git commit -q -m "work14" -- other.txt 2>&1 >/dev/null)"
 [ "$(git log -1 --format=%s)" = "beads: sync export (automated)" ] || fail "pass 1 did not commit the unrelated row"
-grep -q '"k per zklw"' .beads/issues.jsonl || fail "pass 1 overwrote the transport side of the conflict"
+grep -q '"k per hostB"' .beads/issues.jsonl || fail "pass 1 overwrote the transport side of the conflict"
 case "$warn" in *"conflicts"*" k"*) ;; *) fail "pass 1 did not report the conflict; stderr: $warn" ;; esac
 # Pass 2: HEAD now holds C; the database still holds B.
 export DOLT_IDS="$DOLT_IDS n"
 echo work14b > other.txt
 warn="$(git commit -q -m "work14b" -- other.txt 2>&1 >/dev/null)"
-grep -q '"k per zklw"' .beads/issues.jsonl || fail "pass 2 published the database side of a conflict the previous pass had flagged"
+grep -q '"k per hostB"' .beads/issues.jsonl || fail "pass 2 published the database side of a conflict the previous pass had flagged"
 grep -q '"k per the mac"' .beads/issues.jsonl && fail "the conflict was silently reclassified as one-sided on the second pass"
 case "$warn" in *"conflicts"*" k"*) ;; *) fail "pass 2 forgot the conflict; stderr: $warn" ;; esac
 python3 -c 'import json; c=json.load(open(".beads/transport/conflicts.json"))["records"]["k"]; assert c["first_seen"] < c["last_seen"] or c["first_seen"] <= c["last_seen"], c' \
@@ -440,17 +440,17 @@ out = []
 for line in lines:
     row = json.loads(line)
     if row["id"] == "m":
-        row.update(title="m per zklw", updated_at="2026-07-01T00:00:00Z")
+        row.update(title="m per hostB", updated_at="2026-07-01T00:00:00Z")
     out.append(json.dumps(row, separators=(",", ":")))
 open(".beads/issues.jsonl", "w").write("\n".join(out) + "\n")
 PY
 git add .beads/issues.jsonl
-git -c core.hooksPath=/dev/null commit -q -m "pulled zklw edit of m (not imported)"
+git -c core.hooksPath=/dev/null commit -q -m "pulled hostB edit of m (not imported)"
 export DOLT_OVERRIDES="$DOLT_OVERRIDES
 {\"_type\":\"issue\",\"id\":\"m\",\"title\":\"m per the mac\",\"status\":\"open\",\"updated_at\":\"2026-07-02T00:00:00Z\",\"comment_count\":0}"
 echo work15 > other.txt
 warn="$(git commit -q -m "work15" -- other.txt 2>&1 >/dev/null)"
-grep -q '"m per zklw"' .beads/issues.jsonl || fail "a local edit overwrote a pulled row that was never imported"
+grep -q '"m per hostB"' .beads/issues.jsonl || fail "a local edit overwrote a pulled row that was never imported"
 case "$warn" in *"conflicts"*" m"*|*"conflicts"*"m "*|*"conflicts"*"m"*) ;; *) fail "the conflict was not reported; stderr: $warn" ;; esac
 echo "PASS"
 

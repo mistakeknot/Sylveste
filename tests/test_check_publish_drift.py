@@ -12,7 +12,7 @@ than assumed.
 
 The end-to-end pair is the load-bearing test. It reproduces the bug the class was
 built for: on 2026-08-14 canongraph read `clean` on Clavain from a local clone 234
-commits stale, and `drift, 38 commits` on zklw from the source mirror — the same
+commits stale, and `drift, 38 commits` on the build server from the source mirror — the same
 committed code, two hosts, two verdicts. Here one fixture is audited twice,
 differing only in whether its org counts as ours, and the two verdicts must
 differ: `clean` from the local clone when it is ours, `vendored-behind` from the
@@ -198,7 +198,7 @@ def test_vendored_is_audited_from_the_mirror_and_reports_behind(fixture, monkeyp
     This is the cross-machine bug as a unit test: a clean local checkout is
     present and must NOT be what answers. If vendored resolution ever fell back
     to it, `source` would read "local" and `status` "clean" — exactly the pair
-    Clavain reported for canongraph while zklw reported drift.
+    Clavain reported for canongraph while the build server reported drift.
     """
     _rc, r = _run(fixture, "somebody-else", monkeypatch, capsys)
     assert r["vendored"] is True

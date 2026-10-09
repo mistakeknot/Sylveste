@@ -163,7 +163,7 @@ def test_live_estate_is_in_parity(required):
 #      shape — the file present, its version behind a bumped plugin.json because
 #      the checkout has not pulled the regeneration — never reached the guard.
 #      That is the interlore case on 2026-08-07: fixed on the remote on 08-03,
-#      reported as drift on Clavain, clean on zklw, and read at the time as a
+#      reported as drift on Clavain, clean on the build server, and read at the time as a
 #      coverage gap between the machines.
 #
 #   2. It compared against @{upstream} WITHOUT FETCHING, and returned the plain
@@ -171,7 +171,7 @@ def test_live_estate_is_in_parity(required):
 #      failed". On a clone that last fetched five weeks ago the comparison is
 #      between two local pointers and the remote is not consulted at all.
 #      Measured: 55 of 70 Clavain checkouts reported "0 behind" on fetch data
-#      older than seven days, twelve having never fetched; zklw had 65 of 66
+#      older than seven days, twelve having never fetched; the build server had 65 of 66
 #      within the week. Same integer from both machines.
 #
 # These build real git repositories rather than monkeypatching, because the bug

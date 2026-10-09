@@ -31,7 +31,7 @@ Entries with no `tool` value are skipped (unusable for analysis).
 ```json
 {"ts":"2026-05-27T17:39:51.643Z","session_id":"abc123","tool":"Skill","name":"clavain:campaign","duration_ms":42,"exit_code":0}
 {"ts":"2026-05-27T17:40:02.001Z","session_id":"abc123","tool":"Agent","name":"interflux:fd-architecture","duration_ms":343944,"exit_code":0}
-{"ts":"2026-05-27T17:40:15.500Z","session_id":"abc123","tool":"Edit","name":"/Users/sma/projects/Sylveste/scripts/foo.py","duration_ms":12,"exit_code":0}
+{"ts":"2026-05-27T17:40:15.500Z","session_id":"abc123","tool":"Edit","name":"~/projects/Sylveste/scripts/foo.py","duration_ms":12,"exit_code":0}
 ```
 
 ## Privacy
