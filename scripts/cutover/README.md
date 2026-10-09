@@ -131,5 +131,13 @@ Further properties, each with a test and a mutation control in `gate0-run-test.s
   from the recorded one, its bytes are first kept beside the record as `marker.unexpected.<sha256>`
   (copied, flushed and compared), then the live file is removed. A `freeze` still stops when a
   different marker is already set aside, because that is an operator decision.
+- A restart marks its attempt (`restarting-<name>`) before its first side effect and closes the mark
+  only after the completion record is written. A restart that is cut off in between (the marker back,
+  the service run, some timers started) is found by the next restart, which undoes it (every timer
+  stopped, marker aside, mark cleared only when every unit is confirmed stopped) and stops; the restart
+  after that is a new attempt.
+- A restart recorded with no marker (the freeze found none) checks that no marker has appeared; one that
+  has is undone like any other mismatch. A cleanup with no marker recorded keeps a marker it finds as
+  `marker.unexpected.<sha256>` and removes the live file, without creating a marker record.
 
 The wrapper's own sha256 changes with any edit. A handoff cites the digest of the final bytes.

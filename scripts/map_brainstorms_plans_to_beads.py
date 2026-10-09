@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import os
 import re
 import subprocess
 import sys
@@ -142,7 +143,8 @@ def extract_ids(path: Path, infer_missing: bool) -> list[tuple[str, str]]:
 
 
 def collect_mappings(repo_root: Path, infer_missing: bool, docs_root: Path | None = None) -> list[Mapping]:
-    docs_root = docs_root or repo_root / "docs"
+    # a relative root is taken from the checkout; an absolute one may lie outside it
+    docs_root = Path(os.path.normpath(repo_root / docs_root)) if docs_root else repo_root / "docs"
     docs = sorted((docs_root / "brainstorms").glob("*.md")) + sorted(
         (docs_root / "plans").glob("*.md")
     )
@@ -162,8 +164,11 @@ def collect_mappings(repo_root: Path, infer_missing: bool, docs_root: Path | Non
 
     mappings: list[Mapping] = []
     for path in docs:
-        rel = path.relative_to(repo_root).as_posix()
-        kind = "brainstorm" if "/brainstorms/" in rel else "plan"
+        try:
+            rel = path.relative_to(repo_root).as_posix()
+        except ValueError:
+            rel = path.as_posix()  # outside the checkout: keep the absolute path; repo_root / rel still resolves to it
+        kind = "brainstorm" if path.parent.name == "brainstorms" else "plan"
         ids = extract_ids(path, infer_missing=infer_missing)
         if not ids:
             sibling_ids = sorted(slug_to_ids.get(normalize_slug(path), set()))
@@ -210,7 +215,7 @@ def main() -> int:
     args = parser.parse_args()
 
     repo_root = Path.cwd()
-    docs_root = args.docs_root or repo_root / "docs"
+    docs_root = repo_root / args.docs_root if args.docs_root else repo_root / "docs"
     if not (docs_root / "brainstorms").is_dir() and not (docs_root / "plans").is_dir():
         parser.error(f"no brainstorms/ or plans/ under {docs_root}; pass --docs-root")
     mappings = collect_mappings(repo_root, infer_missing=not args.no_infer, docs_root=docs_root)

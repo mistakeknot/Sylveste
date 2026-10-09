@@ -214,18 +214,20 @@ presence() {
   else refuse "no terminal: the presence check needs the operator to type the confirmation"; fi
   [ "$got" = "$want" ] || refuse "presence not confirmed"; }
 marker_aside() { [ -e "$G/marker" ] && [ ! -e "$ROOT/.git-autosync" ]; }
+keep_unexpected_marker() {  # the bytes now in the checkout are not the recorded marker (or the record says there is none): keep them beside the record, verified, before they are removed
+  local m=$G/marker.unexpected.$(sha < "$ROOT/.git-autosync")
+  if [ ! -e "$m" ]; then
+    cp -p "$ROOT/.git-autosync" "$m.tmp.$$" && { sync "$m.tmp.$$" 2>/dev/null || sync; } && mv -f -- "$m.tmp.$$" "$m" || stop "cannot keep the unexpected marker bytes before removing them"; fi
+  [ "$(sha < "$m")" = "$(sha < "$ROOT/.git-autosync")" ] || stop "the kept copy of the unexpected marker does not match it"
+  say "gate0-run: the marker in the checkout is not the recorded one; its bytes are kept in $m"; }
 move_marker_aside() {  # [force] : the marker is untracked and ignored; keep its bytes in G, verify, then remove it from the checkout
-  local m
   [ -e "$ROOT/.git-autosync" ] || return 0
+  if [ "${1:-}" = force ] && [ ! -e "$G/marker" ] && [ "$(sed -n 's/^marker //p' "$G/freeze" 2>/dev/null)" = none ]; then   # cleanup: the record says there is no marker, so none may stay
+    keep_unexpected_marker; rm -f -- "$ROOT/.git-autosync" && [ ! -e "$ROOT/.git-autosync" ] || stop "cannot move the marker aside"; return 0; fi
   if [ -e "$G/marker" ]; then   # the copy is already there (a restart put the marker back from it): no write to the journal is needed
     if [ "$(sha < "$G/marker")" != "$(sha < "$ROOT/.git-autosync")" ]; then
       [ "${1:-}" = force ] || stop "a different marker is already set aside"
-      # cleanup after a failure: the bytes now in the checkout are not the recorded marker; keep them beside it, verify the copy, then remove the live file
-      m=$G/marker.unexpected.$(sha < "$ROOT/.git-autosync")
-      if [ ! -e "$m" ]; then
-        cp -p "$ROOT/.git-autosync" "$m.tmp.$$" && { sync "$m.tmp.$$" 2>/dev/null || sync; } && mv -f -- "$m.tmp.$$" "$m" || stop "cannot keep the unexpected marker bytes before removing them"; fi
-      [ "$(sha < "$m")" = "$(sha < "$ROOT/.git-autosync")" ] || stop "the kept copy of the unexpected marker does not match it"
-      say "gate0-run: the marker in the checkout differs from the recorded one; its bytes are kept in $m"; fi
+      keep_unexpected_marker; fi   # cleanup after a failure: keep the bytes beside the record, then remove the live file
     rm -f -- "$ROOT/.git-autosync" && [ ! -e "$ROOT/.git-autosync" ] || stop "cannot move the marker aside"; return 0; fi
   cp -p "$ROOT/.git-autosync" "$G/marker.tmp.$$" && { sync "$G/marker.tmp.$$" 2>/dev/null || sync; } &&
     mv -f -- "$G/marker.tmp.$$" "$G/marker" && [ "$(sha < "$G/marker")" = "$(sha < "$ROOT/.git-autosync")" ] &&
@@ -313,9 +315,10 @@ do_freeze() {
   if [ -n "${GATE0_STATUS_CMD:-}" ]; then "$GATE0_STATUS_CMD" > "$LOGD/autosync-status.txt" 2>&1; say "gate0-run: autosync status recorded (exit $?)"; fi
   w="marker $([ -e "$G/marker" ] && sha < "$G/marker" || echo none)"
   f=$(act_lines "$act"; printf '%s\n' "$w"; printf 'at %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"); put "$G/freeze" "$f"
-  rm -f -- "$G"/restarted-*   # a new freeze starts a new attempt: an earlier attempt's restart records no longer apply (cleared once the new freeze is recorded)
+  rm -f -- "$G"/restarted-* "$G"/restarting-*   # a new freeze starts a new attempt: an earlier attempt's restart records no longer apply (cleared once the new freeze is recorded)
   rm -f -- "$G/freeze-intent"   # last: while a stale restart record exists the intent still names the restart set, so a crash between these two steps loses nothing
   say "gate0-run: freeze holds (timers and services stopped, marker aside)"; }
+restarting_any() { local f; for f in "$G"/restarting-*; do [ -e "$f" ] && return 0; done; return 1; }
 restarted_any() { local f; for f in "$G"/restarted-*; do [ -e "$f" ] && return 0; done; return 1; }
 freeze_holds() { local u a
   [ -e "$G/freeze" ] || stop "no freeze record; run freeze first"
@@ -406,7 +409,8 @@ rbail() {  # back to the frozen state: every recorded timer stopped, each timer 
   for u in $(sed -n 's/^timer //p' "$G/freeze"); do units stop "$u" >/dev/null 2>&1; done
   for u in $(sed -n 's/^timer //p' "$G/freeze") $SERVICES; do [ "$(unit_state "$u")" = inactive ] || bad="$bad $u"; done
   [ -z "$bad" ] || say "gate0-run: UNCONFIRMED: these units are not confirmed stopped:$bad; a human must stop them before anything else runs" >&2
-  move_marker_aside force; stop "$*${bad:+; UNCONFIRMED stop of$bad}"; }
+  move_marker_aside force; [ -n "$bad" ] || rm -f -- "$G"/restarting-*   # the attempt is closed only when every unit is confirmed stopped and the marker is aside
+  stop "$*${bad:+; UNCONFIRMED stop of$bad}"; }
 restore_marker() {  # the marker set aside goes back, and must be the one the freeze record names (server and Clavain alike)
   [ -f "$G/marker" ] && cp -p "$G/marker" "$ROOT/.git-autosync.tmp.$$" && mv -f -- "$ROOT/.git-autosync.tmp.$$" "$ROOT/.git-autosync" ||
     { [ ! -e "$G/marker" ] && [ "$(sed -n 's/^marker //p' "$G/freeze")" = none ]; } || stop "cannot restore the marker"
@@ -464,7 +468,9 @@ restarted_holds() {  # a restart that is already recorded: re-verify the state i
     [ "$(unit_state "$u")" = active ] || unrecord_bail "restart $1 is recorded but $u is not confirmed active: the state is not the one the record describes; nothing was run"; done
   m=$(sed -n 's/^marker //p' "$G/freeze")
   if [ "$m" != none ]; then [ -e "$ROOT/.git-autosync" ] && [ "$(sha < "$ROOT/.git-autosync")" = "$m" ] ||
-    unrecord_bail "restart $1 is recorded but the marker in the checkout is not the one set aside; nothing was run"; fi
+    unrecord_bail "restart $1 is recorded but the marker in the checkout is not the one set aside; nothing was run"
+  else [ ! -e "$ROOT/.git-autosync" ] || unrecord_bail "restart $1 is recorded with no marker, but a marker is in the checkout; nothing was run"; fi
+  rm -f -- "$G"/restarting-*   # a leftover from a crash after the record was written
   say "gate0-run: restart $1 already done ($(cat "$G/restarted-$1")); the recorded timers are active and the marker is in place; nothing run"; }
 do_restart() {
   local ex=$XARG pe=$XARG
@@ -473,6 +479,7 @@ do_restart() {
     say "gate0-run: restart $ex check: would run the unfreeze gate, preservation, reconciliation, the marker, one autosync run and the timers"; return 0; fi
   [ -e "$G/freeze" ] || refuse "no freeze record"
   if [ -e "$G/restarted-$ex" ]; then restarted_holds "$ex"; return 0; fi   # a repeat runs nothing
+  if restarting_any; then rbail "an earlier restart attempt began (marker, service or timers) and left no completion record: its effects are undone now (every timer stopped, marker aside); run the restart again as a new attempt"; fi
   freeze_holds   # restart: the freeze must hold now (units, marker, agents, bd), not only have been recorded
   if [ "$ex" = r0 ]; then
     if [ "$(cut -d' ' -f1 "$J/cp" 2>/dev/null)" = a0r ]; then pe=a0r
@@ -483,12 +490,14 @@ do_restart() {
   runlog cs unfreeze-gate "$ex" || stop "the unfreeze gate refused: the freeze stays"
   if [ -e "$J/done-p1a" ]; then runlog cs preserved "$( [ "$ex" = r6 ] && echo r6 )" || stop "restart step 1 failed before anything restarted"; fi
   reconcile
+  put "$G/restarting-$ex" "at $(date -u +%Y-%m-%dT%H:%M:%SZ)"   # before the first side effect: a crash from here to the completion record is found and undone by the next restart
   if [ "$MACHINE" = server ]; then restart_server "$ex" "$pe"; else restart_clavain "$ex"; fi
   # step 5: the timers; the bd writers and the agent sessions resume afterwards, started by their owners
   local u; for u in $(sed -n 's/^timer //p' "$G/freeze"); do
     units start "$u" || rbail "cannot re-enable $u; every timer of this attempt is stopped again and the marker is aside"
     [ "$(unit_state "$u")" = active ] || rbail "$u is not active after its start (a controller that returns 0 proves nothing); every timer of this attempt is stopped again and the marker is aside"; done
   put "$G/restarted-$ex" "at $(date -u +%Y-%m-%dT%H:%M:%SZ)" unrecord_bail
+  rm -f -- "$G/restarting-$ex"
   say "gate0-run: restart $ex done: the recorded timers are running again; resume the bd writers and the agent sessions now (they are not started by this script)"; }
 
 need_inputs
