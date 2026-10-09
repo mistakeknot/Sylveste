@@ -179,6 +179,17 @@ Further properties, each with a test and a mutation control in `gate0-run-test.s
   in the ancestor walk, where a failure only makes more processes count as agents; the count and status
   strings, where an empty value never equals the expected one; the Clavain lane-tip compare, whose read is
   status-checked and whose record is required to exist) are fail-safe by construction.
+- Records and values read back are read with their status checked, and an empty value is accepted only
+  after a successful read. This covers the freeze record's timer and marker lines (at the freeze repeat,
+  the earlier freeze intent, the cleanup, a recorded restart and step 5), P1-pre's status record at an R0
+  without P1a and its filter, the P0 lane record, the approved inputs, the sha256 record of the capture
+  (it must name exactly the bundle and the W-snapshot), the archive's push URL, the unmerged-entries read,
+  and the filter behind the marker rule. A read that prints the expected value and then fails is not a
+  match: the compares of the checkout's state (HEAD's name, the heads, the count, the tag) use a helper
+  that returns the value only when the read succeeded. The cleanup that returns a restart to the frozen
+  state never skips the timers because its record is unreadable: it stops every configured timer
+  instead, reads each back, and says so when one cannot be confirmed stopped. The lane-tip fields are cut
+  with a shell expansion, so no command's lost status can leave an empty tip.
 - A step that acts on a recorded value re-validates it at the point of use: the P1-pre head must be a
   commit sha every time it is read, the marker record must hold a sha256 before it is compared, and a
   restart validates the archive destination and its push URL again itself (server and Clavain) instead of
