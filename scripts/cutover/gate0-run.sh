@@ -214,10 +214,18 @@ presence() {
   else refuse "no terminal: the presence check needs the operator to type the confirmation"; fi
   [ "$got" = "$want" ] || refuse "presence not confirmed"; }
 marker_aside() { [ -e "$G/marker" ] && [ ! -e "$ROOT/.git-autosync" ]; }
-move_marker_aside() {  # the marker is untracked and ignored; keep its bytes in G, verify, then remove it from the checkout
+move_marker_aside() {  # [force] : the marker is untracked and ignored; keep its bytes in G, verify, then remove it from the checkout
+  local m
   [ -e "$ROOT/.git-autosync" ] || return 0
   if [ -e "$G/marker" ]; then   # the copy is already there (a restart put the marker back from it): no write to the journal is needed
-    [ "$(sha < "$G/marker")" = "$(sha < "$ROOT/.git-autosync")" ] || stop "a different marker is already set aside"
+    if [ "$(sha < "$G/marker")" != "$(sha < "$ROOT/.git-autosync")" ]; then
+      [ "${1:-}" = force ] || stop "a different marker is already set aside"
+      # cleanup after a failure: the bytes now in the checkout are not the recorded marker; keep them beside it, verify the copy, then remove the live file
+      m=$G/marker.unexpected.$(sha < "$ROOT/.git-autosync")
+      if [ ! -e "$m" ]; then
+        cp -p "$ROOT/.git-autosync" "$m.tmp.$$" && { sync "$m.tmp.$$" 2>/dev/null || sync; } && mv -f -- "$m.tmp.$$" "$m" || stop "cannot keep the unexpected marker bytes before removing them"; fi
+      [ "$(sha < "$m")" = "$(sha < "$ROOT/.git-autosync")" ] || stop "the kept copy of the unexpected marker does not match it"
+      say "gate0-run: the marker in the checkout differs from the recorded one; its bytes are kept in $m"; fi
     rm -f -- "$ROOT/.git-autosync" && [ ! -e "$ROOT/.git-autosync" ] || stop "cannot move the marker aside"; return 0; fi
   cp -p "$ROOT/.git-autosync" "$G/marker.tmp.$$" && { sync "$G/marker.tmp.$$" 2>/dev/null || sync; } &&
     mv -f -- "$G/marker.tmp.$$" "$G/marker" && [ "$(sha < "$G/marker")" = "$(sha < "$ROOT/.git-autosync")" ] &&
@@ -398,7 +406,7 @@ rbail() {  # back to the frozen state: every recorded timer stopped, each timer 
   for u in $(sed -n 's/^timer //p' "$G/freeze"); do units stop "$u" >/dev/null 2>&1; done
   for u in $(sed -n 's/^timer //p' "$G/freeze") $SERVICES; do [ "$(unit_state "$u")" = inactive ] || bad="$bad $u"; done
   [ -z "$bad" ] || say "gate0-run: UNCONFIRMED: these units are not confirmed stopped:$bad; a human must stop them before anything else runs" >&2
-  move_marker_aside; stop "$*${bad:+; UNCONFIRMED stop of$bad}"; }
+  move_marker_aside force; stop "$*${bad:+; UNCONFIRMED stop of$bad}"; }
 restore_marker() {  # the marker set aside goes back, and must be the one the freeze record names (server and Clavain alike)
   [ -f "$G/marker" ] && cp -p "$G/marker" "$ROOT/.git-autosync.tmp.$$" && mv -f -- "$ROOT/.git-autosync.tmp.$$" "$ROOT/.git-autosync" ||
     { [ ! -e "$G/marker" ] && [ "$(sed -n 's/^marker //p' "$G/freeze")" = none ]; } || stop "cannot restore the marker"
@@ -452,7 +460,8 @@ restart_clavain() {  # exit-name
 unrecord_bail() { rm -f -- "$G/restarted-$XARG"; rbail "$@; every timer of this attempt is stopped again and the marker is aside"; }
 restarted_holds() {  # a restart that is already recorded: re-verify the state it describes and run nothing
   local u m
-  for u in $(sed -n 's/^timer //p' "$G/freeze"); do is_active "$u" || unrecord_bail "restart $1 is recorded but $u is not active: the state is not the one the record describes; nothing was run"; done
+  for u in $(sed -n 's/^timer //p' "$G/freeze"); do   # an unknown state is a failure of this check, so it goes through the cleanup too
+    [ "$(unit_state "$u")" = active ] || unrecord_bail "restart $1 is recorded but $u is not confirmed active: the state is not the one the record describes; nothing was run"; done
   m=$(sed -n 's/^marker //p' "$G/freeze")
   if [ "$m" != none ]; then [ -e "$ROOT/.git-autosync" ] && [ "$(sha < "$ROOT/.git-autosync")" = "$m" ] ||
     unrecord_bail "restart $1 is recorded but the marker in the checkout is not the one set aside; nothing was run"; fi
