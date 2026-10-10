@@ -55,16 +55,19 @@ W=$B/w; R=$W/root/Sylveste; J=$W/J; ST=$W/st
 link_text() { local t; t=$(readlink -- "$1" && printf x) || return 1; t=${t%x}; printf '%s' "${t%?}"; }
 dg() { if [ -L "$1" ]; then printf 'l:%s\n' "$(link_text "$1" | sha)"; elif [ -d "$1" ]; then echo d
   elif [ -f "$1" ] && [ -x "$1" ]; then printf 'x:%s\n' "$(sha < "$1")"; elif [ -f "$1" ]; then printf 'f:%s\n' "$(sha < "$1")"; else echo -; fi; }
-files() { (cd "$1" && find . -path ./.git -prune -o \( -type f -o -type l \) -print | sed 's|^\./||' | sort); }
+files() { (cd "$1" && set -o pipefail && find . -path ./.git -prune -o \( -type f -o -type l \) -print | sed 's|^\./||' | sort); }
 dmap() { local p; while IFS= read -r p; do printf '%s\t%s\n' "$(dg "$1/$p")" "$p"; done < "$2"; }
 wr() { mkdir -p "$(dirname "$1")"; printf '%s\n' "$2" > "$1"; }
 g() { GIT_OPTIONAL_LOCKS=0 git -C "$R" "$@"; }   # the test observes the checkout without refreshing its index
-ckfp() {  # the checkout as the plan sees it, plus the marker's presence and bytes; an observation that cannot be made is never equal to another one
-  g rev-parse HEAD > /dev/null 2>&1 || { echo "ckfp-failed-$RANDOM-$RANDOM"; return 0; }
-  g symbolic-ref -q HEAD; g rev-parse HEAD; g ls-files -s | sha; g status --porcelain -uall
-  files "$R" > "$B/ck.list"; dmap "$R" "$B/ck.list"
-  g for-each-ref --format='%(refname) %(objectname)' refs/heads refs/tags; dg "$R/.git-autosync"; }
-jfp() { (cd "$J" 2>/dev/null || { echo "jfp-failed-$RANDOM-$RANDOM"; exit 0; }; find . -mindepth 1 \( -type f -o -type d \) | sort | while IFS= read -r p; do printf '%s %s\n' "$p" "$(dg "$p")"; done) | sha; }
+ckfp() {  # the checkout as the plan sees it, plus the marker's presence and bytes; an observation that cannot be made, or that fails after its output, is never equal to another one
+  local bad="ckfp-failed-$RANDOM-$RANDOM"
+  g rev-parse HEAD > /dev/null 2>&1 || { echo "$bad"; return 0; }
+  g symbolic-ref -q HEAD; g rev-parse HEAD || echo "$bad"; { g ls-files -s || echo "$bad"; } | sha; g status --porcelain -uall || echo "$bad"
+  files "$R" > "$B/ck.list" || echo "$bad"; dmap "$R" "$B/ck.list"
+  g for-each-ref --format='%(refname) %(objectname)' refs/heads refs/tags || echo "$bad"; dg "$R/.git-autosync"; }
+jfp() {  # the journal's files and directories with their digests, hashed; a listing that fails anywhere, after its output included, is never equal to another one
+  local l; l=$(cd "$J" 2>/dev/null && set -o pipefail && find . -mindepth 1 \( -type f -o -type d \) | sort | while IFS= read -r p; do printf '%s %s\n' "$p" "$(dg "$p")"; done) || { echo "jfp-failed-$RANDOM-$RANDOM"; return 0; }
+  printf '%s\n' "$l" | sha || echo "jfp-failed-$RANDOM-$RANDOM"; }
 lanerefs() { git --git-dir="$W/lane.git" for-each-ref --format='%(refname) %(objectname)' || echo "lanerefs-failed-$RANDOM-$RANDOM"; }
 snap() { rm -rf -- "${B:?}/tpl-${1:?}"; cp -a "$W" "$B/tpl-$1"; }
 restore() { rm -rf -- "${W:?}"; cp -a "$B/tpl-$1" "$W"; }
@@ -196,13 +199,20 @@ if [ -e "$ST/sedfail" ]; then case " \$* " in *"\$(cat "$ST/sedfail")"*)
   if [ \$n -gt \$(cat "$ST/sedfail-skip" 2>/dev/null || echo 0) ]; then [ ! -e "$ST/sedfail-out" ] || $REALSED "\$@"; echo "sed: injected failure (stub)" >&2; exit 4; fi ;; esac; fi
 exec $REALSED "\$@"
 EOF
+# cut: a call whose arguments contain the text in $ST/cutfail prints what it would, then fails (the status of a pipeline's first stage)
+REALCUT=$(command -v cut)
+cat > "$B/stub/cut" <<EOF
+#!/bin/bash
+if [ -e "$ST/cutfail" ]; then case " \$* " in *"\$(cat "$ST/cutfail")"*) $REALCUT "\$@"; echo "cut: injected failure after output (stub)" >&2; exit 1 ;; esac; fi
+exec $REALCUT "\$@"
+EOF
 # systemctl --user is-active UNIT : prints the word in $ST/sysctl-out and exits $ST/sysctl-rc (stop and start do nothing)
 cat > "$B/stub/systemctl" <<EOF
 #!/bin/bash
 case "\$*" in *is-active*) cat "$ST/sysctl-out" 2>/dev/null; exit \$(cat "$ST/sysctl-rc" 2>/dev/null || echo 4) ;; esac
 exit 0
 EOF
-chmod +x "$B/stub/grep" "$B/stub/sed" "$B/stub/awk" "$B/stub/systemctl" "$B/stub/sha256sum" "$B/stub/git" "$B/stub/sync" "$B/stub/python3" "$B/bin/sweep" "$B/stub/lsof" "$B/stub/ps" "$B/bin/ctl" "$B/stub/journalctl" "$B/bin/pred" "$B/bin/tell"
+chmod +x "$B/stub/cut" "$B/stub/grep" "$B/stub/sed" "$B/stub/awk" "$B/stub/systemctl" "$B/stub/sha256sum" "$B/stub/git" "$B/stub/sync" "$B/stub/python3" "$B/bin/sweep" "$B/stub/lsof" "$B/stub/ps" "$B/bin/ctl" "$B/stub/journalctl" "$B/bin/pred" "$B/bin/tell"
 rec() { printf '{"_type":"issue","id":"%s","title":"%s","status":"open","priority":2,"issue_type":"task","created_at":"%s","updated_at":"%s"}\n' "$1" "$2" "$3" "$3"; }
 rec fx-one one 2026-10-01T00:00:01Z > "$B/one.jsonl"
 { rec fx-two two 2026-10-01T00:00:02Z; cat "$B/one.jsonl"; } > "$B/trk.jsonl"
@@ -788,12 +798,37 @@ t_swclavmark() {  # a freeze record that cannot be read is not a record that nam
   restore r0a; rm -f "$B/drift.txt"; chmod 000 "$J/gate0-run/freeze"
   GATE0_MACHINE=clavain GATE0_SWEEP="$B/bin/sweep" GATE0_DRIFT_REPORT="$B/drift.txt" wg restart r0 > "$B/out.sw" 2>&1; SWAK="$?/$(sw_msg 'whether a marker was set aside cannot be told')/$(sw_state)"; chmod 644 "$J/gate0-run/freeze"
   [ "$SWAK" = "3/1//0/no/no/" ]; }
-t_swobserver() {  # the test's own before/after observers fail closed: two failed observations are never "nothing changed"
-  local a b c d e f
+t_swobserver() {  # the test's own before/after observers fail closed: two failed observations are never "nothing changed", a listing that fails after its output included
+  local a b c d e f g2 h
   restore fx
   a=$(R=$B/nowhere ckfp 2>/dev/null); b=$(R=$B/nowhere ckfp 2>/dev/null); c=$(J=$B/nowhere jfp 2>/dev/null); d=$(J=$B/nowhere jfp 2>/dev/null); e=$(W=$B/nowhere lanerefs 2>/dev/null); f=$(W=$B/nowhere lanerefs 2>/dev/null)
-  SWAL="$([ "$a" != "$b" ] && echo differ)/$([ "$c" != "$d" ] && echo differ)/$([ "$e" != "$f" ] && echo differ)/$([ "$(ckfp)" = "$(ckfp)" ] && echo same)/$([ "$(jfp)" = "$(jfp)" ] && echo same)"
-  [ "$SWAL" = "differ/differ/differ/same/same" ]; }
+  g2=$(find() { command find "$@"; return 1; }; jfp 2>/dev/null); h=$(find() { command find "$@"; return 1; }; jfp 2>/dev/null)
+  SWAL="$([ "$a" != "$b" ] && echo differ)/$([ "$c" != "$d" ] && echo differ)/$([ "$e" != "$f" ] && echo differ)/$([ "$(ckfp)" = "$(ckfp)" ] && echo same)/$([ "$(jfp)" = "$(jfp)" ] && echo same)/$([ "$g2" != "$h" ] && echo differ)"
+  [ "$SWAL" = "differ/differ/differ/same/same/differ" ]; }
+t_swcapnames() {  # the names of the capture's sha256 record are read with the status of the read: a read that prints both names and then fails is not a match
+  local PD=$W/pres/mA-$O
+  restore fx; stepto preflight freeze capture || return 1
+  printf '%s' 'capture/sha256' > "$ST/cutfail"
+  wg capture > "$B/out.sw" 2>&1; SWAM="$?/$(sw_msg 'sha256 record cannot be read')/$(ls "$PD" | grep -c tmp)"
+  [ "$SWAM" = "3/1/0" ]; }
+t_swrestcap() {  # restart step 1 checks both entries of the capture's sha256 record itself: the pinned step drops a last line with no newline, so a changed W-snapshot behind such a record is caught here, in --check as well
+  local a b c
+  restore r0a; printf '%s' "$(cat "$J/capture/sha256")" > "$J/capture/sha256"; echo x >> "$J/capture/wtree.tar"
+  wg restart r0 > "$B/out.sw" 2>&1; a="$?/$(sw_msg 'the capture in the journal does not match its sha256 record')/$(sw_state)"
+  restore r0a; printf '%s' "$(cat "$J/capture/sha256")" > "$J/capture/sha256"; echo x >> "$J/capture/wtree.tar"
+  wg --check restart r0 > "$B/out.sw" 2>&1; c="$?/$(sw_msg 'restart step 1 would fail')"
+  restore r0a; printf '%s' "$(cat "$J/capture/sha256")" > "$J/capture/sha256"
+  wg restart r0 > "$B/out.sw" 2>&1; b="$?/$(sw_state)"
+  SWAN="$a;$c;$b"; [ "$SWAN" = "3/1//0/no/no/;3/1;0/recorded/1/yes/yes/marker" ]; }
+t_swreconeval() {  # the jsonl_dominated definition is taken from the steps with the extraction's status held and the whole function checked, and its load is checked: an inherited function never stands in for it
+  local a b c
+  restore r0a; sw_sed '/^jsonl_dominated() {/' 0 out
+  wg restart r0 > "$B/out.sw" 2>&1; a="$?/$(sw_msg 'cannot extract jsonl_dominated')/$(sw_state)"
+  restore r0a; sed 's/jsonl_dominated/jsonl_domx/g' "$CS" > "$B/cs-nodom.sh"; chmod +x "$B/cs-nodom.sh"
+  ( jsonl_dominated() { return 0; }; export -f jsonl_dominated; CS=$B/cs-nodom.sh; wg restart r0 > "$B/out.sw" 2>&1; echo "$?" > "$B/rc.sw" ); b="$(cat "$B/rc.sw")/$(sw_msg 'cannot extract jsonl_dominated')/$(sw_state)"
+  restore r0a
+  ( jsonl_dominated() { return 0; }; eval() { case $1 in "jsonl_dominated() {"*) return 1 ;; esac; builtin eval "$@"; }; export -f jsonl_dominated eval; wg restart r0 > "$B/out.sw" 2>&1; echo "$?" > "$B/rc.sw" ); c="$(cat "$B/rc.sw")/$(sw_msg 'cannot load jsonl_dominated')/$(sw_state)"
+  SWAO="$a;$b;$c"; [ "$SWAO" = "3/1//0/no/no/;3/1//0/no/no/;3/1//0/no/no/" ]; }
 
 echo "== --check forms change nothing"
 restore fx; c0=$(ckfp); j0=$(jfp); l0=$(lanerefs)
@@ -967,6 +1002,9 @@ sc "restoring the set-aside marker keeps the bytes it replaces" t_swrestover
 sc "a sha256 record with no final newline is verified in full and a bad capture never replaces the preservation copy" t_swsharecterm
 sc "a freeze record that cannot be read does not take the no-marker path of a Clavain restart" t_swclavmark
 sc "the test's before and after observers fail closed" t_swobserver
+sc "the capture's sha256 names read with a failing status are a STOP" t_swcapnames
+sc "restart step 1 checks both entries of the capture's sha256 record, a last line with no newline included" t_swrestcap
+sc "the jsonl_dominated extraction and load are status-checked and an inherited function is not accepted" t_swreconeval
 
 echo "== mutation controls (each must be judged NOT fail-closed)"
 mutate() {  # NAME SEDEXPR : a copy of the wrapper with one safeguard removed; WG names it
@@ -1134,7 +1172,7 @@ mm M81 t_swlsfilesu "a failed unmerged-entries read is accepted" 's/ || stop "ca
 mm M82 t_swpgs "output-then-failure reads are compared" 's/\$(pgs /$(pg /g'
 mm M83 t_swp0laneread "an unreadable P0 lane record is read as empty" 's/l0=\$(cat "\$J\/p0\/lane") || stop "[^"]*"/l0=$(cat "$J\/p0\/lane" 2>\/dev\/null)/'
 mm M84 t_swinputs "an unreadable input is read as empty" 's/ \&\& LANE=\$(cat "\$J\/lane-remote") \&\& \[ -n "\$LANE" \] || refuse "an input in J cannot be read"/; LANE=$(cat "$J\/lane-remote" 2>\/dev\/null)/'
-mm M85 t_swsharec "a sha256 record naming fewer files is accepted" '/^  \[ "\$(set -o pipefail; cut -f1 "\$J\/capture\/sha256"/d'
+mm M85 t_swsharec "a sha256 record naming fewer files is accepted" '/^  \[ "\$n" = "main.bundle wtree.tar" \] || stop /d'
 mm M86 t_swmarkfilter "a failed marker-rule filter is read as a clean status" 's/ || rbail "cannot filter the status for the marker rule[^"]*"/ || true/'
 mm M87 t_swrestmark "a restored marker is compared after a failed read" 's/{ m=\$(rec_marker) \&\& \[\[/{ m=$(rec_marker); [[/'
 mm M88 t_swactlines "the restart-set list is built without pipefail" 's/^act_lines() { ( set -o pipefail; /act_lines() { ( /'
@@ -1144,4 +1182,10 @@ mm M91 t_swverifyset "the number of completed checks is not required" 's/^  \[ \
 mm M92 t_swsharecterm "the preservation copy is replaced before the capture is verified" 's/^  { verify_set "\$d" ".tmp.\$\$" \&\& .*$/  true ||/'
 mm M93 t_swrestover "the restore replaces other marker bytes without keeping them" 's/^  if \[ -f "\$G\/marker" \] \&\& \[ -e "\$ROOT\/.git-autosync" \].*$/  :/'
 mm M94 t_swclavmark "the freeze record's marker line is read with its status ignored" 's/^  mrec=\$(rec_marker) || stop "[^"]*"[^\n]*$/  mrec=$(rec_marker)/'
+mm M95 t_swcapnames "the names read loses its pipefail" 's/n=\$(set -o pipefail; cut -f1/n=$(cut -f1/'
+mm M96 t_swcapnames "preserve_copy ignores the status of the names read" 's/^  n=\$(capture_names) || stop "[^"]*"/  n=$(capture_names)/'
+mm M97 t_swrestcap "restart does not check the capture itself" 's/^    capture_check || stop "restart step 1: [^"]*"/    :/'
+mm M98 t_swrestcap "the capture check ignores the digests" 's/ \&\& verify_set "\$J\/capture"; }$/; }/'
+mm M99 t_swreconeval "the extraction status and whole-function check are removed" 's/^  def=\$(sed -n \(.*\) "\$CS") \&\& \[\[ .* \]\] || stop "[^"]*"/  def=$(sed -n \1 "$CS")/'
+mm M100 t_swreconeval "the load status is ignored" 's/^  eval "\$def" || stop "[^"]*"/  eval "$def"/'
 if [ $fails = 0 ]; then echo "GATE0-RUN: PASS"; exit 0; else echo "GATE0-RUN: FAIL ($fails)"; exit 1; fi

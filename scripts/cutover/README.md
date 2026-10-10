@@ -195,6 +195,13 @@ Further properties, each with a test and a mutation control in `gate0-run-test.s
   capture's sha256 record: it is read to its last line even without a final newline, exactly two digests must
   be checked, and the preservation copy is staged and verified before it replaces the copy already there,
   so a capture that does not match its record never overwrites a verified backup.
+  The names in that record are read with the read's own status (a read that prints both names and then
+  fails is a STOP), and a restart checks both entries of the capture in the journal itself before it runs
+  the pinned `preserved` step, which reads the record with a loop that drops a last line with no newline.
+  The `jsonl_dominated` definition is taken from the steps with the extraction's status held and the whole
+  function checked, and its load is checked, so an inherited function never stands in for it. Single-command
+  reads that were compared inside `[ ... ]` (the marker record, the checkpoint, the ahead/behind count, a
+  process state) are held in a variable with their status first.
   A restore of the set-aside marker over other bytes in the checkout keeps those bytes first, and the
   Clavain restart stops when the freeze record cannot be read instead of treating it as one that names no
   marker.
