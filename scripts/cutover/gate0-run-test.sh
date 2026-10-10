@@ -1428,7 +1428,7 @@ mutate M1 's/|| stop "the marker is back in the checkout: the freeze no longer h
   { WG=$B/mut/M1.sh; t_markerback; r=$?; WG=; check "M1 (no marker check before capture) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M2 's/^  hook_check   # first:.*/  :/' &&
   { WG=$B/mut/M2.sh; t_hook; r=$?; WG=; check "M2 (no hook check) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
-mutate M3 's/rbail "the run differs/stop "the run differs/' &&
+mutate M3 's/rbail "the run differs/stop "the run differs/; s/INCLEAN=1; ( rcleanup ) >\/dev\/null || :;/:;/' &&   # the caller's recovery and the EXIT-trap net both gone
   { WG=$B/mut/M3.sh; t_verify; r=$?; WG=; check "M3 (marker left in place after a mismatch) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 
 mutate M4 's/^  hook_check   # first:.*/  :/; s/^  archive_check; }$/  hook_check; archive_check; }/' &&
@@ -1457,7 +1457,7 @@ mutate M15 's/^LP=.*$/LP=x/' &&
   { WG=$B/mut/M15.sh; t_symlinks; r=$?; WG=; check "M15 (no check of the log directory's physical path) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M16 's/^  if \[ "\$o" != "\$BASE" \]; then pres_check; fi.*$/  :/; s/pres_check; d=\$PD/PD=\$PRES\/\$HOST-\$o; d=\$PD/' &&
   { WG=$B/mut/M16.sh; t_symlinks; r=$?; WG=; check "M16 (no check of the preservation directory) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
-mutate M17 's/ unrecord_bail$//' &&
+mutate M17 's/ unrecord_bail$//; s/INCLEAN=1; ( rcleanup ) >\/dev\/null || :;/:;/' &&   # the handler and the EXIT-trap net both gone
   { WG=$B/mut/M17.sh; t_putfail; r=$?; WG=; check "M17 (a failed record leaves the restart half done) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M18 's/^inroot() {.*$/inroot() { "$@"; }/' &&
   { WG=$B/mut/M18.sh; t_cwd; r=$?; WG=; check "M18 (bd run from the caller's directory) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
@@ -1478,7 +1478,7 @@ mutate M25 's/^  prior=; .*$/  prior=/' &&
   { WG=$B/mut/M25.sh; t_failstop; r=$?; WG=; check "M25 (no memory of a partly stopped freeze) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M26 's/^  \[ ! -e "\$DRIFT" \] || mv -f -- "\$DRIFT" "\$LOGD\/drift.before".*$/  :/' &&
   { WG=$B/mut/M26.sh; t_staledrift; r=$?; WG=; check "M26 (an earlier drift report accepted) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
-mutate M27 's/^  \[ -z "\$bad" \] || say .*$/  :/; s/\${bad:+; UNCONFIRMED stop of\$bad}//' &&
+mutate M27 's/^  \[ -z "\$RBAD" \] || say .*$/  :/; s/\${RBAD:+; UNCONFIRMED stop of\$RBAD}//' &&
   { WG=$B/mut/M27.sh; t_unconfirmed; r=$?; WG=; check "M27 (an unconfirmed stop not reported) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M28 's/^  rm -f -- "\$G"\/restarted-\*/  rm -f -- "$G\/freeze-intent"\n&/; /^  rm -f -- "\$G\/freeze-intent"   # last/d' &&
   { WG=$B/mut/M28.sh; t_refreezecrash; r=$?; WG=; check "M28 (the restart set dropped before the earlier restart records) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
