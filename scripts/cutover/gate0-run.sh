@@ -188,9 +188,10 @@ under_self() {  # PID : true when this script is among PID's ancestors (its own 
   while [ -n "$q" ] && [ "$q" -gt 1 ] 2>/dev/null && [ $n -lt 64 ]; do [ "$q" != "$$" ] || return 0; q=$(ps -o ppid= -p "$q" 2>/dev/null | tr -d ' '); n=$((n+1)); done; return 1; }
 PROCFS=${GATE0_PROCFS:-/proc}
 skippable_proc() {  # DIR PID : a /proc entry whose working directory cannot be read, and that cannot hold an agent: gone, a zombie, or an account declared uninspectable
-  local d=$1 p=$2 u m
+  local d=$1 p=$2 u m st
   [ -d "$d" ] || return 0   # it exited between the listing and the read
-  case $(sed -n 's/^State:[[:space:]]*\(.\).*/\1/p' "$d/status" 2>/dev/null) in Z|X) return 0 ;; esac
+  st=$(sed -n 's/^State:[[:space:]]*\(.\).*/\1/p' "$d/status" 2>/dev/null) || st=   # a failed read is no state: the process still counts as an agent
+  case $st in Z|X) return 0 ;; esac
   u=$(stat -c %u "$d" 2>/dev/null) || { [ -d "$d" ] || return 0; u=; }
   if [ -n "$u" ]; then case " ${GATE0_UNINSPECTABLE_UIDS:-} " in *" $u "*) return 0 ;; esac; fi
   m="gate0-run: pid $p (uid ${u:-unknown}) is live and its working directory cannot be read, so it cannot be ruled out as an agent; end it, or list its uid in GATE0_UNINSPECTABLE_UIDS only if no process of that account that you cannot inspect can be an agent or bd work in the checkout"
@@ -233,7 +234,7 @@ keep_unexpected_marker() {  # the bytes now in the checkout are not the recorded
   say "gate0-run: the marker in the checkout is not the recorded one; its bytes are kept in $m"; }
 move_marker_aside() {  # [force] : the marker is untracked and ignored; keep its bytes in G, verify, then remove it from the checkout
   [ -e "$ROOT/.git-autosync" ] || return 0
-  if [ "${1:-}" = force ] && [ ! -e "$G/marker" ] && [ "$(sed -n 's/^marker //p' "$G/freeze" 2>/dev/null)" = none ]; then   # cleanup: the record says there is no marker, so none may stay
+  if [ "${1:-}" = force ] && [ ! -e "$G/marker" ] && mk=$(rec_marker) && [ "$mk" = none ]; then   # cleanup: the record says there is no marker, so none may stay
     keep_unexpected_marker; rm -f -- "$ROOT/.git-autosync" && [ ! -e "$ROOT/.git-autosync" ] || stop "cannot move the marker aside"; return 0; fi
   if [ -e "$G/marker" ]; then   # the copy is already there (a restart put the marker back from it): no write to the journal is needed
     if ! cmp -s "$G/marker" "$ROOT/.git-autosync"; then
@@ -316,7 +317,7 @@ do_freeze() {
   if [ -e "$G/freeze" ] && [ $CHECKMODE = 0 ] && ! restarted_any; then   # after a completed restart a new freeze is a new attempt: it falls through
     a=$(rec_timers) || stop "the freeze record cannot be read: whether its timers stay stopped cannot be told"
     for u in $a; do ! is_active "$u" || stop "the freeze was recorded but $u is active again"; done
-    { marker_aside || [ "$(rec_marker)" = none ]; } || stop "the freeze was recorded but the marker is back in the checkout"
+    { marker_aside || { mk=$(rec_marker) && [ "$mk" = none ]; }; } || stop "the freeze was recorded but the marker is back in the checkout"
     rm -f -- "$G/freeze-intent"   # a crash after the freeze was recorded can leave the intent behind; the record holds the set
     say "gate0-run: freeze already holds"; return 0
   fi
@@ -367,7 +368,7 @@ recheck_after_p1a() {  # P0's readiness repeated with no local-head exception
   b=$BASE; h=$HOST; p1pre_head; o=$OLD
   [ "$(pgs symbolic-ref -q HEAD)" = refs/heads/main ] || stop "re-check: HEAD is not main"
   [ "$(pgs rev-parse HEAD)" = "$b" ] && [ "$(pgs rev-parse refs/remotes/origin/main)" = "$b" ] || stop "re-check: HEAD and origin/main are not both the base"
-  [ "$(pgs rev-list --left-right --count HEAD...refs/remotes/origin/main | tr '\t' ' ')" = "0 0" ] || stop "re-check: the count is not 0 0"
+  cnt=$(pgs rev-list --left-right --count HEAD...refs/remotes/origin/main) && [ "${cnt//$'\t'/ }" = "0 0" ] || stop "re-check: the count is not 0 0"
   [ "$(pgs rev-parse -q --verify "refs/tags/gate0/$h-$o")" = "$o" ] || stop "re-check: the tag gate0/$h-$o does not resolve to the old tip"
   t=$(pg rev-parse "$b^{tree}") && [[ $t =~ ^[0-9a-f]{40}$ ]] || stop "re-check: cannot read the base's tree"
   w=$(pg write-tree 2>/dev/null) && [ "$w" = "$t" ] || stop "re-check: the index is not the base's tree"
@@ -380,11 +381,16 @@ verify_set() {  # DIR [SUFFIX] : the files the capture's sha256 record names, in
   while IFS=$(printf '\t') read -r f s || [ -n "$f" ]; do
     [ -n "$s" ] && [ "$(sha < "$d/$f$x")" = "$s" ] || return 1; n=$((n+1)); done < "$J/capture/sha256" || return 1
   [ $n = 2 ]; }
+capture_names() {  # the names the capture's sha256 record lists, sorted, on one line; a record that cannot be read is a failure, never a value to compare
+  local n; n=$(set -o pipefail; cut -f1 "$J/capture/sha256" | sort | paste -sd' ' -) || return 1; printf '%s\n' "$n"; }
+capture_check() {  # the capture in the journal: the record names exactly the bundle and the W-snapshot, and both digests hold (the pinned step 1 drops a last line with no newline)
+  local n; n=$(capture_names) && [ "$n" = "main.bundle wtree.tar" ] && verify_set "$J/capture"; }
 preserve_copy() {  # the capture, outside the journal, verified file by file; the copies are staged and verified before they replace anything
-  local d f g; pres_check; d=$PD
+  local d f g n; pres_check; d=$PD
   [ -f "$J/capture/sha256" ] || stop "no capture to copy"
   mkdir -p "$d" || stop "cannot create $d"
-  [ "$(set -o pipefail; cut -f1 "$J/capture/sha256" | sort | paste -sd' ' -)" = "main.bundle wtree.tar" ] || stop "the capture's sha256 record cannot be read or does not name exactly main.bundle and wtree.tar"
+  n=$(capture_names) || stop "the capture's sha256 record cannot be read: the files it names cannot be checked"
+  [ "$n" = "main.bundle wtree.tar" ] || stop "the capture's sha256 record does not name exactly main.bundle and wtree.tar"
   for f in main.bundle wtree.tar wtree.manifest sha256; do
     cp -p "$J/capture/$f" "$d/$f.tmp.$$" 2>/dev/null && flush_path "$d/$f.tmp.$$" || { for g in main.bundle wtree.tar wtree.manifest sha256; do rm -f -- "$d/$g.tmp.$$"; done; stop "cannot copy and flush $f"; }; done
   { verify_set "$d" ".tmp.$$" && cmp -s "$d/main.bundle.tmp.$$" "$J/capture/main.bundle" && cmp -s "$d/wtree.tar.tmp.$$" "$J/capture/wtree.tar" && cmp -s "$d/wtree.manifest.tmp.$$" "$J/capture/wtree.manifest" && cmp -s "$d/sha256.tmp.$$" "$J/capture/sha256"; } ||
@@ -433,11 +439,11 @@ do_rollback() {
 
 # ---- restart (R0, P10, R6)
 reconcile() {  # restart step 3: the first bd command is bd export; the base's and the old tip's records must be dominated
-  local x o t l
+  local x o t l def
   [ -e "$J/done-p1a" ] || { say "gate0-run: P1a did not run on this machine: no reconciliation"; return 0; }
   # the same function the P1a check uses; extracted from the script that defines it, so there is one definition
-  eval "$(sed -n '/^jsonl_dominated() {/,/"\$2" "\$1"; }$/p' "$CS")"
-  command -v jsonl_dominated >/dev/null 2>&1 || type jsonl_dominated >/dev/null 2>&1 || stop "cannot load jsonl_dominated from $CS"
+  def=$(sed -n '/^jsonl_dominated() {/,/"\$2" "\$1"; }$/p' "$CS") && [[ $def == "jsonl_dominated() {"*'"$2" "$1"; }' ]] || stop "cannot extract jsonl_dominated from $CS: the extraction failed or did not return the whole function"
+  eval "$def" || stop "cannot load jsonl_dominated from $CS"   # the extraction's status is held above: an inherited function never stands in for a definition that did not load
   p1pre_head; o=$OLD; x=$LOGD/export.jsonl
   inroot "$BDBIN" export -o "$x" > "$LOGD/bd-export.out" 2>&1 && [ -f "$x" ] || stop "bd export failed (see $LOGD/bd-export.out)"
   for t in "$o" "$BASE"; do
@@ -461,7 +467,7 @@ restore_marker() {  # the marker set aside goes back, and must be the one the fr
   local m
   if [ -f "$G/marker" ] && [ -e "$ROOT/.git-autosync" ] && ! cmp -s "$G/marker" "$ROOT/.git-autosync"; then keep_unexpected_marker; fi   # other bytes in the checkout are kept before the restore replaces them
   [ -f "$G/marker" ] && cp -p "$G/marker" "$ROOT/.git-autosync.tmp.$$" && mv -f -- "$ROOT/.git-autosync.tmp.$$" "$ROOT/.git-autosync" ||
-    { [ ! -e "$G/marker" ] && [ "$(sed -n 's/^marker //p' "$G/freeze")" = none ]; } || stop "cannot restore the marker"
+    { [ ! -e "$G/marker" ] && mk=$(rec_marker) && [ "$mk" = none ]; } || stop "cannot restore the marker"
   [ ! -e "$ROOT/.git-autosync" ] || { m=$(rec_marker) && [[ $m =~ ^[0-9a-f]{64}$ ]] && [ "$(sha < "$ROOT/.git-autosync")" = "$m" ]; } || { rm -f -- "$ROOT/.git-autosync"; stop "the restored marker differs from the one set aside"; }; }
 lane_refs() {  # PATTERN : the lane's refs matching it, sorted, on one line; a failed read is a failure, never an empty list
   local o; o=$(pg ls-remote "$LANE" "$1") || return 1
@@ -541,7 +547,7 @@ restarted_holds() {  # a restart that is already recorded: re-verify the state i
 do_restart() {
   local ex=$XARG pe=$XARG sn sr
   if [ $CHECKMODE = 1 ]; then
-    [ ! -d "$J/p1-pre" ] || [ ! -e "$J/done-p1a" ] || runlog cs preserved "$( [ "$ex" = r6 ] && echo r6 )" || stop "restart step 1 would fail"
+    [ ! -d "$J/p1-pre" ] || [ ! -e "$J/done-p1a" ] || { capture_check && runlog cs preserved "$( [ "$ex" = r6 ] && echo r6 )"; } || stop "restart step 1 would fail"
     say "gate0-run: restart $ex check: would run the unfreeze gate, preservation, reconciliation, the marker, one autosync run and the timers"; return 0; fi
   [ -e "$G/freeze" ] || refuse "no freeze record"
   if [ -e "$G/restarted-$ex" ]; then restarted_holds "$ex"; return 0; fi   # a repeat runs nothing
@@ -549,7 +555,7 @@ do_restart() {
   freeze_holds   # restart: the freeze must hold now (units, marker, agents, bd), not only have been recorded
   archive_ready   # the lane this restart reads and the run pushes to is validated now, not trusted from preflight
   if [ "$ex" = r0 ]; then
-    if [ "$(cut -d' ' -f1 "$J/cp" 2>/dev/null)" = a0r ]; then pe=a0r
+    if cpv=$(cut -d' ' -f1 "$J/cp" 2>/dev/null) && [ "$cpv" = a0r ]; then pe=a0r
     elif [ ! -e "$J/done-p1a" ]; then pe=p10   # P1a never ran: the machine is at the base, rows 1 or 2 with P1-pre's status
       sn=$(pg status --porcelain -uall) || stop "R0 without P1a: cannot read the status"
       [ -f "$J/p1-pre/status.all" ] || stop "R0 without P1a: P1-pre's status record $J/p1-pre/status.all is missing"
@@ -558,7 +564,9 @@ do_restart() {
       [ "$sn" = "$sr" ] || stop "R0 without P1a: the status differs from P1-pre's record"
     else stop "R0 after P1a needs R0a first (run rollback)"; fi; fi
   runlog cs unfreeze-gate "$ex" || stop "the unfreeze gate refused: the freeze stays"
-  if [ -e "$J/done-p1a" ]; then runlog cs preserved "$( [ "$ex" = r6 ] && echo r6 )" || stop "restart step 1 failed before anything restarted"; fi
+  if [ -e "$J/done-p1a" ]; then   # the wrapper's own check first: the pinned step reads the record with a loop that drops a last line with no newline
+    capture_check || stop "restart step 1: the capture in the journal does not match its sha256 record (both entries are checked, a last line with no newline included); nothing restarted"
+    runlog cs preserved "$( [ "$ex" = r6 ] && echo r6 )" || stop "restart step 1 failed before anything restarted"; fi
   reconcile
   put "$G/restarting-$ex" "at $(date -u +%Y-%m-%dT%H:%M:%SZ)"   # before the first side effect: a crash from here to the completion record is found and undone by the next restart
   if [ "$MACHINE" = server ]; then restart_server "$ex" "$pe"; else restart_clavain "$ex"; fi
