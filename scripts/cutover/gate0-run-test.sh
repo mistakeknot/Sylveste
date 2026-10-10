@@ -1275,6 +1275,7 @@ mutate() {  # NAME SEDEXPR : a copy of the wrapper with one safeguard removed; W
   sed "$2" "$GW" > "$B/mut/$1.sh" || { echo "  FAIL mutation $1: the sed expression failed"; fails=$((fails+1)); return 1; }
   chmod +x "$B/mut/$1.sh"
   cmp -s "$GW" "$B/mut/$1.sh" && { echo "  FAIL mutation $1 changed nothing"; fails=$((fails+1)); return 1; }
+  bash -n "$B/mut/$1.sh" 2>/dev/null || { echo "  FAIL mutation $1 left a wrapper that does not parse (a control against a broken file proves nothing)"; fails=$((fails+1)); return 1; }
   cp "$HERE/cutover-steps.sh" "$B/mut/cutover-steps.sh"; return 0; }
 mutate M1 's/|| stop "the marker is back in the checkout: the freeze no longer holds"/|| true/' &&
   { WG=$B/mut/M1.sh; t_markerback; r=$?; WG=; check "M1 (no marker check before capture) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
@@ -1481,7 +1482,7 @@ mm M121 t_swgitcommon "the log directory may be inside the common git directory"
 mutate M122 '/^restart_settled \&\& exit 0$/d; s/^need_inputs$/need_inputs\nrestart_settled \&\& exit 0/' &&
   { WG=$B/mut/M122.sh; t_swrestartclean; r=$?; WG=; check "M122 (the cleanup of a cut-off restart after the input validation) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mm M123 t_swrestartclean "a recorded restart is no longer re-verified before the input validation" 's/^  if \[ -e "\$G\/restarted-\$XARG" \]; then restarted_holds "\$XARG"; return 0; fi.*$/  :/'
-mm M109 t_swrefreezegone "a new freeze records the earlier attempt's marker copy although the checkout has no marker" '/^  if restarted_any \&\& \[ ! -e "\$G\/freeze-intent" \]/,/^    say "gate0-run: the checkout has no marker: the copy kept/d'
+mm M109 t_swrefreezegone "a new freeze records the earlier attempt's marker copy although the checkout has no marker" 's/^    else mv -f -- "\$G\/marker" "\$G\/marker.earlier.\$w" \&\& \[ ! -e "\$G\/marker" \] || stop "cannot set the earlier attempt.s marker copy aside"$/    else :/'
 mm M125 t_swcheckro "--check freeze sets the earlier attempt's marker copy aside" 's/^    if \[ \$CHECKMODE = 1 \]; then say "gate0-run: freeze check: the checkout has no marker.*$/    if false; then :/'
 mm M126 t_swcheckro "--check freeze stops the timers" 's/^  if \[ \$CHECKMODE = 1 \]; then say "gate0-run: freeze check: would stop/  if false; then say "gate0-run: freeze check: would stop/'
 mm M127 t_swcheckro "--check preflight records P0" 's/^  if \[ \$CHECKMODE = 1 \]; then env CUTOVER_REPORT=0 "\$CS" --check/  if false; then env CUTOVER_REPORT=0 "$CS" --check/'
