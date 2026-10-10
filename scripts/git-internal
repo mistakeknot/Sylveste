@@ -49,9 +49,10 @@
 # every array expansion is guarded with ${a[@]+"${a[@]}"} for set -u.
 set -u
 PATH=${GIT_INTERNAL_PATH:-/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin}
-TPL=$(cd "$(dirname "$0")" && pwd -P)/git-internal-hooks
-
 die() { local rc=$1; shift; echo "git-internal: $*" >&2; exit "$rc"; }
+
+TPL=$(cd "$(dirname "$0")" && pwd -P) || die 1 "cannot locate the hook templates next to $0"
+TPL=$TPL/git-internal-hooks
 
 # platform preflight (finding: Clavain runs /bin/bash 3.2 and may lack sha256sum)
 sha256() {  # FILE... : "<hex>  <file>" lines, from sha256sum or shasum -a 256
@@ -67,7 +68,7 @@ preflight() {  # quiet unless something is missing; doctor prints the report
   command -v sha256sum >/dev/null 2>&1 || command -v shasum >/dev/null 2>&1 ||
     { echo "git-internal: preflight: neither sha256sum nor shasum on PATH ($PATH)" >&2; bad=1; }
   if command -v git >/dev/null 2>&1; then
-    v=$(git version 2>/dev/null); v=${v#git version }; maj=${v%%.*}; min=${v#*.}; min=${min%%.*}
+    v=$(git version 2>/dev/null) || v=; v=${v#git version }; maj=${v%%.*}; min=${v#*.}; min=${min%%.*}
     case $maj$min in *[!0-9]*|'') echo "git-internal: preflight: cannot parse git version '$v'" >&2; bad=1 ;;
       *) [ "$maj" -gt 2 ] || { [ "$maj" = 2 ] && [ "$min" -ge 38 ]; } ||
            { echo "git-internal: preflight: git $v is older than 2.38 (merge-tree --write-tree)" >&2; bad=1; } ;;
@@ -85,7 +86,7 @@ if [ "${1:-}" = -C ]; then ROOT=${2:?}; shift 2; fi
 cmd=${1:-}; [ $# -gt 0 ] && shift
 preflight
 if [ -z "$ROOT" ]; then
-  ROOT=$PWD; while [ "$ROOT" != / ] && [ ! -d "$ROOT/.git-internal" ]; do ROOT=$(dirname "$ROOT"); done
+  ROOT=$PWD; while [ "$ROOT" != / ] && [ ! -d "$ROOT/.git-internal" ]; do ROOT=$(dirname "$ROOT") || die 1 "cannot walk up from $PWD"; done
   [ -d "$ROOT/.git-internal" ] || [ "$cmd" = install ] || [ "$cmd" = doctor ] || die 1 "no .git-internal above $PWD; use -C ROOT"
   [ -d "$ROOT/.git-internal" ] || ROOT=$PWD
 fi
@@ -105,13 +106,14 @@ crash_point() {  # name : tests only; see the header
 }
 fsync_path() { sync "$1" 2>/dev/null || sync; }   # GNU sync FILE fsyncs it; elsewhere a global sync
 put() {  # file text : atomic, durable replace (temp, fsync, rename, directory fsync)
-  local t="$1.tmp.$$"
+  local t="$1.tmp.$$" b d
+  b=$(basename "$1") && d=$(dirname "$1") || return 1
   printf '%s\n' "$2" > "$t" && fsync_path "$t" || { rm -f -- "${t:?}"; return 1; }
-  crash_point "$(basename "$1")-tmp"
-  mv -f "$t" "$1" && fsync_path "$(dirname "$1")" || { rm -f -- "${t:?}"; return 1; }
-  crash_point "$(basename "$1")"
+  crash_point "$b-tmp"
+  mv -f "$t" "$1" && fsync_path "$d" || { rm -f -- "${t:?}"; return 1; }
+  crash_point "$b"
 }
-host() { local h; h=$(cat "$GD/info/host" 2>/dev/null); [ -n "$h" ] || die 4 "$GD/info/host is missing"; printf '%s' "$h"; }
+host() { local h; h=$(cat "$GD/info/host" 2>/dev/null) && [ -n "$h" ] || die 4 "$GD/info/host is missing"; printf '%s' "$h"; }
 
 approved() {  # path : 0 if on info/approved-paths
   local p=$1 a
@@ -141,11 +143,11 @@ cmd_install_hooks() {
 # info/installed marks the end.
 cmd_install() {
   [ $# = 2 ] || die 1 "usage: install URL HOST"
-  local fin=$GD p lst
+  local fin=$GD p lst cu hh
   local -a present=() todo=()
   if [ -e "$GD" ]; then
     [ ! -e "$GD/info/installed" ] || die 4 "install: $GD is already installed"
-    [ "$(gi config --get remote.origin.url)" = "$1" ] && [ "$(cat "$GD/info/host" 2>/dev/null)" = "$2" ] ||
+    cu=$(gi config --get remote.origin.url) && hh=$(cat "$GD/info/host" 2>/dev/null) && [ "$cu" = "$1" ] && [ "$hh" = "$2" ] ||
       die 4 "install: $GD exists, unfinished, for another URL or host"
     rm -f -- "${GD:?}"/info/installed.tmp.*   # a killed run's temporary
     echo "git-internal: install: finishing an interrupted install" >&2
@@ -205,7 +207,7 @@ precheck() {  # the private checkout must be on a branch, with nothing staged
   gi diff --cached --quiet || die 4 "staged changes: commit them first"
 }
 
-push_lane() { gi push -q origin "HEAD:refs/heads/autosync/$(host)" || die 7 "push of own lane failed"; }
+push_lane() { local h; h=$(host) || exit $?; gi push -q origin "HEAD:refs/heads/autosync/$h" || die 7 "push of own lane failed"; }
 
 disk_mode() {  # path : the git mode the file on disk would be recorded with
   if [ -L "$ROOT/$1" ]; then echo 120000; elif [ -x "$ROOT/$1" ]; then echo 100755; else echo 100644; fi
@@ -291,7 +293,7 @@ apply() {  # step old new
 # the importer over ORIG_HEAD..HEAD, which must be idempotent. The intent is
 # removed last. Every git write here is checked: a failure is a STOP (10).
 forward() {  # step old new
-  local step=$1 old=$2 new=$3 h t ot nt p idx
+  local step=$1 old=$2 new=$3 h t ot nt og p idx
   local -a A=() M=() D=() bad=()
   gi symbolic-ref -q HEAD >/dev/null || { echo "git-internal: HEAD is detached; the recorded $step $old..$new is not finished" >&2; return 10; }
   h=$(gi rev-parse -q --verify HEAD) || { echo "git-internal: cannot read HEAD; the recorded $step $old..$new is not finished" >&2; return 10; }
@@ -338,8 +340,9 @@ forward() {  # step old new
   # before it runs, on the first run and on every recovery: re-set when it is
   # not, then read back. A stale ORIG_HEAD.lock fails the update, and an older
   # ORIG_HEAD would import the wrong range (Sol round 8).
-  if [ "$(gi rev-parse -q --verify ORIG_HEAD)" != "$old" ]; then
-    gi update-ref ORIG_HEAD "$old" && [ "$(gi rev-parse -q --verify ORIG_HEAD)" = "$old" ] ||
+  og=$(gi rev-parse -q --verify ORIG_HEAD) || og=   # a read that fails is "not set": the rewrite below is idempotent and read back
+  if [ "$og" != "$old" ]; then
+    gi update-ref ORIG_HEAD "$old" && og=$(gi rev-parse -q --verify ORIG_HEAD) && [ "$og" = "$old" ] ||
       { echo "git-internal: cannot set ORIG_HEAD to the recorded old $old (a stale $GD/ORIG_HEAD.lock?). The importer did not run, the lane was NOT pushed and $INTENT is kept. If no git command is running, remove the stale lock, then run any writing git-internal command to finish." >&2; return 10; }
   fi
   crash_point orig-head
@@ -435,13 +438,13 @@ cmd_sync() {
 # refs and install the whole result through apply
 cmd_resolve() {
   [ $# = 1 ] || die 1 "usage: resolve REF"
-  local head fold rsha rname old ref out rc tree p mode blob cur idx plist
+  local head fold rsha rname old ref out rc tree p mode blob cur idx plist fr
   host >/dev/null; precheck
   [ -f "$STATE" ] || die 1 "resolve: no conflicted sync is recorded; run sync"
   read -r head fold rsha rname < "$STATE" || die 1 "resolve: unreadable $STATE"
   old=$(gi rev-parse -q --verify HEAD) || die 6 "resolve: cannot read HEAD"
   [ "$old" = "$head" ] || die 4 "resolve: HEAD moved since the conflict was recorded; run sync again"
-  [ -n "$fold" ] && [ "$(gi rev-parse -q --verify "$FOLDREF")" = "$fold" ] || die 4 "resolve: the recorded fold is missing; run sync again"
+  fr=$(gi rev-parse -q --verify "$FOLDREF") && [ -n "$fold" ] && [ "$fr" = "$fold" ] || die 4 "resolve: the recorded fold is missing; run sync again"
   ref=$(gi rev-parse -q --verify "$1^{commit}") || die 1 "resolve: unknown ref $1"
   [ "$ref" = "$rsha" ] || die 1 "resolve: the recorded conflict is with $rname ($rsha), not $1"
   out=$(gi merge-tree --write-tree --name-only "$fold" "$ref"); rc=$?
@@ -460,7 +463,7 @@ cmd_resolve() {
       grep -qE '^(<<<<<<<|>>>>>>>) ' "$ROOT/$p"; rc=$?   # 0 markers, 1 none; anything else is a failed read
       [ $rc != 0 ] || { rm -f -- "${idx:?}"; die 1 "resolve: $p still has conflict markers"; }
       [ $rc = 1 ] || { rm -f -- "${idx:?}"; die 6 "resolve: cannot read $p for conflict markers"; }
-      mode=$(disk_mode "$p")
+      mode=$(disk_mode "$p") || { rm -f -- "${idx:?}"; die 6 "resolve: cannot read the mode of $p"; }
       blob=$(disk_blob "$p" -w) || { rm -f -- "${idx:?}"; die 6 "resolve: cannot record $p"; }
       GIT_INDEX_FILE=$idx gi update-index --add --cacheinfo "$mode,$blob,$p" || { rm -f -- "${idx:?}"; die 6 "resolve: cannot stage $p"; }
     else
@@ -479,14 +482,15 @@ cmd_resolve() {
 # dry-run push to main always carries an update and the hook always runs
 cmd_probe() {
   [ $# = 0 ] || die 1 "usage: probe"
-  local h fails=0 p err line want f
-  h=$(host); cd / || exit 8
+  local h fails=0 p err line want f tl hp wt hr
+  h=$(host) || exit $?; cd / || exit 8
   g() { git --git-dir="$GD" ${1+"$@"}; }
   bad() { echo "git-internal: probe: $*" >&2; fails=$((fails+1)); }
-  [ "$(g rev-parse --show-toplevel)" = "$ROOT" ] || bad "toplevel is not $ROOT"
-  [ "$(g rev-parse --git-path hooks)" = "$GD/hooks" ] || bad "hooks do not resolve to $GD/hooks"
-  [ -z "$(g config --get core.hooksPath)" ] || bad "core.hooksPath is set"
-  [ "$(g config --get core.worktree)" = .. ] || bad "core.worktree is not .."
+  tl=$(g rev-parse --show-toplevel) && [ "$tl" = "$ROOT" ] || bad "toplevel is not $ROOT"
+  hp=$(g rev-parse --git-path hooks) && [ "$hp" = "$GD/hooks" ] || bad "hooks do not resolve to $GD/hooks"
+  hp=$(g config --get core.hooksPath); hr=$?   # 1 = not set (the expected answer); 0 = set; anything else is an unreadable config
+  { [ $hr = 1 ] && [ -z "$hp" ]; } || bad "core.hooksPath is set or cannot be read"
+  wt=$(g config --get core.worktree) && [ "$wt" = .. ] || bad "core.worktree is not .."
   [ -s "$GD/info/hooks.sha256" ] || bad "no info/hooks.sha256"
   while read -r want f; do
     line=$(cd "$GD/hooks" && sha256 "$f" 2>/dev/null) && [ "${line%% *}" = "$want" ] || bad "installed hook $f differs from info/hooks.sha256"
