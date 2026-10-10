@@ -387,11 +387,11 @@ preserve_copy() {  # the capture, outside the journal, verified file by file; th
   [ "$(set -o pipefail; cut -f1 "$J/capture/sha256" | sort | paste -sd' ' -)" = "main.bundle wtree.tar" ] || stop "the capture's sha256 record cannot be read or does not name exactly main.bundle and wtree.tar"
   for f in main.bundle wtree.tar wtree.manifest sha256; do
     cp -p "$J/capture/$f" "$d/$f.tmp.$$" 2>/dev/null && flush_path "$d/$f.tmp.$$" || { for g in main.bundle wtree.tar wtree.manifest sha256; do rm -f -- "$d/$g.tmp.$$"; done; stop "cannot copy and flush $f"; }; done
-  { verify_set "$d" ".tmp.$$" && cmp -s "$d/main.bundle.tmp.$$" "$J/capture/main.bundle" && cmp -s "$d/wtree.tar.tmp.$$" "$J/capture/wtree.tar" && cmp -s "$d/wtree.manifest.tmp.$$" "$J/capture/wtree.manifest"; } ||
+  { verify_set "$d" ".tmp.$$" && cmp -s "$d/main.bundle.tmp.$$" "$J/capture/main.bundle" && cmp -s "$d/wtree.tar.tmp.$$" "$J/capture/wtree.tar" && cmp -s "$d/wtree.manifest.tmp.$$" "$J/capture/wtree.manifest" && cmp -s "$d/sha256.tmp.$$" "$J/capture/sha256"; } ||
     { for g in main.bundle wtree.tar wtree.manifest sha256; do rm -f -- "$d/$g.tmp.$$"; done; stop "the capture in the journal does not match its sha256 record or its copy: the preservation copy already there is untouched"; }
   for f in main.bundle wtree.tar wtree.manifest sha256; do mv -f -- "$d/$f.tmp.$$" "$d/$f" || stop "cannot move the staged $f into place"; done
   verify_set "$d" || stop "the preservation copy differs from the capture or its sha256 record"
-  cmp -s "$d/wtree.manifest" "$J/capture/wtree.manifest" || stop "the copied W-snapshot manifest differs"
+  cmp -s "$d/wtree.manifest" "$J/capture/wtree.manifest" && cmp -s "$d/sha256" "$J/capture/sha256" || stop "the copied W-snapshot manifest or sha256 record differs"
   for f in main.bundle wtree.tar wtree.manifest sha256; do flush_path "$d/$f" || stop "cannot flush $d/$f"; done
   flush_path "$d" || stop "cannot flush the directory $d: the copy is not known to be on disk"
   say "gate0-run: preservation copy verified in $d (bundle and W-snapshot sha256 in $d/sha256)"; }
@@ -459,6 +459,7 @@ rbail() {  # back to the frozen state: every recorded timer stopped, each timer 
   stop "$*${bad:+; UNCONFIRMED stop of$bad}"; }
 restore_marker() {  # the marker set aside goes back, and must be the one the freeze record names (server and Clavain alike)
   local m
+  if [ -f "$G/marker" ] && [ -e "$ROOT/.git-autosync" ] && ! cmp -s "$G/marker" "$ROOT/.git-autosync"; then keep_unexpected_marker; fi   # other bytes in the checkout are kept before the restore replaces them
   [ -f "$G/marker" ] && cp -p "$G/marker" "$ROOT/.git-autosync.tmp.$$" && mv -f -- "$ROOT/.git-autosync.tmp.$$" "$ROOT/.git-autosync" ||
     { [ ! -e "$G/marker" ] && [ "$(sed -n 's/^marker //p' "$G/freeze")" = none ]; } || stop "cannot restore the marker"
   [ ! -e "$ROOT/.git-autosync" ] || { m=$(rec_marker) && [[ $m =~ ^[0-9a-f]{64}$ ]] && [ "$(sha < "$ROOT/.git-autosync")" = "$m" ]; } || { rm -f -- "$ROOT/.git-autosync"; stop "the restored marker differs from the one set aside"; }; }
@@ -503,9 +504,10 @@ restart_server() {  # exit-name  predict-exit
   tip1=$(lane_refs "refs/heads/autosync/$h") || rbail "cannot read the lane tip after the run; marker moved aside, timers stay stopped"
   tip1=${tip1%%$'\t'*}; say "gate0-run: lane tip autosync/$h: ${tip0:-absent} -> ${tip1:-absent}"; }
 restart_clavain() {  # exit-name
-  local pred rc tipn l0
+  local pred rc tipn l0 mrec
   [ ! -e "$PAUSE" ] || stop "the automations are paused ($PAUSE exists): the sweep would exit at once; remove it deliberately and re-run"
-  if [ "$(rec_marker)" = none ]; then
+  mrec=$(rec_marker) || stop "the freeze record cannot be read: whether a marker was set aside cannot be told; nothing was run"   # a failed read is not a record that says something else
+  if [ "$mrec" = none ]; then
     say "gate0-run: P0 found no marker: Clavain has no autosync to restart (row 8)"
     tipn=$(pg ls-remote "$LANE" "refs/heads/autosync/$HOST") || stop "cannot read the Clavain lane tip: an unreadable lane is not an unchanged one"
     [ -f "$J/p0/lane" ] || stop "the P0 lane record $J/p0/lane is missing: whether the Clavain lane tip changed cannot be told"

@@ -195,6 +195,9 @@ Further properties, each with a test and a mutation control in `gate0-run-test.s
   capture's sha256 record: it is read to its last line even without a final newline, exactly two digests must
   be checked, and the preservation copy is staged and verified before it replaces the copy already there,
   so a capture that does not match its record never overwrites a verified backup.
+  A restore of the set-aside marker over other bytes in the checkout keeps those bytes first, and the
+  Clavain restart stops when the freeze record cannot be read instead of treating it as one that names no
+  marker.
 - A step that acts on a recorded value re-validates it at the point of use: the P1-pre head must be a
   commit sha every time it is read, the marker record must hold a sha256 before it is compared, and a
   restart validates the archive destination and its push URL again itself (server and Clavain) instead of
