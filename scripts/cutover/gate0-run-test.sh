@@ -894,6 +894,32 @@ t_swpushurls() {  # a lane remote with a second push URL is not the validated de
     GATE0_MACHINE=$m GATE0_SWEEP="$B/bin/sweep" GATE0_DRIFT_REPORT="$B/drift.txt" wg restart r0 > "$B/out.sw" 2>&1; res="$res$?/$(sw_msg 'push URL of lane is not the one just validated')/$(sw_state);"
   done
   SWAW=$res; [ "$SWAW" = "3/1//0/no/no/;3/1//0/no/no/;" ]; }
+t_swcheckro() {  # --check never writes: every --check phase, from every state a freeze or restart can leave, changes nothing in the checkout, the journal, the lane or the units (the review's case: a completed restart, the live marker removed, the earlier attempt's copy still in the journal)
+  local st ph c j l t rc bad="" ran=0
+  for st in start restarted nomarker intent; do
+    restore r0a
+    case $st in
+      start) ;;
+      *) wg restart r0 > "$B/out.ro" 2>&1 || { echo "  FAIL t_swcheckro: restart r0 for state $st exited $?"; return 1; } ;;
+    esac
+    case $st in nomarker|intent) rm -f -- "$R/.git-autosync" ;; esac
+    [ $st != intent ] || printf 'timer git-autosync-repair.timer\ntimer git-autosync-promote.timer\n' > "$J/gate0-run/freeze-intent"
+    if [ $st = nomarker ]; then [ -e "$J/gate0-run/marker" ] && [ ! -e "$R/.git-autosync" ] && ls "$J/gate0-run" | grep -q '^restarted-' || { echo "  FAIL t_swcheckro: state nomarker is not the state under test"; return 1; }; fi
+    for ph in preflight freeze capture run rollback "restart r0" "restart p10" "restart r6"; do
+      c=$(ckfp); j=$(jfp); l=$(lanerefs); t=$(timers)
+      wg --check $ph > "$B/out.ro" 2>&1; rc=$?; ran=$((ran+1))
+      [ "$(ckfp)/$(jfp)/$(lanerefs)/$(timers)" = "$c/$j/$l/$t" ] || bad="$bad $st:$ph"
+    done
+  done
+  for st in "fresh:" "frozen:preflight freeze" "captured:preflight freeze capture"; do   # the states before a rollback, where each phase would really run (a wrapper that ran it in --check would write)
+    restore fx; [ -z "${st#*:}" ] || stepto ${st#*:} || return 1
+    for ph in preflight freeze capture run rollback "restart r0" "restart p10" "restart r6"; do
+      c=$(ckfp); j=$(jfp); l=$(lanerefs); t=$(timers)
+      wg --check $ph > "$B/out.ro" 2>&1; rc=$?; ran=$((ran+1))
+      [ "$(ckfp)/$(jfp)/$(lanerefs)/$(timers)" = "$c/$j/$l/$t" ] || bad="$bad ${st%%:*}:$ph"
+    done
+  done
+  SWRO="${bad:-none}/$ran"; [ "$SWRO" = "none/56" ]; }
 t_swrefreezegone() {  # a new freeze after a completed restart is a new attempt: a marker the operator removed meanwhile is not recorded from the earlier attempt's copy, so the next restart does not put it back
   local r="" m
   restore r0a; wg restart r0 > "$B/out.sw" 2>&1; r="$?/$([ -e "$J/gate0-run/marker" ] && echo copy)/$([ -e "$R/.git-autosync" ] && echo live);"
@@ -1236,6 +1262,7 @@ sc "the host name is read with its status in the driver and in the private pre-p
 sc "an interrupted overlay install's git dir is ignored by the public .gitignore" t_swignore
 sc "a repeated freeze checks the whole invariant" t_swfreezerep
 sc "a new freeze does not record the earlier attempt's marker copy when the checkout has no marker" t_swrefreezegone
+sc "--check never writes, from every freeze and restart state" t_swcheckro
 sc "a lane remote with a second push URL is refused" t_swpushurls
 sc "no process substitution feeds a loop in the overlay driver or its hooks" t_swnoprocsub
 sc "restart step 1 checks both entries of the capture's sha256 record, a last line with no newline included" t_swrestcap
@@ -1455,6 +1482,12 @@ mutate M122 '/^restart_settled \&\& exit 0$/d; s/^need_inputs$/need_inputs\nrest
   { WG=$B/mut/M122.sh; t_swrestartclean; r=$?; WG=; check "M122 (the cleanup of a cut-off restart after the input validation) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mm M123 t_swrestartclean "a recorded restart is no longer re-verified before the input validation" 's/^  if \[ -e "\$G\/restarted-\$XARG" \]; then restarted_holds "\$XARG"; return 0; fi.*$/  :/'
 mm M109 t_swrefreezegone "a new freeze records the earlier attempt's marker copy although the checkout has no marker" '/^  if restarted_any \&\& \[ ! -e "\$G\/freeze-intent" \]/,/^    say "gate0-run: the checkout has no marker: the copy kept/d'
+mm M125 t_swcheckro "--check freeze sets the earlier attempt's marker copy aside" 's/^    if \[ \$CHECKMODE = 1 \]; then say "gate0-run: freeze check: the checkout has no marker.*$/    if false; then :/'
+mm M126 t_swcheckro "--check freeze stops the timers" 's/^  if \[ \$CHECKMODE = 1 \]; then say "gate0-run: freeze check: would stop/  if false; then say "gate0-run: freeze check: would stop/'
+mm M127 t_swcheckro "--check preflight records P0" 's/^  if \[ \$CHECKMODE = 1 \]; then env CUTOVER_REPORT=0 "\$CS" --check/  if false; then env CUTOVER_REPORT=0 "$CS" --check/'
+mm M128 t_swcheckro "--check rollback rolls back" 's/^  if \[ \$CHECKMODE = 1 \]; then say "gate0-run: rollback check/  if false; then say "gate0-run: rollback check/'
+mm M129 t_swcheckro "--check restart restarts" '/^do_restart() {/,/^  \[ -e "\$G\/freeze" \]/ s/^  if \[ \$CHECKMODE = 1 \]; then$/  if false; then/'
+mm M130 t_swcheckro "--check capture captures" '/^do_capture() {/,/P1a is already recorded/ s/^  if \[ \$CHECKMODE = 1 \]; then$/  if false; then/'
 mm M110 t_swrefreezegone "an interrupted new freeze is taken for a new attempt: its recorded marker is set aside" 's/^  if restarted_any \&\& \[ ! -e "\$G\/freeze-intent" \] \&\& /  if restarted_any \&\& /'
 mm M106 t_swfreezerep "a repeated freeze does not check the whole invariant" 's/^    freeze_holds   # the whole invariant.*$/    :/'
 mm M107 t_swpushurls "only the first push URL is compared" 's/remote get-url --push --all "\$LANE"/remote get-url --push "$LANE"/'
