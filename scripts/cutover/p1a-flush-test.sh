@@ -32,7 +32,8 @@ export LC_ALL=C
 HERE=$(cd "$(dirname "$0")" && pwd -P)
 CS=${P1A_CS:-$HERE/cutover-steps.sh}
 if [ "$(printf '' | sha256sum 2>/dev/null | cut -d' ' -f1)" = e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 ]
-then sha() { sha256sum | cut -d' ' -f1; }; else sha() { shasum -a 256 2>/dev/null | cut -d' ' -f1; }; fi
+then sha() { local h; h=$(set -o pipefail; sha256sum | cut -d' ' -f1) && [[ $h =~ ^[0-9a-f]{64}$ ]] && printf '%s\n' "$h" || echo "sha-failed-$RANDOM-$RANDOM"; }
+else sha() { local h; h=$(set -o pipefail; shasum -a 256 2>/dev/null | cut -d' ' -f1) && [[ $h =~ ^[0-9a-f]{64}$ ]] && printf '%s\n' "$h" || echo "sha-failed-$RANDOM-$RANDOM"; }; fi   # a hash that fails is a fresh sentinel: two failed observations are never equal
 case ${1:-} in
   --check)
     bash -n "$0" && [ -f "$CS" ] && bash -n "$CS" && command -v git >/dev/null && command -v tar >/dev/null &&

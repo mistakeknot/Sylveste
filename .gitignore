@@ -156,6 +156,7 @@ __pycache__/
 # repo holds them; scripts/git-internal drives it. Ignored here so a stray
 # `git add -A` cannot republish them.
 /.git-internal/
+/.git-internal.new/
 .tldrs/
 /docs/research/
 /docs/research-notes/
