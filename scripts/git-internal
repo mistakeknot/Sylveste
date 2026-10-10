@@ -196,10 +196,11 @@ cmd_commit() {
 
 precheck() {  # the private checkout must be on a branch, with nothing staged
   gi symbolic-ref -q HEAD >/dev/null || die 4 "HEAD is detached"
-  local f; for f in MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD rebase-merge rebase-apply; do
+  local f u; for f in MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD rebase-merge rebase-apply; do
     [ ! -e "$GD/$f" ] || die 4 "$f is present"
   done
-  [ -z "$(gi ls-files -u)" ] || die 4 "unmerged index entries"
+  u=$(gi ls-files -u) || die 4 "cannot read the index"   # a failed listing is not "no unmerged entries"
+  [ -z "$u" ] || die 4 "unmerged index entries"
   gi update-index -q --refresh >/dev/null || true
   gi diff --cached --quiet || die 4 "staged changes: commit them first"
 }
@@ -377,10 +378,11 @@ clear_state() {  # 1 if the conflict record or the fold ref survives
 # a lane that holds a resolution is taken before the raw refs it resolved. On a
 # conflict, record HEAD, the fold so far and the ref, then exit 3 (nothing written).
 fold() {  # uses and sets cur; $1 = HEAD at the start of this sync
-  local h ref sha c keep out rc
+  local h ref refs sha c keep out rc
   local -a cand=() shas=()
   h=$(host) || exit $?
-  for ref in $(gi for-each-ref --format='%(refname)' refs/remotes/origin/main refs/remotes/origin/autosync); do
+  refs=$(gi for-each-ref --format='%(refname)' refs/remotes/origin/main refs/remotes/origin/autosync) || die 6 "cannot list the remote refs"   # a failed listing is not "nothing to fold"
+  for ref in $refs; do
     [ "$ref" = "refs/remotes/origin/autosync/$h" ] && continue
     sha=$(gi rev-parse -q --verify "$ref^{commit}") || die 6 "cannot read $ref"
     cand+=("$ref"); shas+=("$sha")

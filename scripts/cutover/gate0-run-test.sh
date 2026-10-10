@@ -817,7 +817,7 @@ t_swobserver() {  # the test's own before/after observers fail closed: two faile
   restore fx
   a=$(R=$B/nowhere ckfp 2>/dev/null); b=$(R=$B/nowhere ckfp 2>/dev/null); c=$(J=$B/nowhere jfp 2>/dev/null); d=$(J=$B/nowhere jfp 2>/dev/null); e=$(W=$B/nowhere lanerefs 2>/dev/null); f=$(W=$B/nowhere lanerefs 2>/dev/null)
   g2=$(find() { command find "$@"; return 1; }; jfp 2>/dev/null); h=$(find() { command find "$@"; return 1; }; jfp 2>/dev/null)
-  wr "$B/dgfile" content; printf '%s' "$B/dgfile" > "$ST/fail-sha"; i=$(dg "$B/dgfile" 2>/dev/null); j=$(dg "$B/dgfile" 2>/dev/null); rm -f "$ST/fail-sha"   # a digest that fails: a fresh sentinel each time
+  wr "$B/dgfile" content; printf '%s' "$B/dgfile" > "$ST/fail-sha"; i=$(PATH="$B/stub:$PATH" dg "$B/dgfile" 2>/dev/null); j=$(PATH="$B/stub:$PATH" dg "$B/dgfile" 2>/dev/null); rm -f "$ST/fail-sha"   # a digest that fails: a fresh sentinel each time
   SWAL="$([ "$a" != "$b" ] && echo differ)/$([ "$c" != "$d" ] && echo differ)/$([ "$e" != "$f" ] && echo differ)/$([ "$(ckfp)" = "$(ckfp)" ] && echo same)/$([ "$(jfp)" = "$(jfp)" ] && echo same)/$([ "$g2" != "$h" ] && echo differ)/$([ "$i" != "$j" ] && echo differ)/$([ "$(dg "$B/dgfile")" = "$(dg "$B/dgfile")" ] && echo same)"
   [ "$SWAL" = "differ/differ/differ/same/same/differ/differ/same" ]; }
 t_swidfail() {  # a user id that cannot be read is not "not root": the wrapper stops before it makes a journal or runs git
@@ -853,6 +853,19 @@ EOF
 t_swnoprocsub() {  # the overlay driver and its hook templates feed no loop through a process substitution, whose status is lost
   SWAS=$(cd "$HERE/.." && grep -c 'done < <(' git-internal git-internal-hooks/pre-commit git-internal-hooks/pre-push | tr '\n' ' ')
   [ "$SWAS" = "git-internal:0 git-internal-hooks/pre-commit:0 git-internal-hooks/pre-push:0 " ]; }
+t_swgi() {  # the overlay driver reads the unmerged-entry list and the remote-ref list with their status: a failed read is a refusal, not "none"
+  local gi=${GI:-$HERE/../git-internal} d=$B/gif r="" c rc
+  rm -rf -- "${d:?}"; mkdir -p "$d/gd"
+  for c in pre-ok pre-fail fold-ok fold-fail fold-failout; do   # case names: which read fails, and whether it prints before it fails
+    ( GD=$d/gd; FOLDREF=refs/x; STATE=$d/state; rm -f -- "$d/lsfail" "$d/fefail" "$d/feout"
+      case $c in pre-fail) : > "$d/lsfail" ;; fold-fail) : > "$d/fefail" ;; fold-failout) : > "$d/fefail"; : > "$d/feout" ;; esac
+      gi() { case $1 in ls-files) [ ! -e "$d/lsfail" ] ;; for-each-ref) [ -e "$d/feout" ] && echo refs/remotes/origin/main; [ ! -e "$d/fefail" ] ;; *) true ;; esac; }
+      die() { exit "$1"; }; host() { echo h; }; put() { :; }; crash_point() { :; }
+      eval "$(sed -n '/^precheck() {/,/^}/p;/^fold() {/,/^}/p' "$gi")" || exit 99
+      case $c in pre-*) precheck ;; *) fold h ;; esac; exit 0 ) > /dev/null 2>&1; rc=$?
+    r="$r$c=$rc;"
+  done
+  SWAT=$r; [ "$SWAT" = "pre-ok=0;pre-fail=4;fold-ok=0;fold-fail=6;fold-failout=6;" ]; }
 t_swcapnames() {  # the names of the capture's sha256 record are read with the status of the read: a read that prints both names and then fails is not a match
   local PD=$W/pres/mA-$O
   restore fx; stepto preflight freeze capture || return 1
@@ -1054,6 +1067,7 @@ sc "the capture's sha256 names read with a failing status are a STOP" t_swcapnam
 sc "a user id that cannot be read stops the wrapper before it does anything" t_swidfail
 sc "a /proc listing that cannot be read is not an empty process table" t_swprocenum
 sc "the private pre-commit hook refuses when the staged-path listing fails" t_swprecommit
+sc "the overlay driver refuses when the unmerged-entry list or the remote-ref list cannot be read" t_swgi
 sc "no process substitution feeds a loop in the overlay driver or its hooks" t_swnoprocsub
 sc "restart step 1 checks both entries of the capture's sha256 record, a last line with no newline included" t_swrestcap
 sc "the jsonl_dominated extraction and load are status-checked and an inherited function is not accepted" t_swreconeval
@@ -1242,6 +1256,11 @@ mm M99 t_swreconeval "the extraction status and whole-function check are removed
 mm M100 t_swreconeval "the load status is ignored" 's/^  eval "\$def" || stop "[^"]*"/  eval "$def"/'
 mm M101 t_swidfail "a user id that cannot be read is taken as not root" 's/^MYUID=\$(id -u 2>\/dev\/null) .*$/MYUID=$(id -u 2>\/dev\/null)/'
 mm M102 t_swprocenum "the /proc listing is not required to show this script" 's/^    \[ -n "\$me" \] || return 2 .*$/    :/'
+for n in M104:'s/^  u=\$(gi ls-files -u) || die 4 "[^"]*".*$/  u=$(gi ls-files -u)/' M105:'s/ || die 6 "cannot list the remote refs".*$//'; do
+  sed "${n#*:}" "$HERE/../git-internal" > "$B/mut/${n%%:*}-gi" 2>/dev/null
+  if cmp -s "$HERE/../git-internal" "$B/mut/${n%%:*}-gi"; then echo "  FAIL mutation ${n%%:*} changed nothing"; fails=$((fails+1))
+  else GI=$B/mut/${n%%:*}-gi; t_swgi; r=$?; GI=; check "${n%%:*} (a failed driver read is taken as an empty one) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; fi
+done
 if sed 's/ || { echo "private pre-commit: cannot list the staged paths" >&2; exit 1; }//' "$HERE/../git-internal-hooks/pre-commit" > "$B/mut/M103-hook" && ! cmp -s "$HERE/../git-internal-hooks/pre-commit" "$B/mut/M103-hook"; then
   HOOK=$B/mut/M103-hook; t_swprecommit; r=$?; HOOK=; check "M103 (the hook ignores the status of the staged-path listing) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught
 else echo "  FAIL mutation M103 changed nothing"; fails=$((fails+1)); fi
