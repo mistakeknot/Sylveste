@@ -59,12 +59,13 @@ files() { (cd "$1" && find . -path ./.git -prune -o \( -type f -o -type l \) -pr
 dmap() { local p; while IFS= read -r p; do printf '%s\t%s\n' "$(dg "$1/$p")" "$p"; done < "$2"; }
 wr() { mkdir -p "$(dirname "$1")"; printf '%s\n' "$2" > "$1"; }
 g() { GIT_OPTIONAL_LOCKS=0 git -C "$R" "$@"; }   # the test observes the checkout without refreshing its index
-ckfp() {  # the checkout as the plan sees it, plus the marker's presence and bytes
+ckfp() {  # the checkout as the plan sees it, plus the marker's presence and bytes; an observation that cannot be made is never equal to another one
+  g rev-parse HEAD > /dev/null 2>&1 || { echo "ckfp-failed-$RANDOM-$RANDOM"; return 0; }
   g symbolic-ref -q HEAD; g rev-parse HEAD; g ls-files -s | sha; g status --porcelain -uall
   files "$R" > "$B/ck.list"; dmap "$R" "$B/ck.list"
   g for-each-ref --format='%(refname) %(objectname)' refs/heads refs/tags; dg "$R/.git-autosync"; }
-jfp() { (cd "$J" 2>/dev/null && find . -mindepth 1 \( -type f -o -type d \) | sort | while IFS= read -r p; do printf '%s %s\n' "$p" "$(dg "$p")"; done) | sha; }
-lanerefs() { git --git-dir="$W/lane.git" for-each-ref --format='%(refname) %(objectname)'; }
+jfp() { (cd "$J" 2>/dev/null || { echo "jfp-failed-$RANDOM-$RANDOM"; exit 0; }; find . -mindepth 1 \( -type f -o -type d \) | sort | while IFS= read -r p; do printf '%s %s\n' "$p" "$(dg "$p")"; done) | sha; }
+lanerefs() { git --git-dir="$W/lane.git" for-each-ref --format='%(refname) %(objectname)' || echo "lanerefs-failed-$RANDOM-$RANDOM"; }
 snap() { rm -rf -- "${B:?}/tpl-${1:?}"; cp -a "$W" "$B/tpl-$1"; }
 restore() { rm -rf -- "${W:?}"; cp -a "$B/tpl-$1" "$W"; }
 
@@ -774,6 +775,26 @@ t_swsharecterm() {  # a capture whose sha256 record has no final newline is stil
   wg capture > "$B/out.sw" 2>&1; c="$?"
   SWAI="$a;$b;$c"; [ "$SWAI" = "3/1;3/1/intact/0;0" ]; }
 
+t_swrestover() {  # restoring the set-aside marker over other bytes in the checkout keeps those bytes first: the restore never replaces a marker it has not kept
+  local f1 f2 d res= h
+  f1=$(sed -n '/^keep_unexpected_marker() {/,/^move_marker_aside() {/p' "${WG:-$GW}" | sed '$d'); f2=$(sed -n '/^restore_marker() {/,/^lane_refs() {/p' "${WG:-$GW}" | sed '$d')
+  d=$B/ro; rm -rf "$d"; mkdir -p "$d/G" "$d/R"; printf 'LANE=1\nmine\n' > "$d/G/marker"; h=$(sha256sum < "$d/G/marker" | cut -d' ' -f1); printf 'marker %s\n' "$h" > "$d/G/freeze"
+  printf 'LANE=1\nother\n' > "$d/R/.git-autosync"; h=$(sha256sum < "$d/R/.git-autosync" | cut -d' ' -f1)
+  ( G=$d/G; ROOT=$d/R; sha() { sha256sum | cut -d' ' -f1; }; say() { :; }; stop() { exit 3; }; rec_marker() { sed -n 's/^marker //p' "$G/freeze"; }; eval "$f1"; eval "$f2"; restore_marker ) 2>/dev/null; res="$?"
+  res="$res/$(cmp -s "$d/G/marker" "$d/R/.git-autosync" && echo restored)/$(cmp -s "$d/G/marker.unexpected.$h" <(printf 'LANE=1\nother\n') && echo kept)"
+  SWAJ=$res; [ "$SWAJ" = "0/restored/kept" ]; }
+
+t_swclavmark() {  # a freeze record that cannot be read is not a record that names a marker: the Clavain restart stops before the marker path is taken
+  restore r0a; rm -f "$B/drift.txt"; chmod 000 "$J/gate0-run/freeze"
+  GATE0_MACHINE=clavain GATE0_SWEEP="$B/bin/sweep" GATE0_DRIFT_REPORT="$B/drift.txt" wg restart r0 > "$B/out.sw" 2>&1; SWAK="$?/$(sw_msg 'whether a marker was set aside cannot be told')/$(sw_state)"; chmod 644 "$J/gate0-run/freeze"
+  [ "$SWAK" = "3/1//0/no/no/" ]; }
+t_swobserver() {  # the test's own before/after observers fail closed: two failed observations are never "nothing changed"
+  local a b c d e f
+  restore fx
+  a=$(R=$B/nowhere ckfp 2>/dev/null); b=$(R=$B/nowhere ckfp 2>/dev/null); c=$(J=$B/nowhere jfp 2>/dev/null); d=$(J=$B/nowhere jfp 2>/dev/null); e=$(W=$B/nowhere lanerefs 2>/dev/null); f=$(W=$B/nowhere lanerefs 2>/dev/null)
+  SWAL="$([ "$a" != "$b" ] && echo differ)/$([ "$c" != "$d" ] && echo differ)/$([ "$e" != "$f" ] && echo differ)/$([ "$(ckfp)" = "$(ckfp)" ] && echo same)/$([ "$(jfp)" = "$(jfp)" ] && echo same)"
+  [ "$SWAL" = "differ/differ/differ/same/same" ]; }
+
 echo "== --check forms change nothing"
 restore fx; c0=$(ckfp); j0=$(jfp); l0=$(lanerefs)
 WG= wg --check > "$B/out" 2>&1; check "--check" "$?" 0
@@ -942,7 +963,10 @@ sc "a capture sha256 record that names the wrong files is a STOP" t_swsharec
 sc "a restored marker whose recorded hash is read with a failing status is a STOP" t_swrestmark
 sc "a restart-set list that fails after its output is not written and nothing is stopped" t_swactlines
 sc "the sha256 record verifier needs two completed checks and accepts an unterminated last line" t_swverifyset
+sc "restoring the set-aside marker keeps the bytes it replaces" t_swrestover
 sc "a sha256 record with no final newline is verified in full and a bad capture never replaces the preservation copy" t_swsharecterm
+sc "a freeze record that cannot be read does not take the no-marker path of a Clavain restart" t_swclavmark
+sc "the test's before and after observers fail closed" t_swobserver
 
 echo "== mutation controls (each must be judged NOT fail-closed)"
 mutate() {  # NAME SEDEXPR : a copy of the wrapper with one safeguard removed; WG names it
@@ -1117,4 +1141,6 @@ mm M89 t_swactlines "a failed restart-set list is written" 's/^  al=\$(act_lines
 mm M90 t_swverifyset "an unterminated last record line is dropped" 's/ || \[ -n "\$f" \]; do/; do/'
 mm M91 t_swverifyset "the number of completed checks is not required" 's/^  \[ \$n = 2 \]; }$/  true; }/'
 mm M92 t_swsharecterm "the preservation copy is replaced before the capture is verified" 's/^  \{ verify_set "\$d" ".tmp.\$\$" \&\& .*$/  true ||/'
+mm M93 t_swrestover "the restore replaces other marker bytes without keeping them" 's/^  if \[ -f "\$G\/marker" \] \&\& \[ -e "\$ROOT\/.git-autosync" \].*$/  :/'
+mm M94 t_swclavmark "the freeze record's marker line is read with its status ignored" 's/^  mrec=\$(rec_marker) || stop "[^"]*"[^\n]*$/  mrec=$(rec_marker)/'
 if [ $fails = 0 ]; then echo "GATE0-RUN: PASS"; exit 0; else echo "GATE0-RUN: FAIL ($fails)"; exit 1; fi
