@@ -50,8 +50,8 @@ cleanup() { if [ $fails = 0 ]; then rm -rf -- "${B:?}"; else echo "scratch kept:
 trap cleanup EXIT
 check() { if [ "$2" = "$3" ]; then echo "  ok   $1"; else echo "  FAIL $1: got [$2] want [$3]"; fails=$((fails+1)); fi; }
 
+for _v in $(compgen -e); do case $_v in GIT_*) unset "$_v" ;; esac; done   # no Git environment override reaches the fixtures (repository, work tree, index, object store, configuration): the settings the fixtures need are set below
 export HOME=$B/home GIT_CONFIG_GLOBAL=$B/gitconfig GIT_CONFIG_NOSYSTEM=1 GIT_TERMINAL_PROMPT=0
-unset GIT_CONFIG_COUNT GIT_CONFIG_PARAMETERS GIT_DIR GIT_WORK_TREE
 mkdir -p "$HOME" "$B/bin" "$B/stub" "$B/mut"
 git config --global user.email t@example.invalid; git config --global user.name t
 git config --global init.defaultBranch main; git config --global advice.detachedHead false
@@ -71,14 +71,16 @@ files() { (set -o pipefail; cd "$1" && find . -path ./.git -prune -o \( -type f 
 dmap() { local p; while IFS= read -r p; do printf '%s\t%s\n' "$(dg "$1/$p")" "$p"; done < "$2"; }
 wr() { mkdir -p "$(dirname "$1")"; printf '%s\n' "$2" > "$1"; }
 g() { git -C "$R" "$@"; }
-ckfp() {  # the checkout as the plan sees it: HEAD, index, status, every file's digest, local branches and tags
-  local h
-  g symbolic-ref -q HEAD; g rev-parse HEAD; h=$(set -o pipefail; g ls-files -s | dgh) || h="idx-failed-$RANDOM-$RANDOM"; echo "$h"   # a failed read is a fresh sentinel, never an equal one
-  g status --porcelain -uall
+ckfp() {  # the checkout as the plan sees it: HEAD, index, status, every file's digest, local branches and tags; a read that fails is a fresh sentinel, never an equal one
+  local h x rc
+  x=$(g symbolic-ref -q HEAD); rc=$?; if [ $rc -le 1 ]; then echo "$x"; else echo "head-failed-$RANDOM-$RANDOM"; fi   # 1 is "detached"
+  g rev-parse HEAD || echo "rev-parse-failed-$RANDOM-$RANDOM"
+  h=$(set -o pipefail; g ls-files -s | dgh) || h="idx-failed-$RANDOM-$RANDOM"; echo "$h"
+  g status --porcelain -uall || echo "status-failed-$RANDOM-$RANDOM"
   files "$R" > "$B/ck.list" || echo "files-failed-$RANDOM-$RANDOM"; dmap "$R" "$B/ck.list"
-  g for-each-ref --format='%(refname) %(objectname)' refs/heads refs/tags; }
-gate0refs() { g for-each-ref --format='%(refname)' refs/gate0 | sort | tr '\n' ' '; }
-lanerefs() { git --git-dir="$W/lane.git" for-each-ref --format='%(refname) %(objectname)'; }
+  g for-each-ref --format='%(refname) %(objectname)' refs/heads refs/tags || echo "refs-failed-$RANDOM-$RANDOM"; }
+gate0refs() { (set -o pipefail; g for-each-ref --format='%(refname)' refs/gate0 | sort | tr '\n' ' ') || echo "gate0refs-failed-$RANDOM-$RANDOM"; }
+lanerefs() { git --git-dir="$W/lane.git" for-each-ref --format='%(refname) %(objectname)' || echo "lanerefs-failed-$RANDOM-$RANDOM"; }
 snap() { rm -rf -- "${B:?}/tpl-${1:?}"; cp -a "$W" "$B/tpl-$1"; }
 restore() { rm -rf -- "${W:?}"; cp -a "$B/tpl-$1" "$W"; }
 cs() {  # the script under test (CSX), the stub sync first on its PATH, no report

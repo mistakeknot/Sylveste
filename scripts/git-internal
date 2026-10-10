@@ -49,6 +49,11 @@
 # every array expansion is guarded with ${a[@]+"${a[@]}"} for set -u.
 set -u
 PATH=${GIT_INTERNAL_PATH:-/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin}
+# git takes its repository, work tree, index, object store, namespace and extra configuration from the environment: none of it is inherited, so
+# every git command here acts on the root it was given (this script's own GIT_INTERNAL_* settings, credentials, a terminal prompt, identity and the user-level config file stay)
+for _v in $(compgen -e); do case $_v in
+  GIT_INTERNAL_*|GIT_CONFIG_GLOBAL|GIT_CONFIG_NOSYSTEM|GIT_TERMINAL_PROMPT|GIT_ASKPASS|GIT_SSH|GIT_SSH_COMMAND|GIT_AUTHOR_*|GIT_COMMITTER_*|GIT_OPTIONAL_LOCKS) ;;
+  GIT_*) unset "$_v" ;; esac; done
 die() { local rc=$1; shift; echo "git-internal: $*" >&2; exit "$rc"; }
 
 TPL=$(cd "$(dirname "$0")" && pwd -P) || die 1 "cannot locate the hook templates next to $0"

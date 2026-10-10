@@ -45,8 +45,8 @@ cleanup() { [ -z "$BG" ] || kill $BG 2>/dev/null; if [ $fails = 0 ]; then rm -rf
 trap cleanup EXIT
 check() { if [ "$2" = "$3" ]; then echo "  ok   $1"; else echo "  FAIL $1: got [$2] want [$3]"; fails=$((fails+1)); fi; }
 
+for _v in $(compgen -e); do case $_v in GIT_*) unset "$_v" ;; esac; done   # no Git environment override reaches the fixtures (repository, work tree, index, object store, configuration): the settings the fixtures need are set below
 export HOME=$B/home GIT_CONFIG_GLOBAL=$B/gitconfig GIT_CONFIG_NOSYSTEM=1 GIT_TERMINAL_PROMPT=0
-unset GIT_CONFIG_COUNT GIT_CONFIG_PARAMETERS GIT_DIR GIT_WORK_TREE
 mkdir -p "$HOME" "$B/bin" "$B/stub" "$B/mut" "$B/lib"
 git config --global user.email t@example.invalid; git config --global user.name t
 git config --global init.defaultBranch main; git config --global advice.detachedHead false
@@ -173,6 +173,11 @@ if [ -e "$ST/fail-arch-after" ]; then case " \$* " in *" ls-remote "*archive/gat
 if [ -e "$ST/fail-tip-after" ]; then case " \$* " in *" ls-remote "*refs/heads/autosync/*) case "\$($REALPS -o args= -p \$PPID)" in *cutover-steps*) ;; *) n=\$(cat "$ST/tip-n" 2>/dev/null || echo 0); n=\$((n+1)); echo \$n > "$ST/tip-n"; if [ \$n -gt \$(cat "$ST/fail-tip-after") ]; then echo "fatal: unable to access the lane (stub)" >&2; exit 128; fi ;; esac ;; esac; fi
 if [ -e "$ST/gitfail" ]; then case " \$* " in *"\$(cat "$ST/gitfail")"*) case "\$($REALPS -o args= -p \$PPID)" in *cutover-steps*) ;; *) n=\$(cat "$ST/gitfail-n" 2>/dev/null || echo 0); n=\$((n+1)); echo \$n > "$ST/gitfail-n"
   if [ \$n -gt \$(cat "$ST/gitfail-skip" 2>/dev/null || echo 0) ]; then [ ! -e "$ST/gitfail-out" ] || $REALGIT "\$@"; echo "fatal: injected failure (stub)" >&2; exit 128; fi ;; esac ;; esac; fi
+# the names of the GIT_* variables each git process starts with (while $ST/gitenv-log exists); at call number N of $ST/gitredir (lines: N, root, work tree) the checkout's core.worktree is pointed elsewhere
+if [ -e "$ST/gitenv-log" ]; then env | grep '^GIT_' | sed 's/=.*//' >> "$ST/gitenv-log"; fi
+# while $ST/gitdirenv exists, a git that reads the git directory (--git-dir) is started with GIT_DIR set to the file's content, as if the scrub had let it through
+if [ -e "$ST/gitdirenv" ]; then case " \$* " in *" --git-dir "*) export GIT_DIR=\$(cat "$ST/gitdirenv") ;; esac; fi
+if [ -e "$ST/gitredir" ]; then n=\$(cat "$ST/gitredir-n" 2>/dev/null || echo 0); n=\$((n+1)); echo \$n > "$ST/gitredir-n"; if [ \$n = \$(sed -n 1p "$ST/gitredir") ]; then $REALGIT -C "\$(sed -n 2p "$ST/gitredir")" config core.worktree "\$(sed -n 3p "$ST/gitredir")"; fi; fi
 exec $REALGIT "\$@"
 EOF
 # sha256sum: fails for a stdin that is a file whose path matches the glob in $ST/fail-sha (Linux: /proc names the file behind the redirect)
@@ -596,12 +601,13 @@ t_swhookgit() {  # a failed read of core.hooksPath, or of the hooks directory, i
   wg preflight > "$B/out.sw" 2>&1; b="$?/$(sw_msg 'cannot locate the hooks directory')/$([ -d "$J/p0" ] && echo p0)"
   SWC="$a;$b"; [ "$SWC" = "3/1/;3/1/" ]; }
 t_swready() {  # the git directory, the commit count and the two status reads: a failed read is a STOP, not an empty value, and a read that fails after its output is a failed read
-  local p res= k m o; for o in plain out; do for p in ' rev-parse --absolute-git-dir|cannot read the git directory|1' ' rev-list --left-right --count|cannot count the commits' \
+  local p res= k m o; for o in plain out; do for p in ' rev-parse --absolute-git-dir|cannot read the git directory' ' rev-parse --show-toplevel|is not GATE0_ROOT itself|1' ' rev-parse --path-format=absolute --git-dir|has no usable git directory|1' \
+      ' rev-parse --git-common-dir|has no usable common git directory|1' ' rev-list --left-right --count|cannot count the commits' \
       ' status --porcelain --untracked-files=no|cannot read the status: the local changes' ' status --porcelain --untracked-files=all|cannot read the status: the untracked files'; do
-    m=${p#*|}; k=0; case $m in *"|"*) k=${m#*|}; m=${m%%|*} ;; esac   # the wrapper's own start-up reads the git directory once
+    m=${p#*|}; k=0; case $m in *"|"*) k=${m#*|}; m=${m%%|*} ;; esac   # the wrapper's own start-up check (the git binding) reads each of its three once
     restore fx; sw_inj "${p%%|*}" $k; [ $o = plain ] || touch "$ST/gitfail-out"; wg preflight > "$B/out.sw" 2>&1; res="$res$?/$(sw_msg "$m")/$([ -d "$J/p0" ] && echo p0);"
   done; done
-  SWD=$res; [ "$SWD" = "3/1/;3/1/;3/1/;3/1/;3/1/;3/1/;3/1/;3/1/;" ]; }
+  SWD=$res; [ "$SWD" = "$(printf "3/1/;%.0s" {1..14})" ]; }
 t_swarchlist() {  # an archive listing that fails is not an empty one
   restore fx; echo 0 > "$ST/fail-arch-after"; rm -f "$ST/arch-n"
   wg preflight > "$B/out.sw" 2>&1; SWE="$?/$(sw_msg 'cannot list the archive branches on the lane')/$([ -d "$J/p0" ] && echo p0)"
@@ -921,14 +927,61 @@ t_swcheckro() {  # --check never writes: every --check phase, from every state a
   done
   SWRO="${bad:-none}/$ran"; [ "$SWRO" = "none/56" ]; }
 t_swgitenv() {  # git's repository, work tree, index and configuration can come from the environment, and the work tree from core.worktree: none of them may point a git command of the wrapper, or a step it runs, away from the validated checkout (the review's case: GIT_WORK_TREE at another copy while the freeze and the preservation look at GATE0_ROOT)
-  restore fx; local o=$W/other h oh rc1 rc2 ph; SWGE=
+  restore fx; local o=$W/other h oh os rc1 rc2 rc3 ph; SWGE=
   cp -a "$R" "$o" && git -C "$o" -c user.email=t@example.invalid -c user.name=t commit -q --allow-empty -m other || { echo "  FAIL t_swgitenv: cannot make another copy"; return 1; }
   h=$(g rev-parse HEAD) && oh=$(git -C "$o" rev-parse HEAD) && [ -n "$h" ] && [ "$h" != "$oh" ] || { echo "  FAIL t_swgitenv: the copy has the checkout's head"; return 1; }
   GIT_DIR=$o/.git GIT_WORK_TREE=$o GIT_INDEX_FILE=$o/.git/index GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=core.worktree GIT_CONFIG_VALUE_0=$o wg preflight > "$B/out.sw" 2>&1; rc1=$?
   ph=$(sed -n 's/^base .* head \([0-9a-f]*\) host .*/\1/p' "$J/gate0-run/preflight" 2>/dev/null)
-  restore fx; git -C "$R" config core.worktree "$o"; wg preflight > "$B/out.sw" 2>&1; rc2=$?
-  SWGE="$rc1/$([ "$ph" = "$h" ] && echo head)/$rc2/$(sw_msg 'is not GATE0_ROOT itself')/$([ -e "$J/gate0-run/preflight" ] && echo wrote)/$([ "$(git -C "$o" rev-parse HEAD)" = "$oh" ] && [ -z "$(GIT_OPTIONAL_LOCKS=0 git -C "$o" status --porcelain)" ] && echo other-untouched)"
-  [ "$SWGE" = "0/head/1/1//other-untouched" ]; }
+  restore fx; cp -a "$R" "$o" && git -C "$o" -c user.email=t@example.invalid -c user.name=t commit -q --allow-empty -m other || { echo "  FAIL t_swgitenv: cannot make another copy"; return 1; }
+  oh=$(git -C "$o" rev-parse HEAD); os=$(GIT_OPTIONAL_LOCKS=0 git -C "$o" status --porcelain); git -C "$R" config core.worktree "$o"; wg preflight > "$B/out.sw" 2>&1; rc2=$?
+  SWGE="$rc1/$([ "$ph" = "$h" ] && echo head)/$rc2/$(sw_msg 'is not GATE0_ROOT itself')/$([ -e "$J/gate0-run/preflight" ] && echo wrote)/$([ "$(git -C "$o" rev-parse HEAD)" = "$oh" ] && [ "$(GIT_OPTIONAL_LOCKS=0 git -C "$o" status --porcelain)" = "$os" ] && echo other-untouched)"
+  restore fx; cp -a "$R" "$o" || { echo "  FAIL t_swgitenv: cannot make another copy"; return 1; }; mkdir -p "$ST"; printf '%s' "$o/.git" > "$ST/gitdirenv"
+  wg preflight > "$B/out.sw" 2>&1; rc3=$?
+  SWGE="$SWGE/$rc3/$(sw_msg "is not the one GATE0_ROOT/.git names")"
+  [ "$SWGE" = "0/head/1/1//other-untouched/1/1" ]; }
+t_swgitvars() {  # every variable git reads to find its repository, work tree, index, objects, namespace, configuration or programs is gone before any git process of the wrapper, or of a step it runs, starts; a setting that is not git's own location (identity, credentials, the user-level config file) is left alone
+  local kv v bad="" rc n; SWGV=
+  for kv in GIT_DIR=x GIT_WORK_TREE=x GIT_INDEX_FILE=x GIT_OBJECT_DIRECTORY=x GIT_ALTERNATE_OBJECT_DIRECTORIES=x GIT_COMMON_DIR=x GIT_NAMESPACE=x GIT_CEILING_DIRECTORIES=x \
+            GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=core.worktree GIT_CONFIG_VALUE_0=x GIT_CONFIG_PARAMETERS=x GIT_CONFIG=x GIT_CONFIG_SYSTEM=x GIT_EXEC_PATH=x GIT_PREFIX=x \
+            GIT_LITERAL_PATHSPECS=1 GIT_NO_REPLACE_OBJECTS=1 GIT_REPLACE_REF_BASE=x GIT_SHALLOW_FILE=x GIT_GRAFT_FILE=x GIT_DISCOVERY_ACROSS_FILESYSTEM=1 GIT_ATTR_SOURCE=x \
+            GIT_AUTHOR_NAME=kept; do
+    v=${kv%%=*}; restore fx; mkdir -p "$ST"; : > "$ST/gitenv-log"
+    case $v in
+      GIT_DIR|GIT_WORK_TREE|GIT_COMMON_DIR|GIT_CONFIG|GIT_CONFIG_SYSTEM|GIT_CONFIG_VALUE_0) kv=$v=$W/nowhere ;;
+      GIT_CONFIG_PARAMETERS) kv="$v='core.worktree=$W/nowhere'" ;;
+    esac
+    ( export "$kv"; wg preflight > "$B/out.sw" 2>&1 ); rc=$?
+    n=$(grep -c . "$ST/gitenv-log")
+    if [ $v = GIT_AUTHOR_NAME ]; then   # the control that the filter is not "everything"
+      { [ $rc = 0 ] && grep -qx "$v" "$ST/gitenv-log"; } || bad="$bad $v(removed,rc=$rc)"
+    else
+      { [ $rc = 0 ] && [ "$n" -gt 0 ] && ! grep -qx "$v" "$ST/gitenv-log"; } || bad="$bad $v(rc=$rc,calls=$n)"
+    fi
+  done
+  rm -f -- "$ST/gitenv-log"; SWGV="${bad:-none}"; [ "$SWGV" = none ]; }
+t_swgitmid() {  # the checkout can be pointed elsewhere after the first check (core.worktree written between two git calls): the next use of git on it checks again and stops, with nothing further done
+  local o=$W/other k rc bad="" tot; SWGM=
+  restore fx; mkdir -p "$ST"; : > "$ST/gitenv-log"; wg preflight > "$B/out.sw" 2>&1; rc=$?; tot=$(grep -c '^GIT_OPTIONAL_LOCKS$' "$ST/gitenv-log")
+  [ $rc = 0 ] && [ "$tot" -gt 12 ] || { echo "  FAIL t_swgitmid: the plain run (rc=$rc, $tot git processes)"; return 1; }
+  for k in 8 $((tot/3)) $((tot/2)) $((tot*2/3)) $((tot-3)); do
+    restore fx; mkdir -p "$ST"; cp -a "$R" "$o" 2>/dev/null || { echo "  FAIL t_swgitmid: cannot make another copy"; return 1; }
+    printf '%s\n%s\n%s\n' "$k" "$R" "$o" > "$ST/gitredir"
+    wg preflight > "$B/out.sw" 2>&1; rc=$?
+    { [ $rc != 0 ] && [ "$(sw_msg 'is not GATE0_ROOT itself')" -ge 1 ] && [ ! -e "$J/gate0-run/preflight" ]; } || bad="$bad $k(rc=$rc,msg=$(sw_msg 'is not GATE0_ROOT itself'))"
+  done
+  SWGM="${bad:-none}"; [ "$SWGM" = none ]; }
+t_swgitgi() {  # the overlay driver starts no git with a repository, work tree, index or configuration from the environment; its own settings and identity are kept
+  local gi=${GI:-$HERE/../git-internal} d=$B/gigit bad="" kv v n; SWGI=
+  rm -rf -- "${d:?}"; mkdir -p "$d/bin"
+  printf '#!/bin/sh\nenv | grep "^GIT_" | sed "s/=.*//" >> "%s/log"\nexec %s "$@"\n' "$d" "$REALGIT" > "$d/bin/git"; chmod +x "$d/bin/git"
+  for kv in GIT_DIR=$d/x GIT_WORK_TREE=$d/x GIT_INDEX_FILE=$d/x GIT_OBJECT_DIRECTORY=$d/x GIT_ALTERNATE_OBJECT_DIRECTORIES=$d/x GIT_COMMON_DIR=$d/x GIT_NAMESPACE=x \
+            GIT_CEILING_DIRECTORIES=$d GIT_CONFIG_COUNT=1 GIT_CONFIG_PARAMETERS=x GIT_CONFIG=x GIT_CONFIG_SYSTEM=x GIT_EXEC_PATH=$d/x GIT_PREFIX=x GIT_AUTHOR_NAME=kept; do
+    v=${kv%%=*}; : > "$d/log"
+    ( export "$kv" GIT_INTERNAL_PATH="$d/bin:/usr/local/bin:/usr/bin:/bin"; "$gi" doctor > "$d/out" 2>&1 ); n=$(grep -c . "$d/log")
+    if [ $v = GIT_AUTHOR_NAME ]; then { [ "$n" -gt 0 ] && grep -qx "$v" "$d/log"; } || bad="$bad $v(removed)"
+    else { [ "$n" -gt 0 ] && ! grep -qx "$v" "$d/log"; } || bad="$bad $v(calls=$n)"; fi
+  done
+  SWGI="${bad:-none}"; [ "$SWGI" = none ]; }
 t_swrefreezegone() {  # a new freeze after a completed restart is a new attempt: a marker the operator removed meanwhile is not recorded from the earlier attempt's copy, so the next restart does not put it back
   local r="" m
   restore r0a; wg restart r0 > "$B/out.sw" 2>&1; r="$?/$([ -e "$J/gate0-run/marker" ] && echo copy)/$([ -e "$R/.git-autosync" ] && echo live);"
@@ -1273,6 +1326,9 @@ sc "a repeated freeze checks the whole invariant" t_swfreezerep
 sc "a new freeze does not record the earlier attempt's marker copy when the checkout has no marker" t_swrefreezegone
 sc "--check never writes, from every freeze and restart state" t_swcheckro
 sc "no git variable and no core.worktree points the wrapper away from the validated checkout" t_swgitenv
+sc "every git location and configuration variable is gone before any git of the wrapper or its steps starts" t_swgitvars
+sc "a checkout pointed elsewhere after the first check is refused at the next use of git" t_swgitmid
+sc "the overlay driver starts no git with an inherited location or configuration" t_swgitgi
 sc "a lane remote with a second push URL is refused" t_swpushurls
 sc "no process substitution feeds a loop in the overlay driver or its hooks" t_swnoprocsub
 sc "restart step 1 checks both entries of the capture's sha256 record, a last line with no newline included" t_swrestcap
@@ -1499,8 +1555,11 @@ mm M127 t_swcheckro "--check preflight records P0" 's/^  if \[ \$CHECKMODE = 1 \
 mm M128 t_swcheckro "--check rollback rolls back" 's/^  if \[ \$CHECKMODE = 1 \]; then say "gate0-run: rollback check/  if false; then say "gate0-run: rollback check/'
 mm M129 t_swcheckro "--check restart restarts" '/^do_restart() {/,/^  \[ -e "\$G\/freeze" \]/ s/^  if \[ \$CHECKMODE = 1 \]; then$/  if false; then/'
 mm M130 t_swcheckro "--check capture captures" '/^do_capture() {/,/P1a is already recorded/ s/^  if \[ \$CHECKMODE = 1 \]; then$/  if false; then/'
-mm M131 t_swgitenv "git's location and configuration variables are inherited" 's/^  GIT_\*) unset "\$_v" ;; esac; done$/  GIT_*) : ;; esac; done/'
-mm M132 t_swgitenv "a work tree other than GATE0_ROOT is accepted" 's/\[ "\$TOP" = "\$ROOT" \] ||/true ||/'
+mm M131 t_swgitvars "git's location and configuration variables are inherited" 's/^    GIT_\*) unset "\$_v" ;; esac; done$/    GIT_*) : ;; esac; done/'
+mm M132 t_swgitenv "a work tree other than GATE0_ROOT is accepted" 's/\[ "\$t" = "\$ROOT" \] ||/true ||/'
+mm M133 t_swgitmid "the checkout is not checked again before each git on it" 's/^pg() { git_bind; /pg() { /; s/^inroot() { git_bind; /inroot() { /'
+mm M134 t_swgitvars "the scrub keeps the variables of a config file selected by name" 's/GIT_CONFIG_GLOBAL|GIT_CONFIG_NOSYSTEM|GIT_TERMINAL_PROMPT/GIT_CONFIG_*|GIT_TERMINAL_PROMPT/'
+mm M135 t_swgitenv "the git directory is not compared with the one the checkout names" 's/ \&\& \[ "\$d" = "\$e" \] \&\& \[ "\$c" = "\$ec" \] || bindfail/ || bindfail/'
 mm M110 t_swrefreezegone "an interrupted new freeze is taken for a new attempt: its recorded marker is set aside" 's/^  if restarted_any \&\& \[ ! -e "\$G\/freeze-intent" \] \&\& /  if restarted_any \&\& /'
 mm M106 t_swfreezerep "a repeated freeze does not check the whole invariant" 's/^    freeze_holds   # the whole invariant.*$/    :/'
 mm M107 t_swpushurls "only the first push URL is compared" 's/remote get-url --push --all "\$LANE"/remote get-url --push "$LANE"/'

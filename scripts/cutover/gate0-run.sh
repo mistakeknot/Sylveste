@@ -55,10 +55,12 @@
 set -u
 PATH=${GATE0_PATH:-/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin}
 export LC_ALL=C
-for _v in $(compgen -e); do case $_v in   # git takes its repository, work tree, index, object store and extra configuration from the environment: none of it is inherited, so every git command here and every step acts on the validated checkout (the settings that only choose credentials, a terminal prompt or an identity stay)
-  GIT_CONFIG_GLOBAL|GIT_CONFIG_NOSYSTEM|GIT_TERMINAL_PROMPT|GIT_ASKPASS|GIT_SSH|GIT_SSH_COMMAND|GIT_AUTHOR_*|GIT_COMMITTER_*) ;;
-  GIT_*) unset "$_v" ;; esac; done
-export GIT_OPTIONAL_LOCKS=0   # no git command of this script, nor the steps it runs, rewrites the index to refresh stat data
+git_env_clean() {  # git takes its repository, work tree, index, object store, namespace, extra configuration and program directory from the environment: none of it is inherited, so every git command here and every step acts on the validated checkout. Only the settings that choose credentials, a terminal prompt, an identity or the user-level config file stay
+  local _v; for _v in $(compgen -e); do case $_v in
+    GIT_CONFIG_GLOBAL|GIT_CONFIG_NOSYSTEM|GIT_TERMINAL_PROMPT|GIT_ASKPASS|GIT_SSH|GIT_SSH_COMMAND|GIT_AUTHOR_*|GIT_COMMITTER_*|GIT_OPTIONAL_LOCKS) ;;
+    GIT_*) unset "$_v" ;; esac; done
+  export GIT_OPTIONAL_LOCKS=0; }   # no git command of this script, nor the steps it runs, rewrites the index to refresh stat data
+git_env_clean
 HERE=$(cd "$(dirname "$0")" && pwd -P); SELF=$HERE/$(basename "$0")
 # the hash tool is chosen by a known answer (the digest of no input), so a present but broken sha256sum falls back
 if [ "$(printf '' | sha256sum 2>/dev/null | cut -d' ' -f1)" = e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 ]
@@ -101,10 +103,29 @@ physpath() {  # PATH : its physical path (symlinks resolved), also when it does 
   case $t/ in */../*|*/./*) return 1 ;; esac
   d=$(cd "$p" 2>/dev/null && pwd -P) || return 1
   [ "$d" != / ] || d=; printf '%s%s\n' "$d" "$t"; }
-TOP=$(git -C "$ROOT" rev-parse --show-toplevel 2>/dev/null) && TOP=$(cd "$TOP" 2>/dev/null && pwd -P) && [ "$TOP" = "$ROOT" ] || { echo "gate0-run: git's work tree for GATE0_ROOT is not GATE0_ROOT itself (core.worktree, a bare repository or a subdirectory): refusing, nothing written" >&2; exit 1; }
-GD=$(git -C "$ROOT" rev-parse --absolute-git-dir 2>/dev/null) && GD=$(cd "$GD" 2>/dev/null && pwd -P) || { echo "gate0-run: GATE0_ROOT has no usable git directory" >&2; exit 1; }
-# a linked worktree keeps its refs, objects and config in the common directory, which is outside both the checkout and its own git directory
-GC=$(git -C "$ROOT" rev-parse --git-common-dir 2>/dev/null) && case $GC in /*) ;; *) GC=$ROOT/$GC ;; esac && GC=$(cd "$GC" 2>/dev/null && pwd -P) || { echo "gate0-run: GATE0_ROOT has no usable common git directory" >&2; exit 1; }
+bindfail() {  # MESSAGE : git no longer shows the validated checkout: nothing more is run, also from inside a command substitution (the signal reaches the main shell, whose trap exits)
+  local m="gate0-run: $1: refusing, no further step runs"
+  [ -z "${LOG:-}" ] || printf '%s\n' "$m" >> "$LOG"
+  printf '%s\n' "$m" >&9   # the script's own stderr: a caller that discards the failed command's stderr (2>/dev/null) still shows why the run stopped
+  [ -z "${BINDTRAP:-}" ] || kill -USR1 $$ 2>/dev/null
+  exit "${BINDRC:-3}"; }
+git_bind() {  # git's view of GATE0_ROOT is the checkout's own: its work tree is GATE0_ROOT itself (physical path) and its git and common directories are the ones GATE0_ROOT/.git names (the directory itself, or the one a linked worktree's or submodule's .git file points to), and they are the ones recorded at the start. Run before the first use of git and before every use after it
+  git_env_clean
+  local t d c e= ec= f x
+  t=$(git -C "$ROOT" rev-parse --show-toplevel 2>/dev/null) && t=$(cd "$t" 2>/dev/null && pwd -P) && [ "$t" = "$ROOT" ] || bindfail "git's work tree for GATE0_ROOT is not GATE0_ROOT itself (core.worktree, a bare repository or a subdirectory)"
+  d=$(git -C "$ROOT" rev-parse --path-format=absolute --git-dir 2>/dev/null) && d=$(cd "$d" 2>/dev/null && pwd -P) || bindfail "GATE0_ROOT has no usable git directory"
+  # a linked worktree keeps its refs, objects and config in the common directory, which is outside both the checkout and its own git directory
+  c=$(git -C "$ROOT" rev-parse --git-common-dir 2>/dev/null) && case $c in /*) ;; *) c=$ROOT/$c ;; esac && c=$(cd "$c" 2>/dev/null && pwd -P) || bindfail "GATE0_ROOT has no usable common git directory"
+  if [ -d "$ROOT/.git" ]; then e=$(cd "$ROOT/.git" 2>/dev/null && pwd -P) && ec=$e
+  else f=$(sed -n 's/^gitdir: //p' "$ROOT/.git" 2>/dev/null | sed -n 1p); case $f in /*) ;; *) f=$ROOT/$f ;; esac
+    if e=$(cd "$f" 2>/dev/null && pwd -P); then
+      if [ -f "$e/commondir" ]; then x=$(sed -n 1p "$e/commondir" 2>/dev/null); case $x in /*) ;; *) x=$e/$x ;; esac; ec=$(cd "$x" 2>/dev/null && pwd -P)
+      else ec=$e; fi; fi; fi
+  [ -n "$e" ] && [ -n "$ec" ] && [ "$d" = "$e" ] && [ "$c" = "$ec" ] || bindfail "git's git directory for GATE0_ROOT is not the one GATE0_ROOT/.git names (GIT_DIR, GIT_COMMON_DIR, a gitdir link or a replaced .git)"
+  if [ -n "${GD:-}" ]; then [ "$d" = "$GD" ] && [ "$c" = "$GC" ] || bindfail "git's git directories changed since the start"
+  else GD=$d; GC=$c; fi; }
+exec 9>&2
+BINDRC=1; git_bind
 SD=$(physpath "$SD") || { echo "gate0-run: cannot use GATE0_STATE_DIR" >&2; exit 1; }
 J=$(physpath "${GATE0_JOURNAL:-$SD/journal}") || { echo "gate0-run: cannot use GATE0_JOURNAL" >&2; exit 1; }
 PRES=$(physpath "${GATE0_PRESERVE_DIR:-$SD/preserve}") || { echo "gate0-run: cannot use GATE0_PRESERVE_DIR" >&2; exit 1; }
@@ -143,16 +164,17 @@ report() {  # EXIT trap: the report, then the sender; a failed delivery prints t
     { echo "gate0-run: report not delivered; it is $RLOG:" >&2; cat "$RLOG" >&2; }
   exit $rc; }
 trap report EXIT
+BINDRC=3; BINDTRAP=1; trap 'exit 3' USR1
 say() { printf '%s\n' "$*"; printf '%s\n' "$*" >> "$LOG"; }
 stop() { say "gate0-run: STOP: $*" >&2; exit 3; }
 refuse() { say "gate0-run: refused, nothing written: $*" >&2; exit 1; }
 runlog() {  # command... : run it, show and log its output, keep its exit status
   local rc; "$@" > "$LOGD/cmd.out" 2>&1; rc=$?; cat "$LOGD/cmd.out"; cat "$LOGD/cmd.out" >> "$LOG"; rm -f "$LOGD/cmd.out"; return $rc; }
-pg() { git -C "$ROOT" "$@"; }
+pg() { git_bind; git -C "$ROOT" "$@"; }   # every git command of this script first confirms that git still shows the validated checkout
 pgs() { local o; o=$(pg "$@") || return 1; printf '%s\n' "$o"; }   # pg, but output is shown only when the command succeeded: "output, then failure" is a failure, never a value to compare
 rec_timers() { sed -n 's/^timer //p' "${1:-$G/freeze}" 2>/dev/null; }   # the timers of a record; the status is sed's, so an unreadable record is a failure, never an empty list
 rec_marker() { sed -n 's/^marker //p' "$G/freeze" 2>/dev/null; }
-inroot() { ( cd "$ROOT" && "$@" ); }   # bd and the steps find the tracker from the working directory: always the checkout's, never the caller's
+inroot() { git_bind; ( cd "$ROOT" && "$@" ); }   # bd and the steps find the tracker from the working directory: always the checkout's, never the caller's
 cs() { inroot env CUTOVER_REPORT=0 CUTOVER_PATH="$PATH" CUTOVER_BD="$BDBIN" CUTOVER_CHECK_DIR="$LOGD" "$CS" "$ROOT" "$J" "$@"; }
 flush_path() {  # PATH : flush a file or directory to disk; fails when neither sync nor an fsync can do it
   sync "$1" 2>/dev/null && return 0
