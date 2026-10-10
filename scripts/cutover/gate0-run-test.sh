@@ -1427,11 +1427,6 @@ mm M99 t_swreconeval "the extraction status and whole-function check are removed
 mm M100 t_swreconeval "the load status is ignored" 's/^  eval "\$def" || stop "[^"]*"/  eval "$def"/'
 mm M101 t_swidfail "a user id that cannot be read is taken as not root" 's/^MYUID=\$(id -u 2>\/dev\/null) .*$/MYUID=$(id -u 2>\/dev\/null)/'
 mm M102 t_swprocenum "the /proc listing is not required to show this script" 's/^    \[ -n "\$me" \] || return 2 .*$/    :/'
-for n in M104:'s/^  u=\$(gi ls-files -u) || die 4 "[^"]*".*$/  u=$(gi ls-files -u)/' M105:'s/ || die 6 "cannot list the remote refs".*$//'; do
-  sed "${n#*:}" "$HERE/../git-internal" > "$B/mut/${n%%:*}-gi" 2>/dev/null
-  if cmp -s "$HERE/../git-internal" "$B/mut/${n%%:*}-gi"; then echo "  FAIL mutation ${n%%:*} changed nothing"; fails=$((fails+1))
-  else GI=$B/mut/${n%%:*}-gi; t_swgi; r=$?; GI=; check "${n%%:*} (a failed driver read is taken as an empty one) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; fi
-done
 mgi_prep() {  # NAME SED : the mutated copy of the overlay driver; fails when sed fails, when nothing changed, or when the result does not parse (a control against a file that is not the driver with one fix removed proves nothing)
   sed "$2" "$HERE/../git-internal" > "$B/mut/$1-gi" 2>/dev/null && ! cmp -s "$HERE/../git-internal" "$B/mut/$1-gi" && bash -n "$B/mut/$1-gi" 2>/dev/null; }
 mgi() {  # NAME TEST DESC SED : the same test against the overlay driver with the fix taken out must fail
@@ -1439,6 +1434,8 @@ mgi() {  # NAME TEST DESC SED : the same test against the overlay driver with th
   if ! mgi_prep "$n" "$e"; then echo "  FAIL mutation $n: the sed failed, changed nothing, or left a driver that does not parse"; fails=$((fails+1))
   else GI=$B/mut/$n-gi; $t; r=$?; GI=; check "$n ($d) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; fi
 }
+mgi M104 t_swgi "a failed driver read of the unmerged paths is taken as an empty one" 's/^  u=\$(gi ls-files -u) || die 4 "[^"]*".*$/  u=$(gi ls-files -u)/'
+mgi M105 t_swgi "a failed driver read of the remote refs is taken as an empty one" 's/ || die 6 "cannot list the remote refs".*$//'
 mgi M111 t_swgitidx "a write-tree that prints and fails is taken as the index tree" 's/t=\$(gi write-tree 2>\/dev\/null) \&\& ot=/t=$(gi write-tree 2>\/dev\/null); ot=/'
 mgi M112 t_swgitidx "the recorded trees are read without their status" 's/ \&\& ot=\$(gi rev-parse/; ot=$(gi rev-parse/;s/ \&\& nt=\$(gi rev-parse/; nt=$(gi rev-parse/'
 mgi M113 t_swresolve "a failed conflict-marker read is taken as no markers" 's/^      \[ \$rc = 1 \] || { rm -f -- "\${idx:?}"; die 6 "resolve: cannot read.*$/      :/'
