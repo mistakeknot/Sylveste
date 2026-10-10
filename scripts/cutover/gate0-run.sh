@@ -298,8 +298,8 @@ archive_check() {  # the private archive destination: validated by the lane libr
     [ -z "$r" ] || say "gate0-run: note: $o/* branches exist already (a re-run reuses an equal one)"; done; }
 archive_ready() {  # the archive destination is acceptable now, and its push URL is the one the lane library just validated
   archive_check
-  local pu; pu=$(pg remote get-url --push "$LANE" 2>/dev/null) || stop "cannot read the push URL of $LANE: it cannot be compared with the validated one"
-  [ -n "${ASL_URL:-}" ] && [ "$pu" = "$ASL_URL" ] || stop "the push URL of $LANE is not the one just validated; nothing was pushed, realigned or restarted"; }
+  local pu; pu=$(pg remote get-url --push --all "$LANE" 2>/dev/null) || stop "cannot read the push URLs of $LANE: they cannot be compared with the validated one"
+  [ -n "${ASL_URL:-}" ] && [ "$pu" = "$ASL_URL" ] || stop "the push URL of $LANE is not the one just validated (or it has more than one push URL: a push goes to every one); nothing was pushed, realigned or restarted"; }
 do_preflight() {
   local hd
   ready_checks
@@ -321,6 +321,7 @@ do_freeze() {
     a=$(rec_timers) || stop "the freeze record cannot be read: whether its timers stay stopped cannot be told"
     for u in $a; do ! is_active "$u" || stop "the freeze was recorded but $u is active again"; done
     { marker_aside || { mk=$(rec_marker) && [ "$mk" = none ]; }; } || stop "the freeze was recorded but the marker is back in the checkout"
+    freeze_holds   # the whole invariant, not the timers and the marker alone: hook, every unit, the marker in the checkout, agents, bd
     rm -f -- "$G/freeze-intent"   # a crash after the freeze was recorded can leave the intent behind; the record holds the set
     say "gate0-run: freeze already holds"; return 0
   fi

@@ -145,7 +145,8 @@ Further properties, each with a test and a mutation control in `gate0-run-test.s
   has is undone like any other mismatch. A cleanup with no marker recorded keeps a marker it finds as
   `marker.unexpected.<sha256>` and removes the live file, without creating a marker record.
 - Capture validates the archive destination again after the last freeze check, immediately before the
-  checkout is realigned, and the destination's push URL must be the one the lane library just validated;
+  checkout is realigned, and the destination's push URL must be the one the lane library just validated
+  and the only one (`get-url --push --all`: a push goes to every push URL, so a second one is a STOP);
   a destination that stopped being acceptable, or a push URL that changed in between, is a STOP before P1a
   pushes anything. (The push inside `cutover-steps.sh` itself cannot be re-validated from outside; that
   file is not edited by this wrapper's change, so only the read-back after its push covers a change made
@@ -222,5 +223,15 @@ Further properties, each with a test and a mutation control in `gate0-run-test.s
   restart validates the archive destination and its push URL again itself (server and Clavain) instead of
   trusting preflight. The gate in `cutover-steps.sh` still runs first; where it refuses a damaged record
   the wrapper's own check is a second line that is reached only when that step is bypassed.
+
+- A repeated `freeze` that finds the record already written checks the whole invariant again
+  (`freeze_holds`: the hook, every unit, the marker in the checkout, agents and bd), not only the timers
+  and the marker record; a marker back in the checkout, or a service active again, is a STOP and keeps the
+  restart-set intent.
+- `.gitignore` lists both `/.git-internal/` and `/.git-internal.new/`: the installer builds the overlay as
+  `.git-internal.new` and renames it, so an interrupted install leaves a bare clone in the public tree that
+  a `git add -A` would otherwise stage. `t_swignore` stages a temporary tree holding both directories.
+- The test harness's `sha` helper fails closed: a failed digest (including a failed pipe) yields a fresh
+  non-hex sentinel each time, so two failures never compare equal and a digest check cannot pass on them.
 
 The wrapper's own sha256 changes with any edit. A handoff cites the digest of the final bytes.

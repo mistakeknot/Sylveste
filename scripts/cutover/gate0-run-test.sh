@@ -28,7 +28,8 @@ export LC_ALL=C
 HERE=$(cd "$(dirname "$0")" && pwd -P)
 GW=${GATE0_RUN:-$HERE/gate0-run.sh}; CS=$HERE/cutover-steps.sh
 if [ "$(printf '' | sha256sum 2>/dev/null | cut -d' ' -f1)" = e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 ]
-then sha() { sha256sum | cut -d' ' -f1; }; else sha() { shasum -a 256 2>/dev/null | cut -d' ' -f1; }; fi
+then sha() { local h; h=$(set -o pipefail; sha256sum | cut -d' ' -f1) && [[ $h =~ ^[0-9a-f]{64}$ ]] && printf '%s\n' "$h" || echo "sha-failed-$RANDOM-$RANDOM"; }
+else sha() { local h; h=$(set -o pipefail; shasum -a 256 2>/dev/null | cut -d' ' -f1) && [[ $h =~ ^[0-9a-f]{64}$ ]] && printf '%s\n' "$h" || echo "sha-failed-$RANDOM-$RANDOM"; }; fi   # a hash that fails is a fresh sentinel: two failed observations are never equal
 case ${1:-} in
   --check)
     bash -n "$0" && [ -f "$GW" ] && bash -n "$GW" && [ -f "$CS" ] && command -v git >/dev/null && command -v tar >/dev/null &&
@@ -813,13 +814,14 @@ t_swclavmark() {  # a freeze record that cannot be read is not a record that nam
   GATE0_MACHINE=clavain GATE0_SWEEP="$B/bin/sweep" GATE0_DRIFT_REPORT="$B/drift.txt" wg restart r0 > "$B/out.sw" 2>&1; SWAK="$?/$(sw_msg 'whether a marker was set aside cannot be told')/$(sw_state)"; chmod 644 "$J/gate0-run/freeze"
   [ "$SWAK" = "3/1//0/no/no/" ]; }
 t_swobserver() {  # the test's own before/after observers fail closed: two failed observations are never "nothing changed", a listing that fails after its output included
-  local a b c d e f g2 h i j
+  local a b c d e f g2 h i j k l
   restore fx
   a=$(R=$B/nowhere ckfp 2>/dev/null); b=$(R=$B/nowhere ckfp 2>/dev/null); c=$(J=$B/nowhere jfp 2>/dev/null); d=$(J=$B/nowhere jfp 2>/dev/null); e=$(W=$B/nowhere lanerefs 2>/dev/null); f=$(W=$B/nowhere lanerefs 2>/dev/null)
   g2=$(find() { command find "$@"; return 1; }; jfp 2>/dev/null); h=$(find() { command find "$@"; return 1; }; jfp 2>/dev/null)
   wr "$B/dgfile" content; printf '%s' "$B/dgfile" > "$ST/fail-sha"; i=$(PATH="$B/stub:$PATH" dg "$B/dgfile" 2>/dev/null); j=$(PATH="$B/stub:$PATH" dg "$B/dgfile" 2>/dev/null); rm -f "$ST/fail-sha"   # a digest that fails: a fresh sentinel each time
-  SWAL="$([ "$a" != "$b" ] && echo differ)/$([ "$c" != "$d" ] && echo differ)/$([ "$e" != "$f" ] && echo differ)/$([ "$(ckfp)" = "$(ckfp)" ] && echo same)/$([ "$(jfp)" = "$(jfp)" ] && echo same)/$([ "$g2" != "$h" ] && echo differ)/$([ "$i" != "$j" ] && echo differ)/$([ "$(dg "$B/dgfile")" = "$(dg "$B/dgfile")" ] && echo same)"
-  [ "$SWAL" = "differ/differ/differ/same/same/differ/differ/same" ]; }
+  printf '%s' 'pipe:*' > "$ST/fail-sha"; k=$(echo x | PATH="$B/stub:$PATH" sha 2>/dev/null); l=$(echo x | PATH="$B/stub:$PATH" sha 2>/dev/null); rm -f "$ST/fail-sha"   # the aggregate hash (stdin a pipe) that fails: the same
+  SWAL="$([ "$a" != "$b" ] && echo differ)/$([ "$c" != "$d" ] && echo differ)/$([ "$e" != "$f" ] && echo differ)/$([ "$(ckfp)" = "$(ckfp)" ] && echo same)/$([ "$(jfp)" = "$(jfp)" ] && echo same)/$([ "$g2" != "$h" ] && echo differ)/$([ "$i" != "$j" ] && echo differ)/$([ "$(dg "$B/dgfile")" = "$(dg "$B/dgfile")" ] && echo same)/$([ "$k" != "$l" ] && echo differ)"
+  [ "$SWAL" = "differ/differ/differ/same/same/differ/differ/same/differ" ]; }
 t_swidfail() {  # a user id that cannot be read is not "not root": the wrapper stops before it makes a journal or runs git
   local m r=""
   for m in none after word; do
@@ -866,6 +868,31 @@ t_swgi() {  # the overlay driver reads the unmerged-entry list and the remote-re
     r="$r$c=$rc;"
   done
   SWAT=$r; [ "$SWAT" = "pre-ok=0;pre-fail=4;fold-ok=0;fold-fail=6;fold-failout=6;" ]; }
+t_swignore() {  # the git dir of an interrupted overlay install (.git-internal.new, a bare clone) is ignored like .git-internal: a public `git add -A` cannot stage it
+  local gi=${GITIGNORE:-$HERE/../../.gitignore} d=$B/ign l
+  rm -rf -- "${d:?}"; mkdir -p "$d"; git -C "$d" init -q && cp "$gi" "$d/.gitignore" || return 1
+  git init -q --bare "$d/.git-internal.new" && git init -q --bare "$d/.git-internal" || return 1
+  git -C "$d" add -A > /dev/null 2>&1; l=$(git -C "$d" ls-files) || return 1
+  SWAU=$(printf '%s' "$l" | tr '\n' ' '); [ "$SWAU" = ".gitignore" ]; }
+t_swfreezerep() {  # a repeated freeze checks the whole invariant before it says the freeze holds: a marker back after a "none" record, or a service active again, is a STOP and keeps the intent
+  local r="" c
+  for c in same marker svc; do
+    restore fx; stepto preflight freeze || return 1
+    printf 'timer git-autosync-repair.timer\n' > "$J/gate0-run/freeze-intent"
+    case $c in
+      marker) rm -f "$J/gate0-run/marker"; sed -i 's/^marker .*/marker none/' "$J/gate0-run/freeze"; printf 'x\n' > "$R/.git-autosync" ;;
+      svc) touch "$ST/units/git-autosync-promote.service" ;;
+    esac
+    wg freeze > "$B/out.sw" 2>&1; r="$r$?/$(sw_msg 'freeze already holds')/$(sw_msg 'freeze no longer holds')/$([ -e "$J/gate0-run/freeze-intent" ] && echo intent);"
+  done
+  SWAV=$r; [ "$SWAV" = "0/1/0/;3/0/1/intent;3/0/1/intent;" ]; }
+t_swpushurls() {  # a lane remote with a second push URL is not the validated destination: a push goes to every push URL
+  local res= m
+  for m in server clavain; do
+    restore r0a; g config --add remote.lane.pushurl "file://$W/lane.git"; g config --add remote.lane.pushurl "file://$W/pub.git"
+    GATE0_MACHINE=$m GATE0_SWEEP="$B/bin/sweep" GATE0_DRIFT_REPORT="$B/drift.txt" wg restart r0 > "$B/out.sw" 2>&1; res="$res$?/$(sw_msg 'push URL of lane is not the one just validated')/$(sw_state);"
+  done
+  SWAW=$res; [ "$SWAW" = "3/1//0/no/no/;3/1//0/no/no/;" ]; }
 t_swcapnames() {  # the names of the capture's sha256 record are read with the status of the read: a read that prints both names and then fails is not a match
   local PD=$W/pres/mA-$O
   restore fx; stepto preflight freeze capture || return 1
@@ -1068,6 +1095,9 @@ sc "a user id that cannot be read stops the wrapper before it does anything" t_s
 sc "a /proc listing that cannot be read is not an empty process table" t_swprocenum
 sc "the private pre-commit hook refuses when the staged-path listing fails" t_swprecommit
 sc "the overlay driver refuses when the unmerged-entry list or the remote-ref list cannot be read" t_swgi
+sc "an interrupted overlay install's git dir is ignored by the public .gitignore" t_swignore
+sc "a repeated freeze checks the whole invariant" t_swfreezerep
+sc "a lane remote with a second push URL is refused" t_swpushurls
 sc "no process substitution feeds a loop in the overlay driver or its hooks" t_swnoprocsub
 sc "restart step 1 checks both entries of the capture's sha256 record, a last line with no newline included" t_swrestcap
 sc "the jsonl_dominated extraction and load are status-checked and an inherited function is not accepted" t_swreconeval
@@ -1261,6 +1291,11 @@ for n in M104:'s/^  u=\$(gi ls-files -u) || die 4 "[^"]*".*$/  u=$(gi ls-files -
   if cmp -s "$HERE/../git-internal" "$B/mut/${n%%:*}-gi"; then echo "  FAIL mutation ${n%%:*} changed nothing"; fails=$((fails+1))
   else GI=$B/mut/${n%%:*}-gi; t_swgi; r=$?; GI=; check "${n%%:*} (a failed driver read is taken as an empty one) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; fi
 done
+mm M106 t_swfreezerep "a repeated freeze does not check the whole invariant" 's/^    freeze_holds   # the whole invariant.*$/    :/'
+mm M107 t_swpushurls "only the first push URL is compared" 's/remote get-url --push --all "\$LANE"/remote get-url --push "$LANE"/'
+sed '/^\/\.git-internal\.new\/$/d' "$HERE/../../.gitignore" > "$B/mut/M108-ign" 2>/dev/null
+if cmp -s "$HERE/../../.gitignore" "$B/mut/M108-ign"; then echo "  FAIL mutation M108 changed nothing"; fails=$((fails+1))
+else GITIGNORE=$B/mut/M108-ign; t_swignore; r=$?; GITIGNORE=; check "M108 (the interrupted install's git dir is not ignored) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; fi
 if sed 's/ || { echo "private pre-commit: cannot list the staged paths" >&2; exit 1; }//' "$HERE/../git-internal-hooks/pre-commit" > "$B/mut/M103-hook" && ! cmp -s "$HERE/../git-internal-hooks/pre-commit" "$B/mut/M103-hook"; then
   HOOK=$B/mut/M103-hook; t_swprecommit; r=$?; HOOK=; check "M103 (the hook ignores the status of the staged-path listing) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught
 else echo "  FAIL mutation M103 changed nothing"; fails=$((fails+1)); fi
