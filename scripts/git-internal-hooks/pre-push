@@ -5,7 +5,8 @@
 # .git-internal/info/host. Deleting that lane is refused too. Promotion of
 # main is mk's (plan §1.4 "Private sync"). PR 2a appends the JSONL blob checks.
 set -u
-host=$(cat "$(git rev-parse --git-dir)/info/host" 2>/dev/null)
+gd=$(git rev-parse --git-dir) || { echo "private pre-push: cannot locate the git dir" >&2; exit 1; }
+host=$(cat "$gd/info/host" 2>/dev/null) || host=
 [ -n "$host" ] || { echo "private pre-push: .git-internal/info/host is missing" >&2; exit 1; }
 while read -r lref lsha rref rsha; do
   [ "$rref" = "refs/heads/autosync/$host" ] || { echo "private pre-push: only refs/heads/autosync/$host may be pushed (got $rref)" >&2; exit 1; }

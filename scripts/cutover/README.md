@@ -242,6 +242,10 @@ The wrapper's own sha256 changes with any edit. A handoff cites the digest of th
 - The overlay driver's `forward` (finish a recorded step) reads the index tree and both recorded trees with
   their status before comparing, `resolve` takes `grep`'s status explicitly (0 markers, 1 none, anything else
   stops with nothing recorded), `same_blob` holds the hash with its status, and the leading-directory walk and
-  the hook-digest probe check their reads (`t_swgitidx`, `t_swresolve`, `t_swsameblob`, with controls). The
+  the hook-digest probe check their reads (`t_swgitidx`, `t_swresolve`, `t_swsameblob`, with controls). Every remaining
+  driver and hook read that a decision rests on holds its status the same way: the `ORIG_HEAD` read and its
+  read-back, the host name (driver and private pre-push hook), the install comparison, the fold ref, the probe's
+  config reads, the directory walk and the mode of a resolved file (`t_sworighead`, `t_swhost`, `t_swresolve`,
+  with controls). The
   harness's checkout fingerprint in `p1a-flush-test.sh` records a failed index digest or file listing as a fresh
   sentinel.
