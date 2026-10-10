@@ -736,6 +736,44 @@ t_swsharec() {  # the capture's sha256 record must name exactly the bundle and t
   wg capture > "$B/out.sw" 2>&1; SWAE="$?/$(sw_msg 'does not name exactly main.bundle and wtree.tar')"
   [ "$SWAE" = "3/1" ]; }
 
+t_swrestmark() {  # the restored marker's recorded hash is read with its status: a read that prints the hash and then fails is not a match
+  restore r0a; sw_sed 's/^marker //p' 0 out
+  wg restart r0 > "$B/out.sw" 2>&1; SWAF="$?/$(sw_msg 'the restored marker differs from the one set aside')/$(sw_state)"
+  [ "$SWAF" = "3/1//0/no/no/" ]; }
+t_swactlines() {  # the restart set is written from a list built with each stage's status checked: a list that fails after its output is not written, and nothing is stopped
+  local a b
+  restore fx; stepto preflight || return 1; sw_sed 's/ timer /' 0 out
+  wg freeze > "$B/out.sw" 2>&1; a="$?/$(sw_msg 'cannot write the list of timers to restart')/$([ -e "$J/gate0-run/freeze-intent" ] && echo intent)/$(timers)"
+  restore fx; stepto preflight || return 1; sw_sed '/^timer /p' 0 out
+  wg freeze > "$B/out.sw" 2>&1; b="$?/$(sw_msg 'cannot write the list of timers to restart')/$([ -e "$J/gate0-run/freeze-intent" ] && echo intent)/$(timers)"
+  SWAG="$a;$b"; [ "$SWAG" = "3/1//yes/yes;3/1//yes/yes" ]; }
+t_swverifyset() {  # the verifier of a sha256 record: two completed digest checks, the last line needing no newline, a wrong digest or a missing file anywhere is a failure
+  local fn d res= h1 h2
+  fn=$(sed -n '/^verify_set() {/,/^preserve_copy() {/p' "${WG:-$GW}" | sed '$d')
+  d=$B/vs; rm -rf "$d"; mkdir -p "$d/capture" "$d/c"; printf a > "$d/c/main.bundle"; printf b > "$d/c/wtree.tar"
+  h1=$(sha256sum < "$d/c/main.bundle" | cut -d' ' -f1); h2=$(sha256sum < "$d/c/wtree.tar" | cut -d' ' -f1)
+  vs() { ( J=$d; sha() { sha256sum | cut -d' ' -f1; }; eval "$fn"; verify_set "$d/c" ) 2>/dev/null && echo ok || echo no; }
+  printf 'main.bundle\t%s\nwtree.tar\t%s\n' "$h1" "$h2" > "$d/capture/sha256"; res="$(vs)/"
+  printf 'main.bundle\t%s\nwtree.tar\t%s' "$h1" "$h2" > "$d/capture/sha256"; res="$res$(vs)/"
+  printf 'main.bundle\t%s\nwtree.tar\t%s' "$h1" "$h1" > "$d/capture/sha256"; res="$res$(vs)/"
+  printf 'main.bundle\t%s\nwtree.tar\t%s\n' "$h2" "$h2" > "$d/capture/sha256"; res="$res$(vs)/"
+  printf 'main.bundle\t%s' "$h1" > "$d/capture/sha256"; res="$res$(vs)/"
+  printf 'main.bundle\t%s\nwtree.tar\t%s\nwtree.manifest\t%s\n' "$h1" "$h2" "$h2" > "$d/capture/sha256"; res="$res$(vs)/"
+  printf 'main.bundle\t%s\nwtree.tar\t%s\n' "$h1" "$h2" > "$d/capture/sha256"; rm -f "$d/c/wtree.tar"; res="$res$(vs)/"
+  SWAH=$res; [ "$SWAH" = "ok/ok/no/no/no/no/no/" ]; }
+t_swsharecterm() {  # a capture whose sha256 record has no final newline is still verified file by file, the preservation copy it would replace is never overwritten by a bad one, and a good one still passes
+  local a b c p0 PD=$W/pres/mA-$O
+  restore fx; stepto preflight freeze capture || return 1
+  printf '%s' "$(cat "$J/capture/sha256")" > "$J/capture/sha256"; echo x >> "$J/capture/wtree.tar"
+  wg capture > "$B/out.sw" 2>&1; a="$?/$(sw_msg 'does not match its sha256 record')"
+  restore fx; stepto preflight freeze capture || return 1; p0=$(sha < "$PD/wtree.tar")
+  echo x >> "$J/capture/wtree.tar"
+  wg capture > "$B/out.sw" 2>&1; b="$?/$(sw_msg 'does not match its sha256 record')/$([ "$(sha < "$PD/wtree.tar")" = "$p0" ] && echo intact)/$(ls "$PD" | grep -c tmp)"
+  restore fx; stepto preflight freeze capture || return 1
+  printf '%s' "$(cat "$J/capture/sha256")" > "$J/capture/sha256"
+  wg capture > "$B/out.sw" 2>&1; c="$?"
+  SWAI="$a;$b;$c"; [ "$SWAI" = "3/1;3/1/intact/0;0" ]; }
+
 echo "== --check forms change nothing"
 restore fx; c0=$(ckfp); j0=$(jfp); l0=$(lanerefs)
 WG= wg --check > "$B/out" 2>&1; check "--check" "$?" 0
@@ -901,6 +939,10 @@ sc "a HEAD, origin/main or tag read that prints a match and then fails is not a 
 sc "an unreadable P0 lane record is not an empty tip" t_swp0laneread
 sc "an approved input that cannot be read is refused" t_swinputs
 sc "a capture sha256 record that names the wrong files is a STOP" t_swsharec
+sc "a restored marker whose recorded hash is read with a failing status is a STOP" t_swrestmark
+sc "a restart-set list that fails after its output is not written and nothing is stopped" t_swactlines
+sc "the sha256 record verifier needs two completed checks and accepts an unterminated last line" t_swverifyset
+sc "a sha256 record with no final newline is verified in full and a bad capture never replaces the preservation copy" t_swsharecterm
 
 echo "== mutation controls (each must be judged NOT fail-closed)"
 mutate() {  # NAME SEDEXPR : a copy of the wrapper with one safeguard removed; WG names it
@@ -1069,4 +1111,10 @@ mm M83 t_swp0laneread "an unreadable P0 lane record is read as empty" 's/l0=\$(c
 mm M84 t_swinputs "an unreadable input is read as empty" 's/ \&\& LANE=\$(cat "\$J\/lane-remote") \&\& \[ -n "\$LANE" \] || refuse "an input in J cannot be read"/; LANE=$(cat "$J\/lane-remote" 2>\/dev\/null)/'
 mm M85 t_swsharec "a sha256 record naming fewer files is accepted" '/^  \[ "\$(set -o pipefail; cut -f1 "\$J\/capture\/sha256"/d'
 mm M86 t_swmarkfilter "a failed marker-rule filter is read as a clean status" 's/ || rbail "cannot filter the status for the marker rule[^"]*"/ || true/'
+mm M87 t_swrestmark "a restored marker is compared after a failed read" 's/{ m=\$(rec_marker) \&\& \[\[/{ m=$(rec_marker); [[/'
+mm M88 t_swactlines "the restart-set list is built without pipefail" 's/^act_lines() { ( set -o pipefail; /act_lines() { ( /'
+mm M89 t_swactlines "a failed restart-set list is written" 's/^  al=\$(act_lines "\$act") || stop "[^"]*"/  al=$(act_lines "$act")/'
+mm M90 t_swverifyset "an unterminated last record line is dropped" 's/ || \[ -n "\$f" \]; do/; do/'
+mm M91 t_swverifyset "the number of completed checks is not required" 's/^  \[ \$n = 2 \]; }$/  true; }/'
+mm M92 t_swsharecterm "the preservation copy is replaced before the capture is verified" 's/^  \{ verify_set "\$d" ".tmp.\$\$" \&\& .*$/  true ||/'
 if [ $fails = 0 ]; then echo "GATE0-RUN: PASS"; exit 0; else echo "GATE0-RUN: FAIL ($fails)"; exit 1; fi

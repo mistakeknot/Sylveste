@@ -190,6 +190,11 @@ Further properties, each with a test and a mutation control in `gate0-run-test.s
   state never skips the timers because its record is unreadable: it stops every configured timer
   instead, reads each back, and says so when one cannot be confirmed stopped. The lane-tip fields are cut
   with a shell expansion, so no command's lost status can leave an empty tip.
+  The same holds for the restored marker's recorded hash, the list of timers written to the freeze intent
+  and the freeze record (a list that fails after its output is not written, and nothing is stopped), and the
+  capture's sha256 record: it is read to its last line even without a final newline, exactly two digests must
+  be checked, and the preservation copy is staged and verified before it replaces the copy already there,
+  so a capture that does not match its record never overwrites a verified backup.
 - A step that acts on a recorded value re-validates it at the point of use: the P1-pre head must be a
   commit sha every time it is read, the marker record must hold a sha256 before it is compared, and a
   restart validates the archive destination and its push URL again itself (server and Clavain) instead of
