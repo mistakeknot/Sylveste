@@ -67,13 +67,15 @@ dg() {  # an entry's kind and digest; a digest that cannot be made is a fresh se
   elif [ -f "$1" ]; then if [ -x "$1" ]; then k=x; else k=f; fi; h=$(dgh < "$1")
   else echo -; return 0; fi
   if [ -n "$h" ]; then printf '%s:%s\n' "$k" "$h"; else echo "dg-failed-$RANDOM-$RANDOM"; fi; }
-files() { (cd "$1" && find . -path ./.git -prune -o \( -type f -o -type l \) -print | sed 's|^\./||' | sort); }
+files() { (set -o pipefail; cd "$1" && find . -path ./.git -prune -o \( -type f -o -type l \) -print | sed 's|^\./||' | sort); }
 dmap() { local p; while IFS= read -r p; do printf '%s\t%s\n' "$(dg "$1/$p")" "$p"; done < "$2"; }
 wr() { mkdir -p "$(dirname "$1")"; printf '%s\n' "$2" > "$1"; }
 g() { git -C "$R" "$@"; }
 ckfp() {  # the checkout as the plan sees it: HEAD, index, status, every file's digest, local branches and tags
-  g symbolic-ref -q HEAD; g rev-parse HEAD; g ls-files -s | sha; g status --porcelain -uall
-  files "$R" > "$B/ck.list"; dmap "$R" "$B/ck.list"
+  local h
+  g symbolic-ref -q HEAD; g rev-parse HEAD; h=$(set -o pipefail; g ls-files -s | dgh) || h="idx-failed-$RANDOM-$RANDOM"; echo "$h"   # a failed read is a fresh sentinel, never an equal one
+  g status --porcelain -uall
+  files "$R" > "$B/ck.list" || echo "files-failed-$RANDOM-$RANDOM"; dmap "$R" "$B/ck.list"
   g for-each-ref --format='%(refname) %(objectname)' refs/heads refs/tags; }
 gate0refs() { g for-each-ref --format='%(refname)' refs/gate0 | sort | tr '\n' ' '; }
 lanerefs() { git --git-dir="$W/lane.git" for-each-ref --format='%(refname) %(objectname)'; }

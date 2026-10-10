@@ -331,6 +331,10 @@ do_freeze() {
   [ -z "$a" ] || stop "processes still have their working directory in the checkout (tell their threads to quiesce): $(echo "$a" | tr '\n' ';')"
   a=$(bd_writers) || stop "cannot read the process table (ps): no bd process can be ruled out"
   [ -z "$a" ] || stop "a bd process is running: $(echo "$a" | tr '\n' ';')"
+  if restarted_any && [ ! -e "$G/freeze-intent" ] && [ -e "$G/marker" ] && [ ! -e "$ROOT/.git-autosync" ]; then   # a new attempt (no earlier freeze of it was begun) whose checkout has no marker: the copy the earlier attempt's restart left is not this attempt's marker; keep its bytes, record "none"
+    w=$(sha < "$G/marker") || stop "cannot hash the earlier attempt's marker copy: the new freeze would record a marker the checkout does not have"
+    mv -f -- "$G/marker" "$G/marker.earlier.$w" && [ ! -e "$G/marker" ] || stop "cannot set the earlier attempt's marker copy aside"
+    say "gate0-run: the checkout has no marker: the copy kept from the earlier attempt is set aside as marker.earlier.$w and this freeze records none"; fi
   prior=; [ ! -f "$G/freeze-intent" ] || prior=$(rec_timers "$G/freeze-intent") || stop "the earlier freeze intent cannot be read: the timers it stopped would not be restarted"
   for u in $TIMERS; do
     if is_active "$u"; then act="$act timer $u"
