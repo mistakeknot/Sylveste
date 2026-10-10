@@ -920,6 +920,15 @@ t_swcheckro() {  # --check never writes: every --check phase, from every state a
     done
   done
   SWRO="${bad:-none}/$ran"; [ "$SWRO" = "none/56" ]; }
+t_swgitenv() {  # git's repository, work tree, index and configuration can come from the environment, and the work tree from core.worktree: none of them may point a git command of the wrapper, or a step it runs, away from the validated checkout (the review's case: GIT_WORK_TREE at another copy while the freeze and the preservation look at GATE0_ROOT)
+  restore fx; local o=$W/other h oh rc1 rc2 ph; SWGE=
+  cp -a "$R" "$o" && git -C "$o" -c user.email=t@example.invalid -c user.name=t commit -q --allow-empty -m other || { echo "  FAIL t_swgitenv: cannot make another copy"; return 1; }
+  h=$(g rev-parse HEAD) && oh=$(git -C "$o" rev-parse HEAD) && [ -n "$h" ] && [ "$h" != "$oh" ] || { echo "  FAIL t_swgitenv: the copy has the checkout's head"; return 1; }
+  GIT_DIR=$o/.git GIT_WORK_TREE=$o GIT_INDEX_FILE=$o/.git/index GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=core.worktree GIT_CONFIG_VALUE_0=$o wg preflight > "$B/out.sw" 2>&1; rc1=$?
+  ph=$(sed -n 's/^base .* head \([0-9a-f]*\) host .*/\1/p' "$J/gate0-run/preflight" 2>/dev/null)
+  restore fx; git -C "$R" config core.worktree "$o"; wg preflight > "$B/out.sw" 2>&1; rc2=$?
+  SWGE="$rc1/$([ "$ph" = "$h" ] && echo head)/$rc2/$(sw_msg 'is not GATE0_ROOT itself')/$([ -e "$J/gate0-run/preflight" ] && echo wrote)/$([ "$(git -C "$o" rev-parse HEAD)" = "$oh" ] && [ -z "$(GIT_OPTIONAL_LOCKS=0 git -C "$o" status --porcelain)" ] && echo other-untouched)"
+  [ "$SWGE" = "0/head/1/1//other-untouched" ]; }
 t_swrefreezegone() {  # a new freeze after a completed restart is a new attempt: a marker the operator removed meanwhile is not recorded from the earlier attempt's copy, so the next restart does not put it back
   local r="" m
   restore r0a; wg restart r0 > "$B/out.sw" 2>&1; r="$?/$([ -e "$J/gate0-run/marker" ] && echo copy)/$([ -e "$R/.git-autosync" ] && echo live);"
@@ -1263,6 +1272,7 @@ sc "an interrupted overlay install's git dir is ignored by the public .gitignore
 sc "a repeated freeze checks the whole invariant" t_swfreezerep
 sc "a new freeze does not record the earlier attempt's marker copy when the checkout has no marker" t_swrefreezegone
 sc "--check never writes, from every freeze and restart state" t_swcheckro
+sc "no git variable and no core.worktree points the wrapper away from the validated checkout" t_swgitenv
 sc "a lane remote with a second push URL is refused" t_swpushurls
 sc "no process substitution feeds a loop in the overlay driver or its hooks" t_swnoprocsub
 sc "restart step 1 checks both entries of the capture's sha256 record, a last line with no newline included" t_swrestcap
@@ -1489,6 +1499,8 @@ mm M127 t_swcheckro "--check preflight records P0" 's/^  if \[ \$CHECKMODE = 1 \
 mm M128 t_swcheckro "--check rollback rolls back" 's/^  if \[ \$CHECKMODE = 1 \]; then say "gate0-run: rollback check/  if false; then say "gate0-run: rollback check/'
 mm M129 t_swcheckro "--check restart restarts" '/^do_restart() {/,/^  \[ -e "\$G\/freeze" \]/ s/^  if \[ \$CHECKMODE = 1 \]; then$/  if false; then/'
 mm M130 t_swcheckro "--check capture captures" '/^do_capture() {/,/P1a is already recorded/ s/^  if \[ \$CHECKMODE = 1 \]; then$/  if false; then/'
+mm M131 t_swgitenv "git's location and configuration variables are inherited" 's/^  GIT_\*) unset "\$_v" ;; esac; done$/  GIT_*) : ;; esac; done/'
+mm M132 t_swgitenv "a work tree other than GATE0_ROOT is accepted" 's/\[ "\$TOP" = "\$ROOT" \] ||/true ||/'
 mm M110 t_swrefreezegone "an interrupted new freeze is taken for a new attempt: its recorded marker is set aside" 's/^  if restarted_any \&\& \[ ! -e "\$G\/freeze-intent" \] \&\& /  if restarted_any \&\& /'
 mm M106 t_swfreezerep "a repeated freeze does not check the whole invariant" 's/^    freeze_holds   # the whole invariant.*$/    :/'
 mm M107 t_swpushurls "only the first push URL is compared" 's/remote get-url --push --all "\$LANE"/remote get-url --push "$LANE"/'

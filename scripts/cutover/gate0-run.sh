@@ -55,6 +55,9 @@
 set -u
 PATH=${GATE0_PATH:-/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin}
 export LC_ALL=C
+for _v in $(compgen -e); do case $_v in   # git takes its repository, work tree, index, object store and extra configuration from the environment: none of it is inherited, so every git command here and every step acts on the validated checkout (the settings that only choose credentials, a terminal prompt or an identity stay)
+  GIT_CONFIG_GLOBAL|GIT_CONFIG_NOSYSTEM|GIT_TERMINAL_PROMPT|GIT_ASKPASS|GIT_SSH|GIT_SSH_COMMAND|GIT_AUTHOR_*|GIT_COMMITTER_*) ;;
+  GIT_*) unset "$_v" ;; esac; done
 export GIT_OPTIONAL_LOCKS=0   # no git command of this script, nor the steps it runs, rewrites the index to refresh stat data
 HERE=$(cd "$(dirname "$0")" && pwd -P); SELF=$HERE/$(basename "$0")
 # the hash tool is chosen by a known answer (the digest of no input), so a present but broken sha256sum falls back
@@ -98,6 +101,7 @@ physpath() {  # PATH : its physical path (symlinks resolved), also when it does 
   case $t/ in */../*|*/./*) return 1 ;; esac
   d=$(cd "$p" 2>/dev/null && pwd -P) || return 1
   [ "$d" != / ] || d=; printf '%s%s\n' "$d" "$t"; }
+TOP=$(git -C "$ROOT" rev-parse --show-toplevel 2>/dev/null) && TOP=$(cd "$TOP" 2>/dev/null && pwd -P) && [ "$TOP" = "$ROOT" ] || { echo "gate0-run: git's work tree for GATE0_ROOT is not GATE0_ROOT itself (core.worktree, a bare repository or a subdirectory): refusing, nothing written" >&2; exit 1; }
 GD=$(git -C "$ROOT" rev-parse --absolute-git-dir 2>/dev/null) && GD=$(cd "$GD" 2>/dev/null && pwd -P) || { echo "gate0-run: GATE0_ROOT has no usable git directory" >&2; exit 1; }
 # a linked worktree keeps its refs, objects and config in the common directory, which is outside both the checkout and its own git directory
 GC=$(git -C "$ROOT" rev-parse --git-common-dir 2>/dev/null) && case $GC in /*) ;; *) GC=$ROOT/$GC ;; esac && GC=$(cd "$GC" 2>/dev/null && pwd -P) || { echo "gate0-run: GATE0_ROOT has no usable common git directory" >&2; exit 1; }
