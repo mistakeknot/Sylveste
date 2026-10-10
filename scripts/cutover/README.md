@@ -86,6 +86,11 @@ Further properties, each with a test and a mutation control in `gate0-run-test.s
   one owned by an account listed in `GATE0_UNINSPECTABLE_UIDS` (space separated, default empty) is
   skipped; readable processes of a listed account are still examined. The `lsof` branch cannot see or
   classify processes that `lsof` does not list; that limit is not closed by this wrapper.
+- The `/proc` listing must show the wrapper's own entry: a directory that can be entered but not listed
+  leaves the glob pattern itself in the loop, which would read as "no agents", so a listing without this
+  process is a STOP (status 2).
+- The wrapper stops before it makes a journal or runs git when it cannot read the id of its own user: a failed
+  or non-numeric `id -u` is not "not root".
 - A freeze that fails part-way has already stopped some timers. The restart set is written to
   `freeze-intent` before the first stop, and a repeated freeze takes the union of that set and the
   timers active now, so a timer stopped by the failed attempt is still restarted later.
@@ -202,6 +207,11 @@ Further properties, each with a test and a mutation control in `gate0-run-test.s
   function checked, and its load is checked, so an inherited function never stands in for it. Single-command
   reads that were compared inside `[ ... ]` (the marker record, the checkpoint, the ahead/behind count, a
   process state) are held in a variable with their status first.
+  The overlay driver and its private pre-commit hook read file lists into a temporary file and check the
+  status of the listing (`install` and the pre-commit hook), and `resolve` holds the conflicted-path list in a
+  variable with its status checked; none feeds a loop from a process substitution, whose status is lost.
+  The test pins this structurally (`t_swnoprocsub`); the install and resolve changes have no behavioural
+  failure-injection test, only that guard.
   A restore of the set-aside marker over other bytes in the checkout keeps those bytes first, and the
   Clavain restart stops when the freeze record cannot be read instead of treating it as one that names no
   marker.
