@@ -893,6 +893,60 @@ t_swpushurls() {  # a lane remote with a second push URL is not the validated de
     GATE0_MACHINE=$m GATE0_SWEEP="$B/bin/sweep" GATE0_DRIFT_REPORT="$B/drift.txt" wg restart r0 > "$B/out.sw" 2>&1; res="$res$?/$(sw_msg 'push URL of lane is not the one just validated')/$(sw_state);"
   done
   SWAW=$res; [ "$SWAW" = "3/1//0/no/no/;3/1//0/no/no/;" ]; }
+t_swrefreezegone() {  # a new freeze after a completed restart is a new attempt: a marker the operator removed meanwhile is not recorded from the earlier attempt's copy, so the next restart does not put it back
+  local r="" m
+  restore r0a; wg restart r0 > "$B/out.sw" 2>&1; r="$?/$([ -e "$J/gate0-run/marker" ] && echo copy)/$([ -e "$R/.git-autosync" ] && echo live);"
+  rm -f -- "$R/.git-autosync"
+  wg freeze >> "$B/out.sw" 2>&1; r="$r$?/$(grep -c '^marker none$' "$J/gate0-run/freeze")/$([ -e "$J/gate0-run/marker" ] && echo copy)/$(ls "$J/gate0-run" | grep -c '^marker\.earlier\.');"
+  wg restart r0 >> "$B/out.sw" 2>&1; r="$r$?/$([ -e "$R/.git-autosync" ] && echo marker)"
+  restore r0a; wg restart r0 >> "$B/out.sw" 2>&1   # an interrupted new freeze (its intent exists, the live marker is already aside) is recovered, not a new attempt: its marker stays the recorded one
+  printf 'timer git-autosync-repair.timer\ntimer git-autosync-promote.timer\n' > "$J/gate0-run/freeze-intent"; rm -f -- "$R/.git-autosync"
+  wg freeze >> "$B/out.sw" 2>&1; r="$r;$?/$(grep -c '^marker none$' "$J/gate0-run/freeze")/$([ -e "$J/gate0-run/marker" ] && echo copy)/$(ls "$J/gate0-run" | grep -c '^marker\.earlier\.')"
+  SWAX=$r; [ "$SWAX" = "0/copy/live;0/1//1;0/;0/0/copy/0" ]; }
+t_swgitidx() {  # the overlay driver's finish-the-recorded-step check reads the index tree and both recorded trees with their status: a read that prints a tree and then fails is a STOP, not a match
+  local gi=${GI:-$HERE/../git-internal} d=$B/gix r="" c rc m
+  rm -rf -- "${d:?}"; mkdir -p "$d"
+  for c in ok wt ot nt; do
+    ( ROOT=$d; GD=$d/gd; INTENT=$d/intent; WT=T0; [ $c = nt ] && WT=T1
+      gi() { case $1 in symbolic-ref) true ;;
+        rev-parse) case $* in *"--verify HEAD") echo OLD ;; *"OLD^{tree}") echo T0; [ $c != ot ] ;; *"NEW^{tree}") echo T1; [ $c != nt ] ;; esac ;;
+        write-tree) echo "$WT"; [ $c != wt ] ;; *) true ;; esac; }
+      changes() { return 1; }
+      eval "$(sed -n '/^forward() {/,/^}/p' "$gi")" || exit 99
+      forward sync OLD NEW 2> "$d/err"; echo "$?" > "$d/rc" )
+    rc=$(cat "$d/rc" 2>/dev/null); m=other; grep -q 'cannot read the index tree' "$d/err" && m=tree; grep -q 'cannot list the changes' "$d/err" && m=changes
+    r="$r$c=$rc/$m;"
+  done
+  SWAY=$r; [ "$SWAY" = "ok=10/changes;wt=10/tree;ot=10/tree;nt=10/tree;" ]; }
+t_swresolve() {  # resolve reads a resolved file for conflict markers with the status of the read: markers refuse, none go on, and a failed read is a STOP that records nothing
+  local gi=${GI:-$HERE/../git-internal} d=$B/gir r="" c rc m
+  rm -rf -- "${d:?}"; mkdir -p "$d/root" "$d/gd"; printf 'a\n' > "$d/root/f.txt"; printf 'H F R origin/main\n' > "$d/state"
+  for c in marked clean unread; do
+    ( ROOT=$d/root; GD=$d/gd; STATE=$d/state; FOLDREF=refs/x
+      if [ $c = marked ]; then printf '<<<<<<< ours\n' > "$ROOT/f.txt"; else printf 'a\n' > "$ROOT/f.txt"; fi
+      gi() { case $1 in rev-parse) case $* in *"-q --verify HEAD") echo H ;; *"--verify refs/x") echo F ;; *"--verify origin/main^{commit}") echo R ;; esac ;;
+        merge-tree) printf 'TREE\nf.txt\n'; return 1 ;; *) true ;; esac; }
+      die() { echo "$*" > "$d/die"; exit "$1"; }; host() { echo h; }; precheck() { :; }; approved() { return 0; }
+      disk_blob() { return 1; }; disk_mode() { echo 100644; }
+      [ $c = unread ] && grep() { return 2; }
+      eval "$(sed -n '/^cmd_resolve() {/,/^}/p' "$gi")" || exit 99
+      cmd_resolve origin/main ) > /dev/null 2>&1; rc=$?
+    m=other; grep -q 'still has conflict markers' "$d/die" 2>/dev/null && m=markers; grep -q 'cannot read f.txt for conflict markers' "$d/die" 2>/dev/null && m=unread; grep -q 'cannot record' "$d/die" 2>/dev/null && m=went-on
+    rm -f -- "$d/die"; r="$r$c=$rc/$m;"
+  done
+  SWAZ=$r; [ "$SWAZ" = "marked=1/markers;clean=6/went-on;unread=6/unread;" ]; }
+t_swsameblob() {  # a blob that a failed hash printed is not the file's blob: same_blob is a mismatch, not a match
+  local gi=${GI:-$HERE/../git-internal} d=$B/gis r="" c rc
+  rm -rf -- "${d:?}"; mkdir -p "$d"; printf 'a\n' > "$d/p"
+  for c in ok failout; do
+    ( ROOT=$d
+      gi() { case $1 in ls-tree) printf '100644 blob SHA\tp\n' ;; *) true ;; esac; }
+      disk_blob() { echo SHA; [ $c = ok ]; }
+      eval "$(sed -n '/^disk_mode() {/,/^}/p;/^same_blob() {/,/^}/p' "$gi")" || exit 99
+      same_blob REV p ); rc=$?
+    r="$r$c=$rc;"
+  done
+  SWBA=$r; [ "$SWBA" = "ok=0;failout=1;" ]; }
 t_swcapnames() {  # the names of the capture's sha256 record are read with the status of the read: a read that prints both names and then fails is not a match
   local PD=$W/pres/mA-$O
   restore fx; stepto preflight freeze capture || return 1
@@ -1095,8 +1149,12 @@ sc "a user id that cannot be read stops the wrapper before it does anything" t_s
 sc "a /proc listing that cannot be read is not an empty process table" t_swprocenum
 sc "the private pre-commit hook refuses when the staged-path listing fails" t_swprecommit
 sc "the overlay driver refuses when the unmerged-entry list or the remote-ref list cannot be read" t_swgi
+sc "the overlay driver's finish-the-step check refuses an index tree or recorded tree that is printed and then fails to read" t_swgitidx
+sc "resolve refuses a resolved file whose conflict-marker read fails" t_swresolve
+sc "same_blob does not match a blob that a failed hash printed" t_swsameblob
 sc "an interrupted overlay install's git dir is ignored by the public .gitignore" t_swignore
 sc "a repeated freeze checks the whole invariant" t_swfreezerep
+sc "a new freeze does not record the earlier attempt's marker copy when the checkout has no marker" t_swrefreezegone
 sc "a lane remote with a second push URL is refused" t_swpushurls
 sc "no process substitution feeds a loop in the overlay driver or its hooks" t_swnoprocsub
 sc "restart step 1 checks both entries of the capture's sha256 record, a last line with no newline included" t_swrestcap
@@ -1291,6 +1349,18 @@ for n in M104:'s/^  u=\$(gi ls-files -u) || die 4 "[^"]*".*$/  u=$(gi ls-files -
   if cmp -s "$HERE/../git-internal" "$B/mut/${n%%:*}-gi"; then echo "  FAIL mutation ${n%%:*} changed nothing"; fails=$((fails+1))
   else GI=$B/mut/${n%%:*}-gi; t_swgi; r=$?; GI=; check "${n%%:*} (a failed driver read is taken as an empty one) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; fi
 done
+mgi() {  # NAME TEST DESC SED : the same test against the overlay driver with the fix taken out must fail
+  local n=$1 t=$2 d=$3 e=$4 r
+  sed "$e" "$HERE/../git-internal" > "$B/mut/$n-gi" 2>/dev/null
+  if cmp -s "$HERE/../git-internal" "$B/mut/$n-gi"; then echo "  FAIL mutation $n changed nothing"; fails=$((fails+1))
+  else GI=$B/mut/$n-gi; $t; r=$?; GI=; check "$n ($d) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; fi
+}
+mgi M111 t_swgitidx "a write-tree that prints and fails is taken as the index tree" 's/t=\$(gi write-tree 2>\/dev\/null) \&\& ot=/t=$(gi write-tree 2>\/dev\/null); ot=/'
+mgi M112 t_swgitidx "the recorded trees are read without their status" 's/ \&\& ot=\$(gi rev-parse/; ot=$(gi rev-parse/;s/ \&\& nt=\$(gi rev-parse/; nt=$(gi rev-parse/'
+mgi M113 t_swresolve "a failed conflict-marker read is taken as no markers" 's/^      \[ \$rc = 1 \] || { rm -f -- "\${idx:?}"; die 6 "resolve: cannot read.*$/      :/'
+mgi M114 t_swsameblob "the hash status is not held" 's/dm=\$(disk_mode "\$2") \&\& db=\$(disk_blob "\$2") || return 1/dm=$(disk_mode "$2"); db=$(disk_blob "$2")/'
+mm M109 t_swrefreezegone "a new freeze records the earlier attempt's marker copy although the checkout has no marker" '/^  if restarted_any \&\& \[ ! -e "\$G\/freeze-intent" \]/,/^    say "gate0-run: the checkout has no marker: the copy kept/d'
+mm M110 t_swrefreezegone "an interrupted new freeze is taken for a new attempt: its recorded marker is set aside" 's/^  if restarted_any \&\& \[ ! -e "\$G\/freeze-intent" \] \&\& /  if restarted_any \&\& /'
 mm M106 t_swfreezerep "a repeated freeze does not check the whole invariant" 's/^    freeze_holds   # the whole invariant.*$/    :/'
 mm M107 t_swpushurls "only the first push URL is compared" 's/remote get-url --push --all "\$LANE"/remote get-url --push "$LANE"/'
 sed '/^\/\.git-internal\.new\/$/d' "$HERE/../../.gitignore" > "$B/mut/M108-ign" 2>/dev/null

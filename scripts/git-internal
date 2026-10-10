@@ -224,11 +224,12 @@ disk_blob() {  # path [-w] : the blob id git records for the path on disk. A sym
   else gi hash-object -- "$ROOT/$1"; fi
 }
 same_blob() {  # rev path : 0 if the path on disk already has that entry's blob AND mode
-  local e mode sha
+  local e mode sha dm db
   { [ -L "$ROOT/$2" ] || [ -f "$ROOT/$2" ]; } || return 1
   e=$(gi ls-tree "$1" -- "$2") && [ -n "$e" ] || return 1
   mode=${e%% *}; sha=${e#* }; sha=${sha#* }; sha=${sha%%	*}
-  [ "$(disk_mode "$2")" = "$mode" ] && [ "$(disk_blob "$2")" = "$sha" ]
+  dm=$(disk_mode "$2") && db=$(disk_blob "$2") || return 1   # a blob printed by a failed hash is not the file's blob
+  [ "$dm" = "$mode" ] && [ "$db" = "$sha" ]
 }
 
 changes() {  # old new : fills the caller's A, M and D; 1 if git diff fails (never an empty list)
@@ -262,10 +263,10 @@ apply() {  # step old new
   for p in ${A[@]+"${A[@]}"}; do
     if same_blob "$new" "$p"; then continue; fi
     if [ -e "$ROOT/$p" ] || [ -L "$ROOT/$p" ]; then hit+=("$p"); continue; fi
-    d=$(dirname "$p")
+    d=$(dirname "$p") || { echo "git-internal: cannot check the leading directories of $p. Nothing written." >&2; return 4; }
     while [ "$d" != . ]; do
       if [ -L "$ROOT/$d" ] || { [ -e "$ROOT/$d" ] && [ ! -d "$ROOT/$d" ]; }; then hit+=("$p"); break; fi
-      d=$(dirname "$d")
+      d=$(dirname "$d") || { echo "git-internal: cannot check the leading directories of $p. Nothing written." >&2; return 4; }
     done
   done
   if [ ${#hit[@]} -gt 0 ]; then
@@ -290,14 +291,15 @@ apply() {  # step old new
 # the importer over ORIG_HEAD..HEAD, which must be idempotent. The intent is
 # removed last. Every git write here is checked: a failure is a STOP (10).
 forward() {  # step old new
-  local step=$1 old=$2 new=$3 h t p idx
+  local step=$1 old=$2 new=$3 h t ot nt p idx
   local -a A=() M=() D=() bad=()
   gi symbolic-ref -q HEAD >/dev/null || { echo "git-internal: HEAD is detached; the recorded $step $old..$new is not finished" >&2; return 10; }
   h=$(gi rev-parse -q --verify HEAD) || { echo "git-internal: cannot read HEAD; the recorded $step $old..$new is not finished" >&2; return 10; }
   if [ "$h" != "$new" ]; then
     [ "$h" = "$old" ] || { echo "git-internal: HEAD is $h, neither the recorded old ($old) nor new ($new); inspect, then remove $INTENT by hand" >&2; return 10; }
-    t=$(gi write-tree 2>/dev/null)
-    [ -n "$t" ] && { [ "$t" = "$(gi rev-parse "$old^{tree}")" ] || [ "$t" = "$(gi rev-parse "$new^{tree}")" ]; } ||
+    t=$(gi write-tree 2>/dev/null) && ot=$(gi rev-parse "$old^{tree}") && nt=$(gi rev-parse "$new^{tree}") && [ -n "$t" ] && [ -n "$ot" ] && [ -n "$nt" ] ||
+      { echo "git-internal: cannot read the index tree or the recorded trees; the recorded $step $old..$new is not finished" >&2; return 10; }
+    { [ "$t" = "$ot" ] || [ "$t" = "$nt" ]; } ||
       { echo "git-internal: the index holds neither the old nor the new tree; the recorded $step $old..$new is not finished" >&2; return 10; }
     changes "$old" "$new" || { echo "git-internal: cannot list the changes $old..$new; the recorded $step is not finished" >&2; return 10; }
     for p in ${A[@]+"${A[@]}"}; do { [ ! -e "$ROOT/$p" ] && [ ! -L "$ROOT/$p" ]; } || same_blob "$new" "$p" || bad+=("$p"); done
@@ -439,7 +441,7 @@ cmd_resolve() {
   read -r head fold rsha rname < "$STATE" || die 1 "resolve: unreadable $STATE"
   old=$(gi rev-parse -q --verify HEAD) || die 6 "resolve: cannot read HEAD"
   [ "$old" = "$head" ] || die 4 "resolve: HEAD moved since the conflict was recorded; run sync again"
-  [ "$(gi rev-parse -q --verify "$FOLDREF")" = "$fold" ] || die 4 "resolve: the recorded fold is missing; run sync again"
+  [ -n "$fold" ] && [ "$(gi rev-parse -q --verify "$FOLDREF")" = "$fold" ] || die 4 "resolve: the recorded fold is missing; run sync again"
   ref=$(gi rev-parse -q --verify "$1^{commit}") || die 1 "resolve: unknown ref $1"
   [ "$ref" = "$rsha" ] || die 1 "resolve: the recorded conflict is with $rname ($rsha), not $1"
   out=$(gi merge-tree --write-tree --name-only "$fold" "$ref"); rc=$?
@@ -455,7 +457,9 @@ cmd_resolve() {
       blob=$(disk_blob "$p" -w) || { rm -f -- "${idx:?}"; die 6 "resolve: cannot record the link $p"; }
       GIT_INDEX_FILE=$idx gi update-index --add --cacheinfo "120000,$blob,$p" || { rm -f -- "${idx:?}"; die 6 "resolve: cannot stage $p"; }
     elif [ -f "$ROOT/$p" ]; then
-      grep -qE '^(<<<<<<<|>>>>>>>) ' "$ROOT/$p" && { rm -f -- "${idx:?}"; die 1 "resolve: $p still has conflict markers"; }
+      grep -qE '^(<<<<<<<|>>>>>>>) ' "$ROOT/$p"; rc=$?   # 0 markers, 1 none; anything else is a failed read
+      [ $rc != 0 ] || { rm -f -- "${idx:?}"; die 1 "resolve: $p still has conflict markers"; }
+      [ $rc = 1 ] || { rm -f -- "${idx:?}"; die 6 "resolve: cannot read $p for conflict markers"; }
       mode=$(disk_mode "$p")
       blob=$(disk_blob "$p" -w) || { rm -f -- "${idx:?}"; die 6 "resolve: cannot record $p"; }
       GIT_INDEX_FILE=$idx gi update-index --add --cacheinfo "$mode,$blob,$p" || { rm -f -- "${idx:?}"; die 6 "resolve: cannot stage $p"; }
@@ -485,8 +489,7 @@ cmd_probe() {
   [ "$(g config --get core.worktree)" = .. ] || bad "core.worktree is not .."
   [ -s "$GD/info/hooks.sha256" ] || bad "no info/hooks.sha256"
   while read -r want f; do
-    line=$(cd "$GD/hooks" && sha256 "$f" 2>/dev/null)
-    [ "${line%% *}" = "$want" ] || bad "installed hook $f differs from info/hooks.sha256"
+    line=$(cd "$GD/hooks" && sha256 "$f" 2>/dev/null) && [ "${line%% *}" = "$want" ] || bad "installed hook $f differs from info/hooks.sha256"
   done < "$GD/info/hooks.sha256"
   p=$(g commit-tree "HEAD^{tree}" -p HEAD -m "git-internal probe (never pushed)") || bad "cannot build the probe commit"
   err=$(g push --dry-run origin "$p:refs/heads/main" 2>&1) && bad "dry-run push of a new commit to main was NOT refused"

@@ -235,3 +235,13 @@ Further properties, each with a test and a mutation control in `gate0-run-test.s
   non-hex sentinel each time, so two failures never compare equal and a digest check cannot pass on them.
 
 The wrapper's own sha256 changes with any edit. A handoff cites the digest of the final bytes.
+- A new `freeze` after a completed restart is a new attempt: if the checkout has no marker, the marker copy kept
+  from the earlier attempt is set aside as `marker.earlier.<sha256>` and the new freeze records `marker none`,
+  so a later restart does not put back a marker the operator removed. An interrupted new freeze (its intent file
+  exists) is recovered, not treated as a new attempt (`t_swrefreezegone`).
+- The overlay driver's `forward` (finish a recorded step) reads the index tree and both recorded trees with
+  their status before comparing, `resolve` takes `grep`'s status explicitly (0 markers, 1 none, anything else
+  stops with nothing recorded), `same_blob` holds the hash with its status, and the leading-directory walk and
+  the hook-digest probe check their reads (`t_swgitidx`, `t_swresolve`, `t_swsameblob`, with controls). The
+  harness's checkout fingerprint in `p1a-flush-test.sh` records a failed index digest or file listing as a fresh
+  sentinel.
