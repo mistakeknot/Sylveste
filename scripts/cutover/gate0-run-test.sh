@@ -275,7 +275,8 @@ snap fx
 PATHS="$B/stub:/usr/local/bin:/usr/bin:/bin"
 hostuids() {  # every account that owns a process on this host: the host may run processes whose working directory this account cannot read
   # (a same-account tailscale ssh child is one), and the fixture must not depend on them. Only unreadable processes are exempted; readable ones are still examined
-  stat -c %u /proc/[0-9]* 2>/dev/null | sort -u | tr '\n' ' '; }
+  # Every account in the passwd database is listed too: a process of one (the sshd privilege-separation child of an inbound connection is one) can appear between this listing and the wrapper's own scan
+  { stat -c %u /proc/[0-9]* 2>/dev/null; getent passwd 2>/dev/null | cut -d: -f3; } | sort -u | tr '\n' ' '; }
 wg() {  # run the wrapper under test (WG, default $GW) with the fixture's stubs
   env GATE0_UNINSPECTABLE_UIDS="$(hostuids)" GATE0_ROOT="$R" GATE0_STATE_DIR="${T_STATE:-$W/state}" GATE0_JOURNAL="${T_JOURNAL:-$J}" GATE0_PRESERVE_DIR="${T_PRES:-$W/pres}" GATE0_NO_REEXEC=1 \
     GATE0_PATH="$PATHS" GATE0_BD="$B/bin/bd" GATE0_OPERATOR_HOME="$HOME" AUTOSYNC_LANE_LIB="$B/lib/autosync-lane.sh" \
