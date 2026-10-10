@@ -58,8 +58,14 @@ export GIT_AUTHOR_DATE='2026-10-01T00:00:00Z' GIT_COMMITTER_DATE='2026-10-01T00:
 W=$B/w; R=$W/root/Sylveste; J=$W/J; SS=$B/stub-state
 
 link_text() { local t; t=$(readlink -- "$1" && printf x) || return 1; t=${t%x}; printf '%s' "${t%?}"; }
-dg() { if [ -L "$1" ]; then printf 'l:%s\n' "$(link_text "$1" | sha)"; elif [ -d "$1" ]; then echo d
-  elif [ -f "$1" ] && [ -x "$1" ]; then printf 'x:%s\n' "$(sha < "$1")"; elif [ -f "$1" ]; then printf 'f:%s\n' "$(sha < "$1")"; else echo -; fi; }
+dgh() { local h; h=$(set -o pipefail; sha) && [[ $h =~ ^[0-9a-f]{64}$ ]] && printf '%s' "$h"; }   # stdin's digest; a hash that fails prints nothing and fails
+dg() {  # an entry's kind and digest; a digest that cannot be made is a fresh sentinel, so two failed observations are never equal
+  local h k
+  if [ -L "$1" ]; then k=l; h=$(set -o pipefail; link_text "$1" | dgh)
+  elif [ -d "$1" ]; then echo d; return 0
+  elif [ -f "$1" ]; then if [ -x "$1" ]; then k=x; else k=f; fi; h=$(dgh < "$1")
+  else echo -; return 0; fi
+  if [ -n "$h" ]; then printf '%s:%s\n' "$k" "$h"; else echo "dg-failed-$RANDOM-$RANDOM"; fi; }
 files() { (cd "$1" && find . -path ./.git -prune -o \( -type f -o -type l \) -print | sed 's|^\./||' | sort); }
 dmap() { local p; while IFS= read -r p; do printf '%s\t%s\n' "$(dg "$1/$p")" "$p"; done < "$2"; }
 wr() { mkdir -p "$(dirname "$1")"; printf '%s\n' "$2" > "$1"; }

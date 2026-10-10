@@ -141,7 +141,7 @@ cmd_install_hooks() {
 # info/installed marks the end.
 cmd_install() {
   [ $# = 2 ] || die 1 "usage: install URL HOST"
-  local fin=$GD p
+  local fin=$GD p lst
   local -a present=() todo=()
   if [ -e "$GD" ]; then
     [ ! -e "$GD/info/installed" ] || die 4 "install: $GD is already installed"
@@ -164,10 +164,13 @@ cmd_install() {
     mv "$GD" "$fin" && fsync_path "$ROOT" || die 6 "install: cannot move $GD into place"
     GD=$fin; crash_point install-renamed
   fi
+  lst=$GD/install-list.$$   # the listing is held in a file: a failed ls-files must not read as "nothing to install"
+  gi ls-files -z > "$lst" || { rm -f -- "${lst:?}"; die 6 "install: cannot list the lane's files"; }
   while IFS= read -r -d '' p; do
     same_blob HEAD "$p" && continue       # written by an earlier run, or already identical
     if [ -e "$ROOT/$p" ] || [ -L "$ROOT/$p" ]; then present+=("$p"); else todo+=("$p"); fi
-  done < <(gi ls-files -z)
+  done < "$lst"
+  rm -f -- "${lst:?}"
   [ ${#present[@]} = 0 ] || { printf 'git-internal: install: exists, not overwritten: %s\n' ${present[@]+"${present[@]}"} >&2; exit 5; }
   for p in ${todo[@]+"${todo[@]}"}; do
     gi checkout-index -- "$p" || die 5 "install: checkout-index refused $p (it appeared since the check)"   # no -f: absent only
@@ -428,7 +431,7 @@ cmd_sync() {
 # refs and install the whole result through apply
 cmd_resolve() {
   [ $# = 1 ] || die 1 "usage: resolve REF"
-  local head fold rsha rname old ref out rc tree p mode blob cur idx
+  local head fold rsha rname old ref out rc tree p mode blob cur idx plist
   host >/dev/null; precheck
   [ -f "$STATE" ] || die 1 "resolve: no conflicted sync is recorded; run sync"
   read -r head fold rsha rname < "$STATE" || die 1 "resolve: unreadable $STATE"
@@ -441,6 +444,7 @@ cmd_resolve() {
   [ $rc = 1 ] || die 1 "resolve: $rname does not conflict with the recorded fold; run sync"
   tree=${out%%$'\n'*}
   idx="$GD/resolve-index.$$"
+  plist=$(printf '%s\n' "$out" | sed -n '2,/^$/p') || die 6 "resolve: cannot read the conflicted path list"
   GIT_INDEX_FILE=$idx gi read-tree "$tree" || die 6 "resolve: read-tree failed"
   while IFS= read -r p; do
     [ -n "$p" ] || continue
@@ -456,7 +460,7 @@ cmd_resolve() {
     else
       GIT_INDEX_FILE=$idx gi update-index --force-remove -- "$p" || { rm -f -- "${idx:?}"; die 6 "resolve: cannot remove $p"; }
     fi
-  done < <(printf '%s\n' "$out" | sed -n '2,/^$/p')
+  done <<< "$plist"
   tree=$(GIT_INDEX_FILE=$idx gi write-tree) || { rm -f -- "${idx:?}"; die 6 "resolve: write-tree failed"; }
   rm -f -- "${idx:?}"
   cur=$(gi commit-tree "$tree" -p "$fold" -p "$ref" -m "git-internal resolve: merge $rname") || die 6 "commit-tree failed"

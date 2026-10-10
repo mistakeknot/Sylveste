@@ -53,8 +53,14 @@ export GIT_AUTHOR_DATE='2026-10-01T00:00:00Z' GIT_COMMITTER_DATE='2026-10-01T00:
 W=$B/w; R=$W/root/Sylveste; J=$W/J; ST=$W/st
 
 link_text() { local t; t=$(readlink -- "$1" && printf x) || return 1; t=${t%x}; printf '%s' "${t%?}"; }
-dg() { if [ -L "$1" ]; then printf 'l:%s\n' "$(link_text "$1" | sha)"; elif [ -d "$1" ]; then echo d
-  elif [ -f "$1" ] && [ -x "$1" ]; then printf 'x:%s\n' "$(sha < "$1")"; elif [ -f "$1" ]; then printf 'f:%s\n' "$(sha < "$1")"; else echo -; fi; }
+dgh() { local h; h=$(set -o pipefail; sha) && [[ $h =~ ^[0-9a-f]{64}$ ]] && printf '%s' "$h"; }   # stdin's digest; a hash that fails prints nothing and fails
+dg() {  # an entry's kind and digest; a digest that cannot be made is a fresh sentinel, so two failed observations are never equal
+  local h k
+  if [ -L "$1" ]; then k=l; h=$(set -o pipefail; link_text "$1" | dgh)
+  elif [ -d "$1" ]; then echo d; return 0
+  elif [ -f "$1" ]; then if [ -x "$1" ]; then k=x; else k=f; fi; h=$(dgh < "$1")
+  else echo -; return 0; fi
+  if [ -n "$h" ]; then printf '%s:%s\n' "$k" "$h"; else echo "dg-failed-$RANDOM-$RANDOM"; fi; }
 files() { (cd "$1" && set -o pipefail && find . -path ./.git -prune -o \( -type f -o -type l \) -print | sed 's|^\./||' | sort); }
 dmap() { local p; while IFS= read -r p; do printf '%s\t%s\n' "$(dg "$1/$p")" "$p"; done < "$2"; }
 wr() { mkdir -p "$(dirname "$1")"; printf '%s\n' "$2" > "$1"; }
@@ -206,13 +212,21 @@ cat > "$B/stub/cut" <<EOF
 if [ -e "$ST/cutfail" ]; then case " \$* " in *"\$(cat "$ST/cutfail")"*) $REALCUT "\$@"; echo "cut: injected failure after output (stub)" >&2; exit 1 ;; esac; fi
 exec $REALCUT "\$@"
 EOF
+# id -u : prints nothing and fails (none), prints the id and then fails (after), or prints a word (word), while $ST/idfail holds that mode
+REALID=$(command -v id)
+cat > "$B/stub/id" <<EOF
+#!/bin/bash
+if [ -e "$ST/idfail" ] && [ "\$*" = -u ]; then case "\$(cat "$ST/idfail")" in
+  after) $REALID -u; exit 1 ;; word) echo root; exit 0 ;; *) exit 1 ;; esac; fi
+exec $REALID "\$@"
+EOF
 # systemctl --user is-active UNIT : prints the word in $ST/sysctl-out and exits $ST/sysctl-rc (stop and start do nothing)
 cat > "$B/stub/systemctl" <<EOF
 #!/bin/bash
 case "\$*" in *is-active*) cat "$ST/sysctl-out" 2>/dev/null; exit \$(cat "$ST/sysctl-rc" 2>/dev/null || echo 4) ;; esac
 exit 0
 EOF
-chmod +x "$B/stub/cut" "$B/stub/grep" "$B/stub/sed" "$B/stub/awk" "$B/stub/systemctl" "$B/stub/sha256sum" "$B/stub/git" "$B/stub/sync" "$B/stub/python3" "$B/bin/sweep" "$B/stub/lsof" "$B/stub/ps" "$B/bin/ctl" "$B/stub/journalctl" "$B/bin/pred" "$B/bin/tell"
+chmod +x "$B/stub/id" "$B/stub/cut" "$B/stub/grep" "$B/stub/sed" "$B/stub/awk" "$B/stub/systemctl" "$B/stub/sha256sum" "$B/stub/git" "$B/stub/sync" "$B/stub/python3" "$B/bin/sweep" "$B/stub/lsof" "$B/stub/ps" "$B/bin/ctl" "$B/stub/journalctl" "$B/bin/pred" "$B/bin/tell"
 rec() { printf '{"_type":"issue","id":"%s","title":"%s","status":"open","priority":2,"issue_type":"task","created_at":"%s","updated_at":"%s"}\n' "$1" "$2" "$3" "$3"; }
 rec fx-one one 2026-10-01T00:00:01Z > "$B/one.jsonl"
 { rec fx-two two 2026-10-01T00:00:02Z; cat "$B/one.jsonl"; } > "$B/trk.jsonl"
@@ -799,12 +813,46 @@ t_swclavmark() {  # a freeze record that cannot be read is not a record that nam
   GATE0_MACHINE=clavain GATE0_SWEEP="$B/bin/sweep" GATE0_DRIFT_REPORT="$B/drift.txt" wg restart r0 > "$B/out.sw" 2>&1; SWAK="$?/$(sw_msg 'whether a marker was set aside cannot be told')/$(sw_state)"; chmod 644 "$J/gate0-run/freeze"
   [ "$SWAK" = "3/1//0/no/no/" ]; }
 t_swobserver() {  # the test's own before/after observers fail closed: two failed observations are never "nothing changed", a listing that fails after its output included
-  local a b c d e f g2 h
+  local a b c d e f g2 h i j
   restore fx
   a=$(R=$B/nowhere ckfp 2>/dev/null); b=$(R=$B/nowhere ckfp 2>/dev/null); c=$(J=$B/nowhere jfp 2>/dev/null); d=$(J=$B/nowhere jfp 2>/dev/null); e=$(W=$B/nowhere lanerefs 2>/dev/null); f=$(W=$B/nowhere lanerefs 2>/dev/null)
   g2=$(find() { command find "$@"; return 1; }; jfp 2>/dev/null); h=$(find() { command find "$@"; return 1; }; jfp 2>/dev/null)
-  SWAL="$([ "$a" != "$b" ] && echo differ)/$([ "$c" != "$d" ] && echo differ)/$([ "$e" != "$f" ] && echo differ)/$([ "$(ckfp)" = "$(ckfp)" ] && echo same)/$([ "$(jfp)" = "$(jfp)" ] && echo same)/$([ "$g2" != "$h" ] && echo differ)"
-  [ "$SWAL" = "differ/differ/differ/same/same/differ" ]; }
+  wr "$B/dgfile" content; printf '%s' "$B/dgfile" > "$ST/fail-sha"; i=$(dg "$B/dgfile" 2>/dev/null); j=$(dg "$B/dgfile" 2>/dev/null); rm -f "$ST/fail-sha"   # a digest that fails: a fresh sentinel each time
+  SWAL="$([ "$a" != "$b" ] && echo differ)/$([ "$c" != "$d" ] && echo differ)/$([ "$e" != "$f" ] && echo differ)/$([ "$(ckfp)" = "$(ckfp)" ] && echo same)/$([ "$(jfp)" = "$(jfp)" ] && echo same)/$([ "$g2" != "$h" ] && echo differ)/$([ "$i" != "$j" ] && echo differ)/$([ "$(dg "$B/dgfile")" = "$(dg "$B/dgfile")" ] && echo same)"
+  [ "$SWAL" = "differ/differ/differ/same/same/differ/differ/same" ]; }
+t_swidfail() {  # a user id that cannot be read is not "not root": the wrapper stops before it makes a journal or runs git
+  local m r=""
+  for m in none after word; do
+    restore fx; printf '%s' "$m" > "$ST/idfail"
+    wg preflight > "$B/out.sw" 2>&1; r="$r$?/$(sw_msg 'cannot establish the user id')/$([ -e "$J/gate0-run" ] && echo journal);"
+    rm -f "$ST/idfail"
+  done
+  SWAP=$r; [ "$SWAP" = "1/1/;1/1/;1/1/;" ]; }
+t_swprocenum() {  # a /proc directory that can be entered but not listed leaves the glob pattern in the loop: that is not "no agents"
+  local pf=$B/pf2 h=$B/procfix2.sh o
+  [ "$(id -u)" != 0 ] || return 0   # root lists any directory: the case cannot be built
+  { echo 'ROOT=$1; LOG=$2; mkdir -p "$GATE0_PROCFS/$$"; ln -sfn / "$GATE0_PROCFS/$$/cwd"; chmod 111 "$GATE0_PROCFS"'
+    sed -n '/^under_self() {/,/^bd_writers() {/{/^bd_writers() {/!p;}' "${WG:-$GW}"; echo 'agents_in_root; echo "rc=$?"; chmod 755 "$GATE0_PROCFS"'; } > "$h"
+  chmod 755 "$pf" 2>/dev/null; rm -rf -- "${pf:?}"; mkdir -p "$pf/self"; rm -f -- "$B/unr.log"
+  o=$(env GATE0_PROCFS="$pf" GATE0_UNINSPECTABLE_UIDS="" bash "$h" "$R" "$B/unr.log" 2>&1)
+  chmod 755 "$pf" 2>/dev/null; SWAQ=$(printf '%s\n' "$o" | sed -n 's/^rc=//p'); [ "$SWAQ" = 2 ]; }
+t_swprecommit() {  # the private pre-commit hook reads the staged-path listing with its status: a listing that fails, after an approved path or none, is a refusal
+  local hook=${HOOK:-$HERE/../git-internal-hooks/pre-commit} d=$B/pc m p rest rc want got="" exp=""
+  rm -rf -- "${d:?}"; mkdir -p "$d/stub" "$d/gd/info"; printf '# approved\nok/a\ndir/\n' > "$d/gd/info/approved-paths"
+  cat > "$d/stub/git" <<EOF
+#!/bin/bash
+case "\$1" in rev-parse) echo "$d/gd" ;; diff) cat "$d/staged" 2>/dev/null; exit \$(cat "$d/rc" 2>/dev/null || echo 0) ;; *) exit 2 ;; esac
+EOF
+  chmod +x "$d/stub/git"
+  for m in "ok/a|0|0" "bad|0|1" "ok/a|128|1" "|128|1" "dir/x|0|0"; do   # path|status of the listing|expected hook status
+    p=${m%%|*}; rest=${m#*|}; rc=${rest%%|*}; want=${rest#*|}
+    if [ -n "$p" ]; then printf '%s\0' "$p" > "$d/staged"; else : > "$d/staged"; fi; printf '%s' "$rc" > "$d/rc"
+    PATH="$d/stub:$PATH" bash "$hook" > /dev/null 2>&1; got="$got$? "; exp="$exp$want "
+  done
+  SWAR=$got; [ "$got" = "$exp" ] && [ "$exp" = "0 1 1 1 0 " ]; }
+t_swnoprocsub() {  # the overlay driver and its hook templates feed no loop through a process substitution, whose status is lost
+  SWAS=$(cd "$HERE/.." && grep -c 'done < <(' git-internal git-internal-hooks/pre-commit git-internal-hooks/pre-push | tr '\n' ' ')
+  [ "$SWAS" = "git-internal:0 git-internal-hooks/pre-commit:0 git-internal-hooks/pre-push:0 " ]; }
 t_swcapnames() {  # the names of the capture's sha256 record are read with the status of the read: a read that prints both names and then fails is not a match
   local PD=$W/pres/mA-$O
   restore fx; stepto preflight freeze capture || return 1
@@ -1003,6 +1051,10 @@ sc "a sha256 record with no final newline is verified in full and a bad capture 
 sc "a freeze record that cannot be read does not take the no-marker path of a Clavain restart" t_swclavmark
 sc "the test's before and after observers fail closed" t_swobserver
 sc "the capture's sha256 names read with a failing status are a STOP" t_swcapnames
+sc "a user id that cannot be read stops the wrapper before it does anything" t_swidfail
+sc "a /proc listing that cannot be read is not an empty process table" t_swprocenum
+sc "the private pre-commit hook refuses when the staged-path listing fails" t_swprecommit
+sc "no process substitution feeds a loop in the overlay driver or its hooks" t_swnoprocsub
 sc "restart step 1 checks both entries of the capture's sha256 record, a last line with no newline included" t_swrestcap
 sc "the jsonl_dominated extraction and load are status-checked and an inherited function is not accepted" t_swreconeval
 
@@ -1183,9 +1235,14 @@ mm M92 t_swsharecterm "the preservation copy is replaced before the capture is v
 mm M93 t_swrestover "the restore replaces other marker bytes without keeping them" 's/^  if \[ -f "\$G\/marker" \] \&\& \[ -e "\$ROOT\/.git-autosync" \].*$/  :/'
 mm M94 t_swclavmark "the freeze record's marker line is read with its status ignored" 's/^  mrec=\$(rec_marker) || stop "[^"]*"[^\n]*$/  mrec=$(rec_marker)/'
 mm M95 t_swcapnames "the names read loses its pipefail" 's/n=\$(set -o pipefail; cut -f1/n=$(cut -f1/'
-mm M96 t_swcapnames "preserve_copy ignores the status of the names read" 's/^  n=\$(capture_names) || stop "[^"]*"/  n=$(capture_names)/'
+mm M96 t_swcapnames "the status check on the names read is removed; the name comparison after it still refuses, so this pins the dedicated diagnostic (defense in depth)" 's/^  n=\$(capture_names) || stop "[^"]*"/  n=$(capture_names)/'
 mm M97 t_swrestcap "restart does not check the capture itself" 's/^    capture_check || stop "restart step 1: [^"]*"/    :/'
 mm M98 t_swrestcap "the capture check ignores the digests" 's/ \&\& verify_set "\$J\/capture"; }$/; }/'
 mm M99 t_swreconeval "the extraction status and whole-function check are removed" 's/^  def=\$(sed -n \(.*\) "\$CS") \&\& \[\[ .* \]\] || stop "[^"]*"/  def=$(sed -n \1 "$CS")/'
 mm M100 t_swreconeval "the load status is ignored" 's/^  eval "\$def" || stop "[^"]*"/  eval "$def"/'
+mm M101 t_swidfail "a user id that cannot be read is taken as not root" 's/^MYUID=\$(id -u 2>\/dev\/null) .*$/MYUID=$(id -u 2>\/dev\/null)/'
+mm M102 t_swprocenum "the /proc listing is not required to show this script" 's/^    \[ -n "\$me" \] || return 2 .*$/    :/'
+if sed 's/ || { echo "private pre-commit: cannot list the staged paths" >&2; exit 1; }//' "$HERE/../git-internal-hooks/pre-commit" > "$B/mut/M103-hook" && ! cmp -s "$HERE/../git-internal-hooks/pre-commit" "$B/mut/M103-hook"; then
+  HOOK=$B/mut/M103-hook; t_swprecommit; r=$?; HOOK=; check "M103 (the hook ignores the status of the staged-path listing) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught
+else echo "  FAIL mutation M103 changed nothing"; fails=$((fails+1)); fi
 if [ $fails = 0 ]; then echo "GATE0-RUN: PASS"; exit 0; else echo "GATE0-RUN: FAIL ($fails)"; exit 1; fi

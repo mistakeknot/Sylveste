@@ -85,7 +85,8 @@ esac
 ROOT_IN=${GATE0_ROOT:-}; SD=${GATE0_STATE_DIR:-}
 [ -n "$ROOT_IN" ] && [ -n "$SD" ] || { echo "gate0-run: set GATE0_ROOT and GATE0_STATE_DIR" >&2; exit 1; }
 ROOT=$(cd "$ROOT_IN" 2>/dev/null && pwd -P) && [ -e "$ROOT/.git" ] || { echo "gate0-run: GATE0_ROOT is not a git checkout" >&2; exit 1; }
-if [ "$(id -u)" = 0 ] && [ -z "${GATE0_NO_REEXEC:-}" ]; then   # git runs as the checkout's owner, never as root
+MYUID=$(id -u 2>/dev/null) && case $MYUID in ''|*[!0-9]*) false ;; esac || { echo "gate0-run: cannot establish the user id of this process" >&2; exit 1; }   # a failed read is not "not root"
+if [ "$MYUID" = 0 ] && [ -z "${GATE0_NO_REEXEC:-}" ]; then   # git runs as the checkout's owner, never as root
   OP=${GATE0_OPERATOR:-}; id "$OP" >/dev/null 2>&1 && [ "$OP" != root ] || { echo "gate0-run: run as root, set GATE0_OPERATOR to the checkout's owner" >&2; exit 1; }
   exec runuser -u "$OP" -- env GATE0_NO_REEXEC=1 "$SELF" $( [ $CHECKMODE = 1 ] && echo --check ) $PHASE $XARG
 fi
@@ -168,7 +169,7 @@ units() {  # stop|start UNIT... : the platform's controller
   local act=$1 u rc=0; shift
   if [ -n "${GATE0_TIMER_CTL:-}" ]; then "$GATE0_TIMER_CTL" "$act" "$@"; return $?; fi
   [ "$(uname -s)" = Linux ] || stop "no timer control on this platform (set GATE0_TIMER_CTL)"
-  export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}
+  export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/$MYUID}
   for u in "$@"; do case $act in
     stop) systemctl --user stop "$u" || rc=1 ;; start) systemctl --user start "$u" || rc=1 ;; esac; done; return $rc; }
 unit_state() {  # UNIT : active | inactive | unknown; a controller error is unknown, never inactive
@@ -176,7 +177,7 @@ unit_state() {  # UNIT : active | inactive | unknown; a controller error is unkn
   if [ -n "${GATE0_TIMER_CTL:-}" ]; then "$GATE0_TIMER_CTL" active "$u" >/dev/null 2>&1; rc=$?
     case $rc in 0) echo active ;; 3) echo inactive ;; *) echo unknown ;; esac; return 0; fi
   [ "$(uname -s)" = Linux ] || { echo unknown; return 0; }
-  export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}
+  export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/$MYUID}
   out=$(systemctl --user is-active "$u" 2>/dev/null); rc=$?   # the word and the status must agree: active is 0, inactive and failed are nonzero (3)
   case $out/$rc in active/0) echo active ;; inactive/[1-9]*|failed/[1-9]*) echo inactive ;; *) echo unknown ;; esac; }   # activating, reloading, deactivating and a word that disagrees with its status are not confirmed either way
 is_active() {  # UNIT : 0 active, 1 confirmed inactive; any other answer is a STOP
@@ -198,13 +199,15 @@ skippable_proc() {  # DIR PID : a /proc entry whose working directory cannot be 
   printf '%s\n' "$m" >&2; printf '%s\n' "$m" >> "$LOG"; return 1; }
 agents_in_root() {  # "pid comm" for each process whose cwd is under the checkout, apart from this script, its ancestors and its descendants
   # status 2 when the processes cannot be listed: a listing that does not show this script itself proves nothing
-  local skip=" $$ " p d c out; p=$$
+  local skip=" $$ " p d c out me; p=$$
   while [ -n "$p" ] && [ "$p" -gt 1 ] 2>/dev/null; do p=$(ps -o ppid= -p "$p" 2>/dev/null | tr -d ' '); skip="$skip$p "; done
   if [ -d "$PROCFS/self" ]; then
     readlink "$PROCFS/$$/cwd" >/dev/null 2>&1 || return 2
-    for d in "$PROCFS"/[0-9]*; do p=${d#"$PROCFS"/}; case $skip in *" $p "*) continue ;; esac
+    me=
+    for d in "$PROCFS"/[0-9]*; do p=${d#"$PROCFS"/}; [ "$p" != "$$" ] || me=1; case $skip in *" $p "*) continue ;; esac
       c=$(readlink "$d/cwd" 2>/dev/null) || { skippable_proc "$d" "$p" && continue; return 2; }
       case $c in "$ROOT"|"$ROOT"/*) under_self "$p" || echo "$p $(tr -d '\0' < "$d/comm" 2>/dev/null)" ;; esac; done
+    [ -n "$me" ] || return 2   # an unreadable directory leaves the pattern itself in the loop; a listing that does not show this script proves nothing
   else
     command -v lsof >/dev/null 2>&1 || return 2
     out=$(lsof -d cwd -Fpcn 2>/dev/null) || return 2   # a failed listing can still show this script and omit others
