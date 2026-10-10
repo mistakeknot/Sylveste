@@ -309,9 +309,9 @@ do_preflight() {
 
 # ---- freeze (P1)
 in_list() { local x=$1 y; shift; for y in "$@"; do [ "$y" = "$x" ] && return 0; done; return 1; }
-act_lines() { printf '%s\n' "$1" | sed 's/^ *//; s/ timer /\ntimer /g' | sed -n '/^timer /p'; }   # " timer A timer B" : one "timer UNIT" line each
+act_lines() { ( set -o pipefail; printf '%s\n' "$1" | sed 's/^ *//; s/ timer /\ntimer /g' | sed -n '/^timer /p' ); }   # " timer A timer B" : one "timer UNIT" line each; a failed stage is a failed list, never an empty one
 do_freeze() {
-  local a w u act="" f prior
+  local a w u act="" f prior al
   [ -e "$G/preflight" ] || { [ $CHECKMODE = 1 ] || refuse "no preflight record; run preflight first"; }
   if [ -e "$G/freeze" ] && [ $CHECKMODE = 0 ] && ! restarted_any; then   # after a completed restart a new freeze is a new attempt: it falls through
     a=$(rec_timers) || stop "the freeze record cannot be read: whether its timers stay stopped cannot be told"
@@ -332,8 +332,9 @@ do_freeze() {
     elif in_list "$u" $prior; then act="$act timer $u"; say "gate0-run: $u is inactive but an earlier freeze attempt that did not finish had stopped it: it stays in the restart set"; fi; done
   say "gate0-run: timers to restart after the freeze:${act:- none}"
   if [ $CHECKMODE = 1 ]; then say "gate0-run: freeze check: would stop the timers and services and move the marker aside (marker present: $([ -e "$ROOT/.git-autosync" ] && echo yes || echo no))"; return 0; fi
+  al=$(act_lines "$act") || stop "cannot write the list of timers to restart: nothing was stopped"
   mkdir -p "$G"
-  put "$G/freeze-intent" "$(act_lines "$act")"   # before the first stop: a stop that fails midway must not lose the timers already stopped
+  put "$G/freeze-intent" "$al"   # before the first stop: a stop that fails midway must not lose the timers already stopped
   for u in $TIMERS; do units stop "$u" || stop "cannot stop $u"; done
   for u in $SERVICES; do units stop "$u" || stop "cannot stop $u"; done
   for u in $TIMERS $SERVICES; do ! is_active "$u" || stop "$u is still active"; done
@@ -341,7 +342,7 @@ do_freeze() {
   [ ! -e "$ROOT/.git-autosync" ] || stop "the marker is still in the checkout"
   if [ -n "${GATE0_STATUS_CMD:-}" ]; then "$GATE0_STATUS_CMD" > "$LOGD/autosync-status.txt" 2>&1; say "gate0-run: autosync status recorded (exit $?)"; fi
   if [ -e "$G/marker" ]; then w=$(sha < "$G/marker") || stop "cannot hash the marker set aside: the freeze record would name no marker"; w="marker $w"; else w="marker none"; fi
-  f=$(act_lines "$act"; printf '%s\n' "$w"; printf 'at %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"); put "$G/freeze" "$f"
+  f="${al:+$al$'\n'}$w"$'\n'"at $(date -u +%Y-%m-%dT%H:%M:%SZ)"; put "$G/freeze" "$f"
   rm -f -- "$G"/restarted-* "$G"/restarting-*   # a new freeze starts a new attempt: an earlier attempt's restart records no longer apply (cleared once the new freeze is recorded)
   rm -f -- "$G/freeze-intent"   # last: while a stale restart record exists the intent still names the restart set, so a crash between these two steps loses nothing
   say "gate0-run: freeze holds (timers and services stopped, marker aside)"; }
@@ -374,15 +375,22 @@ recheck_after_p1a() {  # P0's readiness repeated with no local-head exception
 pres_check() {  # PD : this capture's preservation directory, a plain physical child of the preservation copy and outside the checkout and the journal
   local pp; p1pre_head; PD=$PRES/$HOST-$OLD
   pp=$(physpath "$PD") && [ "$pp" = "$PD" ] && ! within "$pp" "$ROOT" "$GD" "$J" || stop "the preservation directory $PD is not a plain directory outside the checkout and the journal (a symlink?)"; }
-preserve_copy() {  # the capture, outside the journal, verified file by file
-  local d f s; pres_check; d=$PD
+verify_set() {  # DIR [SUFFIX] : the files the capture's sha256 record names, in DIR (with SUFFIX), have the recorded digests; exactly two entries are checked, and a last line with no newline is still one
+  local d=$1 x=${2:-} f s n=0
+  while IFS=$(printf '\t') read -r f s || [ -n "$f" ]; do
+    [ -n "$s" ] && [ "$(sha < "$d/$f$x")" = "$s" ] || return 1; n=$((n+1)); done < "$J/capture/sha256" || return 1
+  [ $n = 2 ]; }
+preserve_copy() {  # the capture, outside the journal, verified file by file; the copies are staged and verified before they replace anything
+  local d f g; pres_check; d=$PD
   [ -f "$J/capture/sha256" ] || stop "no capture to copy"
   mkdir -p "$d" || stop "cannot create $d"
-  for f in main.bundle wtree.tar wtree.manifest sha256; do
-    cp -p "$J/capture/$f" "$d/$f.tmp.$$" 2>/dev/null && flush_path "$d/$f.tmp.$$" && mv -f -- "$d/$f.tmp.$$" "$d/$f" || { rm -f -- "$d/$f.tmp.$$"; stop "cannot copy and flush $f"; }; done
   [ "$(set -o pipefail; cut -f1 "$J/capture/sha256" | sort | paste -sd' ' -)" = "main.bundle wtree.tar" ] || stop "the capture's sha256 record cannot be read or does not name exactly main.bundle and wtree.tar"
-  while IFS=$(printf '\t') read -r f s; do
-    [ -n "$s" ] && [ "$(sha < "$d/$f")" = "$s" ] && cmp -s "$d/$f" "$J/capture/$f" || stop "the preservation copy of $f differs from the capture"; done < "$J/capture/sha256" || stop "the capture's sha256 record cannot be read"
+  for f in main.bundle wtree.tar wtree.manifest sha256; do
+    cp -p "$J/capture/$f" "$d/$f.tmp.$$" 2>/dev/null && flush_path "$d/$f.tmp.$$" || { for g in main.bundle wtree.tar wtree.manifest sha256; do rm -f -- "$d/$g.tmp.$$"; done; stop "cannot copy and flush $f"; }; done
+  { verify_set "$d" ".tmp.$$" && cmp -s "$d/main.bundle.tmp.$$" "$J/capture/main.bundle" && cmp -s "$d/wtree.tar.tmp.$$" "$J/capture/wtree.tar" && cmp -s "$d/wtree.manifest.tmp.$$" "$J/capture/wtree.manifest"; } ||
+    { for g in main.bundle wtree.tar wtree.manifest sha256; do rm -f -- "$d/$g.tmp.$$"; done; stop "the capture in the journal does not match its sha256 record or its copy: the preservation copy already there is untouched"; }
+  for f in main.bundle wtree.tar wtree.manifest sha256; do mv -f -- "$d/$f.tmp.$$" "$d/$f" || stop "cannot move the staged $f into place"; done
+  verify_set "$d" || stop "the preservation copy differs from the capture or its sha256 record"
   cmp -s "$d/wtree.manifest" "$J/capture/wtree.manifest" || stop "the copied W-snapshot manifest differs"
   for f in main.bundle wtree.tar wtree.manifest sha256; do flush_path "$d/$f" || stop "cannot flush $d/$f"; done
   flush_path "$d" || stop "cannot flush the directory $d: the copy is not known to be on disk"
@@ -453,7 +461,7 @@ restore_marker() {  # the marker set aside goes back, and must be the one the fr
   local m
   [ -f "$G/marker" ] && cp -p "$G/marker" "$ROOT/.git-autosync.tmp.$$" && mv -f -- "$ROOT/.git-autosync.tmp.$$" "$ROOT/.git-autosync" ||
     { [ ! -e "$G/marker" ] && [ "$(sed -n 's/^marker //p' "$G/freeze")" = none ]; } || stop "cannot restore the marker"
-  [ ! -e "$ROOT/.git-autosync" ] || { m=$(rec_marker); [[ $m =~ ^[0-9a-f]{64}$ ]] && [ "$(sha < "$ROOT/.git-autosync")" = "$m" ]; } || { rm -f -- "$ROOT/.git-autosync"; stop "the restored marker differs from the one set aside"; }; }
+  [ ! -e "$ROOT/.git-autosync" ] || { m=$(rec_marker) && [[ $m =~ ^[0-9a-f]{64}$ ]] && [ "$(sha < "$ROOT/.git-autosync")" = "$m" ]; } || { rm -f -- "$ROOT/.git-autosync"; stop "the restored marker differs from the one set aside"; }; }
 lane_refs() {  # PATTERN : the lane's refs matching it, sorted, on one line; a failed read is a failure, never an empty list
   local o; o=$(pg ls-remote "$LANE" "$1") || return 1
   ( set -o pipefail; printf '%s\n' "$o" | sort | paste -sd' ' - ); }
