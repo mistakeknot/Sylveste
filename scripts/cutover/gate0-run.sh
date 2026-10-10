@@ -99,12 +99,14 @@ physpath() {  # PATH : its physical path (symlinks resolved), also when it does 
   d=$(cd "$p" 2>/dev/null && pwd -P) || return 1
   [ "$d" != / ] || d=; printf '%s%s\n' "$d" "$t"; }
 GD=$(git -C "$ROOT" rev-parse --absolute-git-dir 2>/dev/null) && GD=$(cd "$GD" 2>/dev/null && pwd -P) || { echo "gate0-run: GATE0_ROOT has no usable git directory" >&2; exit 1; }
+# a linked worktree keeps its refs, objects and config in the common directory, which is outside both the checkout and its own git directory
+GC=$(git -C "$ROOT" rev-parse --git-common-dir 2>/dev/null) && case $GC in /*) ;; *) GC=$ROOT/$GC ;; esac && GC=$(cd "$GC" 2>/dev/null && pwd -P) || { echo "gate0-run: GATE0_ROOT has no usable common git directory" >&2; exit 1; }
 SD=$(physpath "$SD") || { echo "gate0-run: cannot use GATE0_STATE_DIR" >&2; exit 1; }
 J=$(physpath "${GATE0_JOURNAL:-$SD/journal}") || { echo "gate0-run: cannot use GATE0_JOURNAL" >&2; exit 1; }
 PRES=$(physpath "${GATE0_PRESERVE_DIR:-$SD/preserve}") || { echo "gate0-run: cannot use GATE0_PRESERVE_DIR" >&2; exit 1; }
 # physical paths, checked before anything is created: nothing this script writes may land in the checkout or its git directory
 for d in "state directory:$SD" "journal:$J" "preservation copy:$PRES"; do
-  case "${d#*:}/" in "$ROOT"/*|"$GD"/*) echo "gate0-run: the ${d%%:*} must be outside the checkout and its git directory" >&2; exit 1 ;; esac; done
+  case "${d#*:}/" in "$ROOT"/*|"$GD"/*|"$GC"/*) echo "gate0-run: the ${d%%:*} must be outside the checkout and its git directories" >&2; exit 1 ;; esac; done
 within() {  # PHYSICAL-PATH DIR... : the path is inside one of the directories
   local p=$1 d; shift; for d in "$@"; do case "$p/" in "$d"/*) return 0 ;; esac; done; return 1; }
 # the children are checked as well: a symlinked logs/ or gate0-run/ must not turn a write into one inside the checkout or the journal
@@ -112,7 +114,7 @@ within "$PRES" "$J" && { echo "gate0-run: the preservation copy must be outside 
 G=$J/gate0-run
 GP=$(physpath "$G") && [ "$GP" = "$G" ] || { echo "gate0-run: $G is not a plain child of the journal (a symlink)" >&2; exit 1; }
 LOGD=$SD/logs/$PHASE-$(date -u +%Y%m%dT%H%M%SZ)-$$
-LP=$(physpath "$LOGD") && ! within "$LP" "$ROOT" "$GD" "$J" "$PRES" || { echo "gate0-run: the log directory must be outside the checkout, its git directory, the journal and the preservation copy" >&2; exit 1; }
+LP=$(physpath "$LOGD") && ! within "$LP" "$ROOT" "$GD" "$GC" "$J" "$PRES" || { echo "gate0-run: the log directory must be outside the checkout, its git directories, the journal and the preservation copy" >&2; exit 1; }
 [ $CHECKMODE = 1 ] || mkdir -p "$J" || { echo "gate0-run: cannot create the journal" >&2; exit 1; }
 mkdir -p "$LOGD" || { echo "gate0-run: cannot create $LOGD" >&2; exit 1; }
 LOG=$LOGD/run.log; RLOG=$LOGD/run.report
@@ -383,7 +385,7 @@ recheck_after_p1a() {  # P0's readiness repeated with no local-head exception
   say "gate0-run: re-check after P1a passes"; }
 pres_check() {  # PD : this capture's preservation directory, a plain physical child of the preservation copy and outside the checkout and the journal
   local pp; p1pre_head; PD=$PRES/$HOST-$OLD
-  pp=$(physpath "$PD") && [ "$pp" = "$PD" ] && ! within "$pp" "$ROOT" "$GD" "$J" || stop "the preservation directory $PD is not a plain directory outside the checkout and the journal (a symlink?)"; }
+  pp=$(physpath "$PD") && [ "$pp" = "$PD" ] && ! within "$pp" "$ROOT" "$GD" "$GC" "$J" || stop "the preservation directory $PD is not a plain directory outside the checkout and the journal (a symlink?)"; }
 verify_set() {  # DIR [SUFFIX] : the files the capture's sha256 record names, in DIR (with SUFFIX), have the recorded digests; exactly two entries are checked, and a last line with no newline is still one
   local d=$1 x=${2:-} f s n=0
   while IFS=$(printf '\t') read -r f s || [ -n "$f" ]; do
@@ -558,8 +560,6 @@ do_restart() {
     [ ! -d "$J/p1-pre" ] || [ ! -e "$J/done-p1a" ] || { capture_check && runlog cs preserved "$( [ "$ex" = r6 ] && echo r6 )"; } || stop "restart step 1 would fail"
     say "gate0-run: restart $ex check: would run the unfreeze gate, preservation, reconciliation, the marker, one autosync run and the timers"; return 0; fi
   [ -e "$G/freeze" ] || refuse "no freeze record"
-  if [ -e "$G/restarted-$ex" ]; then restarted_holds "$ex"; return 0; fi   # a repeat runs nothing
-  if restarting_any; then rbail "an earlier restart attempt began (marker, service or timers) and left no completion record: its effects are undone now (every timer stopped, marker aside); run the restart again as a new attempt"; fi
   freeze_holds   # restart: the freeze must hold now (units, marker, agents, bd), not only have been recorded
   archive_ready   # the lane this restart reads and the run pushes to is validated now, not trusted from preflight
   if [ "$ex" = r0 ]; then
@@ -587,6 +587,12 @@ do_restart() {
   rm -f -- "$G/restarting-$ex"
   say "gate0-run: restart $ex done: the recorded timers are running again; resume the bd writers and the agent sessions now (they are not started by this script)"; }
 
+restart_settled() {  # a restart already recorded is re-verified, and a restart attempt cut off is undone, before any input is validated: neither needs J's inputs, and a missing one must not leave the timers and the service as the cut-off attempt left them
+  [ "$PHASE" = restart ] && [ $CHECKMODE = 0 ] && [ -e "$G/freeze" ] || return 1
+  if [ -e "$G/restarted-$XARG" ]; then restarted_holds "$XARG"; return 0; fi   # a repeat runs nothing
+  if restarting_any; then rbail "an earlier restart attempt began (marker, service or timers) and left no completion record: its effects are undone now (every timer stopped, marker aside); run the restart again as a new attempt"; fi
+  return 1; }
+restart_settled && exit 0
 need_inputs
 say "gate0-run.sh $SELF_SHA: $CMDLINE (machine $MACHINE, host $HOST, base $BASE)"
 case $PHASE in

@@ -68,8 +68,8 @@ Unit control (`GATE0_TIMER_CTL`, default `systemctl --user`): the controller is 
 `CTL stop|start|active UNIT`. For `active`, exit 0 means active, exit 3 means inactive,
 and any other result (a missing bus, a controller error) is unknown, which the wrapper
 treats as a STOP; an error is never read as "inactive". The wrapper keeps its state
-directory, journal and preservation copy outside the checkout and its git directory
-(checked by physical path, before anything is created), runs no step that rewrites the
+directory, journal and preservation copy outside the checkout and its git directories (its own
+and, for a linked worktree, the shared one; checked by physical path, before anything is created), runs no step that rewrites the
 index to refresh stat data (`GIT_OPTIONAL_LOCKS=0`), and keeps the predictor's own stderr
 and report sender out of the prediction the verifier reads. The freeze is re-checked
 (timers, services, marker, agent processes, bd) at every capture, immediately before
@@ -100,8 +100,8 @@ Further properties, each with a test and a mutation control in `gate0-run-test.s
   the sweep, and only a report the sweep wrote is verified; if none is written the earlier report is
   put back as found and the restart stops. The sweep's own exit status is logged, not judged.
 - Children are confined too: the log directory, `gate0-run/` and each preservation
-  directory must be plain physical children outside the checkout, its git directory and
-  the journal (a symlinked `logs/` or `gate0-run/` is refused; a symlinked preservation
+  directory must be plain physical children outside the checkout, its git directories (the shared
+  one of a linked worktree included) and the journal (a symlinked `logs/` or `gate0-run/` is refused; a symlinked preservation
   directory is a STOP before the checkout is realigned).
 - `bd` and the steps run with the checkout as their working directory, whatever the caller's.
 - A restart that is already recorded runs nothing: it re-verifies that the recorded timers
@@ -126,6 +126,10 @@ Further properties, each with a test and a mutation control in `gate0-run-test.s
 - The service's journal is read from a cursor taken just before the start (`--after-cursor`), so a
   summary line left by an earlier run is never taken for this run's. If no cursor can be taken, the
   restart stops before anything starts.
+- A restart that was cut off, and a recorded restart, are looked at before the approved inputs are
+  validated: their cleanup and re-verification need none of them, so a missing or unreadable input
+  cannot leave the timers or the service as the cut-off attempt left them. A new attempt still
+  needs every input.
 - A recorded restart whose timers or marker no longer match the record is undone like any other
   failed restart: the record is removed, every timer of the attempt is stopped and the marker is
   aside, so a later restart is a new attempt.

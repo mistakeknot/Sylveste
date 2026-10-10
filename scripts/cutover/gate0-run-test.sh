@@ -1018,6 +1018,39 @@ t_swreconeval() {  # the jsonl_dominated definition is taken from the steps with
   ( jsonl_dominated() { return 0; }; eval() { case $1 in "jsonl_dominated() {"*) return 1 ;; esac; builtin eval "$@"; }; export -f jsonl_dominated eval; wg restart r0 > "$B/out.sw" 2>&1; echo "$?" > "$B/rc.sw" ); c="$(cat "$B/rc.sw")/$(sw_msg 'cannot load jsonl_dominated')/$(sw_state)"
   SWAO="$a;$b;$c"; [ "$SWAO" = "3/1//0/no/no/;3/1//0/no/no/;3/1//0/no/no/" ]; }
 
+# ---- class sweep, round 18: the shared git directory of a linked worktree, and the cleanup of a cut-off restart before any input is validated (bead mk-z9st.22)
+t_swgitcommon() {  # a linked worktree keeps its refs, objects and config in the common git directory: no state, journal, preservation or log directory may be inside it
+  restore fx; local R0=$R cm rf0 r1 r2 r3 r4
+  git -C "$R0" worktree add --detach "$W/wt" HEAD > "$B/out.gc" 2>&1 || { echo "  FAIL cannot add a linked worktree"; return 1; }
+  cm=$(cd "$R0/.git" && pwd -P); rf0=$(ls "$cm/refs"); R=$W/wt; : > "$B/out.sw"
+  T_STATE="$cm/refs/st" wg --check preflight >> "$B/out.sw" 2>&1; r1=$?
+  T_JOURNAL="$cm/jj" wg --check preflight >> "$B/out.sw" 2>&1; r2=$?
+  T_PRES="$cm/objects/pp" wg --check preflight >> "$B/out.sw" 2>&1; r3=$?
+  mkdir -p "$W/lst"; ln -s "$cm/refs" "$W/lst/logs"   # the state directory is outside; its logs child leads into the common directory
+  T_STATE="$W/lst" wg --check preflight >> "$B/out.sw" 2>&1; r4=$?
+  R=$R0; SWGC="$r1$r2$r3$r4/$(sw_msg 'git directories')"
+  [ "$SWGC" = 1111/4 ] && [ ! -e "$cm/refs/st" ] && [ ! -e "$cm/jj" ] && [ ! -e "$cm/objects/pp" ] && [ "$(ls "$cm/refs")" = "$rf0" ]; }
+t_swrestartclean() {  # a restart cut off after its first timer start is undone by the next restart although an input in J is missing or unreadable (the cleanup needs none); the inputs are still required for a new attempt
+  local v crash=$B/mut/crash2.sh rc rc2 rc3 f g; SWRC=
+  for v in missing unreadable; do
+    sed '/^    units start "\$u" || rbail "cannot re-enable/a exit 9' "${WG:-$GW}" > "$crash"; chmod +x "$crash"; cp "$HERE/cutover-steps.sh" "$B/mut/cutover-steps.sh"
+    cmp -s "${WG:-$GW}" "$crash" && { echo "  FAIL crash copy changed nothing"; return 1; }
+    restore r0a; rm -f "$ST/units/git-autosync-repair.service"; : > "$B/out.sw"
+    WG=$crash wg restart r0 >> "$B/out.sw" 2>&1; rc=$?
+    f="$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)"
+    case $v in missing) rm -f "$J/lane-remote" ;; unreadable) chmod 000 "$J/lane-remote" ;; esac
+    wg restart r0 >> "$B/out.sw" 2>&1; rc2=$?
+    g="$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)/$(ls "$J/gate0-run" | grep -c '^restart')/$(sw_msg 'an earlier restart attempt began')"
+    wg restart r0 >> "$B/out.sw" 2>&1; rc3=$?
+    SWRC="$SWRC$rc/$f/$rc2/$g/$rc3/$(sw_msg 'is missing or empty\|cannot be read');"
+    chmod 644 "$J/lane-remote" 2>/dev/null
+  done
+  restore r0a; : > "$B/out.sw"; wg restart r0 >> "$B/out.sw" 2>&1 || return 1   # a completed restart whose state no longer matches its record is undone, not refused
+  rm -f "$J/lane-remote"; rm -f "$ST/units/git-autosync-promote.timer"
+  wg restart r0 >> "$B/out.sw" 2>&1; rc=$?
+  SWRC="$SWRC$rc/$([ -e "$J/gate0-run/restarted-r0" ] && echo recorded)/$(timers)/$([ -e "$R/.git-autosync" ] && echo marker)/$(sw_msg 'is not confirmed active')"
+  [ "$SWRC" = "9/marker/yes/no/3//no/no/0/1/1/1;9/marker/yes/no/3//no/no/0/1/1/1;3//no/no//1" ]; }
+
 echo "== --check forms change nothing"
 restore fx; c0=$(ckfp); j0=$(jfp); l0=$(lanerefs)
 WG= wg --check > "$B/out" 2>&1; check "--check" "$?" 0
@@ -1207,6 +1240,8 @@ sc "a lane remote with a second push URL is refused" t_swpushurls
 sc "no process substitution feeds a loop in the overlay driver or its hooks" t_swnoprocsub
 sc "restart step 1 checks both entries of the capture's sha256 record, a last line with no newline included" t_swrestcap
 sc "the jsonl_dominated extraction and load are status-checked and an inherited function is not accepted" t_swreconeval
+sc "no state, journal, preservation or log directory may be inside the common git directory of a linked worktree" t_swgitcommon
+sc "a cut-off restart is undone before any input is validated, and a new attempt still needs the inputs" t_swrestartclean
 
 echo "== mutation controls (each must be judged NOT fail-closed)"
 mutate() {  # NAME SEDEXPR : a copy of the wrapper with one safeguard removed; WG names it
@@ -1233,7 +1268,7 @@ mutate M8 's/2> "\$pred.err"/2>\&1/' &&
   { WG=$B/mut/M8.sh; t_noise; r=$?; WG=; check "M8 (predictor stderr in the prediction) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M9 's/^  a=\$(agents_in_root) || stop "cannot list the processes (lsof or \/proc): the freeze cannot be confirmed"/  a=/' &&
   { WG=$B/mut/M9.sh; t_agentre; r=$?; WG=; check "M9 (no agent re-check at capture) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
-mutate M10 's/^  if \[ -e "\$G\/restarted-\$ex" \]; then restarted_holds.*$/  :/' &&
+mutate M10 's/^  if \[ -e "\$G\/restarted-\$XARG" \]; then restarted_holds.*$/  :/' &&
   { WG=$B/mut/M10.sh; t_restart_idem; r=$?; WG=; check "M10 (a repeated restart runs again) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M11 's/^  freeze_holds   # restart:.*$/  :/' &&
   { WG=$B/mut/M11.sh; t_restart_idem; r=$?; WG=; check "M11 (no freeze check before restart) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
@@ -1397,10 +1432,11 @@ for n in M104:'s/^  u=\$(gi ls-files -u) || die 4 "[^"]*".*$/  u=$(gi ls-files -
   if cmp -s "$HERE/../git-internal" "$B/mut/${n%%:*}-gi"; then echo "  FAIL mutation ${n%%:*} changed nothing"; fails=$((fails+1))
   else GI=$B/mut/${n%%:*}-gi; t_swgi; r=$?; GI=; check "${n%%:*} (a failed driver read is taken as an empty one) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; fi
 done
+mgi_prep() {  # NAME SED : the mutated copy of the overlay driver; fails when sed fails, when nothing changed, or when the result does not parse (a control against a file that is not the driver with one fix removed proves nothing)
+  sed "$2" "$HERE/../git-internal" > "$B/mut/$1-gi" 2>/dev/null && ! cmp -s "$HERE/../git-internal" "$B/mut/$1-gi" && bash -n "$B/mut/$1-gi" 2>/dev/null; }
 mgi() {  # NAME TEST DESC SED : the same test against the overlay driver with the fix taken out must fail
   local n=$1 t=$2 d=$3 e=$4 r
-  sed "$e" "$HERE/../git-internal" > "$B/mut/$n-gi" 2>/dev/null
-  if cmp -s "$HERE/../git-internal" "$B/mut/$n-gi"; then echo "  FAIL mutation $n changed nothing"; fails=$((fails+1))
+  if ! mgi_prep "$n" "$e"; then echo "  FAIL mutation $n: the sed failed, changed nothing, or left a driver that does not parse"; fails=$((fails+1))
   else GI=$B/mut/$n-gi; $t; r=$?; GI=; check "$n ($d) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; fi
 }
 mgi M111 t_swgitidx "a write-tree that prints and fails is taken as the index tree" 's/t=\$(gi write-tree 2>\/dev\/null) \&\& ot=/t=$(gi write-tree 2>\/dev\/null); ot=/'
@@ -1414,6 +1450,13 @@ if sed 's/host=\$(cat "\$gd\/info\/host" 2>\/dev\/null) || host=$/host=$(cat "$g
   PPHOOK=$B/mut/M118-hook; t_swhost; r=$?; PPHOOK=; check "M118 (the pre-push hook keeps a host name that a failed read printed) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught
 else echo "  FAIL mutation M118 changed nothing"; fails=$((fails+1)); fi
 mgi M119 t_swresolve "a mode that a failed read printed is recorded" 's/mode=\$(disk_mode "\$p") || { rm -f -- "\${idx:?}"; die 6 "resolve: cannot read the mode of \$p"; }/mode=$(disk_mode "$p")/'
+mgi_prep M124 's/(/' ; a=$?; mgi_prep M124 's/zzzqq-not-present/x/'; b=$?; mgi_prep M124 's/^#!.*/if/'; c=$?; mgi_prep M124 's/^host() {/host() {/' ; e=$?
+check "M124 (a mutation of the driver whose sed fails, changes nothing or leaves a script that does not parse is rejected, a real one accepted)" "$([ $a != 0 ] && [ $b != 0 ] && [ $c != 0 ] && [ $e != 0 ] && mgi_prep M124 's/^host() {/host() { :;/' && echo rejected)" rejected
+mm M120 t_swgitcommon "the common git directory is not checked for the state, journal and preservation directories" 's/|"\$GC"\/\*) echo/) echo/'
+mm M121 t_swgitcommon "the log directory may be inside the common git directory" 's/"\$GD" "\$GC" "\$J" "\$PRES" ||/"$GD" "$J" "$PRES" ||/'
+mutate M122 '/^restart_settled \&\& exit 0$/d; s/^need_inputs$/need_inputs\nrestart_settled \&\& exit 0/' &&
+  { WG=$B/mut/M122.sh; t_swrestartclean; r=$?; WG=; check "M122 (the cleanup of a cut-off restart after the input validation) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+mm M123 t_swrestartclean "a recorded restart is no longer re-verified before the input validation" 's/^  if \[ -e "\$G\/restarted-\$XARG" \]; then restarted_holds "\$XARG"; return 0; fi.*$/  :/'
 mm M109 t_swrefreezegone "a new freeze records the earlier attempt's marker copy although the checkout has no marker" '/^  if restarted_any \&\& \[ ! -e "\$G\/freeze-intent" \]/,/^    say "gate0-run: the checkout has no marker: the copy kept/d'
 mm M110 t_swrefreezegone "an interrupted new freeze is taken for a new attempt: its recorded marker is set aside" 's/^  if restarted_any \&\& \[ ! -e "\$G\/freeze-intent" \] \&\& /  if restarted_any \&\& /'
 mm M106 t_swfreezerep "a repeated freeze does not check the whole invariant" 's/^    freeze_holds   # the whole invariant.*$/    :/'
