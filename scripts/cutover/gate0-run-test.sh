@@ -970,7 +970,8 @@ sc "the test's before and after observers fail closed" t_swobserver
 
 echo "== mutation controls (each must be judged NOT fail-closed)"
 mutate() {  # NAME SEDEXPR : a copy of the wrapper with one safeguard removed; WG names it
-  sed "$2" "$GW" > "$B/mut/$1.sh"; chmod +x "$B/mut/$1.sh"
+  sed "$2" "$GW" > "$B/mut/$1.sh" || { echo "  FAIL mutation $1: the sed expression failed"; fails=$((fails+1)); return 1; }
+  chmod +x "$B/mut/$1.sh"
   cmp -s "$GW" "$B/mut/$1.sh" && { echo "  FAIL mutation $1 changed nothing"; fails=$((fails+1)); return 1; }
   cp "$HERE/cutover-steps.sh" "$B/mut/cutover-steps.sh"; return 0; }
 mutate M1 's/|| stop "the marker is back in the checkout: the freeze no longer holds"/|| true/' &&
@@ -1140,7 +1141,7 @@ mm M88 t_swactlines "the restart-set list is built without pipefail" 's/^act_lin
 mm M89 t_swactlines "a failed restart-set list is written" 's/^  al=\$(act_lines "\$act") || stop "[^"]*"/  al=$(act_lines "$act")/'
 mm M90 t_swverifyset "an unterminated last record line is dropped" 's/ || \[ -n "\$f" \]; do/; do/'
 mm M91 t_swverifyset "the number of completed checks is not required" 's/^  \[ \$n = 2 \]; }$/  true; }/'
-mm M92 t_swsharecterm "the preservation copy is replaced before the capture is verified" 's/^  \{ verify_set "\$d" ".tmp.\$\$" \&\& .*$/  true ||/'
+mm M92 t_swsharecterm "the preservation copy is replaced before the capture is verified" 's/^  { verify_set "\$d" ".tmp.\$\$" \&\& .*$/  true ||/'
 mm M93 t_swrestover "the restore replaces other marker bytes without keeping them" 's/^  if \[ -f "\$G\/marker" \] \&\& \[ -e "\$ROOT\/.git-autosync" \].*$/  :/'
 mm M94 t_swclavmark "the freeze record's marker line is read with its status ignored" 's/^  mrec=\$(rec_marker) || stop "[^"]*"[^\n]*$/  mrec=$(rec_marker)/'
 if [ $fails = 0 ]; then echo "GATE0-RUN: PASS"; exit 0; else echo "GATE0-RUN: FAIL ($fails)"; exit 1; fi
