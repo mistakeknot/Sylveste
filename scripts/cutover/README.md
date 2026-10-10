@@ -211,7 +211,9 @@ Further properties, each with a test and a mutation control in `gate0-run-test.s
   status of the listing (`install` and the pre-commit hook), and `resolve` holds the conflicted-path list in a
   variable with its status checked; none feeds a loop from a process substitution, whose status is lost.
   The test pins this structurally (`t_swnoprocsub`); the install and resolve changes have no behavioural
-  failure-injection test, only that guard.
+  failure-injection test, only that guard. `precheck` (the unmerged-entry list) and `fold` (the remote-ref
+  list) hold their reads with the status checked, so a failed listing is a refusal and not "nothing unmerged"
+  or "nothing to fold"; `t_swgi` injects the failures.
   A restore of the set-aside marker over other bytes in the checkout keeps those bytes first, and the
   Clavain restart stops when the freeze record cannot be read instead of treating it as one that names no
   marker.
