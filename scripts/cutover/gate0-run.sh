@@ -117,10 +117,12 @@ git_bind() {  # git's view of GATE0_ROOT is the checkout's own: its work tree is
   # a linked worktree keeps its refs, objects and config in the common directory, which is outside both the checkout and its own git directory
   c=$(git -C "$ROOT" rev-parse --git-common-dir 2>/dev/null) && case $c in /*) ;; *) c=$ROOT/$c ;; esac && c=$(cd "$c" 2>/dev/null && pwd -P) || bindfail "GATE0_ROOT has no usable common git directory"
   if [ -d "$ROOT/.git" ]; then e=$(cd "$ROOT/.git" 2>/dev/null && pwd -P) && ec=$e
-  else f=$(sed -n 's/^gitdir: //p' "$ROOT/.git" 2>/dev/null | sed -n 1p); case $f in /*) ;; *) f=$ROOT/$f ;; esac
-    if e=$(cd "$f" 2>/dev/null && pwd -P); then
-      if [ -f "$e/commondir" ]; then x=$(sed -n 1p "$e/commondir" 2>/dev/null); case $x in /*) ;; *) x=$e/$x ;; esac; ec=$(cd "$x" 2>/dev/null && pwd -P)
-      else ec=$e; fi; fi; fi
+  else f=$(sed -n '/^gitdir: /{s///p;q;}' "$ROOT/.git" 2>/dev/null) && [ -n "$f" ] || bindfail "GATE0_ROOT/.git is neither a directory nor a readable gitdir link"   # one reader, its own status: a read that prints a path and then fails names no git directory
+    case $f in /*) ;; *) f=$ROOT/$f ;; esac
+    e=$(cd "$f" 2>/dev/null && pwd -P) || bindfail "the git directory GATE0_ROOT/.git names cannot be entered"
+    if [ -f "$e/commondir" ]; then x=$(sed -n 1p "$e/commondir" 2>/dev/null) && [ -n "$x" ] || bindfail "the common directory link of the git directory cannot be read"
+      case $x in /*) ;; *) x=$e/$x ;; esac; ec=$(cd "$x" 2>/dev/null && pwd -P) || bindfail "the common git directory GATE0_ROOT/.git names cannot be entered"
+    else ec=$e; fi; fi
   [ -n "$e" ] && [ -n "$ec" ] && [ "$d" = "$e" ] && [ "$c" = "$ec" ] || bindfail "git's git directory for GATE0_ROOT is not the one GATE0_ROOT/.git names (GIT_DIR, GIT_COMMON_DIR, a gitdir link or a replaced .git)"
   if [ -n "${GD:-}" ]; then [ "$d" = "$GD" ] && [ "$c" = "$GC" ] || bindfail "git's git directories changed since the start"
   else GD=$d; GC=$c; fi; }
@@ -156,15 +158,25 @@ case " $SERVICES " in *" $REPAIR_SVC "*) ;; *) SERVICES="$SERVICES $REPAIR_SVC" 
 REL=${GATE0_REL:-$(basename "$ROOT")}
 export AUTOSYNC_LANE_LIB=${AUTOSYNC_LANE_LIB:-$OPH/.local/lib/autosync-lane.sh}
 
-report() {  # EXIT trap: the report, then the sender; a failed delivery prints the report
+report() {  # EXIT trap: an open restart attempt is undone first (whatever ended the script: a stop, a die, a signal, a helper); then the report, then the sender; a failed delivery prints the report
   local rc=$? tell=${GATE0_REPORT_TELL:-} t=${GATE0_REPORT_TITLE:-gate0-run} r
+  if [ -n "${RSTART:-}" ]; then
+    [ $rc != 0 ] || rc=3   # an attempt still open at exit did not complete, whatever status reached this trap
+    if [ -z "${INCLEAN:-}" ]; then INCLEAN=1; ( rcleanup ) >/dev/null || :; fi   # a subshell: the cleanup's own stop ends it, never this report
+  fi
   r=$([ $rc = 0 ] && echo ok || echo failed)
   echo "gate0-run.sh (sha256 $SELF_SHA) $CMDLINE: phase $PHASE, exit $rc ($r); log $LOG" > "$RLOG" 2>/dev/null
   "$tell" --title "$t" --message-file "$RLOG" --script "$SELF" --result "$r" --step "$PHASE" --log "$LOG" >/dev/null 2>&1 ||
     { echo "gate0-run: report not delivered; it is $RLOG:" >&2; cat "$RLOG" >&2; }
   exit $rc; }
 trap report EXIT
-BINDRC=3; BINDTRAP=1; trap 'exit 3' USR1
+trap 'exit 130' INT; trap 'exit 143' TERM; trap 'exit 129' HUP   # a signal is a failed exit, never the status 0 an EXIT trap sees after it
+RSTART=   # set while a restart attempt is open (its record is written, its completion record is not): the only phase whose side effects a stop must undo itself
+bindtrap() {  # USR1, from bindfail: git no longer shows the checkout. A restart in progress is undone first (every recorded timer and service stopped and read back, the marker aside); nothing else runs
+  trap '' USR1
+  if [ -n "$RSTART" ] && [ -z "${INCLEAN:-}" ]; then INCLEAN=1; rbail "git no longer shows the validated checkout during the restart; every timer of this attempt is stopped and the marker is aside"; fi
+  exit 3; }
+BINDRC=3; BINDTRAP=1; trap bindtrap USR1
 say() { printf '%s\n' "$*"; printf '%s\n' "$*" >> "$LOG"; }
 stop() { say "gate0-run: STOP: $*" >&2; exit 3; }
 refuse() { say "gate0-run: refused, nothing written: $*" >&2; exit 1; }
@@ -492,14 +504,16 @@ reconcile() {  # restart step 3: the first bd command is bd export; the base's a
 journal_cursor() { local o; o=$(journalctl --user -n 1 --show-cursor -o cat --no-pager 2>/dev/null) || return 1; printf '%s\n' "$o" | sed -n 's/^-- cursor: //p'; }   # the position of the newest entry, taken before the start
 journal_since() { journalctl --user -u "$REPAIR_SVC" --after-cursor="$1" --no-pager -o cat 2>/dev/null; }   # only lines written after that position: an earlier invocation's lines are never this run's
 predict() { RESTART_REPORT=0 "$PRED" "$@"; }   # the wrapper reports once; the predictor's own report sender stays off
-rbail() {  # back to the frozen state: every recorded timer stopped, each timer and service read back, the marker aside; a stop that cannot be confirmed is said so
-  local u bad= ts
+rcleanup() {  # back to the frozen state, idempotent: every recorded timer stopped, each timer and service read back, the marker aside; the unconfirmed units are left in RBAD
+  local u ts; RBAD=
   ts=$(rec_timers) || { ts=$TIMERS; say "gate0-run: the freeze record cannot be read: every configured timer is stopped instead" >&2; }   # cleanup never skips the timers because its record is unreadable
   for u in $ts $SERVICES; do units stop "$u" >/dev/null 2>&1; done   # a service a cut-off restart left running is stopped too
-  for u in $ts $SERVICES; do [ "$(unit_state "$u")" = inactive ] || bad="$bad $u"; done
-  [ -z "$bad" ] || say "gate0-run: UNCONFIRMED: these units are not confirmed stopped:$bad; a human must stop them before anything else runs" >&2
-  move_marker_aside force; [ -n "$bad" ] || rm -f -- "$G"/restarting-*   # the attempt is closed only when every unit is confirmed stopped and the marker is aside
-  stop "$*${bad:+; UNCONFIRMED stop of$bad}"; }
+  for u in $ts $SERVICES; do [ "$(unit_state "$u")" = inactive ] || RBAD="$RBAD $u"; done
+  [ -z "$RBAD" ] || say "gate0-run: UNCONFIRMED: these units are not confirmed stopped:$RBAD; a human must stop them before anything else runs" >&2
+  [ -z "${RSTART:-}" ] || rm -f -- "$G/restarted-$RSTART"   # a completion record written before the cut-off is withdrawn with the rest
+  move_marker_aside force; [ -n "$RBAD" ] || rm -f -- "$G"/restarting-*   # the attempt is closed only when every unit is confirmed stopped and the marker is aside
+}
+rbail() { INCLEAN=1; rcleanup; stop "$*${RBAD:+; UNCONFIRMED stop of$RBAD}"; }   # the one way out of a failed restart; the EXIT trap runs the same cleanup for every other way out
 restore_marker() {  # the marker set aside goes back, and must be the one the freeze record names (server and Clavain alike)
   local m
   if [ -f "$G/marker" ] && [ -e "$ROOT/.git-autosync" ] && ! cmp -s "$G/marker" "$ROOT/.git-autosync"; then keep_unexpected_marker; fi   # other bytes in the checkout are kept before the restore replaces them
@@ -604,6 +618,7 @@ do_restart() {
     runlog cs preserved "$( [ "$ex" = r6 ] && echo r6 )" || stop "restart step 1 failed before anything restarted"; fi
   reconcile
   put "$G/restarting-$ex" "at $(date -u +%Y-%m-%dT%H:%M:%SZ)"   # before the first side effect: a crash from here to the completion record is found and undone by the next restart
+  RSTART=$ex
   if [ "$MACHINE" = server ]; then restart_server "$ex" "$pe"; else restart_clavain "$ex"; fi
   # step 5: the timers; the bd writers and the agent sessions resume afterwards, started by their owners
   local u ts; ts=$(rec_timers) || rbail "the freeze record cannot be read: the timers to start are unknown; every timer of this attempt is stopped again and the marker is aside"
@@ -612,6 +627,7 @@ do_restart() {
     [ "$(unit_state "$u")" = active ] || rbail "$u is not active after its start (a controller that returns 0 proves nothing); every timer of this attempt is stopped again and the marker is aside"; done
   put "$G/restarted-$ex" "at $(date -u +%Y-%m-%dT%H:%M:%SZ)" unrecord_bail
   rm -f -- "$G/restarting-$ex"
+  RSTART=
   say "gate0-run: restart $ex done: the recorded timers are running again; resume the bd writers and the agent sessions now (they are not started by this script)"; }
 
 restart_settled() {  # a restart already recorded is re-verified, and a restart attempt cut off is undone, before any input is validated: neither needs J's inputs, and a missing one must not leave the timers and the service as the cut-off attempt left them
