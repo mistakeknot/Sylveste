@@ -1216,30 +1216,108 @@ t_swrestartclean() {  # a restart cut off after its first timer start is undone 
   SWRC="$SWRC$rc/$([ -e "$J/gate0-run/restarted-r0" ] && echo recorded)/$(timers)/$([ -e "$R/.git-autosync" ] && echo marker)/$(sw_msg 'is not confirmed active')"
   [ "$SWRC" = "137/marker/yes/no/3//no/no/0/1/1/1;137/marker/yes/no/3//no/no/0/1/1/1;3//no/no//1" ]; }
 
-t_swstartrecover() {  # a restart cut off after its first timer start is undone by a retry that fails at any step of its start, before restart_settled can run: git's first read, the checkout's .git, the outside-the-checkout check, the log directory, the machine name, the script's own digest; with no cut-off record a failing start undoes nothing
-  local v crash=$B/mut/crash3.sh rc rc2 f g; SWSR=
-  for v in gitcfg nogit outside logdir machine nosha; do
-    sed '/^    units start "\$u" || rbail "cannot re-enable/a kill -KILL $$' "${WG:-$GW}" > "$crash"; chmod +x "$crash"; cp "$HERE/cutover-steps.sh" "$B/mut/cutover-steps.sh"
-    cmp -s "${WG:-$GW}" "$crash" && { echo "  FAIL crash copy changed nothing"; return 1; }
-    restore r0a; rm -f "$ST/units/git-autosync-repair.service"; : > "$B/out.sw"; rm -rf "$B/shabad" "$B/badcfg"
-    WG=$crash wg restart r0 >> "$B/out.sw" 2>&1; rc=$?
-    f="$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)"
-    case $v in
-      gitcfg) printf '[\n' > "$B/badcfg"; GIT_CONFIG_GLOBAL=$B/badcfg wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;   # the first rev-parse fails
+# The statements of the start-up that can end the script, in the order they run, are read from the wrapper itself and each has a case below
+# (a statement with no entry, or an entry with no statement, fails t_swstartguards). set -u is no extra class: an unbound variable ends the script
+# through the same EXIT trap, and every expansion before the arm is guarded or assigned above it.
+SRKEYS=('$ROOT/.git' 'git_bind' 'PRES=$(physpath' 'must be outside the checkout and its git' 'preservation copy must be outside the journal' 'LP=$(physpath' 'cannot create the journal' 'cannot create $LOGD' 'GATE0_MACHINE is server' 'self_sha')
+SRCASES=('nogit' 'gitcfg gitroot gitdir gitcommon' 'pres-dangling pres-file' 'state-in-checkout pres-in-checkout' 'pres-in-journal' 'logs-into-checkout' 'journal-mkdir' 'logdir-mkdir' 'machine' 'nosha')
+# before the recovery is armed only what names the journal can fail (and nothing is written there)
+SPKEYS=('exit $?' 'self_sha' 'usage: gate0-run.sh' 'set GATE0_ROOT and GATE0_STATE_DIR' 'GATE0_ROOT is not a git checkout' 'cannot establish the user id' 'run as root, set GATE0_OPERATOR' 'exec runuser' 'cannot use GATE0_STATE_DIR' 'cannot use GATE0_JOURNAL' 'is not a plain child')
+SPCASES=('check' 'check-nosha' 'usage usage-exit-arg' 'noenv' 'root-bad' 'uid-bad' 'operator-bad' 'runuser-bad' 'state-dangling' 'journal-dangling' 'gate-symlink')
+sr_post() { awk '/^trap bootexit EXIT$/{on=1;next} /^restart_settled && exit 0$/{on=0} on' "${WG:-$GW}" | grep -v '^ *#' | grep -v '^trap ' | grep -E 'exit [0-9$]|git_bind|self_sha'; }
+sr_pre() { awk '
+/^trap bootexit EXIT$/{exit}
+{ line=$0; o=gsub(/\{/,"{",line); c=gsub(/\}/,"}",line)
+  if (depth==0 && $0 ~ /^[A-Za-z_][A-Za-z0-9_]*\(\) *\{/) { depth=o-c; next }
+  if (depth>0) { depth+=o-c; next }
+  if ($0 ~ /^ *#/) next
+  if ($0 ~ /exit [0-9$]|exec runuser|self_sha/) print }' "${WG:-$GW}"; }
+sr_table_ok() {  # LINES KEYS... : every line holds a key and every key is held by a line
+  local lines=$1 k l miss=; shift
+  while IFS= read -r l; do [ -n "$l" ] || continue; for k in "$@"; do case $l in *"$k"*) continue 2 ;; esac; done; miss="$miss [no case for: ${l:0:70}]"; done <<< "$lines"
+  for k in "$@"; do case $lines in *"$k"*) ;; *) miss="$miss [no statement for: $k]" ;; esac; done
+  [ -z "$miss" ] || { echo "    start-up table: $miss"; return 1; }; }
+t_swstartguards() {  # the case tables cover every statement that can end the start-up, before and after the arm
+  local n; n=$(sr_post | wc -l); [ "$n" -ge 8 ] || { echo "    start-up table: only $n statements found after the arm"; return 1; }
+  n=$(sr_pre | wc -l); [ "$n" -ge 8 ] || { echo "    start-up table: only $n statements found before the arm"; return 1; }
+  sr_table_ok "$(sr_post)" "${SRKEYS[@]}" && sr_table_ok "$(sr_pre)" "${SPKEYS[@]}" && [ ${#SRKEYS[@]} = ${#SRCASES[@]} ] && [ ${#SPKEYS[@]} = ${#SPCASES[@]} ]; }
+sr_cut() {  # a restart cut off after its first timer start; SRRC is its status, SRF the marker and timers it left
+  local crash=$B/mut/crash3.sh
+  sed '/^    units start "\$u" || rbail "cannot re-enable/a kill -KILL $$' "${WG:-$GW}" > "$crash"; chmod +x "$crash"; cp "$HERE/cutover-steps.sh" "$B/mut/cutover-steps.sh"
+  cmp -s "${WG:-$GW}" "$crash" && { echo "  FAIL crash copy changed nothing"; return 1; }
+  restore r0a; rm -f "$ST/units/git-autosync-repair.service"; : > "$B/out.sw"; rm -rf "$B/shabad" "$B/badcfg" "$B/mkbad" "$B/idstub" "$B/rustub"
+  WG=$crash wg restart r0 >> "$B/out.sw" 2>&1; SRRC=$?
+  SRF="$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)"; }
+sr_state() { echo "$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)/$(ls "$J/gate0-run" | grep -c '^restart')"; }
+sr_stubs() {  # stub commands that fail on request, ahead of the wrapper's own PATH
+  mkdir -p "$B/mkbad" "$B/shabad" "$B/idstub" "$B/rustub"
+  printf '#!/bin/sh\nfor a in "$@"; do [ "$a" != "$STUB_FAIL" ] || exit 1; done\nexec %s "$@"\n' "$(command -v mkdir)" > "$B/mkbad/mkdir"
+  printf '#!/bin/sh\necho x\nexit 1\n' > "$B/shabad/sha256sum"; cp "$B/shabad/sha256sum" "$B/shabad/shasum"
+  printf '#!/bin/sh\ncase "$1" in -u) [ "$ID_MODE" = bad ] && exit 1; echo 0 ;; "") exit 1 ;; *) exit 0 ;; esac\n' > "$B/idstub/id"
+  printf '#!/bin/sh\nexit 1\n' > "$B/rustub/runuser"
+  chmod +x "$B"/mkbad/mkdir "$B"/shabad/* "$B"/idstub/id "$B"/rustub/runuser; }
+t_swstartrecover() {  # a restart cut off after its first timer start is undone by a retry that fails at any step of its start after the arm, before restart_settled can run (one case for each statement t_swstartguards lists), with no PRES, log directory or other input resolved
+  local c rc2 g want='137/marker/yes/no/1//no/no/0' bad= ran=0 total=0 cs; SWSR=
+  for cs in "${SRCASES[@]}"; do for c in $cs; do total=$((total+1)); done; done
+  for cs in "${SRCASES[@]}"; do for c in $cs; do
+    sr_cut || return 1; sr_stubs; ran=$((ran+1)); rc2=0
+    case $c in
       nogit) mv "$R/.git" "$R/.git.off"; wg restart r0 >> "$B/out.sw" 2>&1; rc2=$?; mv "$R/.git.off" "$R/.git" ;;
-      outside) T_PRES=$R/pres wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;
-      logdir) mkdir -p "$W/state2"; : > "$W/state2/logs"; T_STATE=$W/state2 wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;
+      gitcfg) printf '[\n' > "$B/badcfg"; GIT_CONFIG_GLOBAL=$B/badcfg wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;
+      gitroot) sw_inj ' --show-toplevel'; wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;
+      gitdir) sw_inj ' --git-dir'; wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;
+      gitcommon) sw_inj ' --git-common-dir'; wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;
+      pres-dangling) ln -s "$W/nowhere" "$W/pdang"; T_PRES=$W/pdang wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;   # the round-25 case: the preservation path cannot be resolved
+      pres-file) : > "$W/pfile"; T_PRES=$W/pfile/x wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;
+      state-in-checkout) T_STATE=$R/st wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;
+      pres-in-checkout) T_PRES=$R/pres wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;
+      pres-in-journal) T_PRES=$J/pres wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;
+      logs-into-checkout) mkdir -p "$W/lst"; ln -s "$R" "$W/lst/logs"; T_STATE=$W/lst wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;
+      journal-mkdir) STUB_FAIL=$J PATHS=$B/mkbad:$PATHS wg restart r0 >> "$B/out.sw" 2>&1; rc2=$?   # the journal exists (it holds the record), so only an injected failure reaches the statement
+        [ "$(sw_msg 'cannot create the journal')" = 1 ] || { echo "    $c: the statement was not reached"; bad="$bad $c"; } ;;
+      logdir-mkdir) mkdir -p "$W/state2"; : > "$W/state2/logs"; T_STATE=$W/state2 wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;
       machine) GATE0_MACHINE=bogus wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;
-      nosha) mkdir -p "$B/shabad"; printf '#!/bin/sh\necho x\nexit 1\n' > "$B/shabad/sha256sum"; cp "$B/shabad/sha256sum" "$B/shabad/shasum"; chmod +x "$B/shabad/sha256sum" "$B/shabad/shasum"
-        PATHS=$B/shabad:$PATHS wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;   # neither digest tool works
+      nosha) PATHS=$B/shabad:$PATHS wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;   # neither digest tool works
+      *) echo "    no such start-up case: $c"; return 1 ;;
     esac
-    g="$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)/$(ls "$J/gate0-run" | grep -c '^restart')"
-    SWSR="$SWSR$rc/$f/$rc2/$g;"
-  done
+    g=$(sr_state); [ "$SRRC/$SRF/$rc2/$g" = "$want" ] || { echo "    start case $c: got $SRRC/$SRF/$rc2/$g want $want"; bad="$bad $c"; }
+    SWSR="$SWSR$c:$rc2;"
+  done; done
+  [ "$ran" = "$total" ] || { echo "    start cases run: $ran"; return 1; }
   restore r0a; : > "$B/out.sw"; wg restart r0 >> "$B/out.sw" 2>&1 || return 1   # a completed restart is not undone by a later start that fails
-  GATE0_MACHINE=bogus wg restart r0 >> "$B/out.sw" 2>&1; rc=$?
-  SWSR="$SWSR$rc/$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)/$(ls "$J/gate0-run" | grep -c '^restarted-')"
-  [ "$SWSR" = "137/marker/yes/no/1//no/no/0;137/marker/yes/no/1//no/no/0;137/marker/yes/no/1//no/no/0;137/marker/yes/no/1//no/no/0;137/marker/yes/no/1//no/no/0;137/marker/yes/no/1//no/no/0;1/marker/yes/yes/1" ]; }
+  GATE0_MACHINE=bogus wg restart r0 >> "$B/out.sw" 2>&1; rc2=$?
+  SWSR="$SWSR$rc2/$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)/$(ls "$J/gate0-run" | grep -c '^restarted-')"
+  [ -z "$bad" ] && [ "$rc2/$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)/$(ls "$J/gate0-run" | grep -c '^restarted-')" = 1/marker/yes/yes/1 ]; }
+t_swprearm() {  # a retry that fails before the recovery is armed (usage, the environment, the checkout path, the user, the state and journal paths, the script's own digest under --check) writes and undoes nothing: the cut-off attempt is unchanged, and the next ordinary retry undoes it
+  local c rc2 pre post bad= ran=0 total=0 cs op; SWPA=
+  op=$(id -un)
+  for cs in "${SPCASES[@]}"; do for c in $cs; do total=$((total+1)); done; done
+  for cs in "${SPCASES[@]}"; do for c in $cs; do
+    sr_cut || return 1; sr_stubs; ran=$((ran+1)); rc2=0; pre=$(sr_state)
+    case $c in
+      check) wg --check >> "$B/out.sw" 2>&1; rc2=$? ;;
+      check-nosha) PATHS=$B/shabad:$PATHS wg --check >> "$B/out.sw" 2>&1; rc2=$? ;;
+      usage) wg restart >> "$B/out.sw" 2>&1; rc2=$? ;;
+      usage-exit-arg) wg restart zz >> "$B/out.sw" 2>&1; rc2=$? ;;
+      noenv) env GATE0_ROOT= GATE0_STATE_DIR= GATE0_PATH="$PATHS" "${WG:-$GW}" restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;
+      root-bad) R=$W/nowhere wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;
+      uid-bad) ID_MODE=bad PATHS=$B/idstub:$PATHS wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;
+      operator-bad) env GATE0_ROOT="$R" GATE0_STATE_DIR="$W/state" GATE0_JOURNAL="$J" GATE0_PATH="$B/idstub:$PATHS" GATE0_OPERATOR= "${WG:-$GW}" restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;
+      runuser-bad) env GATE0_ROOT="$R" GATE0_STATE_DIR="$W/state" GATE0_JOURNAL="$J" GATE0_PATH="$B/rustub:$B/idstub:$PATHS" GATE0_OPERATOR=$op "${WG:-$GW}" restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;
+      state-dangling) ln -s "$W/nowhere" "$W/sdang"; T_STATE=$W/sdang wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;
+      journal-dangling) ln -s "$W/nowhere" "$W/jdang"; T_JOURNAL=$W/jdang wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;
+      gate-symlink) mv "$J/gate0-run" "$J/gate0-real"; ln -s gate0-real "$J/gate0-run"; wg restart r0 >> "$B/out.sw" 2>&1; rc2=$?; rm -f "$J/gate0-run"; mv "$J/gate0-real" "$J/gate0-run" ;;
+      *) echo "    no such pre-arm case: $c"; return 1 ;;
+    esac
+    post=$(sr_state)
+    case $c in check) [ $rc2 = 0 ] || { echo "    pre-arm $c: exit $rc2 want 0"; bad="$bad $c"; } ;; *) [ $rc2 != 0 ] || { echo "    pre-arm $c: exit 0"; bad="$bad $c"; } ;; esac
+    [ "$SRRC/$SRF" = 137/marker/yes/no ] && [ "$pre" = "$post" ] || { echo "    pre-arm $c: state $pre -> $post"; bad="$bad $c"; }
+    wg restart r0 >> "$B/out.sw" 2>&1; post=$(sr_state)
+    [ "$post" = "/no/no/0" ] || { echo "    pre-arm $c: the next retry left $post"; bad="$bad $c"; }
+    SWPA="$SWPA$c:$rc2;"
+  done; done
+  [ "$ran" = "$total" ] || { echo "    pre-arm cases run: $ran"; return 1; }
+  [ -z "$bad" ]; }
 
 echo "== --check forms change nothing"
 restore fx; c0=$(ckfp); j0=$(jfp); l0=$(lanerefs)
@@ -1441,7 +1519,9 @@ sc "restart step 1 checks both entries of the capture's sha256 record, a last li
 sc "the jsonl_dominated extraction and load are status-checked and an inherited function is not accepted" t_swreconeval
 sc "no state, journal, preservation or log directory may be inside the common git directory of a linked worktree" t_swgitcommon
 sc "a cut-off restart is undone before any input is validated, and a new attempt still needs the inputs" t_swrestartclean
-sc "a cut-off restart is undone by a retry whose start fails at any step before the settled check can run" t_swstartrecover
+sc "the start-up case tables list every statement that can end the start, before and after the recovery is armed" t_swstartguards
+sc "a cut-off restart is undone by a retry whose start fails at any step after the arm, one case for each statement of the start-up" t_swstartrecover
+sc "a retry that fails before the recovery is armed changes nothing, and the next retry undoes the cut-off restart" t_swprearm
 
 echo "== mutation controls (each must be judged NOT fail-closed)"
 mutate() {  # NAME SEDEXPR : a copy of the wrapper with one safeguard removed; WG names it
@@ -1653,7 +1733,7 @@ check "M124 (a mutation of the driver whose sed fails, changes nothing or leaves
 mm M120 t_swgitcommon "the common git directory is not checked for the state, journal and preservation directories" 's/|"\$GC"\/\*) echo/) echo/'
 mm M121 t_swgitcommon "the log directory may be inside the common git directory" 's/"\$GD" "\$GC" "\$J" "\$PRES" ||/"$GD" "$J" "$PRES" ||/'
 mutate M122 '/^restart_settled \&\& exit 0$/d; s/^need_inputs$/need_inputs\nrestart_settled \&\& exit 0/' &&
-  { WG=$B/mut/M122.sh; t_swrestartclean; r=$?; WG=; check "M122 (the cleanup of a cut-off restart after the input validation) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+  { WG=$B/mut/M122.sh; t_swrestartclean; r=$?; WG=; check "M122 (diagnostic only: a restart cleanup placed after the input validation changes the exit status and the message of a blocked input; M145 to M148 are the controls that lose the recovery, M149 to M152 guard the case tables) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mm M123 t_swrestartclean "a recorded restart is no longer re-verified before the input validation" 's/^  if \[ -e "\$G\/restarted-\$XARG" \]; then restarted_holds "\$XARG"; return 0; fi.*$/  :/'
 mm M109 t_swrefreezegone "a new freeze records the earlier attempt's marker copy although the checkout has no marker" 's/^    else mv -f -- "\$G\/marker" "\$G\/marker.earlier.\$w" \&\& \[ ! -e "\$G\/marker" \] || stop "cannot set the earlier attempt.s marker copy aside"$/    else :/'
 mm M125 t_swcheckro "--check freeze sets the earlier attempt's marker copy aside" 's/^    if \[ \$CHECKMODE = 1 \]; then say "gate0-run: freeze check: the checkout has no marker.*$/    if false; then :/'
@@ -1676,6 +1756,14 @@ mm M141 t_swexitclean "the EXIT trap does not undo an open restart attempt" 's/I
 mm M142 t_swexitclean "a signal is not turned into a failed exit" "s/^trap 'exit 130' INT; trap 'exit 143' TERM; trap 'exit 129' HUP.*\$/:/"
 mm M143 t_swstartrecover "a start that fails before the log directory exists leaves a cut-off restart live" 's/^trap bootexit EXIT$/:/'
 mm M144 t_swstartrecover "the start-up exit trap does not undo a cut-off restart" '/^bootexit()/,/^  exit \$rc; }/ s/if undo_open_restart; then/if false; then/'
+mm M145 t_swstartrecover "the preservation path is resolved before the recovery is armed" '/^PRES=/d; s/^trap bootexit EXIT$/PRES=$(physpath "${GATE0_PRESERVE_DIR:-$SD\/preserve}") || { echo "gate0-run: cannot use GATE0_PRESERVE_DIR" >\&2; exit 1; }\ntrap bootexit EXIT/'
+mm M146 t_swstartrecover "the checkout's .git is asked for before the recovery is armed" '/^\[ -e "\$ROOT\/.git" \] ||/d; s/^trap bootexit EXIT$/[ -e "$ROOT\/.git" ] || { echo "gate0-run: GATE0_ROOT is not a git checkout" >\&2; exit 1; }\ntrap bootexit EXIT/'
+mm M147 t_swstartrecover "git's view of the checkout is bound before the recovery is armed" '/^BINDRC=1; git_bind$/d; s/^trap bootexit EXIT$/BINDRC=1; git_bind\ntrap bootexit EXIT/'
+mm M148 t_swstartrecover "the machine name is checked before the recovery is armed" '/^MACHINE=/d; s/^trap bootexit EXIT$/MACHINE=${GATE0_MACHINE:-server}; case $MACHINE in server|clavain) ;; *) echo "gate0-run: GATE0_MACHINE is server or clavain" >\&2; exit 1 ;; esac\ntrap bootexit EXIT/'
+mm M149 t_swstartguards "a new statement that can end the start-up has no case" 's/^BINDRC=1; git_bind$/&\n[ -d \/ ] || exit 1/'
+mm M150 t_swstartguards "a case names a statement that is gone" '/^self_sha$/d'
+mm M151 t_swstartguards "a new statement before the recovery is armed has no case" 's/^PHASE=\${1:-}; XARG=\${2:-}$/&\n[ -d \/ ] || exit 1/'
+mm M152 t_swprearm "a retry that fails before the arm clears the open restart's records" 's/^\[ -n "\$PHASE" \] || { echo "usage/[ -n "$PHASE" ] || { rm -f -- "${GATE0_JOURNAL:-\/nonexistent}"\/gate0-run\/restarting-*; echo "usage/'
 mm M110 t_swrefreezegone "an interrupted new freeze is taken for a new attempt: its recorded marker is set aside" 's/^  if restarted_any \&\& \[ ! -e "\$G\/freeze-intent" \] \&\& /  if restarted_any \&\& /'
 mm M106 t_swfreezerep "a repeated freeze does not check the whole invariant" 's/^    freeze_holds   # the whole invariant.*$/    :/'
 mm M107 t_swpushurls "only the first push URL is compared" 's/remote get-url --push --all "\$LANE"/remote get-url --push "$LANE"/'

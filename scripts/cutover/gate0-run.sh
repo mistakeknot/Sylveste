@@ -620,7 +620,6 @@ restart_settled() {  # a restart already recorded is re-verified, and a restart 
 # ---- start-up: everything above only defines functions. The paths that name the journal (git-free) come first; from there on a restart attempt that was cut off is undone by whatever ends the start (bootexit), so no later step (git, the checks, the log directory) can leave the restored marker, a started timer or the repair service live
 SD=$(physpath "$SD") || { echo "gate0-run: cannot use GATE0_STATE_DIR" >&2; exit 1; }
 J=$(physpath "${GATE0_JOURNAL:-$SD/journal}") || { echo "gate0-run: cannot use GATE0_JOURNAL" >&2; exit 1; }
-PRES=$(physpath "${GATE0_PRESERVE_DIR:-$SD/preserve}") || { echo "gate0-run: cannot use GATE0_PRESERVE_DIR" >&2; exit 1; }
 G=$J/gate0-run
 GP=$(physpath "$G") && [ "$GP" = "$G" ] || { echo "gate0-run: $G is not a plain child of the journal (a symlink)" >&2; exit 1; }
 TIMERS=${GATE0_UNITS_TIMERS:-git-autosync-repair.timer git-autosync-promote.timer}
@@ -634,6 +633,7 @@ trap bootexit EXIT
 trap 'exit 130' INT; trap 'exit 143' TERM; trap 'exit 129' HUP   # a signal is a failed exit, never the status 0 an EXIT trap sees after it
 [ -e "$ROOT/.git" ] || { echo "gate0-run: GATE0_ROOT is not a git checkout" >&2; exit 1; }
 BINDRC=1; git_bind
+PRES=$(physpath "${GATE0_PRESERVE_DIR:-$SD/preserve}") || { echo "gate0-run: cannot use GATE0_PRESERVE_DIR" >&2; exit 1; }
 # physical paths, checked before anything is created: nothing this script writes may land in the checkout or its git directory
 for d in "state directory:$SD" "journal:$J" "preservation copy:$PRES"; do
   case "${d#*:}/" in "$ROOT"/*|"$GD"/*|"$GC"/*) echo "gate0-run: the ${d%%:*} must be outside the checkout and its git directories" >&2; exit 1 ;; esac; done
