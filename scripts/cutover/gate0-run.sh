@@ -49,6 +49,11 @@
 # pr1-head, delete-list. cutover-steps.sh documents their formats.
 # Exit: 0 ok; 1 usage, or refused before any write; 3 STOP (a check failed; the state is described).
 # Every phase is idempotent: it re-verifies what an earlier run left and continues from the journal.
+# A restart attempt that was cut off is undone only when the journal is confirmed outside the checkout and its git
+# directories AND every record of the attempt names this very checkout (real path, git directory, common git
+# directory, marker digest). Anything else, including a record or git link that is present but not a regular
+# well-formed entry, is LEFT AS FOUND: no unit, marker or record is touched, the exit is non-zero, and the message
+# names the left-over state for a human.
 # Reporting: the EXIT trap writes a report (this script's sha256, the phase, the exit status) to the run's log
 # directory $GATE0_STATE_DIR/logs/<phase>-<utc timestamp>-<pid> and sends it with the report sender.
 # Portable to /bin/bash 3.2.
@@ -112,17 +117,22 @@ bindfail() {  # MESSAGE : git no longer shows the validated checkout: nothing mo
   printf '%s\n' "$m" >&9   # the script's own stderr: a caller that discards the failed command's stderr (2>/dev/null) still shows why the run stopped
   [ -z "${BINDTRAP:-}" ] || kill -USR1 $$ 2>/dev/null
   exit "${BINDRC:-3}"; }
-gitnames() {  # NE and NEC: the git directory and the common git directory that GATE0_ROOT/.git names, as physical paths, read without git: .git as a directory (or a link to one) or as a gitdir file, and the commondir file of the git directory in every layout. No git, no write, no exit; NERR says why it failed. The one reader: git_bind compares git's answer with it and the start-up confinement decides the journal from it.
+oneline() {  # FILE : its content when it is one non-empty line, as a regular file that is not a link; any other entry, an empty or a longer file, or a failed read is a failure (git reads such a file whole: a first line alone is not what git sees)
+  local c; [ -f "$1" ] && [ ! -L "$1" ] || return 1
+  c=$(cat -- "$1" 2>/dev/null) || return 1
+  case $c in ''|*$'\n'*) return 1 ;; esac
+  printf '%s\n' "$c"; }
+gitnames() {  # NE and NEC: the git directory and the common git directory that GATE0_ROOT/.git names, as physical paths, read without git: .git as a directory (or a link to one) or as a gitdir file, and the commondir file of the git directory in every layout. No git, no write, no exit; NERR says why it failed. A gitdir link or a commondir entry that exists but is not a regular one-line file is a failure (unknown), never an absent one. The one reader: git_bind compares git's answer with it and the start-up confinement decides the journal from it.
   local f= x=; NE=; NEC=; NERR=
   if [ -d "$ROOT/.git" ]; then f=$ROOT/.git
   else
-    f=$(sed -n '/^gitdir: /{s///p;q;}' "$ROOT/.git" 2>/dev/null) && [ -n "$f" ] || { NERR="GATE0_ROOT/.git is neither a directory nor a readable gitdir link"; return 1; }   # one reader, its own status: a read that prints a path and then fails names no git directory
+    x=$(oneline "$ROOT/.git") && case $x in "gitdir: "?*) f=${x#gitdir: } ;; *) false ;; esac || { NERR="GATE0_ROOT/.git is neither a directory nor a regular one-line gitdir link"; return 1; }   # one reader, its own status: a read that prints a path and then fails names no git directory
     case $f in /*) ;; *) f=$ROOT/$f ;; esac
   fi
   NE=$(cd "$f" 2>/dev/null && pwd -P) && [ -n "$NE" ] || { NE=; NERR="the git directory GATE0_ROOT/.git names cannot be entered"; return 1; }
   NEC=$NE
-  if [ -f "$NE/commondir" ]; then
-    x=$(sed -n 1p "$NE/commondir" 2>/dev/null) && [ -n "$x" ] || { NERR="the common directory link of the git directory cannot be read"; return 1; }
+  if [ -e "$NE/commondir" ] || [ -L "$NE/commondir" ]; then   # present in any form: only a regular one-line file is read
+    x=$(oneline "$NE/commondir") || { NERR="the common directory link of the git directory is not a regular one-line file or cannot be read"; return 1; }
     case $x in /*) ;; *) x=$NE/$x ;; esac
     NEC=$(cd "$x" 2>/dev/null && pwd -P) && [ -n "$NEC" ] || { NEC=; NERR="the common git directory GATE0_ROOT/.git names cannot be entered"; return 1; }
   fi; }
@@ -318,6 +328,7 @@ act_lines() { ( set -o pipefail; printf '%s\n' "$1" | sed 's/^ *//; s/ timer /\n
 do_freeze() {
   local a w u act="" f prior al
   [ -e "$G/preflight" ] || { [ $CHECKMODE = 1 ] || refuse "no preflight record; run preflight first"; }
+  records_ours 4 || stop "restart records that do not name this checkout (or are not well formed) are in $G: nothing was changed; a human must clear them"   # the freeze deletes the earlier attempt's records: only ones of this checkout
   if [ -e "$G/freeze" ] && [ $CHECKMODE = 0 ] && ! restarted_any; then   # after a completed restart a new freeze is a new attempt: it falls through
     a=$(rec_timers) || stop "the freeze record cannot be read: whether its timers stay stopped cannot be told"
     for u in $a; do ! is_active "$u" || stop "the freeze was recorded but $u is active again"; done
@@ -358,8 +369,8 @@ do_freeze() {
   rm -f -- "$G/freeze-intent"   # last: while a stale restart record exists the intent still names the restart set, so a crash between these two steps loses nothing
   say "gate0-run: freeze holds (timers and services stopped, marker aside)"; }
 nobeads() { local rc; grep -v ' \.beads/issues\.jsonl$'; rc=$?; [ $rc -le 1 ]; }   # drop the tracker export line; grep 1 is "no line left", 2 or more is a failed filter
-restarting_any() { local f; for f in "$G"/restarting-*; do [ -e "$f" ] && return 0; done; return 1; }
-restarted_any() { local f; for f in "$G"/restarted-*; do [ -e "$f" ] && return 0; done; return 1; }
+restarting_any() { local f; for f in "$G"/restarting-*; do [ -e "$f" ] || [ -L "$f" ] && return 0; done; return 1; }
+restarted_any() { local f; for f in "$G"/restarted-*; do [ -e "$f" ] || [ -L "$f" ] && return 0; done; return 1; }
 freeze_holds() { local u a
   [ -e "$G/freeze" ] || stop "no freeze record; run freeze first"
   hook_check   # a hook installed after preflight would run on the fetch, the realign or the repair run that follow
@@ -557,12 +568,14 @@ restarted_holds() {  # a restart that is already recorded: re-verify the state i
   rm -f -- "$G"/restarting-*   # a leftover from a crash after the record was written
   say "gate0-run: restart $1 already done ($(cat "$G/restarted-$1")); the recorded timers are active and the marker is in place; nothing run"; }
 do_restart() {
-  local ex=$XARG pe=$XARG sn sr
+  local ex=$XARG pe=$XARG sn sr tgt
   if [ $CHECKMODE = 1 ]; then
     [ ! -d "$J/p1-pre" ] || [ ! -e "$J/done-p1a" ] || { capture_check && runlog cs preserved "$( [ "$ex" = r6 ] && echo r6 )"; } || stop "restart step 1 would fail"
     say "gate0-run: restart $ex check: would run the unfreeze gate, preservation, reconciliation, the marker, one autosync run and the timers"; return 0; fi
   [ -e "$G/freeze" ] || refuse "no freeze record"
   freeze_holds   # restart: the freeze must hold now (units, marker, agents, bd), not only have been recorded
+  records_ours 5 || stop "restart records that do not name this checkout (or are not well formed) are in $G: nothing was run"   # a record of another checkout is for a human, never overwritten
+  tgt=$(rtarget) || stop "the recovery target of this checkout cannot be established (the checkout's identity or the freeze record's marker): nothing was run"   # before any side effect
   archive_ready   # the lane this restart reads and the run pushes to is validated now, not trusted from preflight
   if [ "$ex" = r0 ]; then
     if cpv=$(cut -d' ' -f1 "$J/cp" 2>/dev/null) && [ "$cpv" = a0r ]; then pe=a0r
@@ -578,7 +591,7 @@ do_restart() {
     capture_check || stop "restart step 1: the capture in the journal does not match its sha256 record (both entries are checked, a last line with no newline included); nothing restarted"
     runlog cs preserved "$( [ "$ex" = r6 ] && echo r6 )" || stop "restart step 1 failed before anything restarted"; fi
   reconcile
-  put "$G/restarting-$ex" "at $(date -u +%Y-%m-%dT%H:%M:%SZ)"   # before the first side effect: a crash from here to the completion record is found and undone by the next restart
+  put "$G/restarting-$ex" "at $(date -u +%Y-%m-%dT%H:%M:%SZ)"$'\n'"$tgt"   # the record names the checkout it was begun on; before the first side effect: a crash from here to the completion record is found and undone by the next restart
   RSTART=$ex
   if [ "$MACHINE" = server ]; then restart_server "$ex" "$pe"; else restart_clavain "$ex"; fi
   # step 5: the timers; the bd writers and the agent sessions resume afterwards, started by their owners
@@ -586,7 +599,7 @@ do_restart() {
   for u in $ts; do
     units start "$u" || rbail "cannot re-enable $u; every timer of this attempt is stopped again and the marker is aside"
     [ "$(unit_state "$u")" = active ] || rbail "$u is not active after its start (a controller that returns 0 proves nothing); every timer of this attempt is stopped again and the marker is aside"; done
-  put "$G/restarted-$ex" "at $(date -u +%Y-%m-%dT%H:%M:%SZ)" unrecord_bail
+  put "$G/restarted-$ex" "at $(date -u +%Y-%m-%dT%H:%M:%SZ)"$'\n'"$tgt" unrecord_bail
   rm -f -- "$G/restarting-$ex"
   RSTART=
   say "gate0-run: restart $ex done: the recorded timers are running again; resume the bd writers and the agent sessions now (they are not started by this script)"; }
@@ -594,28 +607,54 @@ do_restart() {
 within() {  # PHYSICAL-PATH DIR... : the path is inside one of the directories
   local p=$1 d; shift; for d in "$@"; do case "$p/" in "$d"/*) return 0 ;; esac; done; return 1; }
 confine() {  # JSAFE, the one decision about the journal, from the facts gitnames reads: safe (outside the checkout and outside both git directories .git names), unsafe (inside one of them) or unknown (the facts cannot be read). A checkout with no .git has no git directory to be inside. Read-only (no git, no write, no exit); it runs before the recovery is armed and again after git_bind, and the refusal and the recovery both read only this result: a later run replaces an earlier one, so neither a stale unknown nor an early safe survives.
-  local r=unknown
+  local r=unknown rid=
   if [ -e "$ROOT/.git" ] || [ -L "$ROOT/.git" ]; then gitnames && r=read; else NE=; NEC=; r=read; fi
   if [ $r = read ]; then if within "$J" "$ROOT" ${NE:+"$NE"} ${NEC:+"$NEC"}; then r=unsafe; else r=safe; fi; fi
-  JSAFE=$r; }   # assigned once, at the end: a computation that is cut short keeps the earlier decision, never a half-made one
-recovery_due() {  # a restart attempt is open in this process, or an earlier one was cut off after its record was written (and has no completion record): the test restart_settled applies, so a start that fails before it can run it still undoes the cut-off attempt. Only in a journal confine found safe: an unsafe or unknown one is never written to.
-  [ "${JSAFE:-unknown}" = safe ] || return 1
-  [ -n "${RSTART:-}" ] && return 0
-  [ "$PHASE" = restart ] && [ $CHECKMODE = 0 ] && [ -e "$G/freeze" ] && [ ! -e "$G/restarted-$XARG" ] && restarting_any; }
-undo_open_restart() {  # at an exit: whatever ended the script, an open or cut-off restart attempt is undone first (every recorded timer and service stopped and read back, the marker aside)
-  [ -z "${INCLEAN:-}" ] && recovery_due || return 1
-  INCLEAN=1; ( rcleanup ) >/dev/null || :   # a subshell: the cleanup's own stop ends it, never the trap that called it
-  return 0; }
+  if [ $r = safe ] && [ -n "$NE" ] && [ -n "$NEC" ]; then case "$ROOT$NE$NEC" in *$'\n'*) ;; *) rid="root $ROOT"$'\n'"gitdir $NE"$'\n'"common $NEC" ;; esac; fi   # the checkout's identity, set only from facts that were all read: real path and both git directories
+  RID=$rid; JSAFE=$r; }   # both assigned together, at the end: a computation that is cut short keeps the earlier decision and identity, never a half-made one
+rtarget() {  # the recovery target of this checkout, four lines: its real path, its git directory, its common git directory and the digest of the marker the freeze record names. It fails unless every one of them was read and is well formed
+  local m; m=$(rec_marker) && [[ $m =~ ^(none|[0-9a-f]{64})$ ]] && [ -n "${RID:-}" ] || return 1
+  printf '%s\nmarker %s\n' "$RID" "$m"; }
+rec_ours() {  # FILE N : a restart record is a regular file (not a link) whose lines 2 to N are the first N-1 lines of this checkout's recovery target (N 4: the checkout alone, N 5: and the marker digest). An old-format, foreign, unreadable or malformed record is not ours
+  local w g
+  [ -f "$1" ] && [ ! -L "$1" ] || return 1
+  w=$(rtarget) || return 1; w=$(printf '%s\n' "$w" | sed -n "1,$(($2-1))p") || return 1
+  g=$(sed -n "2,${2}p" -- "$1" 2>/dev/null) || return 1
+  [ "$g" = "$w" ]; }
+records_ours() {  # N : every restarted-* and restarting-* record in G, a dangling link included, is ours (rec_ours N)
+  local f; for f in "$G"/restarted-* "$G"/restarting-*; do
+    if [ -e "$f" ] || [ -L "$f" ]; then rec_ours "$f" "$1" || return 1; fi; done; return 0; }
+left_note() {  # REASON : a restart attempt's state is left exactly as found, once per process; the exit status of the script is made non-zero by the traps
+  [ -z "${LEFT:-}" ] || return 0; LEFT=1
+  local m="gate0-run: LEFT AS FOUND, nothing changed: $1; records in $G: $(ls -- "$G" 2>/dev/null | grep '^restart' | tr '\n' ' '); a human must check the checkout's marker, the repair service and the timers and clear the records deliberately"
+  echo "$m" >&2; echo "$m" >> "$LOG"; }
+recovery_state() {  # RDEC: none (no restart attempt is open), undo (one is, and the recovery may act) or left (one is, and nothing may be touched). The recovery acts only when all hold: the journal was confined as safe, the attempt is this process's own, or every record of it names this very checkout (real path, git directory, common git directory, marker digest) in the form its start wrote. Anything else, a record that cannot be read or is not well formed included, is left
+  RDEC=none
+  if [ -n "${RSTART:-}" ]; then RDEC=undo
+  elif [ "$PHASE" = restart ] && [ $CHECKMODE = 0 ] && [ -e "$G/freeze" ] && [ ! -e "$G/restarted-$XARG" ] && restarting_any; then
+    RDEC=undo; records_ours 5 || RDEC=left
+  else return 0; fi
+  [ "$JSAFE" = safe ] || RDEC=left; }
+undo_open_restart() {  # at an exit: whatever ended the script, an open or cut-off restart attempt is undone first (every recorded timer and service stopped and read back, the marker aside), but only when recovery_state says undo; a left attempt is named and not touched
+  [ -z "${INCLEAN:-}" ] || return 1
+  recovery_state
+  case $RDEC in
+    undo) INCLEAN=1; ( rcleanup ) >/dev/null || :; return 0 ;;   # a subshell: the cleanup's own stop ends it, never the trap that called it
+    left) left_note "an earlier restart attempt cannot be shown to belong to this checkout, or the journal is not confirmed safe (journal $JSAFE)" ;;
+  esac
+  return 1; }
 bootexit() {  # EXIT trap while the start-up runs, until the log directory exists and the report takes over: nothing is reported yet, but a cut-off restart is not left as it was by a start that fails (git, the checks, the log directory)
   local rc=$?
   if undo_open_restart; then
     [ $rc != 0 ] || rc=3
     echo "gate0-run: the start stopped while an earlier restart attempt was cut off: its effects are undone now (every recorded timer and service stopped, marker aside)" >&2
   fi
+  [ -z "${LEFT:-}" ] || [ $rc != 0 ] || rc=3
   exit $rc; }
 report() {  # EXIT trap: an open restart attempt is undone first (whatever ended the script: a stop, a die, a signal, a helper); then the report, then the sender; a failed delivery prints the report
   local rc=$? tell=${GATE0_REPORT_TELL:-} t=${GATE0_REPORT_TITLE:-gate0-run} r
   if undo_open_restart || [ -n "${RSTART:-}" ]; then [ $rc != 0 ] || rc=3; fi   # an attempt still open at exit did not complete, whatever status reached this trap
+  [ -z "${LEFT:-}" ] || [ $rc != 0 ] || rc=3   # a left attempt is never a success
   r=$([ $rc = 0 ] && echo ok || echo failed)
   echo "gate0-run.sh (sha256 $SELF_SHA) $CMDLINE: phase $PHASE, exit $rc ($r); log $LOG" > "$RLOG" 2>/dev/null
   "$tell" --title "$t" --message-file "$RLOG" --script "$SELF" --result "$r" --step "$PHASE" --log "$LOG" >/dev/null 2>&1 ||
@@ -626,10 +665,14 @@ bindtrap() {  # USR1, from bindfail: git no longer shows the checkout. A restart
   if [ -n "$RSTART" ] && [ -z "${INCLEAN:-}" ]; then INCLEAN=1; rbail "git no longer shows the validated checkout during the restart; every timer of this attempt is stopped and the marker is aside"; fi
   exit 3; }
 
-restart_settled() {  # a restart already recorded is re-verified, and a restart attempt cut off is undone, before any input is validated: neither needs J's inputs, and a missing one must not leave the timers and the service as the cut-off attempt left them
+restart_settled() {  # a restart already recorded is re-verified, and a restart attempt cut off is undone, before any input is validated: neither needs J's inputs, and a missing one must not leave the timers and the service as the cut-off attempt left them. Both act only on records that name this checkout; otherwise nothing is touched and the exit is non-zero
   [ "$PHASE" = restart ] && [ $CHECKMODE = 0 ] && [ -e "$G/freeze" ] || return 1
-  if [ -e "$G/restarted-$XARG" ]; then restarted_holds "$XARG"; return 0; fi   # a repeat runs nothing
-  if restarting_any; then rbail "an earlier restart attempt began (marker, service or timers) and left no completion record: its effects are undone now (every timer stopped, marker aside); run the restart again as a new attempt"; fi
+  if [ -e "$G/restarted-$XARG" ] || [ -L "$G/restarted-$XARG" ]; then
+    records_ours 5 || { left_note "the restart records do not name this checkout (or are not well formed)"; exit 3; }
+    restarted_holds "$XARG"; return 0; fi   # a repeat runs nothing
+  if restarting_any; then
+    recovery_state; [ "$RDEC" = undo ] || { left_note "an earlier restart attempt cannot be shown to belong to this checkout (journal $JSAFE)"; exit 3; }
+    rbail "an earlier restart attempt began (marker, service or timers) and left no completion record: its effects are undone now (every timer stopped, marker aside); run the restart again as a new attempt"; fi
   return 1; }
 # ---- start-up: everything above only defines functions. The paths that name the journal (git-free) come first; from there on a restart attempt that was cut off is undone by whatever ends the start (bootexit), so no later step (git, the checks, the log directory) can leave the restored marker, a started timer or the repair service live
 SD=$(physpath "$SD") || { echo "gate0-run: cannot use GATE0_STATE_DIR" >&2; exit 1; }
