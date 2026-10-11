@@ -585,7 +585,24 @@ do_restart() {
 
 within() {  # PHYSICAL-PATH DIR... : the path is inside one of the directories
   local p=$1 d; shift; for d in "$@"; do case "$p/" in "$d"/*) return 0 ;; esac; done; return 1; }
-recovery_due() {  # a restart attempt is open in this process, or an earlier one was cut off after its record was written (and has no completion record): the test restart_settled applies, so a start that fails before it can run it still undoes the cut-off attempt
+jconfine() {  # JSAFE=1 only when the journal is outside the checkout and outside every git directory the checkout's .git names; read-only (no git, no write, no exit), so it can run before anything else: a recovery writes into the journal, and a journal that is not confined (or whose confinement cannot be read) is refused later and is never written to. A checkout with no .git has no git directory to be inside.
+  local f= e= ec= x= l; JSAFE=0
+  if [ -d "$ROOT/.git" ]; then e=$(cd "$ROOT/.git" 2>/dev/null && pwd -P) && ec=$e || return 0
+  elif [ -e "$ROOT/.git" ] || [ -L "$ROOT/.git" ]; then
+    { while IFS= read -r l || [ -n "$l" ]; do case $l in "gitdir: "*) f=${l#gitdir: }; break ;; esac; done; } 2>/dev/null < "$ROOT/.git"
+    [ -n "$f" ] || return 0
+    case $f in /*) ;; *) f=$ROOT/$f ;; esac
+    e=$(cd "$f" 2>/dev/null && pwd -P) || return 0
+    if [ -f "$e/commondir" ]; then
+      IFS= read -r x 2>/dev/null < "$e/commondir"; [ -n "$x" ] || return 0
+      case $x in /*) ;; *) x=$e/$x ;; esac
+      ec=$(cd "$x" 2>/dev/null && pwd -P) || return 0
+    else ec=$e; fi
+  fi
+  within "$J" "$ROOT" ${e:+"$e"} ${ec:+"$ec"} && return 0
+  JSAFE=1; }
+recovery_due() {  # a restart attempt is open in this process, or an earlier one was cut off after its record was written (and has no completion record): the test restart_settled applies, so a start that fails before it can run it still undoes the cut-off attempt. Only in a journal that passed jconfine: a refused journal is never written to.
+  [ "${JSAFE:-0}" = 1 ] || return 1
   [ -n "${RSTART:-}" ] && return 0
   [ "$PHASE" = restart ] && [ $CHECKMODE = 0 ] && [ -e "$G/freeze" ] && [ ! -e "$G/restarted-$XARG" ] && restarting_any; }
 undo_open_restart() {  # at an exit: whatever ended the script, an open or cut-off restart attempt is undone first (every recorded timer and service stopped and read back, the marker aside)
@@ -629,12 +646,13 @@ case " $SERVICES " in *" $REPAIR_SVC "*) ;; *) SERVICES="$SERVICES $REPAIR_SVC" 
 LOG=/dev/null; RLOG=/dev/null   # until the log directory exists
 SELF_SHA=unknown   # until self_sha has run (the report names it)
 RSTART=   # set while a restart attempt is open (its record is written, its completion record is not): the only phase whose side effects a stop must undo itself
+jconfine   # before the arm: a journal that is not confined is refused by the checks below and is never written to, by the recovery either
 trap bootexit EXIT
 trap 'exit 130' INT; trap 'exit 143' TERM; trap 'exit 129' HUP   # a signal is a failed exit, never the status 0 an EXIT trap sees after it
 [ -e "$ROOT/.git" ] || { echo "gate0-run: GATE0_ROOT is not a git checkout" >&2; exit 1; }
 BINDRC=1; git_bind
 PRES=$(physpath "${GATE0_PRESERVE_DIR:-$SD/preserve}") || { echo "gate0-run: cannot use GATE0_PRESERVE_DIR" >&2; exit 1; }
-# physical paths, checked before anything is created: nothing this script writes may land in the checkout or its git directory
+# physical paths, checked before anything is created: nothing this script writes may land in the checkout or its git directory (for the journal this repeats jconfine with git's directories, which git_bind has just shown equal to the ones .git names)
 for d in "state directory:$SD" "journal:$J" "preservation copy:$PRES"; do
   case "${d#*:}/" in "$ROOT"/*|"$GD"/*|"$GC"/*) echo "gate0-run: the ${d%%:*} must be outside the checkout and its git directories" >&2; exit 1 ;; esac; done
 # the children are checked as well: a symlinked logs/ or gate0-run/ must not turn a write into one inside the checkout or the journal

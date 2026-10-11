@@ -1217,8 +1217,10 @@ t_swrestartclean() {  # a restart cut off after its first timer start is undone 
   [ "$SWRC" = "137/marker/yes/no/3//no/no/0/1/1/1;137/marker/yes/no/3//no/no/0/1/1/1;3//no/no//1" ]; }
 
 # The statements of the start-up that can end the script, in the order they run, are read from the wrapper itself and each has a case below
-# (a statement with no entry, or an entry with no statement, fails t_swstartguards). set -u is no extra class: an unbound variable ends the script
-# through the same EXIT trap, and every expansion before the arm is guarded or assigned above it.
+# (a statement with no entry, or an entry with no statement, fails t_swstartguards). The tables are lexical, so they are an aid and no proof:
+# they cannot see an exit inside a helper function. The proof is t_swstartinject, which fails every command the start-up executes (helpers and
+# subshells included) and checks the state each time. set -u is no extra class: an unbound variable ends the script through the same EXIT trap,
+# and every expansion before the arm is guarded or assigned above it.
 SRKEYS=('$ROOT/.git' 'git_bind' 'PRES=$(physpath' 'must be outside the checkout and its git' 'preservation copy must be outside the journal' 'LP=$(physpath' 'cannot create the journal' 'cannot create $LOGD' 'GATE0_MACHINE is server' 'self_sha')
 SRCASES=('nogit' 'gitcfg gitroot gitdir gitcommon' 'pres-dangling pres-file' 'state-in-checkout pres-in-checkout' 'pres-in-journal' 'logs-into-checkout' 'journal-mkdir' 'logdir-mkdir' 'machine' 'nosha')
 # before the recovery is armed only what names the journal can fail (and nothing is written there)
@@ -1318,6 +1320,69 @@ t_swprearm() {  # a retry that fails before the recovery is armed (usage, the en
   done; done
   [ "$ran" = "$total" ] || { echo "    pre-arm cases run: $ran"; return 1; }
   [ -z "$bad" ]; }
+
+t_swunconfined() {  # a retry whose journal is not confined (inside the checkout, inside a git directory it names, or confinement that cannot be read) is refused and touches nothing: no write into that journal, nothing stopped, the marker where it was; the state stays for a run with the right journal, which then undoes it
+  local c rc2 jj Rx R0=$R bad= jpre jpost rpre rpost spre spost g; SWUC=
+  for c in jin jgit wtgit wtcommon wtroot brokenlink; do
+    sr_cut || return 1; sr_stubs; : > "$B/out.sw"; Rx=$R0; jj=$J
+    case $c in
+      jin) jj=$R0/jin ;;
+      jgit) jj=$R0/.git/jin ;;
+      wtgit|wtcommon|wtroot)
+        git -C "$R0" checkout -q --detach && git -C "$R0" worktree add "$W/wt" main >> "$B/out.sw" 2>&1 || { echo "    $c: cannot add a linked worktree"; return 1; }
+        Rx=$W/wt
+        case $c in wtgit) jj=$R0/.git/worktrees/wt/jin ;; wtcommon) jj=$R0/.git/jc ;; wtroot) jj=$W/wt/jin ;; esac ;;
+      brokenlink) Rx=$W/brk; mkdir -p "$Rx"; printf 'gitdir: %s\n' "$W/nowhere/x" > "$Rx/.git"; jj=$W/jout ;;
+    esac
+    mkdir -p "$(dirname "$jj")" && cp -a "$J" "$jj" || { echo "    $c: cannot copy the journal"; return 1; }
+    jpre=$(J=$jj jfp); rpre=$(ls -A "$Rx" | sha); spre="$([ -e "$R0/.git-autosync" ] && echo marker)/$(timers)"
+    R=$Rx T_JOURNAL=$jj wg restart r0 >> "$B/out.sw" 2>&1; rc2=$?
+    jpost=$(J=$jj jfp); rpost=$(ls -A "$Rx" | sha); spost="$([ -e "$R0/.git-autosync" ] && echo marker)/$(timers)"
+    [ "$rc2" = 1 ] || { echo "    $c: exit $rc2 want 1"; bad="$bad $c"; }
+    { [ "$jpre" = "$jpost" ] && [ "$rpre" = "$rpost" ] && [ "$spre" = "$spost" ] && [ "$spost" = marker/yes/no ]; } || { echo "    $c: the refused start changed something (journal ${jpre:0:8}->${jpost:0:8}, checkout ${rpre:0:8}->${rpost:0:8}, $spre -> $spost)"; bad="$bad $c"; }
+    [ "$(sw_msg 'are undone now')" = 0 ] || { echo "    $c: a recovery ran in the refused start"; bad="$bad $c"; }
+    case $c in brokenlink) ;; *) [ "$(sw_msg 'must be outside the checkout and its git')" = 1 ] || { echo "    $c: not refused by the confinement check"; bad="$bad $c"; } ;; esac
+    wg restart r0 >> "$B/out.sw" 2>&1; g=$(sr_state)   # the run with the right journal undoes the earlier attempt
+    [ "$g" = "/no/no/0" ] || { echo "    $c: the right journal left $g"; bad="$bad $c"; }
+    SWUC="$SWUC$c:$rc2;"
+  done
+  [ -z "$bad" ]; }
+t_swstartinject() {  # every command the start-up executes, in a counted run, is failed in turn (a DEBUG trap with a counter in a file, so helpers and subshells count too) with a cut-off restart in the journal: a failure after the recovery is armed always leaves it undone; one before leaves everything as it was, or undone, and the next retry undoes it
+  local inj=$B/inj mut=$B/mut/inj.sh wsave n tot arm rc2 pre jpre post jpost kept=0 rec=0 bad= g; SWSI=
+  rm -rf "$inj"; mkdir -p "$inj"
+  cat > "$inj/head.txt" <<'EOS'
+set -T
+injtrap() {  # test only
+  [ -e "$INJF.fired" ] && return 0
+  local n; read -r n < "$INJF.n"; n=$((n+1)); echo "$n" > "$INJF.n"
+  echo "$n ${BASH_COMMAND%%$'\n'*}" >> "$INJF.log"
+  if [ "$n" = "$INJN" ]; then : > "$INJF.fired"; exit 1; fi
+  return 0; }
+trap injtrap DEBUG
+EOS
+  sed -e '/^set -u$/r '"$inj/head.txt" -e 's/^restart_settled && exit 0$/trap - DEBUG\n&/' "${WG:-$GW}" > "$mut"; chmod +x "$mut"
+  bash -n "$mut" 2>/dev/null && ! cmp -s "$mut" "${WG:-$GW}" || { echo "    injector copy is not usable"; return 1; }
+  wsave=${WG:-}; WG=; sr_cut || { WG=$wsave; return 1; }; WG=$wsave   # the cut-off state comes from the unmutated wrapper, so a mutation of the start-up is not already in the baseline
+  sr_stubs; snap rcut
+  echo 0 > "$inj/c.n"; : > "$inj/c.log"
+  INJF=$inj/c INJN=0 WG=$mut wg restart r0 >> "$B/out.sw" 2>&1
+  arm=$(awk '$2=="trap" && $3=="bootexit" && $4=="EXIT" {print $1; exit}' "$inj/c.log"); tot=$(awk '$2=="trap" && $3=="-" && $4=="DEBUG" {print $1; exit}' "$inj/c.log")
+  { [ -n "$arm" ] && [ -n "$tot" ] && [ "$arm" -ge 8 ] && [ $((tot-arm)) -ge 15 ]; } || { echo "    injector: arm=$arm end=$tot (too few steps counted)"; return 1; }
+  for ((n=1; n<=tot; n++)); do
+    restore rcut; : > "$B/out.sw"; echo 0 > "$inj/k.n"; : > "$inj/k.log"; rm -f "$inj/k.fired"
+    pre=$(sr_state); jpre=$(jfp)
+    INJF=$inj/k INJN=$n WG=$mut wg restart r0 >> "$B/out.sw" 2>&1; rc2=$?
+    [ -e "$inj/k.fired" ] || { echo "    step $n: not reached"; bad="$bad $n(not reached)"; continue; }
+    post=$(sr_state); jpost=$(jfp)
+    [ "$rc2" != 0 ] || { echo "    step $n: exit 0"; bad="$bad $n(exit 0)"; }
+    if [ "$post" = "/no/no/0" ]; then rec=$((rec+1))
+    elif [ "$n" -le "$arm" ] && [ "$post" = "$pre" ] && [ "$jpost" = "$jpre" ]; then
+      kept=$((kept+1)); wg restart r0 >> "$B/out.sw" 2>&1; g=$(sr_state)
+      [ "$g" = "/no/no/0" ] || { echo "    step $n: the next retry left $g"; bad="$bad $n(retry)"; }
+    else echo "    step $n ($(sed -n "s/^$n //p" "$inj/k.log" | head -n 1 | cut -c1-70)): left $post (journal $([ "$jpost" = "$jpre" ] && echo same || echo changed)), arm at $arm"; bad="$bad $n"; fi
+  done
+  SWSI="steps=$tot arm=$arm kept=$kept recovered=$rec"; echo "    injector: $SWSI"
+  [ -z "$bad" ] && [ "$kept" -ge 1 ] && [ $((kept+rec)) = "$tot" ]; }
 
 echo "== --check forms change nothing"
 restore fx; c0=$(ckfp); j0=$(jfp); l0=$(lanerefs)
@@ -1522,6 +1587,8 @@ sc "a cut-off restart is undone before any input is validated, and a new attempt
 sc "the start-up case tables list every statement that can end the start, before and after the recovery is armed" t_swstartguards
 sc "a cut-off restart is undone by a retry whose start fails at any step after the arm, one case for each statement of the start-up" t_swstartrecover
 sc "a retry that fails before the recovery is armed changes nothing, and the next retry undoes the cut-off restart" t_swprearm
+sc "a retry whose journal is not confined is refused and touches nothing: no write, nothing stopped" t_swunconfined
+sc "every command of the start-up failed in turn: after the arm the cut-off restart is undone, before it nothing changed" t_swstartinject
 
 echo "== mutation controls (each must be judged NOT fail-closed)"
 mutate() {  # NAME SEDEXPR : a copy of the wrapper with one safeguard removed; WG names it
@@ -1733,7 +1800,7 @@ check "M124 (a mutation of the driver whose sed fails, changes nothing or leaves
 mm M120 t_swgitcommon "the common git directory is not checked for the state, journal and preservation directories" 's/|"\$GC"\/\*) echo/) echo/'
 mm M121 t_swgitcommon "the log directory may be inside the common git directory" 's/"\$GD" "\$GC" "\$J" "\$PRES" ||/"$GD" "$J" "$PRES" ||/'
 mutate M122 '/^restart_settled \&\& exit 0$/d; s/^need_inputs$/need_inputs\nrestart_settled \&\& exit 0/' &&
-  { WG=$B/mut/M122.sh; t_swrestartclean; r=$?; WG=; check "M122 (diagnostic only: a restart cleanup placed after the input validation changes the exit status and the message of a blocked input; M145 to M148 are the controls that lose the recovery, M149 to M152 guard the case tables) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
+  { WG=$B/mut/M122.sh; t_swrestartclean; r=$?; WG=; check "M122 (diagnostic only: a restart cleanup placed after the input validation changes the exit status and the message of a blocked input; M145 to M148 are the controls that lose the recovery, M149 to M152 guard the case tables, M153 to M156 the unconfined journal and the start-up injector) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mm M123 t_swrestartclean "a recorded restart is no longer re-verified before the input validation" 's/^  if \[ -e "\$G\/restarted-\$XARG" \]; then restarted_holds "\$XARG"; return 0; fi.*$/  :/'
 mm M109 t_swrefreezegone "a new freeze records the earlier attempt's marker copy although the checkout has no marker" 's/^    else mv -f -- "\$G\/marker" "\$G\/marker.earlier.\$w" \&\& \[ ! -e "\$G\/marker" \] || stop "cannot set the earlier attempt.s marker copy aside"$/    else :/'
 mm M125 t_swcheckro "--check freeze sets the earlier attempt's marker copy aside" 's/^    if \[ \$CHECKMODE = 1 \]; then say "gate0-run: freeze check: the checkout has no marker.*$/    if false; then :/'
@@ -1764,6 +1831,10 @@ mm M149 t_swstartguards "a new statement that can end the start-up has no case" 
 mm M150 t_swstartguards "a case names a statement that is gone" '/^self_sha$/d'
 mm M151 t_swstartguards "a new statement before the recovery is armed has no case" 's/^PHASE=\${1:-}; XARG=\${2:-}$/&\n[ -d \/ ] || exit 1/'
 mm M152 t_swprearm "a retry that fails before the arm clears the open restart's records" 's/^\[ -n "\$PHASE" \] || { echo "usage/[ -n "$PHASE" ] || { rm -f -- "${GATE0_JOURNAL:-\/nonexistent}"\/gate0-run\/restarting-*; echo "usage/'
+mm M153 t_swunconfined "the recovery ignores whether the journal passed confinement" 's/^  \[ "\${JSAFE:-0}" = 1 \] || return 1$/  :/'
+mm M154 t_swunconfined "the git directories the checkout names are left out of the journal confinement" 's/within "\$J" "\$ROOT" \${e:+"\$e"} \${ec:+"\$ec"} \&\& return 0/within "$J" "$ROOT" \&\& return 0/'
+mm M155 t_swunconfined "a git directory link that cannot be read counts as confined" 's/^    e=\$(cd "\$f" 2>\/dev\/null \&\& pwd -P) || return 0$/    e=$(cd "$f" 2>\/dev\/null \&\& pwd -P) || { JSAFE=1; return 0; }/'
+mm M156 t_swstartinject "a write into the journal before the recovery is armed (no lexical table sees it)" 's/^jconfine   # before the arm.*$/: > "$J\/early-write"\n&/'
 mm M110 t_swrefreezegone "an interrupted new freeze is taken for a new attempt: its recorded marker is set aside" 's/^  if restarted_any \&\& \[ ! -e "\$G\/freeze-intent" \] \&\& /  if restarted_any \&\& /'
 mm M106 t_swfreezerep "a repeated freeze does not check the whole invariant" 's/^    freeze_holds   # the whole invariant.*$/    :/'
 mm M107 t_swpushurls "only the first push URL is compared" 's/remote get-url --push --all "\$LANE"/remote get-url --push "$LANE"/'
