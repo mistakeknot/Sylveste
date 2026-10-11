@@ -212,13 +212,13 @@ cat > "$B/stub/grep" <<EOF
 if [ -e "$ST/grepfail" ]; then case " \$* " in *"\$(cat "$ST/grepfail")"*) if [ -e "$ST/grepfail-out" ]; then $REALGREP "\$@"; else cat > /dev/null; fi; echo "grep: injected failure (stub)" >&2; exit 2 ;; esac; fi
 exec $REALGREP "\$@"
 EOF
-# sed: a call whose arguments contain the text in $ST/sedfail fails (after $ST/sedfail-skip such calls passed), printing what it would first while $ST/sedfail-out exists
+# sed: a call whose arguments contain the text in $ST/sedfail fails (after $ST/sedfail-skip such calls passed), printing what it would first while $ST/sedfail-out exists; while $ST/sedfail-blank exists it succeeds and prints nothing (a record without the line)
 REALSED=$(command -v sed)
 cat > "$B/stub/sed" <<EOF
 #!/bin/bash
 if [ -e "$ST/sedfail" ]; then case " \$* " in *"\$(cat "$ST/sedfail")"*)
   n=\$(cat "$ST/sedfail-n" 2>/dev/null || echo 0); n=\$((n+1)); echo \$n > "$ST/sedfail-n"
-  if [ \$n -gt \$(cat "$ST/sedfail-skip" 2>/dev/null || echo 0) ]; then [ ! -e "$ST/sedfail-out" ] || $REALSED "\$@"; echo "sed: injected failure (stub)" >&2; exit 4; fi ;; esac; fi
+  if [ \$n -gt \$(cat "$ST/sedfail-skip" 2>/dev/null || echo 0) ]; then [ ! -e "$ST/sedfail-blank" ] || exit 0; [ ! -e "$ST/sedfail-out" ] || $REALSED "\$@"; echo "sed: injected failure (stub)" >&2; exit 4; fi ;; esac; fi
 exec $REALSED "\$@"
 EOF
 # cat: a call with an argument ending in the text in $ST/catfail fails (after $ST/catfail-skip such calls passed), printing what it would first while $ST/catfail-out exists
@@ -654,10 +654,10 @@ t_swtree() {  # the base's tree and the index's tree are both read; a failed rea
   SWH="$a;$b"; [ "$SWH" = "3/1/;3/1/" ]; }
 t_swmarkrec() {  # a marker record that names no hash is not equal to a hash that could not be computed (restore, and a recorded restart)
   local a b
-  restore r0a; sed -i '/^marker /d' "$J/gate0-run/freeze"; printf '%s' '*/.git-autosync' > "$ST/fail-sha"
+  restore r0a; sw_sed 's/^marker //p' 1 blank; printf '%s' '*/.git-autosync' > "$ST/fail-sha"   # the first read is the recovery target's, which needs a hash; the later one finds no marker line
   wg restart r0 > "$B/out.sw" 2>&1; a="$?/$(sw_msg 'the restored marker differs')/$(sw_state)"
   restore r0a; wg restart r0 > "$B/out.sw" 2>&1 || return 1
-  sed -i '/^marker /d' "$J/gate0-run/freeze"; printf '%s' '*/.git-autosync' > "$ST/fail-sha"
+  sw_sed 's/^marker //p' 1 blank; printf '%s' '*/.git-autosync' > "$ST/fail-sha"
   wg restart r0 > "$B/out.sw" 2>&1; b="$?/$(sw_msg 'is recorded but the marker in the checkout is not the one set aside')/$(sw_state)"
   SWI="$a;$b"; [ "$SWI" = "3/1//0/no/no/;3/1//1/no/no/" ]; }
 t_swrestatus() {  # the status read behind the marker rule: a failed read is a STOP with nothing started
@@ -717,8 +717,8 @@ t_swlsremote() {  # --check: origin/main read from the remote and from the track
 
 # ---- class sweep, round 12: the record reads, the push URL read and the status compares (bead mk-z9st.22)
 sw_injo() { sw_inj "$@"; touch "$ST/gitfail-out"; }   # as sw_inj, but the real output is shown before the failure
-sw_sed() {  # TEXT [SKIP] [out] : the wrapper's sed calls whose arguments contain TEXT fail (after SKIP matching calls pass); "out" prints their output first
-  printf '%s' "$1" > "$ST/sedfail"; printf '%s' "${2:-0}" > "$ST/sedfail-skip"; rm -f "$ST/sedfail-n" "$ST/sedfail-out"; [ "${3:-}" != out ] || touch "$ST/sedfail-out"; }
+sw_sed() {  # TEXT [SKIP] [out|blank] : the wrapper's sed calls whose arguments contain TEXT fail (after SKIP matching calls pass); "out" prints their output first
+  printf '%s' "$1" > "$ST/sedfail"; printf '%s' "${2:-0}" > "$ST/sedfail-skip"; rm -f "$ST/sedfail-n" "$ST/sedfail-out" "$ST/sedfail-blank"; [ "${3:-}" != out ] || touch "$ST/sedfail-out"; [ "${3:-}" != blank ] || touch "$ST/sedfail-blank"; }
 t_swrecrbail() {  # cleanup with an unreadable freeze record still stops every configured timer (the recorded restart's check and its cleanup both fail to read it)
   restore r0a; wg restart r0 > "$B/out.sw" 2>&1 || return 1
   sw_sed 's/^timer //p'
@@ -729,7 +729,7 @@ t_swrecholds() {  # a recorded restart whose freeze record fails after its outpu
   restore r0a; wg restart r0 > "$B/out.sw" 2>&1 || return 1
   sw_sed 's/^timer //p' 0 out; wg restart r0 > "$B/out.sw" 2>&1; a="$?/$(sw_msg 'the timers it names cannot be checked')/$(sw_state)"
   restore r0a; wg restart r0 > "$B/out.sw" 2>&1 || return 1
-  sw_sed 's/^marker //p' 0 out; wg restart r0 > "$B/out.sw" 2>&1; b="$?/$(sw_msg 'its marker cannot be checked')/$(sw_state)"
+  sw_sed 's/^marker //p' 1 out; wg restart r0 > "$B/out.sw" 2>&1; b="$?/$(sw_msg 'its marker cannot be checked')/$(sw_state)"
   SWU="$a;$b"; [ "$SWU" = "3/1//1/no/no/;3/1//1/no/no/" ]; }
 t_swstep5() {  # the timers to start are read from the record with its status checked: a read that fails after its output starts no timer
   restore r0a; sw_sed 's/^timer //p' 0 out
@@ -789,7 +789,7 @@ t_swsharec() {  # the capture's sha256 record must name exactly the bundle and t
   [ "$SWAE" = "3/1" ]; }
 
 t_swrestmark() {  # the restored marker's recorded hash is read with its status: a read that prints the hash and then fails is not a match
-  restore r0a; sw_sed 's/^marker //p' 0 out
+  restore r0a; sw_sed 's/^marker //p' 1 out   # the first read is the recovery target's
   wg restart r0 > "$B/out.sw" 2>&1; SWAF="$?/$(sw_msg 'the restored marker differs from the one set aside')/$(sw_state)"
   [ "$SWAF" = "3/1//0/no/no/" ]; }
 t_swactlines() {  # the restart set is written from a list built with each stage's status checked: a list that fails after its output is not written, and nothing is stopped
@@ -836,9 +836,19 @@ t_swrestover() {  # restoring the set-aside marker over other bytes in the check
   SWAJ=$res; [ "$SWAJ" = "0/restored/kept" ]; }
 
 t_swclavmark() {  # a freeze record that cannot be read is not a record that names a marker: the Clavain restart stops before the marker path is taken
-  restore r0a; rm -f "$B/drift.txt"; chmod 000 "$J/gate0-run/freeze"
-  GATE0_MACHINE=clavain GATE0_SWEEP="$B/bin/sweep" GATE0_DRIFT_REPORT="$B/drift.txt" wg restart r0 > "$B/out.sw" 2>&1; SWAK="$?/$(sw_msg 'whether a marker was set aside cannot be told')/$(sw_state)"; chmod 644 "$J/gate0-run/freeze"
+  restore r0a; rm -f "$B/drift.txt"; sw_sed 's/^marker //p' 1   # the first read is the recovery target's
+  GATE0_MACHINE=clavain GATE0_SWEEP="$B/bin/sweep" GATE0_DRIFT_REPORT="$B/drift.txt" wg restart r0 > "$B/out.sw" 2>&1; SWAK="$?/$(sw_msg 'whether a marker was set aside cannot be told')/$(sw_state)"
   [ "$SWAK" = "3/1//0/no/no/" ]; }
+t_swtargetread() {  # the recovery target needs the freeze record's marker line, read with its status and well formed: without it a fresh restart stops before any side effect, and a recorded restart is left as found (a failed read is not "no marker")
+  local a b c
+  restore r0a; sw_sed 's/^marker //p' 0 out
+  wg restart r0 > "$B/out.sw" 2>&1; a="$?/$(sw_msg 'the recovery target of this checkout cannot be established')/$(sw_state)"
+  restore r0a; sw_sed 's/^marker //p' 0 blank
+  wg restart r0 > "$B/out.sw" 2>&1; b="$?/$(sw_msg 'the recovery target of this checkout cannot be established')/$(sw_state)"
+  restore r0a; wg restart r0 > "$B/out.sw" 2>&1 || return 1
+  sw_sed 's/^marker //p' 0 out
+  wg restart r0 > "$B/out.sw" 2>&1; c="$?/$(sw_msg 'LEFT AS FOUND')/$(sw_state)"
+  SWTR="$a;$b;$c"; [ "$SWTR" = "3/1//0/no/no/;3/1//0/no/no/;3/1/recorded/1/yes/yes/marker" ]; }
 t_swobserver() {  # the test's own before/after observers fail closed: two failed observations are never "nothing changed", a listing that fails after its output included
   local a b c d e f g2 h i j k l
   restore fx
@@ -1707,6 +1717,7 @@ sc "the sha256 record verifier needs two completed checks and accepts an untermi
 sc "restoring the set-aside marker keeps the bytes it replaces" t_swrestover
 sc "a sha256 record with no final newline is verified in full and a bad capture never replaces the preservation copy" t_swsharecterm
 sc "a freeze record that cannot be read does not take the no-marker path of a Clavain restart" t_swclavmark
+sc "a freeze record whose marker line cannot be read gives no recovery target: a fresh restart stops, a recorded one is left as found" t_swtargetread
 sc "the test's before and after observers fail closed" t_swobserver
 sc "the capture's sha256 names read with a failing status are a STOP" t_swcapnames
 sc "a user id that cannot be read stops the wrapper before it does anything" t_swidfail
@@ -2008,6 +2019,7 @@ mm M169 t_swgitlink "oneline ignores a failed read" 's/^  c=\$(cat -- "\$1" 2>\/
 mm M170 t_swstartinject "the checkout's identity is cleared before the decision is made" 's/^  local r=unknown rid=$/&; RID=/'
 mm M171 t_swwrongroot "a completed restart's record of another checkout is not checked" 's/^    records_ours 5 || { left_note "the restart records do not name this checkout (or are not well formed)"; exit 3; }$/    :/'
 mm M172 t_swwrongroot "a left attempt is not named" 's/^  \[ -z "\${LEFT:-}" \] || return 0; LEFT=1$/  return 0/'
+mm M173 t_swtargetread "a restart goes on without a recovery target" 's/^  tgt=\$(rtarget) || stop "[^"]*"[^\n]*$/  tgt=$(rtarget)/'
 mm M110 t_swrefreezegone "an interrupted new freeze is taken for a new attempt: its recorded marker is set aside" 's/^  if restarted_any \&\& \[ ! -e "\$G\/freeze-intent" \] \&\& /  if restarted_any \&\& /'
 mm M106 t_swfreezerep "a repeated freeze does not check the whole invariant" 's/^    freeze_holds   # the whole invariant.*$/    :/'
 mm M107 t_swpushurls "only the first push URL is compared" 's/remote get-url --push --all "\$LANE"/remote get-url --push "$LANE"/'
