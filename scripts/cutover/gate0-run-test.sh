@@ -1047,18 +1047,18 @@ t_swexitclean() {  # a restart cut off by anything but rbail (a stop after the r
   res="$rc/$(sw_msg 'the automations are paused')/$(sw_state)/$(eval "$rcount")"; rm -f "$B/nopause"
   restore r0a; touch "$ST/start-hang" "$ST/svc-stays-active"; : > "$B/tell.log"
   wg restart r0 > "$B/out.sw" 2>&1 &
-  for i in $(seq 1 150); do [ -e "$ST/start-hung" ] && break; sleep 0.1; done
-  if [ -e "$ST/start-hung" ]; then pid=$(cat "$ST/start-hung"); kill -TERM "$pid"; fi
+  for i in $(seq 1 600); do [ -s "$ST/start-hung" ] && break; sleep 0.1; done   # non-empty: the stub creates the file before it writes the pid
+  if [ -s "$ST/start-hung" ]; then pid=$(cat "$ST/start-hung"); kill -TERM "$pid"; fi
   touch "$ST/start-release"; wait $!; rc=$?
   res="$res;$rc/$(sw_state)/$(eval "$rcount")/$([ -e "$ST/units/git-autosync-repair.service" ] && echo svc)/$([ -e "$J/gate0-run/marker" ] && echo aside)"
   res="$res/$(tail -n 1 "$B/tell.log" | grep -c -- '--result failed --step restart')"
   restore fx; stepto preflight || return 1; touch "$ST/stop-hang"; : > "$B/tell.log"   # a signal outside a restart: still a failed exit, and the report says so
   wg freeze > "$B/out.sw" 2>&1 &
-  for i in $(seq 1 150); do [ -e "$ST/stop-hung" ] && break; sleep 0.1; done
-  if [ -e "$ST/stop-hung" ]; then pid=$(cat "$ST/stop-hung"); kill -TERM "$pid"; fi
+  for i in $(seq 1 600); do [ -s "$ST/stop-hung" ] && break; sleep 0.1; done
+  if [ -s "$ST/stop-hung" ]; then pid=$(cat "$ST/stop-hung"); kill -TERM "$pid"; fi
   touch "$ST/stop-release"; wait $!; rc=$?; rm -f "$ST/stop-hang" "$ST/stop-hung" "$ST/stop-release"
   res="$res;$rc/$(tail -n 1 "$B/tell.log" | grep -c -- '--result failed --step freeze')"
-  SWEC=$res; [ "$SWEC" = "3/1//0/no/no//0;143//1/no/no//0//aside/1;143/1" ]; }
+  SWEC=$res; [ "$SWEC" = "3/1//0/no/no//0;143//1/no/no//0//aside/1;143/1" ] || { echo "    t_swexitclean got: $SWEC"; return 1; }; }
 t_swrefreezegone() {  # a new freeze after a completed restart is a new attempt: a marker the operator removed meanwhile is not recorded from the earlier attempt's copy, so the next restart does not put it back
   local r="" m
   restore r0a; wg restart r0 > "$B/out.sw" 2>&1; r="$?/$([ -e "$J/gate0-run/marker" ] && echo copy)/$([ -e "$R/.git-autosync" ] && echo live);"
