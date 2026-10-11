@@ -112,20 +112,28 @@ bindfail() {  # MESSAGE : git no longer shows the validated checkout: nothing mo
   printf '%s\n' "$m" >&9   # the script's own stderr: a caller that discards the failed command's stderr (2>/dev/null) still shows why the run stopped
   [ -z "${BINDTRAP:-}" ] || kill -USR1 $$ 2>/dev/null
   exit "${BINDRC:-3}"; }
+gitnames() {  # NE and NEC: the git directory and the common git directory that GATE0_ROOT/.git names, as physical paths, read without git: .git as a directory (or a link to one) or as a gitdir file, and the commondir file of the git directory in every layout. No git, no write, no exit; NERR says why it failed. The one reader: git_bind compares git's answer with it and the start-up confinement decides the journal from it.
+  local f= x=; NE=; NEC=; NERR=
+  if [ -d "$ROOT/.git" ]; then f=$ROOT/.git
+  else
+    f=$(sed -n '/^gitdir: /{s///p;q;}' "$ROOT/.git" 2>/dev/null) && [ -n "$f" ] || { NERR="GATE0_ROOT/.git is neither a directory nor a readable gitdir link"; return 1; }   # one reader, its own status: a read that prints a path and then fails names no git directory
+    case $f in /*) ;; *) f=$ROOT/$f ;; esac
+  fi
+  NE=$(cd "$f" 2>/dev/null && pwd -P) && [ -n "$NE" ] || { NE=; NERR="the git directory GATE0_ROOT/.git names cannot be entered"; return 1; }
+  NEC=$NE
+  if [ -f "$NE/commondir" ]; then
+    x=$(sed -n 1p "$NE/commondir" 2>/dev/null) && [ -n "$x" ] || { NERR="the common directory link of the git directory cannot be read"; return 1; }
+    case $x in /*) ;; *) x=$NE/$x ;; esac
+    NEC=$(cd "$x" 2>/dev/null && pwd -P) && [ -n "$NEC" ] || { NEC=; NERR="the common git directory GATE0_ROOT/.git names cannot be entered"; return 1; }
+  fi; }
 git_bind() {  # git's view of GATE0_ROOT is the checkout's own: its work tree is GATE0_ROOT itself (physical path) and its git and common directories are the ones GATE0_ROOT/.git names (the directory itself, or the one a linked worktree's or submodule's .git file points to), and they are the ones recorded at the start. Run before the first use of git and before every use after it
   git_env_clean
-  local t d c e= ec= f x
+  local t d c e= ec=
   t=$(git -C "$ROOT" rev-parse --show-toplevel 2>/dev/null) && t=$(cd "$t" 2>/dev/null && pwd -P) && [ "$t" = "$ROOT" ] || bindfail "git's work tree for GATE0_ROOT is not GATE0_ROOT itself (core.worktree, a bare repository or a subdirectory)"
   d=$(git -C "$ROOT" rev-parse --path-format=absolute --git-dir 2>/dev/null) && d=$(cd "$d" 2>/dev/null && pwd -P) || bindfail "GATE0_ROOT has no usable git directory"
   # a linked worktree keeps its refs, objects and config in the common directory, which is outside both the checkout and its own git directory
   c=$(git -C "$ROOT" rev-parse --git-common-dir 2>/dev/null) && case $c in /*) ;; *) c=$ROOT/$c ;; esac && c=$(cd "$c" 2>/dev/null && pwd -P) || bindfail "GATE0_ROOT has no usable common git directory"
-  if [ -d "$ROOT/.git" ]; then e=$(cd "$ROOT/.git" 2>/dev/null && pwd -P) && ec=$e
-  else f=$(sed -n '/^gitdir: /{s///p;q;}' "$ROOT/.git" 2>/dev/null) && [ -n "$f" ] || bindfail "GATE0_ROOT/.git is neither a directory nor a readable gitdir link"   # one reader, its own status: a read that prints a path and then fails names no git directory
-    case $f in /*) ;; *) f=$ROOT/$f ;; esac
-    e=$(cd "$f" 2>/dev/null && pwd -P) || bindfail "the git directory GATE0_ROOT/.git names cannot be entered"
-    if [ -f "$e/commondir" ]; then x=$(sed -n 1p "$e/commondir" 2>/dev/null) && [ -n "$x" ] || bindfail "the common directory link of the git directory cannot be read"
-      case $x in /*) ;; *) x=$e/$x ;; esac; ec=$(cd "$x" 2>/dev/null && pwd -P) || bindfail "the common git directory GATE0_ROOT/.git names cannot be entered"
-    else ec=$e; fi; fi
+  gitnames || bindfail "$NERR"; e=$NE; ec=$NEC   # the same reader the start-up confinement uses
   [ -n "$e" ] && [ -n "$ec" ] && [ "$d" = "$e" ] && [ "$c" = "$ec" ] || bindfail "git's git directory for GATE0_ROOT is not the one GATE0_ROOT/.git names (GIT_DIR, GIT_COMMON_DIR, a gitdir link or a replaced .git)"
   if [ -n "${GD:-}" ]; then [ "$d" = "$GD" ] && [ "$c" = "$GC" ] || bindfail "git's git directories changed since the start"
   else GD=$d; GC=$c; fi; }
@@ -585,24 +593,13 @@ do_restart() {
 
 within() {  # PHYSICAL-PATH DIR... : the path is inside one of the directories
   local p=$1 d; shift; for d in "$@"; do case "$p/" in "$d"/*) return 0 ;; esac; done; return 1; }
-jconfine() {  # JSAFE=1 only when the journal is outside the checkout and outside every git directory the checkout's .git names; read-only (no git, no write, no exit), so it can run before anything else: a recovery writes into the journal, and a journal that is not confined (or whose confinement cannot be read) is refused later and is never written to. A checkout with no .git has no git directory to be inside.
-  local f= e= ec= x= l; JSAFE=0
-  if [ -d "$ROOT/.git" ]; then e=$(cd "$ROOT/.git" 2>/dev/null && pwd -P) && ec=$e || return 0
-  elif [ -e "$ROOT/.git" ] || [ -L "$ROOT/.git" ]; then
-    { while IFS= read -r l || [ -n "$l" ]; do case $l in "gitdir: "*) f=${l#gitdir: }; break ;; esac; done; } 2>/dev/null < "$ROOT/.git"
-    [ -n "$f" ] || return 0
-    case $f in /*) ;; *) f=$ROOT/$f ;; esac
-    e=$(cd "$f" 2>/dev/null && pwd -P) || return 0
-    if [ -f "$e/commondir" ]; then
-      IFS= read -r x 2>/dev/null < "$e/commondir"; [ -n "$x" ] || return 0
-      case $x in /*) ;; *) x=$e/$x ;; esac
-      ec=$(cd "$x" 2>/dev/null && pwd -P) || return 0
-    else ec=$e; fi
-  fi
-  within "$J" "$ROOT" ${e:+"$e"} ${ec:+"$ec"} && return 0
-  JSAFE=1; }
-recovery_due() {  # a restart attempt is open in this process, or an earlier one was cut off after its record was written (and has no completion record): the test restart_settled applies, so a start that fails before it can run it still undoes the cut-off attempt. Only in a journal that passed jconfine: a refused journal is never written to.
-  [ "${JSAFE:-0}" = 1 ] || return 1
+confine() {  # JSAFE, the one decision about the journal, from the facts gitnames reads: safe (outside the checkout and outside both git directories .git names), unsafe (inside one of them) or unknown (the facts cannot be read). A checkout with no .git has no git directory to be inside. Read-only (no git, no write, no exit); it runs before the recovery is armed and again after git_bind, and the refusal and the recovery both read only this result: a later run replaces an earlier one, so neither a stale unknown nor an early safe survives.
+  local r=unknown
+  if [ -e "$ROOT/.git" ] || [ -L "$ROOT/.git" ]; then gitnames && r=read; else NE=; NEC=; r=read; fi
+  if [ $r = read ]; then if within "$J" "$ROOT" ${NE:+"$NE"} ${NEC:+"$NEC"}; then r=unsafe; else r=safe; fi; fi
+  JSAFE=$r; }   # assigned once, at the end: a computation that is cut short keeps the earlier decision, never a half-made one
+recovery_due() {  # a restart attempt is open in this process, or an earlier one was cut off after its record was written (and has no completion record): the test restart_settled applies, so a start that fails before it can run it still undoes the cut-off attempt. Only in a journal confine found safe: an unsafe or unknown one is never written to.
+  [ "${JSAFE:-unknown}" = safe ] || return 1
   [ -n "${RSTART:-}" ] && return 0
   [ "$PHASE" = restart ] && [ $CHECKMODE = 0 ] && [ -e "$G/freeze" ] && [ ! -e "$G/restarted-$XARG" ] && restarting_any; }
 undo_open_restart() {  # at an exit: whatever ended the script, an open or cut-off restart attempt is undone first (every recorded timer and service stopped and read back, the marker aside)
@@ -646,15 +643,18 @@ case " $SERVICES " in *" $REPAIR_SVC "*) ;; *) SERVICES="$SERVICES $REPAIR_SVC" 
 LOG=/dev/null; RLOG=/dev/null   # until the log directory exists
 SELF_SHA=unknown   # until self_sha has run (the report names it)
 RSTART=   # set while a restart attempt is open (its record is written, its completion record is not): the only phase whose side effects a stop must undo itself
-jconfine   # before the arm: a journal that is not confined is refused by the checks below and is never written to, by the recovery either
+JSAFE=unknown
+confine   # before the arm: a journal that is not safe is refused after git_bind and is never written to, by the recovery either
 trap bootexit EXIT
 trap 'exit 130' INT; trap 'exit 143' TERM; trap 'exit 129' HUP   # a signal is a failed exit, never the status 0 an EXIT trap sees after it
 [ -e "$ROOT/.git" ] || { echo "gate0-run: GATE0_ROOT is not a git checkout" >&2; exit 1; }
 BINDRC=1; git_bind
 PRES=$(physpath "${GATE0_PRESERVE_DIR:-$SD/preserve}") || { echo "gate0-run: cannot use GATE0_PRESERVE_DIR" >&2; exit 1; }
-# physical paths, checked before anything is created: nothing this script writes may land in the checkout or its git directory (for the journal this repeats jconfine with git's directories, which git_bind has just shown equal to the ones .git names)
-for d in "state directory:$SD" "journal:$J" "preservation copy:$PRES"; do
-  case "${d#*:}/" in "$ROOT"/*|"$GD"/*|"$GC"/*) echo "gate0-run: the ${d%%:*} must be outside the checkout and its git directories" >&2; exit 1 ;; esac; done
+confine   # the final decision, from the facts git_bind has just shown equal to the git directories git names: it replaces the one made before the arm, and the refusal and the recovery both read it
+[ "$JSAFE" = safe ] || { echo "gate0-run: the journal must be outside the checkout and its git directories (it is $JSAFE)" >&2; exit 1; }
+# physical paths, checked before anything is created: nothing else this script writes may land in the checkout or its git directory (the journal has the one decision above)
+for d in "state directory:$SD" "preservation copy:$PRES"; do
+  ! within "${d#*:}" "$ROOT" "$GD" "$GC" || { echo "gate0-run: the ${d%%:*} must be outside the checkout and its git directories" >&2; exit 1; }; done
 # the children are checked as well: a symlinked logs/ or gate0-run/ must not turn a write into one inside the checkout or the journal
 within "$PRES" "$J" && { echo "gate0-run: the preservation copy must be outside the journal" >&2; exit 1; }
 LOGD=$SD/logs/$PHASE-$(date -u +%Y%m%dT%H%M%SZ)-$$
