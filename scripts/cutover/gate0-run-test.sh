@@ -1859,7 +1859,7 @@ else echo "  FAIL mutation M118 changed nothing"; fails=$((fails+1)); fi
 mgi M119 t_swresolve "a mode that a failed read printed is recorded" 's/mode=\$(disk_mode "\$p") || { rm -f -- "\${idx:?}"; die 6 "resolve: cannot read the mode of \$p"; }/mode=$(disk_mode "$p")/'
 mgi_prep M124 's/(/' ; a=$?; mgi_prep M124 's/zzzqq-not-present/x/'; b=$?; mgi_prep M124 's/^#!.*/if/'; c=$?; mgi_prep M124 's/^host() {/host() {/' ; e=$?
 check "M124 (a mutation of the driver whose sed fails, changes nothing or leaves a script that does not parse is rejected, a real one accepted)" "$([ $a != 0 ] && [ $b != 0 ] && [ $c != 0 ] && [ $e != 0 ] && mgi_prep M124 's/^host() {/host() { :;/' && echo rejected)" rejected
-mm M120 t_swgitcommon "the common git directory is not checked for the state, journal and preservation directories" 's/|"\$GC"\/\*) echo/) echo/'
+mm M120 t_swgitcommon "the common git directory is not checked for the state, journal and preservation directories" 's/! within "\${d#\*:}" "\$ROOT" "\$GD" "\$GC" ||/! within "${d#*:}" "$ROOT" "$GD" ||/'
 mm M121 t_swgitcommon "the log directory may be inside the common git directory" 's/"\$GD" "\$GC" "\$J" "\$PRES" ||/"$GD" "$J" "$PRES" ||/'
 mutate M122 '/^restart_settled \&\& exit 0$/d; s/^need_inputs$/need_inputs\nrestart_settled \&\& exit 0/' &&
   { WG=$B/mut/M122.sh; t_swrestartclean; r=$?; WG=; check "M122 (diagnostic only: a restart cleanup placed after the input validation changes the exit status and the message of a blocked input; M145 to M148 are the controls that lose the recovery, M149 to M152 guard the case tables, M153 to M161 the single confinement decision and the start-up injector) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
