@@ -1216,6 +1216,31 @@ t_swrestartclean() {  # a restart cut off after its first timer start is undone 
   SWRC="$SWRC$rc/$([ -e "$J/gate0-run/restarted-r0" ] && echo recorded)/$(timers)/$([ -e "$R/.git-autosync" ] && echo marker)/$(sw_msg 'is not confirmed active')"
   [ "$SWRC" = "137/marker/yes/no/3//no/no/0/1/1/1;137/marker/yes/no/3//no/no/0/1/1/1;3//no/no//1" ]; }
 
+t_swstartrecover() {  # a restart cut off after its first timer start is undone by a retry that fails at any step of its start, before restart_settled can run: git's first read, the checkout's .git, the outside-the-checkout check, the log directory, the machine name, the script's own digest; with no cut-off record a failing start undoes nothing
+  local v crash=$B/mut/crash3.sh rc rc2 f g; SWSR=
+  for v in gitcfg nogit outside logdir machine nosha; do
+    sed '/^    units start "\$u" || rbail "cannot re-enable/a kill -KILL $$' "${WG:-$GW}" > "$crash"; chmod +x "$crash"; cp "$HERE/cutover-steps.sh" "$B/mut/cutover-steps.sh"
+    cmp -s "${WG:-$GW}" "$crash" && { echo "  FAIL crash copy changed nothing"; return 1; }
+    restore r0a; rm -f "$ST/units/git-autosync-repair.service"; : > "$B/out.sw"; rm -rf "$B/shabad" "$B/badcfg"
+    WG=$crash wg restart r0 >> "$B/out.sw" 2>&1; rc=$?
+    f="$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)"
+    case $v in
+      gitcfg) printf '[\n' > "$B/badcfg"; GIT_CONFIG_GLOBAL=$B/badcfg wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;   # the first rev-parse fails
+      nogit) mv "$R/.git" "$R/.git.off"; wg restart r0 >> "$B/out.sw" 2>&1; rc2=$?; mv "$R/.git.off" "$R/.git" ;;
+      outside) T_PRES=$R/pres wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;
+      logdir) mkdir -p "$W/state2"; : > "$W/state2/logs"; T_STATE=$W/state2 wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;
+      machine) GATE0_MACHINE=bogus wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;
+      nosha) mkdir -p "$B/shabad"; printf '#!/bin/sh\necho x\nexit 1\n' > "$B/shabad/sha256sum"; cp "$B/shabad/sha256sum" "$B/shabad/shasum"; chmod +x "$B/shabad/sha256sum" "$B/shabad/shasum"
+        PATHS=$B/shabad:$PATHS wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;   # neither digest tool works
+    esac
+    g="$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)/$(ls "$J/gate0-run" | grep -c '^restart')"
+    SWSR="$SWSR$rc/$f/$rc2/$g;"
+  done
+  restore r0a; : > "$B/out.sw"; wg restart r0 >> "$B/out.sw" 2>&1 || return 1   # a completed restart is not undone by a later start that fails
+  GATE0_MACHINE=bogus wg restart r0 >> "$B/out.sw" 2>&1; rc=$?
+  SWSR="$SWSR$rc/$([ -e "$R/.git-autosync" ] && echo marker)/$(timers)/$(ls "$J/gate0-run" | grep -c '^restarted-')"
+  [ "$SWSR" = "137/marker/yes/no/1//no/no/0;137/marker/yes/no/1//no/no/0;137/marker/yes/no/1//no/no/0;137/marker/yes/no/1//no/no/0;137/marker/yes/no/1//no/no/0;137/marker/yes/no/1//no/no/0;1/marker/yes/yes/1" ]; }
+
 echo "== --check forms change nothing"
 restore fx; c0=$(ckfp); j0=$(jfp); l0=$(lanerefs)
 WG= wg --check > "$B/out" 2>&1; check "--check" "$?" 0
@@ -1416,6 +1441,7 @@ sc "restart step 1 checks both entries of the capture's sha256 record, a last li
 sc "the jsonl_dominated extraction and load are status-checked and an inherited function is not accepted" t_swreconeval
 sc "no state, journal, preservation or log directory may be inside the common git directory of a linked worktree" t_swgitcommon
 sc "a cut-off restart is undone before any input is validated, and a new attempt still needs the inputs" t_swrestartclean
+sc "a cut-off restart is undone by a retry whose start fails at any step before the settled check can run" t_swstartrecover
 
 echo "== mutation controls (each must be judged NOT fail-closed)"
 mutate() {  # NAME SEDEXPR : a copy of the wrapper with one safeguard removed; WG names it
@@ -1428,7 +1454,7 @@ mutate M1 's/|| stop "the marker is back in the checkout: the freeze no longer h
   { WG=$B/mut/M1.sh; t_markerback; r=$?; WG=; check "M1 (no marker check before capture) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M2 's/^  hook_check   # first:.*/  :/' &&
   { WG=$B/mut/M2.sh; t_hook; r=$?; WG=; check "M2 (no hook check) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
-mutate M3 's/rbail "the run differs/stop "the run differs/; s/INCLEAN=1; ( rcleanup ) >\/dev\/null || :;/:;/' &&   # the caller's recovery and the EXIT-trap net both gone
+mutate M3 's/rbail "the run differs/stop "the run differs/; s/INCLEAN=1; ( rcleanup ) >\/dev\/null || :   #/:   #/' &&   # the caller's recovery and the EXIT-trap net both gone
   { WG=$B/mut/M3.sh; t_verify; r=$?; WG=; check "M3 (marker left in place after a mismatch) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 
 mutate M4 's/^  hook_check   # first:.*/  :/; s/^  archive_check; }$/  hook_check; archive_check; }/' &&
@@ -1457,7 +1483,7 @@ mutate M15 's/^LP=.*$/LP=x/' &&
   { WG=$B/mut/M15.sh; t_symlinks; r=$?; WG=; check "M15 (no check of the log directory's physical path) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M16 's/^  if \[ "\$o" != "\$BASE" \]; then pres_check; fi.*$/  :/; s/pres_check; d=\$PD/PD=\$PRES\/\$HOST-\$o; d=\$PD/' &&
   { WG=$B/mut/M16.sh; t_symlinks; r=$?; WG=; check "M16 (no check of the preservation directory) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
-mutate M17 's/ unrecord_bail$//; s/INCLEAN=1; ( rcleanup ) >\/dev\/null || :;/:;/' &&   # the handler and the EXIT-trap net both gone
+mutate M17 's/ unrecord_bail$//; s/INCLEAN=1; ( rcleanup ) >\/dev\/null || :   #/:   #/' &&   # the handler and the EXIT-trap net both gone
   { WG=$B/mut/M17.sh; t_putfail; r=$?; WG=; check "M17 (a failed record leaves the restart half done) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M18 's/^inroot() {.*$/inroot() { "$@"; }/' &&
   { WG=$B/mut/M18.sh; t_cwd; r=$?; WG=; check "M18 (bd run from the caller's directory) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
@@ -1641,13 +1667,15 @@ mm M132 t_swgitenv "a work tree other than GATE0_ROOT is accepted" 's/\[ "\$t" =
 mm M133 t_swgitmid "the checkout is not checked again before each git on it" 's/^pg() { git_bind; /pg() { /; s/^inroot() { git_bind; /inroot() { /'
 mm M134 t_swgitvars "the scrub keeps the variables of a config file selected by name" 's/GIT_CONFIG_GLOBAL|GIT_CONFIG_NOSYSTEM|GIT_TERMINAL_PROMPT/GIT_CONFIG_*|GIT_TERMINAL_PROMPT/'
 mm M135 t_swgitenv "the git directory is not compared with the one the checkout names" 's/ \&\& \[ "\$d" = "\$e" \] \&\& \[ "\$c" = "\$ec" \] || bindfail/ || bindfail/'
-mm M136 t_swgitrst "a bind failure during a restart does not undo the restart" 's/^  if \[ -n "\$RSTART" \] \&\& \[ -z "\${INCLEAN:-}" \]; then.*; fi$/  :/'
+mm M136 t_swgitrst "diagnostic only: the bind-failure trap no longer says why; the EXIT-trap cleanup still undoes the restart (M141 and M143 are the controls that lose the recovery)" 's/^  if \[ -n "\$RSTART" \] \&\& \[ -z "\${INCLEAN:-}" \]; then.*; fi$/  :/'
 mm M137 t_swgitlink "a failing gitdir link read is accepted" 's/ \&\& \[ -n "\$f" \] || bindfail "GATE0_ROOT\/.git is neither[^"]*"/ || :/'
 mm M138 t_swgitlink "a failing commondir read is accepted" 's/ \&\& \[ -n "\$x" \] || bindfail "the common directory link of the git directory cannot be read"/ || :/'
 mm M139 t_swgitfailall "the cleanup of a failed restart leaves the marker in the checkout" 's/^  move_marker_aside force; \[ -n "\$RBAD" \]/  [ -n "$RBAD" ]/'
 mm M140 t_swgitfailall "the cleanup of a failed restart leaves the repair service running" 's/^  for u in \$ts \$SERVICES; do units stop "\$u" >\/dev\/null 2>&1; done/  for u in $ts; do units stop "$u" >\/dev\/null 2>\&1; done/'
-mm M141 t_swexitclean "the EXIT trap does not undo an open restart attempt" 's/INCLEAN=1; ( rcleanup ) >\/dev\/null || :; fi/:; fi/'
+mm M141 t_swexitclean "the EXIT trap does not undo an open restart attempt" 's/INCLEAN=1; ( rcleanup ) >\/dev\/null || :   #/:   #/'
 mm M142 t_swexitclean "a signal is not turned into a failed exit" "s/^trap 'exit 130' INT; trap 'exit 143' TERM; trap 'exit 129' HUP.*\$/:/"
+mm M143 t_swstartrecover "a start that fails before the log directory exists leaves a cut-off restart live" 's/^trap bootexit EXIT$/:/'
+mm M144 t_swstartrecover "the start-up exit trap does not undo a cut-off restart" '/^bootexit()/,/^  exit \$rc; }/ s/if undo_open_restart; then/if false; then/'
 mm M110 t_swrefreezegone "an interrupted new freeze is taken for a new attempt: its recorded marker is set aside" 's/^  if restarted_any \&\& \[ ! -e "\$G\/freeze-intent" \] \&\& /  if restarted_any \&\& /'
 mm M106 t_swfreezerep "a repeated freeze does not check the whole invariant" 's/^    freeze_holds   # the whole invariant.*$/    :/'
 mm M107 t_swpushurls "only the first push URL is compared" 's/remote get-url --push --all "\$LANE"/remote get-url --push "$LANE"/'

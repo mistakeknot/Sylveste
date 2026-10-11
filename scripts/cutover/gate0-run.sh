@@ -61,18 +61,21 @@ git_env_clean() {  # git takes its repository, work tree, index, object store, n
     GIT_*) unset "$_v" ;; esac; done
   export GIT_OPTIONAL_LOCKS=0; }   # no git command of this script, nor the steps it runs, rewrites the index to refresh stat data
 git_env_clean
+exec 9>&2   # the script's own stderr, kept for the messages of a refused bind
 HERE=$(cd "$(dirname "$0")" && pwd -P); SELF=$HERE/$(basename "$0")
 # the hash tool is chosen by a known answer (the digest of no input), so a present but broken sha256sum falls back
 if [ "$(printf '' | sha256sum 2>/dev/null | cut -d' ' -f1)" = e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 ]
 then sha() { local h; h=$(set -o pipefail; sha256sum | cut -d' ' -f1) && [[ $h =~ ^[0-9a-f]{64}$ ]] && printf '%s\n' "$h"; }
 else sha() { local h; h=$(set -o pipefail; shasum -a 256 2>/dev/null | cut -d' ' -f1) && [[ $h =~ ^[0-9a-f]{64}$ ]] && printf '%s\n' "$h"; }; fi   # a hash that fails prints nothing and fails: two failed hashes are never "equal"
-SELF_SHA=$(sha < "$SELF")
-[[ $SELF_SHA =~ ^[0-9a-f]{64}$ ]] || { echo "gate0-run: no sha256 of this script (neither sha256sum nor shasum -a 256 works); refusing" >&2; exit 1; }
+self_sha() {  # the digest of this script, for the report: asked for after an open restart attempt is covered by the start-up recovery
+  SELF_SHA=$(sha < "$SELF")
+  [[ $SELF_SHA =~ ^[0-9a-f]{64}$ ]] || { echo "gate0-run: no sha256 of this script (neither sha256sum nor shasum -a 256 works); refusing" >&2; exit 1; }; }
 CS=${GATE0_CS:-$HERE/cutover-steps.sh}; PRED=${GATE0_PRED:-$HERE/restart-predict.sh}
 CMDLINE="$*"; CHECKMODE=0; PHASE=none
 if [ "${1:-}" = --check ]; then
   CHECKMODE=1; shift
   if [ $# = 0 ]; then
+    self_sha
     bash -n "$SELF" && [ -f "$CS" ] && [ -f "$PRED" ] && bash -n "$CS" && bash -n "$PRED" && command -v git >/dev/null &&
       command -v tar >/dev/null && command -v awk >/dev/null && command -v ps >/dev/null &&
       echo "gate0-run.sh: check ok (sha256 $SELF_SHA; cutover-steps.sh $(sha < "$CS"); restart-predict.sh $(sha < "$PRED"))"
@@ -89,7 +92,7 @@ esac
 
 ROOT_IN=${GATE0_ROOT:-}; SD=${GATE0_STATE_DIR:-}
 [ -n "$ROOT_IN" ] && [ -n "$SD" ] || { echo "gate0-run: set GATE0_ROOT and GATE0_STATE_DIR" >&2; exit 1; }
-ROOT=$(cd "$ROOT_IN" 2>/dev/null && pwd -P) && [ -e "$ROOT/.git" ] || { echo "gate0-run: GATE0_ROOT is not a git checkout" >&2; exit 1; }
+ROOT=$(cd "$ROOT_IN" 2>/dev/null && pwd -P) || { echo "gate0-run: GATE0_ROOT is not a git checkout" >&2; exit 1; }   # whether it has a .git is asked after the start-up recovery is in place
 MYUID=$(id -u 2>/dev/null) && case $MYUID in ''|*[!0-9]*) false ;; esac || { echo "gate0-run: cannot establish the user id of this process" >&2; exit 1; }   # a failed read is not "not root"
 if [ "$MYUID" = 0 ] && [ -z "${GATE0_NO_REEXEC:-}" ]; then   # git runs as the checkout's owner, never as root
   OP=${GATE0_OPERATOR:-}; id "$OP" >/dev/null 2>&1 && [ "$OP" != root ] || { echo "gate0-run: run as root, set GATE0_OPERATOR to the checkout's owner" >&2; exit 1; }
@@ -126,57 +129,7 @@ git_bind() {  # git's view of GATE0_ROOT is the checkout's own: its work tree is
   [ -n "$e" ] && [ -n "$ec" ] && [ "$d" = "$e" ] && [ "$c" = "$ec" ] || bindfail "git's git directory for GATE0_ROOT is not the one GATE0_ROOT/.git names (GIT_DIR, GIT_COMMON_DIR, a gitdir link or a replaced .git)"
   if [ -n "${GD:-}" ]; then [ "$d" = "$GD" ] && [ "$c" = "$GC" ] || bindfail "git's git directories changed since the start"
   else GD=$d; GC=$c; fi; }
-exec 9>&2
-BINDRC=1; git_bind
-SD=$(physpath "$SD") || { echo "gate0-run: cannot use GATE0_STATE_DIR" >&2; exit 1; }
-J=$(physpath "${GATE0_JOURNAL:-$SD/journal}") || { echo "gate0-run: cannot use GATE0_JOURNAL" >&2; exit 1; }
-PRES=$(physpath "${GATE0_PRESERVE_DIR:-$SD/preserve}") || { echo "gate0-run: cannot use GATE0_PRESERVE_DIR" >&2; exit 1; }
-# physical paths, checked before anything is created: nothing this script writes may land in the checkout or its git directory
-for d in "state directory:$SD" "journal:$J" "preservation copy:$PRES"; do
-  case "${d#*:}/" in "$ROOT"/*|"$GD"/*|"$GC"/*) echo "gate0-run: the ${d%%:*} must be outside the checkout and its git directories" >&2; exit 1 ;; esac; done
-within() {  # PHYSICAL-PATH DIR... : the path is inside one of the directories
-  local p=$1 d; shift; for d in "$@"; do case "$p/" in "$d"/*) return 0 ;; esac; done; return 1; }
-# the children are checked as well: a symlinked logs/ or gate0-run/ must not turn a write into one inside the checkout or the journal
-within "$PRES" "$J" && { echo "gate0-run: the preservation copy must be outside the journal" >&2; exit 1; }
-G=$J/gate0-run
-GP=$(physpath "$G") && [ "$GP" = "$G" ] || { echo "gate0-run: $G is not a plain child of the journal (a symlink)" >&2; exit 1; }
-LOGD=$SD/logs/$PHASE-$(date -u +%Y%m%dT%H%M%SZ)-$$
-LP=$(physpath "$LOGD") && ! within "$LP" "$ROOT" "$GD" "$GC" "$J" "$PRES" || { echo "gate0-run: the log directory must be outside the checkout, its git directories, the journal and the preservation copy" >&2; exit 1; }
-[ $CHECKMODE = 1 ] || mkdir -p "$J" || { echo "gate0-run: cannot create the journal" >&2; exit 1; }
-mkdir -p "$LOGD" || { echo "gate0-run: cannot create $LOGD" >&2; exit 1; }
-LOG=$LOGD/run.log; RLOG=$LOGD/run.report
-MACHINE=${GATE0_MACHINE:-server}; case $MACHINE in server|clavain) ;; *) echo "gate0-run: GATE0_MACHINE is server or clavain" >&2; exit 1 ;; esac
-OPH=${GATE0_OPERATOR_HOME:-${HOME:-}}; BDBIN=${GATE0_BD:-bd}
-DOT=${GATE0_DOTFILES:-$OPH/projects/dotfiles}
-SWEEP=${GATE0_SWEEP:-$OPH/.local/bin/git-autosync-sweep.sh}
-DRIFT=${GATE0_DRIFT_REPORT:-$OPH/.local/state/autosync-drift/report.txt}
-PAUSE=${GATE0_PAUSE_FILE:-$OPH/.claude-automations-paused}
-TIMERS=${GATE0_UNITS_TIMERS:-git-autosync-repair.timer git-autosync-promote.timer}
-SERVICES=${GATE0_UNITS_SERVICES:-git-autosync-repair.service git-autosync-promote.service}
-REPAIR_SVC=git-autosync-repair.service
-case " $SERVICES " in *" $REPAIR_SVC "*) ;; *) SERVICES="$SERVICES $REPAIR_SVC" ;; esac   # the service a restart starts is always one the freeze and the cleanup stop and read back
-REL=${GATE0_REL:-$(basename "$ROOT")}
-export AUTOSYNC_LANE_LIB=${AUTOSYNC_LANE_LIB:-$OPH/.local/lib/autosync-lane.sh}
 
-report() {  # EXIT trap: an open restart attempt is undone first (whatever ended the script: a stop, a die, a signal, a helper); then the report, then the sender; a failed delivery prints the report
-  local rc=$? tell=${GATE0_REPORT_TELL:-} t=${GATE0_REPORT_TITLE:-gate0-run} r
-  if [ -n "${RSTART:-}" ]; then
-    [ $rc != 0 ] || rc=3   # an attempt still open at exit did not complete, whatever status reached this trap
-    if [ -z "${INCLEAN:-}" ]; then INCLEAN=1; ( rcleanup ) >/dev/null || :; fi   # a subshell: the cleanup's own stop ends it, never this report
-  fi
-  r=$([ $rc = 0 ] && echo ok || echo failed)
-  echo "gate0-run.sh (sha256 $SELF_SHA) $CMDLINE: phase $PHASE, exit $rc ($r); log $LOG" > "$RLOG" 2>/dev/null
-  "$tell" --title "$t" --message-file "$RLOG" --script "$SELF" --result "$r" --step "$PHASE" --log "$LOG" >/dev/null 2>&1 ||
-    { echo "gate0-run: report not delivered; it is $RLOG:" >&2; cat "$RLOG" >&2; }
-  exit $rc; }
-trap report EXIT
-trap 'exit 130' INT; trap 'exit 143' TERM; trap 'exit 129' HUP   # a signal is a failed exit, never the status 0 an EXIT trap sees after it
-RSTART=   # set while a restart attempt is open (its record is written, its completion record is not): the only phase whose side effects a stop must undo itself
-bindtrap() {  # USR1, from bindfail: git no longer shows the checkout. A restart in progress is undone first (every recorded timer and service stopped and read back, the marker aside); nothing else runs
-  trap '' USR1
-  if [ -n "$RSTART" ] && [ -z "${INCLEAN:-}" ]; then INCLEAN=1; rbail "git no longer shows the validated checkout during the restart; every timer of this attempt is stopped and the marker is aside"; fi
-  exit 3; }
-BINDRC=3; BINDTRAP=1; trap bindtrap USR1
 say() { printf '%s\n' "$*"; printf '%s\n' "$*" >> "$LOG"; }
 stop() { say "gate0-run: STOP: $*" >&2; exit 3; }
 refuse() { say "gate0-run: refused, nothing written: $*" >&2; exit 1; }
@@ -630,11 +583,78 @@ do_restart() {
   RSTART=
   say "gate0-run: restart $ex done: the recorded timers are running again; resume the bd writers and the agent sessions now (they are not started by this script)"; }
 
+within() {  # PHYSICAL-PATH DIR... : the path is inside one of the directories
+  local p=$1 d; shift; for d in "$@"; do case "$p/" in "$d"/*) return 0 ;; esac; done; return 1; }
+recovery_due() {  # a restart attempt is open in this process, or an earlier one was cut off after its record was written (and has no completion record): the test restart_settled applies, so a start that fails before it can run it still undoes the cut-off attempt
+  [ -n "${RSTART:-}" ] && return 0
+  [ "$PHASE" = restart ] && [ $CHECKMODE = 0 ] && [ -e "$G/freeze" ] && [ ! -e "$G/restarted-$XARG" ] && restarting_any; }
+undo_open_restart() {  # at an exit: whatever ended the script, an open or cut-off restart attempt is undone first (every recorded timer and service stopped and read back, the marker aside)
+  [ -z "${INCLEAN:-}" ] && recovery_due || return 1
+  INCLEAN=1; ( rcleanup ) >/dev/null || :   # a subshell: the cleanup's own stop ends it, never the trap that called it
+  return 0; }
+bootexit() {  # EXIT trap while the start-up runs, until the log directory exists and the report takes over: nothing is reported yet, but a cut-off restart is not left as it was by a start that fails (git, the checks, the log directory)
+  local rc=$?
+  if undo_open_restart; then
+    [ $rc != 0 ] || rc=3
+    echo "gate0-run: the start stopped while an earlier restart attempt was cut off: its effects are undone now (every recorded timer and service stopped, marker aside)" >&2
+  fi
+  exit $rc; }
+report() {  # EXIT trap: an open restart attempt is undone first (whatever ended the script: a stop, a die, a signal, a helper); then the report, then the sender; a failed delivery prints the report
+  local rc=$? tell=${GATE0_REPORT_TELL:-} t=${GATE0_REPORT_TITLE:-gate0-run} r
+  if undo_open_restart || [ -n "${RSTART:-}" ]; then [ $rc != 0 ] || rc=3; fi   # an attempt still open at exit did not complete, whatever status reached this trap
+  r=$([ $rc = 0 ] && echo ok || echo failed)
+  echo "gate0-run.sh (sha256 $SELF_SHA) $CMDLINE: phase $PHASE, exit $rc ($r); log $LOG" > "$RLOG" 2>/dev/null
+  "$tell" --title "$t" --message-file "$RLOG" --script "$SELF" --result "$r" --step "$PHASE" --log "$LOG" >/dev/null 2>&1 ||
+    { echo "gate0-run: report not delivered; it is $RLOG:" >&2; cat "$RLOG" >&2; }
+  exit $rc; }
+bindtrap() {  # USR1, from bindfail: git no longer shows the checkout. A restart in progress is undone first (every recorded timer and service stopped and read back, the marker aside); nothing else runs
+  trap '' USR1
+  if [ -n "$RSTART" ] && [ -z "${INCLEAN:-}" ]; then INCLEAN=1; rbail "git no longer shows the validated checkout during the restart; every timer of this attempt is stopped and the marker is aside"; fi
+  exit 3; }
+
 restart_settled() {  # a restart already recorded is re-verified, and a restart attempt cut off is undone, before any input is validated: neither needs J's inputs, and a missing one must not leave the timers and the service as the cut-off attempt left them
   [ "$PHASE" = restart ] && [ $CHECKMODE = 0 ] && [ -e "$G/freeze" ] || return 1
   if [ -e "$G/restarted-$XARG" ]; then restarted_holds "$XARG"; return 0; fi   # a repeat runs nothing
   if restarting_any; then rbail "an earlier restart attempt began (marker, service or timers) and left no completion record: its effects are undone now (every timer stopped, marker aside); run the restart again as a new attempt"; fi
   return 1; }
+# ---- start-up: everything above only defines functions. The paths that name the journal (git-free) come first; from there on a restart attempt that was cut off is undone by whatever ends the start (bootexit), so no later step (git, the checks, the log directory) can leave the restored marker, a started timer or the repair service live
+SD=$(physpath "$SD") || { echo "gate0-run: cannot use GATE0_STATE_DIR" >&2; exit 1; }
+J=$(physpath "${GATE0_JOURNAL:-$SD/journal}") || { echo "gate0-run: cannot use GATE0_JOURNAL" >&2; exit 1; }
+PRES=$(physpath "${GATE0_PRESERVE_DIR:-$SD/preserve}") || { echo "gate0-run: cannot use GATE0_PRESERVE_DIR" >&2; exit 1; }
+G=$J/gate0-run
+GP=$(physpath "$G") && [ "$GP" = "$G" ] || { echo "gate0-run: $G is not a plain child of the journal (a symlink)" >&2; exit 1; }
+TIMERS=${GATE0_UNITS_TIMERS:-git-autosync-repair.timer git-autosync-promote.timer}
+SERVICES=${GATE0_UNITS_SERVICES:-git-autosync-repair.service git-autosync-promote.service}
+REPAIR_SVC=git-autosync-repair.service
+case " $SERVICES " in *" $REPAIR_SVC "*) ;; *) SERVICES="$SERVICES $REPAIR_SVC" ;; esac   # the service a restart starts is always one the freeze and the cleanup stop and read back
+LOG=/dev/null; RLOG=/dev/null   # until the log directory exists
+SELF_SHA=unknown   # until self_sha has run (the report names it)
+RSTART=   # set while a restart attempt is open (its record is written, its completion record is not): the only phase whose side effects a stop must undo itself
+trap bootexit EXIT
+trap 'exit 130' INT; trap 'exit 143' TERM; trap 'exit 129' HUP   # a signal is a failed exit, never the status 0 an EXIT trap sees after it
+[ -e "$ROOT/.git" ] || { echo "gate0-run: GATE0_ROOT is not a git checkout" >&2; exit 1; }
+BINDRC=1; git_bind
+# physical paths, checked before anything is created: nothing this script writes may land in the checkout or its git directory
+for d in "state directory:$SD" "journal:$J" "preservation copy:$PRES"; do
+  case "${d#*:}/" in "$ROOT"/*|"$GD"/*|"$GC"/*) echo "gate0-run: the ${d%%:*} must be outside the checkout and its git directories" >&2; exit 1 ;; esac; done
+# the children are checked as well: a symlinked logs/ or gate0-run/ must not turn a write into one inside the checkout or the journal
+within "$PRES" "$J" && { echo "gate0-run: the preservation copy must be outside the journal" >&2; exit 1; }
+LOGD=$SD/logs/$PHASE-$(date -u +%Y%m%dT%H%M%SZ)-$$
+LP=$(physpath "$LOGD") && ! within "$LP" "$ROOT" "$GD" "$GC" "$J" "$PRES" || { echo "gate0-run: the log directory must be outside the checkout, its git directories, the journal and the preservation copy" >&2; exit 1; }
+[ $CHECKMODE = 1 ] || mkdir -p "$J" || { echo "gate0-run: cannot create the journal" >&2; exit 1; }
+mkdir -p "$LOGD" || { echo "gate0-run: cannot create $LOGD" >&2; exit 1; }
+LOG=$LOGD/run.log; RLOG=$LOGD/run.report
+MACHINE=${GATE0_MACHINE:-server}; case $MACHINE in server|clavain) ;; *) echo "gate0-run: GATE0_MACHINE is server or clavain" >&2; exit 1 ;; esac
+OPH=${GATE0_OPERATOR_HOME:-${HOME:-}}; BDBIN=${GATE0_BD:-bd}
+DOT=${GATE0_DOTFILES:-$OPH/projects/dotfiles}
+SWEEP=${GATE0_SWEEP:-$OPH/.local/bin/git-autosync-sweep.sh}
+DRIFT=${GATE0_DRIFT_REPORT:-$OPH/.local/state/autosync-drift/report.txt}
+PAUSE=${GATE0_PAUSE_FILE:-$OPH/.claude-automations-paused}
+REL=${GATE0_REL:-$(basename "$ROOT")}
+export AUTOSYNC_LANE_LIB=${AUTOSYNC_LANE_LIB:-$OPH/.local/lib/autosync-lane.sh}
+trap report EXIT   # from here the report is sent, after the same recovery
+BINDRC=3; BINDTRAP=1; trap bindtrap USR1
+self_sha
 restart_settled && exit 0
 need_inputs
 say "gate0-run.sh $SELF_SHA: $CMDLINE (machine $MACHINE, host $HOST, base $BASE)"
