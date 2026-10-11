@@ -1519,7 +1519,7 @@ mutate M32 '/^restarted_holds()/,/^do_restart/ s/\[ "\$(unit_state "\$u")" = act
 mutate M33 's/^  move_marker_aside force; \[ -n /  move_marker_aside; [ -n /' &&
   { WG=$B/mut/M33.sh; t_holdsmarker; r=$?; WG=; check "M33 (a changed marker left in the checkout by the cleanup) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 
-mutate M34 's/^  if restarting_any; then rbail /  if false; then rbail /' &&
+mutate M34 's/^  if restarting_any; then rbail /  if false; then rbail /; s/\&\& restarting_any; }$/\&\& false; }/' &&   # the settled check and the start-up/EXIT-trap net both stop looking for an earlier attempt
   { WG=$B/mut/M34.sh; t_restartcrash; r=$?; WG=; check "M34 (an earlier restart attempt that left no record is not looked for) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M35 's/\[ ! -e "\$ROOT\/.git-autosync" \] || unrecord_bail "restart \$1 is recorded with no marker[^"]*"/:/' &&
   { WG=$B/mut/M35.sh; t_holdsnone; r=$?; WG=; check "M35 (a recorded no-marker restart does not check the marker stays absent) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
