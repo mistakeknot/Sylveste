@@ -32,7 +32,7 @@ bd backup && bash .beads/push.sh && git push  # Complete work after commit
 
 ## Conventions
 
-**Naming:** All module names are lowercase (`interflux`, `intermute`). Exceptions (proper nouns): Clavain, Interverse, Sylveste, Autarch, Interspect, Intercore, Skaffen, Zaka, Alwe, Ockham. GitHub repos: `github.com/mistakeknot/<name>`. Pillar directories use proper casing (`os/Clavain/`, `apps/Autarch/`). Never create lowercase duplicates — causes triple-loading. See also [CONVENTIONS.md](CONVENTIONS.md) for artifact paths.
+**Naming:** All module names are lowercase (`interflux`, `intermute`). Exceptions (proper nouns): Clavain, Interverse, Sylveste, Autarch, Interspect, Intercore, Skaffen, Zaka, Alwe, Ockham, Sonnerie. GitHub repos: `github.com/mistakeknot/<name>`. Pillar directories use proper casing (`os/Clavain/`, `apps/Autarch/`). Never create lowercase duplicates — causes triple-loading. See also [CONVENTIONS.md](CONVENTIONS.md) for artifact paths.
 
 **Plugin collisions:** Claude Code autodiscovers all `.claude-plugin/plugin.json` in the monorepo. One canonical owner per command/skill — when extracted from Clavain, remove from Clavain's plugin.json. Extracted plugins own their domain. Delegation facades (namespaced commands like `interkasten:doctor`) are safe.
 
