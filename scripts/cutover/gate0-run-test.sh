@@ -488,7 +488,7 @@ t_unconfirmed() {  # a stop the wrapper cannot confirm in cleanup is said so, wi
 t_refreezecrash() {  # a crash while a new freeze clears the earlier attempt's records must not lose the restart set, at either point
   local pt pat crash=$B/mut/crash.sh rc rc2 n left; RZS=
   for pt in restarted intent; do
-    case $pt in restarted) pat='^  rm -f -- "\$G"\/restarted-\*' ;; intent) pat='^  rm -f -- "\$G\/freeze-intent"' ;; esac
+    case $pt in restarted) pat='^  jrm .restarted-\*. .restarting-\*. ' ;; intent) pat='^  rm -f -- "\$G\/freeze-intent"' ;; esac
     sed "/$pat/i exit 9" "${WG:-$GW}" > "$crash"; chmod +x "$crash"; cp "$HERE/cutover-steps.sh" "$B/mut/cutover-steps.sh"
     cmp -s "${WG:-$GW}" "$crash" && { echo "  FAIL crash copy for $pt changed nothing"; return 1; }
     restore r0a; wg restart r0 > "$B/out.rz" 2>&1 || return 1
@@ -1998,7 +1998,7 @@ mutate M26 's/^  \[ ! -e "\$DRIFT" \] || mv -f -- "\$DRIFT" "\$LOGD\/drift.befor
   { WG=$B/mut/M26.sh; t_staledrift; r=$?; WG=; check "M26 (an earlier drift report accepted) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M27 's/^  \[ -z "\$RBAD" \] || say .*$/  :/; s/\${RBAD:+; UNCONFIRMED stop of\$RBAD}//' &&
   { WG=$B/mut/M27.sh; t_unconfirmed; r=$?; WG=; check "M27 (an unconfirmed stop not reported) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
-mutate M28 's/^  rm -f -- "\$G"\/restarted-\*/  rm -f -- "$G\/freeze-intent"\n&/; /^  rm -f -- "\$G\/freeze-intent"   # last/d' &&
+mutate M28 's/^  jrm .restarted-\*. .restarting-\*. /  rm -f -- "$G\/freeze-intent"\n&/; /^  rm -f -- "\$G\/freeze-intent"   # last/d' &&
   { WG=$B/mut/M28.sh; t_refreezecrash; r=$?; WG=; check "M28 (the restart set dropped before the earlier restart records) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M29 's/2>\/dev\/null || stop "cannot read .beads\/issues.jsonl at \$t (the tree lists it): its records cannot be compared"/2>\/dev\/null || : > "$LOGD\/jsonl.$t"/' &&
   { WG=$B/mut/M29.sh; t_reconcileread; r=$?; WG=; check "M29 (an unreadable tracker file read as empty) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
@@ -2011,7 +2011,7 @@ mutate M32 '/^restarted_holds()/,/^do_restart/ s/\[ "\$(unit_state "\$u")" = act
 mutate M33 's/^  move_marker_aside force; \[ -z /  move_marker_aside; [ -z /' &&
   { WG=$B/mut/M33.sh; t_holdsmarker; r=$?; WG=; check "M33 (a changed marker left in the checkout by the cleanup) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 
-mutate M34 's/^  if restarting_any; then$/  if false; then/; s/\&\& restarting_any; then$/\&\& false; then/' &&   # the settled check and the start-up/EXIT-trap net both stop looking for an earlier attempt
+mutate M34 's/^  if restarting_any; then$/  if false; then/; s/^    jhas .restarting-\*.; case \$? in 0) RDEC=undo/    false; case $? in 0) RDEC=undo/' &&   # the settled check and the start-up/EXIT-trap net both stop looking for an earlier attempt
   { WG=$B/mut/M34.sh; t_restartcrash; r=$?; WG=; check "M34 (an earlier restart attempt that left no record is not looked for) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M35 's/\[ ! -e "\$ROOT\/.git-autosync" \] || unrecord_bail "restart \$1 is recorded with no marker[^"]*"/:/' &&
   { WG=$B/mut/M35.sh; t_holdsnone; r=$?; WG=; check "M35 (a recorded no-marker restart does not check the marker stays absent) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
