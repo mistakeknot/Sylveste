@@ -1,0 +1,17 @@
+[book]
+title = "Sylveste Wiki"
+description = "Figures and structure of the Sylveste platform, checked against the repository."
+authors = ["Sylveste contributors"]
+language = "en"
+src = "src"
+
+[build]
+build-dir = "book"
+create-missing = false
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "navy"
+
+[output.html.search]
+enable = true
