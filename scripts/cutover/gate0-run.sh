@@ -610,7 +610,7 @@ confine() {  # JSAFE, the one decision about the journal, from the facts gitname
   local r=unknown rid=
   if [ -e "$ROOT/.git" ] || [ -L "$ROOT/.git" ]; then gitnames && r=read; else NE=; NEC=; r=read; fi
   if [ $r = read ]; then if within "$J" "$ROOT" ${NE:+"$NE"} ${NEC:+"$NEC"}; then r=unsafe; else r=safe; fi; fi
-  if [ $r = safe ] && [ -n "$NE" ] && [ -n "$NEC" ]; then case "$ROOT$NE$NEC" in *$'\n'*) ;; *) rid="root $ROOT"$'\n'"gitdir $NE"$'\n'"common $NEC" ;; esac; fi   # the checkout's identity, set only from facts that were all read: real path and both git directories
+  if [ $r != unknown ] && [ -n "$NE" ] && [ -n "$NEC" ]; then case "$ROOT$NE$NEC" in *$'\n'*) ;; *) rid="root $ROOT"$'\n'"gitdir $NE"$'\n'"common $NEC" ;; esac; fi   # the checkout's identity, set only from facts that were all read (real path and both git directories) and apart from the journal's decision: the recovery tests each by itself
   RID=$rid; JSAFE=$r; }   # both assigned together, at the end: a computation that is cut short keeps the earlier decision and identity, never a half-made one
 rtarget() {  # the recovery target of this checkout, four lines: its real path, its git directory, its common git directory and the digest of the marker the freeze record names. It fails unless every one of them was read and is well formed
   local m; m=$(rec_marker) && [[ $m =~ ^(none|[0-9a-f]{64})$ ]] && [ -n "${RID:-}" ] || return 1
