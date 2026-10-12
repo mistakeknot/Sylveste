@@ -1424,6 +1424,43 @@ t_swfreezeforeign() {  # a freeze meets records of another checkout in the journ
   pre=$(wr_obs "$J" "$R0"); : > "$B/out.sw"; wg freeze >> "$B/out.sw" 2>&1; rc2=$?; post=$(wr_obs "$J" "$R0")
   SWFF="$rc2/$(sw_msg 'do not name this checkout')"
   [ "$rc2" != 0 ] && [ "$pre" = "$post" ] && [ "$(sw_msg 'do not name this checkout')" = 1 ]; }
+t_swfreezeroot() {  # the journal's preflight and freeze belong to the checkout they were made for: with NO restart record in the journal (a fresh restart, a capture, a rollback, a new freeze) another checkout (an empty directory, a clone, a linked worktree), or a record of another checkout, an old-format record or a link in its place, is refused before anything is changed, and the right checkout then still goes on
+  local R0=$R Rx c ph rc2 pre post bad= n=0 want phases; SWFR=
+  for c in empty clone wt pfother pfold fzother fzold fzlink; do
+    restore r0a; Rx=$R0; n=$((n+1)); : > "$B/out.sw"
+    case $c in
+      empty) Rx=$W/other-$c; mkdir -p "$Rx" ;;
+      clone) Rx=$W/other-$c; git clone -q "$R0" "$Rx" >> "$B/out.sw" 2>&1 || { echo "    $c: cannot make the checkout"; return 1; } ;;
+      wt) Rx=$W/other-$c; git -C "$R0" worktree add --detach "$Rx" >> "$B/out.sw" 2>&1 || { echo "    $c: cannot add a linked worktree"; return 1; } ;;
+      pfother) sed -i '2s|.*|root /elsewhere|' "$J/gate0-run/preflight" ;;
+      pfold) sed -i '/^\(root\|gitdir\|common\) /d' "$J/gate0-run/preflight" ;;
+      fzother) sed -i 's|^root .*|root /elsewhere|' "$J/gate0-run/freeze" ;;
+      fzold) sed -i '/^\(root\|gitdir\|common\) /d' "$J/gate0-run/freeze" ;;
+      fzlink) mv "$J/gate0-run/freeze" "$J/gate0-run/keep-freeze" && ln -s keep-freeze "$J/gate0-run/freeze" ;;
+    esac || { echo "    $c: cannot make the case"; return 1; }
+    [ "$(ls "$J/gate0-run" | grep -c '^restart')" = 0 ] || { echo "    $c: a restart record exists; the case needs none"; return 1; }
+    want=1; case $c in empty) want=0 ;; esac   # an empty directory is refused by the start-up itself, before any record is read
+    case $c in pf*) phases="freeze capture preflight" ;; fz*) phases="restart:r0 capture freeze" ;; *) phases="restart:r0 capture rollback freeze" ;; esac
+    for ph in $phases; do
+      pre="$(wr_obs "$J" "$Rx")/$(nstarts)"; : > "$B/out.sw"
+      R=$Rx wg ${ph/:/ } >> "$B/out.sw" 2>&1; rc2=$?
+      post="$(wr_obs "$J" "$Rx")/$(nstarts)"
+      { [ "$rc2" != 0 ] && [ "$pre" = "$post" ] && { [ "$want" = 0 ] || [ "$(sw_msg "is not this checkout")" = 1 ]; }; } || { echo "    $c: $ph rc=$rc2 not-this-checkout=$(sw_msg "is not this checkout") state $([ "$pre" = "$post" ] && echo same || echo CHANGED)"; bad="$bad $c/$ph"; }
+      SWFR="$SWFR$c/$ph:$rc2;"
+    done
+    case $c in empty|clone|wt) : > "$B/out.sw"; wg restart r0 >> "$B/out.sw" 2>&1 || { echo "    $c: the right checkout's restart does not complete"; bad="$bad $c(retry)"; } ;; esac   # the refusal left everything as it was: the right checkout still restarts
+  done
+  [ "$n" = 8 ] || { echo "    cases run: $n"; return 1; }
+  [ -z "$bad" ]; }
+t_swcleanfail() {  # a start that fails while an earlier restart attempt is cut off, when the cleanup cannot stop a unit, does not say the effects are undone: it says the cleanup is incomplete, exits non-zero and keeps the attempt's record; the next retry (the unit stops now) finishes the cleanup and says so
+  local SRSVC=1 SRSED= rc2 rc3; SWCF=
+  sr_cut || return 1; sr_stubs; touch "$ST/failstop-git-autosync-repair.timer"; : > "$B/out.sw"
+  GATE0_MACHINE=bogus wg restart r0 >> "$B/out.sw" 2>&1; rc2=$?
+  SWCF="$rc2/$(sw_msg 'are undone now')/$(sw_msg 'INCOMPLETE')/$(sr_state)"
+  rm -f "$ST/failstop-git-autosync-repair.timer"; : > "$B/out.sw"
+  GATE0_MACHINE=bogus wg restart r0 >> "$B/out.sw" 2>&1; rc3=$?
+  SWCF="$SWCF;$rc3/$(sw_msg 'are undone now')/$(sw_msg 'INCOMPLETE')/$(sr_state)"
+  [ "$SWCF" = "1/0/1//yes/no/1;1/1/0//no/no/0" ]; }
 t_swcommonshape() {  # a git directory link or common directory link that exists but is not a regular one-line file (a directory, a link, a dangling link, an empty or a two-line file) is not "no link": the checkout's git directories are unknown, the journal under the shared git directory is not confirmed safe, and nothing is written into it, stopped or moved
   local SRSVC=1 SRSED= R0=$R Rt gd jj c f rc2 pre post bad= n=0; SWCS=
   for c in cdir clink cdangle cempty ctwo gsym gempty gtwo; do
@@ -1754,6 +1791,8 @@ sc "a retry whose journal is not confined is refused and touches nothing: no wri
 sc "every layout of .git and every place of the journal: refuse or run and recover as git's own answer says" t_swlayouts
 sc "a retry for another checkout, or one whose records are not provably this checkout's, touches nothing and says what it left; the right checkout's retry then still recovers" t_swwrongroot
 sc "a freeze that meets records of another checkout stops before it changes anything" t_swfreezeforeign
+sc "the journal's preflight and freeze belong to their checkout: a fresh restart, capture, rollback or freeze on another checkout, or on a record that is not this checkout's, changes nothing" t_swfreezeroot
+sc "a start that cannot finish the cleanup of a cut-off restart says it is incomplete, not undone" t_swcleanfail
 sc "a git directory link or common directory link that exists but is not a regular one-line file is unknown, never absent: nothing is written, stopped or moved" t_swcommonshape
 sc "a transient failure of the first confinement read does not stay, and an early safe is revoked by the final decision" t_swtransient
 sc "every command of the start-up failed in turn: after the arm the cut-off restart is undone, before it nothing changed" t_swstartinject
@@ -1769,14 +1808,14 @@ mutate M1 's/|| stop "the marker is back in the checkout: the freeze no longer h
   { WG=$B/mut/M1.sh; t_markerback; r=$?; WG=; check "M1 (no marker check before capture) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M2 's/^  hook_check   # first:.*/  :/' &&
   { WG=$B/mut/M2.sh; t_hook; r=$?; WG=; check "M2 (no hook check) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
-mutate M3 's/rbail "the run differs/stop "the run differs/; s/undo) INCLEAN=1; ( rcleanup ) >\/dev\/null || :;/undo) :;/' &&   # the caller's recovery and the EXIT-trap net both gone
+mutate M3 's/rbail "the run differs/stop "the run differs/; s/undo) INCLEAN=1; CLEANRC=0; ( rcleanup ) >\/dev\/null || CLEANRC=1;/undo) :;/' &&   # the caller's recovery and the EXIT-trap net both gone
   { WG=$B/mut/M3.sh; t_verify; r=$?; WG=; check "M3 (marker left in place after a mismatch) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 
 mutate M4 's/^  hook_check   # first:.*/  :/; s/^  archive_check; }$/  hook_check; archive_check; }/' &&
   { WG=$B/mut/M4.sh; t_hookfetch; r=$?; WG=; check "M4 (hook check after the fetch) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M5 's/\*) stop "cannot establish whether \$1 is active: the unit controller gave an error" ;; esac; }/*) return 1 ;; esac; }/' &&
   { WG=$B/mut/M5.sh; t_unitserr; r=$?; WG=; check "M5 (controller error read as inactive) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
-mutate M6 's/^  move_marker_aside force; \[ -n /  [ -n /' &&
+mutate M6 's/^  move_marker_aside force; \[ -z /  [ -z /' &&
   { WG=$B/mut/M6.sh; t_cleanup; r=$?; WG=; check "M6 (failed restart leaves the marker in place) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M7 's/under_self "\$p" || //g' &&
   { WG=$B/mut/M7.sh; t_self; r=$?; WG=; check "M7 (own processes counted as agents) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
@@ -1798,7 +1837,7 @@ mutate M15 's/^LP=.*$/LP=x/' &&
   { WG=$B/mut/M15.sh; t_symlinks; r=$?; WG=; check "M15 (no check of the log directory's physical path) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M16 's/^  if \[ "\$o" != "\$BASE" \]; then pres_check; fi.*$/  :/; s/pres_check; d=\$PD/PD=\$PRES\/\$HOST-\$o; d=\$PD/' &&
   { WG=$B/mut/M16.sh; t_symlinks; r=$?; WG=; check "M16 (no check of the preservation directory) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
-mutate M17 's/ unrecord_bail$//; s/undo) INCLEAN=1; ( rcleanup ) >\/dev\/null || :;/undo) :;/' &&   # the handler and the EXIT-trap net both gone
+mutate M17 's/ unrecord_bail$//; s/undo) INCLEAN=1; CLEANRC=0; ( rcleanup ) >\/dev\/null || CLEANRC=1;/undo) :;/' &&   # the handler and the EXIT-trap net both gone
   { WG=$B/mut/M17.sh; t_putfail; r=$?; WG=; check "M17 (a failed record leaves the restart half done) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M18 's/^inroot() {.*$/inroot() { "$@"; }/' &&
   { WG=$B/mut/M18.sh; t_cwd; r=$?; WG=; check "M18 (bd run from the caller's directory) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
@@ -1831,7 +1870,7 @@ mutate M31 '/^restarted_holds()/,/^do_restart/ s/unrecord_bail/stop/' &&
   { WG=$B/mut/M31.sh; t_holdsbail; r=$?; WG=; check "M31 (a failed recorded-restart check left as a plain STOP) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M32 '/^restarted_holds()/,/^do_restart/ s/\[ "\$(unit_state "\$u")" = active \] || unrecord_bail/is_active "$u" || unrecord_bail/' &&
   { WG=$B/mut/M32.sh; t_holdsunknown; r=$?; WG=; check "M32 (an unknown timer state in a recorded restart skips the cleanup) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
-mutate M33 's/^  move_marker_aside force; \[ -n /  move_marker_aside; [ -n /' &&
+mutate M33 's/^  move_marker_aside force; \[ -z /  move_marker_aside; [ -z /' &&
   { WG=$B/mut/M33.sh; t_holdsmarker; r=$?; WG=; check "M33 (a changed marker left in the checkout by the cleanup) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 
 mutate M34 's/^  if restarting_any; then$/  if false; then/; s/\&\& restarting_any; then$/\&\& false; then/' &&   # the settled check and the start-up/EXIT-trap net both stop looking for an earlier attempt
@@ -1985,9 +2024,9 @@ mm M135 t_swgitenv "the git directory is not compared with the one the checkout 
 mm M136 t_swgitrst "diagnostic only: the bind-failure trap no longer says why; the EXIT-trap cleanup still undoes the restart (M141 and M143 are the controls that lose the recovery)" 's/^  if \[ -n "\$RSTART" \] \&\& \[ -z "\${INCLEAN:-}" \]; then.*; fi$/  :/'
 mm M137 t_swgitlink "a failing gitdir link read is accepted" 's/ || { NERR="GATE0_ROOT\/.git is neither[^"]*"; return 1; }   # one reader/ || :   # one reader/'
 mm M138 t_swgitlink "a failing commondir read is accepted" 's/ || { NERR="the common directory link of the git directory is not a regular[^"]*"; return 1; }/ || :/'
-mm M139 t_swgitfailall "the cleanup of a failed restart leaves the marker in the checkout" 's/^  move_marker_aside force; \[ -n "\$RBAD" \]/  [ -n "$RBAD" ]/'
+mm M139 t_swgitfailall "the cleanup of a failed restart leaves the marker in the checkout" 's/^  move_marker_aside force; \[ -z "\$RBAD" \]/  [ -z "$RBAD" ]/'
 mm M140 t_swgitfailall "the cleanup of a failed restart leaves the repair service running" 's/^  for u in \$ts \$SERVICES; do units stop "\$u" >\/dev\/null 2>&1; done/  for u in $ts; do units stop "$u" >\/dev\/null 2>\&1; done/'
-mm M141 t_swexitclean "the EXIT trap does not undo an open restart attempt" 's/undo) INCLEAN=1; ( rcleanup ) >\/dev\/null || :;/undo) :;/'
+mm M141 t_swexitclean "the EXIT trap does not undo an open restart attempt" 's/undo) INCLEAN=1; CLEANRC=0; ( rcleanup ) >\/dev\/null || CLEANRC=1;/undo) :;/'
 mm M142 t_swexitclean "a signal is not turned into a failed exit" "s/^trap 'exit 130' INT; trap 'exit 143' TERM; trap 'exit 129' HUP.*\$/:/"
 mm M143 t_swstartrecover "a start that fails before the log directory exists leaves a cut-off restart live" 's/^trap bootexit EXIT$/:/'
 mm M144 t_swstartrecover "the start-up exit trap does not undo a cut-off restart" '/^bootexit()/,/^  exit \$rc; }/ s/if undo_open_restart; then/if false; then/'
@@ -2020,6 +2059,14 @@ mm M170 t_swstartinject "the checkout's identity is cleared before the decision 
 mm M171 t_swwrongroot "a completed restart's record of another checkout is not checked" 's/^    records_ours 5 || { left_note "the restart records do not name this checkout (or are not well formed)"; exit 3; }$/    :/'
 mm M172 t_swwrongroot "a left attempt is not named" 's/^  \[ -z "\${LEFT:-}" \] || return 0; LEFT=1$/  return 0/'
 mm M173 t_swtargetread "a restart goes on without a recovery target" 's/^  tgt=\$(rtarget) || stop "[^"]*"[^\n]*$/  tgt=$(rtarget)/'
+mm M174 t_swfreezeroot "every record is taken for this checkout's" 's/^  \[ "\$g" = "\$RID" \]; }$/  true; }/'
+mm M175 t_swfreezeroot "a linked record is taken for a regular one" 's/^  local g; \[ -f "\$1" \] \&\& \[ ! -L "\$1" \] \&\& /  local g; [ -f "$1" ] \&\& /'
+mm M176 t_swfreezeroot "the freeze of another checkout is relied on by capture, rollback and restart" 's/^  need_bound "\$G\/freeze" freeze .*$/  :/'
+mm M177 t_swfreezeroot "capture does not check the preflight record" 's/^  need_bound "\$G\/preflight" preflight$/  :/'
+mm M178 t_swfreezeroot "a freeze does not check the preflight record" 's/^  \[ ! -e "\$G\/preflight" \] || need_bound "\$G\/preflight" preflight .*$/  :/'
+mm M179 t_swfreezeroot "an already recorded preflight is not checked" 's/need_bound "\$G\/preflight" preflight; say "gate0-run: P0 already recorded/say "gate0-run: P0 already recorded/'
+mm M180 t_swcleanfail "a cleanup that failed is reported as done" 's/^    undo) INCLEAN=1; CLEANRC=0; ( rcleanup ) >\/dev\/null || CLEANRC=1; return 0 ;;/    undo) INCLEAN=1; CLEANRC=0; ( rcleanup ) >\/dev\/null || :; return 0 ;;/'
+mm M181 t_swcleanfail "the cleanup status is never read" 's/if \[ "\${CLEANRC:-1}" = 0 \]; then echo "gate0-run: the start stopped/if true; then echo "gate0-run: the start stopped/'
 mm M110 t_swrefreezegone "an interrupted new freeze is taken for a new attempt: its recorded marker is set aside" 's/^  if restarted_any \&\& \[ ! -e "\$G\/freeze-intent" \] \&\& /  if restarted_any \&\& /'
 mm M106 t_swfreezerep "a repeated freeze does not check the whole invariant" 's/^    freeze_holds   # the whole invariant.*$/    :/'
 mm M107 t_swpushurls "only the first push URL is compared" 's/remote get-url --push --all "\$LANE"/remote get-url --push "$LANE"/'

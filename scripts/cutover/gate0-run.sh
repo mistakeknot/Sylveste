@@ -157,6 +157,12 @@ pg() { git_bind; git -C "$ROOT" "$@"; }   # every git command of this script fir
 pgs() { local o; o=$(pg "$@") || return 1; printf '%s\n' "$o"; }   # pg, but output is shown only when the command succeeded: "output, then failure" is a failure, never a value to compare
 rec_timers() { sed -n 's/^timer //p' "${1:-$G/freeze}" 2>/dev/null; }   # the timers of a record; the status is sed's, so an unreadable record is a failure, never an empty list
 rec_marker() { sed -n 's/^marker //p' "$G/freeze" 2>/dev/null; }
+rec_bound() {  # FILE : the journal record (preflight or freeze) is a regular file, not a link, whose root, gitdir and common lines are this checkout's identity (RID). A record of another checkout, an old-format one (no identity), an unreadable one or an unknown identity is not this checkout's: never a record to act on
+  local g; [ -f "$1" ] && [ ! -L "$1" ] && [ -n "${RID:-}" ] || return 1
+  g=$(sed -n '/^root /p;/^gitdir /p;/^common /p' -- "$1" 2>/dev/null) || return 1
+  [ "$g" = "$RID" ]; }
+need_bound() {  # FILE WHAT : a stop, before any write, unless the record is this checkout's
+  rec_bound "$1" || stop "the $2 record is not this checkout's (the record of another checkout, an old format, or unreadable, or this checkout's identity is not known): nothing was changed; a human must check the journal and clear it deliberately"; }
 inroot() { git_bind; ( cd "$ROOT" && "$@" ); }   # bd and the steps find the tracker from the working directory: always the checkout's, never the caller's
 cs() { inroot env CUTOVER_REPORT=0 CUTOVER_PATH="$PATH" CUTOVER_BD="$BDBIN" CUTOVER_CHECK_DIR="$LOGD" "$CS" "$ROOT" "$J" "$@"; }
 flush_path() {  # PATH : flush a file or directory to disk; fails when neither sync nor an fsync can do it
@@ -316,10 +322,11 @@ do_preflight() {
   ready_checks
   if [ $CHECKMODE = 1 ]; then env CUTOVER_REPORT=0 "$CS" --check >/dev/null || stop "cutover-steps.sh --check failed"; say "gate0-run: preflight check: would run cutover-steps.sh p0"; return 0; fi
   mkdir -p "$G"
-  if [ -d "$J/p0" ] && [ -e "$G/preflight" ]; then say "gate0-run: P0 already recorded ($(cat "$G/preflight"))"; return 0; fi
+  if [ -d "$J/p0" ] && [ -e "$G/preflight" ]; then need_bound "$G/preflight" preflight; say "gate0-run: P0 already recorded ($(sed -n 1p "$G/preflight"))"; return 0; fi
   runlog cs p0 || stop "P0 (cutover-steps.sh p0) failed"
   hd=$(pg rev-parse HEAD) && [[ $hd =~ ^[0-9a-f]{40}$ ]] || stop "cannot read HEAD: the preflight record would name no head"
-  put "$G/preflight" "base $BASE head $hd host $HOST machine $MACHINE at $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  [ -n "${RID:-}" ] || stop "the checkout's identity is not known: the preflight record would bind to nothing"
+  put "$G/preflight" "base $BASE head $hd host $HOST machine $MACHINE at $(date -u +%Y-%m-%dT%H:%M:%SZ)"$'\n'"$RID"
   say "gate0-run: P0 recorded in $J/p0"; }
 
 # ---- freeze (P1)
@@ -328,6 +335,7 @@ act_lines() { ( set -o pipefail; printf '%s\n' "$1" | sed 's/^ *//; s/ timer /\n
 do_freeze() {
   local a w u act="" f prior al
   [ -e "$G/preflight" ] || { [ $CHECKMODE = 1 ] || refuse "no preflight record; run preflight first"; }
+  [ ! -e "$G/preflight" ] || need_bound "$G/preflight" preflight   # the journal's preflight is this checkout's, before the freeze reads or writes anything
   records_ours 4 || stop "restart records that do not name this checkout (or are not well formed) are in $G: nothing was changed; a human must clear them"   # the freeze deletes the earlier attempt's records: only ones of this checkout
   if [ -e "$G/freeze" ] && [ $CHECKMODE = 0 ] && ! restarted_any; then   # after a completed restart a new freeze is a new attempt: it falls through
     a=$(rec_timers) || stop "the freeze record cannot be read: whether its timers stay stopped cannot be told"
@@ -364,7 +372,8 @@ do_freeze() {
   [ ! -e "$ROOT/.git-autosync" ] || stop "the marker is still in the checkout"
   if [ -n "${GATE0_STATUS_CMD:-}" ]; then "$GATE0_STATUS_CMD" > "$LOGD/autosync-status.txt" 2>&1; say "gate0-run: autosync status recorded (exit $?)"; fi
   if [ -e "$G/marker" ]; then w=$(sha < "$G/marker") || stop "cannot hash the marker set aside: the freeze record would name no marker"; w="marker $w"; else w="marker none"; fi
-  f="${al:+$al$'\n'}$w"$'\n'"at $(date -u +%Y-%m-%dT%H:%M:%SZ)"; put "$G/freeze" "$f"
+  [ -n "${RID:-}" ] || stop "the checkout's identity is not known: the freeze record would bind to nothing"
+  f="${al:+$al$'\n'}$w"$'\n'"$RID"$'\n'"at $(date -u +%Y-%m-%dT%H:%M:%SZ)"; put "$G/freeze" "$f"
   rm -f -- "$G"/restarted-* "$G"/restarting-*   # a new freeze starts a new attempt: an earlier attempt's restart records no longer apply (cleared once the new freeze is recorded)
   rm -f -- "$G/freeze-intent"   # last: while a stale restart record exists the intent still names the restart set, so a crash between these two steps loses nothing
   say "gate0-run: freeze holds (timers and services stopped, marker aside)"; }
@@ -373,6 +382,7 @@ restarting_any() { local f; for f in "$G"/restarting-*; do [ -e "$f" ] || [ -L "
 restarted_any() { local f; for f in "$G"/restarted-*; do [ -e "$f" ] || [ -L "$f" ] && return 0; done; return 1; }
 freeze_holds() { local u a
   [ -e "$G/freeze" ] || stop "no freeze record; run freeze first"
+  need_bound "$G/freeze" freeze   # before the hook check, the units, anything: the freeze of another checkout is never relied on
   hook_check   # a hook installed after preflight would run on the fetch, the realign or the repair run that follow
   for u in $TIMERS $SERVICES; do ! is_active "$u" || stop "$u is active: the freeze no longer holds"; done
   [ ! -e "$ROOT/.git-autosync" ] || stop "the marker is back in the checkout: the freeze no longer holds"
@@ -431,6 +441,7 @@ do_capture() {
       stop "the P1a check failed (it ran P1-pre and every capture check against a scratch copy)"
     say "gate0-run: capture check: P1a would run; it writes the capture, the archive branch, the tag and the realign"; return 0; fi
   [ -e "$G/preflight" ] || refuse "no preflight record"
+  need_bound "$G/preflight" preflight
   freeze_holds
   if [ -e "$G/captured" ]; then
     recheck_after_p1a; preserve_copy; runlog cs preserved || stop "restart step 1 (preservation) failed"
@@ -483,7 +494,8 @@ rcleanup() {  # back to the frozen state, idempotent: every recorded timer stopp
   for u in $ts $SERVICES; do [ "$(unit_state "$u")" = inactive ] || RBAD="$RBAD $u"; done
   [ -z "$RBAD" ] || say "gate0-run: UNCONFIRMED: these units are not confirmed stopped:$RBAD; a human must stop them before anything else runs" >&2
   [ -z "${RSTART:-}" ] || rm -f -- "$G/restarted-$RSTART"   # a completion record written before the cut-off is withdrawn with the rest
-  move_marker_aside force; [ -n "$RBAD" ] || rm -f -- "$G"/restarting-*   # the attempt is closed only when every unit is confirmed stopped and the marker is aside
+  move_marker_aside force; [ -z "$RBAD" ] || return 1   # the marker's own failure is a stop (the subshell's status); an unconfirmed unit is a failed cleanup
+  rm -f -- "$G"/restarting-*   # the attempt is closed only when every unit is confirmed stopped and the marker is aside
 }
 rbail() { INCLEAN=1; rcleanup; stop "$*${RBAD:+; UNCONFIRMED stop of$RBAD}"; }   # the one way out of a failed restart; the EXIT trap runs the same cleanup for every other way out
 restore_marker() {  # the marker set aside goes back, and must be the one the freeze record names (server and Clavain alike)
@@ -639,7 +651,7 @@ undo_open_restart() {  # at an exit: whatever ended the script, an open or cut-o
   [ -z "${INCLEAN:-}" ] || return 1
   recovery_state
   case $RDEC in
-    undo) INCLEAN=1; ( rcleanup ) >/dev/null || :; return 0 ;;   # a subshell: the cleanup's own stop ends it, never the trap that called it
+    undo) INCLEAN=1; CLEANRC=0; ( rcleanup ) >/dev/null || CLEANRC=1; return 0 ;;   # a subshell: the cleanup's own stop ends it, never the trap that called it
     left) left_note "an earlier restart attempt cannot be shown to belong to this checkout, or the journal is not confirmed safe (journal $JSAFE)" ;;
   esac
   return 1; }
@@ -647,7 +659,8 @@ bootexit() {  # EXIT trap while the start-up runs, until the log directory exist
   local rc=$?
   if undo_open_restart; then
     [ $rc != 0 ] || rc=3
-    echo "gate0-run: the start stopped while an earlier restart attempt was cut off: its effects are undone now (every recorded timer and service stopped, marker aside)" >&2
+    if [ "${CLEANRC:-1}" = 0 ]; then echo "gate0-run: the start stopped while an earlier restart attempt was cut off: its effects are undone now (every recorded timer and service stopped, marker aside)" >&2
+    else echo "gate0-run: the start stopped while an earlier restart attempt was cut off: the cleanup is INCOMPLETE (a unit is not confirmed stopped or the marker is not confirmed aside); a human must check the marker, the repair service and the timers" >&2; fi
   fi
   [ -z "${LEFT:-}" ] || [ $rc != 0 ] || rc=3
   exit $rc; }
