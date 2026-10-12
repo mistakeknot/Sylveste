@@ -2019,6 +2019,8 @@ mutate M71 's/^  else rm_=.*/  else rm_=$(pg ls-remote origin refs\/heads\/main 
   { WG=$B/mut/M71.sh; t_swlsremote; r=$?; WG=; check "M71 (the remote read behind --check is not checked) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mm() {  # NAME TEST DESC SEDEXPR : one more mutation control
   local n=$1 t=$2 d=$3; mutate "$n" "$4" && { WG=$B/mut/$n.sh; $t; r=$?; WG=; check "$n ($d) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }; }
+mmd() {  # NAME TEST REASON SEDEXPR : a mutation that is NOT caught by design: an earlier safeguard (the journal gate, the identity check, git_bind) refuses first, so the removed one is defense in depth; the copy must still be refused (fail-closed)
+  local n=$1 t=$2 d=$3; mutate "$n" "$4" && { WG=$B/mut/$n.sh; $t; r=$?; WG=; check "$n (defense in depth, NOT caught by design: $d) stays refused" "$([ $r = 0 ] && echo fail-closed || echo caught)" fail-closed; }; }
 mm M72 t_swrecrbail "cleanup without a readable freeze record stops no timer" 's/^  ts=\$(rec_timers) || { ts=\$TIMERS; say [^}]*}/  ts=$(rec_timers)/'
 mm M73 t_swrecholds "the recorded timers are trusted after a failed read" 's/^  ts=\$(rec_timers) || unrecord_bail "[^"]*"/  ts=$(rec_timers)/'
 mm M74 t_swrecholds "the recorded marker is trusted after a failed read" 's/^  m=\$(rec_marker) || unrecord_bail "[^"]*"/  m=$(rec_marker)/'
@@ -2099,7 +2101,7 @@ mm M142 t_swexitclean "a signal is not turned into a failed exit" "s/^trap 'exit
 mm M143 t_swstartrecover "a start that fails before the log directory exists leaves a cut-off restart live" 's/^trap bootexit EXIT$/:/'
 mm M144 t_swstartrecover "the start-up exit trap does not undo a cut-off restart" '/^bootexit()/,/^  exit \$rc; }/ s/if undo_open_restart; then/if false; then/'
 mm M145 t_swstartrecover "the preservation path is resolved before the recovery is armed" '/^PRES=/d; s/^trap bootexit EXIT$/PRES=$(physpath "${GATE0_PRESERVE_DIR:-$SD\/preserve}") || { echo "gate0-run: cannot use GATE0_PRESERVE_DIR" >\&2; exit 1; }\ntrap bootexit EXIT/'
-mm M146 t_swstartrecover "the checkout's .git is asked for before the recovery is armed" '/^\[ -e "\$ROOT\/.git" \] ||/d; s/^trap bootexit EXIT$/[ -e "$ROOT\/.git" ] || { echo "gate0-run: GATE0_ROOT is not a git checkout" >\&2; exit 1; }\ntrap bootexit EXIT/'
+mmd M146 t_swstartrecover "the journal gate refuses a checkout with no .git and an open attempt first, so this check only matters with no attempt to undo" '/^\[ -e "\$ROOT\/.git" \] ||/d; s/^trap bootexit EXIT$/[ -e "$ROOT\/.git" ] || { echo "gate0-run: GATE0_ROOT is not a git checkout" >\&2; exit 1; }\ntrap bootexit EXIT/'
 mm M147 t_swstartrecover "git's view of the checkout is bound before the recovery is armed" '/^BINDRC=1; git_bind$/d; s/^trap bootexit EXIT$/BINDRC=1; git_bind\ntrap bootexit EXIT/'
 mm M148 t_swstartrecover "the machine name is checked before the recovery is armed" '/^MACHINE=/d; s/^trap bootexit EXIT$/MACHINE=${GATE0_MACHINE:-server}; case $MACHINE in server|clavain) ;; *) echo "gate0-run: GATE0_MACHINE is server or clavain" >\&2; exit 1 ;; esac\ntrap bootexit EXIT/'
 mm M149 t_swstartguards "a new statement that can end the start-up has no case" 's/^BINDRC=1; git_bind$/&\n[ -d \/ ] || exit 1/'
@@ -2111,16 +2113,16 @@ mm M154 t_swunconfined "the git directories the checkout names are left out of t
 mutate M155 's/gitnames \&\& r=read; else/gitnames; r=read; else/' &&
   { WG=$B/mut/M155.sh; t_swcommonshape; r=$?; WG=; check "M155 (defense in depth, so NOT caught by design: git directories that cannot be read count as confined; no identity can then be made from them, so the journal gate refuses first, and the identity check and git_bind would refuse after it; the shape tests keep passing) stays refused" "$([ $r = 0 ] && echo fail-closed || echo caught)" fail-closed; }
 mm M156 t_swstartinject "a write into the journal before the recovery is armed (no lexical table sees it)" 's/^confine   # before the arm.*$/: > "$J\/early-write"\n&/'
-mm M157 t_swtransient "no final confinement after the checkout is bound: the result of the first, possibly failed, read stays" '/^confine   # the final decision/d'
+mm M157 t_swstartrecover "no final confinement after the checkout is bound: the result of the first, possibly failed, read stays" '/^confine   # the final decision/d'
 mm M158 t_swlayouts "the start-up does not refuse a journal that is not confined" '/^\[ "\$JSAFE" = safe \] || {/d'
-mm M159 t_swtransient "the early result is kept when it is not unknown: an early safe is never revoked" 's/^confine   # the final decision.*$/[ "$JSAFE" != unknown ] || confine/'
-mm M160 t_swcommonshape "the recovery accepts a confinement that is unknown (and takes the checkout's identity from the failed read)" 's/^  \[ "\$JSAFE" = safe \] || RDEC=left; }$/  [ "$JSAFE" != unsafe ] || RDEC=left; }/; s/if \[ \$r != unknown \] \&\& \[ -n "\$NE" \]/if [ -n "$NE" ]/'
+mm M159 t_swstartrecover "the early result is kept when it is not unknown: an early safe is never revoked" 's/^confine   # the final decision.*$/[ "$JSAFE" != unknown ] || confine/'
+mmd M160 t_swcommonshape "the journal gate refuses an unknown confinement or identity first" 's/^  \[ "\$JSAFE" = safe \] || RDEC=left; }$/  [ "$JSAFE" != unsafe ] || RDEC=left; }/; s/if \[ \$r != unknown \] \&\& \[ -n "\$NE" \]/if [ -n "$NE" ]/'
 mm M161 t_swlayouts "the common git directory is not read from commondir" 's/^  if \[ -e "\$NE\/commondir" \] || \[ -L "\$NE\/commondir" \]; then   # present.*$/  if false; then/'
 mm M162 t_swwrongroot "a restart record is accepted whatever checkout it names" 's/^  \[ "\$g" = "\$w" \]; }$/  :; }/'
 mm M163 t_swwrongroot "the recovery does not check that the records name this checkout" 's/^    RDEC=undo; records_ours 5 || RDEC=left$/    RDEC=undo/'
 mm M164 t_swwrongroot "the recovery compares the checkout but not the marker digest" 's/^    RDEC=undo; records_ours 5 || RDEC=left$/    RDEC=undo; records_ours 4 || RDEC=left/'
-mm M165 t_swfreezeforeign "the freeze deletes the records of another checkout" 's/^  records_ours 4 || stop "restart records that do not name this checkout/  true || stop "restart records that do not name this checkout/'
-mm M166 t_swcommonshape "a commondir that exists but is not a regular one-line file counts as absent" 's/^    x=\$(oneline "\$NE\/commondir") || { NERR=[^}]*}$/    x=$(oneline "$NE\/commondir") || x=$NE/'
+mmd M165 t_swfreezeforeign "the journal gate refuses restart records of another checkout first" 's/^  records_ours 4 || stop "restart records that do not name this checkout/  true || stop "restart records that do not name this checkout/'
+mmd M166 t_swcommonshape "the journal gate and git itself refuse a malformed commondir first" 's/^    x=\$(oneline "\$NE\/commondir") || { NERR=[^}]*}$/    x=$(oneline "$NE\/commondir") || x=$NE/'
 mm M167 t_swcommonshape "oneline accepts a link or a directory" 's/^  local c; \[ -f "\$1" \] \&\& \[ ! -L "\$1" \] || return 1$/  local c; [ -e "$1" ] || return 1/'
 mm M168 t_swcommonshape "oneline reads the first line of a file of several lines" 's/^  c=\$(cat -- "\$1" 2>\/dev\/null) || return 1$/  read -r c < "$1" || return 1/'
 mm M169 t_swgitlink "oneline ignores a failed read" 's/^  c=\$(cat -- "\$1" 2>\/dev\/null) || return 1$/  c=$(cat -- "$1" 2>\/dev\/null) || :/'
