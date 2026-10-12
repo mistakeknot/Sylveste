@@ -155,6 +155,14 @@ runlog() {  # command... : run it, show and log its output, keep its exit status
   local rc; "$@" > "$LOGD/cmd.out" 2>&1; rc=$?; cat "$LOGD/cmd.out"; cat "$LOGD/cmd.out" >> "$LOG"; rm -f "$LOGD/cmd.out"; return $rc; }
 pg() { git_bind; git -C "$ROOT" "$@"; }   # every git command of this script first confirms that git still shows the validated checkout
 pgs() { local o; o=$(pg "$@") || return 1; printf '%s\n' "$o"; }   # pg, but output is shown only when the command succeeded: "output, then failure" is a failure, never a value to compare
+jlist() {  # PATTERN... : the ONLY way the journal's records are found: print the names in G that match any case pattern (a dangling link and an entry that cannot be examined included). Status 0: the journal was listed (no output means nothing matched); status 1: it could not be listed (a missing, linked or unreadable directory, or a failed read), which is never read as "empty"
+  local o n p; [ -d "$G" ] && [ ! -L "$G" ] && [ -r "$G" ] && [ -x "$G" ] || return 1
+  o=$(ls -A -- "$G" 2>/dev/null) || return 1
+  while IFS= read -r n; do [ -n "$n" ] || continue; for p in "$@"; do case $n in $p) printf '%s\n' "$n"; break ;; esac; done; done <<< "$o"; return 0; }
+jhas() { local o; o=$(jlist "$@") || return 2; [ -n "$o" ]; }   # PATTERN... : 0 a record matches, 1 none does, 2 the journal could not be listed
+jrm() {  # PATTERN... : remove the matching entries; failure when the journal cannot be listed or an entry cannot be removed
+  local o n; o=$(jlist "$@") || return 1
+  while IFS= read -r n; do [ -z "$n" ] || rm -f -- "$G/$n" || return 1; done <<< "$o"; return 0; }
 rec_timers() { [ "${JGATE:-}" = bound ] || return 1; sed -n 's/^timer //p' "${1:-$G/freeze}" 2>/dev/null; }   # the timers of a record; read only after journal_gate said bound in this run; the status is sed's, so an unreadable record is a failure, never an empty list
 rec_marker() { [ "${JGATE:-}" = bound ] || return 1; sed -n 's/^marker //p' "$G/freeze" 2>/dev/null; }   # the marker digest the freeze names: same rule
 rec_state() {  # FILE : 0 bound (a regular file, not a link, whose root, gitdir and common lines are exactly this checkout's identity RID), 1 foreign (well formed, another checkout's), 2 unknown (a link or other non-regular entry, unreadable, no identity or not well formed: an old format, an unknown identity of this checkout)
@@ -163,15 +171,16 @@ rec_state() {  # FILE : 0 bound (a regular file, not a link, whose root, gitdir 
   [[ $g =~ ^root\ [^$nl]+${nl}gitdir\ [^$nl]+${nl}common\ [^$nl]+$ ]] || return 2
   [ "$g" = "$RID" ] || return 1; }
 journal_gate() {  # JGATE=bound, or the exit: the one decision about the journal's records, made first in every mode (before any git call, any journal read that drives a decision, any write). Every trust-carrying record that exists (preflight, freeze, freeze intent, every restart record, dangling links included) must be bound to this checkout (rec_state 0); the records that carry no identity (captured, p1a-skipped, the marker copies) are trusted only beside a preflight record, which is itself bound. Foreign and unknown are both refused: nothing is changed, and the records are named. The readers of the freeze (rec_timers, rec_marker) refuse until this has said bound
-  local f s foreign= unknown= nonid=; JGATE=
+  local f l s foreign= unknown= nonid=; JGATE=
   if [ -e "$G" ] || [ -L "$G" ]; then
     [ -d "$G" ] && [ ! -L "$G" ] || { foreign=; unknown=" $(basename "$G")"; }
-    for f in "$G"/preflight "$G"/freeze "$G"/freeze-intent "$G"/restarting-* "$G"/restarted-*; do
-      if [ -e "$f" ] || [ -L "$f" ]; then rec_state "$f"; s=$?
-        case $s in 0) ;; 1) foreign="$foreign ${f##*/}" ;; *) unknown="$unknown ${f##*/}" ;; esac; fi; done
-    if [ ! -e "$G/preflight" ] && [ ! -L "$G/preflight" ]; then
-      for f in "$G"/captured "$G"/p1a-skipped "$G"/marker "$G"/marker.*; do
-        if [ -e "$f" ] || [ -L "$f" ]; then nonid="$nonid ${f##*/}"; fi; done; fi; fi
+    if [ -d "$G" ] && [ ! -L "$G" ]; then
+      l=$(jlist preflight freeze freeze-intent 'restarting-*' 'restarted-*') || { l=; unknown="$unknown (the journal cannot be listed)"; }
+      while IFS= read -r f; do [ -n "$f" ] || continue; rec_state "$G/$f"; s=$?
+        case $s in 0) ;; 1) foreign="$foreign $f" ;; *) unknown="$unknown $f" ;; esac; done <<< "$l"
+      if [ -z "$unknown" ] && ! jhas preflight; then
+        l=$(jlist captured p1a-skipped marker 'marker.*') || { l=; unknown="$unknown (the journal cannot be listed)"; }
+        while IFS= read -r f; do [ -n "$f" ] && nonid="$nonid $f"; done <<< "$l"; fi; fi; fi
   if [ -n "$foreign$unknown$nonid" ]; then
     left_note "a record in the journal is not this checkout's (it is the record of another checkout, an old format, a link or unreadable, or this checkout's identity is not known; foreign:${foreign:- none}; unknown:${unknown:- none}; with no preflight record:${nonid:- none}); the journal is not used"
     exit 3; fi
@@ -387,12 +396,12 @@ do_freeze() {
   if [ -e "$G/marker" ]; then w=$(sha < "$G/marker") || stop "cannot hash the marker set aside: the freeze record would name no marker"; w="marker $w"; else w="marker none"; fi
   [ -n "${RID:-}" ] || stop "the checkout's identity is not known: the freeze record would bind to nothing"
   f="${al:+$al$'\n'}$w"$'\n'"$RID"$'\n'"at $(date -u +%Y-%m-%dT%H:%M:%SZ)"; put "$G/freeze" "$f"
-  rm -f -- "$G"/restarted-* "$G"/restarting-*   # a new freeze starts a new attempt: an earlier attempt's restart records no longer apply (cleared once the new freeze is recorded)
+  jrm 'restarted-*' 'restarting-*' || stop "the earlier attempt's restart records cannot be cleared (the journal cannot be listed or an entry cannot be removed)"   # a new freeze starts a new attempt: an earlier attempt's restart records no longer apply (cleared once the new freeze is recorded)
   rm -f -- "$G/freeze-intent"   # last: while a stale restart record exists the intent still names the restart set, so a crash between these two steps loses nothing
   say "gate0-run: freeze holds (timers and services stopped, marker aside)"; }
 nobeads() { local rc; grep -v ' \.beads/issues\.jsonl$'; rc=$?; [ $rc -le 1 ]; }   # drop the tracker export line; grep 1 is "no line left", 2 or more is a failed filter
-restarting_any() { local f; for f in "$G"/restarting-*; do [ -e "$f" ] || [ -L "$f" ] && return 0; done; return 1; }
-restarted_any() { local f; for f in "$G"/restarted-*; do [ -e "$f" ] || [ -L "$f" ] && return 0; done; return 1; }
+restarting_any() { jhas 'restarting-*'; local r=$?; [ $r != 2 ] || stop "the journal $G cannot be listed: whether an earlier restart attempt is open is not known; nothing was changed"; return $r; }   # 0 open, 1 none; an unlistable journal is a stop, never "none"
+restarted_any() { jhas 'restarted-*'; local r=$?; [ $r != 2 ] || stop "the journal $G cannot be listed: whether a restart is recorded is not known; nothing was changed"; return $r; }
 freeze_holds() { local u a
   [ -e "$G/freeze" ] || stop "no freeze record; run freeze first"
   hook_check   # a hook installed after preflight would run on the fetch, the realign or the repair run that follow
@@ -506,7 +515,7 @@ rcleanup() {  # back to the frozen state, idempotent: every recorded timer stopp
   [ -z "$RBAD" ] || say "gate0-run: UNCONFIRMED: these units are not confirmed stopped:$RBAD; a human must stop them before anything else runs" >&2
   [ -z "${RSTART:-}" ] || rm -f -- "$G/restarted-$RSTART"   # a completion record written before the cut-off is withdrawn with the rest
   move_marker_aside force; [ -z "$RBAD" ] || return 1   # the marker's own failure is a stop (the subshell's status); an unconfirmed unit is a failed cleanup
-  rm -f -- "$G"/restarting-*   # the attempt is closed only when every unit is confirmed stopped and the marker is aside
+  jrm 'restarting-*' || { RBAD="$RBAD [the restart records]"; say "gate0-run: UNCONFIRMED: the restart records cannot be cleared (the journal cannot be listed or an entry cannot be removed)" >&2; return 1; }   # the attempt is closed only when every unit is confirmed stopped and the marker is aside
 }
 rbail() {  # REASON : the one way out of a failed restart; the EXIT trap runs the same cleanup for every other way out. The message says what the cleanup confirmed: undone, or incomplete with the units that are not confirmed stopped (the reasons never claim an outcome)
   local o; INCLEAN=1; rcleanup
@@ -592,7 +601,7 @@ restarted_holds() {  # a restart that is already recorded: re-verify the state i
   if [ "$m" != none ]; then [[ $m =~ ^[0-9a-f]{64}$ ]] && [ -e "$ROOT/.git-autosync" ] && [ "$(sha < "$ROOT/.git-autosync")" = "$m" ] ||
     unrecord_bail "restart $1 is recorded but the marker in the checkout is not the one set aside; nothing was run"
   else [ ! -e "$ROOT/.git-autosync" ] || unrecord_bail "restart $1 is recorded with no marker, but a marker is in the checkout; nothing was run"; fi
-  rm -f -- "$G"/restarting-*   # a leftover from a crash after the record was written
+  jrm 'restarting-*' || unrecord_bail "restart $1 is recorded but the restart records cannot be cleared (the journal cannot be listed); nothing was run"   # a leftover from a crash after the record was written
   say "gate0-run: restart $1 already done ($(cat "$G/restarted-$1")); the recorded timers are active and the marker is in place; nothing run"; }
 do_restart() {
   local ex=$XARG pe=$XARG sn sr tgt
@@ -649,17 +658,17 @@ rec_ours() {  # FILE N : a restart record is a regular file (not a link) whose l
   g=$(sed -n "2,${2}p" -- "$1" 2>/dev/null) || return 1
   [ "$g" = "$w" ]; }
 records_ours() {  # N : every restarted-* and restarting-* record in G, a dangling link included, is ours (rec_ours N)
-  local f; for f in "$G"/restarted-* "$G"/restarting-*; do
-    if [ -e "$f" ] || [ -L "$f" ]; then rec_ours "$f" "$1" || return 1; fi; done; return 0; }
+  local f o; o=$(jlist 'restarted-*' 'restarting-*') || return 1   # an unlistable journal: the records are not known to be ours
+  while IFS= read -r f; do [ -z "$f" ] || rec_ours "$G/$f" "$1" || return 1; done <<< "$o"; return 0; }
 left_note() {  # REASON : a restart attempt's state is left exactly as found, once per process; the exit status of the script is made non-zero by the traps
   [ -z "${LEFT:-}" ] || return 0; LEFT=1
-  local m="gate0-run: LEFT AS FOUND, nothing changed: $1; records in $G: $(ls -- "$G" 2>/dev/null | grep '^restart' | tr '\n' ' '); a human must check the checkout's marker, the repair service and the timers and clear the records deliberately"
+  local m="gate0-run: LEFT AS FOUND, nothing changed: $1; records in $G: $(jlist 'restart*' | tr '\n' ' ' ; [ "${PIPESTATUS[0]}" = 0 ] || printf '(the journal cannot be listed) '); a human must check the checkout's marker, the repair service and the timers and clear the records deliberately"
   echo "$m" >&2; echo "$m" >> "$LOG"; }
 recovery_state() {  # RDEC: none (no restart attempt is open), undo (one is, and the recovery may act) or left (one is, and nothing may be touched). The recovery acts only when all hold: the journal was confined as safe, the attempt is this process's own, or every record of it names this very checkout (real path, git directory, common git directory, marker digest) in the form its start wrote. Anything else, a record that cannot be read or is not well formed included, is left
   RDEC=none
   if [ -n "${RSTART:-}" ]; then RDEC=undo
-  elif [ "$PHASE" = restart ] && [ $CHECKMODE = 0 ] && [ -e "$G/freeze" ] && [ ! -e "$G/restarted-$XARG" ] && restarting_any; then
-    RDEC=undo; records_ours 5 || RDEC=left
+  elif [ "$PHASE" = restart ] && [ $CHECKMODE = 0 ] && [ -e "$G/freeze" ] && [ ! -e "$G/restarted-$XARG" ]; then
+    jhas 'restarting-*'; case $? in 0) RDEC=undo; records_ours 5 || RDEC=left ;; 1) return 0 ;; *) RDEC=left ;; esac   # 2: the journal cannot be listed: an open attempt cannot be ruled out, and nothing is touched
   else return 0; fi
   [ "$JSAFE" = safe ] || RDEC=left; }
 undo_open_restart() {  # at an exit: whatever ended the script, an open or cut-off restart attempt is undone first (every recorded timer and service stopped and read back, the marker aside), but only when recovery_state says undo; a left attempt is named and not touched

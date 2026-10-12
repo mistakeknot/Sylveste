@@ -1506,6 +1506,74 @@ t_swgate() {  # the one journal gate, run first in every mode: with a foreign or
   done
   [ "$n" = 84 ] || { echo "    cells run: $n"; return 1; }
   [ -z "$bad" ]; }
+t_swunlistable() {  # a journal directory that cannot be listed (write and search permission without read, or read without search) is "unknown", never "empty": with an open restart attempt of this checkout, one of another checkout, a completed restart, or only a preflight and a freeze, EVERY mode (each also under --check) stops with the gate's refusal (exit 3, naming that the journal cannot be listed) and writes nothing at all, git metadata included
+  local SRSVC=1 SRSED= R0=$R set perm chk mode rc2 pre post bad= n=0 gd m0
+  [ "$(id -u)" != 0 ] || { echo "    SKIPPED: root lists any directory, the case cannot be built"; return 0; }
+  for set in plain restarting foreign restarted; do
+    case $set in
+      plain) restore fx; stepto preflight freeze ;;
+      restarting) sr_cut ;;
+      foreign) sr_cut && sed -i '2s|.*|root /elsewhere|' "$J/gate0-run/restarting-r0" ;;
+      restarted) restore r0a; WG= wg restart r0 >> "$B/step.out" 2>&1 ;;
+    esac || { echo "    $set: cannot make the state"; return 1; }
+    case $set in restarting|foreign) sr_stubs ;; esac
+    gd=$J/gate0-run; m0=$(stat -c %a "$gd")
+    for perm in 300 400; do
+      chmod "$perm" "$gd"; if [ -r "$gd" ] && [ -x "$gd" ]; then chmod "$m0" "$gd"; echo "    $set/$perm: the directory is still readable and searchable; the case cannot be built"; return 1; fi; chmod "$m0" "$gd"
+      for chk in "" --check; do for mode in preflight freeze capture run rollback "restart r0"; do
+        n=$((n+1)); pre="$(wr_obs "$J" "$R0")/$(ls -A "$W/state/logs" 2>/dev/null | wc -l)/$(nstarts)"; : > "$B/out.sw"
+        chmod "$perm" "$gd"; wg $chk $mode >> "$B/out.sw" 2>&1; rc2=$?; chmod "$m0" "$gd"
+        post="$(wr_obs "$J" "$R0")/$(ls -A "$W/state/logs" 2>/dev/null | wc -l)/$(nstarts)"
+        { [ "$pre" = "$post" ] && [ "$(sw_msg 'are undone now')" = 0 ] && case $perm in   # read without search is refused earlier still, by the start-up's own check of the gate directory (exit 1)
+            300) [ "$rc2" = 3 ] && [ "$(sw_msg 'the journal cannot be listed')" -ge 1 ] && [ "$(sw_msg "a record in the journal is not this checkout's")" = 1 ] ;;
+            *) { [ "$rc2" = 3 ] && [ "$(sw_msg 'the journal cannot be listed')" -ge 1 ]; } || { [ "$rc2" = 1 ] && [ "$(sw_msg 'is not a plain child of the journal')" = 1 ]; } ;;
+          esac; } || { echo "    $set/$perm: $chk $mode rc=$rc2 gate-notes=$(sw_msg "a record in the journal is not this checkout's") unlistable-notes=$(sw_msg 'the journal cannot be listed') state $([ "$pre" = "$post" ] && echo same || echo CHANGED)"; bad="$bad $set/$perm/$chk/$mode"; }
+      done; done
+    done
+    [ "$set" = plain ] || continue   # listable again: the gate does not mention the listing
+    : > "$B/out.sw"; wg --check capture >> "$B/out.sw" 2>&1
+    [ "$(sw_msg 'the journal cannot be listed')" = 0 ] || { echo "    $set: a listable journal is reported as unlistable"; bad="$bad $set/listable"; }
+  done
+  [ "$n" = 96 ] || { echo "    cells run: $n"; return 1; }
+  [ -z "$bad" ]; }
+t_swjlist() {  # the journal enumerator (jlist, jhas, jrm, restarting_any, restarted_any) distinguishes "listed and empty" from "could not list": a missing, linked, write-and-search-only, read-only or unreadable directory is status 1 (jhas 2, jrm failure, the two *_any helpers stop, nothing removed), an empty one is status 0 with no output, a dangling link is listed, only matching names are listed or removed
+  local d=$B/jl h=$B/jlh.sh o rc g bad= m
+  [ "$(id -u)" != 0 ] || { echo "    SKIPPED: root lists any directory, the case cannot be built"; return 0; }
+  chmod -R 755 "$d" 2>/dev/null; rm -rf -- "${d:?}"; mkdir -p "$d"
+  { echo 'say() { printf "%s\n" "$*"; }; stop() { say "STOP: $*" >&2; exit 3; }'
+    sed -n '/^jlist() {/,/^rec_timers() {/{/^rec_timers() {/!p;}' "${WG:-$GW}"
+    grep -E '^(restarting_any|restarted_any)\(\)' "${WG:-$GW}"
+    cat <<'HEOF'
+G=$1; shift
+case $1 in
+  list) jlist 'restarting-*' 'restarted-*' preflight; echo "rc=$?" ;;
+  has) jhas 'restarting-*'; echo "rc=$?" ;;
+  rm) jrm 'restarting-*'; echo "rc=$?" ;;
+  any) restarting_any; echo "rc=$?" ;;
+  anyd) restarted_any; echo "rc=$?" ;;
+esac
+HEOF
+  } > "$h"
+  run() { bash "$h" "$d/g" "$@" 2>&1 | tr '\n' ' '; }
+  g=$d/g
+  [ "$(run list)" = "rc=1 " ] || { echo "    a missing directory: $(run list)"; bad="$bad missing"; }
+  mkdir "$g"
+  [ "$(run list)" = "rc=0 " ] && [ "$(run has)" = "rc=1 " ] && [ "$(run any)" = "rc=1 " ] || { echo "    an empty directory: $(run list) $(run has) $(run any)"; bad="$bad empty"; }
+  : > "$g/preflight"; : > "$g/restarting-a"; : > "$g/restarted-b"; : > "$g/freeze"; ln -s "$d/nowhere" "$g/restarting-c"
+  [ "$(run list)" = "preflight restarted-b restarting-a restarting-c rc=0 " ] || { echo "    a listed directory: $(run list)"; bad="$bad listed"; }
+  [ "$(run has)" = "rc=0 " ] && [ "$(run any)" = "rc=0 " ] && [ "$(run anyd)" = "rc=0 " ] || { echo "    has: $(run has) $(run any) $(run anyd)"; bad="$bad has"; }
+  for m in 300 400 100 000; do
+    chmod $m "$g"
+    [ "$(run list)" = "rc=1 " ] && [ "$(run has)" = "rc=2 " ] && [ "$(run rm)" = "rc=1 " ] || { echo "    mode $m: list=$(run list) has=$(run has) rm=$(run rm)"; bad="$bad m$m"; }
+    case "$(run any)" in "STOP: the journal $g cannot be listed"*) ;; *) echo "    mode $m: restarting_any: $(run any)"; bad="$bad any$m" ;; esac
+    case "$(run anyd)" in "STOP: the journal $g cannot be listed"*) ;; *) echo "    mode $m: restarted_any: $(run anyd)"; bad="$bad anyd$m" ;; esac
+    chmod 755 "$g"
+    [ -e "$g/restarting-a" ] && [ -L "$g/restarting-c" ] || { echo "    mode $m: records were removed"; bad="$bad rm$m"; }
+  done
+  ln -s "$g" "$d/lnk"; [ "$(bash "$h" "$d/lnk" list 2>&1 | tr '\n' ' ')" = "rc=1 " ] || { echo "    a linked directory is listed"; bad="$bad link"; }
+  [ "$(run rm)" = "rc=0 " ] && [ ! -e "$g/restarting-a" ] && [ ! -L "$g/restarting-c" ] && [ -e "$g/restarted-b" ] && [ -e "$g/preflight" ] && [ -e "$g/freeze" ] || { echo "    jrm: $(run rm); left: $(ls -A "$g" | tr '\n' ' ')"; bad="$bad rm"; }
+  [ "$(run has)" = "rc=1 " ] && [ "$(run any)" = "rc=1 " ] || { echo "    after jrm: $(run has) $(run any)"; bad="$bad after"; }
+  chmod -R 755 "$d" 2>/dev/null; [ -z "$bad" ]; }
 t_swrbailwording() {  # the restart that finds an earlier attempt cut off undoes it and says so only when the cleanup was confirmed: a unit that cannot be stopped makes the message say the cleanup is INCOMPLETE (and name the unit), never that the effects are undone; the retry that can stop it says they are
   local SRSVC=1 SRSED= rc2 rc3; SWRB=
   sr_cut || return 1; touch "$ST/failstop-git-autosync-repair.timer"; : > "$B/out.sw"
@@ -1860,6 +1928,8 @@ sc "a freeze that meets records of another checkout stops before it changes anyt
 sc "the journal's preflight and freeze belong to their checkout: a fresh restart, capture, rollback or freeze on another checkout, or on a record that is not this checkout's, changes nothing" t_swfreezeroot
 sc "a start that cannot finish the cleanup of a cut-off restart says it is incomplete, not undone" t_swcleanfail
 sc "the journal gate runs first in every mode (preflight, freeze, capture, run, rollback, restart; each also under --check): a foreign, unknown or identity-less record of any kind stops it with no write at all, git metadata included" t_swgate
+sc "an unlistable journal directory is unknown, never empty: every mode (also under --check) is refused with no write at all, git metadata included" t_swunlistable
+sc "the journal enumerator tells a directory that was listed (empty or not) from one that could not be listed" t_swjlist
 sc "a restart that finds an earlier attempt cut off says the effects are undone only when the cleanup was confirmed" t_swrbailwording
 sc "a git directory link or common directory link that exists but is not a regular one-line file is unknown, never absent: nothing is written, stopped or moved" t_swcommonshape
 sc "a transient failure of the first confinement read does not stay, and an early safe is revoked by the final decision" t_swtransient
@@ -2119,8 +2189,8 @@ mm M159 t_swstartrecover "the early result is kept when it is not unknown: an ea
 mmd M160 t_swcommonshape "the journal gate refuses an unknown confinement or identity first" 's/^  \[ "\$JSAFE" = safe \] || RDEC=left; }$/  [ "$JSAFE" != unsafe ] || RDEC=left; }/; s/if \[ \$r != unknown \] \&\& \[ -n "\$NE" \]/if [ -n "$NE" ]/'
 mm M161 t_swlayouts "the common git directory is not read from commondir" 's/^  if \[ -e "\$NE\/commondir" \] || \[ -L "\$NE\/commondir" \]; then   # present.*$/  if false; then/'
 mm M162 t_swwrongroot "a restart record is accepted whatever checkout it names" 's/^  \[ "\$g" = "\$w" \]; }$/  :; }/'
-mm M163 t_swwrongroot "the recovery does not check that the records name this checkout" 's/^    RDEC=undo; records_ours 5 || RDEC=left$/    RDEC=undo/'
-mm M164 t_swwrongroot "the recovery compares the checkout but not the marker digest" 's/^    RDEC=undo; records_ours 5 || RDEC=left$/    RDEC=undo; records_ours 4 || RDEC=left/'
+mm M163 t_swwrongroot "the recovery does not check that the records name this checkout" 's/RDEC=undo; records_ours 5 || RDEC=left ;;/RDEC=undo ;;/'
+mm M164 t_swwrongroot "the recovery compares the checkout but not the marker digest" 's/RDEC=undo; records_ours 5 || RDEC=left ;;/RDEC=undo; records_ours 4 || RDEC=left ;;/'
 mmd M165 t_swfreezeforeign "the journal gate refuses restart records of another checkout first" 's/^  records_ours 4 || stop "restart records that do not name this checkout/  true || stop "restart records that do not name this checkout/'
 mmd M166 t_swcommonshape "the journal gate and git itself refuse a malformed commondir first" 's/^    x=\$(oneline "\$NE\/commondir") || { NERR=[^}]*}$/    x=$(oneline "$NE\/commondir") || x=$NE/'
 mm M167 t_swcommonshape "oneline accepts a link or a directory" 's/^  local c; \[ -f "\$1" \] \&\& \[ ! -L "\$1" \] || return 1$/  local c; [ -e "$1" ] || return 1/'
@@ -2140,12 +2210,23 @@ mm M182 t_swgate "the journal gate is skipped in rollback" 's/^journal_gate .*/[
 mm M183 t_swgate "the journal gate is skipped in restart" 's/^journal_gate .*/[ "$PHASE" = restart ] || journal_gate/'
 mm M184 t_swgate "the journal gate is skipped under --check" 's/^journal_gate .*/[ $CHECKMODE = 1 ] || journal_gate/'
 mm M185 t_swfreezeroot "a record with no identity is taken for this checkout's" 's/^  \[\[ \$g =~ .*$/  [ -n "$g" ] || return 0/'
-mm M186 t_swgate "a freeze intent of another checkout is not looked at" 's/^    for f in "\$G"\/preflight "\$G"\/freeze "\$G"\/freeze-intent /    for f in "$G"\/preflight "$G"\/freeze /'
-mm M187 t_swgate "a restart record of another checkout is not looked at" 's/ "\$G"\/restarting-\* "\$G"\/restarted-\*; do$/ "$G"\/restarted-*; do/'
-mm M188 t_swgate "a completed restart's record of another checkout is not looked at" 's/ "\$G"\/restarting-\* "\$G"\/restarted-\*; do$/ "$G"\/restarting-*; do/'
-mm M189 t_swgate "records with no identity are trusted without a preflight record" 's/^    if \[ ! -e "\$G\/preflight" \] \&\& \[ ! -L "\$G\/preflight" \]; then$/    if false; then/'
-mm M190 t_swgate "a dangling record link is not looked at" 's/^      if \[ -e "\$f" \] || \[ -L "\$f" \]; then rec_state "\$f"; s=\$?$/      if [ -e "$f" ]; then rec_state "$f"; s=$?/'
+mm M186 t_swgate "a freeze intent of another checkout is not looked at" 's/^\(      l=\$(jlist preflight freeze\) freeze-intent /\1 /'
+mm M187 t_swgate "a restart record of another checkout is not looked at" 's/^\(      l=\$(jlist preflight freeze freeze-intent\) .restarting-\*. /\1 /'
+mm M188 t_swgate "a completed restart's record of another checkout is not looked at" 's/^\(      l=\$(jlist preflight freeze freeze-intent .restarting-\*.\) .restarted-\*.)/\1)/'
+mm M189 t_swgate "records with no identity are trusted without a preflight record" 's/^      if \[ -z "\$unknown" \] \&\& ! jhas preflight; then$/      if false; then/'
+mm M190 t_swgate "a dangling record link is not looked at" 's/case \$n in \$p) printf/case $n in $p) [ -e "$G\/$n" ] \&\& printf/'
 mm M191 t_swrbailwording "a cleanup that could not be confirmed is reported as done" 's/^  if \[ -z "\${RBAD:-}" \]; then o=/  if true; then o=/'
+mm M192 t_swjlist "the permissions of the journal directory are not checked, only the status of ls" 's/ \&\& \[ -r "\$G" \] \&\& \[ -x "\$G" \] || return 1$/ || return 1/'
+mm M193 t_swunlistable "neither the journal directory's permissions nor the status of ls is checked: an unlistable journal lists as empty" 's/ \&\& \[ -r "\$G" \] \&\& \[ -x "\$G" \] || return 1$/ || return 1/; s/^  o=\$(ls -A -- "\$G" 2>\/dev\/null) || return 1$/  o=$(ls -A -- "$G" 2>\/dev\/null)/'
+mm M194 t_swjlist "jhas reports a journal that could not be listed as having no record" 's/o=\$(jlist "\$@") || return 2;/o=$(jlist "$@") || return 1;/'
+mm M195 t_swjlist "jrm ignores that the journal could not be listed" 's/^  local o n; o=\$(jlist "\$@") || return 1$/  local o n; o=$(jlist "$@")/'
+mm M196 t_swjlist "restarting_any takes an unlistable journal for one with no open attempt" 's/\[ \$r != 2 \] || stop "the journal \$G cannot be listed: whether an earlier[^"]*"/:/'
+mm M197 t_swjlist "restarted_any takes an unlistable journal for one with no completed restart" 's/\[ \$r != 2 \] || stop "the journal \$G cannot be listed: whether a restart is recorded[^"]*"/:/'
+mm M198 t_swunlistable "the gate takes an unlistable journal for one with no records (both of its listings)" 's/^\(      l=\$(jlist preflight freeze freeze-intent .restarting-\*. .restarted-\*.)\) || {.*$/\1 || l=/; s/^\(        l=\$(jlist captured [^)]*)\) || {.*$/\1 || l=/'
+mm M199 t_swunlistable "the gate finds the records with bare globs again (an unmatched glob stays literal and is skipped)" 's/^      l=\$(jlist preflight freeze freeze-intent .*$/      l=$(for f in "$G"\/preflight "$G"\/freeze "$G"\/freeze-intent "$G"\/restarting-* "$G"\/restarted-*; do if [ -e "$f" ] || [ -L "$f" ]; then basename "$f"; fi; done)/; s/^      if \[ -z "\$unknown" \] \&\& ! jhas preflight; then$/      if [ -z "$unknown" ] \&\& [ ! -e "$G\/preflight" ]; then/; s/^        l=\$(jlist captured .*$/        l=$(for f in "$G"\/captured "$G"\/p1a-skipped "$G"\/marker "$G"\/marker.*; do if [ -e "$f" ] || [ -L "$f" ]; then basename "$f"; fi; done)/'
+mmd M200 t_swunlistable "the gate refuses first; records_ours ignores that the journal could not be listed" 's/^\(  local f o; o=\$(jlist [^)]*)\) || return 1/\1/'
+mmd M201 t_swunlistable "the gate refuses first; the cleanup ignores that the restart records could not be removed" 's/^  jrm .restarting-\*. || { RBAD=.*$/  true/'
+mmd M202 t_swunlistable "the gate refuses first; a new freeze ignores that the earlier restart records could not be cleared" 's/^  jrm .restarted-\*. .restarting-\*. || stop .*$/  true/'
 mm M180 t_swcleanfail "a cleanup that failed is reported as done" 's/^    undo) INCLEAN=1; CLEANRC=0; ( rcleanup ) >\/dev\/null || CLEANRC=1; return 0 ;;/    undo) INCLEAN=1; CLEANRC=0; ( rcleanup ) >\/dev\/null || :; return 0 ;;/'
 mm M181 t_swcleanfail "the cleanup status is never read" 's/if \[ "\${CLEANRC:-1}" = 0 \]; then echo "gate0-run: the start stopped/if true; then echo "gate0-run: the start stopped/'
 mm M110 t_swrefreezegone "an interrupted new freeze is taken for a new attempt: its recorded marker is set aside" 's/^  if restarted_any \&\& \[ ! -e "\$G\/freeze-intent" \] \&\& /  if restarted_any \&\& /'
