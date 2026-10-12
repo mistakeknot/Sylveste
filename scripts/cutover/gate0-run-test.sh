@@ -186,6 +186,8 @@ cat > "$B/stub/git" <<EOF
 #!/bin/bash
 # the real git, except that reading the tracker file from a commit fails while $ST/failshow exists (an unreadable object)
 if [ -e "$ST/failshow" ]; then case " \$* " in *" show "*":.beads/issues.jsonl"*) echo "fatal: bad object (stub)" >&2; exit 128 ;; esac; fi
+# the first git call finds the checkout's .git replaced by a link to a copy (a command in $ST/gitswap, run once): the identity read at the journal gate is no longer the checkout's
+if [ -f "$ST/gitswap" ]; then s=\$(cat "$ST/gitswap"); rm -f "$ST/gitswap"; eval "\$s"; fi
 # the lane cannot be read by the wrapper's own git calls (the steps it runs read it through their own, which still work)
 if [ -e "$ST/fail-lsremote" ]; then case " \$* " in *" ls-remote "*) case "\$($REALPS -o args= -p \$PPID)" in *cutover-steps*) ;; *) echo "fatal: unable to access the lane (stub)" >&2; exit 128 ;; esac ;; esac; fi
 if [ -e "$ST/fail-arch-after" ]; then case " \$* " in *" ls-remote "*archive/gate0*) case "\$($REALPS -o args= -p \$PPID)" in *cutover-steps*) ;; *) n=\$(cat "$ST/arch-n" 2>/dev/null || echo 0); n=\$((n+1)); echo \$n > "$ST/arch-n"; if [ \$n -gt \$(cat "$ST/fail-arch-after") ]; then echo "fatal: unable to access the lane (stub)" >&2; exit 128; fi ;; esac ;; esac; fi
@@ -753,7 +755,7 @@ t_swfreezerec() {  # a freeze record, or an earlier freeze intent, that fails af
   local a b
   restore fx; stepto preflight freeze || return 1; sw_sed 's/^timer //p' 0 out
   wg freeze > "$B/out.sw" 2>&1; a="$?/$(sw_msg 'whether its timers stay stopped cannot be told')"
-  restore fx; stepto preflight || return 1; printf 'timer git-autosync-repair.timer\n%s\n' "$(ridl)" > "$J/gate0-run/freeze-intent"; sw_sed 'freeze-intent' 0 out
+  restore fx; stepto preflight || return 1; printf 'timer git-autosync-repair.timer\n%s\n' "$(ridl)" > "$J/gate0-run/freeze-intent"; sw_sed 's/^timer //p' 0 out   # the gate's own read of the intent (identity lines) passes: the timers read after it is the one that fails
   wg freeze > "$B/out.sw" 2>&1; b="$?/$(sw_msg 'the earlier freeze intent cannot be read')/$([ -e "$J/gate0-run/freeze" ] && echo recorded)"
   SWW="$a;$b"; [ "$SWW" = "3/1;3/1/" ]; }
 t_swpushurl() {  # the lane's push URL read prints the validated URL and then fails: that is a failed read, not a match
@@ -1255,8 +1257,8 @@ t_swrestartclean() {  # a restart cut off after its first timer start is undone 
 # they cannot see an exit inside a helper function. The proof is t_swstartinject, which fails every command the start-up executes (helpers and
 # subshells included) and checks the state each time. set -u is no extra class: an unbound variable ends the script through the same EXIT trap,
 # and every expansion before the arm is guarded or assigned above it.
-SRKEYS=('$ROOT/.git' 'git_bind' 'PRES=$(physpath' 'must be outside the checkout and its git' 'preservation copy must be outside the journal' 'LP=$(physpath' 'cannot create the journal' 'cannot create $LOGD' 'GATE0_MACHINE is server' 'self_sha')
-SRCASES=('nogit' 'gitcfg gitroot gitdir gitcommon' 'pres-dangling pres-file' 'state-in-checkout pres-in-checkout' 'pres-in-journal' 'logs-into-checkout' 'journal-mkdir' 'logdir-mkdir' 'machine' 'nosha')
+SRKEYS=('$ROOT/.git' 'git_bind' 'identity changed between the journal gate' 'PRES=$(physpath' 'must be outside the checkout and its git' 'preservation copy must be outside the journal' 'LP=$(physpath' 'cannot create the journal' 'cannot create $LOGD' 'GATE0_MACHINE is server' 'self_sha')
+SRCASES=('nogit' 'idchange' 'gitcfg gitroot gitdir gitcommon' 'pres-dangling pres-file' 'state-in-checkout pres-in-checkout' 'pres-in-journal' 'logs-into-checkout' 'journal-mkdir' 'logdir-mkdir' 'machine' 'nosha')
 # before the recovery is armed only what names the journal can fail (and nothing is written there)
 SPKEYS=('exit $?' 'self_sha' 'usage: gate0-run.sh' 'set GATE0_ROOT and GATE0_STATE_DIR' 'GATE0_ROOT is not a git checkout' 'cannot establish the user id' 'run as root, set GATE0_OPERATOR' 'exec runuser' 'cannot use GATE0_STATE_DIR' 'cannot use GATE0_JOURNAL' 'is not a plain child')
 SPCASES=('check' 'check-nosha' 'usage usage-exit-arg' 'noenv' 'root-bad' 'uid-bad' 'operator-bad' 'runuser-bad' 'state-dangling' 'journal-dangling' 'gate-symlink')
@@ -1295,13 +1297,17 @@ sr_stubs() {  # stub commands that fail on request, ahead of the wrapper's own P
   printf '#!/bin/sh\nexit 1\n' > "$B/rustub/runuser"
   chmod +x "$B"/mkbad/mkdir "$B"/shabad/* "$B"/idstub/id "$B"/rustub/runuser; }
 t_swstartrecover() {  # a restart cut off after its first timer start is undone by a retry that fails at any step of its start after the arm, before restart_settled can run (one case for each statement t_swstartguards lists), with no PRES, log directory or other input resolved
-  local c rc2 g want='137/marker/yes/no/1//no/no/0' bad= ran=0 total=0 cs; SWSR=
+  local c rc2 g w want='137/marker/yes/no/1//no/no/0' bad= ran=0 total=0 cs; SWSR=
   for cs in "${SRCASES[@]}"; do for c in $cs; do total=$((total+1)); done; done
   for cs in "${SRCASES[@]}"; do for c in $cs; do
     sr_cut || return 1; sr_stubs; ran=$((ran+1)); rc2=0
     case $c in
       nogit) mv "$R/.git" "$R/.git.off"; wg restart r0 >> "$B/out.sw" 2>&1; rc2=$?; mv "$R/.git.off" "$R/.git"   # the checkout cannot be shown to be the one the attempt began on (it has no git directory now): nothing is touched and the state is named; the retry on the checkout itself then undoes it
         { [ "$(sr_state)" = marker/yes/no/1 ] && [ "$(sw_msg 'LEFT AS FOUND')" = 1 ]; } || { echo "    $c: the retry did not leave the attempt as found: $(sr_state), notes $(sw_msg 'LEFT AS FOUND')"; bad="$bad $c(left)"; }
+        wg restart r0 >> "$B/out.sw" 2>&1 ;;
+      idchange) cp -a "$R/.git" "$W/gitcopy"; printf '%s' "rm -rf '$R/.git' && printf 'gitdir: %s\\n' '$W/gitcopy' > '$R/.git'" > "$ST/gitswap"   # after the journal gate, git shows the checkout on another git directory: the attempt is left as found
+        wg restart r0 >> "$B/out.sw" 2>&1; rc2=$?; rm -rf "$R/.git"; mv "$W/gitcopy" "$R/.git"
+        { [ "$(sr_state)" = marker/yes/no/1 ] && [ "$(sw_msg 'LEFT AS FOUND')" = 1 ] && [ "$(sw_msg 'identity changed between the journal gate')" = 1 ]; } || { echo "    $c: not left as found: $(sr_state), notes $(sw_msg 'LEFT AS FOUND'), $(sw_msg 'identity changed between the journal gate')"; bad="$bad $c(left)"; }
         wg restart r0 >> "$B/out.sw" 2>&1 ;;
       gitcfg) printf '[\n' > "$B/badcfg"; GIT_CONFIG_GLOBAL=$B/badcfg wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;
       gitroot) sw_inj ' --show-toplevel'; wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;
@@ -1320,7 +1326,8 @@ t_swstartrecover() {  # a restart cut off after its first timer start is undone 
       nosha) PATHS=$B/shabad:$PATHS wg restart r0 >> "$B/out.sw" 2>&1; rc2=$? ;;   # neither digest tool works
       *) echo "    no such start-up case: $c"; return 1 ;;
     esac
-    g=$(sr_state); [ "$SRRC/$SRF/$rc2/$g" = "$want" ] || { echo "    start case $c: got $SRRC/$SRF/$rc2/$g want $want"; bad="$bad $c"; }
+    g=$(sr_state); w=$want; [ "$c" != nogit ] || w=${want/yes\/no\/1\//yes\/no\/3\/}   # no git directory at all: the journal gate refuses (3); every other case ends at an exit 1
+    [ "$SRRC/$SRF/$rc2/$g" = "$w" ] || { echo "    start case $c: got $SRRC/$SRF/$rc2/$g want $w"; bad="$bad $c"; }
     SWSR="$SWSR$c:$rc2;"
   done; done
   [ "$ran" = "$total" ] || { echo "    start cases run: $ran"; return 1; }
@@ -1373,24 +1380,23 @@ t_swunconfined() {  # a retry whose journal is not confined (inside the checkout
       brokenlink) Rx=$W/brk; mkdir -p "$Rx"; printf 'gitdir: %s\n' "$W/nowhere/x" > "$Rx/.git"; jj=$W/jout ;;
     esac
     mkdir -p "$(dirname "$jj")" && cp -a "$J" "$jj" || { echo "    $c: cannot copy the journal"; return 1; }
+    case $c in wt*) sr_retarget "$jj" "$Rx" || { echo "    $c: cannot re-point the attempt"; return 1; } ;; esac   # the attempt began on this checkout, so the journal gate says bound and only the confinement decides
     jpre=$(J=$jj jfp); rpre=$(ls -A "$Rx" | sha); spre="$([ -e "$R0/.git-autosync" ] && echo marker)/$(timers)"
     R=$Rx T_JOURNAL=$jj wg restart r0 >> "$B/out.sw" 2>&1; rc2=$?
     jpost=$(J=$jj jfp); rpost=$(ls -A "$Rx" | sha); spost="$([ -e "$R0/.git-autosync" ] && echo marker)/$(timers)"
-    [ "$rc2" = 1 ] || { echo "    $c: exit $rc2 want 1"; bad="$bad $c"; }
+    case $c in brokenlink) [ "$rc2" = 3 ] || { echo "    $c: exit $rc2 want 3"; bad="$bad $c"; } ;; *) [ "$rc2" = 1 ] || { echo "    $c: exit $rc2 want 1"; bad="$bad $c"; } ;; esac   # a checkout whose git directory cannot be read has no identity: the journal gate refuses it (3) and names the state
     { [ "$jpre" = "$jpost" ] && [ "$rpre" = "$rpost" ] && [ "$spre" = "$spost" ] && [ "$spost" = marker/yes/no ]; } || { echo "    $c: the refused start changed something (journal ${jpre:0:8}->${jpost:0:8}, checkout ${rpre:0:8}->${rpost:0:8}, $spre -> $spost)"; bad="$bad $c"; }
     [ "$(sw_msg 'are undone now')" = 0 ] || { echo "    $c: a recovery ran in the refused start"; bad="$bad $c"; }
-    case $c in brokenlink) ;; *) [ "$(sw_msg 'must be outside the checkout and its git')" = 1 ] || { echo "    $c: not refused by the confinement check"; bad="$bad $c"; } ;; esac
+    case $c in brokenlink) [ "$(sw_msg 'LEFT AS FOUND')" = 1 ] || { echo "    $c: the left state is not named"; bad="$bad $c"; } ;; *) [ "$(sw_msg 'must be outside the checkout and its git')" = 1 ] || { echo "    $c: not refused by the confinement check"; bad="$bad $c"; } ;; esac
     wg restart r0 >> "$B/out.sw" 2>&1; g=$(sr_state)   # the run with the right journal undoes the earlier attempt
     [ "$g" = "/no/no/0" ] || { echo "    $c: the right journal left $g"; bad="$bad $c"; }
     SWUC="$SWUC$c:$rc2;"
   done
   [ -z "$bad" ]; }
-sr_retarget() {  # JOURNAL CHECKOUT : re-point the records of a cut-off attempt (their identity lines only) at another checkout and give it a copy of the marker, as if the attempt had begun on it; the identity comes from git's own answers
-  local jd=$1 Rt=$2 og oc rt f
-  og=$(git -C "$Rt" rev-parse --path-format=absolute --git-dir) && oc=$(git -C "$Rt" rev-parse --path-format=absolute --git-common-dir) || return 1
-  og=$(cd "$og" && pwd -P) && oc=$(cd "$oc" && pwd -P) && rt=$(cd "$Rt" && pwd -P) || return 1
+sr_retarget() {  # JOURNAL CHECKOUT : re-point every record of a cut-off attempt that carries an identity (preflight, freeze, restart records; their identity lines only) at another checkout and give it a copy of the marker, as if the attempt had begun on it; the identity comes from git's own answers
+  local jd=$1 Rt=$2 f
   [ -e "$Rt/.git-autosync" ] || cp "$R/.git-autosync" "$Rt/.git-autosync" || return 1
-  for f in "$jd"/gate0-run/restart*-*; do [ -e "$f" ] || continue; sed -i "2s|.*|root $rt|;3s|.*|gitdir $og|;4s|.*|common $oc|" "$f" || return 1; done; }
+  for f in "$jd"/gate0-run/preflight "$jd"/gate0-run/freeze "$jd"/gate0-run/freeze-intent "$jd"/gate0-run/restart*-*; do [ -f "$f" ] || continue; retid "$f" "$Rt" || return 1; done; }
 wr_obs() {  # JOURNAL CHECKOUT : the whole state of a cut-off attempt: the journal, the timers, the repair service, the restart records, the preserved marker's bytes, the original checkout's marker, the other checkout's marker and listing, and git's own metadata of both checkouts (refs, objects, packs, FETCH_HEAD, index, config)
   local jd=$1 Rx=$2
   echo "$(J=$jd jfp)/$(timers)/$([ -e "$ST/units/git-autosync-repair.service" ] && echo svc)/$(ls "$jd/gate0-run" | grep -c '^restart')/$([ -f "$jd/gate0-run/marker" ] && sha < "$jd/gate0-run/marker")/$(dg "$R0/.git-autosync")/$(dg "$Rx/.git-autosync")/$(ls -A "$Rx" | sha)/$(gitmeta "$R0")/$(gitmeta "$Rx")"; }
@@ -1582,28 +1588,31 @@ t_swlayouts() {  # the journal's confinement is one decision, taken from the git
   done
   SWLAY="rows=$rows refused=$refused acted=$acted"; echo "    layouts: $SWLAY"
   [ -z "$bad" ] && [ "$rows" -ge 15 ] && [ "$refused" -ge 8 ] && [ "$acted" -ge 3 ]; }
-t_swtransient() {  # a confinement result is the last one computed: a transient failure of the first read of the git directories (the recovery is armed with nothing known) does not stay: the start-up goes on on the later, good result, and a signal after the restart still undoes it; an early "safe" is revoked the same way: a later "unsafe" refuses and the recovery then touches nothing
+t_swtransient() {  # a confinement result is the last one computed, and the journal gate reads its inputs first: a transient failure of the first read of the git directories makes the journal unknown, so the start-up refuses (exit 3, left as found, nothing written) and the next run, on a good read, goes on and a signal after its restart still undoes it; an early read that names another checkout is refused by the gate the same way (the records are bound to the real one) and touches nothing
   local m=$B/mut/gn1.sh m2=$B/mut/gn2.sh res rc i pid rcount='find "$J/gate0-run" -maxdepth 1 -name restarting-\* | wc -l' R0=$R jj g jpre jpost spre spost
   sed $'/^  local f= x=; NE=; NEC=; NERR=$/a\\\n  if [ -n "${GN_ONCE:-}" ] \\&\\& [ ! -e "$GN_ONCE" ]; then : > "$GN_ONCE"; NERR=transient; return 1; fi' "${WG:-$GW}" > "$m"
   sed $'/^  local f= x=; NE=; NEC=; NERR=$/a\\\n  if [ -n "${GN_FAKE:-}" ] \\&\\& [ ! -e "$GN_FAKE" ]; then : > "$GN_FAKE"; NE=/nonexistent-git-dir; NEC=$NE; return 0; fi' "${WG:-$GW}" > "$m2"
   chmod +x "$m" "$m2"; cp "$HERE/cutover-steps.sh" "$B/mut/cutover-steps.sh"
   { bash -n "$m" && bash -n "$m2" && ! cmp -s "$m" "${WG:-$GW}" && ! cmp -s "$m2" "${WG:-$GW}"; } 2>/dev/null || { echo "    transient copies are not usable"; return 1; }
-  rm -f "$B/gnonce" "$B/gnfake"; restore r0a; touch "$ST/start-hang" "$ST/svc-stays-active"; : > "$B/tell.log"
+  rm -f "$B/gnonce" "$B/gnfake"; restore r0a; : > "$B/tell.log"; : > "$B/out.sw"; jpre=$(jfp); spre=$(sw_state)
+  GN_ONCE=$B/gnonce WG=$m wg restart r0 >> "$B/out.sw" 2>&1; rc=$?
+  { [ "$rc" = 3 ] && [ -e "$B/gnonce" ] && [ "$jpre" = "$(jfp)" ] && [ "$spre" = "$(sw_state)" ] && [ "$(sw_msg 'LEFT AS FOUND')" = 1 ]; } || { echo "    a transient first read: rc=$rc read=$([ -e "$B/gnonce" ] && echo used) journal $([ "$jpre" = "$(jfp)" ] && echo same || echo changed) state $spre -> $(sw_state)"; return 1; }
+  touch "$ST/start-hang" "$ST/svc-stays-active"; : > "$B/tell.log"
   GN_ONCE=$B/gnonce WG=$m wg restart r0 > "$B/out.sw" 2>&1 &
   for i in $(seq 1 600); do [ -s "$ST/start-hung" ] && break; sleep 0.1; done
   if [ -s "$ST/start-hung" ]; then pid=$(cat "$ST/start-hung"); kill -TERM "$pid"; fi
   touch "$ST/start-release"; wait $!; rc=$?
   res="$rc/$(sw_state)/$(eval "$rcount")/$([ -e "$ST/units/git-autosync-repair.service" ] && echo svc)/$([ -e "$J/gate0-run/marker" ] && echo aside)/$(tail -n 1 "$B/tell.log" | grep -c -- '--result failed --step restart')/$([ -e "$B/gnonce" ] && echo transient)"
   rm -f "$ST/start-hang" "$ST/start-hung" "$ST/start-release" "$ST/svc-stays-active"
-  [ "$res" = "143//1/no/no//0//aside/1/transient" ] || { echo "    transient failure, then a signal after the restart: got $res"; return 1; }
+  [ "$res" = "143//1/no/no//0//aside/1/transient" ] || { echo "    the run after the transient failure, then a signal after the restart: got $res"; return 1; }
   sr_cut || return 1; sr_stubs; : > "$B/out.sw"; jj=$R0/.git/jc   # the journal is inside the shared git directory of the worktree; the first read of the names says otherwise
   git -C "$R0" worktree add --detach "$W/wt" >> "$B/out.sw" 2>&1 || { echo "    cannot add a linked worktree"; return 1; }
-  cp -a "$J" "$jj" || return 1; jpre=$(J=$jj jfp); spre="$(R=$R0 sr_state)"
+  cp -a "$J" "$jj" && sr_retarget "$jj" "$W/wt" || return 1; jpre=$(J=$jj jfp); spre="$(R=$R0 sr_state)"
   R=$W/wt T_JOURNAL=$jj GN_FAKE=$B/gnfake WG=$m2 wg restart r0 >> "$B/out.sw" 2>&1; rc=$?
   jpost=$(J=$jj jfp); spost="$(R=$R0 sr_state)"
-  { [ "$rc" = 1 ] && [ -e "$B/gnfake" ] && [ "$jpre" = "$jpost" ] && [ "$spre" = "$spost" ] && [ "$spost" = marker/yes/no/1 ] && [ "$(sw_msg 'must be outside the checkout and its git')" = 1 ] && [ "$(sw_msg 'are undone now')" = 0 ]; } || { echo "    an early safe, then unsafe: rc=$rc fake=$([ -e "$B/gnfake" ] && echo used) journal $([ "$jpre" = "$jpost" ] && echo same || echo changed) state $spre -> $spost"; return 1; }
+  { [ "$rc" = 3 ] && [ -e "$B/gnfake" ] && [ "$jpre" = "$jpost" ] && [ "$spre" = "$spost" ] && [ "$spost" = marker/yes/no/1 ] && [ "$(sw_msg "is not this checkout's")" = 1 ] && [ "$(sw_msg 'are undone now')" = 0 ]; } || { echo "    an early read of another checkout: rc=$rc fake=$([ -e "$B/gnfake" ] && echo used) journal $([ "$jpre" = "$jpost" ] && echo same || echo changed) state $spre -> $spost"; return 1; }
   true; }
-t_swstartinject() {  # every command the start-up executes, in a counted run, is failed in turn (a DEBUG trap with a counter in a file, so helpers and subshells count too) with a cut-off restart in the journal: a failure after the recovery is armed always leaves it undone, except that the final confinement read failing makes the start-up refuse an unknown journal and touch nothing; one before the arm leaves everything as it was, or undone; and the next retry undoes it
+t_swstartinject() {  # every command the start-up executes, in a counted run, is failed in turn (a DEBUG trap with a counter in a file, so helpers and subshells count too) with a cut-off restart in the journal: a failure after the recovery is armed always leaves it undone, except that the final confinement read failing makes the start-up refuse an unknown journal (or a checkout whose identity it can no longer read the same) and touch nothing; one before the arm leaves everything as it was, or undone; and the next retry undoes it
   local inj=$B/inj mut=$B/mut/inj.sh wsave clean n tot arm rc2 pre jpre post jpost kept=0 rec=0 bad= g; SWSI=
   rm -rf "$inj"; mkdir -p "$inj"
   cat > "$inj/head.txt" <<'EOS'
@@ -1632,7 +1641,7 @@ EOS
     post=$(sr_full); jpost=$(jfp)
     [ "$rc2" != 0 ] || { echo "    step $n: exit 0"; bad="$bad $n(exit 0)"; }
     if [ "$post" = "$clean" ]; then rec=$((rec+1))
-    elif { [ "$n" -le "$arm" ] || grep -q 'its git directories (it is unknown)' "$B/out.sw"; } && [ "$post" = "$pre" ] && [ "$jpost" = "$jpre" ]; then   # after the arm only a refusal for a confinement the final read could not establish may leave the state as it was: the recovery then reads "unknown" and touches nothing
+    elif { [ "$n" -le "$arm" ] || grep -q -e 'its git directories (it is unknown)' -e 'identity changed between the journal gate' "$B/out.sw"; } && [ "$post" = "$pre" ] && [ "$jpost" = "$jpre" ]; then   # after the arm only a refusal for a confinement or an identity the final read could not establish may leave the state as it was: the recovery then reads "unknown" and touches nothing
       kept=$((kept+1)); wg restart r0 >> "$B/out.sw" 2>&1; g=$(sr_full)
       [ "$g" = "$clean" ] || { echo "    step $n: the next retry left $g"; bad="$bad $n(retry)"; }
     else echo "    step $n ($(sed -n "s/^$n //p" "$inj/k.log" | head -n 1 | cut -c1-70)): left $post (journal $([ "$jpost" = "$jpre" ] && echo same || echo changed)), arm at $arm"; bad="$bad $n"; fi
@@ -2099,7 +2108,8 @@ mm M151 t_swstartguards "a new statement before the recovery is armed has no cas
 mm M152 t_swprearm "a retry that fails before the arm clears the open restart's records" 's/^\[ -n "\$PHASE" \] || { echo "usage/[ -n "$PHASE" ] || { rm -f -- "${GATE0_JOURNAL:-\/nonexistent}"\/gate0-run\/restarting-*; echo "usage/'
 mm M153 t_swunconfined "the recovery ignores whether the journal passed confinement" 's/^  \[ "\$JSAFE" = safe \] || RDEC=left; }$/  :; }/'
 mm M154 t_swunconfined "the git directories the checkout names are left out of the journal confinement" 's/within "\$J" "\$ROOT" \${NE:+"\$NE"} \${NEC:+"\$NEC"}/within "$J" "$ROOT"/'
-mm M155 t_swcommonshape "git directories that cannot be read count as confined" 's/gitnames \&\& r=read; else/gitnames; r=read; else/'
+mutate M155 's/gitnames \&\& r=read; else/gitnames; r=read; else/' &&
+  { WG=$B/mut/M155.sh; t_swcommonshape; r=$?; WG=; check "M155 (defense in depth, so NOT caught by design: git directories that cannot be read count as confined; no identity can then be made from them, so the journal gate refuses first, and the identity check and git_bind would refuse after it; the shape tests keep passing) stays refused" "$([ $r = 0 ] && echo fail-closed || echo caught)" fail-closed; }
 mm M156 t_swstartinject "a write into the journal before the recovery is armed (no lexical table sees it)" 's/^confine   # before the arm.*$/: > "$J\/early-write"\n&/'
 mm M157 t_swtransient "no final confinement after the checkout is bound: the result of the first, possibly failed, read stays" '/^confine   # the final decision/d'
 mm M158 t_swlayouts "the start-up does not refuse a journal that is not confined" '/^\[ "\$JSAFE" = safe \] || {/d'
