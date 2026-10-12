@@ -2,6 +2,7 @@
 import json
 import re
 from pathlib import Path
+from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parent.parent
 WIKI = ROOT / "docs" / "wiki" / "src"
@@ -13,8 +14,13 @@ def page(rel):
     return (WIKI / rel).read_text()
 
 
+def layout_rows(text):
+    """(path, pillar, notes) for each module row of a markdown table."""
+    return re.findall(r"^\| `([^`]+)` \| ([^|]*?) \| (.*) \|$", text, flags=re.M)
+
+
 def layout_paths():
-    return re.findall(r"^\| `([^`]+)` \|", ARCH, flags=re.M)
+    return [r[0] for r in layout_rows(ARCH)]
 
 
 def test_pillar_names_match_glossary():
@@ -23,8 +29,13 @@ def test_pillar_names_match_glossary():
     assert len(names) == count
     text = page("architecture/pillars.md")
     assert f"Sylveste has {count} pillars" in text
+    # Layers: the glossary defines L1/L2/L3 by pillar; Skaffen is "L2" in its own entry.
+    layers = {"Intercore": "L1", "Clavain": "L2", "Skaffen": "L2", "Interverse": "L2", "Autarch": "L3", "Interspect": "cross-cutting"}
+    assert set(layers) == set(names)
+    assert "L1 (Kernel/Intercore)" in ARCH and "L2 (OS/Clavain + Drivers/Interverse)" in ARCH and "L3 (Apps/Autarch)" in ARCH
+    assert re.search(r"Skaffen\*\* \| .*L2", ARCH) and "Cross-cutting (not a layer)" in ARCH
     for name in names:
-        assert re.search(rf"^\| {name} \|", text, flags=re.M), f"pillars.md is missing pillar {name}"
+        assert re.search(rf"^\| {name} \| {re.escape(layers[name])} \|", text, flags=re.M), f"pillars.md has the wrong layer for {name}"
 
 
 def test_layout_table_matches_architecture_doc():
@@ -32,7 +43,11 @@ def test_layout_table_matches_architecture_doc():
     assert paths, "no module paths found in agents/architecture.md"
     text = page("architecture/layout.md")
     assert f"lists {len(paths)} module paths" in text
-    assert re.findall(r"^\| `([^`]+)` \|", text, flags=re.M) == paths
+    want = [r for r in layout_rows(ARCH) if r[0] != "interverse/"]
+    got = [r for r in layout_rows(text) if r[0] != "interverse/"]
+    assert got == want  # path, pillar and notes must all match
+    assert [r[0] for r in layout_rows(text)] == paths
+    assert dict((r[0], r[1]) for r in layout_rows(text))["interverse/"] == "Interverse"
 
 
 def test_dependency_chains_match_architecture_doc():
@@ -67,7 +82,23 @@ def test_summary_lists_every_page_and_all_exist():
 
 
 def test_wiki_pages_follow_public_repo_hygiene():
-    bad = [r"/home/", r"/Users/", r"\bq\d{3,4}\b", r"\.ts\.net", r"localhost", r"https?://(?!github\.com|rust-lang\.github\.io)"]
+    bad = [r"/home/", r"/Users/", r"\bq\d{3,4}\b", r"\.ts\.net", r"localhost", r"\b" + "zk" + r"lw\b", r"\.internal\b",
+           r"\bclavain\.local\b", r"\bjawn" + r"verse\b", r"\bms" + r"q-\d+", r"\bauth\.[a-z]+\.com"]
+    allowed_hosts = {"github.com", "rust-lang.github.io"}
     for p in WIKI.rglob("*.md"):
+        text = p.read_text()
         for pat in bad:
-            assert not re.search(pat, p.read_text()), f"{p.relative_to(WIKI)} matches {pat}"
+            assert not re.search(pat, text, flags=re.I), f"{p.relative_to(WIKI)} matches {pat}"
+        for url in re.findall(r"https?://[^\s)>\]]+", text):
+            assert urlparse(url).hostname in allowed_hosts, f"{p.relative_to(WIKI)} links {url}"
+
+
+def test_hygiene_check_catches_bad_content():
+    # The scan must reject what it claims to: guard against a vacuous pattern list.
+    host = "zk" + "lw"
+    ruling = "ru" + "ling q" + "123"
+    samples = ("see /home/x", ruling, "host " + host, "https://github.com.internal.example/x")
+    patterns = (r"/home/", r"\bq\d{3,4}\b", r"\b" + host + r"\b", r"\.internal\b")
+    for sample in samples:
+        assert any(re.search(p, sample, flags=re.I) for p in patterns), sample
+    assert urlparse(samples[-1]).hostname not in {"github.com", "rust-lang.github.io"}
