@@ -155,14 +155,27 @@ runlog() {  # command... : run it, show and log its output, keep its exit status
   local rc; "$@" > "$LOGD/cmd.out" 2>&1; rc=$?; cat "$LOGD/cmd.out"; cat "$LOGD/cmd.out" >> "$LOG"; rm -f "$LOGD/cmd.out"; return $rc; }
 pg() { git_bind; git -C "$ROOT" "$@"; }   # every git command of this script first confirms that git still shows the validated checkout
 pgs() { local o; o=$(pg "$@") || return 1; printf '%s\n' "$o"; }   # pg, but output is shown only when the command succeeded: "output, then failure" is a failure, never a value to compare
-rec_timers() { sed -n 's/^timer //p' "${1:-$G/freeze}" 2>/dev/null; }   # the timers of a record; the status is sed's, so an unreadable record is a failure, never an empty list
-rec_marker() { sed -n 's/^marker //p' "$G/freeze" 2>/dev/null; }
-rec_bound() {  # FILE : the journal record (preflight or freeze) is a regular file, not a link, whose root, gitdir and common lines are this checkout's identity (RID). A record of another checkout, an old-format one (no identity), an unreadable one or an unknown identity is not this checkout's: never a record to act on
-  local g; [ -f "$1" ] && [ ! -L "$1" ] && [ -n "${RID:-}" ] || return 1
-  g=$(sed -n '/^root /p;/^gitdir /p;/^common /p' -- "$1" 2>/dev/null) || return 1
-  [ "$g" = "$RID" ]; }
-need_bound() {  # FILE WHAT : a stop, before any write, unless the record is this checkout's
-  rec_bound "$1" || stop "the $2 record is not this checkout's (the record of another checkout, an old format, or unreadable, or this checkout's identity is not known): nothing was changed; a human must check the journal and clear it deliberately"; }
+rec_timers() { [ "${JGATE:-}" = bound ] || return 1; sed -n 's/^timer //p' "${1:-$G/freeze}" 2>/dev/null; }   # the timers of a record; read only after journal_gate said bound in this run; the status is sed's, so an unreadable record is a failure, never an empty list
+rec_marker() { [ "${JGATE:-}" = bound ] || return 1; sed -n 's/^marker //p' "$G/freeze" 2>/dev/null; }   # the marker digest the freeze names: same rule
+rec_state() {  # FILE : 0 bound (a regular file, not a link, whose root, gitdir and common lines are exactly this checkout's identity RID), 1 foreign (well formed, another checkout's), 2 unknown (a link or other non-regular entry, unreadable, no identity or not well formed: an old format, an unknown identity of this checkout)
+  local g nl=$'\n'; [ -f "$1" ] && [ ! -L "$1" ] && [ -n "${RID:-}" ] || return 2
+  g=$(sed -n '/^root /p;/^gitdir /p;/^common /p' -- "$1" 2>/dev/null) || return 2
+  [[ $g =~ ^root\ [^$nl]+${nl}gitdir\ [^$nl]+${nl}common\ [^$nl]+$ ]] || return 2
+  [ "$g" = "$RID" ] || return 1; }
+journal_gate() {  # JGATE=bound, or the exit: the one decision about the journal's records, made first in every mode (before any git call, any journal read that drives a decision, any write). Every trust-carrying record that exists (preflight, freeze, freeze intent, every restart record, dangling links included) must be bound to this checkout (rec_state 0); the records that carry no identity (captured, p1a-skipped, the marker copies) are trusted only beside a preflight record, which is itself bound. Foreign and unknown are both refused: nothing is changed, and the records are named. The readers of the freeze (rec_timers, rec_marker) refuse until this has said bound
+  local f s foreign= unknown= nonid=; JGATE=
+  if [ -e "$G" ] || [ -L "$G" ]; then
+    [ -d "$G" ] && [ ! -L "$G" ] || { foreign=; unknown=" $(basename "$G")"; }
+    for f in "$G"/preflight "$G"/freeze "$G"/freeze-intent "$G"/restarting-* "$G"/restarted-*; do
+      if [ -e "$f" ] || [ -L "$f" ]; then rec_state "$f"; s=$?
+        case $s in 0) ;; 1) foreign="$foreign ${f##*/}" ;; *) unknown="$unknown ${f##*/}" ;; esac; fi; done
+    if [ ! -e "$G/preflight" ] && [ ! -L "$G/preflight" ]; then
+      for f in "$G"/captured "$G"/p1a-skipped "$G"/marker "$G"/marker.*; do
+        if [ -e "$f" ] || [ -L "$f" ]; then nonid="$nonid ${f##*/}"; fi; done; fi; fi
+  if [ -n "$foreign$unknown$nonid" ]; then
+    left_note "a record in the journal is not this checkout's (it is the record of another checkout, an old format, a link or unreadable, or this checkout's identity is not known; foreign:${foreign:- none}; unknown:${unknown:- none}; with no preflight record:${nonid:- none}); the journal is not used"
+    exit 3; fi
+  JGATE=bound; GRID=$RID; }
 inroot() { git_bind; ( cd "$ROOT" && "$@" ); }   # bd and the steps find the tracker from the working directory: always the checkout's, never the caller's
 cs() { inroot env CUTOVER_REPORT=0 CUTOVER_PATH="$PATH" CUTOVER_BD="$BDBIN" CUTOVER_CHECK_DIR="$LOGD" "$CS" "$ROOT" "$J" "$@"; }
 flush_path() {  # PATH : flush a file or directory to disk; fails when neither sync nor an fsync can do it
@@ -322,7 +335,7 @@ do_preflight() {
   ready_checks
   if [ $CHECKMODE = 1 ]; then env CUTOVER_REPORT=0 "$CS" --check >/dev/null || stop "cutover-steps.sh --check failed"; say "gate0-run: preflight check: would run cutover-steps.sh p0"; return 0; fi
   mkdir -p "$G"
-  if [ -d "$J/p0" ] && [ -e "$G/preflight" ]; then need_bound "$G/preflight" preflight; say "gate0-run: P0 already recorded ($(sed -n 1p "$G/preflight"))"; return 0; fi
+  if [ -d "$J/p0" ] && [ -e "$G/preflight" ]; then say "gate0-run: P0 already recorded ($(sed -n 1p "$G/preflight"))"; return 0; fi
   runlog cs p0 || stop "P0 (cutover-steps.sh p0) failed"
   hd=$(pg rev-parse HEAD) && [[ $hd =~ ^[0-9a-f]{40}$ ]] || stop "cannot read HEAD: the preflight record would name no head"
   [ -n "${RID:-}" ] || stop "the checkout's identity is not known: the preflight record would bind to nothing"
@@ -335,7 +348,6 @@ act_lines() { ( set -o pipefail; printf '%s\n' "$1" | sed 's/^ *//; s/ timer /\n
 do_freeze() {
   local a w u act="" f prior al
   [ -e "$G/preflight" ] || { [ $CHECKMODE = 1 ] || refuse "no preflight record; run preflight first"; }
-  [ ! -e "$G/preflight" ] || need_bound "$G/preflight" preflight   # the journal's preflight is this checkout's, before the freeze reads or writes anything
   records_ours 4 || stop "restart records that do not name this checkout (or are not well formed) are in $G: nothing was changed; a human must clear them"   # the freeze deletes the earlier attempt's records: only ones of this checkout
   if [ -e "$G/freeze" ] && [ $CHECKMODE = 0 ] && ! restarted_any; then   # after a completed restart a new freeze is a new attempt: it falls through
     a=$(rec_timers) || stop "the freeze record cannot be read: whether its timers stay stopped cannot be told"
@@ -364,7 +376,8 @@ do_freeze() {
   if [ $CHECKMODE = 1 ]; then say "gate0-run: freeze check: would stop the timers and services and move the marker aside (marker present: $([ -e "$ROOT/.git-autosync" ] && echo yes || echo no))"; return 0; fi
   al=$(act_lines "$act") || stop "cannot write the list of timers to restart: nothing was stopped"
   mkdir -p "$G"
-  put "$G/freeze-intent" "$al"   # before the first stop: a stop that fails midway must not lose the timers already stopped
+  [ -n "${RID:-}" ] || stop "the checkout's identity is not known: the freeze intent would bind to nothing"
+  put "$G/freeze-intent" "${al:+$al$'\n'}$RID"   # before the first stop: a stop that fails midway must not lose the timers already stopped
   for u in $TIMERS; do units stop "$u" || stop "cannot stop $u"; done
   for u in $SERVICES; do units stop "$u" || stop "cannot stop $u"; done
   for u in $TIMERS $SERVICES; do ! is_active "$u" || stop "$u is still active"; done
@@ -382,7 +395,6 @@ restarting_any() { local f; for f in "$G"/restarting-*; do [ -e "$f" ] || [ -L "
 restarted_any() { local f; for f in "$G"/restarted-*; do [ -e "$f" ] || [ -L "$f" ] && return 0; done; return 1; }
 freeze_holds() { local u a
   [ -e "$G/freeze" ] || stop "no freeze record; run freeze first"
-  need_bound "$G/freeze" freeze   # before the hook check, the units, anything: the freeze of another checkout is never relied on
   hook_check   # a hook installed after preflight would run on the fetch, the realign or the repair run that follow
   for u in $TIMERS $SERVICES; do ! is_active "$u" || stop "$u is active: the freeze no longer holds"; done
   [ ! -e "$ROOT/.git-autosync" ] || stop "the marker is back in the checkout: the freeze no longer holds"
@@ -441,7 +453,6 @@ do_capture() {
       stop "the P1a check failed (it ran P1-pre and every capture check against a scratch copy)"
     say "gate0-run: capture check: P1a would run; it writes the capture, the archive branch, the tag and the realign"; return 0; fi
   [ -e "$G/preflight" ] || refuse "no preflight record"
-  need_bound "$G/preflight" preflight
   freeze_holds
   if [ -e "$G/captured" ]; then
     recheck_after_p1a; preserve_copy; runlog cs preserved || stop "restart step 1 (preservation) failed"
@@ -497,7 +508,11 @@ rcleanup() {  # back to the frozen state, idempotent: every recorded timer stopp
   move_marker_aside force; [ -z "$RBAD" ] || return 1   # the marker's own failure is a stop (the subshell's status); an unconfirmed unit is a failed cleanup
   rm -f -- "$G"/restarting-*   # the attempt is closed only when every unit is confirmed stopped and the marker is aside
 }
-rbail() { INCLEAN=1; rcleanup; stop "$*${RBAD:+; UNCONFIRMED stop of$RBAD}"; }   # the one way out of a failed restart; the EXIT trap runs the same cleanup for every other way out
+rbail() {  # REASON : the one way out of a failed restart; the EXIT trap runs the same cleanup for every other way out. The message says what the cleanup confirmed: undone, or incomplete with the units that are not confirmed stopped (the reasons never claim an outcome)
+  local o; INCLEAN=1; rcleanup
+  if [ -z "${RBAD:-}" ]; then o="its effects are undone now (every recorded timer and service is confirmed stopped, the marker is aside)"
+  else o="the cleanup is INCOMPLETE: UNCONFIRMED stop of$RBAD; a human must check the marker, the repair service and the timers"; fi
+  stop "$*; $o"; }
 restore_marker() {  # the marker set aside goes back, and must be the one the freeze record names (server and Clavain alike)
   local m
   if [ -f "$G/marker" ] && [ -e "$ROOT/.git-autosync" ] && ! cmp -s "$G/marker" "$ROOT/.git-autosync"; then keep_unexpected_marker; fi   # other bytes in the checkout are kept before the restore replaces them
@@ -513,36 +528,36 @@ tag_refs() {  # the gate0 tags, sorted, on one line; a failed read is a failure,
 restart_server() {  # exit-name  predict-exit
   local ex=$1 pe=$2 mk_ p2 cur pred rc tries n tip0 tip1 tags0 tags1 arch0 arch1 st h=$HOST
   restore_marker
-  st=$(pg status --porcelain=v1 --untracked-files=all) || rbail "cannot read the status: whether the marker would be committed cannot be told; nothing started, marker moved aside again"
-  mk_=$(set -o pipefail; printf '%s\n' "$st" | cut -c4- | { grep -x '\.git-autosync'; rc=$?; [ $rc -le 1 ]; }) || rbail "cannot filter the status for the marker rule: a failed filter shows no marker; nothing started, marker moved aside again"   # grep 1 is "no such line", 2 or more is a failed filter
+  st=$(pg status --porcelain=v1 --untracked-files=all) || rbail "cannot read the status: whether the marker would be committed cannot be told; nothing started"
+  mk_=$(set -o pipefail; printf '%s\n' "$st" | cut -c4- | { grep -x '\.git-autosync'; rc=$?; [ $rc -le 1 ]; }) || rbail "cannot filter the status for the marker rule: a failed filter shows no marker; nothing started"   # grep 1 is "no such line", 2 or more is a failed filter
   if [ -n "$mk_" ]; then
     rbail "the marker rule: .git-autosync is in the status; a run would commit it into the checkout and push it to the lane"; fi
   p2=; [ "$ex" != r6 ] || p2=$J/p2.status.all
   pred=$LOGD/prediction.txt
   predict server "$ROOT" "$REL" "$h" "$pe" $p2 > "$pred" 2> "$pred.err"; rc=$?   # stdout only is the prediction
   cat "$pred" "$pred.err" >> "$LOG"; sed -n 's/^\(row\|verdict\) /\1 /p' "$pred" | while read -r l; do say "gate0-run: prediction: $l"; done
-  if [ $rc != 0 ] || ! grep -q '^verdict run' "$pred"; then rbail "the prediction says STOP; nothing started, marker moved aside again (see $pred)"; fi
-  tip0=$(lane_refs "refs/heads/autosync/$h") || rbail "cannot read the lane tip before the run: an unreadable lane is not an unchanged one; nothing started, marker moved aside again"
+  if [ $rc != 0 ] || ! grep -q '^verdict run' "$pred"; then rbail "the prediction says STOP; nothing started (see $pred)"; fi
+  tip0=$(lane_refs "refs/heads/autosync/$h") || rbail "cannot read the lane tip before the run: an unreadable lane is not an unchanged one; nothing started"
   tip0=${tip0%%$'\t'*}   # the first field, with no command whose status could be lost
-  tags0=$(tag_refs) || rbail "cannot read the gate0 tags before the run; nothing started, marker moved aside again"
-  arch0=$(lane_refs "refs/heads/archive/gate0/$h/*") || rbail "cannot read the archive branches before the run; nothing started, marker moved aside again"
+  tags0=$(tag_refs) || rbail "cannot read the gate0 tags before the run; nothing started"
+  arch0=$(lane_refs "refs/heads/archive/gate0/$h/*") || rbail "cannot read the archive branches before the run; nothing started"
   [ ! -e "$J/done-p1a" ] || { [ -n "$tags0" ] && [ -n "$arch0" ]; } || rbail "P1a ran on this machine but the gate0 tag or the archive branch is not there: nothing started, marker moved aside again"
-  cur=$(journal_cursor) && [ -n "$cur" ] || rbail "cannot take a journal cursor: lines of an earlier run could not be told from this run's; nothing started, marker moved aside again"
+  cur=$(journal_cursor) && [ -n "$cur" ] || rbail "cannot take a journal cursor: lines of an earlier run could not be told from this run's; nothing started"
   units start "$REPAIR_SVC"; say "gate0-run: the service start returned $? (the unit's result is not a row signal; the run is judged by Sylveste's lines and the checkout)"
   tries=${GATE0_JOURNAL_TRIES:-10}; n=0
   jok=0
   while :; do if journal_since "$cur" > "$LOGD/journal.txt"; then jok=1; grep -Eq '^[0-9]+ autosync repo\(s\)' "$LOGD/journal.txt" && break; else jok=0; fi   # lines read by a failed read are not evidence
     n=$((n+1)); [ "$n" -le "$tries" ] || break; sleep 1; done
   cat "$LOGD/journal.txt" >> "$LOG"
-  [ "$jok" = 1 ] || rbail "the journal could not be read after the start: its lines cannot be trusted; marker moved aside, timers stay stopped"
-  grep -Eq '^[0-9]+ autosync repo\(s\)' "$LOGD/journal.txt" || rbail "the start left no '<n> autosync repo(s)' summary line: the run did not happen; marker moved aside, timers stay stopped"
+  [ "$jok" = 1 ] || rbail "the journal could not be read after the start: its lines cannot be trusted"
+  grep -Eq '^[0-9]+ autosync repo\(s\)' "$LOGD/journal.txt" || rbail "the start left no '<n> autosync repo(s)' summary line: the run did not happen"
   if ! predict verify "$pred" "$LOGD/journal.txt" > "$LOGD/verify.out" 2>&1; then
-    cat "$LOGD/verify.out" >> "$LOG"; cat "$LOGD/verify.out"; rbail "the run differs from the prediction (log lines, committed paths, status after, or lane tip); marker moved aside, timers stay stopped"; fi
+    cat "$LOGD/verify.out" >> "$LOG"; cat "$LOGD/verify.out"; rbail "the run differs from the prediction (log lines, committed paths, status after, or lane tip)"; fi
   cat "$LOGD/verify.out" >> "$LOG"
-  tags1=$(tag_refs) || rbail "cannot read the gate0 tags after the run: the tag is not known to be preserved; marker moved aside, timers stay stopped"
-  arch1=$(lane_refs "refs/heads/archive/gate0/$h/*") || rbail "cannot read the archive branches after the run: the archive is not known to be preserved; marker moved aside, timers stay stopped"
-  [ "$tags0" = "$tags1" ] && [ "$arch0" = "$arch1" ] || rbail "the tag or an archive branch changed during the restart run; marker moved aside, timers stay stopped"
-  tip1=$(lane_refs "refs/heads/autosync/$h") || rbail "cannot read the lane tip after the run; marker moved aside, timers stay stopped"
+  tags1=$(tag_refs) || rbail "cannot read the gate0 tags after the run: the tag is not known to be preserved"
+  arch1=$(lane_refs "refs/heads/archive/gate0/$h/*") || rbail "cannot read the archive branches after the run: the archive is not known to be preserved"
+  [ "$tags0" = "$tags1" ] && [ "$arch0" = "$arch1" ] || rbail "the tag or an archive branch changed during the restart run"
+  tip1=$(lane_refs "refs/heads/autosync/$h") || rbail "cannot read the lane tip after the run"
   tip1=${tip1%%$'\t'*}; say "gate0-run: lane tip autosync/$h: ${tip0:-absent} -> ${tip1:-absent}"; }
 restart_clavain() {  # exit-name
   local pred rc tipn l0 mrec
@@ -559,15 +574,15 @@ restart_clavain() {  # exit-name
   restore_marker
   pred=$LOGD/prediction.txt
   predict clavain "$ROOT" "$HOST" > "$pred" 2> "$pred.err"; rc=$?; cat "$pred" "$pred.err" >> "$LOG"
-  if [ $rc != 0 ] || ! grep -q '^verdict run' "$pred"; then rbail "the prediction says STOP; the sweep was not run, marker moved aside again (see $pred)"; fi
+  if [ $rc != 0 ] || ! grep -q '^verdict run' "$pred"; then rbail "the prediction says STOP; the sweep was not run (see $pred)"; fi
   # an earlier report is not evidence about this sweep: set it aside, so only a report this sweep wrote can be verified
   [ ! -e "$DRIFT" ] || mv -f -- "$DRIFT" "$LOGD/drift.before" || rbail "cannot set the earlier drift report aside ($DRIFT)"
   "$SWEEP" > "$LOGD/sweep.out" 2>&1; say "gate0-run: the sweep returned $? (its exit status is logged, not judged: the verdict is the drift report it wrote)"; cat "$LOGD/sweep.out" >> "$LOG"
   if [ ! -f "$DRIFT" ]; then [ ! -e "$LOGD/drift.before" ] || mv -f -- "$LOGD/drift.before" "$DRIFT"   # put the earlier report back as found
     rbail "the sweep wrote no new drift report ($DRIFT)"; fi
-  predict verify "$pred" "$DRIFT" > "$LOGD/verify.out" 2>&1 || { tee -a "$LOG" < "$LOGD/verify.out"; rbail "the sweep differs from the prediction; marker moved aside"; }
+  predict verify "$pred" "$DRIFT" > "$LOGD/verify.out" 2>&1 || { tee -a "$LOG" < "$LOGD/verify.out"; rbail "the sweep differs from the prediction"; }
   cat "$LOGD/verify.out" >> "$LOG"; }
-unrecord_bail() { rm -f -- "$G/restarted-$XARG"; rbail "$@; every timer of this attempt is stopped again and the marker is aside"; }
+unrecord_bail() { rm -f -- "$G/restarted-$XARG"; rbail "$@"; }
 restarted_holds() {  # a restart that is already recorded: re-verify the state it describes and run nothing
   local u m ts
   ts=$(rec_timers) || unrecord_bail "restart $1 is recorded but the freeze record cannot be read: the timers it names cannot be checked; nothing was run"
@@ -607,10 +622,10 @@ do_restart() {
   RSTART=$ex
   if [ "$MACHINE" = server ]; then restart_server "$ex" "$pe"; else restart_clavain "$ex"; fi
   # step 5: the timers; the bd writers and the agent sessions resume afterwards, started by their owners
-  local u ts; ts=$(rec_timers) || rbail "the freeze record cannot be read: the timers to start are unknown; every timer of this attempt is stopped again and the marker is aside"
+  local u ts; ts=$(rec_timers) || rbail "the freeze record cannot be read: the timers to start are unknown"
   for u in $ts; do
-    units start "$u" || rbail "cannot re-enable $u; every timer of this attempt is stopped again and the marker is aside"
-    [ "$(unit_state "$u")" = active ] || rbail "$u is not active after its start (a controller that returns 0 proves nothing); every timer of this attempt is stopped again and the marker is aside"; done
+    units start "$u" || rbail "cannot re-enable $u"
+    [ "$(unit_state "$u")" = active ] || rbail "$u is not active after its start (a controller that returns 0 proves nothing)"; done
   put "$G/restarted-$ex" "at $(date -u +%Y-%m-%dT%H:%M:%SZ)"$'\n'"$tgt" unrecord_bail
   rm -f -- "$G/restarting-$ex"
   RSTART=
@@ -675,7 +690,7 @@ report() {  # EXIT trap: an open restart attempt is undone first (whatever ended
   exit $rc; }
 bindtrap() {  # USR1, from bindfail: git no longer shows the checkout. A restart in progress is undone first (every recorded timer and service stopped and read back, the marker aside); nothing else runs
   trap '' USR1
-  if [ -n "$RSTART" ] && [ -z "${INCLEAN:-}" ]; then INCLEAN=1; rbail "git no longer shows the validated checkout during the restart; every timer of this attempt is stopped and the marker is aside"; fi
+  if [ -n "$RSTART" ] && [ -z "${INCLEAN:-}" ]; then INCLEAN=1; rbail "git no longer shows the validated checkout during the restart"; fi
   exit 3; }
 
 restart_settled() {  # a restart already recorded is re-verified, and a restart attempt cut off is undone, before any input is validated: neither needs J's inputs, and a missing one must not leave the timers and the service as the cut-off attempt left them. Both act only on records that name this checkout; otherwise nothing is touched and the exit is non-zero
@@ -685,7 +700,7 @@ restart_settled() {  # a restart already recorded is re-verified, and a restart 
     restarted_holds "$XARG"; return 0; fi   # a repeat runs nothing
   if restarting_any; then
     recovery_state; [ "$RDEC" = undo ] || { left_note "an earlier restart attempt cannot be shown to belong to this checkout (journal $JSAFE)"; exit 3; }
-    rbail "an earlier restart attempt began (marker, service or timers) and left no completion record: its effects are undone now (every timer stopped, marker aside); run the restart again as a new attempt"; fi
+    rbail "an earlier restart attempt began (marker, service or timers) and left no completion record; run the restart again as a new attempt once the state is confirmed"; fi
   return 1; }
 # ---- start-up: everything above only defines functions. The paths that name the journal (git-free) come first; from there on a restart attempt that was cut off is undone by whatever ends the start (bootexit), so no later step (git, the checks, the log directory) can leave the restored marker, a started timer or the repair service live
 SD=$(physpath "$SD") || { echo "gate0-run: cannot use GATE0_STATE_DIR" >&2; exit 1; }
@@ -700,13 +715,16 @@ LOG=/dev/null; RLOG=/dev/null   # until the log directory exists
 SELF_SHA=unknown   # until self_sha has run (the report names it)
 RSTART=   # set while a restart attempt is open (its record is written, its completion record is not): the only phase whose side effects a stop must undo itself
 JSAFE=unknown
+JGATE=; GRID=   # set by journal_gate
 confine   # before the arm: a journal that is not safe is refused after git_bind and is never written to, by the recovery either
+journal_gate   # first, in every mode: before the arm, any git call, any journal read that drives a decision and any write
 trap bootexit EXIT
 trap 'exit 130' INT; trap 'exit 143' TERM; trap 'exit 129' HUP   # a signal is a failed exit, never the status 0 an EXIT trap sees after it
 [ -e "$ROOT/.git" ] || { echo "gate0-run: GATE0_ROOT is not a git checkout" >&2; exit 1; }
 BINDRC=1; git_bind
 PRES=$(physpath "${GATE0_PRESERVE_DIR:-$SD/preserve}") || { echo "gate0-run: cannot use GATE0_PRESERVE_DIR" >&2; exit 1; }
 confine   # the final decision, from the facts git_bind has just shown equal to the git directories git names: it replaces the one made before the arm, and the refusal and the recovery both read it
+[ "$RID" = "$GRID" ] || { echo "gate0-run: the checkout's identity changed between the journal gate and the git bind" >&2; exit 1; }
 [ "$JSAFE" = safe ] || { echo "gate0-run: the journal must be outside the checkout and its git directories (it is $JSAFE)" >&2; exit 1; }
 # physical paths, checked before anything is created: nothing else this script writes may land in the checkout or its git directory (the journal has the one decision above)
 for d in "state directory:$SD" "preservation copy:$PRES"; do

@@ -77,6 +77,20 @@ ckfp() {  # the checkout as the plan sees it, plus the marker's presence and byt
 jfp() {  # the journal's files and directories with their digests, hashed; a listing that fails anywhere, after its output included, is never equal to another one
   local l; l=$(cd "$J" 2>/dev/null && set -o pipefail && find . -mindepth 1 \( -type f -o -type d \) | sort | while IFS= read -r p; do printf '%s %s\n' "$p" "$(dg "$p")"; done) || { echo "jfp-failed-$RANDOM-$RANDOM"; return 0; }
   printf '%s\n' "$l" | sha || echo "jfp-failed-$RANDOM-$RANDOM"; }
+ridl() {  # [CHECKOUT, default R] : its identity lines, as git names its directories: what the wrapper writes into its records
+  local c=${1:-$R} og oc; og=$(git -C "$c" rev-parse --path-format=absolute --git-dir) && oc=$(git -C "$c" rev-parse --path-format=absolute --git-common-dir) || return 1
+  printf 'root %s\ngitdir %s\ncommon %s\n' "$(cd "$c" && pwd -P)" "$(cd "$og" && pwd -P)" "$(cd "$oc" && pwd -P)"; }
+retid() {  # FILE CHECKOUT : the identity lines of a record, replaced by the checkout's (the record's other lines and their order are kept)
+  local l; l=$(ridl "$2") || return 1
+  awk -v l="$l" 'BEGIN { n = split(l, a, "\n") } /^(root|gitdir|common) / { if (!d) { for (i = 1; i <= n; i++) print a[i]; d = 1 } next } { print }' "$1" > "$1.new" && mv -- "$1.new" "$1"; }
+gitmeta() {  # CHECKOUT : what git keeps for it, hashed: refs and reflogs (digests), objects and packs (names and sizes), FETCH_HEAD, ORIG_HEAD, packed-refs, shallow, index, config and HEAD, of its git directory and of the common one; an observation that cannot be made is never equal to another
+  local gd gc d f
+  gd=$(git -C "$1" rev-parse --path-format=absolute --git-dir 2>/dev/null) && gc=$(git -C "$1" rev-parse --path-format=absolute --git-common-dir 2>/dev/null) || { echo "nogit-$(ls -A "$1" 2>/dev/null | sha)"; return 0; }
+  { for d in "$gd" "$gc"; do
+      ( cd "$d" && set -o pipefail && find ./objects -type f -printf 'o %p %s\n' 2>/dev/null | sort
+        find ./refs ./logs -type f 2>/dev/null | sort | while IFS= read -r f; do printf 'r %s %s\n' "$f" "$(dg "$f")"; done
+        for f in FETCH_HEAD ORIG_HEAD packed-refs shallow index config HEAD; do printf 'm %s %s\n' "$f" "$(dg "$f")"; done ) || echo "gitmeta-failed-$RANDOM-$RANDOM"
+    done; } | sha; }
 lanerefs() { git --git-dir="$W/lane.git" for-each-ref --format='%(refname) %(objectname)' || echo "lanerefs-failed-$RANDOM-$RANDOM"; }
 snap() { rm -rf -- "${B:?}/tpl-${1:?}"; cp -a "$W" "$B/tpl-$1"; }
 restore() { rm -rf -- "${W:?}"; cp -a "$B/tpl-$1" "$W"; }
@@ -739,7 +753,7 @@ t_swfreezerec() {  # a freeze record, or an earlier freeze intent, that fails af
   local a b
   restore fx; stepto preflight freeze || return 1; sw_sed 's/^timer //p' 0 out
   wg freeze > "$B/out.sw" 2>&1; a="$?/$(sw_msg 'whether its timers stay stopped cannot be told')"
-  restore fx; stepto preflight || return 1; printf 'timer git-autosync-repair.timer\n' > "$J/gate0-run/freeze-intent"; sw_sed 'freeze-intent' 0 out
+  restore fx; stepto preflight || return 1; printf 'timer git-autosync-repair.timer\n%s\n' "$(ridl)" > "$J/gate0-run/freeze-intent"; sw_sed 'freeze-intent' 0 out
   wg freeze > "$B/out.sw" 2>&1; b="$?/$(sw_msg 'the earlier freeze intent cannot be read')/$([ -e "$J/gate0-run/freeze" ] && echo recorded)"
   SWW="$a;$b"; [ "$SWW" = "3/1;3/1/" ]; }
 t_swpushurl() {  # the lane's push URL read prints the validated URL and then fails: that is a failed read, not a match
@@ -914,7 +928,7 @@ t_swfreezerep() {  # a repeated freeze checks the whole invariant before it says
   local r="" c
   for c in same marker svc; do
     restore fx; stepto preflight freeze || return 1
-    printf 'timer git-autosync-repair.timer\n' > "$J/gate0-run/freeze-intent"
+    printf 'timer git-autosync-repair.timer\n%s\n' "$(ridl)" > "$J/gate0-run/freeze-intent"
     case $c in
       marker) rm -f "$J/gate0-run/marker"; sed -i 's/^marker .*/marker none/' "$J/gate0-run/freeze"; printf 'x\n' > "$R/.git-autosync" ;;
       svc) touch "$ST/units/git-autosync-promote.service" ;;
@@ -938,7 +952,7 @@ t_swcheckro() {  # --check never writes: every --check phase, from every state a
       *) wg restart r0 > "$B/out.ro" 2>&1 || { echo "  FAIL t_swcheckro: restart r0 for state $st exited $?"; return 1; } ;;
     esac
     case $st in nomarker|intent) rm -f -- "$R/.git-autosync" ;; esac
-    [ $st != intent ] || printf 'timer git-autosync-repair.timer\ntimer git-autosync-promote.timer\n' > "$J/gate0-run/freeze-intent"
+    [ $st != intent ] || printf 'timer git-autosync-repair.timer\ntimer git-autosync-promote.timer\n%s\n' "$(ridl)" > "$J/gate0-run/freeze-intent"
     if [ $st = nomarker ]; then [ -e "$J/gate0-run/marker" ] && [ ! -e "$R/.git-autosync" ] && ls "$J/gate0-run" | grep -q '^restarted-' || { echo "  FAIL t_swcheckro: state nomarker is not the state under test"; return 1; }; fi
     for ph in preflight freeze capture run rollback "restart r0" "restart p10" "restart r6"; do
       c=$(ckfp); j=$(jfp); l=$(lanerefs); t=$(timers)
@@ -1086,7 +1100,7 @@ t_swrefreezegone() {  # a new freeze after a completed restart is a new attempt:
   wg freeze >> "$B/out.sw" 2>&1; r="$r$?/$(grep -c '^marker none$' "$J/gate0-run/freeze")/$([ -e "$J/gate0-run/marker" ] && echo copy)/$(ls "$J/gate0-run" | grep -c '^marker\.earlier\.');"
   wg restart r0 >> "$B/out.sw" 2>&1; r="$r$?/$([ -e "$R/.git-autosync" ] && echo marker)"
   restore r0a; wg restart r0 >> "$B/out.sw" 2>&1   # an interrupted new freeze (its intent exists, the live marker is already aside) is recovered, not a new attempt: its marker stays the recorded one
-  printf 'timer git-autosync-repair.timer\ntimer git-autosync-promote.timer\n' > "$J/gate0-run/freeze-intent"; rm -f -- "$R/.git-autosync"
+  printf 'timer git-autosync-repair.timer\ntimer git-autosync-promote.timer\n%s\n' "$(ridl)" > "$J/gate0-run/freeze-intent"; rm -f -- "$R/.git-autosync"
   wg freeze >> "$B/out.sw" 2>&1; r="$r;$?/$(grep -c '^marker none$' "$J/gate0-run/freeze")/$([ -e "$J/gate0-run/marker" ] && echo copy)/$(ls "$J/gate0-run" | grep -c '^marker\.earlier\.')"
   SWAX=$r; [ "$SWAX" = "0/copy/live;0/1//1;0/;0/0/copy/0" ]; }
 t_swgitidx() {  # the overlay driver's finish-the-recorded-step check reads the index tree and both recorded trees with their status: a read that prints a tree and then fails is a STOP, not a match
@@ -1377,9 +1391,9 @@ sr_retarget() {  # JOURNAL CHECKOUT : re-point the records of a cut-off attempt 
   og=$(cd "$og" && pwd -P) && oc=$(cd "$oc" && pwd -P) && rt=$(cd "$Rt" && pwd -P) || return 1
   [ -e "$Rt/.git-autosync" ] || cp "$R/.git-autosync" "$Rt/.git-autosync" || return 1
   for f in "$jd"/gate0-run/restart*-*; do [ -e "$f" ] || continue; sed -i "2s|.*|root $rt|;3s|.*|gitdir $og|;4s|.*|common $oc|" "$f" || return 1; done; }
-wr_obs() {  # JOURNAL CHECKOUT : the whole state of a cut-off attempt: the journal, the timers, the repair service, the restart records, the preserved marker's bytes, the original checkout's marker, and the other checkout's marker and listing
+wr_obs() {  # JOURNAL CHECKOUT : the whole state of a cut-off attempt: the journal, the timers, the repair service, the restart records, the preserved marker's bytes, the original checkout's marker, the other checkout's marker and listing, and git's own metadata of both checkouts (refs, objects, packs, FETCH_HEAD, index, config)
   local jd=$1 Rx=$2
-  echo "$(J=$jd jfp)/$(timers)/$([ -e "$ST/units/git-autosync-repair.service" ] && echo svc)/$(ls "$jd/gate0-run" | grep -c '^restart')/$([ -f "$jd/gate0-run/marker" ] && sha < "$jd/gate0-run/marker")/$(dg "$R0/.git-autosync")/$(dg "$Rx/.git-autosync")/$(ls -A "$Rx" | sha)"; }
+  echo "$(J=$jd jfp)/$(timers)/$([ -e "$ST/units/git-autosync-repair.service" ] && echo svc)/$(ls "$jd/gate0-run" | grep -c '^restart')/$([ -f "$jd/gate0-run/marker" ] && sha < "$jd/gate0-run/marker")/$(dg "$R0/.git-autosync")/$(dg "$Rx/.git-autosync")/$(ls -A "$Rx" | sha)/$(gitmeta "$R0")/$(gitmeta "$Rx")"; }
 t_swwrongroot() {  # a retry that is not for the checkout the attempt began on touches nothing: with the SAME journal and another checkout (an empty directory, a clone with a marker of its own, a linked worktree) nothing changes in the journal, the timers, the repair service or either marker, the exit is non-zero and names the state it left, and the right checkout's retry then still finds the attempt and undoes it. The same holds for records that are old-format, foreign, links or dangling, and for a completed restart whose record names another checkout
   local SRSVC=1 SRSED= R0=$R Rx c rc2 pre post mk0 bad= g n=0; SWWR=
   for c in empty clone wt; do
@@ -1422,8 +1436,8 @@ t_swfreezeforeign() {  # a freeze meets records of another checkout in the journ
   local SRSVC=1 SRSED= R0=$R pre post rc2; SWFF=
   sr_cut || return 1; sr_stubs; sed -i '2s|.*|root /elsewhere|' "$J/gate0-run/restarting-r0"
   pre=$(wr_obs "$J" "$R0"); : > "$B/out.sw"; wg freeze >> "$B/out.sw" 2>&1; rc2=$?; post=$(wr_obs "$J" "$R0")
-  SWFF="$rc2/$(sw_msg 'do not name this checkout')"
-  [ "$rc2" != 0 ] && [ "$pre" = "$post" ] && [ "$(sw_msg 'do not name this checkout')" = 1 ]; }
+  SWFF="$rc2/$(sw_msg "a record in the journal is not this checkout's")"
+  [ "$rc2" != 0 ] && [ "$pre" = "$post" ] && [ "$(sw_msg "a record in the journal is not this checkout's")" = 1 ]; }
 t_swfreezeroot() {  # the journal's preflight and freeze belong to the checkout they were made for: with NO restart record in the journal (a fresh restart, a capture, a rollback, a new freeze) another checkout (an empty directory, a clone, a linked worktree), or a record of another checkout, an old-format record or a link in its place, is refused before anything is changed, and the right checkout then still goes on
   local R0=$R Rx c ph rc2 pre post bad= n=0 want phases; SWFR=
   for c in empty clone wt pfother pfold fzother fzold fzlink; do
@@ -1452,6 +1466,49 @@ t_swfreezeroot() {  # the journal's preflight and freeze belong to the checkout 
   done
   [ "$n" = 8 ] || { echo "    cases run: $n"; return 1; }
   [ -z "$bad" ]; }
+t_swgate() {  # the one journal gate, run first in every mode: with a foreign or unknown record of each kind in the journal (preflight, freeze, freeze intent, restart record, completed-restart record, a dangling record link, and records that carry no identity with no preflight beside them) EVERY mode (preflight, freeze, capture, run, rollback, restart; each also under --check) stops with the gate's own message, status 3 and no write at all: not to the journal, the units, the markers, the log directory, the checkouts or git's own metadata (refs, objects, packs, FETCH_HEAD, index, config); with the same records all bound to the checkout the gate lets the start go on
+  local SRSVC=1 SRSED= R0=$R Rx=$W/other-gate set mode chk rc2 pre post bad= n=0 f ft want hit
+  for set in preflight freeze intent restarting restarted dangling noid; do
+    case $set in
+      preflight) restore fx; stepto preflight; ft=preflight ;;
+      freeze) restore fx; stepto preflight freeze; ft=freeze ;;
+      intent) restore fx; stepto preflight freeze; ft=freeze-intent ;;
+      restarting) sr_cut; ft=restarting-r0 ;;
+      restarted) restore r0a; WG= wg restart r0 >> "$B/step.out" 2>&1; ft=restarted-r0 ;;
+      dangling) restore r0a; ft=restarting-r0 ;;
+      noid) restore fx; ft=captured ;;
+    esac || { echo "    $set: cannot make the state"; return 1; }
+    git clone -q "$R0" "$Rx" >> "$B/out.sw" 2>&1 || { echo "    $set: cannot make the other checkout"; return 1; }
+    case $set in
+      intent) printf 'timer git-autosync-repair.timer\n%s\n' "$(ridl "$R0")" > "$J/gate0-run/freeze-intent" ;;
+      dangling) ln -s "$W/nowhere" "$J/gate0-run/restarting-r0" ;;
+      noid) mkdir -p "$J/gate0-run"; printf 'x\n' > "$J/gate0-run/captured"; printf 'x\n' > "$J/gate0-run/marker" ;;
+    esac
+    for f in preflight freeze freeze-intent restarting-r0 restarted-r0; do   # every other record is this other checkout's: the one record named ft is the only thing the gate has to refuse
+      [ -f "$J/gate0-run/$f" ] && [ ! -L "$J/gate0-run/$f" ] && [ "$f" != "$ft" ] && { retid "$J/gate0-run/$f" "$Rx" || { echo "    $set: cannot retarget $f"; return 1; }; }
+    done
+    for chk in "" --check; do for mode in preflight freeze capture run rollback "restart r0"; do
+      n=$((n+1)); pre="$(wr_obs "$J" "$Rx")/$(ls -A "$W/state/logs" 2>/dev/null | wc -l)/$(nstarts)"; : > "$B/out.sw"
+      R=$Rx wg $chk $mode >> "$B/out.sw" 2>&1; rc2=$?
+      post="$(wr_obs "$J" "$Rx")/$(ls -A "$W/state/logs" 2>/dev/null | wc -l)/$(nstarts)"
+      { [ "$rc2" = 3 ] && [ "$pre" = "$post" ] && [ "$(sw_msg "a record in the journal is not this checkout's")" = 1 ] && [ "$(sw_msg "$ft")" -ge 1 ] && [ "$(sw_msg 'are undone now')" = 0 ]; } || { echo "    $set: $chk $mode rc=$rc2 gate-notes=$(sw_msg "a record in the journal is not this checkout's") named=$(sw_msg "$ft") state $([ "$pre" = "$post" ] && echo same || echo CHANGED)"; bad="$bad $set/$chk/$mode"; }
+    done; done
+    case $set in dangling|noid) continue ;; esac
+    retid "$J/gate0-run/$ft" "$Rx" || return 1   # now every record is this checkout's: the gate says bound
+    : > "$B/out.sw"; R=$Rx wg --check capture >> "$B/out.sw" 2>&1
+    [ "$(sw_msg "a record in the journal is not this checkout's")" = 0 ] || { echo "    $set: records that are all this checkout's are refused"; bad="$bad $set/bound"; }
+  done
+  [ "$n" = 84 ] || { echo "    cells run: $n"; return 1; }
+  [ -z "$bad" ]; }
+t_swrbailwording() {  # the restart that finds an earlier attempt cut off undoes it and says so only when the cleanup was confirmed: a unit that cannot be stopped makes the message say the cleanup is INCOMPLETE (and name the unit), never that the effects are undone; the retry that can stop it says they are
+  local SRSVC=1 SRSED= rc2 rc3; SWRB=
+  sr_cut || return 1; touch "$ST/failstop-git-autosync-repair.timer"; : > "$B/out.sw"
+  wg restart r0 >> "$B/out.sw" 2>&1; rc2=$?
+  SWRB="$rc2/$(sw_msg 'are undone now')/$(sw_msg 'INCOMPLETE')/$(sw_msg 'UNCONFIRMED stop of.*git-autosync-repair.timer')"
+  rm -f "$ST/failstop-git-autosync-repair.timer"; : > "$B/out.sw"
+  wg restart r0 >> "$B/out.sw" 2>&1; rc3=$?
+  SWRB="$SWRB;$rc3/$(sw_msg 'are undone now')/$(sw_msg 'INCOMPLETE')/$(sr_state)"
+  [ "$SWRB" = "3/0/1/1;3/1/0//no/no/0" ]; }
 t_swcleanfail() {  # a start that fails while an earlier restart attempt is cut off, when the cleanup cannot stop a unit, does not say the effects are undone: it says the cleanup is incomplete, exits non-zero and keeps the attempt's record; the next retry (the unit stops now) finishes the cleanup and says so
   local SRSVC=1 SRSED= rc2 rc3; SWCF=
   sr_cut || return 1; sr_stubs; touch "$ST/failstop-git-autosync-repair.timer"; : > "$B/out.sw"
@@ -1793,6 +1850,8 @@ sc "a retry for another checkout, or one whose records are not provably this che
 sc "a freeze that meets records of another checkout stops before it changes anything" t_swfreezeforeign
 sc "the journal's preflight and freeze belong to their checkout: a fresh restart, capture, rollback or freeze on another checkout, or on a record that is not this checkout's, changes nothing" t_swfreezeroot
 sc "a start that cannot finish the cleanup of a cut-off restart says it is incomplete, not undone" t_swcleanfail
+sc "the journal gate runs first in every mode (preflight, freeze, capture, run, rollback, restart; each also under --check): a foreign, unknown or identity-less record of any kind stops it with no write at all, git metadata included" t_swgate
+sc "a restart that finds an earlier attempt cut off says the effects are undone only when the cleanup was confirmed" t_swrbailwording
 sc "a git directory link or common directory link that exists but is not a regular one-line file is unknown, never absent: nothing is written, stopped or moved" t_swcommonshape
 sc "a transient failure of the first confinement read does not stay, and an early safe is revoked by the final decision" t_swtransient
 sc "every command of the start-up failed in turn: after the arm the cut-off restart is undone, before it nothing changed" t_swstartinject
@@ -2056,15 +2115,25 @@ mm M167 t_swcommonshape "oneline accepts a link or a directory" 's/^  local c; \
 mm M168 t_swcommonshape "oneline reads the first line of a file of several lines" 's/^  c=\$(cat -- "\$1" 2>\/dev\/null) || return 1$/  read -r c < "$1" || return 1/'
 mm M169 t_swgitlink "oneline ignores a failed read" 's/^  c=\$(cat -- "\$1" 2>\/dev\/null) || return 1$/  c=$(cat -- "$1" 2>\/dev\/null) || :/'
 mm M170 t_swstartinject "the checkout's identity is cleared before the decision is made" 's/^  local r=unknown rid=$/&; RID=/'
-mm M171 t_swwrongroot "a completed restart's record of another checkout is not checked" 's/^    records_ours 5 || { left_note "the restart records do not name this checkout (or are not well formed)"; exit 3; }$/    :/'
+mm M171 t_swwrongroot "a completed restart's record of another checkout is checked by neither the gate nor the restart (the gate is the first barrier, records_ours the second)" 's/^    records_ours 5 || { left_note "the restart records do not name this checkout (or are not well formed)"; exit 3; }$/    :/;s/ "\$G"\/restarting-\* "\$G"\/restarted-\*; do$/ "$G"\/restarting-*; do/'
 mm M172 t_swwrongroot "a left attempt is not named" 's/^  \[ -z "\${LEFT:-}" \] || return 0; LEFT=1$/  return 0/'
 mm M173 t_swtargetread "a restart goes on without a recovery target" 's/^  tgt=\$(rtarget) || stop "[^"]*"[^\n]*$/  tgt=$(rtarget)/'
-mm M174 t_swfreezeroot "every record is taken for this checkout's" 's/^  \[ "\$g" = "\$RID" \]; }$/  true; }/'
-mm M175 t_swfreezeroot "a linked record is taken for a regular one" 's/^  local g; \[ -f "\$1" \] \&\& \[ ! -L "\$1" \] \&\& /  local g; [ -f "$1" ] \&\& /'
-mm M176 t_swfreezeroot "the freeze of another checkout is relied on by capture, rollback and restart" 's/^  need_bound "\$G\/freeze" freeze .*$/  :/'
-mm M177 t_swfreezeroot "capture does not check the preflight record" 's/^  need_bound "\$G\/preflight" preflight$/  :/'
-mm M178 t_swfreezeroot "a freeze does not check the preflight record" 's/^  \[ ! -e "\$G\/preflight" \] || need_bound "\$G\/preflight" preflight .*$/  :/'
-mm M179 t_swfreezeroot "an already recorded preflight is not checked" 's/need_bound "\$G\/preflight" preflight; say "gate0-run: P0 already recorded/say "gate0-run: P0 already recorded/'
+mm M174 t_swgate "every record is taken for this checkout's" 's/^  \[ "\$g" = "\$RID" \] || return 1; }$/  return 0; }/'
+mm M175 t_swfreezeroot "a linked record is taken for a regular one" 's/^\(  local g nl=[^;]*; \[ -f "\$1" \] \&\& \)\[ ! -L "\$1" \] \&\& /\1/'
+mm M176 t_swgate "the journal gate is skipped in preflight" 's/^journal_gate .*/[ "$PHASE" = preflight ] || journal_gate/'
+mm M177 t_swgate "the journal gate is skipped in freeze" 's/^journal_gate .*/[ "$PHASE" = freeze ] || journal_gate/'
+mm M178 t_swgate "the journal gate is skipped in capture" 's/^journal_gate .*/[ "$PHASE" = capture ] || journal_gate/'
+mm M179 t_swgate "the journal gate is skipped in run" 's/^journal_gate .*/[ "$PHASE" = run ] || journal_gate/'
+mm M182 t_swgate "the journal gate is skipped in rollback" 's/^journal_gate .*/[ "$PHASE" = rollback ] || journal_gate/'
+mm M183 t_swgate "the journal gate is skipped in restart" 's/^journal_gate .*/[ "$PHASE" = restart ] || journal_gate/'
+mm M184 t_swgate "the journal gate is skipped under --check" 's/^journal_gate .*/[ $CHECKMODE = 1 ] || journal_gate/'
+mm M185 t_swfreezeroot "a record with no identity is taken for this checkout's" 's/^  \[\[ \$g =~ .*$/  [ -n "$g" ] || return 0/'
+mm M186 t_swgate "a freeze intent of another checkout is not looked at" 's/^    for f in "\$G"\/preflight "\$G"\/freeze "\$G"\/freeze-intent /    for f in "$G"\/preflight "$G"\/freeze /'
+mm M187 t_swgate "a restart record of another checkout is not looked at" 's/ "\$G"\/restarting-\* "\$G"\/restarted-\*; do$/ "$G"\/restarted-*; do/'
+mm M188 t_swgate "a completed restart's record of another checkout is not looked at" 's/ "\$G"\/restarting-\* "\$G"\/restarted-\*; do$/ "$G"\/restarting-*; do/'
+mm M189 t_swgate "records with no identity are trusted without a preflight record" 's/^    if \[ ! -e "\$G\/preflight" \] \&\& \[ ! -L "\$G\/preflight" \]; then$/    if false; then/'
+mm M190 t_swgate "a dangling record link is not looked at" 's/^      if \[ -e "\$f" \] || \[ -L "\$f" \]; then rec_state "\$f"; s=\$?$/      if [ -e "$f" ]; then rec_state "$f"; s=$?/'
+mm M191 t_swrbailwording "a cleanup that could not be confirmed is reported as done" 's/^  if \[ -z "\${RBAD:-}" \]; then o=/  if true; then o=/'
 mm M180 t_swcleanfail "a cleanup that failed is reported as done" 's/^    undo) INCLEAN=1; CLEANRC=0; ( rcleanup ) >\/dev\/null || CLEANRC=1; return 0 ;;/    undo) INCLEAN=1; CLEANRC=0; ( rcleanup ) >\/dev\/null || :; return 0 ;;/'
 mm M181 t_swcleanfail "the cleanup status is never read" 's/if \[ "\${CLEANRC:-1}" = 0 \]; then echo "gate0-run: the start stopped/if true; then echo "gate0-run: the start stopped/'
 mm M110 t_swrefreezegone "an interrupted new freeze is taken for a new attempt: its recorded marker is set aside" 's/^  if restarted_any \&\& \[ ! -e "\$G\/freeze-intent" \] \&\& /  if restarted_any \&\& /'
