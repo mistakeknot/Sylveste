@@ -2291,7 +2291,7 @@ mm M188 t_swgate "a completed restart's record of another checkout is not looked
 mm M189 t_swgate "records with no identity are trusted without a preflight record" 's/^      if \[ -z "\$unknown" \] \&\& ! jhas preflight; then$/      if false; then/'
 mm M190 t_swgate "a dangling record link is not looked at" 's/case \$n in \$p) printf/case $n in $p) [ -e "$G\/$n" ] \&\& printf/'
 mm M191 t_swrbailwording "a cleanup that could not be confirmed is reported as done" 's/^  if \[ -z "\${RBAD:-}" \]; then o=/  if true; then o=/'
-mm M192 t_swjlist "the permissions of the journal directory are not checked, only the status of ls" 's/ \&\& \[ -r "\$G" \] \&\& \[ -x "\$G" \] || return 1$/ || return 1/'
+mmd M192 t_swjlist "the explicit permission test on the journal directory; cd and find fail on a directory that cannot be read or searched anyway" 's/ \&\& \[ -r "\$G" \] \&\& \[ -x "\$G" \] || return 1$/ || return 1/'
 mm M193 t_swunlistable "neither the journal directory's permissions nor the status of ls is checked: an unlistable journal lists as empty" 's/ \&\& \[ -r "\$G" \] \&\& \[ -x "\$G" \] || return 1$/ || return 1/; s/^  o=\$(cd -- "\$G" 2>\/dev\/null \&\& find \. -mindepth 1 -maxdepth 1 2>\/dev\/null) || return 1 .*$/  o=$(cd -- "$G" 2>\/dev\/null \&\& find . -mindepth 1 -maxdepth 1 2>\/dev\/null; true)/'
 mm M194 t_swjlist "jhas reports a journal that could not be listed as having no record" 's/o=\$(jlist "\$@") || return 2;/o=$(jlist "$@") || return 1;/'
 mm M195 t_swjlist "jrm ignores that the journal could not be listed" 's/^  local o n; o=\$(jlist "\$@") || return 1$/  local o n; o=$(jlist "$@")/'
