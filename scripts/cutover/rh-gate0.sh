@@ -141,6 +141,45 @@ export CUTOVER_REPORT=0 RESTART_REPORT=0 GIT_CONFIG_NOSYSTEM=1 HOME="$B/home" TM
 fails=0; TOTAL=0; SUMMARY=""
 check() { if [ "$2" = "$3" ]; then echo "  ok   $1"; else echo "  FAIL $1: got [$2] want [$3]"; fails=$((fails+1)); fi; }
 fail() { echo "  FAIL $*"; fails=$((fails+1)); }
+# --- contract begin: the repair's exit and its STANDING line (dotfiles e35d7d2: a refusal that repeats the previous
+# scheduled run's exits 0 and prints the line below; a refusal that is new still exits 1 and prints no such line).
+# Nothing reads the repair's exit 1 as "a human is needed": the exit only decides whether `systemctl --failed` lists the unit.
+STL='STANDING: the same 1 repo(s) needed a human last run; nothing new'
+RZN=0; RZX=0; RZS=0
+rzx() {  # name want exit log : want is 0, 1 or "standing" (exit 0, the exact line once, and no other STANDING line)
+  local w=$2 sl=0; RZX=$((RZX+1))
+  [ "$w" != standing ] || { w=0; sl=1; RZS=$((RZS+1)); }
+  check "restart $1: the repair exits $w$([ $sl = 0 ] || echo ' (a STANDING refusal)')" "$3" "$w"
+  check "restart $1: the exact STANDING line appears $sl time(s) and no other STANDING line does" \
+    "$(grep -cxF -- "$STL" "$4") $(grep -c '^STANDING' "$4")" "$sl $sl"; }
+svcx() {  # exit journal : the service path's standing refusal
+  check "service: the unit exited 0 (the same refusal is STANDING: nothing new)" "$1" 0
+  check "service: the journal records no failure (no status=1/FAILURE)" "$(grep -c 'FAILURE\|Failed with result' "$2")" 0
+  check "service: the journal carries the exact STANDING line once and no other STANDING line" \
+    "$(grep -cxF -- "$STL" "$2") $(grep -c '^STANDING' "$2")" "1 1"; }
+contract_selftest() {  # prints how many fixtures the contract judged wrongly (0 = every positive passed, every negative failed)
+  local d bad=0 t; d=$(mktemp -d "${TMPDIR:-/tmp}/rh-ct.XXXXXX") || { echo 1; return; }
+  t() { local want=$1 r; shift; r=$( (fails=0; "$@" > /dev/null 2>&1; echo $fails) )
+    if [ "$want" = ok ]; then [ "$r" = 0 ] || bad=$((bad+1)); else [ "$r" != 0 ] || bad=$((bad+1)); fi; }
+  printf 'x\n%s\n' "$STL" > "$d/one"; printf 'x\n' > "$d/none"
+  printf 'x\nSTANDING: the same 2 repo(s) needed a human last run; nothing new\n' > "$d/two"
+  printf 'x\n%s\n%s\n' "$STL" "$STL" > "$d/twice"; printf 'x\n%s extra\n' "$STL" > "$d/extra"
+  printf 'x\nSTANDING: something else\n%s\n' "$STL" > "$d/other"; printf 'x\n  %s\n' "$STL" > "$d/indented"
+  printf 'x\nunit.service: Deactivated successfully.\n%s\n' "$STL" > "$d/jok"
+  printf 'x\nunit.service: Main process exited, code=exited, status=1/FAILURE\nunit.service: Failed with result '"'"'exit-code'"'"'.\n' > "$d/jfail"
+  printf 'x\nunit.service: Main process exited, code=exited, status=1/FAILURE\n%s\n' "$STL" > "$d/jfailline"
+  t ok rzx n standing 0 "$d/one";   t ok rzx n 1 1 "$d/none"; t ok rzx n 0 0 "$d/none"
+  t red rzx n standing 1 "$d/one";  t red rzx n standing 1 "$d/none"; t red rzx n standing 2 "$d/one"
+  t red rzx n standing 0 "$d/none"; t red rzx n standing 0 "$d/two";  t red rzx n standing 0 "$d/twice"
+  t red rzx n standing 0 "$d/extra"; t red rzx n standing 0 "$d/other"; t red rzx n standing 0 "$d/indented"
+  t red rzx n 1 0 "$d/one";         t red rzx n 1 1 "$d/one";         t red rzx n 1 0 "$d/none"
+  t red rzx n 0 0 "$d/one";         t red rzx n 0 1 "$d/none"
+  t ok svcx 0 "$d/jok"
+  t red svcx 1 "$d/jok";            t red svcx 1 "$d/jfail";          t red svcx 0 "$d/jfail"
+  t red svcx 0 "$d/jfailline";      t red svcx 0 "$d/none";           t red svcx 0 "$d/two"
+  t red svcx 0 "$d/twice";          t red svcx 0 "$d/indented"
+  rm -rf -- "${d:?}"; echo $bad; }
+# --- contract end
 iso() {  # the sandbox, verified from inside rather than trusted from the environment
   local d f bad=0 m p
   for d in / "$(dirname "$B")" "$TS" "$HERE" "$RB" "$OPH"; do f=$d/.rh-probe-$$
@@ -162,8 +201,7 @@ echo "sandbox proven from inside: / and $(dirname "$B"), $TS, $HERE, $RB, $OPH r
 if [ $MODE = svcv ]; then   # the service case, after the outer process ran the unit
   echo "== service path: verify"
   r=$B/x/svc/root/Sylveste
-  check "service: the unit exited 1 (the planted file is a STOP)" "$(cat "$B/svc.rc")" 1
-  check "service: the journal records the unit's failure" "$(grep -c 'status=1/FAILURE' "$B/svc.journal")" 1
+  svcx "$(cat "$B/svc.rc")" "$B/svc.journal"   # the planted file is a STOP, and the same refusal as the last run is STANDING (dotfiles e35d7d2)
   echo "  note: NEEDS-HUMAN lines in the journal read by unit: $(grep -c 'NEEDS-HUMAN' "$B/svc.journal-u"), by identifier: $(grep -c 'NEEDS-HUMAN' "$B/svc.journal")"
   bash "$PRED" verify "$B/rs/svc.pred" "$B/svc.journal" > "$B/out" 2>&1; rc=$?
   check "service: the journal matches the prediction" "$rc" 0; [ $rc = 0 ] || sed 's/^/    /' "$B/out"
@@ -625,7 +663,7 @@ rz() {  # name repo exit verdict row repair-exit [p2status] : predict, run the r
   vc=0; [ "$4" = run ] || vc=3
   check "restart $n: predicted $(grep '^row ' "$pr"), $(tail -n 1 "$pr")" "$(grep '^row ' "$pr") $(sed -n 's/^verdict \([A-Za-z]*\).*/\1/p' "$pr") $rc" "row $5 $4 $vc"
   repair "$(dirname "$repo")" > "$lg" 2>&1; rc=$?
-  check "restart $n: the repair exits $6" "$rc" "$6"
+  RZN=$((RZN+1)); rzx "$n" "$6" "$rc" "$lg"
   bash "$PRED" verify "$pr" "$lg" > "$B/out" 2>&1; rc=$?
   check "restart $n: the run matches the prediction" "$rc" 0; [ $rc = 0 ] || { sed 's/^/    /' "$B/out"; sed 's/^/    log: /' "$lg"; }
   check "restart $n: tag and archive branches unchanged" "$(pres "$repo")" "$pb"; }
@@ -652,9 +690,9 @@ r=$(mkcase p10-u p10 tag); wr "$r/README.md" local; git -C "$r" commit -qam loca
 rz p10-2u "$r" p10 STOP 2u 1
 r=$(mkcase r6-1 r6 tag); wr "$r/README.md" edited; git -C "$r" status $ST > "$B/p2-1"; rz r6-one-M "$r" r6 run 3 1 "$B/p2-1"
 r=$(mkcase r6-8 r6 tag); wr "$r/README.md" edited; for i in 1 2 3 4 5 6 7; do wr "$r/x$i.md" "$i"; done
-git -C "$r" status $ST > "$B/p2-8"; rz r6-eight "$r" r6 run 3 1 "$B/p2-8"
+git -C "$r" status $ST > "$B/p2-8"; rz r6-eight "$r" r6 run 3 standing "$B/p2-8"
 check "r6-eight: six listed and '... and 2 more'" "$(grep -c '^      ' "$B/rs/r6-eight.log") $(grep -c '^      \.\.\. and 2 more$' "$B/rs/r6-eight.log")" "7 1"
-r=$(mkcase r6-j r6 tag); wr "$r/README.md" edited; git -C "$r" status $ST > "$B/p2-j"; jl "$r"; rz r6-jsonl "$r" r6 run 3 1 "$B/p2-j"
+r=$(mkcase r6-j r6 tag); wr "$r/README.md" edited; git -C "$r" status $ST > "$B/p2-j"; jl "$r"; rz r6-jsonl "$r" r6 run 3 standing "$B/p2-j"
 r=$(mkcase r6-0 r6 tag); : > "$B/p2-0"; rz r6-row1-ignored-marker "$r" r6 run 1 0 "$B/p2-0"
 r=$(mkcase r6-c r6 tag); rm "$r/uv.lock"; ln -s README.md "$r/uv.lock"; wr "$r/a b.md" q
 git -C "$r" status $ST > "$B/p2-c"; rz r6-classification "$r" r6 run 3 1 "$B/p2-c"
@@ -662,7 +700,7 @@ check "classification: type change and quoted path" "$(grep -c '^      uv.lock (
 # the real P2 capture: the c0 checkout's internal set, restored at R5 over the reverted origin
 r=$(mkcase r6-p2 r6 tag); rm -rf -- "${r:?}/internal"; cp -a "$B/tpl-c0/root/Sylveste/internal" "$r/internal"
 check "r6-real-p2: R5's checkout shows P2's recorded status" "$(git -C "$r" status $ST)" "$(cat "$B/tpl-c0/J/p2.status.all")"
-rz r6-real-p2 "$r" r6 run 3 1 "$B/tpl-c0/J/p2.status.all"
+rz r6-real-p2 "$r" r6 run 3 standing "$B/tpl-c0/J/p2.status.all"
 # the same with an entirely untracked directory of several files: the default mode collapses it to one
 # entry, the repair script's -uall lists every file, so P2 must record each file
 restore a1; for f in one two three; do wr "$R/internal/nd/$f.md" "$f"; done
@@ -674,9 +712,14 @@ check "r6-real-p2-dir: P2's status lists each file of the untracked directory, n
 snap c0u
 r=$(mkcase r6-p2d r6 tag); rm -rf -- "${r:?}/internal"; cp -a "$B/tpl-c0u/root/Sylveste/internal" "$r/internal"
 check "r6-real-p2-dir: R5's checkout shows P2's recorded status" "$(git -C "$r" status $ST)" "$(cat "$B/tpl-c0u/J/p2.status.all")"
-rz r6-real-p2-dir "$r" r6 run 3 1 "$B/tpl-c0u/J/p2.status.all"
-restore a0r; rz a0r-row4 "$R" a0r run 4 1
-restore a0r; jl "$R"; rz a0r-row4-jsonl "$R" a0r run 4 1
+rz r6-real-p2-dir "$r" r6 run 3 standing "$B/tpl-c0u/J/p2.status.all"
+restore a0r; rz a0r-row4 "$R" a0r run 4 standing
+restore a0r; jl "$R"; rz a0r-row4-jsonl "$R" a0r run 4 standing
+# the contract's own accounting: every rz went through rzx, exactly the six repeated refusals expect STANDING, and the
+# contract judges its positive and negative fixtures correctly
+check "restart contract: every rz case was judged by rzx ($RZN of $RZX)" "$RZX" "$RZN"
+check "restart contract: exactly six cases expect the STANDING line" "$RZS" 6
+check "restart contract: the self-test fixtures (positive pass, every negative fails) are judged correctly" "$(contract_selftest)" 0
 check "a0r: tag, archive branches and lane unchanged after the runs" \
   "$(g rev-parse "refs/tags/gate0/mA-$O") $(git --git-dir="$W/lane.git" rev-parse "refs/heads/archive/gate0/mA/$O" refs/heads/autosync/mA | paste -sd' ' -)" "$O $O $O"
 cp "$B/rs/p10-row2-jsonl.pred" "$B/rs/tampered.pred"; sed -i 's/^log   COMMIT /log   COMMIT x/' "$B/rs/tampered.pred"
