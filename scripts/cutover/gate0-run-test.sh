@@ -1609,6 +1609,23 @@ t_swfrozenunits() {  # the freeze records every unit it stopped, and a later pha
   GATE0_UNITS_TIMERS=git-autosync-repair.timer GATE0_UNITS_SERVICES=git-autosync-repair.service wg freeze >> "$B/out.sw" 2>&1; rc=$?
   { [ "$rc" = 0 ] && [ "$(sw_msg 'freeze already holds')" = 1 ]; } || { echo "    a narrower configuration with every frozen unit still stopped: rc=$rc"; bad="$bad narrower"; }
   [ -z "$bad" ]; }
+t_swunionlife() {  # the recorded unit set survives every step of the lifecycle: a new freeze after a completed restart, under a narrower or a renamed configuration, stops and records the earlier units too (and keeps them in the restart set); the cleanup of a cut-off restart stops a recorded service the configuration no longer names; and a restart refuses a recorded unit that is active again under a renamed configuration
+  local R0=$R bad= rc n=0 cfg pt rec
+  for cfg in "git-autosync-repair.timer/git-autosync-repair.service" "other.timer/other.service"; do
+    n=$((n+1)); restore r0a; : > "$B/out.sw"
+    wg restart r0 >> "$B/out.sw" 2>&1 || { echo "    the restart that precedes the new freeze did not complete"; bad="$bad restart-$n"; continue; }
+    [ "$(timers)" = yes/yes ] || { echo "    the completed restart left the timers $(timers)"; bad="$bad restart-$n"; continue; }
+    GATE0_UNITS_TIMERS=${cfg%/*} GATE0_UNITS_SERVICES=${cfg#*/} wg freeze >> "$B/out.sw" 2>&1; rc=$?
+    rec=$(grep -c '^unit git-autosync-promote.timer$' "$J/gate0-run/freeze")/$(grep -c '^timer git-autosync-promote.timer$' "$J/gate0-run/freeze")/$(grep -c '^unit git-autosync-promote.service$' "$J/gate0-run/freeze")
+    { [ "$rc" = 0 ] && [ "$(timers)" = no/no ] && [ "$rec" = 1/1/1 ]; } || { echo "    a new freeze after a completed restart under ${cfg%/*}: rc=$rc timers=$(timers) record(unit timer/restart-set timer/unit service)=$rec"; bad="$bad freeze-$n"; }
+  done
+  sr_cut || return 1; touch "$ST/units/git-autosync-promote.service"; : > "$B/out.sw"
+  GATE0_UNITS_SERVICES=git-autosync-repair.service wg restart r0 >> "$B/out.sw" 2>&1; rc=$?
+  { [ "$rc" = 3 ] && [ "$(active git-autosync-promote.service)" = no ] && [ "$(sw_msg 'are undone now')" = 1 ]; } || { echo "    the cleanup of a cut-off restart under a narrower service list: rc=$rc promote.service=$(active git-autosync-promote.service) undone-notes=$(sw_msg 'are undone now')"; bad="$bad cleanup"; }
+  restore fx; stepto preflight freeze || return 1; touch "$ST/units/git-autosync-promote.timer"; : > "$B/out.sw"
+  GATE0_UNITS_TIMERS=other.timer GATE0_UNITS_SERVICES=other.service wg restart r0 >> "$B/out.sw" 2>&1; rc=$?
+  { [ "$rc" = 3 ] && [ "$(nstarts)" = 0 ] && [ "$(active git-autosync-promote.timer)" = yes ]; } || { echo "    a restart under a renamed configuration with a recorded timer active again: rc=$rc starts=$(nstarts) promote.timer=$(active git-autosync-promote.timer)"; bad="$bad restart"; }
+  [ -z "$bad" ]; }
 t_swenvmatrix() {  # the verdicts of a restart do not depend on the caller's environment: with each of the variables that change how a tool prints (QUOTING_STYLE, LS_COLORS, TIME_STYLE, LANG, a hostile TZ, GREP_OPTIONS and GREP_COLORS, PS_FORMAT, COLUMNS, BLOCK_SIZE), and with all of them together, a restart exits and leaves the same state as with a clean environment; a CDPATH that holds a directory of the script's own relative name does not change where the script finds itself
   local kv sig0 sig bad= n=0 all rel=$B/rel dec=$B/decoy rc
   sg() { echo "$1/$(nstarts)/$(timers)/$([ -e "$R/.git-autosync" ] && echo marker)/$(ls "$J/gate0-run" | grep -c '^restarted')"; }
@@ -1983,6 +2000,7 @@ sc "an unlistable journal directory is unknown, never empty: every mode (also un
 sc "the journal enumerator tells a directory that was listed (empty or not) from one that could not be listed" t_swjlist
 sc "the journal's records are found whatever ls settings the caller has (QUOTING_STYLE): a foreign record is refused, a cut-off restart is undone" t_swquoting
 sc "a later phase checks every unit the freeze stopped, not only those the configuration names now; a freeze record that names none is refused" t_swfrozenunits
+sc "the recorded unit set survives every step: a new freeze after a completed restart keeps the earlier units under a narrower or renamed configuration, the cleanup of a cut-off restart stops a recorded service the configuration no longer names, a restart refuses a recorded timer that is active again" t_swunionlife
 sc "a restart gives the same verdict and leaves the same state under each hostile environment variable (and all together), and under a CDPATH that names a directory of the script's own relative name" t_swenvmatrix
 sc "a restart that finds an earlier attempt cut off says the effects are undone only when the cleanup was confirmed" t_swrbailwording
 sc "a git directory link or common directory link that exists but is not a regular one-line file is unknown, never absent: nothing is written, stopped or moved" t_swcommonshape
@@ -2083,7 +2101,7 @@ mutate M41 's/^  flush_path "\$d" || stop .*/  flush_path "$d" || true/' &&
   { WG=$B/mut/M41.sh; t_flushfail; r=$?; WG=; check "M41 (a failed directory flush is ignored) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M42 's/^    tipn=\$(pg ls-remote "\$LANE" "refs\/heads\/autosync\/\$HOST") || stop .*/    tipn=$(pg ls-remote "$LANE" "refs\/heads\/autosync\/$HOST")/' &&
   { WG=$B/mut/M42.sh; t_lanefail; r=$?; WG=; check "M42 (a failed lane read is taken for an unchanged lane) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
-mutate M43 '/# a service a cut-off restart left running is stopped too/ s/ \$SERVICES;/;/' &&
+mutate M43 '/# a service a cut-off restart left running is stopped too/ s/for u in \$us;/for u in $ts;/' &&
   { WG=$B/mut/M43.sh; t_restartcrash; r=$?; WG=; check "M43 (a cleanup does not stop the services) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M44 's/o=\$(pg ls-remote "\$LANE" "\$1") || return 1/o=$(pg ls-remote "$LANE" "$1")/' &&
   { WG=$B/mut/M44.sh; t_archfail; r=$?; WG=; check "M44 (a failed lane read is an empty listing) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
@@ -2219,7 +2237,7 @@ mm M136 t_swgitrst "diagnostic only: the bind-failure trap no longer says why; t
 mm M137 t_swgitlink "a failing gitdir link read is accepted" 's/ || { NERR="GATE0_ROOT\/.git is neither[^"]*"; return 1; }   # one reader/ || :   # one reader/'
 mm M138 t_swgitlink "a failing commondir read is accepted" 's/ || { NERR="the common directory link of the git directory is not a regular[^"]*"; return 1; }/ || :/'
 mm M139 t_swgitfailall "the cleanup of a failed restart leaves the marker in the checkout" 's/^  move_marker_aside force; \[ -z "\$RBAD" \]/  [ -z "$RBAD" ]/'
-mm M140 t_swgitfailall "the cleanup of a failed restart leaves the repair service running" 's/^  for u in \$ts \$SERVICES; do units stop "\$u" >\/dev\/null 2>&1; done/  for u in $ts; do units stop "$u" >\/dev\/null 2>\&1; done/'
+mm M140 t_swgitfailall "the cleanup of a failed restart leaves the repair service running" 's/^  for u in \$us; do units stop "\$u" >\/dev\/null 2>&1; done/  for u in $ts; do units stop "$u" >\/dev\/null 2>\&1; done/'
 mm M141 t_swexitclean "the EXIT trap does not undo an open restart attempt" 's/undo) INCLEAN=1; CLEANRC=0; ( rcleanup ) >\/dev\/null || CLEANRC=1;/undo) :;/'
 mm M142 t_swexitclean "a signal is not turned into a failed exit" "s/^trap 'exit 130' INT; trap 'exit 143' TERM; trap 'exit 129' HUP.*\$/:/"
 mm M143 t_swstartrecover "a start that fails before the log directory exists leaves a cut-off restart live" 's/^trap bootexit EXIT$/:/'
@@ -2282,9 +2300,12 @@ mmd M200 t_swunlistable "the gate refuses first; records_ours ignores that the j
 mmd M201 t_swunlistable "the gate refuses first; the cleanup ignores that the restart records could not be removed" 's/^  jrm .restarting-\*. || { RBAD=.*$/  true/'
 mmd M202 t_swunlistable "the gate refuses first; a new freeze ignores that the earlier restart records could not be cleared" 's/^  jrm .restarted-\*. .restarting-\*. || stop .*$/  true/'
 mm M203 t_swquoting "the journal is listed with ls again, whose output the caller's QUOTING_STYLE changes, and QUOTING_STYLE is no longer dropped" 's/^  o=\$(cd -- "\$G" 2>\/dev\/null \&\& find \. -mindepth 1 -maxdepth 1 2>\/dev\/null) || return 1 .*$/  o=$(ls -A -- "$G" 2>\/dev\/null) || return 1/; s/ QUOTING_STYLE//'
-mm M204 t_swfrozenunits "a later phase checks only the units the configuration names now" 's/^  for u in \$ru \$TIMERS \$SERVICES; do/  for u in $TIMERS $SERVICES; do/'
+mm M204 t_swfrozenunits "a later phase checks only the units the configuration names now" 's/^  us=\$(unit_set) || stop "the freeze record cannot be read: whether its units.*$/  us="$TIMERS $SERVICES"/'
 mm M205 t_swfrozenunits "a freeze record that names no frozen units is accepted" 's/^  ru=\$(rec_units) \&\& \[ -n "\$ru" \] || stop .*$/  ru=$(rec_units)/'
-mm M206 t_swfrozenunits "the freeze does not record the units it stopped" 's/"\$(for u in \$TIMERS \$SERVICES; do printf .unit %s\\n. "\$u"; done)"\$.\\n.//'
+mm M206 t_swfrozenunits "the freeze does not record the units it stopped" 's/"\$(for u in \$us; do printf .unit %s\\n. "\$u"; done)"\$.\\n.//'
+mm M210 t_swunionlife "a new freeze stops and records only the configured units" 's/^  us=\$(unit_set) || stop "the earlier freeze record cannot be read.*$/  us="$TIMERS $SERVICES"/'
+mm M211 t_swunionlife "the cleanup of a cut-off restart stops only the restart set and the configured services" 's/^  us=\$(unit_set \$ts) ||.*$/  us="$ts $SERVICES"/'
+mm M212 t_swunionlife "the unit set ignores the freeze record" 's/ru=\$(rec_units) || rc=1/ru=/'
 mm M207 t_swenvmatrix "the CDPATH and the print-changing variables are no longer dropped" 's/^unset CDPATH POSIXLY_CORRECT .*$/:/'
 mmd M208 t_swenvmatrix "no parsed output of the wrapper differs by locale or zone on this fixture; the pins stay for the hosts where one would" 's/^export LC_ALL=C TZ=UTC$/:/'
 mmd M209 t_swquoting "the listing is environment-independent (find), so dropping QUOTING_STYLE as well is defense in depth" 's/ QUOTING_STYLE//'

@@ -355,9 +355,15 @@ do_preflight() {
 
 # ---- freeze (P1)
 in_list() { local x=$1 y; shift; for y in "$@"; do [ "$y" = "$x" ] && return 0; done; return 1; }
+unit_set() {  # the ONE set every decision about the frozen units uses (the freeze's stops, the freeze check, the cleanup): the units the freeze record names, the configured ones and any EXTRA arguments, each once. Status 1 (the set still printed, configured units only) when a record exists and cannot be read: a caller that must not forget a recorded unit stops on it
+  local ru= u o= rc=0
+  if [ -e "$G/freeze" ]; then ru=$(rec_units) || rc=1; fi
+  for u in $ru "$@" $TIMERS $SERVICES; do in_list "$u" $o || o="$o $u"; done
+  printf '%s\n' "${o# }"; return $rc; }
+is_timer_unit() { case $1 in *.timer) return 0 ;; esac; in_list "$1" $TIMERS; }
 act_lines() { ( set -o pipefail; printf '%s\n' "$1" | sed 's/^ *//; s/ timer /\ntimer /g' | sed -n '/^timer /p' ); }   # " timer A timer B" : one "timer UNIT" line each; a failed stage is a failed list, never an empty one
 do_freeze() {
-  local a w u act="" f prior al
+  local a w u act="" f prior al us
   [ -e "$G/preflight" ] || { [ $CHECKMODE = 1 ] || refuse "no preflight record; run preflight first"; }
   records_ours 4 || stop "restart records that do not name this checkout (or are not well formed) are in $G: nothing was changed; a human must clear them"   # the freeze deletes the earlier attempt's records: only ones of this checkout
   if [ -e "$G/freeze" ] && [ $CHECKMODE = 0 ] && ! restarted_any; then   # after a completed restart a new freeze is a new attempt: it falls through
@@ -380,7 +386,9 @@ do_freeze() {
     else mv -f -- "$G/marker" "$G/marker.earlier.$w" && [ ! -e "$G/marker" ] || stop "cannot set the earlier attempt's marker copy aside"
       say "gate0-run: the checkout has no marker: the copy kept from the earlier attempt is set aside as marker.earlier.$w and this freeze records none"; fi; fi
   prior=; [ ! -f "$G/freeze-intent" ] || prior=$(rec_timers "$G/freeze-intent") || stop "the earlier freeze intent cannot be read: the timers it stopped would not be restarted"
-  for u in $TIMERS; do
+  us=$(unit_set) || stop "the earlier freeze record cannot be read: a new freeze would forget the units it stopped"   # a new freeze keeps the earlier record's units: a narrower configuration never drops one
+  [ ! -e "$G/freeze" ] || [ -n "$(rec_units)" ] || stop "the earlier freeze record names no frozen units: a new freeze would forget what it stopped"
+  for u in $us; do is_timer_unit "$u" || continue
     if is_active "$u"; then act="$act timer $u"
     elif in_list "$u" $prior; then act="$act timer $u"; say "gate0-run: $u is inactive but an earlier freeze attempt that did not finish had stopped it: it stays in the restart set"; fi; done
   say "gate0-run: timers to restart after the freeze:${act:- none}"
@@ -389,26 +397,27 @@ do_freeze() {
   mkdir -p "$G"
   [ -n "${RID:-}" ] || stop "the checkout's identity is not known: the freeze intent would bind to nothing"
   put "$G/freeze-intent" "${al:+$al$'\n'}$RID"   # before the first stop: a stop that fails midway must not lose the timers already stopped
-  for u in $TIMERS; do units stop "$u" || stop "cannot stop $u"; done
-  for u in $SERVICES; do units stop "$u" || stop "cannot stop $u"; done
-  for u in $TIMERS $SERVICES; do ! is_active "$u" || stop "$u is still active"; done
+  for u in $us; do ! is_timer_unit "$u" || units stop "$u" || stop "cannot stop $u"; done
+  for u in $us; do is_timer_unit "$u" || units stop "$u" || stop "cannot stop $u"; done
+  for u in $us; do ! is_active "$u" || stop "$u is still active"; done
   move_marker_aside
   [ ! -e "$ROOT/.git-autosync" ] || stop "the marker is still in the checkout"
   if [ -n "${GATE0_STATUS_CMD:-}" ]; then "$GATE0_STATUS_CMD" > "$LOGD/autosync-status.txt" 2>&1; say "gate0-run: autosync status recorded (exit $?)"; fi
   if [ -e "$G/marker" ]; then w=$(sha < "$G/marker") || stop "cannot hash the marker set aside: the freeze record would name no marker"; w="marker $w"; else w="marker none"; fi
   [ -n "${RID:-}" ] || stop "the checkout's identity is not known: the freeze record would bind to nothing"
-  f="${al:+$al$'\n'}$w"$'\n'"$(for u in $TIMERS $SERVICES; do printf 'unit %s\n' "$u"; done)"$'\n'"$RID"$'\n'"at $(date -u +%Y-%m-%dT%H:%M:%SZ)"; put "$G/freeze" "$f"
+  f="${al:+$al$'\n'}$w"$'\n'"$(for u in $us; do printf 'unit %s\n' "$u"; done)"$'\n'"$RID"$'\n'"at $(date -u +%Y-%m-%dT%H:%M:%SZ)"; put "$G/freeze" "$f"
   jrm 'restarted-*' 'restarting-*' || stop "the earlier attempt's restart records cannot be cleared (the journal cannot be listed or an entry cannot be removed)"   # a new freeze starts a new attempt: an earlier attempt's restart records no longer apply (cleared once the new freeze is recorded)
   rm -f -- "$G/freeze-intent"   # last: while a stale restart record exists the intent still names the restart set, so a crash between these two steps loses nothing
   say "gate0-run: freeze holds (timers and services stopped, marker aside)"; }
 nobeads() { local rc; grep -v ' \.beads/issues\.jsonl$'; rc=$?; [ $rc -le 1 ]; }   # drop the tracker export line; grep 1 is "no line left", 2 or more is a failed filter
 restarting_any() { jhas 'restarting-*'; local r=$?; [ $r != 2 ] || stop "the journal $G cannot be listed: whether an earlier restart attempt is open is not known; nothing was changed"; return $r; }   # 0 open, 1 none; an unlistable journal is a stop, never "none"
 restarted_any() { jhas 'restarted-*'; local r=$?; [ $r != 2 ] || stop "the journal $G cannot be listed: whether a restart is recorded is not known; nothing was changed"; return $r; }
-freeze_holds() { local u a ru
+freeze_holds() { local u a ru us
   [ -e "$G/freeze" ] || stop "no freeze record; run freeze first"
   ru=$(rec_units) && [ -n "$ru" ] || stop "the freeze record names no frozen units (or cannot be read): whether they stay stopped cannot be told"   # the set the freeze stopped, not only what GATE0_UNITS_* says now
   hook_check   # a hook installed after preflight would run on the fetch, the realign or the repair run that follow
-  for u in $ru $TIMERS $SERVICES; do ! is_active "$u" || stop "$u is active: the freeze no longer holds"; done
+  us=$(unit_set) || stop "the freeze record cannot be read: whether its units stay stopped cannot be told"
+  for u in $us; do ! is_active "$u" || stop "$u is active: the freeze no longer holds"; done
   [ ! -e "$ROOT/.git-autosync" ] || stop "the marker is back in the checkout: the freeze no longer holds"
   a=$(agents_in_root) || stop "cannot list the processes (lsof or /proc): the freeze cannot be confirmed"
   [ -z "$a" ] || stop "an agent process has its working directory in the checkout: the freeze no longer holds: $(echo "$a" | tr '\n' ';')"
@@ -511,10 +520,11 @@ journal_cursor() { local o; o=$(journalctl --user -n 1 --show-cursor -o cat --no
 journal_since() { journalctl --user -u "$REPAIR_SVC" --after-cursor="$1" --no-pager -o cat 2>/dev/null; }   # only lines written after that position: an earlier invocation's lines are never this run's
 predict() { RESTART_REPORT=0 "$PRED" "$@"; }   # the wrapper reports once; the predictor's own report sender stays off
 rcleanup() {  # back to the frozen state, idempotent: every recorded timer stopped, each timer and service read back, the marker aside; the unconfirmed units are left in RBAD
-  local u ts; RBAD=
+  local u ts us; RBAD=
   ts=$(rec_timers) || { ts=$TIMERS; say "gate0-run: the freeze record cannot be read: every configured timer is stopped instead" >&2; }   # cleanup never skips the timers because its record is unreadable
-  for u in $ts $SERVICES; do units stop "$u" >/dev/null 2>&1; done   # a service a cut-off restart left running is stopped too
-  for u in $ts $SERVICES; do [ "$(unit_state "$u")" = inactive ] || RBAD="$RBAD $u"; done
+  us=$(unit_set $ts) || say "gate0-run: the freeze record cannot be read: only the configured units and the restart set are stopped" >&2   # the recorded units too, whatever the configuration names now
+  for u in $us; do units stop "$u" >/dev/null 2>&1; done   # a service a cut-off restart left running is stopped too
+  for u in $us; do [ "$(unit_state "$u")" = inactive ] || RBAD="$RBAD $u"; done
   [ -z "$RBAD" ] || say "gate0-run: UNCONFIRMED: these units are not confirmed stopped:$RBAD; a human must stop them before anything else runs" >&2
   [ -z "${RSTART:-}" ] || rm -f -- "$G/restarted-$RSTART"   # a completion record written before the cut-off is withdrawn with the rest
   move_marker_aside force; [ -z "$RBAD" ] || return 1   # the marker's own failure is a stop (the subshell's status); an unconfirmed unit is a failed cleanup
