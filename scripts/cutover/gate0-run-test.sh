@@ -1574,6 +1574,57 @@ HEOF
   [ "$(run rm)" = "rc=0 " ] && [ ! -e "$g/restarting-a" ] && [ ! -L "$g/restarting-c" ] && [ -e "$g/restarted-b" ] && [ -e "$g/preflight" ] && [ -e "$g/freeze" ] || { echo "    jrm: $(run rm); left: $(ls -A "$g" | tr '\n' ' ')"; bad="$bad rm"; }
   [ "$(run has)" = "rc=1 " ] && [ "$(run any)" = "rc=1 " ] || { echo "    after jrm: $(run has) $(run any)"; bad="$bad after"; }
   chmod -R 755 "$d" 2>/dev/null; [ -z "$bad" ]; }
+t_swquoting() {  # the journal's records are found whatever the caller's ls settings are: with QUOTING_STYLE=shell-always (GNU ls then prints 'restarting-r0' in quotes) a record of another checkout is still found by the gate in every mode (exit 3, nothing written), and a restart cut off on this checkout is still found and undone by a retry
+  local SRSVC=1 SRSED= R0=$R mode rc pre post bad= n=0
+  sr_cut || return 1; sed -i '2s|.*|root /elsewhere|' "$J/gate0-run/restarting-r0"; sr_stubs
+  for mode in preflight freeze capture run rollback "restart r0"; do
+    n=$((n+1)); pre="$(wr_obs "$J" "$R0")/$(nstarts)"; : > "$B/out.sw"
+    QUOTING_STYLE=shell-always wg $mode >> "$B/out.sw" 2>&1; rc=$?
+    post="$(wr_obs "$J" "$R0")/$(nstarts)"
+    { [ "$rc" = 3 ] && [ "$pre" = "$post" ] && [ "$(sw_msg "a record in the journal is not this checkout's")" = 1 ]; } || { echo "    $mode: rc=$rc gate-notes=$(sw_msg "a record in the journal is not this checkout's") state $([ "$pre" = "$post" ] && echo same || echo CHANGED)"; bad="$bad $mode"; }
+  done
+  [ "$n" = 6 ] || return 1
+  sr_cut || return 1; sr_stubs; : > "$B/out.sw"
+  QUOTING_STYLE=shell-always wg restart r0 >> "$B/out.sw" 2>&1; rc=$?
+  SWQ="$(sw_msg 'are undone now')/$(sr_state)"; [ "$SWQ" = "1//no/no/0" ] || { echo "    the cut-off restart was not undone under QUOTING_STYLE: rc=$rc $SWQ"; bad="$bad recover"; }
+  [ -z "$bad" ]; }
+t_swfrozenunits() {  # the freeze records every unit it stopped, and a later phase checks those whatever GATE0_UNITS_TIMERS and GATE0_UNITS_SERVICES say then: a timer re-enabled after the freeze stops a repeated freeze, capture and rollback even when the omitted-timer configuration no longer names it; a freeze record that names no frozen units is refused
+  local R0=$R mode rc pre post bad= n=0 u
+  restore fx; stepto preflight || return 1; wg freeze >> "$B/step.out" 2>&1
+  [ "$(sed -n 's/^unit //p' "$J/gate0-run/freeze" | paste -sd' ' -)" = "git-autosync-repair.timer git-autosync-promote.timer git-autosync-repair.service git-autosync-promote.service" ] || { echo "    the freeze record does not name the four units it stopped: $(sed -n 's/^unit //p' "$J/gate0-run/freeze" | paste -sd' ' -)"; bad="$bad record"; }
+  for mode in freeze capture rollback; do
+    for u in timer service; do
+      restore fx; stepto preflight freeze || return 1; touch "$ST/units/git-autosync-promote.$u"
+      n=$((n+1)); pre="$(wr_obs "$J" "$R")"; : > "$B/out.sw"
+      GATE0_UNITS_TIMERS=git-autosync-repair.timer GATE0_UNITS_SERVICES=git-autosync-repair.service wg $mode >> "$B/out.sw" 2>&1; rc=$?
+      post="$(wr_obs "$J" "$R")"
+      { [ "$rc" = 3 ] && [ "$(( $(sw_msg 'the freeze no longer holds') + $(sw_msg 'is active again') ))" -ge 1 ] && [ "$(active git-autosync-promote.$u)" = yes ] && [ "$(nstarts)" = 0 ]; } || { echo "    $mode/$u: rc=$rc holds-notes=$(( $(sw_msg 'the freeze no longer holds') + $(sw_msg 'is active again') )) promote-$u=$(active git-autosync-promote.$u) starts=$(nstarts)"; bad="$bad $mode/$u"; }
+    done
+  done
+  [ "$n" = 6 ] || return 1
+  restore fx; stepto preflight freeze || return 1; sed -i '/^unit /d' "$J/gate0-run/freeze"; : > "$B/out.sw"
+  wg freeze >> "$B/out.sw" 2>&1; rc=$?
+  { [ "$rc" = 3 ] && [ "$(sw_msg 'names no frozen units')" = 1 ] && [ "$(sw_msg 'freeze already holds')" = 0 ]; } || { echo "    a freeze record with no unit lines: rc=$rc names-none=$(sw_msg 'names no frozen units') holds=$(sw_msg 'freeze already holds')"; bad="$bad nounits"; }
+  restore fx; stepto preflight freeze || return 1; : > "$B/out.sw"
+  GATE0_UNITS_TIMERS=git-autosync-repair.timer GATE0_UNITS_SERVICES=git-autosync-repair.service wg freeze >> "$B/out.sw" 2>&1; rc=$?
+  { [ "$rc" = 0 ] && [ "$(sw_msg 'freeze already holds')" = 1 ]; } || { echo "    a narrower configuration with every frozen unit still stopped: rc=$rc"; bad="$bad narrower"; }
+  [ -z "$bad" ]; }
+t_swenvmatrix() {  # the verdicts of a restart do not depend on the caller's environment: with each of the variables that change how a tool prints (QUOTING_STYLE, LS_COLORS, TIME_STYLE, LANG, a hostile TZ, GREP_OPTIONS and GREP_COLORS, PS_FORMAT, COLUMNS, BLOCK_SIZE), and with all of them together, a restart exits and leaves the same state as with a clean environment; a CDPATH that holds a directory of the script's own relative name does not change where the script finds itself
+  local kv sig0 sig bad= n=0 all rel=$B/rel dec=$B/decoy rc
+  sg() { echo "$1/$(nstarts)/$(timers)/$([ -e "$R/.git-autosync" ] && echo marker)/$(ls "$J/gate0-run" | grep -c '^restarted')"; }
+  restore r0a; wg restart r0 > "$B/out.sw" 2>&1; sig0=$(sg $?)
+  [ "$sig0" = "0/1/yes/yes/marker/1" ] || { echo "    the clean restart is not what the test needs: $sig0"; return 1; }
+  all=(QUOTING_STYLE=shell-always "LS_COLORS=rs=0:di=01;34:fi=01;31" TIME_STYLE=long-iso LANG=de_DE.UTF-8 TZ=Pacific/Kiritimati GREP_OPTIONS=--color=always "GREP_COLORS=mt=01;31" PS_FORMAT=pid COLUMNS=20 BLOCK_SIZE=K)
+  for kv in "${all[@]}" ALL; do
+    n=$((n+1)); restore r0a
+    if [ "$kv" = ALL ]; then ( export "${all[@]}"; wg restart r0 > "$B/out.sw" 2>&1 ); else ( export "$kv"; wg restart r0 > "$B/out.sw" 2>&1 ); fi
+    rc=$?; sig=$(sg $rc); [ "$sig" = "$sig0" ] || { echo "    ${kv%%=*}: $sig (clean: $sig0)"; bad="$bad ${kv%%=*}"; }
+  done
+  [ "$n" = 11 ] || return 1
+  rm -rf "$rel" "$dec"; mkdir -p "$rel/sub" "$dec/sub"; cp "${WG:-$GW}" "$rel/sub/gate0-run.sh"; cp "$HERE/cutover-steps.sh" "$rel/sub/cutover-steps.sh"; chmod +x "$rel/sub/gate0-run.sh"
+  restore r0a; ( cd "$rel" && CDPATH=$dec WG=sub/gate0-run.sh wg restart r0 > "$B/out.sw" 2>&1 ); sig=$(sg $?)
+  [ "$sig" = "$sig0" ] || { echo "    CDPATH: $sig (clean: $sig0)"; bad="$bad CDPATH"; }
+  [ -z "$bad" ]; }
 t_swrbailwording() {  # the restart that finds an earlier attempt cut off undoes it and says so only when the cleanup was confirmed: a unit that cannot be stopped makes the message say the cleanup is INCOMPLETE (and name the unit), never that the effects are undone; the retry that can stop it says they are
   local SRSVC=1 SRSED= rc2 rc3; SWRB=
   sr_cut || return 1; touch "$ST/failstop-git-autosync-repair.timer"; : > "$B/out.sw"
@@ -1930,6 +1981,9 @@ sc "a start that cannot finish the cleanup of a cut-off restart says it is incom
 sc "the journal gate runs first in every mode (preflight, freeze, capture, run, rollback, restart; each also under --check): a foreign, unknown or identity-less record of any kind stops it with no write at all, git metadata included" t_swgate
 sc "an unlistable journal directory is unknown, never empty: every mode (also under --check) is refused with no write at all, git metadata included" t_swunlistable
 sc "the journal enumerator tells a directory that was listed (empty or not) from one that could not be listed" t_swjlist
+sc "the journal's records are found whatever ls settings the caller has (QUOTING_STYLE): a foreign record is refused, a cut-off restart is undone" t_swquoting
+sc "a later phase checks every unit the freeze stopped, not only those the configuration names now; a freeze record that names none is refused" t_swfrozenunits
+sc "a restart gives the same verdict and leaves the same state under each hostile environment variable (and all together), and under a CDPATH that names a directory of the script's own relative name" t_swenvmatrix
 sc "a restart that finds an earlier attempt cut off says the effects are undone only when the cleanup was confirmed" t_swrbailwording
 sc "a git directory link or common directory link that exists but is not a regular one-line file is unknown, never absent: nothing is written, stopped or moved" t_swcommonshape
 sc "a transient failure of the first confinement read does not stay, and an early safe is revoked by the final decision" t_swtransient
@@ -1996,7 +2050,7 @@ mutate M25 's/^  prior=; .*$/  prior=/' &&
   { WG=$B/mut/M25.sh; t_failstop; r=$?; WG=; check "M25 (no memory of a partly stopped freeze) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M26 's/^  \[ ! -e "\$DRIFT" \] || mv -f -- "\$DRIFT" "\$LOGD\/drift.before".*$/  :/' &&
   { WG=$B/mut/M26.sh; t_staledrift; r=$?; WG=; check "M26 (an earlier drift report accepted) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
-mutate M27 's/^  \[ -z "\$RBAD" \] || say .*$/  :/; s/\${RBAD:+; UNCONFIRMED stop of\$RBAD}//' &&
+mutate M27 's/^  \[ -z "\$RBAD" \] || say .*$/  :/; s/INCOMPLETE: UNCONFIRMED stop of\$RBAD; a human/INCOMPLETE; a human/' &&
   { WG=$B/mut/M27.sh; t_unconfirmed; r=$?; WG=; check "M27 (an unconfirmed stop not reported) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M28 's/^  jrm .restarted-\*. .restarting-\*. /  rm -f -- "$G\/freeze-intent"\n&/; /^  rm -f -- "\$G\/freeze-intent"   # last/d' &&
   { WG=$B/mut/M28.sh; t_refreezecrash; r=$?; WG=; check "M28 (the restart set dropped before the earlier restart records) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
@@ -2217,7 +2271,7 @@ mm M189 t_swgate "records with no identity are trusted without a preflight recor
 mm M190 t_swgate "a dangling record link is not looked at" 's/case \$n in \$p) printf/case $n in $p) [ -e "$G\/$n" ] \&\& printf/'
 mm M191 t_swrbailwording "a cleanup that could not be confirmed is reported as done" 's/^  if \[ -z "\${RBAD:-}" \]; then o=/  if true; then o=/'
 mm M192 t_swjlist "the permissions of the journal directory are not checked, only the status of ls" 's/ \&\& \[ -r "\$G" \] \&\& \[ -x "\$G" \] || return 1$/ || return 1/'
-mm M193 t_swunlistable "neither the journal directory's permissions nor the status of ls is checked: an unlistable journal lists as empty" 's/ \&\& \[ -r "\$G" \] \&\& \[ -x "\$G" \] || return 1$/ || return 1/; s/^  o=\$(ls -A -- "\$G" 2>\/dev\/null) || return 1$/  o=$(ls -A -- "$G" 2>\/dev\/null)/'
+mm M193 t_swunlistable "neither the journal directory's permissions nor the status of ls is checked: an unlistable journal lists as empty" 's/ \&\& \[ -r "\$G" \] \&\& \[ -x "\$G" \] || return 1$/ || return 1/; s/^  o=\$(cd -- "\$G" 2>\/dev\/null \&\& find \. -mindepth 1 -maxdepth 1 2>\/dev\/null) || return 1 .*$/  o=$(cd -- "$G" 2>\/dev\/null \&\& find . -mindepth 1 -maxdepth 1 2>\/dev\/null; true)/'
 mm M194 t_swjlist "jhas reports a journal that could not be listed as having no record" 's/o=\$(jlist "\$@") || return 2;/o=$(jlist "$@") || return 1;/'
 mm M195 t_swjlist "jrm ignores that the journal could not be listed" 's/^  local o n; o=\$(jlist "\$@") || return 1$/  local o n; o=$(jlist "$@")/'
 mm M196 t_swjlist "restarting_any takes an unlistable journal for one with no open attempt" 's/\[ \$r != 2 \] || stop "the journal \$G cannot be listed: whether an earlier[^"]*"/:/'
@@ -2227,6 +2281,13 @@ mm M199 t_swunlistable "the gate finds the records with bare globs again (an unm
 mmd M200 t_swunlistable "the gate refuses first; records_ours ignores that the journal could not be listed" 's/^\(  local f o; o=\$(jlist [^)]*)\) || return 1/\1/'
 mmd M201 t_swunlistable "the gate refuses first; the cleanup ignores that the restart records could not be removed" 's/^  jrm .restarting-\*. || { RBAD=.*$/  true/'
 mmd M202 t_swunlistable "the gate refuses first; a new freeze ignores that the earlier restart records could not be cleared" 's/^  jrm .restarted-\*. .restarting-\*. || stop .*$/  true/'
+mm M203 t_swquoting "the journal is listed with ls again, whose output the caller's QUOTING_STYLE changes, and QUOTING_STYLE is no longer dropped" 's/^  o=\$(cd -- "\$G" 2>\/dev\/null \&\& find \. -mindepth 1 -maxdepth 1 2>\/dev\/null) || return 1 .*$/  o=$(ls -A -- "$G" 2>\/dev\/null) || return 1/; s/ QUOTING_STYLE//'
+mm M204 t_swfrozenunits "a later phase checks only the units the configuration names now" 's/^  for u in \$ru \$TIMERS \$SERVICES; do/  for u in $TIMERS $SERVICES; do/'
+mm M205 t_swfrozenunits "a freeze record that names no frozen units is accepted" 's/^  ru=\$(rec_units) \&\& \[ -n "\$ru" \] || stop .*$/  ru=$(rec_units)/'
+mm M206 t_swfrozenunits "the freeze does not record the units it stopped" 's/"\$(for u in \$TIMERS \$SERVICES; do printf .unit %s\\n. "\$u"; done)"\$.\\n.//'
+mm M207 t_swenvmatrix "the CDPATH and the print-changing variables are no longer dropped" 's/^unset CDPATH POSIXLY_CORRECT .*$/:/'
+mmd M208 t_swenvmatrix "no parsed output of the wrapper differs by locale or zone on this fixture; the pins stay for the hosts where one would" 's/^export LC_ALL=C TZ=UTC$/:/'
+mmd M209 t_swquoting "the listing is environment-independent (find), so dropping QUOTING_STYLE as well is defense in depth" 's/ QUOTING_STYLE//'
 mm M180 t_swcleanfail "a cleanup that failed is reported as done" 's/^    undo) INCLEAN=1; CLEANRC=0; ( rcleanup ) >\/dev\/null || CLEANRC=1; return 0 ;;/    undo) INCLEAN=1; CLEANRC=0; ( rcleanup ) >\/dev\/null || :; return 0 ;;/'
 mm M181 t_swcleanfail "the cleanup status is never read" 's/if \[ "\${CLEANRC:-1}" = 0 \]; then echo "gate0-run: the start stopped/if true; then echo "gate0-run: the start stopped/'
 mm M110 t_swrefreezegone "an interrupted new freeze is taken for a new attempt: its recorded marker is set aside" 's/^  if restarted_any \&\& \[ ! -e "\$G\/freeze-intent" \] \&\& /  if restarted_any \&\& /'

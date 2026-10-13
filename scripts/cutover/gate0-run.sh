@@ -59,7 +59,8 @@
 # Portable to /bin/bash 3.2.
 set -u
 PATH=${GATE0_PATH:-/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin}
-export LC_ALL=C
+export LC_ALL=C TZ=UTC
+unset CDPATH POSIXLY_CORRECT GREP_OPTIONS GREP_COLOR GREP_COLORS PS_FORMAT PS_PERSONALITY COLUMNS LINES TIME_STYLE QUOTING_STYLE LS_COLORS LS_OPTIONS BLOCK_SIZE BLOCKSIZE   # the output this script parses must not depend on the caller's locale, time zone or tool settings: the locale and zone are pinned, a variable that changes how a tool prints or how cd resolves a name is dropped (CDPATH would make cd print the directory and change which one it enters)
 git_env_clean() {  # git takes its repository, work tree, index, object store, namespace, extra configuration and program directory from the environment: none of it is inherited, so every git command here and every step acts on the validated checkout. Only the settings that choose credentials, a terminal prompt, an identity or the user-level config file stay
   local _v; for _v in $(compgen -e); do case $_v in
     GIT_CONFIG_GLOBAL|GIT_CONFIG_NOSYSTEM|GIT_TERMINAL_PROMPT|GIT_ASKPASS|GIT_SSH|GIT_SSH_COMMAND|GIT_AUTHOR_*|GIT_COMMITTER_*|GIT_OPTIONAL_LOCKS) ;;
@@ -82,7 +83,7 @@ if [ "${1:-}" = --check ]; then
   if [ $# = 0 ]; then
     self_sha
     bash -n "$SELF" && [ -f "$CS" ] && [ -f "$PRED" ] && bash -n "$CS" && bash -n "$PRED" && command -v git >/dev/null &&
-      command -v tar >/dev/null && command -v awk >/dev/null && command -v ps >/dev/null &&
+      command -v tar >/dev/null && command -v awk >/dev/null && command -v find >/dev/null && command -v ps >/dev/null &&
       echo "gate0-run.sh: check ok (sha256 $SELF_SHA; cutover-steps.sh $(sha < "$CS"); restart-predict.sh $(sha < "$PRED"))"
     exit $?
   fi
@@ -157,13 +158,14 @@ pg() { git_bind; git -C "$ROOT" "$@"; }   # every git command of this script fir
 pgs() { local o; o=$(pg "$@") || return 1; printf '%s\n' "$o"; }   # pg, but output is shown only when the command succeeded: "output, then failure" is a failure, never a value to compare
 jlist() {  # PATTERN... : the ONLY way the journal's records are found: print the names in G that match any case pattern (a dangling link and an entry that cannot be examined included). Status 0: the journal was listed (no output means nothing matched); status 1: it could not be listed (a missing, linked or unreadable directory, or a failed read), which is never read as "empty"
   local o n p; [ -d "$G" ] && [ ! -L "$G" ] && [ -r "$G" ] && [ -x "$G" ] || return 1
-  o=$(ls -A -- "$G" 2>/dev/null) || return 1
-  while IFS= read -r n; do [ -n "$n" ] || continue; for p in "$@"; do case $n in $p) printf '%s\n' "$n"; break ;; esac; done; done <<< "$o"; return 0; }
+  o=$(cd -- "$G" 2>/dev/null && find . -mindepth 1 -maxdepth 1 2>/dev/null) || return 1   # find prints the names as they are and fails when it cannot read the directory; ls would quote them as QUOTING_STYLE says and hide every record from the patterns
+  while IFS= read -r n; do n=${n#./}; [ -n "$n" ] || continue; for p in "$@"; do case $n in $p) printf '%s\n' "$n"; break ;; esac; done; done <<< "$o"; return 0; }
 jhas() { local o; o=$(jlist "$@") || return 2; [ -n "$o" ]; }   # PATTERN... : 0 a record matches, 1 none does, 2 the journal could not be listed
 jrm() {  # PATTERN... : remove the matching entries; failure when the journal cannot be listed or an entry cannot be removed
   local o n; o=$(jlist "$@") || return 1
   while IFS= read -r n; do [ -z "$n" ] || rm -f -- "$G/$n" || return 1; done <<< "$o"; return 0; }
 rec_timers() { [ "${JGATE:-}" = bound ] || return 1; sed -n 's/^timer //p' "${1:-$G/freeze}" 2>/dev/null; }   # the timers of a record; read only after journal_gate said bound in this run; the status is sed's, so an unreadable record is a failure, never an empty list
+rec_units() { [ "${JGATE:-}" = bound ] || return 1; sed -n 's/^unit //p' "$G/freeze" 2>/dev/null; }   # the units the freeze stopped (every configured timer and service), one per line; same rule. The freeze checks these, whatever the configuration says now
 rec_marker() { [ "${JGATE:-}" = bound ] || return 1; sed -n 's/^marker //p' "$G/freeze" 2>/dev/null; }   # the marker digest the freeze names: same rule
 rec_state() {  # FILE : 0 bound (a regular file, not a link, whose root, gitdir and common lines are exactly this checkout's identity RID), 1 foreign (well formed, another checkout's), 2 unknown (a link or other non-regular entry, unreadable, no identity or not well formed: an old format, an unknown identity of this checkout)
   local g nl=$'\n'; [ -f "$1" ] && [ ! -L "$1" ] && [ -n "${RID:-}" ] || return 2
@@ -395,17 +397,18 @@ do_freeze() {
   if [ -n "${GATE0_STATUS_CMD:-}" ]; then "$GATE0_STATUS_CMD" > "$LOGD/autosync-status.txt" 2>&1; say "gate0-run: autosync status recorded (exit $?)"; fi
   if [ -e "$G/marker" ]; then w=$(sha < "$G/marker") || stop "cannot hash the marker set aside: the freeze record would name no marker"; w="marker $w"; else w="marker none"; fi
   [ -n "${RID:-}" ] || stop "the checkout's identity is not known: the freeze record would bind to nothing"
-  f="${al:+$al$'\n'}$w"$'\n'"$RID"$'\n'"at $(date -u +%Y-%m-%dT%H:%M:%SZ)"; put "$G/freeze" "$f"
+  f="${al:+$al$'\n'}$w"$'\n'"$(for u in $TIMERS $SERVICES; do printf 'unit %s\n' "$u"; done)"$'\n'"$RID"$'\n'"at $(date -u +%Y-%m-%dT%H:%M:%SZ)"; put "$G/freeze" "$f"
   jrm 'restarted-*' 'restarting-*' || stop "the earlier attempt's restart records cannot be cleared (the journal cannot be listed or an entry cannot be removed)"   # a new freeze starts a new attempt: an earlier attempt's restart records no longer apply (cleared once the new freeze is recorded)
   rm -f -- "$G/freeze-intent"   # last: while a stale restart record exists the intent still names the restart set, so a crash between these two steps loses nothing
   say "gate0-run: freeze holds (timers and services stopped, marker aside)"; }
 nobeads() { local rc; grep -v ' \.beads/issues\.jsonl$'; rc=$?; [ $rc -le 1 ]; }   # drop the tracker export line; grep 1 is "no line left", 2 or more is a failed filter
 restarting_any() { jhas 'restarting-*'; local r=$?; [ $r != 2 ] || stop "the journal $G cannot be listed: whether an earlier restart attempt is open is not known; nothing was changed"; return $r; }   # 0 open, 1 none; an unlistable journal is a stop, never "none"
 restarted_any() { jhas 'restarted-*'; local r=$?; [ $r != 2 ] || stop "the journal $G cannot be listed: whether a restart is recorded is not known; nothing was changed"; return $r; }
-freeze_holds() { local u a
+freeze_holds() { local u a ru
   [ -e "$G/freeze" ] || stop "no freeze record; run freeze first"
+  ru=$(rec_units) && [ -n "$ru" ] || stop "the freeze record names no frozen units (or cannot be read): whether they stay stopped cannot be told"   # the set the freeze stopped, not only what GATE0_UNITS_* says now
   hook_check   # a hook installed after preflight would run on the fetch, the realign or the repair run that follow
-  for u in $TIMERS $SERVICES; do ! is_active "$u" || stop "$u is active: the freeze no longer holds"; done
+  for u in $ru $TIMERS $SERVICES; do ! is_active "$u" || stop "$u is active: the freeze no longer holds"; done
   [ ! -e "$ROOT/.git-autosync" ] || stop "the marker is back in the checkout: the freeze no longer holds"
   a=$(agents_in_root) || stop "cannot list the processes (lsof or /proc): the freeze cannot be confirmed"
   [ -z "$a" ] || stop "an agent process has its working directory in the checkout: the freeze no longer holds: $(echo "$a" | tr '\n' ';')"
