@@ -2197,7 +2197,7 @@ mm M167 t_swcommonshape "oneline accepts a link or a directory" 's/^  local c; \
 mm M168 t_swcommonshape "oneline reads the first line of a file of several lines" 's/^  c=\$(cat -- "\$1" 2>\/dev\/null) || return 1$/  read -r c < "$1" || return 1/'
 mm M169 t_swgitlink "oneline ignores a failed read" 's/^  c=\$(cat -- "\$1" 2>\/dev\/null) || return 1$/  c=$(cat -- "$1" 2>\/dev\/null) || :/'
 mm M170 t_swstartinject "the checkout's identity is cleared before the decision is made" 's/^  local r=unknown rid=$/&; RID=/'
-mm M171 t_swwrongroot "a completed restart's record of another checkout is checked by neither the gate nor the restart (the gate is the first barrier, records_ours the second)" 's/^    records_ours 5 || { left_note "the restart records do not name this checkout (or are not well formed)"; exit 3; }$/    :/;s/ "\$G"\/restarting-\* "\$G"\/restarted-\*; do$/ "$G"\/restarting-*; do/'
+mm M171 t_swwrongroot "a completed restart's record of another checkout is checked by neither the gate nor the restart (the gate is the first barrier, records_ours the second)" 's/^    records_ours 5 || { left_note "the restart records do not name this checkout (or are not well formed)"; exit 3; }$/    :/;s/^\(      l=\$(jlist preflight freeze freeze-intent .restarting-\*.\) .restarted-\*.)/\1)/'
 mm M172 t_swwrongroot "a left attempt is not named" 's/^  \[ -z "\${LEFT:-}" \] || return 0; LEFT=1$/  return 0/'
 mm M173 t_swtargetread "a restart goes on without a recovery target" 's/^  tgt=\$(rtarget) || stop "[^"]*"[^\n]*$/  tgt=$(rtarget)/'
 mm M174 t_swgate "every record is taken for this checkout's" 's/^  \[ "\$g" = "\$RID" \] || return 1; }$/  return 0; }/'
