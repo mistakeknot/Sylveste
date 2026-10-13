@@ -165,7 +165,7 @@ jrm() {  # PATTERN... : remove the matching entries; failure when the journal ca
   local o n; o=$(jlist "$@") || return 1
   while IFS= read -r n; do [ -z "$n" ] || rm -f -- "$G/$n" || return 1; done <<< "$o"; return 0; }
 rec_timers() { [ "${JGATE:-}" = bound ] || return 1; sed -n 's/^timer //p' "${1:-$G/freeze}" 2>/dev/null; }   # the timers of a record; read only after journal_gate said bound in this run; the status is sed's, so an unreadable record is a failure, never an empty list
-rec_units() { [ "${JGATE:-}" = bound ] || return 1; sed -n 's/^unit //p' "$G/freeze" 2>/dev/null; }   # the units the freeze stopped (every configured timer and service), one per line; same rule. The freeze checks these, whatever the configuration says now
+rec_units() { [ "${JGATE:-}" = bound ] || return 1; sed -n 's/^unit //p' "${1:-$G/freeze}" 2>/dev/null; }   # the units a freeze record (or a freeze intent) names as stopped (every configured timer and service, and any earlier record's), one per line; same rule. The freeze checks these, whatever the configuration says now
 rec_marker() { [ "${JGATE:-}" = bound ] || return 1; sed -n 's/^marker //p' "$G/freeze" 2>/dev/null; }   # the marker digest the freeze names: same rule
 rec_state() {  # FILE : 0 bound (a regular file, not a link, whose root, gitdir and common lines are exactly this checkout's identity RID), 1 foreign (well formed, another checkout's), 2 unknown (a link or other non-regular entry, unreadable, no identity or not well formed: an old format, an unknown identity of this checkout)
   local g nl=$'\n'; [ -f "$1" ] && [ ! -L "$1" ] && [ -n "${RID:-}" ] || return 2
@@ -355,10 +355,11 @@ do_preflight() {
 
 # ---- freeze (P1)
 in_list() { local x=$1 y; shift; for y in "$@"; do [ "$y" = "$x" ] && return 0; done; return 1; }
-unit_set() {  # the ONE set every decision about the frozen units uses (the freeze's stops, the freeze check, the cleanup): the units the freeze record names, the configured ones and any EXTRA arguments, each once. Status 1 (the set still printed, configured units only) when a record exists and cannot be read: a caller that must not forget a recorded unit stops on it
-  local ru= u o= rc=0
+unit_set() {  # the ONE set every decision about the frozen units uses (the freeze's stops, the freeze check, the cleanup): the units every record of this run's freeze names (the freeze record, and the freeze intent a freeze that was cut off left: its units and its timers), the configured ones and any EXTRA arguments, each once. Status 1 (the set still printed, configured units only) when a record exists and cannot be read: a caller that must not forget a recorded unit stops on it
+  local ru= ri= rt= u o= rc=0
   if [ -e "$G/freeze" ]; then ru=$(rec_units) || rc=1; fi
-  for u in $ru "$@" $TIMERS $SERVICES; do in_list "$u" $o || o="$o $u"; done
+  if [ -e "$G/freeze-intent" ]; then ri=$(rec_units "$G/freeze-intent") || rc=1; rt=$(rec_timers "$G/freeze-intent") || rc=1; fi
+  for u in $ru $ri $rt "$@" $TIMERS $SERVICES; do in_list "$u" $o || o="$o $u"; done
   printf '%s\n' "${o# }"; return $rc; }
 is_timer_unit() { case $1 in *.timer) return 0 ;; esac; in_list "$1" $TIMERS; }
 act_lines() { ( set -o pipefail; printf '%s\n' "$1" | sed 's/^ *//; s/ timer /\ntimer /g' | sed -n '/^timer /p' ); }   # " timer A timer B" : one "timer UNIT" line each; a failed stage is a failed list, never an empty one
@@ -396,7 +397,7 @@ do_freeze() {
   al=$(act_lines "$act") || stop "cannot write the list of timers to restart: nothing was stopped"
   mkdir -p "$G"
   [ -n "${RID:-}" ] || stop "the checkout's identity is not known: the freeze intent would bind to nothing"
-  put "$G/freeze-intent" "${al:+$al$'\n'}$RID"   # before the first stop: a stop that fails midway must not lose the timers already stopped
+  put "$G/freeze-intent" "${al:+$al$'\n'}$(for u in $us; do printf 'unit %s\n' "$u"; done)"$'\n'"$RID"   # before the first stop: a stop that fails midway must not lose the timers already stopped, nor any unit (a service too) a retry with a narrower configuration would otherwise forget
   for u in $us; do ! is_timer_unit "$u" || units stop "$u" || stop "cannot stop $u"; done
   for u in $us; do is_timer_unit "$u" || units stop "$u" || stop "cannot stop $u"; done
   for u in $us; do ! is_active "$u" || stop "$u is still active"; done
@@ -521,8 +522,8 @@ journal_since() { journalctl --user -u "$REPAIR_SVC" --after-cursor="$1" --no-pa
 predict() { RESTART_REPORT=0 "$PRED" "$@"; }   # the wrapper reports once; the predictor's own report sender stays off
 rcleanup() {  # back to the frozen state, idempotent: every recorded timer stopped, each timer and service read back, the marker aside; the unconfirmed units are left in RBAD
   local u ts us; RBAD=
-  ts=$(rec_timers) || { ts=$TIMERS; say "gate0-run: the freeze record cannot be read: every configured timer is stopped instead" >&2; }   # cleanup never skips the timers because its record is unreadable
-  us=$(unit_set $ts) || say "gate0-run: the freeze record cannot be read: only the configured units and the restart set are stopped" >&2   # the recorded units too, whatever the configuration names now
+  ts=$(rec_timers) || { ts=$TIMERS; RBAD="$RBAD [the recorded timer set]"; say "gate0-run: the freeze record cannot be read: every configured timer is stopped instead, and the cleanup is incomplete" >&2; }   # cleanup never skips the timers because its record is unreadable; the set is not known, so the attempt is not closed (the evidence stays)
+  us=$(unit_set $ts) || { RBAD="$RBAD [the recorded unit set]"; say "gate0-run: a record of the frozen units cannot be read: only the configured units and the restart set are stopped, and the cleanup is incomplete" >&2; }   # the recorded units too, whatever the configuration names now; when they cannot be read the cleanup says so and keeps its evidence
   for u in $us; do units stop "$u" >/dev/null 2>&1; done   # a service a cut-off restart left running is stopped too
   for u in $us; do [ "$(unit_state "$u")" = inactive ] || RBAD="$RBAD $u"; done
   [ -z "$RBAD" ] || say "gate0-run: UNCONFIRMED: these units are not confirmed stopped:$RBAD; a human must stop them before anything else runs" >&2
