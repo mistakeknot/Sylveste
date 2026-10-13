@@ -2282,7 +2282,7 @@ mutate M21 's/^    \[ "\$(unit_state "\$u")" = active \] || rbail .*; done$/    
   { WG=$B/mut/M21.sh; t_startlie; r=$?; WG=; check "M21 (a started timer not checked live) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 mutate M22 's/env CUTOVER_REPORT=0 "\$CS" --check/"$CS" --check/' &&
   { WG=$B/mut/M22.sh; t_checkreport; r=$?; WG=; check "M22 (preflight check lets the step script report) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
-mutate M23 's/ && ! restarted_any; then/; then/' &&
+mutate M23 's/ && ! restarted_any && intent_covered; then/ \&\& intent_covered; then/' &&
   { WG=$B/mut/M23.sh; t_refreeze; r=$?; WG=; check "M23 (freeze after a completed restart stops) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }
 
 mutate M24 's/|| { skippable_proc "\$d" "\$p" && continue; return 2; }/|| continue/' &&
