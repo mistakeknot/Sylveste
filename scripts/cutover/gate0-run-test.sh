@@ -605,7 +605,10 @@ t_svcoverride() {  # a custom service list still holds the service a restart sta
   rm -f "$ST/svc-stays-active"
   GATE0_UNITS_SERVICES="other.service" wg restart r0 >> "$B/out.so" 2>&1; rc2=$?
   SOS="$rc/$rc2/$(active git-autosync-repair.service)/$(timers)/$([ -e "$R/.git-autosync" ] && echo marker)"
-  [ "$SOS" = "137/3/no/no/no/" ]; }
+  [ "$SOS" = "137/3/no/no/no/" ] || return 1
+  restore fx; stepto preflight || return 1   # and a fresh freeze under the same list records and stops the repair service too
+  : > "$B/out.so"; GATE0_UNITS_SERVICES="other.service" wg freeze >> "$B/out.so" 2>&1 || return 1
+  [ "$(grep -c '^unit git-autosync-repair.service$' "$J/gate0-run/freeze")" = 1 ]; }
 t_hookafter() {  # a writing hook installed after preflight is found before capture's fetch runs it
   restore fx; stepto preflight freeze || return 1
   rm -f "$B/hook-ran"; git -C "$SD" push -q origin main:refs/heads/newbr2
@@ -1560,7 +1563,7 @@ HEOF
   mkdir "$g"
   [ "$(run list)" = "rc=0 " ] && [ "$(run has)" = "rc=1 " ] && [ "$(run any)" = "rc=1 " ] || { echo "    an empty directory: $(run list) $(run has) $(run any)"; bad="$bad empty"; }
   : > "$g/preflight"; : > "$g/restarting-a"; : > "$g/restarted-b"; : > "$g/freeze"; ln -s "$d/nowhere" "$g/restarting-c"
-  [ "$(run list)" = "preflight restarted-b restarting-a restarting-c rc=0 " ] || { echo "    a listed directory: $(run list)"; bad="$bad listed"; }
+  [ "$(run list | tr ' ' '\n' | grep . | LC_ALL=C sort | tr '\n' ' ')" = "preflight rc=0 restarted-b restarting-a restarting-c " ] || { echo "    a listed directory: $(run list)"; bad="$bad listed"; }   # the names in any order: the enumerator promises the set, not an order
   [ "$(run has)" = "rc=0 " ] && [ "$(run any)" = "rc=0 " ] && [ "$(run anyd)" = "rc=0 " ] || { echo "    has: $(run has) $(run any) $(run anyd)"; bad="$bad has"; }
   for m in 300 400 100 000; do
     chmod $m "$g"
