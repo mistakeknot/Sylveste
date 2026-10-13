@@ -535,7 +535,8 @@ rcleanup() {  # back to the frozen state, idempotent: every recorded timer stopp
   for u in $us; do units stop "$u" >/dev/null 2>&1; done   # a service a cut-off restart left running is stopped too
   for u in $us; do [ "$(unit_state "$u")" = inactive ] || RBAD="$RBAD $u"; done
   [ -z "$RBAD" ] || say "gate0-run: UNCONFIRMED: these units are not confirmed stopped:$RBAD; a human must stop them before anything else runs" >&2
-  [ -z "${RSTART:-}" ] || rm -f -- "$G/restarted-$RSTART"   # a completion record written before the cut-off is withdrawn with the rest
+  if [ -n "${RSTART:-}" ] && { [ -e "$G/restarted-$RSTART" ] || [ -L "$G/restarted-$RSTART" ]; }; then   # a completion record written before the cut-off is turned into an open-attempt record (one rename), never deleted: the cleanup below may still fail to stop a unit, and the next restart needs the evidence; the last step closes it
+    mv -f -- "$G/restarted-$RSTART" "$G/restarting-$RSTART" || { RBAD="$RBAD [the restart records]"; say "gate0-run: UNCONFIRMED: the completion record cannot be turned into an open-attempt record" >&2; }; fi
   move_marker_aside force; [ -z "$RBAD" ] || return 1   # the marker's own failure is a stop (the subshell's status); an unconfirmed unit is a failed cleanup
   jrm 'restarting-*' || { RBAD="$RBAD [the restart records]"; say "gate0-run: UNCONFIRMED: the restart records cannot be cleared (the journal cannot be listed or an entry cannot be removed)" >&2; return 1; }   # the attempt is closed only when every unit is confirmed stopped and the marker is aside
 }
@@ -613,7 +614,10 @@ restart_clavain() {  # exit-name
     rbail "the sweep wrote no new drift report ($DRIFT)"; fi
   predict verify "$pred" "$DRIFT" > "$LOGD/verify.out" 2>&1 || { tee -a "$LOG" < "$LOGD/verify.out"; rbail "the sweep differs from the prediction"; }
   cat "$LOGD/verify.out" >> "$LOG"; }
-unrecord_bail() { rm -f -- "$G/restarted-$XARG"; rbail "$@"; }
+unrecord_bail() {  # a completion record that no longer describes the state is turned into an open-attempt record (one rename: at no instant is there neither), so a cut-off or failed cleanup leaves the evidence the next restart needs; the cleanup closes it once every unit is confirmed stopped
+  if [ -e "$G/restarted-$XARG" ] || [ -L "$G/restarted-$XARG" ]; then
+    mv -f -- "$G/restarted-$XARG" "$G/restarting-$XARG" || say "gate0-run: the completion record cannot be turned into an open-attempt record: it is kept as found" >&2; fi
+  rbail "$@"; }
 restarted_holds() {  # a restart that is already recorded: re-verify the state it describes and run nothing
   local u m ts
   ts=$(rec_timers) || unrecord_bail "restart $1 is recorded but the freeze record cannot be read: the timers it names cannot be checked; nothing was run"

@@ -751,6 +751,25 @@ t_swrecholds() {  # a recorded restart whose freeze record fails after its outpu
   restore r0a; wg restart r0 > "$B/out.sw" 2>&1 || return 1
   sw_sed 's/^marker //p' 1 out; wg restart r0 > "$B/out.sw" 2>&1; b="$?/$(sw_msg 'its marker cannot be checked')/$(sw_state)"
   SWU="$a;$b"; [ "$SWU" = "3/1//1/no/no/;3/1//1/no/no/" ]; }
+t_swholdscut() {  # a recorded restart whose state no longer holds (a recorded timer is inactive) is turned into an open attempt before its cleanup: cut off at the cleanup's first stop, or with a stop that fails, the next restart still finds the attempt and undoes it (the timers stopped, the marker aside, no record left). The expected state is specified here, not read from the records
+  local crash=$B/mut/crash4.sh a b c d
+  sed -e '/^  for u in \$us; do units stop "\$u" >\/dev\/null 2>&1; done/s/2>&1; done/2>\&1; kill -KILL $$; done/' "${WG:-$GW}" > "$crash"; chmod +x "$crash"; cp "$HERE/cutover-steps.sh" "$B/mut/cutover-steps.sh"
+  cmp -s "${WG:-$GW}" "$crash" && { echo "  FAIL crash copy changed nothing"; return 1; }
+  restore r0a; : > "$B/out.sw"; wg restart r0 >> "$B/out.sw" 2>&1 || return 1; rm -f "$ST/units/git-autosync-promote.timer"   # a completed restart, then one recorded timer goes inactive
+  WG=$crash wg restart r0 >> "$B/out.sw" 2>&1; a="$?/$([ -e "$J/gate0-run/restarted-r0" ] && echo done)$([ -e "$J/gate0-run/restarting-r0" ] && echo open)"   # killed at the first stop: the evidence is an open attempt and nothing says it is complete
+  wg restart r0 >> "$B/out.sw" 2>&1; b="$?/$(sr_state)"   # undone: the marker aside, no timer active, no restart record
+  restore r0a; : > "$B/out.sw"; wg restart r0 >> "$B/out.sw" 2>&1 || return 1; rm -f "$ST/units/git-autosync-promote.timer"; touch "$ST/failstop-git-autosync-repair.timer"
+  wg restart r0 >> "$B/out.sw" 2>&1; c="$?/$([ -e "$J/gate0-run/restarted-r0" ] && echo done)$([ -e "$J/gate0-run/restarting-r0" ] && echo open)/$(timers)"   # a stop that fails: the unit stays active and the attempt stays open
+  rm -f "$ST/failstop-git-autosync-repair.timer"; wg restart r0 >> "$B/out.sw" 2>&1; d="$?/$(sr_state)"
+  SWZ="$a;$b;$c;$d"; echo "  holdscut: $SWZ"; [ "$SWZ" = "137/open;3//no/no/0;3/open/yes/no;3//no/no/0" ]; }
+t_swdonecut() {  # a restart cut off after its completion record was written (before the open-attempt record was removed and the flag cleared) and whose cleanup cannot stop a unit: the completion record is turned into an open-attempt record, not deleted, so the next restart still finds the attempt and undoes it
+  local crash=$B/mut/crash5.sh a b
+  sed -e '/^  rm -f -- "\$G\/restarting-\$ex"$/a rbail "test: a cut-off after the completion record"' "${WG:-$GW}" > "$crash"; chmod +x "$crash"; cp "$HERE/cutover-steps.sh" "$B/mut/cutover-steps.sh"
+  cmp -s "${WG:-$GW}" "$crash" && { echo "  FAIL crash copy changed nothing"; return 1; }
+  restore r0a; : > "$B/out.sw"; touch "$ST/failstop-git-autosync-repair.timer"
+  WG=$crash wg restart r0 >> "$B/out.sw" 2>&1; a="$?/$([ -e "$J/gate0-run/restarted-r0" ] && echo done)$([ -e "$J/gate0-run/restarting-r0" ] && echo open)/$(timers)"   # the stop fails: the timer stays active and the attempt stays open
+  rm -f "$ST/failstop-git-autosync-repair.timer"; wg restart r0 >> "$B/out.sw" 2>&1; b="$?/$(sr_state)"   # undone: no marker, no timer, no record
+  SWZZ="$a;$b"; echo "  donecut: $SWZZ"; [ "$SWZZ" = "3/open/yes/no;3//no/no/0" ]; }
 t_swstep5() {  # the timers to start are read from the record with its status checked: a read that fails after its output starts no timer
   restore r0a; sw_sed 's/^timer //p' 0 out
   wg restart r0 > "$B/out.sw" 2>&1; SWV="$?/$(sw_msg 'the timers to start are unknown')/$(sw_state)"
@@ -2201,6 +2220,8 @@ sc "a later phase checks every unit the freeze stopped, not only those the confi
 sc "the recorded unit set survives every step: a new freeze after a completed restart keeps the earlier units under a narrower or renamed configuration, the cleanup of a cut-off restart stops a recorded service the configuration no longer names, a restart refuses a recorded timer that is active again" t_swunionlife
 sc "a first freeze cut off after it stopped every unit leaves an intent naming all of them: a retry under a renamed configuration stops and records the services too" t_swintentunits
 sc "an older freeze record beside a larger freeze intent (a larger freeze cut off after a completed restart): the next freeze merges the intent's units and timers into the record before it deletes the intent" t_swrefreeze
+sc "a recorded restart whose state no longer holds is turned into an open attempt before its cleanup: a cut-off or failed cleanup leaves the evidence the next restart undoes" t_swholdscut
+sc "a restart cut off after its completion record, with a cleanup that cannot stop a unit, keeps an open-attempt record" t_swdonecut
 sc "a record of the frozen units that cannot be read (the freeze record, the freeze intent, or just its timers or its units) makes the cleanup of a cut-off restart incomplete and keeps the restart record, under a narrower or a disjoint configuration; the same state with readable records is undone" t_swrecunread
 sc "the lifecycle x config x mode matrix: for every state of the lifecycle (fresh, frozen, restart open, restart complete, restart cut off, recovered), every configuration against the recorded units (same, subset, superset, disjoint) and every mode (freeze, capture, preflight, restart, rollback, a second restart, a restart whose verification differs), with a different recorded or configured unit active in turn: the recorded set only grows, only a restart starts anything, a success leaves every unit of the union stopped (a restart: the recorded timers running), and a failed restart changed nothing or left the union stopped with no open restart record or said it is unconfirmed" t_swmatrix
 sc "a restart gives the same verdict and leaves the same state under each hostile environment variable (and all together), and under a CDPATH that names a directory of the script's own relative name" t_swenvmatrix
@@ -2365,7 +2386,7 @@ mm() {  # NAME TEST DESC SEDEXPR : one more mutation control
   local n=$1 t=$2 d=$3; mutate "$n" "$4" && { WG=$B/mut/$n.sh; $t; r=$?; WG=; check "$n ($d) is caught" "$([ $r = 0 ] && echo fail-closed || echo caught)" caught; }; }
 mmd() {  # NAME TEST REASON SEDEXPR : a mutation that is NOT caught by design: an earlier safeguard (the journal gate, the identity check, git_bind) refuses first, so the removed one is defense in depth; the copy must still be refused (fail-closed)
   local n=$1 t=$2 d=$3; mutate "$n" "$4" && { WG=$B/mut/$n.sh; $t; r=$?; WG=; check "$n (defense in depth, NOT caught by design: $d) stays refused" "$([ $r = 0 ] && echo fail-closed || echo caught)" fail-closed; }; }
-mm M72 t_swrecrbail "cleanup without a readable freeze record stops no timer" 's/^  ts=\$(rec_timers) || { ts=\$TIMERS; say [^}]*}/  ts=$(rec_timers)/'
+mm M72 t_swrecrbail "cleanup without a readable freeze record stops no timer" 's/^  ts=\$(rec_timers) || { ts=\$TIMERS; RBAD=[^}]*}/  ts=$(rec_timers)/'
 mm M73 t_swrecholds "the recorded timers are trusted after a failed read" 's/^  ts=\$(rec_timers) || unrecord_bail "[^"]*"/  ts=$(rec_timers)/'
 mm M74 t_swrecholds "the recorded marker is trusted after a failed read" 's/^  m=\$(rec_marker) || unrecord_bail "[^"]*"/  m=$(rec_marker)/'
 mm M75 t_swstep5 "timers are started from a failed read" 's/ts=\$(rec_timers) || rbail "the freeze record cannot be read: the timers to start[^"]*"/ts=$(rec_timers)/'
@@ -2536,5 +2557,7 @@ mm M224 t_swintentunits "the freeze intent names only the timers again" '/^  put
 mm M225 t_mxinterrupted "the matrix: a freeze retry after a cut-off first freeze ignores the freeze intent's units" 's/^  if \[ -e "\$G\/freeze-intent" \]; then ri=.*$/  :/'
 mm M226 t_swrefreeze "a freeze takes the already-holds path and deletes an intent that names more than the record" 's/ && ! restarted_any && intent_covered; then/ \&\& ! restarted_any; then/'
 mm M227 t_swrefreeze "a freeze over an older record forgets the record's own stopped timers" 's/prior="\$prior \$ft"; fi/:; fi/'
+mm M228 t_swholdscut "a recorded restart that no longer holds is deleted before its cleanup, with no open-attempt record in its place" 's/mv -f -- "\$G\/restarted-\$XARG" "\$G\/restarting-\$XARG" ||/rm -f -- "$G\/restarted-$XARG" ||/'
+mm M229 t_swdonecut "a cleanup deletes the completion record instead of turning it into an open-attempt record" 's/mv -f -- "\$G\/restarted-\$RSTART" "\$G\/restarting-\$RSTART" ||/rm -f -- "$G\/restarted-$RSTART" ||/'
 mm M219 t_mxpreflight "the matrix: a preflight after a freeze drops the freeze record" 's/^  if \[ -d "\$J\/p0" \] \&\& \[ -e "\$G\/preflight" \]; then say/  rm -f "$G\/freeze"; if [ -d "$J\/p0" ] \&\& [ -e "$G\/preflight" ]; then say/'
 if [ $fails = 0 ]; then echo "GATE0-RUN: PASS"; exit 0; else echo "GATE0-RUN: FAIL ($fails)"; exit 1; fi
