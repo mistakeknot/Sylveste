@@ -1643,6 +1643,28 @@ t_swintentunits() {  # a first freeze cut off after it stopped every unit, befor
   n=$(grep -c '^unit git-autosync-promote.service$' "$J/gate0-run/freeze" 2>/dev/null)
   { [ "$rc2" = 0 ] && [ "$(active git-autosync-promote.service)" = no ] && [ "$n" = 1 ] && [ ! -e "$J/gate0-run/freeze-intent" ]; } || { echo "    the retry under a renamed configuration: rc=$rc2 promote.service=$(active git-autosync-promote.service) recorded=$n intent=$([ -e "$J/gate0-run/freeze-intent" ] && echo left)"; bad="$bad retry"; }
   [ -z "$bad" ]; }
+t_swrefreeze() {  # an older freeze record beside a LARGER intent (a completed restart, then a bigger freeze cut off before it replaced the record): the next freeze, after the restart's cleanup, merges the intent's units and timers into the record and only then deletes it; later steps under a narrower configuration still know them. Variant "thin": the intent names fewer timers than the record: the record's timers stay in the restart set
+  local crash=$B/mut/crash-rf.sh rc v bad= n nt TX="git-autosync-repair.timer git-autosync-promote.timer extra.timer" SX="git-autosync-repair.service git-autosync-promote.service extra.service"
+  for v in full thin; do
+    sed '/^  move_marker_aside$/i exit 9' "${WG:-$GW}" > "$crash"; chmod +x "$crash"; cp "$HERE/cutover-steps.sh" "$B/mut/cutover-steps.sh"
+    cmp -s "${WG:-$GW}" "$crash" && { echo "  FAIL the larger-freeze copy changed nothing"; return 1; }
+    restore r0a; WG= wg restart r0 >> "$B/out.sw" 2>&1 || return 1; touch "$ST/units/extra.timer" "$ST/units/extra.service"
+    GATE0_UNITS_TIMERS="$TX" GATE0_UNITS_SERVICES="$SX" WG=$crash wg freeze >> "$B/out.sw" 2>&1; rc=$?
+    [ "$rc" = 9 ] && [ "$(grep -c '^unit ' "$J/gate0-run/freeze-intent")" = 6 ] && [ "$(grep -c '^unit ' "$J/gate0-run/freeze")" = 4 ] || { echo "    $v: the cut-off larger freeze: rc=$rc (wanted 9, intent of 6 units beside a record of 4)"; bad="$bad $v-setup"; continue; }
+    if [ $v = thin ]; then sed -i '/^timer git-autosync-/d' "$J/gate0-run/freeze-intent"; fi
+    GATE0_UNITS_TIMERS=git-autosync-repair.timer GATE0_UNITS_SERVICES=git-autosync-repair.service wg restart r0 >> "$B/out.sw" 2>&1; rc=$?   # the retry withdraws the completion record and cleans up
+    { [ ! -e "$J/gate0-run/restarted-r0" ] && [ -e "$J/gate0-run/freeze-intent" ] && [ "$(active extra.timer)/$(active extra.service)" = no/no ]; } || { echo "    $v: the restart retry: rc=$rc completion=$([ -e "$J/gate0-run/restarted-r0" ] && echo kept) intent=$([ -e "$J/gate0-run/freeze-intent" ] && echo kept || echo lost) extra=$(active extra.timer)/$(active extra.service) (wanted the completion withdrawn, the intent kept, both stopped)"; bad="$bad $v-restart"; continue; }
+    GATE0_UNITS_TIMERS=git-autosync-repair.timer GATE0_UNITS_SERVICES=git-autosync-repair.service wg freeze >> "$B/out.sw" 2>&1; rc=$?
+    n=$(grep -c '^unit ' "$J/gate0-run/freeze" 2>/dev/null); nt=$(grep -c '^timer ' "$J/gate0-run/freeze" 2>/dev/null)
+    { [ "$rc" = 0 ] && [ "$n" = 6 ] && [ "$nt" = 3 ] && grep -q '^timer extra.timer$' "$J/gate0-run/freeze" && [ ! -e "$J/gate0-run/freeze-intent" ]; } || { echo "    $v: the freeze after the cleanup: rc=$rc units-recorded=$n timers-recorded=$nt intent=$([ -e "$J/gate0-run/freeze-intent" ] && echo kept || echo gone) (wanted 0/6/3, the extra timer named, intent gone)"; bad="$bad $v-freeze"; continue; }
+    touch "$ST/units/extra.service"
+    GATE0_UNITS_TIMERS=git-autosync-repair.timer GATE0_UNITS_SERVICES=git-autosync-repair.service wg freeze >> "$B/out.sw" 2>&1; rc=$?
+    [ "$rc" != 0 ] || { echo "    $v: a freeze under a narrower configuration reported success with extra.service active again (the record must name it)"; bad="$bad $v-recheck"; }
+    rm -f "$ST/units/extra.service"
+    GATE0_UNITS_TIMERS=git-autosync-repair.timer GATE0_UNITS_SERVICES=git-autosync-repair.service wg restart r0 >> "$B/out.sw" 2>&1; rc=$?
+    { [ "$rc" = 0 ] && [ "$(active extra.timer)" = yes ] && [ "$(timers)" = yes/yes ]; } || { echo "    $v: the restart under a narrower configuration: rc=$rc extra.timer=$(active extra.timer) timers=$(timers) (wanted all three timers restarted)"; bad="$bad $v-final"; }
+  done
+  [ -z "$bad" ] || { echo "    refreeze: failed:$bad"; return 1; }; }
 t_swrecunread() {  # a record of the frozen units that cannot be read (the freeze record, the freeze intent or both) makes the cleanup of a cut-off restart INCOMPLETE and keeps the restart record, under a narrower or a disjoint configuration and with a recorded service the configuration no longer names still running; the same state with readable records is undone and the restart record removed
   local f cfg rc bad= ran=0 sedreal st rec n0 want
   sedreal=$(command -v sed); rm -rf -- "$B/sedbad"; mkdir -p "$B/sedbad"
@@ -1664,7 +1686,7 @@ t_swrecunread() {  # a record of the frozen units that cannot be read (the freez
   echo "    unreadable-record cleanup: $ran cases"
   [ -z "$bad" ]; }
 t_swmatrix() {  # the lifecycle x config x mode matrix: the union of the units the freeze record names and the configuration names must survive every lifecycle transition. For every state of the lifecycle (fresh, frozen, a restart that is open, a restart that is complete, a restart cut off mid-way, a cut-off restart that was recovered), every configuration against the recorded units (the same, a subset, a superset, a disjoint one) and every mode (freeze, capture, preflight, restart, rollback, a second restart after the first, a restart whose verification differs), each with a different recorded or configured unit active in turn: (1) the recorded unit set only grows and the record stays; (2) a mode other than a restart starts nothing and activates nothing; (3) a freeze, capture or rollback that reports success has every unit of the recorded set and the configured set stopped; a restart that reports success has the recorded timers active and no open restart record; (4) a restart that fails either changed nothing, or left every unit of the union stopped with no open restart record, or says a stop is UNCONFIRMED or that it left the state as found
-  local MS=${MXSTATES:-fresh interrupted frozen captured rolledback restarted-open restarted-complete crashed recovered} MC=${MXCFGS:-same subset superset disjoint} MM=${MXMODES:-freeze capture preflight restart rollback recovery cleanup}
+  local MS=${MXSTATES:-fresh interrupted refrozen frozen captured rolledback restarted-open restarted-complete crashed recovered} MC=${MXCFGS:-same subset superset disjoint} MM=${MXMODES:-freeze capture preflight restart rollback recovery cleanup}
   local R0=$R st cfg mode cls bad= cells=0 runs=0 cn=0
   mx_build() {  # STATE : the lifecycle state as a snapshot, built once with the real wrapper
     [ -d "$B/tpl-mx-$1" ] && return 0
@@ -1679,6 +1701,13 @@ t_swmatrix() {  # the lifecycle x config x mode matrix: the union of the units t
         [ "$rc" = 9 ] && [ -e "$J/gate0-run/freeze-intent" ] && [ ! -e "$J/gate0-run/freeze" ] && [ "$(timers)" = no/no ] || { echo "  FAIL the interrupted freeze: rc=$rc timers=$(timers)"; return 1; }
         mkdir -p "$B/mx-exp"; mx_units same | tr ' ' '\n' > "$B/mx-exp/interrupted" ;;
       captured) restore fx; stepto preflight freeze capture || return 1 ;;
+      refrozen)  # a completed restart, then a LARGER freeze (two more units) cut off after it stopped them, before it replaced the record: the older record beside a larger intent; the intent is the only record of the two (the oracle's expected set is the six units, whatever the records say)
+        sed '/^  move_marker_aside$/i exit 9' "$GW" > "$crash"; chmod +x "$crash"; cp "$HERE/cutover-steps.sh" "$B/mut/cutover-steps.sh"
+        cmp -s "$GW" "$crash" && { echo "  FAIL the cut-off larger-freeze copy changed nothing"; return 1; }
+        restore r0a; WG= wg restart r0 >> "$B/step.out" 2>&1 || return 1; touch "$ST/units/extra.timer" "$ST/units/extra.service"
+        GATE0_UNITS_TIMERS="git-autosync-repair.timer git-autosync-promote.timer extra.timer" GATE0_UNITS_SERVICES="git-autosync-repair.service git-autosync-promote.service extra.service" WG=$crash wg freeze >> "$B/step.out" 2>&1; rc=$?
+        [ "$rc" = 9 ] && [ -e "$J/gate0-run/freeze-intent" ] && [ -e "$J/gate0-run/freeze" ] && [ -e "$J/gate0-run/restarted-r0" ] && [ "$(grep -c '^unit ' "$J/gate0-run/freeze")" = 4 ] && [ "$(grep -c '^unit ' "$J/gate0-run/freeze-intent")" = 6 ] || { echo "  FAIL the cut-off larger freeze: rc=$rc (wanted an older record of 4 units beside an intent of 6)"; return 1; }
+        mkdir -p "$B/mx-exp"; mx_units superset | tr ' ' '\n' > "$B/mx-exp/refrozen" ;;
       rolledback) restore r0a ;;
       restarted-complete) restore r0a; WG= wg restart r0 >> "$B/step.out" 2>&1 || return 1 ;;
       restarted-open)
@@ -2171,6 +2200,7 @@ sc "the journal's records are found whatever ls settings the caller has (QUOTING
 sc "a later phase checks every unit the freeze stopped, not only those the configuration names now; a freeze record that names none is refused" t_swfrozenunits
 sc "the recorded unit set survives every step: a new freeze after a completed restart keeps the earlier units under a narrower or renamed configuration, the cleanup of a cut-off restart stops a recorded service the configuration no longer names, a restart refuses a recorded timer that is active again" t_swunionlife
 sc "a first freeze cut off after it stopped every unit leaves an intent naming all of them: a retry under a renamed configuration stops and records the services too" t_swintentunits
+sc "an older freeze record beside a larger freeze intent (a larger freeze cut off after a completed restart): the next freeze merges the intent's units and timers into the record before it deletes the intent" t_swrefreeze
 sc "a record of the frozen units that cannot be read (the freeze record, the freeze intent, or just its timers or its units) makes the cleanup of a cut-off restart incomplete and keeps the restart record, under a narrower or a disjoint configuration; the same state with readable records is undone" t_swrecunread
 sc "the lifecycle x config x mode matrix: for every state of the lifecycle (fresh, frozen, restart open, restart complete, restart cut off, recovered), every configuration against the recorded units (same, subset, superset, disjoint) and every mode (freeze, capture, preflight, restart, rollback, a second restart, a restart whose verification differs), with a different recorded or configured unit active in turn: the recorded set only grows, only a restart starts anything, a success leaves every unit of the union stopped (a restart: the recorded timers running), and a failed restart changed nothing or left the union stopped with no open restart record or said it is unconfirmed" t_swmatrix
 sc "a restart gives the same verdict and leaves the same state under each hostile environment variable (and all together), and under a CDPATH that names a directory of the script's own relative name" t_swenvmatrix
@@ -2504,5 +2534,7 @@ mm M222 t_swrecunread "the unit set does not look at whether the freeze intent's
 mm M223 t_swrecunread "the unit set ignores the freeze intent" 's/^  if \[ -e "\$G\/freeze-intent" \]; then ri=.*$/  :/'
 mm M224 t_swintentunits "the freeze intent names only the timers again" '/^  put "\$G\/freeze-intent"/ s/\$(for u in \$us; do printf .unit %s\\n. "\$u"; done)//'
 mm M225 t_mxinterrupted "the matrix: a freeze retry after a cut-off first freeze ignores the freeze intent's units" 's/^  if \[ -e "\$G\/freeze-intent" \]; then ri=.*$/  :/'
+mm M226 t_swrefreeze "a freeze takes the already-holds path and deletes an intent that names more than the record" 's/ && ! restarted_any && intent_covered; then/ \&\& ! restarted_any; then/'
+mm M227 t_swrefreeze "a freeze over an older record forgets the record's own stopped timers" 's/prior="\$prior \$ft"; fi/:; fi/'
 mm M219 t_mxpreflight "the matrix: a preflight after a freeze drops the freeze record" 's/^  if \[ -d "\$J\/p0" \] \&\& \[ -e "\$G\/preflight" \]; then say/  rm -f "$G\/freeze"; if [ -d "$J\/p0" ] \&\& [ -e "$G\/preflight" ]; then say/'
 if [ $fails = 0 ]; then echo "GATE0-RUN: PASS"; exit 0; else echo "GATE0-RUN: FAIL ($fails)"; exit 1; fi

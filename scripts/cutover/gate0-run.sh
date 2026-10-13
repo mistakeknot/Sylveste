@@ -363,11 +363,18 @@ unit_set() {  # the ONE set every decision about the frozen units uses (the free
   printf '%s\n' "${o# }"; return $rc; }
 is_timer_unit() { case $1 in *.timer) return 0 ;; esac; in_list "$1" $TIMERS; }
 act_lines() { ( set -o pipefail; printf '%s\n' "$1" | sed 's/^ *//; s/ timer /\ntimer /g' | sed -n '/^timer /p' ); }   # " timer A timer B" : one "timer UNIT" line each; a failed stage is a failed list, never an empty one
+intent_covered() {  # no freeze intent, or the freeze record already names every unit and every timer the intent names: only then may the intent be deleted (a freeze cut off before it replaced the record leaves a larger intent beside the older record, and the intent is then the only record of what it stopped)
+  [ -e "$G/freeze-intent" ] || return 0
+  local x ru rt iu it
+  ru=$(rec_units) && rt=$(rec_timers) && iu=$(rec_units "$G/freeze-intent") && it=$(rec_timers "$G/freeze-intent") || stop "the freeze record or its intent cannot be read: whether the record names every unit the intent stopped is not known"
+  for x in $iu; do in_list "$x" $ru || return 1; done
+  for x in $it; do in_list "$x" $rt || return 1; done
+  return 0; }
 do_freeze() {
-  local a w u act="" f prior al us
+  local a w u act="" f prior al us ft
   [ -e "$G/preflight" ] || { [ $CHECKMODE = 1 ] || refuse "no preflight record; run preflight first"; }
   records_ours 4 || stop "restart records that do not name this checkout (or are not well formed) are in $G: nothing was changed; a human must clear them"   # the freeze deletes the earlier attempt's records: only ones of this checkout
-  if [ -e "$G/freeze" ] && [ $CHECKMODE = 0 ] && ! restarted_any; then   # after a completed restart a new freeze is a new attempt: it falls through
+  if [ -e "$G/freeze" ] && [ $CHECKMODE = 0 ] && ! restarted_any && intent_covered; then   # after a completed restart a new freeze is a new attempt: it falls through; so does a freeze whose intent names more than the record (a cut-off larger freeze): it is finished, never dropped
     a=$(rec_timers) || stop "the freeze record cannot be read: whether its timers stay stopped cannot be told"
     for u in $a; do ! is_active "$u" || stop "the freeze was recorded but $u is active again"; done
     { marker_aside || { mk=$(rec_marker) && [ "$mk" = none ]; }; } || stop "the freeze was recorded but the marker is back in the checkout"
@@ -387,6 +394,7 @@ do_freeze() {
     else mv -f -- "$G/marker" "$G/marker.earlier.$w" && [ ! -e "$G/marker" ] || stop "cannot set the earlier attempt's marker copy aside"
       say "gate0-run: the checkout has no marker: the copy kept from the earlier attempt is set aside as marker.earlier.$w and this freeze records none"; fi; fi
   prior=; [ ! -f "$G/freeze-intent" ] || prior=$(rec_timers "$G/freeze-intent") || stop "the earlier freeze intent cannot be read: the timers it stopped would not be restarted"
+  if [ -e "$G/freeze" ] && ! restarted_any; then ft=$(rec_timers) || stop "the freeze record cannot be read: the timers it stopped would not be restarted"; prior="$prior $ft"; fi   # an unfinished larger freeze over a recorded one: the record's stopped timers stay in the restart set too
   us=$(unit_set) || stop "the earlier freeze record cannot be read: a new freeze would forget the units it stopped"   # a new freeze keeps the earlier record's units: a narrower configuration never drops one
   [ ! -e "$G/freeze" ] || [ -n "$(rec_units)" ] || stop "the earlier freeze record names no frozen units: a new freeze would forget what it stopped"
   for u in $us; do is_timer_unit "$u" || continue
