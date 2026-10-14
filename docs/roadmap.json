@@ -2079,13 +2079,13 @@
         "id": "sylveste-bkrh",
         "missing_dependencies": [],
         "module": "beads",
-        "notes": "Align Sylveste tracker remotes across Mac and zklw",
+        "notes": "Align Sylveste tracker remotes across Mac and the build server",
         "phase": "now",
         "priority": "P1",
         "source": "beads",
         "source_file": "beads",
         "status": "open",
-        "title": "Align Sylveste tracker remotes across Mac and zklw"
+        "title": "Align Sylveste tracker remotes across Mac and the build server"
       },
       {
         "blocked_by": [],
@@ -2294,13 +2294,13 @@
         "id": "sylveste-mij3",
         "missing_dependencies": [],
         "module": "sylveste",
-        "notes": "Install sqlite3 CLI on zklw + re-derive cost-per-landable-change baseline",
+        "notes": "Install sqlite3 CLI on the build server + re-derive cost-per-landable-change baseline",
         "phase": "now",
         "priority": "P1",
         "source": "beads",
         "source_file": "beads",
         "status": "open",
-        "title": "Install sqlite3 CLI on zklw + re-derive cost-per-landable-change baseline"
+        "title": "Install sqlite3 CLI on the build server + re-derive cost-per-landable-change baseline"
       },
       {
         "blocked_by": [],
@@ -2452,13 +2452,13 @@
         "id": "Sylveste-tozs",
         "missing_dependencies": [],
         "module": "sylveste",
-        "notes": "zklw clavain-cli emits policy schema 1 — every gate fails closed as 'malformed policy'",
+        "notes": "the build server clavain-cli emits policy schema 1 — every gate fails closed as 'malformed policy'",
         "phase": "now",
         "priority": "P1",
         "source": "beads",
         "source_file": "beads",
         "status": "open",
-        "title": "zklw clavain-cli emits policy schema 1 — every gate fails closed as 'malformed policy'"
+        "title": "the build server clavain-cli emits policy schema 1 — every gate fails closed as 'malformed policy'"
       },
       {
         "blocked_by": [],
@@ -3613,13 +3613,13 @@
         "id": "Sylveste-6f7",
         "missing_dependencies": [],
         "module": "infra",
-        "notes": "zklw Go toolchain (1.23.8) too old to build intercore (go 1.25.0) + darwin release binaries — blocks canary-registering ic and Clavain publish from zklw",
+        "notes": "the build server Go toolchain (1.23.8) too old to build intercore (go 1.25.0) + darwin release binaries — blocks canary-registering ic and Clavain publish from the build server",
         "phase": "next",
         "priority": "P2",
         "source": "beads",
         "source_file": "beads",
         "status": "open",
-        "title": "zklw Go toolchain (1.23.8) too old to build intercore (go 1.25.0) + darwin release binaries — blocks canary-registering ic and Clavain publish from zklw"
+        "title": "the build server Go toolchain (1.23.8) too old to build intercore (go 1.25.0) + darwin release binaries — blocks canary-registering ic and Clavain publish from the build server"
       },
       {
         "blocked_by": [],
@@ -7069,13 +7069,13 @@
         "id": "Sylveste-8rpw",
         "missing_dependencies": [],
         "module": "sylveste",
-        "notes": "zklw: delete the phantom ~/projects/Demarch tree (needs mk's go)",
+        "notes": "the build server: delete the phantom ~/projects/Demarch tree (needs mk's go)",
         "phase": "later",
         "priority": "P3",
         "source": "beads",
         "source_file": "beads",
         "status": "open",
-        "title": "zklw: delete the phantom ~/projects/Demarch tree (needs mk's go)"
+        "title": "the build server: delete the phantom ~/projects/Demarch tree (needs mk's go)"
       },
       {
         "blocked_by": [],
@@ -7095,13 +7095,13 @@
         "id": "Sylveste-942",
         "missing_dependencies": [],
         "module": "sylveste",
-        "notes": "Fix /Users/arouth hardcoded path in com.arouth.claude-plugin-cleanup.plist",
+        "notes": "Fix ~ hardcoded path in com.arouth.claude-plugin-cleanup.plist",
         "phase": "later",
         "priority": "P3",
         "source": "beads",
         "source_file": "beads",
         "status": "open",
-        "title": "Fix /Users/arouth hardcoded path in com.arouth.claude-plugin-cleanup.plist"
+        "title": "Fix ~ hardcoded path in com.arouth.claude-plugin-cleanup.plist"
       },
       {
         "blocked_by": [],

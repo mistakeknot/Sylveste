@@ -27,7 +27,7 @@ Four plugins showed errors in Claude Code's `/plugin` output despite their MCP s
 
 - Module: Interverse monorepo (interflux, interject, interkasten, interserve)
 - Claude Code: latest (Feb 2026)
-- Plugin cache: `/home/mk/.claude/plugins/cache/interagency-marketplace/`
+- Plugin cache: `~/.claude/plugins/cache/interagency-marketplace/`
 - Date: 2026-02-17
 
 ## Symptoms

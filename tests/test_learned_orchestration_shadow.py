@@ -12,7 +12,7 @@ if str(ROOT) not in sys.path:
 
 from scripts import learned_orchestration_shadow as los
 
-SEED_PATH = ROOT / "docs" / "research" / "learned-orchestration" / "seed-examples-v0.jsonl"
+SEED_PATH = ROOT / "tests" / "fixtures" / "learned-orchestration" / "seed-examples-v0.jsonl"
 
 
 def test_load_seed_examples_validates_required_schema() -> None:

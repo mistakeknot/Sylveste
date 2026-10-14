@@ -2,7 +2,7 @@
 
 **Bead:** Sylveste-vd1
 **Date:** 2026-03-16
-**Brainstorm:** `docs/brainstorms/2026-03-16-mutation-engine-brainstorm.md`
+**Brainstorm:** `2026-03-16-mutation-engine-brainstorm.md` (internal doc, not in the public tree)
 
 ## Problem
 

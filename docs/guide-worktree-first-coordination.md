@@ -18,7 +18,7 @@ checkout.**
 
 ## 1. Two layers, not two choices
 
-The retirement verdict (`docs/research/2026-07-22-git-index-file-retirement-verdict.md`)
+The retirement verdict (`2026-07-22-git-index-file-retirement-verdict.md` (internal doc, not in the public tree))
 established that Sylveste's bespoke `GIT_INDEX_FILE` per-session-index machinery
 is gone. What replaced it is **two complementary layers**, not one mechanism:
 

@@ -406,4 +406,4 @@ The project began by merging [superpowers](https://github.com/obra/superpowers),
 
 ---
 
-*Module inventory, model routing stages, and adoption ladder: [sylveste-reference.md](./sylveste-reference.md). Layer-specific vision docs: [Intercore](../core/intercore/docs/intercore-roadmap.md) (kernel), [Clavain](../os/Clavain/docs/clavain-vision.md) (OS), [Skaffen](../os/Skaffen/PHILOSOPHY.md) (sovereign runtime), [Autarch](../apps/Autarch/docs/autarch-vision.md) (apps), [Interspect](./interspect-vision.md) (profiler, [roadmap](./interspect-roadmap.md)).*
+*Module inventory, model routing stages, and adoption ladder: [sylveste-reference.md](./demarch-reference.md). Layer-specific vision docs: [Intercore](../core/intercore/docs/intercore-roadmap.md) (kernel), [Clavain](../os/Clavain/docs/clavain-vision.md) (OS), [Skaffen](../os/Skaffen/PHILOSOPHY.md) (sovereign runtime), [Autarch](../apps/Autarch/docs/autarch-vision.md) (apps), [Interspect](./interspect-vision.md) (profiler, [roadmap](./interspect-roadmap.md)).*

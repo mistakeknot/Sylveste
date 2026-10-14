@@ -239,7 +239,7 @@ which it could not report while the files were still tracked.
 ### Trap: a tracked hooks directory turns hook installs into commits
 
 A hook installer symlinked `pre-commit` to
-`/Users/sma/projects/dotfiles/cloud/pre-commit.sh` in roughly 130 repos under
+`~/projects/dotfiles/cloud/pre-commit.sh` in roughly 130 repos under
 `~/projects`. In almost all of them it landed in `.git/hooks/`, which git never
 tracks — so it was invisible and harmless by construction.
 
@@ -398,7 +398,7 @@ outlier.
 
 ## See also
 
-- `docs/reflections/2026-07-25-monorepo-tree-cleanup-reflect.md` — where the 198
+- `2026-07-25-monorepo-tree-cleanup-reflect.md` (internal doc, not in the public tree) — where the 198
   were first found
 - `docs/solutions/2026-07-25-unattended-work-needs-a-stopped-signal.md`
   § "Adjacent: ignore-noise buries real work"

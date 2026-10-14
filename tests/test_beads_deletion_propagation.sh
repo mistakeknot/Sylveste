@@ -92,7 +92,7 @@ use_real_checker() { cp "$SANDBOX/checker.real.py" scripts/check_beads_jsonl_dol
 # ─── 1: a recorded deletion is applied ────────────────────────────────
 echo "=== 1: a bead named in the ledger is deleted ==="
 reset_db
-ledger '{"id":"target","deleted_at":"2026-07-30T00:00:00Z","actor":"mk","machine":"zklw"}'
+ledger '{"id":"target","deleted_at":"2026-07-30T00:00:00Z","actor":"mk","machine":"hostB"}'
 python3 scripts/beads_apply_deletions.py --quiet >/dev/null 2>&1 || fail "a clean application exited non-zero"
 present target && fail "the bead named in the ledger survived"
 
@@ -105,7 +105,7 @@ python3 scripts/beads_apply_deletions.py --quiet >/dev/null 2>&1 || fail "replay
 # ─── 3: newer local work is refused, loudly, and non-zero ─────────────
 echo "=== 3: a bead changed here after the deletion was recorded is kept ==="
 printf 'keep-1\t2026-07-01T00:00:00Z\ntarget\t2026-08-01T00:00:00Z\n' > "$BD_STUB_DB"
-ledger '{"id":"target","deleted_at":"2026-07-30T00:00:00Z","actor":"mk","machine":"zklw"}'
+ledger '{"id":"target","deleted_at":"2026-07-30T00:00:00Z","actor":"mk","machine":"hostB"}'
 rc=0
 warn="$(python3 scripts/beads_apply_deletions.py --quiet 2>&1 >/dev/null)" || rc=$?
 present target || fail "work done after the deletion record was destroyed anyway"
@@ -119,7 +119,7 @@ esac
 # Without this, an applier that deleted everything would pass scenarios 1-3.
 echo "=== 4: beads absent from the ledger are never deleted ==="
 reset_db
-ledger '{"id":"target","deleted_at":"2026-07-30T00:00:00Z","actor":"mk","machine":"zklw"}'
+ledger '{"id":"target","deleted_at":"2026-07-30T00:00:00Z","actor":"mk","machine":"hostB"}'
 python3 scripts/beads_apply_deletions.py --quiet >/dev/null 2>&1
 present keep-1 || fail "a bead not named in the ledger was deleted"
 present keep-2 || fail "a bead not named in the ledger was deleted"
@@ -140,7 +140,7 @@ esac
 # nothing was checked, and the hook reported the deletions as applied.
 echo "=== 6: a bd show that fails for a non-absence reason is an error, not a skip ==="
 reset_db
-ledger '{"id":"target","deleted_at":"2026-07-30T00:00:00Z","actor":"mk","machine":"zklw"}'
+ledger '{"id":"target","deleted_at":"2026-07-30T00:00:00Z","actor":"mk","machine":"hostB"}'
 rc=0
 out="$(BD_STUB_SHOW_FAIL=1 python3 scripts/beads_apply_deletions.py --quiet 2>&1 >/dev/null)" || rc=$?
 [ "$rc" -ne 0 ] || fail "a failing bd show was treated as success"
@@ -150,13 +150,13 @@ present target || fail "a bead was deleted while bd could not even be asked abou
 # ─── 7: an unreadable timestamp is a refusal ──────────────────────────
 echo "=== 7: a deletion record whose timestamp cannot be read is not applied ==="
 reset_db
-ledger '{"id":"target","deleted_at":"yesterday-ish","actor":"mk","machine":"zklw"}'
+ledger '{"id":"target","deleted_at":"yesterday-ish","actor":"mk","machine":"hostB"}'
 rc=0
 out="$(python3 scripts/beads_apply_deletions.py --quiet 2>&1 >/dev/null)" || rc=$?
 [ "$rc" -ne 0 ] || fail "an unreadable deleted_at exited 0"
 present target || fail "a bead was deleted on a timestamp that could not be compared"
 case "$out" in *"unreadable timestamp"*) ;; *) fail "the timestamp problem was not named: $out" ;; esac
-ledger '{"id":"target","actor":"mk","machine":"zklw"}'
+ledger '{"id":"target","actor":"mk","machine":"hostB"}'
 rc=0; python3 scripts/beads_apply_deletions.py --quiet >/dev/null 2>&1 || rc=$?
 [ "$rc" -ne 0 ] || fail "a missing deleted_at exited 0"
 present target || fail "a bead was deleted on a record with no deleted_at at all"
@@ -212,7 +212,7 @@ fi
 present target || fail "deleted locally with no checker present"
 
 # ─── 11: another machine's unimported work survives a confirmed deletion ─
-# On zklw, whose import had been killed mid-flight, confirming ONE deletion
+# On hostB, whose import had been killed mid-flight, confirming ONE deletion
 # once produced an export with SIX beads missing. The guarded merge keeps
 # rows only the transport holds; only the confirmed ID is dropped.
 echo "=== 11: a confirmed deletion never exports away rows this database has not imported ==="

@@ -8,11 +8,11 @@ clean, 1 findings, 2 could-not-assess, wired into rig-health-check.sh, red means
 act. This tool does not, because a standing check needs a signal with both
 COVERAGE (it can judge most repos) and PRECISION (what it flags is real), and on
 2026-08-05 four candidate signals were measured on 78 `.beads` directories on
-Clavain and 94 on zklw. All four failed one or the other:
+Clavain and 94 on the build server. All four failed one or the other:
 
   1. Declared issue-prefix vs the export's ids.
      Only 8 of 78 .beads/config.yaml files declare `issue-prefix` (10 of 94 on
-     zklw). 87% unjudgeable -- which is the exact defect this was meant to fix:
+     the build server). 87% unjudgeable -- which is the exact defect this was meant to fix:
      the predecessor sweep reported cannot-assess for 30 of 50 directories.
 
   2. "Is there a database inside this repo?"

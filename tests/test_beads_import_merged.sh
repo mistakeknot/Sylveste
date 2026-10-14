@@ -145,7 +145,7 @@ bash scripts/beads-import-merged.sh "$prev" >/dev/null 2>&1 || fail "a deletion-
 
 # ─── 5: an unknown before-ref is an explicit, recoverable result ──────
 # It used to `exec bd import <whole file>`, unbounded. Slow was thought to beat
-# wrong; on zklw slow meant a pull that never returned. The helper now says
+# wrong; on hostB slow meant a pull that never returned. The helper now says
 # what it does not know and names the deliberate way to import everything.
 echo "=== 5: an unresolvable before-ref imports nothing and says so ==="
 reset_import
@@ -285,11 +285,11 @@ import json
 rows = [json.loads(l) for l in open(".beads/issues.jsonl") if l.strip()]
 for r in rows:
     if r["id"] == "a":
-        r.update(title="edited on zklw", updated_at="2026-12-01T00:00:00Z")
+        r.update(title="edited on hostB", updated_at="2026-12-01T00:00:00Z")
 rows.append({"id": "h", "title": "t", "updated_at": "2026-12-01T00:00:00Z"})
 open(".beads/issues.jsonl", "w").write("".join(json.dumps(r, separators=(",", ":")) + "\n" for r in rows))
 PY
-git commit -q -m "zklw edited a, added h" -- .beads/issues.jsonl
+git commit -q -m "hostB edited a, added h" -- .beads/issues.jsonl
 rc=0
 out="$(bash scripts/beads-import-merged.sh "$prev" 2>&1 >/dev/null)" || rc=$?
 [ "$rc" -eq 1 ] || fail "an import with a held-back conflict exited $rc, expected 1"
@@ -300,7 +300,7 @@ case "$out" in *"changed on both hosts"*" a"*) ;; *) fail "the held-back row was
 python3 -c 'import json,sys; c=json.load(open(".beads/transport/conflicts.json"))["records"]; assert "a" in c and c["a"]["reason"]=="local_changed_since_verified", c' \
   || fail "the conflict was not recorded in conflicts.json"
 ev="$(ls -d .beads/transport/evidence/*/ | tail -1)"
-grep -q "edited on zklw" "$ev/a.incoming.json" && grep -q "edited locally" "$ev/a.database.json" \
+grep -q "edited on hostB" "$ev/a.incoming.json" && grep -q "edited locally" "$ev/a.database.json" \
   || fail "both versions of the held-back row were not preserved under $ev"
 [ -f .beads/transport/pending-import.json ] && fail "a conflict is not a pending batch; a retry cannot resolve it"
 
@@ -315,12 +315,12 @@ import json
 rows = [json.loads(l) for l in open(".beads/issues.jsonl") if l.strip()]
 for r in rows:
     if r["id"] == "b":
-        r.update(title="b edited on zklw", updated_at="2026-12-02T00:00:00Z")
+        r.update(title="b edited on hostB", updated_at="2026-12-02T00:00:00Z")
 open(".beads/issues.jsonl", "w").write("".join(json.dumps(r, separators=(",", ":")) + "\n" for r in rows))
 PY
-git commit -q -m "zklw edited b" -- .beads/issues.jsonl
+git commit -q -m "hostB edited b" -- .beads/issues.jsonl
 bash scripts/beads-import-merged.sh "$prev" >/dev/null 2>&1 || fail "a one-sided incoming edit reported failure"
-db_has b "b edited on zklw" || fail "a one-sided incoming edit was not applied"
+db_has b "b edited on hostB" || fail "a one-sided incoming edit was not applied"
 python3 -c 'import json; b=json.load(open(".beads/transport/baseline.json"))["records"]; assert "b" in b' \
   || fail "the applied row was not added to the verified baseline"
 
@@ -757,7 +757,7 @@ ev="$(python3 -c 'import json; print(json.load(open(".beads/transport/conflicts.
 grep -q '"k per b1"' "$ev"/k.*.json && grep -q '"k per b2"' "$ev"/k.*.json || fail "evidence does not hold both upstream versions of k"
 
 echo "=== 33: a normal verified fast-forward import leaves no stray TMP files and releases the lock ==="
-# Regression for the installed defect diagnosed on zklw: run_range declared
+# Regression for the installed defect diagnosed on hostB: run_range declared
 # its working file as "local TMP" but installed an EXIT trap that reads $TMP
 # only when the WHOLE PROCESS exits — by which point a successful (non-exit)
 # return from run_range has already torn down that local binding, so the trap

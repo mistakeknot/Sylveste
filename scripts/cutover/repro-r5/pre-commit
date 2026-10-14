@@ -1,0 +1,22 @@
+#!/bin/bash
+# git-internal private pre-commit (template; installed by `git-internal
+# install-hooks` into .git-internal/hooks/). Refuses any staged path, added,
+# changed or deleted, that is not on .git-internal/info/approved-paths.
+# PR 2a appends the JSONL checks after this one.
+set -u
+gd=$(git rev-parse --git-dir) || exit 1
+list=$gd/info/approved-paths
+[ -r "$list" ] || { echo "private pre-commit: $list is missing" >&2; exit 1; }
+mapfile -t approved < <(grep -v -e '^#' -e '^[[:space:]]*$' "$list")
+bad=0
+while IFS= read -r -d '' p; do
+  ok=0
+  for a in "${approved[@]}"; do
+    case $a in
+      */) [[ $p == "$a"* ]] && ok=1 ;;
+      *)  [[ $p == "$a" ]] && ok=1 ;;
+    esac
+  done
+  [ $ok = 1 ] || { echo "private pre-commit: $p is not an approved path" >&2; bad=1; }
+done < <(git diff --cached --no-renames --name-only -z)
+exit $bad

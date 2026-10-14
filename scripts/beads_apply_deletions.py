@@ -18,7 +18,7 @@ deletion.sh` at the moment a human confirms the deletion was deliberate. This
 file is the *only* thing that authorises removing a bead here.
 
   {"id": "sylveste-abc", "deleted_at": "2026-08-01T05:00:00Z",
-   "actor": "mk", "machine": "zklw", "note": "sync probe"}
+   "actor": "mk", "machine": "build-server", "note": "sync probe"}
 
 Run AFTER the import, never before: the import would otherwise re-create
 whatever this just removed.

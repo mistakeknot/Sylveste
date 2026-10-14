@@ -8,7 +8,7 @@ Wrapper around `bd create` that warns on likely duplicate beads before creating.
 
 ## Signal stack
 
-Per finding KF-02 + POLY-5 (`docs/research/flux-review/sylveste-improvements-multi-axis/2026-05-04-synthesis.md`):
+Per finding KF-02 + POLY-5 (the 2026-05-04 sylveste-improvements-multi-axis flux-review synthesis, kept in the private internal docs):
 
 - **Title TF-IDF cosine** (45%) — high precision for rename-style dups; rare-token-weighted
 - **Title+description TF-IDF cosine** (25%) — broader semantic overlap when titles diverge
@@ -30,16 +30,16 @@ bash scripts/bd-create-checked.sh -t task -p 2 \
 As an alias (drop into `~/.bashrc` or shell init):
 
 ```bash
-alias bd-create='bash /home/mk/projects/Sylveste/scripts/bd-create-checked.sh'
+alias bd-create='bash ~/projects/Sylveste/scripts/bd-create-checked.sh'
 ```
 
 …or to make it the default `bd create` everywhere, define a function override:
 
 ```bash
 bd() {
-    if [[ "${1:-}" == "create" ]] && [[ -f /home/mk/projects/Sylveste/scripts/bd-create-checked.sh ]]; then
+    if [[ "${1:-}" == "create" ]] && [[ -f ~/projects/Sylveste/scripts/bd-create-checked.sh ]]; then
         shift
-        bash /home/mk/projects/Sylveste/scripts/bd-create-checked.sh "$@"
+        bash ~/projects/Sylveste/scripts/bd-create-checked.sh "$@"
     else
         command bd "$@"
     fi

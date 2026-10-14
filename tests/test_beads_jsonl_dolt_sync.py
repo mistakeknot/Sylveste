@@ -278,7 +278,7 @@ def test_records_mode_sees_an_older_task_edit_the_high_water_mark_hides(tmp_path
 
 def test_equal_timestamp_different_content_is_a_conflict_not_a_choice(tmp_path: Path) -> None:
     base = [row("a", "2026-07-01T00:00:00Z")]
-    transport = [row("a", "2026-07-02T00:00:00Z", title="renamed on zklw")]
+    transport = [row("a", "2026-07-02T00:00:00Z", title="renamed on hostB")]
     database = [row("a", "2026-07-02T00:00:00Z", title="renamed on the mac")]
     evidence = tmp_path / "evidence"
     merged = tmp_path / "merged.jsonl"
@@ -290,7 +290,7 @@ def test_equal_timestamp_different_content_is_a_conflict_not_a_choice(tmp_path: 
     assert out["synchronized"] is False
     assert out["export_needed"] is False
     # The transport keeps its current version; nothing picked a winner.
-    assert "renamed on zklw" in merged.read_text(encoding="utf-8")
+    assert "renamed on hostB" in merged.read_text(encoding="utf-8")
     assert "renamed on the mac" not in merged.read_text(encoding="utf-8")
     # Both versions survive privately; the public report carries hashes only.
     evidence_dir = Path(out["evidence_path"])
@@ -482,7 +482,7 @@ def test_conflict_survives_a_partial_export_when_the_baseline_is_persisted(tmp_p
     state = tmp_path / "state"
     state.mkdir()
     a = row("k", "2026-01-01T00:00:00Z")
-    c = row("k", "2026-05-01T00:00:00Z", title="k per zklw")
+    c = row("k", "2026-05-01T00:00:00Z", title="k per hostB")
     b = row("k", "2026-06-01T00:00:00Z", title="k per the mac")
     write_jsonl(tmp_path / "seed.jsonl", [a])
     proc = subprocess.run(
@@ -528,8 +528,8 @@ def test_plan_import_holds_back_rows_whose_local_copy_changed_since_verified(tmp
     baseline_a = row("a", "2026-01-01T00:00:00Z")
     before = [baseline_a, row("b", "2026-01-01T00:00:00Z")]
     batch = [
-        row("a", "2026-12-01T00:00:00Z", title="a per zklw"),   # local a changed too -> conflict
-        row("b", "2026-12-01T00:00:00Z", title="b per zklw"),   # local b == before -> import
+        row("a", "2026-12-01T00:00:00Z", title="a per hostB"),   # local a changed too -> conflict
+        row("b", "2026-12-01T00:00:00Z", title="b per hostB"),   # local b == before -> import
         row("c", "2026-12-01T00:00:00Z"),                       # absent locally -> import
         row("d", "2026-12-01T00:00:00Z"),                       # already equal -> nothing to do
     ]
@@ -562,7 +562,7 @@ def test_plan_import_holds_back_rows_whose_local_copy_changed_since_verified(tmp
     ids = [json.loads(l)["id"] for l in out_batch.read_text(encoding="utf-8").splitlines()]
     assert ids == ["b", "c"], "the conflicted row must never reach bd import"
     ev = Path(out["evidence_path"])
-    assert "a per zklw" in (ev / "a.incoming.json").read_text(encoding="utf-8")
+    assert "a per hostB" in (ev / "a.incoming.json").read_text(encoding="utf-8")
     assert "a edited locally" in (ev / "a.database.json").read_text(encoding="utf-8")
     assert "a edited locally" not in json.dumps(out)
 

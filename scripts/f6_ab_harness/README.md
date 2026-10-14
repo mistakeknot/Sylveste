@@ -33,7 +33,7 @@ from pathlib import Path
 from scripts.f6_ab_harness import run_corpus
 from scripts.f6_ab_harness.backends import FakeBackend
 agg = run_corpus(
-    corpus_dir=Path('docs/research/f6-ab-corpus'),
+    corpus_dir=Path('/path/to/f6-ab-corpus'),
     backend=FakeBackend(script={}),
     baseline_sha='f72d3cfd7d72a33c1a97ec37cfe99c5708a5fa0d',
     output_path=Path('/tmp/f6-smoke.jsonl'),
@@ -49,7 +49,7 @@ Expected: `runs=30 skipped=0` (FakeBackend with empty script returns empty resul
 ```bash
 python -m scripts.f6_ab_harness \
     --backend legacy \
-    --corpus-dir docs/research/f6-ab-corpus \
+    --corpus-dir /path/to/f6-ab-corpus \
     --output /tmp/legacy.jsonl \
     --baseline-sha f72d3cfd7d72a33c1a97ec37cfe99c5708a5fa0d \
     --metrics-output /tmp/legacy-metrics.txt
@@ -61,11 +61,9 @@ Currently fails on `--backend legacy` and `--backend ontology` with the F6a stub
 
 F2 closed lattice as the home for ontology *type extensions*. The harness is not a lattice extension — it tests legacy flux-drive against lattice templates *via* a backend protocol. At F6a, neither backend imports lattice (both are stubs). F6b's ontology backend can import lattice or shell out; that decision belongs to F6b's plan.
 
-Living next to the corpus (`docs/research/f6-ab-corpus/`) keeps the F6 evaluation kit self-contained and avoids cross-repo commit choreography during F6b.
+Living next to the corpus (kept in the private internal docs overlay) keeps the F6 evaluation kit self-contained and avoids cross-repo commit choreography during F6b.
 
 ## See also
 
-- Pre-registration doc — `docs/research/f6-measurement-preregistration.md`
-- Corpus README — `docs/research/f6-ab-corpus/README.md`
-- PRD §F6a — `docs/prds/2026-04-21-persona-lens-ontology.md`
+- Pre-registration doc, corpus README and PRD §F6a: kept in the private internal docs overlay, not in the public tree
 - Bead — `bd show sylveste-2n8i`

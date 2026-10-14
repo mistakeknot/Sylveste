@@ -1,7 +1,7 @@
 """Coverage for the estate workflow-health check.
 
 This file did not exist until 2026-08-07, and the check had been running weekly
-on zklw for a month without one. What it was missing is the reason it is here.
+on the build server for a month without one. What it was missing is the reason it is here.
 
 check-workflow-health had a vacuity guard, `--require-repos`, and the guard was
 pointed at the wrong denominator: `len(repos)`, the directories on disk. The loop

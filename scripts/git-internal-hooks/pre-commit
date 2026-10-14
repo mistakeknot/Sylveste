@@ -1,0 +1,27 @@
+#!/bin/bash
+# git-internal private pre-commit (template; installed by `git-internal
+# install-hooks` into .git-internal/hooks/). Refuses any staged path, added,
+# changed or deleted, that is not on .git-internal/info/approved-paths.
+# PR 2a appends the JSONL checks after this one. Portable to /bin/bash 3.2:
+# no mapfile, and the list is re-read per path instead of held in an array.
+set -u
+gd=$(git rev-parse --git-dir) || exit 1
+list=$gd/info/approved-paths
+[ -r "$list" ] || { echo "private pre-commit: $list is missing" >&2; exit 1; }
+tmp=$(mktemp "${TMPDIR:-/tmp}/pre-commit.XXXXXX") || { echo "private pre-commit: cannot make a temporary file" >&2; exit 1; }
+trap 'rm -f -- "$tmp"' EXIT
+# the staged paths are held in a file, not read through a process substitution, so a failed listing is a refusal and not "no paths"
+git diff --cached --no-renames --name-only -z > "$tmp" || { echo "private pre-commit: cannot list the staged paths" >&2; exit 1; }
+bad=0
+while IFS= read -r -d '' p; do
+  ok=0
+  while IFS= read -r a; do
+    case $a in
+      ''|'#'*) ;;
+      */) [[ $p == "$a"* ]] && ok=1 ;;
+      *)  [[ $p == "$a" ]] && ok=1 ;;
+    esac
+  done < "$list"
+  [ $ok = 1 ] || { echo "private pre-commit: $p is not an approved path" >&2; bad=1; }
+done < "$tmp"
+exit $bad

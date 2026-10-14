@@ -111,17 +111,17 @@ multi-key verification or an explicit re-sign migration first. `policy
 quarantine` records an event; the current verifier does not yet enforce that
 event against historical rows.
 
-For the Sylveste operating baseline, zklw is the sole canonical signer and owns
+For the Sylveste operating baseline, the build server is the sole canonical signer and owns
 the sole writable authorization ledger. Mac is verifier-only: it uses the
-Git-tracked public key and legacy manifest plus a signed snapshot of zklw's
+Git-tracked public key and legacy manifest plus a signed snapshot of the build server's
 authorization DB, and it does not hold the private key. Any signer-required operation initiated on Mac
-must be handed off to zklw and recorded in the canonical ledger there. Do not
+must be handed off to the build server and recorded in the canonical ledger there. Do not
 copy the private key to Mac unless and until the system has real ledger
 replication with a single canonical write path or a remote-signing service.
 
 The schema-36 cutover is a quiesced migration. Drain stale sessions and managed
 writers, install and fingerprint the schema-aware `ic` and `clavain-cli`
-binaries on both hosts, and only then migrate zklw. Before migration and before
+binaries on both hosts, and only then migrate the build server. Before migration and before
 the final replica, checkpoint WAL with `wal_checkpoint(TRUNCATE)` and create a
 verified backup through SQLite's backup API; copying only the main database file
 is not a safe WAL-mode backup. Commit the public manifest and evidence, complete

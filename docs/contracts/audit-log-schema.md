@@ -31,7 +31,7 @@ Entries with no `tool` value are skipped (unusable for analysis).
 ```json
 {"ts":"2026-05-27T17:39:51.643Z","session_id":"abc123","tool":"Skill","name":"clavain:campaign","duration_ms":42,"exit_code":0}
 {"ts":"2026-05-27T17:40:02.001Z","session_id":"abc123","tool":"Agent","name":"interflux:fd-architecture","duration_ms":343944,"exit_code":0}
-{"ts":"2026-05-27T17:40:15.500Z","session_id":"abc123","tool":"Edit","name":"/Users/sma/projects/Sylveste/scripts/foo.py","duration_ms":12,"exit_code":0}
+{"ts":"2026-05-27T17:40:15.500Z","session_id":"abc123","tool":"Edit","name":"~/projects/Sylveste/scripts/foo.py","duration_ms":12,"exit_code":0}
 ```
 
 ## Privacy
@@ -63,7 +63,7 @@ operator (cron job → external storage if long-term analysis is needed).
   rows into the evidence store under `source_kind='skill'`, then derives per-skill
   composite quality scores from four signals (tokens, bead_close,
   no_redirect, error). See
-  `docs/plans/2026-06-16-interspect-skill-calibration.md`. No schema change —
+  `2026-06-16-interspect-skill-calibration.md` (internal doc, not in the public tree). No schema change —
   `tool: "Skill"` is already captured per the example above.
 
 ## Versioning

@@ -146,7 +146,7 @@ def remote_evidence(plugin: Path, max_fetch_age_days: float) -> Evidence:
     machine's disk. A checkout that has not pulled shows kimi.plugin.json as
     absent, or shows an old one beside a bumped plugin.json, even though the pair
     was committed in agreement — which is what happened when this check first ran
-    on zklw: 58 of 65 "out of parity", every one of them a stale working copy
+    on the build server: 58 of 65 "out of parity", every one of them a stale working copy
     rather than real drift.
 
     THE FUNCTION THIS REPLACES ANSWERED A DIFFERENT QUESTION THAN IT WAS ASKED.
@@ -162,7 +162,7 @@ def remote_evidence(plugin: Path, max_fetch_age_days: float) -> Evidence:
     pointers: it reports 0 with complete confidence and the remote is not
     involved. Measured 2026-08-07: 55 of 70 Clavain plugin checkouts reported
     "0 behind" from fetch data older than seven days, twelve of which had never
-    fetched at all, while zklw — whose autosync keeps its checkouts current — had
+    fetched at all, while the build server — whose autosync keeps its checkouts current — had
     65 of 66 within the week. Both machines got the same integer out of this
     function. Only one of them had measured anything.
 

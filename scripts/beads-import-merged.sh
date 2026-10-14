@@ -2,7 +2,7 @@
 # Import the issue rows a merge actually brought in — bounded, verified, and
 # recoverable — rather than all 3,900 on every pull.
 #
-# `bd import` on the whole file takes ~49s here and on zklw has not always
+# `bd import` on the whole file takes ~49s here and on the build server has not always
 # finished at all. git already knows which lines a merge changed and every
 # issue is exactly one line, so the batch is the '+' side of the diff between
 # the commit before the merge and HEAD. bd still decides, row by row, whether
@@ -447,7 +447,7 @@ EOF
   fi
 
   # ─── Import, bounded ────────────────────────────────────────────────
-  # Observed on zklw: `bd import` blocked in futex_wait with an open socket
+  # Observed on the build server: `bd import` blocked in futex_wait with an open socket
   # to its own Dolt server. Without a bound, `git pull` never returns.
   beads_run_bounded "$TIMEOUT" bd import --json "$BATCH" >"$TMP.out" 2>&1    # cwd is $ROOT; never -C (see lib)
   local rc=$?

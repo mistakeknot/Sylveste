@@ -91,9 +91,6 @@ ockham dispatch advise   # show what would be dispatched next
 
 ## Related Research
 
-- `docs/brainstorms/2026-03-19-ai-factory-orchestration-brainstorm.md`
-- `docs/plans/2026-03-20-ai-factory-wave1-foundation.md`
-- `docs/research/flux-research/authority-tiers/synthesis.md`
-- `docs/research/flux-research/phase1-self-dispatch/synthesis.md`
+Related research (brainstorms, plans and synthesis notes) is kept in the private internal docs overlay and is not in the public tree.
 
 

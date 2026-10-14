@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Independent zklw recipe for the existing Generator and parity checkers gate.
+# Independent the build server recipe for the existing Generator and parity checkers gate.
 # Run only in a disposable clone: one acceptance probe replaces its Git hook.
 # Python and pytest are supplied by the registry-pinned Ubuntu 24.04 image.
 set -euo pipefail
