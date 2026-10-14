@@ -355,14 +355,19 @@ do_preflight() {
 
 # ---- freeze (P1)
 in_list() { local x=$1 y; shift; for y in "$@"; do [ "$y" = "$x" ] && return 0; done; return 1; }
-unit_set() {  # the ONE set every decision about the frozen units uses (the freeze's stops, the freeze check, the cleanup): the units every record of this run's freeze names (the freeze record, and the freeze intent a freeze that was cut off left: its units and its timers), the configured ones and any EXTRA arguments, each once. Status 1 (the set still printed, configured units only) when a record exists and cannot be read: a caller that must not forget a recorded unit stops on it
+unit_set() {  # the ONE set every decision about the frozen units uses (the freeze's stops, the freeze check, the cleanup): the units every record of this run's freeze names (the freeze record, and the freeze intent a freeze that was cut off left: its units and its timers), the configured ones and any EXTRA arguments, each once. Status 1 (the set still printed, configured units only) when a record exists and cannot be read, or the freeze record names no unit: a caller that must not forget a recorded unit stops on it
   local ru= ri= rt= u o= rc=0
-  if [ -e "$G/freeze" ]; then ru=$(rec_units) || rc=1; fi
+  if [ -e "$G/freeze" ]; then ru=$(rec_units) || rc=1; [ -n "$ru" ] || rc=1; fi   # a freeze record that names no unit is as unreadable as a damaged one: the cleanup keeps its evidence
   if [ -e "$G/freeze-intent" ]; then ri=$(rec_units "$G/freeze-intent") || rc=1; rt=$(rec_timers "$G/freeze-intent") || rc=1; fi
   for u in $ru $ri $rt "$@" $TIMERS $SERVICES; do in_list "$u" $o || o="$o $u"; done
   printf '%s\n' "${o# }"; return $rc; }
 is_timer_unit() { case $1 in *.timer) return 0 ;; esac; in_list "$1" $TIMERS; }
 act_lines() { ( set -o pipefail; printf '%s\n' "$1" | sed 's/^ *//; s/ timer /\ntimer /g' | sed -n '/^timer /p' ); }   # " timer A timer B" : one "timer UNIT" line each; a failed stage is a failed list, never an empty one
+config_covered() {  # the freeze record already names every unit the CONFIGURATION names now (a repeated freeze under a configuration with more units must stop them and record the union, never return early and forget them)
+  local x ru; ru=$(rec_units) || stop "the freeze record cannot be read: whether it names every configured unit is not known"
+  [ -n "$ru" ] || return 0   # a record with no unit lines is freeze_holds' to refuse, with its own message
+  for x in $TIMERS $SERVICES; do in_list "$x" $ru || return 1; done
+  return 0; }
 intent_covered() {  # no freeze intent, or the freeze record already names every unit and every timer the intent names: only then may the intent be deleted (a freeze cut off before it replaced the record leaves a larger intent beside the older record, and the intent is then the only record of what it stopped)
   [ -e "$G/freeze-intent" ] || return 0
   local x ru rt iu it
@@ -374,7 +379,7 @@ do_freeze() {
   local a w u act="" f prior al us ft
   [ -e "$G/preflight" ] || { [ $CHECKMODE = 1 ] || refuse "no preflight record; run preflight first"; }
   records_ours 4 || stop "restart records that do not name this checkout (or are not well formed) are in $G: nothing was changed; a human must clear them"   # the freeze deletes the earlier attempt's records: only ones of this checkout
-  if [ -e "$G/freeze" ] && [ $CHECKMODE = 0 ] && ! restarted_any && intent_covered; then   # after a completed restart a new freeze is a new attempt: it falls through; so does a freeze whose intent names more than the record (a cut-off larger freeze): it is finished, never dropped
+  if [ -e "$G/freeze" ] && [ $CHECKMODE = 0 ] && ! restarted_any && intent_covered && config_covered; then   # after a completed restart a new freeze is a new attempt: it falls through; so does a freeze whose intent names more than the record (a cut-off larger freeze): it is finished, never dropped
     a=$(rec_timers) || stop "the freeze record cannot be read: whether its timers stay stopped cannot be told"
     for u in $a; do ! is_active "$u" || stop "the freeze was recorded but $u is active again"; done
     { marker_aside || { mk=$(rec_marker) && [ "$mk" = none ]; }; } || stop "the freeze was recorded but the marker is back in the checkout"
