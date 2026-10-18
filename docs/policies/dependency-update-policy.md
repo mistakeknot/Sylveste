@@ -2,13 +2,15 @@
 
 **Bead:** iv-446o7.2
 **Status:** Active
-**Last updated:** 2026-02-26
+**Last updated:** 2026-10-18
 
 ## Automated Updates
 
-All production repos use GitHub Dependabot with weekly cadence (Mondays). Updates are grouped by minor/patch to reduce PR noise.
+> **Version-update PRs are retired (2026-10).** The `.github/dependabot.yml` files, including the 7-day cooldown on version-update PRs, are removed. Dependabot security alerts and security updates are repository settings and stay on, so the Vulnerability Response SLA below still applies. The sections below describe the retired setup and are kept for history.
 
-### Coverage
+All production repos used GitHub Dependabot with weekly cadence (Mondays). Updates are grouped by minor/patch to reduce PR noise.
+
+### Coverage (retired)
 
 | Ecosystem | Repos | Config |
 |-----------|-------|--------|
