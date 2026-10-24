@@ -81,24 +81,30 @@ def test_summary_lists_every_page_and_all_exist():
     assert on_disk == linked
 
 
+BAD = [r"/home/", r"/Users/", r"\bq\d{3,4}\b", r"\.ts\.net", r"localhost", r"\b" + "zk" + r"lw\b", r"\.internal\b",
+       r"\bclavain\.local\b", r"\bjawn" + r"verse\b", r"\bms" + r"q-\d+", r"\bauth\.[a-z]+\.com"]
+ALLOWED_HOSTS = {"github.com", "rust-lang.github.io"}
+
+
+def hygiene_violations(text):
+    found = [f"matches {pat}" for pat in BAD if re.search(pat, text, flags=re.I)]
+    for url in re.findall(r"(?:[a-z][a-z0-9+.-]*:)?//[^\s)>\]]+", text, flags=re.I):
+        if urlparse(url if not url.startswith("//") else "https:" + url).hostname not in ALLOWED_HOSTS:
+            found.append(f"links {url}")
+    return found
+
+
 def test_wiki_pages_follow_public_repo_hygiene():
-    bad = [r"/home/", r"/Users/", r"\bq\d{3,4}\b", r"\.ts\.net", r"localhost", r"\b" + "zk" + r"lw\b", r"\.internal\b",
-           r"\bclavain\.local\b", r"\bjawn" + r"verse\b", r"\bms" + r"q-\d+", r"\bauth\.[a-z]+\.com"]
-    allowed_hosts = {"github.com", "rust-lang.github.io"}
     for p in WIKI.rglob("*.md"):
-        text = p.read_text()
-        for pat in bad:
-            assert not re.search(pat, text, flags=re.I), f"{p.relative_to(WIKI)} matches {pat}"
-        for url in re.findall(r"https?://[^\s)>\]]+", text):
-            assert urlparse(url).hostname in allowed_hosts, f"{p.relative_to(WIKI)} links {url}"
+        assert not hygiene_violations(p.read_text()), f"{p.relative_to(WIKI)}: {hygiene_violations(p.read_text())}"
 
 
 def test_hygiene_check_catches_bad_content():
-    # The scan must reject what it claims to: guard against a vacuous pattern list.
+    # Exercise the production scanner: a vacuous pattern list or URL check must fail here.
     host = "zk" + "lw"
     ruling = "ru" + "ling q" + "123"
-    samples = ("see /home/x", ruling, "host " + host, "https://github.com.internal.example/x")
-    patterns = (r"/home/", r"\bq\d{3,4}\b", r"\b" + host + r"\b", r"\.internal\b")
+    samples = ("see /home/x", ruling, "host " + host, "https://github.com.internal.example/x",
+               "HTTPS://private.example/x", "[p](//private.example/x)", "ftp://private.example/x")
     for sample in samples:
-        assert any(re.search(p, sample, flags=re.I) for p in patterns), sample
-    assert urlparse(samples[-1]).hostname not in {"github.com", "rust-lang.github.io"}
+        assert hygiene_violations(sample), sample
+    assert not hygiene_violations("[ok](https://github.com/mistakeknot/Sylveste) and https://rust-lang.github.io/mdBook/")
