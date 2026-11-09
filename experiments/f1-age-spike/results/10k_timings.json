@@ -1,4 +1,3 @@
-Bench against fixture with 30 domains, 50 disciplines
 {
   "runs": 20,
   "edges": 10000,
