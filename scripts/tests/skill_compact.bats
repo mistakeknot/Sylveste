@@ -23,7 +23,7 @@ need_assert() {
 setup() {
     NPM_GLOBAL=""
     for candidate in /usr/lib/node_modules /usr/local/lib/node_modules; do
-        if [[ -d "$candidate/bats-support" ]]; then
+        if [[ -d "$candidate/bats-support" && -d "$candidate/bats-assert" ]]; then
             NPM_GLOBAL="$candidate"
             break
         fi
