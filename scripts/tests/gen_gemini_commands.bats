@@ -3,6 +3,13 @@
 SCRIPT="$BATS_TEST_DIRNAME/../gen-gemini-commands.sh"
 PROJECT_ROOT="$(cd "$BATS_TEST_DIRNAME/.." && pwd)/.."
 
+# These two tests count and read command sources under os/ and interverse/,
+# which are nested repos absent from a clone of the public skeleton alone.
+need_nested_repos() {
+    [ -d "$PROJECT_ROOT/os" ] && [ -d "$PROJECT_ROOT/interverse" ] \
+        || skip "nested repos os/ and interverse/ are not checked out"
+}
+
 setup() {
     NPM_GLOBAL=""
     for candidate in /usr/lib/node_modules /usr/local/lib/node_modules; do
@@ -18,6 +25,7 @@ setup() {
 }
 
 @test "generates Gemini commands for all Demarch command markdown sources" {
+    need_nested_repos
     local outdir expected_count actual_count
     outdir="$(mktemp -d)"
 
@@ -33,6 +41,7 @@ setup() {
 }
 
 @test "normalizes Claude-specific instructions for Gemini commands" {
+    need_nested_repos
     local outdir route_cmd roadmap_cmd
     outdir="$(mktemp -d)"
 

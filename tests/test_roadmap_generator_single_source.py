@@ -20,11 +20,20 @@ import shutil
 import subprocess
 from pathlib import Path
 
+import pytest
+
 
 ROOT = Path(__file__).resolve().parents[1]
 SHIM = ROOT / "scripts" / "sync-roadmap-json.sh"
 GENERATOR = ROOT / "interverse" / "interpath" / "scripts" / "sync-roadmap-json.sh"
 RENDERER = ROOT / "interverse" / "interpath" / "scripts" / "render_backlog.py"
+
+# interverse/interpath is a nested repo: it is absent from a clone of the public
+# skeleton alone, so tests that execute it skip with a reason instead of failing.
+needs_interpath = pytest.mark.skipif(
+    not (ROOT / "interverse" / "interpath" / "scripts").is_dir(),
+    reason="interverse/interpath is not checked out (nested repo absent from this clone)",
+)
 
 # Two beads, chosen to exercise the divergences that actually happened:
 # one deferred (silently counted as open by the old plugin copy) and one with a
@@ -90,6 +99,7 @@ def _run(script: Path, repo: Path, bin_dir: Path, tag: str) -> dict:
     }
 
 
+@needs_interpath
 def test_the_shim_and_the_generator_produce_the_same_output(tmp_path: Path) -> None:
     """Run both paths and diff. Reading the two files is not evidence.
 
@@ -115,6 +125,7 @@ def test_the_shim_and_the_generator_produce_the_same_output(tmp_path: Path) -> N
     assert via_shim["backlog"] == direct["backlog"]
 
 
+@needs_interpath
 def test_generated_at_is_parseable_on_this_platform(tmp_path: Path) -> None:
     """%:z is GNU-only; BSD date passes ':z' through literally.
 
@@ -133,6 +144,7 @@ def test_generated_at_is_parseable_on_this_platform(tmp_path: Path) -> None:
     datetime.fromisoformat(stamp.replace("Z", "+00:00"))
 
 
+@needs_interpath
 def test_deferred_beads_are_not_counted_as_open_work(tmp_path: Path) -> None:
     """The 481 -> 499 inflation, as a unit."""
     repo, bin_dir = _fake_repo(tmp_path)
@@ -149,6 +161,7 @@ def test_deferred_beads_are_not_counted_as_open_work(tmp_path: Path) -> None:
     assert "_(deferred)_" in out["backlog"]
 
 
+@needs_interpath
 def test_dependency_edges_survive(tmp_path: Path) -> None:
     """blocked_by: [] dropped 127 edges on the real tracker."""
     repo, bin_dir = _fake_repo(tmp_path)
@@ -202,6 +215,7 @@ def test_the_shim_delegates_instead_of_reimplementing() -> None:
         )
 
 
+@needs_interpath
 def test_shim_rejects_other_portfolio_even_with_project_override(tmp_path: Path) -> None:
     repo, bin_dir = _fake_repo(tmp_path)
     (bin_dir / "bd").write_text(FAKE_BD.replace("Sylveste-", "shadow-work-"))

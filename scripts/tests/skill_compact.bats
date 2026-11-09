@@ -4,6 +4,21 @@
 SCRIPT="$BATS_TEST_DIRNAME/../gen-skill-compact.sh"
 INTERVERSE_ROOT="$BATS_TEST_DIRNAME/../.."
 
+# Tests that read skills from the nested interverse/ plugin repos skip, with a
+# reason, when those repos are not checked out (a clone of the public skeleton
+# alone has no interverse/). Tests that use assert_* skip when bats-assert is
+# not installed instead of failing with status 127.
+need_nested() {
+    local p
+    for p in "$@"; do
+        [[ -d "$INTERVERSE_ROOT/$p" ]] || skip "nested repo not checked out: $p"
+    done
+}
+
+need_assert() {
+    declare -F assert_success >/dev/null || skip "bats-assert is not installed"
+}
+
 # Load bats-support and bats-assert
 setup() {
     NPM_GLOBAL=""
@@ -22,42 +37,49 @@ setup() {
 # ── Manifest format ──────────────────────────────────────────────────
 
 @test "manifest: doc-watch manifest is valid JSON" {
+    need_assert; need_nested interverse/interwatch/skills/doc-watch
     local manifest="$INTERVERSE_ROOT/interverse/interwatch/skills/doc-watch/.skill-compact-manifest.json"
     run jq '.' "$manifest"
     assert_success
 }
 
 @test "manifest: artifact-gen manifest is valid JSON" {
+    need_assert; need_nested interverse/interpath/skills/artifact-gen
     local manifest="$INTERVERSE_ROOT/interverse/interpath/skills/artifact-gen/.skill-compact-manifest.json"
     run jq '.' "$manifest"
     assert_success
 }
 
 @test "manifest: flux-drive manifest is valid JSON" {
+    need_assert; need_nested interverse/interflux/skills/flux-drive
     local manifest="$INTERVERSE_ROOT/interverse/interflux/skills/flux-drive/.skill-compact-manifest.json"
     run jq '.' "$manifest"
     assert_success
 }
 
 @test "manifest: doc-watch manifest has SKILL.md key" {
+    need_assert; need_nested interverse/interwatch/skills/doc-watch
     local manifest="$INTERVERSE_ROOT/interverse/interwatch/skills/doc-watch/.skill-compact-manifest.json"
     run jq -e '."SKILL.md"' "$manifest"
     assert_success
 }
 
 @test "manifest: artifact-gen manifest has SKILL.md key" {
+    need_assert; need_nested interverse/interpath/skills/artifact-gen
     local manifest="$INTERVERSE_ROOT/interverse/interpath/skills/artifact-gen/.skill-compact-manifest.json"
     run jq -e '."SKILL.md"' "$manifest"
     assert_success
 }
 
 @test "manifest: flux-drive manifest has SKILL.md key" {
+    need_assert; need_nested interverse/interflux/skills/flux-drive
     local manifest="$INTERVERSE_ROOT/interverse/interflux/skills/flux-drive/.skill-compact-manifest.json"
     run jq -e '."SKILL.md"' "$manifest"
     assert_success
 }
 
 @test "manifest: all hash values are 64-char hex (SHA256)" {
+    need_nested interverse/interwatch/skills/doc-watch interverse/interpath/skills/artifact-gen interverse/interflux/skills/flux-drive
     for skill in interverse/interwatch/skills/doc-watch interverse/interpath/skills/artifact-gen interverse/interflux/skills/flux-drive; do
         local manifest="$INTERVERSE_ROOT/$skill/.skill-compact-manifest.json"
         local bad
@@ -69,38 +91,45 @@ setup() {
 # ── Compact file existence ───────────────────────────────────────────
 
 @test "compact: doc-watch SKILL-compact.md exists" {
+    need_nested interverse/interwatch/skills/doc-watch
     [[ -f "$INTERVERSE_ROOT/interverse/interwatch/skills/doc-watch/SKILL-compact.md" ]]
 }
 
 @test "compact: artifact-gen SKILL-compact.md exists" {
+    need_nested interverse/interpath/skills/artifact-gen
     [[ -f "$INTERVERSE_ROOT/interverse/interpath/skills/artifact-gen/SKILL-compact.md" ]]
 }
 
 @test "compact: flux-drive SKILL-compact.md exists" {
+    need_nested interverse/interflux/skills/flux-drive
     [[ -f "$INTERVERSE_ROOT/interverse/interflux/skills/flux-drive/SKILL-compact.md" ]]
 }
 
 # ── Freshness checks via gen-skill-compact.sh ────────────────────────
 
 @test "freshness: doc-watch is fresh" {
+    need_assert; need_nested interverse/interwatch/skills/doc-watch
     run bash "$SCRIPT" --check "$INTERVERSE_ROOT/interverse/interwatch/skills/doc-watch"
     assert_success
     assert_output --partial "FRESH"
 }
 
 @test "freshness: artifact-gen is fresh" {
+    need_assert; need_nested interverse/interpath/skills/artifact-gen
     run bash "$SCRIPT" --check "$INTERVERSE_ROOT/interverse/interpath/skills/artifact-gen"
     assert_success
     assert_output --partial "FRESH"
 }
 
 @test "freshness: flux-drive is fresh" {
+    need_assert; need_nested interverse/interflux/skills/flux-drive
     run bash "$SCRIPT" --check "$INTERVERSE_ROOT/interverse/interflux/skills/flux-drive"
     assert_success
     assert_output --partial "FRESH"
 }
 
 @test "freshness: --check-all reports all fresh" {
+    need_assert; need_nested interverse/interwatch/skills/doc-watch interverse/interpath/skills/artifact-gen interverse/interflux/skills/flux-drive
     run bash "$SCRIPT" --check-all
     assert_success
     # Verify all three skills appear in output
@@ -112,6 +141,7 @@ setup() {
 # ── Staleness detection ──────────────────────────────────────────────
 
 @test "freshness: detects stale manifest after source change" {
+    need_assert
     local tmpdir
     tmpdir=$(mktemp -d)
     mkdir -p "$tmpdir/phases"
@@ -165,6 +195,7 @@ setup() {
 }
 
 @test "cli: --help exits 0" {
+    need_assert
     run bash "$SCRIPT" --help
     assert_success
     assert_output --partial "Usage"
@@ -184,6 +215,7 @@ setup() {
 # ── Generation smoke test ────────────────────────────────────────────
 
 @test "generation: mock LLM produces compact + manifest" {
+    need_assert
     local tmpdir
     tmpdir=$(mktemp -d)
     mkdir -p "$tmpdir/phases"
