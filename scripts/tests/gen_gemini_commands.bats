@@ -53,7 +53,8 @@ setup() {
     python3 -c 'import tomllib' 2>/dev/null || skip "python3 with tomllib (3.11+) is required"
 
     local tree outdir cmd_dir
-    tree="$(mktemp -d)"
+    # bats removes BATS_TEST_TMPDIR itself, whether the test passes or fails.
+    tree="$BATS_TEST_TMPDIR/tree"
     outdir="$tree/out"
     cmd_dir="$tree/interverse/demo/commands"
     mkdir -p "$tree/scripts" "$tree/os" "$cmd_dir" "$tree/interverse/demo/.claude-plugin"
@@ -100,5 +101,4 @@ print("ok")
 PY
     echo "$output"
     [ "$status" -eq 0 ]
-    rm -rf "$tree"
 }
