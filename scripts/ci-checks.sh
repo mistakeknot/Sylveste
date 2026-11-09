@@ -18,9 +18,12 @@ python3 -m pytest tests/test_gen_kimi_manifests.py -q
 # Autonomy position rendering tests
 python3 -m pytest tests/test_gen_autonomy_position.py -q
 
-# Autonomy position checker refuses a kernel-less checkout
+# Autonomy position checker refuses a kernel-less checkout.
+# Force the no-kernel case: a host that has `ic` on PATH (such as the build
+# server) would otherwise run the real check and compare against a fresh clone,
+# which has no calibration state, and report the block stale.
 set +e
-python3 scripts/gen-autonomy-position.py --check
+IC_BIN=/nonexistent/ic python3 scripts/gen-autonomy-position.py --check
 rc=$?
 set -e
 echo "exit=$rc"
