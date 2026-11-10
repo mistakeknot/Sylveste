@@ -10,20 +10,6 @@ need_nested_repos() {
         || skip "nested repos os/ and interverse/ are not checked out"
 }
 
-setup() {
-    NPM_GLOBAL=""
-    for candidate in /usr/lib/node_modules /usr/local/lib/node_modules; do
-        if [[ -d "$candidate/bats-support" ]]; then
-            NPM_GLOBAL="$candidate"
-            break
-        fi
-    done
-    if [[ -n "$NPM_GLOBAL" ]]; then
-        load "$NPM_GLOBAL/bats-support/load"
-        load "$NPM_GLOBAL/bats-assert/load"
-    fi
-}
-
 @test "generates Gemini commands for all Demarch command markdown sources" {
     need_nested_repos
     local outdir expected_count actual_count
