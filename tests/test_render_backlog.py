@@ -5,6 +5,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -18,6 +20,13 @@ ROOT = Path(__file__).resolve().parents[1]
 GENERATOR = ROOT / "interverse" / "interpath" / "scripts" / "sync-roadmap-json.sh"
 SCRIPT = ROOT / "interverse" / "interpath" / "scripts" / "render_backlog.py"
 SHIM = ROOT / "scripts" / "sync-roadmap-json.sh"
+
+# interverse/interpath is a nested repo: it is absent from a clone of the public
+# skeleton alone, so tests that execute it skip with a reason instead of failing.
+needs_interpath = pytest.mark.skipif(
+    not (ROOT / "interverse" / "interpath" / "scripts").is_dir(),
+    reason="interverse/interpath is not checked out (nested repo absent from this clone)",
+)
 
 
 def run_renderer(tmp_path: Path, payload: dict) -> subprocess.CompletedProcess[str]:
@@ -82,6 +91,7 @@ def roadmap_payload() -> dict:
     }
 
 
+@needs_interpath
 def test_renders_live_p2_through_p4_grouped_by_priority_and_module(tmp_path: Path) -> None:
     result = run_renderer(tmp_path, roadmap_payload())
 
@@ -102,6 +112,7 @@ def test_renders_live_p2_through_p4_grouped_by_priority_and_module(tmp_path: Pat
     assert all(line == line.rstrip() for line in rendered.splitlines())
 
 
+@needs_interpath
 def test_rejects_duplicate_issue_ids_across_phases(tmp_path: Path) -> None:
     payload = roadmap_payload()
     payload["roadmap"]["later"].append(
@@ -121,6 +132,7 @@ def test_rejects_duplicate_issue_ids_across_phases(tmp_path: Path) -> None:
     assert not (tmp_path / "backlog.md").exists()
 
 
+@needs_interpath
 def test_roadmap_sync_regenerates_backlog_with_machine_output(tmp_path: Path) -> None:
     repo = tmp_path / "repo"
     scripts = repo / "scripts"
