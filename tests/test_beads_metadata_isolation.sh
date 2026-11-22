@@ -51,7 +51,7 @@ sees() {         # sees <dir> <issue-id>
 build_pair() {   # build_pair <root> <track-metadata: yes|no>
   local root="$1" track="$2"
   local remote="$root/remote.git" a="$root/A" b="$root/B"
-  git init -q --bare "$remote"
+  git init -q -b main --bare "$remote"
 
   setup_repo "$a" machine-A
   (cd "$a" && bd init --prefix aaa >/dev/null 2>&1) || return 1

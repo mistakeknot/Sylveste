@@ -89,7 +89,7 @@ export BD_STUB_DB="$SANDBOX/.beads/stub-db.jsonl"   # bound to this checkout's .
 export BEADS_TRANSPORT_LOCK_BASE="$SANDBOX/locks"; mkdir -p "$BEADS_TRANSPORT_LOCK_BASE"
 
 cd "$SANDBOX"
-git init -q .
+git init -q -b main .
 git config user.email t@test; git config user.name tester
 
 row() { printf '{"id":"%s","title":"t","updated_at":"%s"}\n' "$1" "$2"; }
