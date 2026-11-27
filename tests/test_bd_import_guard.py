@@ -188,7 +188,9 @@ def test_absent_issues_are_created(closed_bead):
 
 def _post_merge_fixture(tmp_path_factory, name: str) -> tuple[Path, str]:
     path = tmp_path_factory.mktemp(name)
-    subprocess.run(["git", "init", "-q", "."], cwd=path, check=True)
+    # The tests below check out "main" by name, so do not depend on the host's
+    # init.defaultBranch (git falls back to "master" when it is unset).
+    subprocess.run(["git", "init", "-q", "-b", "main", "."], cwd=path, check=True)
     subprocess.run(["git", "config", "user.email", "t@t"], cwd=path, check=True)
     subprocess.run(["git", "config", "user.name", "t"], cwd=path, check=True)
     subprocess.run(["git", "config", "core.hooksPath", "/dev/null"], cwd=path, check=True)
