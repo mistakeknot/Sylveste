@@ -1,6 +1,8 @@
 # Memory Lanes — routing policy across persistence systems
 
 > Status: ACTIVE (2026-07-14, goal mk-5so). CanonGraph joins as the entity-graph lane.
+> Retiring (2026-11-26): the estate index in Lattice replaces this lane at parity. Until
+> cutover this policy stands as written; see [retirement.md](retirement.md).
 > The failure mode this prevents: five memory systems all capturing the same fact
 > ("memory sprawl"), or worse, capturing conflicting versions of it.
 
